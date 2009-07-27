@@ -1,0 +1,7 @@
+#!/usr/bin/env ruby
+
+# Require Middleman
+require File.join(File.dirname(__FILE__), '..', 'lib', 'middleman')
+
+# Start Middleman
+Middleman.run!(:root => Dir.pwd)

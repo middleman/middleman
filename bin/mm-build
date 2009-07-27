@@ -1,0 +1,68 @@
+#!/usr/bin/env ruby
+
+# Require app
+require 'rubygems'
+require 'templater'
+require 'open-uri'
+require File.join(File.dirname(__FILE__), '..', 'lib', 'middleman')
+
+module Generators
+  extend Templater::Manifold
+  desc "Build a staticmatic site"
+
+  class Builder < Templater::Generator
+    # Define source and desintation
+    def self.source_root; Dir.pwd; end
+    def destination_root; File.join(Dir.pwd, 'build'); end
+
+    # Override template to ask staticmatic for the correct extension to output
+    def self.template(name, *args, &block)
+      return if args.first.include?('layout')
+      return if File.basename(args.first)[0,1] == '_'
+
+      if (args[0] === args[1])
+        newext = case File.extname(args.first)
+        when '.haml'
+          '.html'
+        when '.sass'
+          '.css'
+        else
+          File.extname(args.first)
+        end
+        args[1] = args[0].gsub(File.extname(args.first), newext).gsub('views/', '')
+      end
+
+      super(name, *args, &block)
+    end
+
+    def self.file(name, *args, &block)
+      args[1] = args[0].gsub('views/', '') if (args[0] === args[1])
+      super(name, *args, &block)
+    end
+
+    public_files_glob = File.join(source_root, "public", '**/*')
+    Dir[public_files_glob].each do |action|
+      next if File.directory?(action)
+      action = action.sub("#{source_root}/", '')
+      file(action.downcase.gsub(/[^a-z0-9]+/, '_').to_sym, action, action.gsub('public/', ''))
+    end
+
+    glob! "views", %w(haml sass)
+  end
+
+  add :build, Builder
+end
+
+# Monkey-patch to use a dynamic renderer, not just ERb
+class Templater::Actions::Template
+  def render
+    return ""
+    #request_path = destination.gsub(File.join(Dir.pwd, 'build'), "")
+    #Rack Handler
+  end
+end
+
+# Start app
+#Middleman.run!(:root => Dir.pwd) do
+  Generators.run_cli(Dir.pwd, 'mm-build', 1,  %w(build --force).concat(ARGV))
+#end

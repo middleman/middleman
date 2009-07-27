@@ -1,7 +1,7 @@
 = middleman
 
-Description goes here.
+The Middleman is ever-vigilant against tag-soup, unreadable CSS and repetition. He stands-watch over your Haml and Sass producing only the cleanest and efficient markup.
 
 == Copyright
 
-Copyright (c) 2009 tdreyno. See LICENSE for details.
+Copyright (c) 2009 Thomas Reynolds. See LICENSE for details.
