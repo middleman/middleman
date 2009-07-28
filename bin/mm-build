@@ -22,7 +22,7 @@ module Generators
 
       if (args[0] === args[1])
         newext = case File.extname(args.first)
-        when '.haml'
+        when '.haml', '.mab', '.maruku'
           '.html'
         when '.sass'
           '.css'
@@ -47,7 +47,7 @@ module Generators
       file(action.downcase.gsub(/[^a-z0-9]+/, '_').to_sym, action, action.gsub('public/', ''))
     end
 
-    glob! "views", %w(haml sass)
+    glob! "views", %w(haml sass mab maruku)
   end
 
   add :build, Builder

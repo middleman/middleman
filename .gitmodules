@@ -1,3 +1,6 @@
 [submodule "vendor/sinatra-markaby"]
 	path = vendor/sinatra-markaby
 	url = git://github.com/sbfaulkner/sinatra-markaby.git
+[submodule "vendor/sinatra-maruku"]
+	path = vendor/sinatra-maruku
+	url = git://github.com/wbzyl/sinatra-maruku.git

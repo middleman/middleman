@@ -4,10 +4,15 @@ require 'compass' #must be loaded before sinatra
 require 'sinatra/base'
 
 # Include markaby support
-require File.join(File.dirname(__FILE__), '..', 'vendor', 'sinatra', 'markaby')
+require File.join(File.dirname(__FILE__), '..', 'vendor', 'sinatra-markaby', 'lib', 'sinatra', 'markaby')
+
+# Include maruku support
+require File.join(File.dirname(__FILE__), '..', 'vendor', 'sinatra-maruku', 'lib', 'sinatra', 'maruku')
 
 class Middleman < Sinatra::Base
   set :app_file, __FILE__
+  helpers Sinatra::Markaby
+  helpers Sinatra::Maruku
   
   def self.run!(options={}, &block)
     set options
@@ -41,21 +46,23 @@ class Middleman < Sinatra::Base
     end
   end
   
-  def render_haml_or_sass(path)
+  get /(.*)/ do |path|
+    path << "index.html" if path.match(%r{/$})
+    path.gsub!(%r{^/}, '')
+    
+    template = path.gsub(File.extname(path), '').to_sym
     if path.match /.html$/
-      haml(path.gsub('.html', '').to_sym)
-      #markaby
+      if File.exists? File.join(options.views, "#{template}.haml")
+        haml(template)
+      elsif File.exists? File.join(options.views, "#{template}.maruku")
+        maruku(template)
+      else
+        markaby(template)
+      end
     elsif path.match /.css$/
       content_type 'text/css', :charset => 'utf-8'
-      sass(path.gsub('.css', '').to_sym, Compass.sass_engine_options)
-    end
-  end
-  
-  get /(.*)/ do |path|
-    path = path.gsub(%r{^/}, '')
-    path = "index.html" if path == ''
-    
-    if !render_haml_or_sass(path)
+      sass(template, Compass.sass_engine_options)
+    else
       pass
     end
   end

@@ -14,6 +14,8 @@ begin
     gem.executables = %w(sm-init sm-build sm-server)
     gem.add_dependency("templater")
     gem.add_dependency("sinatra")
+    gem.add_dependency("markaby")
+    gem.add_dependency("maruku")
     gem.add_dependency("haml", ">=2.1.0")
     gem.add_dependency("chriseppstein-compass")
   end
