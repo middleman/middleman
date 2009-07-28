@@ -45,27 +45,28 @@ class Middleman < Sinatra::Base
       config.http_images_path = "/images/"
     end
   end
-  
+
   get /(.*)/ do |path|
     path << "index.html" if path.match(%r{/$})
     path.gsub!(%r{^/}, '')
-    
     template = path.gsub(File.extname(path), '').to_sym
-    if path.match /.html$/
-      if File.exists? File.join(options.views, "#{template}.haml")
-        haml(template)
-      elsif File.exists? File.join(options.views, "#{template}.maruku")
-        maruku(template)
-      elsif File.exists? File.join(options.views, "#{template}.mab")
-        markaby(template)
+    
+    result = nil
+    
+    %w(haml erb builder maruku mab sass).each do |renderer|
+      next if !File.exists?(File.join(options.views, "#{template}.#{renderer}"))
+      
+      renderer = "markaby" if renderer == "mab"
+      result = if renderer == "sass"
+        content_type 'text/css', :charset => 'utf-8'
+        sass(template, Compass.sass_engine_options)
       else
-        pass
+        send(renderer.to_sym, template)
       end
-    elsif path.match /.css$/
-      content_type 'text/css', :charset => 'utf-8'
-      sass(template, Compass.sass_engine_options)
-    else
-      pass
+      
+      break
     end
+    
+    result || pass
   end
 end
