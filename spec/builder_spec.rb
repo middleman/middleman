@@ -20,18 +20,22 @@ describe "Builder" do
   
   it "should build markaby files" do
     File.exists?("#{@root_dir}/build/markaby.html").should be_true
+    File.read("#{@root_dir}/build/markaby.html").should include("<title>Hi Markaby</title>")
   end
   
   it "should build haml files" do
     File.exists?("#{@root_dir}/build/index.html").should be_true
+    File.read("#{@root_dir}/build/index.html").should include("<h1>Welcome</h1>")
   end
   
   it "should build maruku files" do
     File.exists?("#{@root_dir}/build/maruku.html").should be_true
+    File.read("#{@root_dir}/build/maruku.html").should include("<h1 class='header' id='hello_maruku'>Hello Maruku</h1>")
   end
   
   it "should build static files" do
     File.exists?("#{@root_dir}/build/static.html").should be_true
+    File.read("#{@root_dir}/build/static.html").should include("Static, no code!")
   end
 
   it "should build subdirectory files" do
@@ -40,6 +44,7 @@ describe "Builder" do
 
   it "should build sass files" do
     File.exists?("#{@root_dir}/build/stylesheets/site.css").should be_true
+    File.read("#{@root_dir}/build/stylesheets/site.css").should include("html, body, div, span, applet, object, iframe")
   end
 
   it "should build static css files" do

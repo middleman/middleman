@@ -3,3 +3,5 @@
 coverage
 rdoc
 pkg
+.sass-cache
+*.gemspec

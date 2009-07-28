@@ -3,8 +3,8 @@
 # Require app
 require 'rubygems'
 require 'templater'
-require 'open-uri'
 require File.join(File.dirname(__FILE__), '..', 'lib', 'middleman')
+require File.join(File.dirname(__FILE__), '..', 'vendor', 'rack-test', 'lib', 'rack', 'test')
 
 module Generators
   extend Templater::Manifold
@@ -19,7 +19,7 @@ module Generators
     def self.template(name, *args, &block)
       return if args.first.include?('layout')
       return if File.basename(args.first)[0,1] == '_'
-
+      
       if (args[0] === args[1])
         newext = case File.extname(args.first)
         when '.haml', '.mab', '.maruku'
@@ -31,11 +31,12 @@ module Generators
         end
         args[1] = args[0].gsub(File.extname(args.first), newext).gsub('views/', '')
       end
-
+      
       super(name, *args, &block)
     end
 
     def self.file(name, *args, &block)
+      puts args.inspect
       args[1] = args[0].gsub('views/', '') if (args[0] === args[1])
       super(name, *args, &block)
     end
@@ -53,16 +54,16 @@ module Generators
   add :build, Builder
 end
 
-# Monkey-patch to use a dynamic renderer, not just ERb
+Middleman.set :root, Dir.pwd
+
+# Monkey-patch to use a dynamic renderer
 class Templater::Actions::Template
   def render
-    return ""
-    #request_path = destination.gsub(File.join(Dir.pwd, 'build'), "")
-    #Rack Handler
+    request_path = destination.gsub(File.join(Dir.pwd, 'build'), "")
+    browser = Rack::Test::Session.new(Rack::MockSession.new(Middleman))
+    browser.get(request_path)
+    browser.last_response.body
   end
 end
 
-# Start app
-#Middleman.run!(:root => Dir.pwd) do
-  Generators.run_cli(Dir.pwd, 'mm-build', 1,  %w(build --force).concat(ARGV))
-#end
+Generators.run_cli(Dir.pwd, 'mm-build', 1,  %w(build --force).concat(ARGV))

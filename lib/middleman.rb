@@ -56,8 +56,10 @@ class Middleman < Sinatra::Base
         haml(template)
       elsif File.exists? File.join(options.views, "#{template}.maruku")
         maruku(template)
-      else
+      elsif File.exists? File.join(options.views, "#{template}.mab")
         markaby(template)
+      else
+        pass
       end
     elsif path.match /.css$/
       content_type 'text/css', :charset => 'utf-8'

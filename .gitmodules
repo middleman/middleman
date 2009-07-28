@@ -4,3 +4,6 @@
 [submodule "vendor/sinatra-maruku"]
 	path = vendor/sinatra-maruku
 	url = git://github.com/wbzyl/sinatra-maruku.git
+[submodule "vendor/rack-test"]
+	path = vendor/rack-test
+	url = git://github.com/brynary/rack-test.git
