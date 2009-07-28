@@ -11,7 +11,7 @@ begin
     gem.authors = ["Thomas Reynolds"]
     gem.rubyforge_project = "middleman"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
-    gem.executables = %w(sm-init sm-build sm-server)
+    gem.executables = %w(mm-init mm-build mm-server)
     gem.add_dependency("templater")
     gem.add_dependency("sinatra")
     gem.add_dependency("markaby")
