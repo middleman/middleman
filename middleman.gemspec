@@ -2,13 +2,13 @@
 
 Gem::Specification.new do |s|
   s.name = %q{middleman}
-  s.version = "0.2.0"
+  s.version = "0.2.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Thomas Reynolds"]
   s.date = %q{2009-07-28}
   s.email = %q{tdreyno@gmail.com}
-  s.executables = ["sm-init", "sm-build", "sm-server"]
+  s.executables = ["mm-init", "mm-build", "mm-server"]
   s.extra_rdoc_files = [
     "LICENSE",
      "README.rdoc"
@@ -28,6 +28,7 @@ Gem::Specification.new do |s|
      "lib/middleman/template/views/index.haml",
      "lib/middleman/template/views/layout.haml",
      "lib/middleman/template/views/stylesheets/site.sass",
+     "middleman.gemspec",
      "spec/builder_spec.rb",
      "spec/fixtures/sample/public/static.html",
      "spec/fixtures/sample/public/stylesheets/static.css",
