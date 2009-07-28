@@ -12,7 +12,7 @@ begin
     gem.rubyforge_project = "middleman"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
     gem.executables = %w(mm-init mm-build mm-server)
-    gem.files = FileList['**/*']
+    gem.files.include ['vendor/**/*']
     gem.add_dependency("templater")
     gem.add_dependency("sinatra")
     gem.add_dependency("markaby")
