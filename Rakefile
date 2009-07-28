@@ -14,6 +14,7 @@ begin
     gem.executables = %w(sm-init sm-build sm-server)
     gem.add_dependency("templater")
     gem.add_dependency("sinatra")
+    gem.add_dependency("sbfaulkner-sinatra-markaby")
     gem.add_dependency("haml", ">=2.1.0")
     gem.add_dependency("chriseppstein-compass")
   end
@@ -52,4 +53,3 @@ Rake::RDocTask.new do |rdoc|
   rdoc.rdoc_files.include('README*')
   rdoc.rdoc_files.include('lib/**/*.rb')
 end
-

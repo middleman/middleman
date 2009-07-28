@@ -2,6 +2,7 @@ require 'rubygems'
 require 'haml'
 require 'compass' #must be loaded before sinatra
 require 'sinatra/base'
+require 'sinatra/markaby'
 
 class Middleman < Sinatra::Base
   set :app_file, __FILE__
@@ -53,6 +54,7 @@ class Middleman < Sinatra::Base
     
     if path.match /.html$/
       haml(path.gsub('.html', '').to_sym)
+      #markaby
     elsif path.match /.css$/
       content_type 'text/css', :charset => 'utf-8'
       sass(path.gsub('.css', '').to_sym, Compass.sass_engine_options)
