@@ -2,7 +2,9 @@ require 'rubygems'
 require 'haml'
 require 'compass' #must be loaded before sinatra
 require 'sinatra/base'
-require 'sinatra/markaby'
+
+# Include markaby support
+require File.join(File.dirname(__FILE__), '..', 'vendor', 'sinatra', 'markaby')
 
 class Middleman < Sinatra::Base
   set :app_file, __FILE__
@@ -42,6 +44,7 @@ class Middleman < Sinatra::Base
   def render_haml_or_sass(path)
     if path.match /.html$/
       haml(path.gsub('.html', '').to_sym)
+      #markaby
     elsif path.match /.css$/
       content_type 'text/css', :charset => 'utf-8'
       sass(path.gsub('.css', '').to_sym, Compass.sass_engine_options)
@@ -52,13 +55,7 @@ class Middleman < Sinatra::Base
     path = path.gsub(%r{^/}, '')
     path = "index.html" if path == ''
     
-    if path.match /.html$/
-      haml(path.gsub('.html', '').to_sym)
-      #markaby
-    elsif path.match /.css$/
-      content_type 'text/css', :charset => 'utf-8'
-      sass(path.gsub('.css', '').to_sym, Compass.sass_engine_options)
-    else
+    if !render_haml_or_sass(path)
       pass
     end
   end
