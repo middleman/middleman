@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{middleman}
-  s.version = "0.2.5"
+  s.version = "0.2.6"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Thomas Reynolds"]
@@ -64,6 +64,12 @@ Gem::Specification.new do |s|
      "vendor/rack-test/spec/rcov.opts",
      "vendor/rack-test/spec/spec.opts",
      "vendor/rack-test/spec/spec_helper.rb",
+     "vendor/sinatra-content-for/LICENSE",
+     "vendor/sinatra-content-for/README.rdoc",
+     "vendor/sinatra-content-for/Rakefile",
+     "vendor/sinatra-content-for/lib/sinatra/content_for.rb",
+     "vendor/sinatra-content-for/sinatra-content-for.gemspec",
+     "vendor/sinatra-content-for/test/content_for_test.rb",
      "vendor/sinatra-markaby/CHANGES",
      "vendor/sinatra-markaby/LICENSE",
      "vendor/sinatra-markaby/README.rdoc",
