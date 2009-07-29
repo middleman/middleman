@@ -9,6 +9,9 @@ require File.join(File.dirname(__FILE__), '..', 'vendor', 'sinatra-markaby', 'li
 # Include maruku support
 require File.join(File.dirname(__FILE__), '..', 'vendor', 'sinatra-maruku', 'lib', 'sinatra', 'maruku')
 
+# Include content_for support
+require File.join(File.dirname(__FILE__), '..', 'vendor', 'sinatra-content-for', 'lib', 'sinatra', 'content_for')
+
 class Middleman < Sinatra::Base
   set :app_file, __FILE__
   set :static, true
@@ -17,6 +20,13 @@ class Middleman < Sinatra::Base
     
   helpers Sinatra::Markaby
   helpers Sinatra::Maruku
+  helpers Sinatra::ContentFor
+  
+  helpers do
+    def link_to(title, url="#")
+      %Q{<a href="#{url}">#{title}</a>}
+    end
+  end
   
   def self.run!(options={}, &block)
     set options
