@@ -11,6 +11,10 @@ require File.join(File.dirname(__FILE__), '..', 'vendor', 'sinatra-maruku', 'lib
 
 class Middleman < Sinatra::Base
   set :app_file, __FILE__
+  set :static, true
+  set :root, Dir.pwd
+  set :environment, defined?(MIDDLEMAN_BUILDER) ? :build : :development
+    
   helpers Sinatra::Markaby
   helpers Sinatra::Maruku
   
@@ -45,7 +49,14 @@ class Middleman < Sinatra::Base
       config.http_images_path = "/images/"
     end
   end
-
+  
+  # Check for local config
+  local_config = File.join(self.root, "init.rb")
+  if File.exists? local_config
+    puts "== Local config at: #{local_config}"
+    class_eval File.read(local_config)
+  end
+  
   get /(.*)/ do |path|
     path << "index.html" if path.match(%r{/$})
     path.gsub!(%r{^/}, '')

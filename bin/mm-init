@@ -18,7 +18,8 @@ module Generators
     def self.source_root
       File.join(File.dirname(__FILE__), '..', 'lib', 'middleman', 'template')
     end
-
+    
+    file :init, "init.rb"
     glob! :views
     glob! :public
     empty_directory :stylesheets, "public/stylesheets"

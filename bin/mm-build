@@ -3,6 +3,8 @@
 # Require app
 require 'rubygems'
 require 'templater'
+
+MIDDLEMAN_BUILDER = true
 require File.join(File.dirname(__FILE__), '..', 'lib', 'middleman')
 require File.join(File.dirname(__FILE__), '..', 'vendor', 'rack-test', 'lib', 'rack', 'test')
 
@@ -36,7 +38,6 @@ module Generators
     end
 
     def self.file(name, *args, &block)
-      puts args.inspect
       args[1] = args[0].gsub('views/', '') if (args[0] === args[1])
       super(name, *args, &block)
     end
@@ -53,8 +54,6 @@ module Generators
 
   add :build, Builder
 end
-
-Middleman.set :root, Dir.pwd
 
 # Monkey-patch to use a dynamic renderer
 class Templater::Actions::Template
