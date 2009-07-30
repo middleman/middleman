@@ -23,8 +23,9 @@ class Middleman < Sinatra::Base
   helpers Sinatra::ContentFor
   
   helpers do
-    def link_to(title, url="#")
-      %Q{<a href="#{url}">#{title}</a>}
+    def link_to(title, url="#", params={})
+      params = params.map { |k,v| %Q{#{k}="#{v}"}}.join(' ')
+      %Q{<a href="#{url}" #{params}>#{title}</a>}
     end
   end
   
