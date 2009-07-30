@@ -13,5 +13,10 @@ configure :build do
     
     # Or use a different image path
     # config.http_images_path = "/Content/images/"
+    
+    # Disable cache buster
+    # config.asset_cache_buster do
+    #   false
+    # end
   end
 end

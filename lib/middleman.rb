@@ -27,6 +27,20 @@ class Middleman < Sinatra::Base
       params = params.map { |k,v| %Q{#{k}="#{v}"}}.join(' ')
       %Q{<a href="#{url}" #{params}>#{title}</a>}
     end
+    
+    def page_classes(*additional)
+      classes = []
+      parts = @full_request_path.split('.')[0].split('/')
+      parts.each_with_index { |path, i| classes << parts.first(i+1).join('_') }
+    
+      classes << "index" if classes.empty?
+      classes += additional unless additional.empty?
+      classes.join(' ')
+    end
+    
+    def sprite(name)
+      image_tag("spacer.gif", :class => "#{name}-img")
+    end
   end
   
   def self.run!(options={}, &block)
@@ -56,7 +70,7 @@ class Middleman < Sinatra::Base
       config.project_path     = Dir.pwd
       config.sass_dir         = File.join(File.expand_path(self.views), "stylesheets")
       config.output_style     = :nested
-      config.images_dir       = File.join(File.expand_path(self.public), "images")
+      config.images_dir       = File.join(File.basename(self.public), "images")
       config.http_images_path = "/images/"
     end
   end
@@ -72,6 +86,7 @@ class Middleman < Sinatra::Base
     path << "index.html" if path.match(%r{/$})
     path.gsub!(%r{^/}, '')
     template = path.gsub(File.extname(path), '').to_sym
+    @full_request_path = path
     
     result = nil
     
