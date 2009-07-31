@@ -2,11 +2,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{middleman}
-  s.version = "0.2.7"
+  s.version = "0.2.8"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Thomas Reynolds"]
-  s.date = %q{2009-07-30}
+  s.date = %q{2009-07-31}
   s.email = %q{tdreyno@gmail.com}
   s.executables = ["mm-init", "mm-build", "mm-server"]
   s.extra_rdoc_files = [
@@ -25,6 +25,7 @@ Gem::Specification.new do |s|
      "bin/mm-init",
      "bin/mm-server",
      "lib/middleman.rb",
+     "lib/middleman/helpers.rb",
      "lib/middleman/template/init.rb",
      "lib/middleman/template/views/index.haml",
      "lib/middleman/template/views/layout.haml",
@@ -70,6 +71,27 @@ Gem::Specification.new do |s|
      "vendor/sinatra-content-for/lib/sinatra/content_for.rb",
      "vendor/sinatra-content-for/sinatra-content-for.gemspec",
      "vendor/sinatra-content-for/test/content_for_test.rb",
+     "vendor/sinatra-helpers/LICENSE",
+     "vendor/sinatra-helpers/README.rdoc",
+     "vendor/sinatra-helpers/Rakefile",
+     "vendor/sinatra-helpers/VERSION.yml",
+     "vendor/sinatra-helpers/lib/sinatra-helpers.rb",
+     "vendor/sinatra-helpers/lib/sinatra-helpers/haml.rb",
+     "vendor/sinatra-helpers/lib/sinatra-helpers/haml/flash.rb",
+     "vendor/sinatra-helpers/lib/sinatra-helpers/haml/forms.rb",
+     "vendor/sinatra-helpers/lib/sinatra-helpers/haml/links.rb",
+     "vendor/sinatra-helpers/lib/sinatra-helpers/haml/partials.rb",
+     "vendor/sinatra-helpers/lib/sinatra-helpers/html.rb",
+     "vendor/sinatra-helpers/lib/sinatra-helpers/html/escape.rb",
+     "vendor/sinatra-helpers/sinatra-helpers.gemspec",
+     "vendor/sinatra-helpers/test/haml/flash_test.rb",
+     "vendor/sinatra-helpers/test/haml/forms_test.rb",
+     "vendor/sinatra-helpers/test/haml/links_test.rb",
+     "vendor/sinatra-helpers/test/haml/partials_test.rb",
+     "vendor/sinatra-helpers/test/haml/views/_object.haml",
+     "vendor/sinatra-helpers/test/haml/views/_thing.haml",
+     "vendor/sinatra-helpers/test/html/escape_test.rb",
+     "vendor/sinatra-helpers/test/test_helper.rb",
      "vendor/sinatra-markaby/CHANGES",
      "vendor/sinatra-markaby/LICENSE",
      "vendor/sinatra-markaby/README.rdoc",
