@@ -12,37 +12,22 @@ require File.join(File.dirname(__FILE__), '..', 'vendor', 'sinatra-maruku', 'lib
 # Include content_for support
 require File.join(File.dirname(__FILE__), '..', 'vendor', 'sinatra-content-for', 'lib', 'sinatra', 'content_for')
 
+# Include common haml/html helper support
+require File.join(File.dirname(__FILE__), '..', 'vendor', 'sinatra-helpers', 'lib', 'sinatra-helpers', 'haml')
+
 class Middleman < Sinatra::Base
   set :app_file, __FILE__
   set :static, true
   set :root, Dir.pwd
   set :environment, defined?(MIDDLEMAN_BUILDER) ? :build : :development
-    
+
   helpers Sinatra::Markaby
   helpers Sinatra::Maruku
   helpers Sinatra::ContentFor
-  
-  helpers do
-    def link_to(title, url="#", params={})
-      params = params.map { |k,v| %Q{#{k}="#{v}"}}.join(' ')
-      %Q{<a href="#{url}" #{params}>#{title}</a>}
-    end
-    
-    def page_classes(*additional)
-      classes = []
-      parts = @full_request_path.split('.')[0].split('/')
-      parts.each_with_index { |path, i| classes << parts.first(i+1).join('_') }
-    
-      classes << "index" if classes.empty?
-      classes += additional unless additional.empty?
-      classes.join(' ')
-    end
-    
-    def sprite(name)
-      image_tag("spacer.gif", :class => "#{name}-img")
-    end
-  end
-  
+  helpers Sinatra::Helpers::Haml::Forms
+  helpers Sinatra::Helpers::Haml::Links
+  helpers Sinatra::Helpers::Haml::Partials
+
   def self.run!(options={}, &block)
     set options
     handler      = detect_rack_handler
@@ -107,3 +92,5 @@ class Middleman < Sinatra::Base
     result || pass
   end
 end
+
+require File.join(File.dirname(__FILE__), 'middleman', 'helpers')
