@@ -1,5 +1,6 @@
 Middleman.helpers do
-  def link_to(title, url="#", params={ :href => url })
+  def link_to(title, url="#", params={})
+    params.merge!(:href => url)
     params = params.map { |k,v| %Q{#{k}="#{v}"}}.join(' ')
     %Q{<a #{params}>#{title}</a>}
   end
