@@ -12,9 +12,6 @@ require File.join(File.dirname(__FILE__), '..', 'vendor', 'sinatra-maruku', 'lib
 # Include content_for support
 require File.join(File.dirname(__FILE__), '..', 'vendor', 'sinatra-content-for', 'lib', 'sinatra', 'content_for')
 
-# Include common haml/html helper support
-require File.join(File.dirname(__FILE__), '..', 'vendor', 'sinatra-helpers', 'lib', 'sinatra-helpers', 'haml')
-
 class Middleman < Sinatra::Base
   set :app_file, __FILE__
   set :static, true
@@ -24,9 +21,6 @@ class Middleman < Sinatra::Base
   helpers Sinatra::Markaby
   helpers Sinatra::Maruku
   helpers Sinatra::ContentFor
-  helpers Sinatra::Helpers::Haml::Forms
-  helpers Sinatra::Helpers::Haml::Links
-  helpers Sinatra::Helpers::Haml::Partials
 
   def self.run!(options={}, &block)
     set options
@@ -51,7 +45,6 @@ class Middleman < Sinatra::Base
   end
   
   configure do
-  puts "config yo"
     Compass.configuration do |config|
       config.project_path     = Dir.pwd
       config.sass_dir         = File.join(File.basename(self.views), "stylesheets")

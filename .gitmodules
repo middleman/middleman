@@ -10,6 +10,3 @@
 [submodule "vendor/sinatra-content-for"]
 	path = vendor/sinatra-content-for
 	url = git://github.com/foca/sinatra-content-for.git
-[submodule "vendor/sinatra-helpers"]
-	path = vendor/sinatra-helpers
-	url = git://github.com/sbfaulkner/sinatra-helpers.git

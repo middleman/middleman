@@ -15,7 +15,21 @@ Middleman.helpers do
     classes.join(' ')
   end
   
-  def asset_url(path, tld_length = 1)
-    "/#{path}"
+  def asset_url(path)
+    path.include?("://") ? path : "/#{path}"
+  end
+  
+  def image_tag(path, options={})
+    options[:alt] ||= ""
+    capture_haml do
+      haml_tag :img, options.merge(:src => asset_url(path))
+    end
+  end
+  
+  def stylesheet_link_tag(path, options={})
+    options[:rel] ||= "stylesheet"
+    capture_haml do
+      haml_tag :link, options.merge(:href => asset_url(path), :type => "text/css")
+    end
   end
 end
