@@ -14,4 +14,8 @@ Middleman.helpers do
     classes += additional unless additional.empty?
     classes.join(' ')
   end
+  
+  def asset_url(path, tld_length = 1)
+    "/#{path}"
+  end
 end

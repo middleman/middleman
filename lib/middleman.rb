@@ -50,21 +50,24 @@ class Middleman < Sinatra::Base
     puts "== The Middleman is already standing watch on port #{port}!"
   end
   
-  configure do
-    Compass.configuration do |config|
-      config.project_path     = Dir.pwd
-      config.sass_dir         = File.join(File.expand_path(self.views), "stylesheets")
-      config.output_style     = :nested
-      config.images_dir       = File.join(File.basename(self.public), "images")
-      config.http_images_path = "/images/"
-    end
-  end
-  
   # Check for local config
   local_config = File.join(self.root, "init.rb")
   if File.exists? local_config
     puts "== Local config at: #{local_config}"
     class_eval File.read(local_config)
+  end
+  
+  configure do
+    Compass.configuration do |config|
+      config.project_path     = Dir.pwd
+      config.sass_dir         = File.join(File.basename(self.views), "stylesheets")
+      config.output_style     = :nested
+      config.images_dir       = File.join(File.basename(self.public), "images")
+      config.http_images_path = "/images/"
+      config.add_import_path(config.sass_dir)
+    end
+    
+    Compass.configure_sass_plugin!
   end
   
   get /(.*)/ do |path|
