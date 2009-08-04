@@ -55,6 +55,9 @@ class Middleman < Sinatra::Base
     end
   end
   
+  # include helpers
+  class_eval File.read(File.join(File.dirname(__FILE__), 'middleman', 'helpers.rb'))
+  
   # Check for local config
   local_config = File.join(self.root, "init.rb")
   if File.exists? local_config
