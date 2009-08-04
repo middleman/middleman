@@ -26,6 +26,12 @@ Middleman.helpers do
     end
   end
   
+  def javascript_include_tag(path, options={})
+    capture_haml do
+      haml_tag :script, options.merge(:src => asset_url(path), :type => "text/javascript")
+    end
+  end
+  
   def stylesheet_link_tag(path, options={})
     options[:rel] ||= "stylesheet"
     capture_haml do
