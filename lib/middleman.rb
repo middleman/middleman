@@ -72,20 +72,20 @@ class Middleman < Sinatra::Base
   get /(.*)/ do |path|
     path << "index.html" if path.match(%r{/$})
     path.gsub!(%r{^/}, '')
-    template = path.gsub(File.extname(path), '').to_sym
+    @template = path.gsub(File.extname(path), '').to_sym
     @full_request_path = path
     
     result = nil
     
     %w(haml erb builder maruku mab sass).each do |renderer|
-      next if !File.exists?(File.join(options.views, "#{template}.#{renderer}"))
+      next if !File.exists?(File.join(options.views, "#{@template}.#{renderer}"))
       
       renderer = "markaby" if renderer == "mab"
       result = if renderer == "sass"
         content_type 'text/css', :charset => 'utf-8'
-        sass(template, Compass.sass_engine_options)
+        sass(@template, Compass.sass_engine_options)
       else
-        send(renderer.to_sym, template)
+        send(renderer.to_sym, @template)
       end
       
       break
