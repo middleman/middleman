@@ -83,7 +83,11 @@ class Middleman < Sinatra::Base
       renderer = "markaby" if renderer == "mab"
       result = if renderer == "sass"
         content_type 'text/css', :charset => 'utf-8'
-        sass(@template, Compass.sass_engine_options)
+        begin
+          sass(@template, Compass.sass_engine_options)
+        rescue Exception => e
+          sass_exception_string(e)
+        end
       else
         send(renderer.to_sym, @template)
       end
@@ -92,6 +96,45 @@ class Middleman < Sinatra::Base
     end
     
     result || pass
+  end
+
+  # Handle Sass errors
+  def sass_exception_string(e)
+    e_string = "#{e.class}: #{e.message}"
+
+    if e.is_a? Sass::SyntaxError
+      e_string << "\non line #{e.sass_line}"
+
+      if e.sass_filename
+        e_string << " of #{e.sass_filename}"
+
+        if File.exists?(e.sass_filename)
+          e_string << "\n\n"
+
+          min = [e.sass_line - 5, 0].max
+          begin
+            File.read(e.sass_filename).rstrip.split("\n")[
+              min .. e.sass_line + 5
+            ].each_with_index do |line, i|
+              e_string << "#{min + i + 1}: #{line}\n"
+            end
+          rescue
+            e_string << "Couldn't read sass file: #{e.sass_filename}"
+          end
+        end
+      end
+    end
+    <<END
+/*
+#{e_string}
+
+Backtrace:\n#{e.backtrace.join("\n")}
+*/
+body:before {
+  white-space: pre;
+  font-family: monospace;
+  content: "#{e_string.gsub('"', '\"').gsub("\n", '\\A ')}"; }
+END
   end
 end
 
