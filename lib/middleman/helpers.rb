@@ -51,3 +51,42 @@ def stylesheet_link_tag(path, options={})
     haml_tag :link, options.merge(:href => asset_url(path), :type => "text/css")
   end
 end
+
+# Handle Sass errors
+def sass_exception_string(e)
+  e_string = "#{e.class}: #{e.message}"
+
+  if e.is_a? Sass::SyntaxError
+    e_string << "\non line #{e.sass_line}"
+
+    if e.sass_filename
+      e_string << " of #{e.sass_filename}"
+
+      if File.exists?(e.sass_filename)
+        e_string << "\n\n"
+
+        min = [e.sass_line - 5, 0].max
+        begin
+          File.read(e.sass_filename).rstrip.split("\n")[
+            min .. e.sass_line + 5
+          ].each_with_index do |line, i|
+            e_string << "#{min + i + 1}: #{line}\n"
+          end
+        rescue
+          e_string << "Couldn't read sass file: #{e.sass_filename}"
+        end
+      end
+    end
+  end
+  <<END
+/*
+#{e_string}
+
+Backtrace:\n#{e.backtrace.join("\n")}
+*/
+body:before {
+  white-space: pre;
+  font-family: monospace;
+  content: "#{e_string.gsub('"', '\"').gsub("\n", '\\A ')}"; }
+END
+end

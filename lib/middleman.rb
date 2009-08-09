@@ -69,72 +69,36 @@ class Middleman < Sinatra::Base
     Compass.configure_sass_plugin!
   end
   
+  # CSS files
+  get %r{/(.*).css} do |path|
+    content_type 'text/css', :charset => 'utf-8'
+    begin
+      sass(path.to_sym, Compass.sass_engine_options)
+    rescue Exception => e
+      sass_exception_string(e)
+    end
+  end
+  
   get /(.*)/ do |path|
     path << "index.html" if path.match(%r{/$})
     path.gsub!(%r{^/}, '')
+
     @template = path.gsub(File.extname(path), '').to_sym
     @full_request_path = path
     
     result = nil
-    
-    %w(haml erb builder maruku mab sass).each do |renderer|
-      next if !File.exists?(File.join(options.views, "#{@template}.#{renderer}"))
-      
-      renderer = "markaby" if renderer == "mab"
-      result = if renderer == "sass"
-        content_type 'text/css', :charset => 'utf-8'
-        begin
-          sass(@template, Compass.sass_engine_options)
-        rescue Exception => e
-          sass_exception_string(e)
-        end
-      else
-        send(renderer.to_sym, @template)
+    begin
+      %w(haml erb builder maruku mab).detect do |renderer|
+        next false if !File.exists?(File.join(options.views, "#{@template}.#{renderer}"))
+        renderer = "markaby" if renderer == "mab"
+        result = send(renderer.to_sym, @template)
       end
-      
-      break
+    rescue Haml::Error => e
+      result = "Haml Error: #{e}"
+      #result << "<pre>Backtrace: #{e.backtrace.join("\n")}</pre>"
     end
     
     result || pass
-  end
-
-  # Handle Sass errors
-  def sass_exception_string(e)
-    e_string = "#{e.class}: #{e.message}"
-
-    if e.is_a? Sass::SyntaxError
-      e_string << "\non line #{e.sass_line}"
-
-      if e.sass_filename
-        e_string << " of #{e.sass_filename}"
-
-        if File.exists?(e.sass_filename)
-          e_string << "\n\n"
-
-          min = [e.sass_line - 5, 0].max
-          begin
-            File.read(e.sass_filename).rstrip.split("\n")[
-              min .. e.sass_line + 5
-            ].each_with_index do |line, i|
-              e_string << "#{min + i + 1}: #{line}\n"
-            end
-          rescue
-            e_string << "Couldn't read sass file: #{e.sass_filename}"
-          end
-        end
-      end
-    end
-    <<END
-/*
-#{e_string}
-
-Backtrace:\n#{e.backtrace.join("\n")}
-*/
-body:before {
-  white-space: pre;
-  font-family: monospace;
-  content: "#{e_string.gsub('"', '\"').gsub("\n", '\\A ')}"; }
-END
   end
 end
 
