@@ -20,7 +20,9 @@ module Generators
     # Override template to ask staticmatic for the correct extension to output
     def self.template(name, *args, &block)
       return if args.first.include?('layout')
-      return if File.basename(args.first)[0,1] == '_'
+      args.first.split('/').each do |part|
+        return if part[0,1] == '_'
+      end
       
       if (args[0] === args[1])
         newext = case File.extname(args.first)

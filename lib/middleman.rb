@@ -49,8 +49,11 @@ class Middleman < Sinatra::Base
       config.project_path     = Dir.pwd
       config.sass_dir         = File.join(File.basename(self.views), "stylesheets")
       config.output_style     = :nested
+      config.css_dir          = File.join(File.basename(self.public), "stylesheets")
       config.images_dir       = File.join(File.basename(self.public), "images")
-      config.http_images_path = "/images/"
+      config.http_path        = "/"
+      config.http_images_path = "/images"
+      config.http_stylesheets_path = "/stylesheets"
       config.add_import_path(config.sass_dir)
     end
   end
@@ -73,7 +76,9 @@ class Middleman < Sinatra::Base
   get %r{/(.*).css} do |path|
     content_type 'text/css', :charset => 'utf-8'
     begin
-      sass(path.to_sym, Compass.sass_engine_options)
+      location_of_sass_file = defined?(MIDDLEMAN_BUILDER) ? "build" : "views"
+      css_filename = File.join(Dir.pwd, location_of_sass_file) + request.path_info
+      sass(path.to_sym, Compass.sass_engine_options.merge({ :css_filename => css_filename }))
     rescue Exception => e
       sass_exception_string(e)
     end
