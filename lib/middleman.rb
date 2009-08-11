@@ -82,16 +82,14 @@ class Middleman < Sinatra::Base
   get /(.*)/ do |path|
     path << "index.html" if path.match(%r{/$})
     path.gsub!(%r{^/}, '')
-
-    @template = path.gsub(File.extname(path), '').to_sym
-    @full_request_path = path
+    path.gsub!(File.extname(path), '')
     
     result = nil
     begin
       %w(haml erb builder maruku mab).detect do |renderer|
-        next false if !File.exists?(File.join(options.views, "#{@template}.#{renderer}"))
+        next false if !File.exists?(File.join(options.views, "#{path}.#{renderer}"))
         renderer = "markaby" if renderer == "mab"
-        result = send(renderer.to_sym, @template)
+        result = send(renderer.to_sym, path.to_sym)
       end
     rescue Haml::Error => e
       result = "Haml Error: #{e}"

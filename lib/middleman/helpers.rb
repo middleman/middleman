@@ -5,8 +5,12 @@ def link_to(title, url="#", params={})
 end
 
 def page_classes(*additional)
+  path = env["REQUEST_PATH"]
+  path << "index.html" if path.match(%r{/$})
+  path.gsub!(%r{^/}, '')
+  
   classes = []
-  parts = @full_request_path.split('.')[0].split('/')
+  parts = path.split('.')[0].split('/')
   parts.each_with_index { |path, i| classes << parts.first(i+1).join('_') }
 
   classes << "index" if classes.empty?
