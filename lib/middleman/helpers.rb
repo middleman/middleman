@@ -5,7 +5,7 @@ def link_to(title, url="#", params={})
 end
 
 def page_classes(*additional)
-  path = env["REQUEST_PATH"]
+  path = request.path_info
   path << "index.html" if path.match(%r{/$})
   path.gsub!(%r{^/}, '')
   
