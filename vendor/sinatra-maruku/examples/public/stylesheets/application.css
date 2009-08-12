@@ -1,0 +1,23 @@
+html {
+  margin: 0;
+  padding: 0;
+  background-color: #B5052E;
+  line-height: 1.6;
+}
+
+body {
+  margin: 1em auto 1em auto;
+  padding: 1em 2em 2em 1em;
+  width: 760px;
+  border: 1px solid black;
+  background-color: #E8DDCB;
+}
+
+pre {
+  padding: 0.5em 0 0.5em 2em;
+  background-color: #D7D3C1;
+}
+
+h1, h2, h3 {
+  color: #B5052E;
+}

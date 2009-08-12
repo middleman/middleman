@@ -1,0 +1,32 @@
+Maruku features
+===============
+
+Maruku allows you to write in an easy-to-read-and-write syntax, like this:
+
+> [This document in Markdown][this_md] 
+
+Then it can be translated to HTML:
+
+> [This document in HTML][this_html]
+	
+or LaTeX, which is then converted to PDF:
+
+> [This document in PDF][this_pdf]
+
+Maruku implements:
+
+* the original [Markdown syntax][markdown_html] 
+  ([HTML][markdown_html] or [PDF][markdown_pdf]), translated by Maruku).
+
+* all the improvements in PHP Markdown Extra. 
+
+* a new [meta-data syntax][meta_data_proposal]
+
+[markdown_html]: http://maruku.rubyforge.org/markdown_syntax.html
+[markdown_pdf]: http://maruku.rubyforge.org/markdown_syntax.pdf
+[this_md]: http://maruku.rubyforge.org/maruku.md
+[this_html]: http://maruku.rubyforge.org/maruku.html
+[this_pdf]: http://maruku.rubyforge.org/maruku.pdf
+[Andrea Censi]: http://www.dis.uniroma1.it/~acensi/
+
+[meta_data_proposal]: http://maruku.rubyforge.org/proposal.html

@@ -1,0 +1,4 @@
+mab.html do
+  head { title "Hello" }
+  body { yield }
+end

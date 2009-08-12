@@ -1,0 +1,2 @@
+erb layout
+<%= yield %>

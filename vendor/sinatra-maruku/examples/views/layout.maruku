@@ -1,0 +1,9 @@
+CSS: /stylesheets/application.css /stylesheets/print.css
+Javascript: /javascriprs/application.js
+Lang: pl
+Title: Hello Maruku 
+LaTeX preamble: preamble.tex
+
+# Hello Maruku  {.header}
+
+<%= yield %>
