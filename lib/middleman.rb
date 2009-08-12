@@ -3,12 +3,6 @@ require 'haml'
 require 'compass' #must be loaded before sinatra
 require 'sinatra/base'
 
-# Include markaby support
-require File.join(File.dirname(__FILE__), '..', 'vendor', 'sinatra-markaby', 'lib', 'sinatra', 'markaby')
-
-# Include maruku support
-require File.join(File.dirname(__FILE__), '..', 'vendor', 'sinatra-maruku', 'lib', 'sinatra', 'maruku')
-
 # Include content_for support
 require File.join(File.dirname(__FILE__), '..', 'vendor', 'sinatra-content-for', 'lib', 'sinatra', 'content_for')
 
@@ -17,9 +11,9 @@ class Middleman < Sinatra::Base
   set :static, true
   set :root, Dir.pwd
   set :environment, defined?(MIDDLEMAN_BUILDER) ? :build : :development
-
-  helpers Sinatra::Markaby
-  helpers Sinatra::Maruku
+  
+  set :supported_formats, %w(haml erb builder)
+  
   helpers Sinatra::ContentFor
 
   def self.run!(options={}, &block)
@@ -84,6 +78,7 @@ class Middleman < Sinatra::Base
     end
   end
   
+  # All other files
   get /(.*)/ do |path|
     path << "index.html" if path.match(%r{/$})
     path.gsub!(%r{^/}, '')
@@ -91,9 +86,8 @@ class Middleman < Sinatra::Base
     
     result = nil
     begin
-      %w(haml erb builder maruku mab).detect do |renderer|
+      options.supported_formats.detect do |renderer|
         next false if !File.exists?(File.join(options.views, "#{path}.#{renderer}"))
-        renderer = "markaby" if renderer == "mab"
         result = send(renderer.to_sym, path.to_sym)
       end
     rescue Haml::Error => e
@@ -104,5 +98,3 @@ class Middleman < Sinatra::Base
     result || pass
   end
 end
-
-require File.join(File.dirname(__FILE__), 'middleman', 'helpers')

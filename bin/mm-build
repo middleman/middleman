@@ -26,6 +26,7 @@ module Generators
       
       if (args[0] === args[1])
         newext = case File.extname(args.first)
+        # Middleman.supported_formats.map { |ext| ".#{ext}" }
         when '.haml', '.erb', '.mab', '.maruku'
           '.html'
         when '.sass'
@@ -51,7 +52,7 @@ module Generators
       file(action.downcase.gsub(/[^a-z0-9]+/, '_').to_sym, action, action.gsub('public/', ''))
     end
 
-    glob! "views", %w(haml sass erb builder mab maruku)
+    glob! "views", (Middleman.supported_formats << "sass")
   end
 
   add :build, Builder
