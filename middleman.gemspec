@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{middleman}
-  s.version = "0.3.10"
+  s.version = "0.4.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Thomas Reynolds"]
-  s.date = %q{2009-08-11}
+  s.date = %q{2009-08-12}
   s.email = %q{tdreyno@gmail.com}
   s.executables = ["mm-init", "mm-build", "mm-server"]
   s.extra_rdoc_files = [
@@ -29,12 +29,15 @@ Gem::Specification.new do |s|
      "bin/mm-server",
      "lib/middleman.rb",
      "lib/middleman/helpers.rb",
+     "lib/middleman/markaby.rb",
+     "lib/middleman/maruku.rb",
      "lib/middleman/template/init.rb",
      "lib/middleman/template/views/index.haml",
      "lib/middleman/template/views/layout.haml",
      "lib/middleman/template/views/stylesheets/site.sass",
      "middleman.gemspec",
      "spec/builder_spec.rb",
+     "spec/fixtures/sample/init.rb",
      "spec/fixtures/sample/public/static.html",
      "spec/fixtures/sample/public/stylesheets/static.css",
      "spec/fixtures/sample/views/_partial.haml",
@@ -113,6 +116,7 @@ Gem::Specification.new do |s|
   s.summary = %q{A static site generator utilizing Haml and Sass}
   s.test_files = [
     "spec/builder_spec.rb",
+     "spec/fixtures/sample/init.rb",
      "spec/generator_spec.rb",
      "spec/spec_helper.rb"
   ]
