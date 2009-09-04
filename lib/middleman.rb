@@ -45,7 +45,6 @@ class Middleman < Sinatra::Base
       config.output_style     = :nested
       config.css_dir          = File.join(File.basename(self.public), "stylesheets")
       config.images_dir       = File.join(File.basename(self.public), "images")
-      config.http_path        = "/"
       config.http_images_path = "/images"
       config.http_stylesheets_path = "/stylesheets"
       config.add_import_path(config.sass_dir)

@@ -1,3 +1,38 @@
+module Table
+  include Haml::Filters::Base
+
+  def render(text)
+    output = '<div class="table"><table cellspacing="0" cellpadding="0">'
+    line_num = 0
+    text.each_line do |line|
+      line_num += 1
+      next if line.strip.empty?
+      output << %Q{<tr class="#{(line_num % 2 == 0) ? "even" : "odd" }#{(line_num == 1) ? " first" : "" }">}
+      
+      columns = line.split("|").map { |p| p.strip }
+      columns.each_with_index do |col, i|
+        output << %Q{<td class="col#{i+1}">#{col}</td>}
+      end
+      
+      output << "</tr>"
+    end
+    output + "</table></div>"
+  end
+end
+
+def find_and_include_related_sass_file
+  path = request.path_info.dup
+  path << "index.html" if path.match(%r{/$})
+  path.gsub!(%r{^/}, '')
+  path.gsub!(File.extname(path), '')
+  path.gsub!('/', '-')
+
+  sass_file = File.join(File.basename(self.class.views), "stylesheets", "#{path}.sass")
+  if File.exists? sass_file
+    stylesheet_link_tag "stylesheets/#{path}.css"
+  end
+end
+
 def link_to(title, url="#", params={})
   params.merge!(:href => url)
   params = params.map { |k,v| %Q{#{k}="#{v}"}}.join(' ')
