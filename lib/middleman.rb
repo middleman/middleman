@@ -3,6 +3,7 @@ require 'compass' #must be loaded before sinatra
 require 'sinatra/base'
 
 # Sprockets ruby 1.9 hack
+require 'sprockets'
 require File.join(File.dirname(__FILE__), 'middleman', 'sprockets_ext')
 
 # Include content_for support
