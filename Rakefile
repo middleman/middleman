@@ -12,7 +12,6 @@ begin
     gem.rubyforge_project = "middleman"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
     gem.executables = %w(mm-init mm-build mm-server)
-    gem.files.include ['vendor/**/*']
     gem.add_dependency("templater")
     gem.add_dependency("yui-compressor")
     gem.add_dependency("sprockets")
@@ -22,8 +21,10 @@ begin
     gem.add_dependency("haml", ">=2.1.0")
     gem.add_dependency("chriseppstein-compass")
   end
-
-  Jeweler::RubyforgeTasks.new
+  
+  Jeweler::RubyforgeTasks.new do |rubyforge|
+    rubyforge.doc_task = "rdoc"
+  end
 rescue LoadError
   puts "Jeweler (or a dependency) not available. Install it with: sudo gem install jeweler"
 end
@@ -40,14 +41,14 @@ Spec::Rake::SpecTask.new(:rcov) do |spec|
   spec.rcov = true
 end
 
+task :spec => :check_dependencies
 
 task :default => :spec
 
 require 'rake/rdoctask'
 Rake::RDocTask.new do |rdoc|
-  if File.exist?('VERSION.yml')
-    config = YAML.load(File.read('VERSION.yml'))
-    version = "#{config[:major]}.#{config[:minor]}.#{config[:patch]}"
+  if File.exist?('VERSION')
+    version = File.read('VERSION')
   else
     version = ""
   end
