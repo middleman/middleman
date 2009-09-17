@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{middleman}
-  s.version = "0.4.2"
+  s.version = "0.5.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Thomas Reynolds"]
-  s.date = %q{2009-09-04}
+  s.date = %q{2009-09-17}
   s.email = %q{tdreyno@gmail.com}
   s.executables = ["mm-init", "mm-build", "mm-server"]
   s.extra_rdoc_files = [
@@ -30,6 +30,7 @@ Gem::Specification.new do |s|
      "lib/middleman/helpers.rb",
      "lib/middleman/markaby.rb",
      "lib/middleman/maruku.rb",
+     "lib/middleman/sprockets_ext.rb",
      "lib/middleman/template/init.rb",
      "lib/middleman/template/views/index.haml",
      "lib/middleman/template/views/layout.haml",
@@ -184,6 +185,8 @@ Gem::Specification.new do |s|
 
     if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<templater>, [">= 0"])
+      s.add_runtime_dependency(%q<yui-compressor>, [">= 0"])
+      s.add_runtime_dependency(%q<sprockets>, [">= 0"])
       s.add_runtime_dependency(%q<sinatra>, [">= 0"])
       s.add_runtime_dependency(%q<markaby>, [">= 0"])
       s.add_runtime_dependency(%q<maruku>, [">= 0"])
@@ -191,6 +194,8 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<chriseppstein-compass>, [">= 0"])
     else
       s.add_dependency(%q<templater>, [">= 0"])
+      s.add_dependency(%q<yui-compressor>, [">= 0"])
+      s.add_dependency(%q<sprockets>, [">= 0"])
       s.add_dependency(%q<sinatra>, [">= 0"])
       s.add_dependency(%q<markaby>, [">= 0"])
       s.add_dependency(%q<maruku>, [">= 0"])
@@ -199,6 +204,8 @@ Gem::Specification.new do |s|
     end
   else
     s.add_dependency(%q<templater>, [">= 0"])
+    s.add_dependency(%q<yui-compressor>, [">= 0"])
+    s.add_dependency(%q<sprockets>, [">= 0"])
     s.add_dependency(%q<sinatra>, [">= 0"])
     s.add_dependency(%q<markaby>, [">= 0"])
     s.add_dependency(%q<maruku>, [">= 0"])
