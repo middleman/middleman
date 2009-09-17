@@ -1,9 +1,10 @@
 #!/usr/bin/env ruby
 
 # Require app
-require 'rubygems'
 require 'templater'
-
+require "yui/compressor"
+require "sprockets"
+  
 MIDDLEMAN_BUILDER = true
 require File.join(File.dirname(__FILE__), '..', 'lib', 'middleman')
 require File.join(File.dirname(__FILE__), '..', 'vendor', 'rack-test', 'lib', 'rack', 'test')
@@ -17,7 +18,7 @@ module Generators
     def self.source_root; Dir.pwd; end
     def destination_root; File.join(Dir.pwd, 'build'); end
 
-    # Override template to ask staticmatic for the correct extension to output
+    # Override template to ask middleman for the correct extension to output
     def self.template(name, *args, &block)
       return if args.first.include?('layout')
       args.first.split('/').each do |part|
@@ -26,7 +27,6 @@ module Generators
       
       if (args[0] === args[1])
         newext = case File.extname(args.first)
-        # Middleman.supported_formats.map { |ext| ".#{ext}" }
         when '.haml', '.erb', '.mab', '.maruku'
           '.html'
         when '.sass'
@@ -49,7 +49,13 @@ module Generators
     Dir[public_files_glob].each do |action|
       next if File.directory?(action)
       action = action.sub("#{source_root}/", '')
-      file(action.downcase.gsub(/[^a-z0-9]+/, '_').to_sym, action, action.gsub('public/', ''))
+      template_sym = action.downcase.gsub(/[^a-z0-9]+/, '_').to_sym
+      
+      if File.extname(action) == '.js' && !action.include?('min')
+        template(template_sym, action, action.gsub('public/', ''))
+      else
+        file(template_sym, action, action.gsub('public/', ''))
+      end
     end
 
     glob! "views", (Middleman.supported_formats << "sass")
@@ -58,14 +64,50 @@ module Generators
   add :build, Builder
 end
 
+class BuildConfig
+  def self.render(source, destination)
+    renderer.render(source, destination)
+  end
+  
+  def self.renderer
+    @@renderer ||= BuildRenderer
+  end
+  
+  def self.renderer=(val)
+    @@renderer = val
+  end
+end
+
 # Monkey-patch to use a dynamic renderer
 class Templater::Actions::Template
   def render
+    BuildConfig.render(source, destination)
+  end
+end
+
+# Default render through middleman
+class BuildRenderer
+  def self.render(source, destination)
     request_path = destination.gsub(File.join(Dir.pwd, 'build'), "")
     browser = Rack::Test::Session.new(Rack::MockSession.new(Middleman))
     browser.get(request_path)
     browser.last_response.body
   end
 end
+
+class SprocketsRenderer < BuildRenderer
+  def self.render(source, destination)
+    if File.extname(source) == '.js'
+      secretary = Sprockets::Secretary.new( :asset_root   => "public",
+                                          :load_path    => ["public/assets/javascripts/**/*.js"],
+                                          :source_files => [source] )
+      compressor = YUI::JavaScriptCompressor.new(:munge => true)
+      compressor.compress(secretary.concatenation.to_s)
+    else
+      super
+    end
+  end
+end
+BuildConfig.renderer = SprocketsRenderer
 
 Generators.run_cli(Dir.pwd, 'mm-build', 1,  %w(build --force).concat(ARGV))

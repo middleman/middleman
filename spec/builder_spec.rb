@@ -18,7 +18,7 @@ describe "Builder" do
     FileUtils.rm_rf(File.join(@root_dir, "build"))
   end
   
-  it "should build markaby files" do
+  xit "should build markaby files" do
     File.exists?("#{@root_dir}/build/markaby.html").should be_true
     File.read("#{@root_dir}/build/markaby.html").should include("<title>Hi Markaby</title>")
   end

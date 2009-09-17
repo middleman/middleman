@@ -14,6 +14,8 @@ begin
     gem.executables = %w(mm-init mm-build mm-server)
     gem.files.include ['vendor/**/*']
     gem.add_dependency("templater")
+    gem.add_dependency("yui-compressor")
+    gem.add_dependency("sprockets")
     gem.add_dependency("sinatra")
     gem.add_dependency("markaby")
     gem.add_dependency("maruku")

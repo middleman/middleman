@@ -1,7 +1,9 @@
-require 'rubygems'
 require 'haml'
 require 'compass' #must be loaded before sinatra
 require 'sinatra/base'
+
+# Sprockets ruby 1.9 hack
+require File.join(File.dirname(__FILE__), 'middleman', 'sprockets_ext')
 
 # Include content_for support
 require File.join(File.dirname(__FILE__), '..', 'vendor', 'sinatra-content-for', 'lib', 'sinatra', 'content_for')
@@ -91,7 +93,7 @@ class Middleman < Sinatra::Base
       end
     rescue Haml::Error => e
       result = "Haml Error: #{e}"
-      #result << "<pre>Backtrace: #{e.backtrace.join("\n")}</pre>"
+      result << "<pre>Backtrace: #{e.backtrace.join("\n")}</pre>"
     end
     
     result || pass
