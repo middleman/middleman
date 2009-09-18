@@ -14,7 +14,7 @@ class Middleman < Sinatra::Base
   set :static, true
   set :root, Dir.pwd
   set :environment, defined?(MIDDLEMAN_BUILDER) ? :build : :development
-  
+  set :default_ext, 'html'
   set :supported_formats, %w(haml erb builder)
   
   helpers Sinatra::ContentFor
@@ -82,15 +82,20 @@ class Middleman < Sinatra::Base
   
   # All other files
   get /(.*)/ do |path|
-    path << "index.html" if path.match(%r{/$})
+    path << "index.#{options.default_ext}" if path.match(%r{/$})
     path.gsub!(%r{^/}, '')
-    path.gsub!(File.extname(path), '')
+    path_without_ext = path.gsub(File.extname(path), '')
     
     result = nil
     begin
       options.supported_formats.detect do |renderer|
-        next false if !File.exists?(File.join(options.views, "#{path}.#{renderer}"))
-        result = send(renderer.to_sym, path.to_sym)
+        if File.exists?(File.join(options.views, "#{path}.#{renderer}"))
+          result = send(renderer.to_sym, path.to_sym)
+        elsif File.exists?(File.join(options.views, "#{path_without_ext}.#{renderer}"))
+          result = send(renderer.to_sym, path_without_ext.to_sym)
+        else
+          false
+        end
       end
     rescue Haml::Error => e
       result = "Haml Error: #{e}"
@@ -98,5 +103,11 @@ class Middleman < Sinatra::Base
     end
     
     result || pass
+  end
+  
+  
+  get %r{/(.*\.xml)} do |path|
+    content_type 'text/xml', :charset => 'utf-8'
+    haml(path.to_sym, :layout => false)
   end
 end

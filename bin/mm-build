@@ -26,15 +26,22 @@ module Generators
       end
       
       if (args[0] === args[1])
-        newext = case File.extname(args.first)
-        when '.haml', '.erb', '.mab', '.maruku'
-          '.html'
-        when '.sass'
-          '.css'
+        file_name_parts = File.basename(args.first).split('.')
+        
+        if file_name_parts.length > 2
+          # static ext embedded in filename
+          newext = ""
         else
-          File.extname(args.first)
+          # use defaults
+          newext = case file_name_parts.last
+          when 'haml', 'erb', 'mab', 'maruku'
+            '.html'
+          when 'sass'
+            '.css'
+          end
         end
-        args[1] = args[0].gsub(File.extname(args.first), newext).gsub('views/', '')
+        
+        args[1] = args[0].gsub(".#{file_name_parts.last}", newext).gsub('views/', '')
       end
       
       super(name, *args, &block)
