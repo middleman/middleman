@@ -72,6 +72,9 @@ class Middleman < Sinatra::Base
   get %r{/(.*).css} do |path|
     content_type 'text/css', :charset => 'utf-8'
     begin
+      static_version = File.join(Dir.pwd, 'public') + request.path_info
+      send_file(static_version) if File.exists? static_version
+      
       location_of_sass_file = defined?(MIDDLEMAN_BUILDER) ? "build" : "views"
       css_filename = File.join(Dir.pwd, location_of_sass_file) + request.path_info
       sass(path.to_sym, Compass.sass_engine_options.merge({ :css_filename => css_filename }))
