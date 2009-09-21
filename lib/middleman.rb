@@ -71,6 +71,10 @@ class Middleman < Sinatra::Base
   end
   
   configure :build do
+    Compass.configuration do |config|
+      config.output_style = :compressed
+    end
+    
     module Minified
       module Javascript
         include ::Haml::Filters::Base
