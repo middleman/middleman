@@ -2,8 +2,6 @@
 
 # Require app
 require 'templater'
-require "yui/compressor"
-require "sprockets"
   
 MIDDLEMAN_BUILDER = true
 require File.join(File.dirname(__FILE__), '..', 'lib', 'middleman')

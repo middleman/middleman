@@ -6,6 +6,8 @@ require 'sinatra/base'
 require 'sprockets'
 require File.join(File.dirname(__FILE__), 'middleman', 'sprockets_ext')
 
+require "yui/compressor"
+
 # Include content_for support
 require File.join(File.dirname(__FILE__), '..', 'vendor', 'sinatra-content-for', 'lib', 'sinatra', 'content_for')
 
@@ -68,6 +70,19 @@ class Middleman < Sinatra::Base
     Compass.configure_sass_plugin!
   end
   
+  configure :build do
+    module Minified
+      module Javascript
+        include ::Haml::Filters::Base
+        def render_with_options(text, options)
+          compressor = ::YUI::JavaScriptCompressor.new(:munge => true)
+          data = compressor.compress(text.rstrip.gsub("\n", "\n    "))
+          %Q{<script type=#{options[:attr_wrapper]}text/javascript#{options[:attr_wrapper]}>#{data.chomp}</script>}
+        end
+      end
+    end
+  end
+  
   # CSS files
   get %r{/(.*).css} do |path|
     content_type 'text/css', :charset => 'utf-8'
@@ -107,7 +122,6 @@ class Middleman < Sinatra::Base
     
     result || pass
   end
-  
   
   get %r{/(.*\.xml)} do |path|
     content_type 'text/xml', :charset => 'utf-8'
