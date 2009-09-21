@@ -54,4 +54,8 @@ describe "Builder" do
   it "should not build partial files" do
     File.exists?("#{@root_dir}/build/_partial.html").should be_false
   end
+  
+  it "should minify inline javascript" do
+    File.readlines("#{@root_dir}/build/inline-js.html").length.should == 9
+  end
 end
