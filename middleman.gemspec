@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{middleman}
-  s.version = "0.5.4"
+  s.version = "0.5.5"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Thomas Reynolds"]
-  s.date = %q{2009-09-19}
+  s.date = %q{2009-09-21}
   s.email = %q{tdreyno@gmail.com}
   s.executables = ["mm-init", "mm-build", "mm-server"]
   s.extra_rdoc_files = [
@@ -42,6 +42,7 @@ Gem::Specification.new do |s|
      "spec/fixtures/sample/public/stylesheets/static.css",
      "spec/fixtures/sample/views/_partial.haml",
      "spec/fixtures/sample/views/index.haml",
+     "spec/fixtures/sample/views/inline-js.haml",
      "spec/fixtures/sample/views/layout.haml",
      "spec/fixtures/sample/views/markaby.mab",
      "spec/fixtures/sample/views/maruku.maruku",
