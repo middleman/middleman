@@ -26,6 +26,7 @@ Gem::Specification.new do |s|
      "bin/mm-build",
      "bin/mm-init",
      "bin/mm-server",
+     "deps.rip",
      "lib/middleman.rb",
      "lib/middleman/helpers.rb",
      "lib/middleman/markaby.rb",
@@ -74,8 +75,12 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<yui-compressor>, [">= 0"])
       s.add_runtime_dependency(%q<sprockets>, [">= 0"])
       s.add_runtime_dependency(%q<sinatra>, [">= 0"])
+      s.add_runtime_dependency(%q<foca-sinatra-content-for>, [">= 0"])
+      s.add_runtime_dependency(%q<brynary-rack-test>, [">= 0"])
       s.add_runtime_dependency(%q<markaby>, [">= 0"])
+      s.add_runtime_dependency(%q<sbfaulkner-sinatra-markaby>, [">= 0"])
       s.add_runtime_dependency(%q<maruku>, [">= 0"])
+      s.add_runtime_dependency(%q<wbzyl-sinatra-maruku>, [">= 0"])
       s.add_runtime_dependency(%q<haml>, [">= 2.1.0"])
       s.add_runtime_dependency(%q<chriseppstein-compass>, [">= 0"])
     else
@@ -83,8 +88,12 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<yui-compressor>, [">= 0"])
       s.add_dependency(%q<sprockets>, [">= 0"])
       s.add_dependency(%q<sinatra>, [">= 0"])
+      s.add_dependency(%q<foca-sinatra-content-for>, [">= 0"])
+      s.add_dependency(%q<brynary-rack-test>, [">= 0"])
       s.add_dependency(%q<markaby>, [">= 0"])
+      s.add_dependency(%q<sbfaulkner-sinatra-markaby>, [">= 0"])
       s.add_dependency(%q<maruku>, [">= 0"])
+      s.add_dependency(%q<wbzyl-sinatra-maruku>, [">= 0"])
       s.add_dependency(%q<haml>, [">= 2.1.0"])
       s.add_dependency(%q<chriseppstein-compass>, [">= 0"])
     end
@@ -93,8 +102,12 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<yui-compressor>, [">= 0"])
     s.add_dependency(%q<sprockets>, [">= 0"])
     s.add_dependency(%q<sinatra>, [">= 0"])
+    s.add_dependency(%q<foca-sinatra-content-for>, [">= 0"])
+    s.add_dependency(%q<brynary-rack-test>, [">= 0"])
     s.add_dependency(%q<markaby>, [">= 0"])
+    s.add_dependency(%q<sbfaulkner-sinatra-markaby>, [">= 0"])
     s.add_dependency(%q<maruku>, [">= 0"])
+    s.add_dependency(%q<wbzyl-sinatra-maruku>, [">= 0"])
     s.add_dependency(%q<haml>, [">= 2.1.0"])
     s.add_dependency(%q<chriseppstein-compass>, [">= 0"])
   end

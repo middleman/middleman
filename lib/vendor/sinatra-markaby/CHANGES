@@ -1,7 +1,0 @@
-= 0.9.2.2
-
-* layout support is tested
-
-= 0.9.2.1
-
-* use Rack::Test instead of Sinatra::Test

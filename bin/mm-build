@@ -4,8 +4,8 @@
 require 'templater'
   
 MIDDLEMAN_BUILDER = true
-require File.join(File.dirname(__FILE__), '..', 'lib', 'middleman')
-require File.join(File.dirname(__FILE__), '..', 'lib', 'vendor', 'rack-test', 'lib', 'rack', 'test')
+require 'middleman'
+require 'rack-test'
 
 module Generators
   extend Templater::Manifold

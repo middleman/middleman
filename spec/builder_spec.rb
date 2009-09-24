@@ -44,7 +44,7 @@ describe "Builder" do
 
   it "should build sass files" do
     File.exists?("#{@root_dir}/build/stylesheets/site.css").should be_true
-    File.read("#{@root_dir}/build/stylesheets/site.css").should include("html, body, div, span, applet, object, iframe")
+    File.read("#{@root_dir}/build/stylesheets/site.css").should include("html,body,div,span,applet,object,iframe")
   end
 
   it "should build static css files" do

@@ -2,14 +2,14 @@ require 'haml'
 require 'compass' #must be loaded before sinatra
 require 'sinatra/base'
 
-# Sprockets ruby 1.9 hack
 require 'sprockets'
-require File.join(File.dirname(__FILE__), 'middleman', 'sprockets_ext')
+# Sprockets ruby 1.9 hack
+require 'middleman/sprockets+ruby19'
 
 require "yui/compressor"
 
 # Include content_for support
-require File.join(File.dirname(__FILE__), '..', 'lib', 'vendor', 'sinatra-content-for', 'lib', 'sinatra', 'content_for')
+require 'sinatra-content-for'
 
 class Middleman < Sinatra::Base
   set :app_file, __FILE__

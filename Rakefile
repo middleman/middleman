@@ -16,8 +16,12 @@ begin
     gem.add_dependency("yui-compressor")
     gem.add_dependency("sprockets")
     gem.add_dependency("sinatra")
+    gem.add_dependency("foca-sinatra-content-for")
+    gem.add_dependency("brynary-rack-test")
     gem.add_dependency("markaby")
+    gem.add_dependency("sbfaulkner-sinatra-markaby")
     gem.add_dependency("maruku")
+    gem.add_dependency("wbzyl-sinatra-maruku")
     gem.add_dependency("haml", ">=2.1.0")
     gem.add_dependency("chriseppstein-compass")
   end
