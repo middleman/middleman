@@ -3,4 +3,3 @@ lib/**/*.rb
 bin/*
 features/**/*.feature
 LICENSE
-vendor/**/*
