@@ -1,0 +1,6 @@
+git://github.com/jnicklas/templater.git
+git://github.com/sstephenson/ruby-yui-compressor.git
+git://github.com/sstephenson/sprockets.git
+git://github.com/sinatra/sinatra.git
+git://github.com/nex3/haml.git
+git://github.com/chriseppstein/compass.git

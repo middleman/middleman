@@ -9,7 +9,7 @@ require File.join(File.dirname(__FILE__), 'middleman', 'sprockets_ext')
 require "yui/compressor"
 
 # Include content_for support
-require File.join(File.dirname(__FILE__), '..', 'vendor', 'sinatra-content-for', 'lib', 'sinatra', 'content_for')
+require File.join(File.dirname(__FILE__), '..', 'lib', 'vendor', 'sinatra-content-for', 'lib', 'sinatra', 'content_for')
 
 class Middleman < Sinatra::Base
   set :app_file, __FILE__
@@ -80,8 +80,10 @@ class Middleman < Sinatra::Base
         include ::Haml::Filters::Base
         def render_with_options(text, options)
           compressor = ::YUI::JavaScriptCompressor.new(:munge => true)
-          data = compressor.compress(text.rstrip.gsub("\n", "\n    "))
-          %Q{<script type=#{options[:attr_wrapper]}text/javascript#{options[:attr_wrapper]}>#{data.chomp}</script>}
+          data = compressor.compress(text)
+          <<END
+<script type=#{options[:attr_wrapper]}text/javascript#{options[:attr_wrapper]}>#{data.chomp}</script>
+END
         end
       end
     end
