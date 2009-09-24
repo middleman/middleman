@@ -31,7 +31,7 @@ Gem::Specification.new do |s|
      "lib/middleman/helpers.rb",
      "lib/middleman/markaby.rb",
      "lib/middleman/maruku.rb",
-     "lib/middleman/sprockets_ext.rb",
+     "lib/middleman/sprockets+ruby19.rb",
      "lib/middleman/template/init.rb",
      "lib/middleman/template/views/index.haml",
      "lib/middleman/template/views/layout.haml",
