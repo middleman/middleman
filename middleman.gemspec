@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{middleman}
-  s.version = "0.5.5"
+  s.version = "0.9.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Thomas Reynolds"]
-  s.date = %q{2009-09-24}
+  s.date = %q{2009-09-29}
   s.email = %q{tdreyno@gmail.com}
   s.executables = ["mm-init", "mm-build", "mm-server"]
   s.extra_rdoc_files = [
@@ -28,10 +28,22 @@ Gem::Specification.new do |s|
      "bin/mm-server",
      "deps.rip",
      "lib/middleman.rb",
+     "lib/middleman/base.rb",
+     "lib/middleman/builder.rb",
+     "lib/middleman/features/cache_buster.rb",
+     "lib/middleman/features/compass.rb",
+     "lib/middleman/features/content_for.rb",
+     "lib/middleman/features/growl.rb",
+     "lib/middleman/features/haml.rb",
+     "lib/middleman/features/markaby.rb",
+     "lib/middleman/features/maruku.rb",
+     "lib/middleman/features/minify_css.rb",
+     "lib/middleman/features/minify_javascript.rb",
+     "lib/middleman/features/relative_assets.rb",
+     "lib/middleman/features/slickmap.rb",
+     "lib/middleman/features/sprockets+ruby19.rb",
+     "lib/middleman/features/sprockets.rb",
      "lib/middleman/helpers.rb",
-     "lib/middleman/markaby.rb",
-     "lib/middleman/maruku.rb",
-     "lib/middleman/sprockets+ruby19.rb",
      "lib/middleman/template/init.rb",
      "lib/middleman/template/views/index.haml",
      "lib/middleman/template/views/layout.haml",
@@ -39,16 +51,18 @@ Gem::Specification.new do |s|
      "middleman.gemspec",
      "spec/builder_spec.rb",
      "spec/fixtures/sample/init.rb",
+     "spec/fixtures/sample/public/javascripts/empty-with-include.js",
+     "spec/fixtures/sample/public/javascripts/to-be-included.js",
      "spec/fixtures/sample/public/static.html",
      "spec/fixtures/sample/public/stylesheets/static.css",
      "spec/fixtures/sample/views/_partial.haml",
-     "spec/fixtures/sample/views/index.haml",
-     "spec/fixtures/sample/views/inline-js.haml",
+     "spec/fixtures/sample/views/index.html.haml",
+     "spec/fixtures/sample/views/inline-js.html.haml",
      "spec/fixtures/sample/views/layout.haml",
-     "spec/fixtures/sample/views/markaby.mab",
-     "spec/fixtures/sample/views/maruku.maruku",
-     "spec/fixtures/sample/views/services/index.haml",
-     "spec/fixtures/sample/views/stylesheets/site.sass",
+     "spec/fixtures/sample/views/markaby.html.mab",
+     "spec/fixtures/sample/views/maruku.html.maruku",
+     "spec/fixtures/sample/views/services/index.html.haml",
+     "spec/fixtures/sample/views/stylesheets/site.css.sass",
      "spec/generator_spec.rb",
      "spec/spec_helper.rb"
   ]
@@ -72,42 +86,27 @@ Gem::Specification.new do |s|
 
     if Gem::Version.new(Gem::RubyGemsVersion) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<templater>, [">= 0"])
-      s.add_runtime_dependency(%q<yui-compressor>, [">= 0"])
       s.add_runtime_dependency(%q<sprockets>, [">= 0"])
       s.add_runtime_dependency(%q<sinatra>, [">= 0"])
-      s.add_runtime_dependency(%q<foca-sinatra-content-for>, [">= 0"])
-      s.add_runtime_dependency(%q<brynary-rack-test>, [">= 0"])
-      s.add_runtime_dependency(%q<markaby>, [">= 0"])
-      s.add_runtime_dependency(%q<sbfaulkner-sinatra-markaby>, [">= 0"])
-      s.add_runtime_dependency(%q<maruku>, [">= 0"])
-      s.add_runtime_dependency(%q<wbzyl-sinatra-maruku>, [">= 0"])
+      s.add_runtime_dependency(%q<sinatra-content-for>, [">= 0"])
+      s.add_runtime_dependency(%q<rack-test>, [">= 0"])
       s.add_runtime_dependency(%q<haml>, [">= 2.1.0"])
       s.add_runtime_dependency(%q<chriseppstein-compass>, [">= 0"])
     else
       s.add_dependency(%q<templater>, [">= 0"])
-      s.add_dependency(%q<yui-compressor>, [">= 0"])
       s.add_dependency(%q<sprockets>, [">= 0"])
       s.add_dependency(%q<sinatra>, [">= 0"])
-      s.add_dependency(%q<foca-sinatra-content-for>, [">= 0"])
-      s.add_dependency(%q<brynary-rack-test>, [">= 0"])
-      s.add_dependency(%q<markaby>, [">= 0"])
-      s.add_dependency(%q<sbfaulkner-sinatra-markaby>, [">= 0"])
-      s.add_dependency(%q<maruku>, [">= 0"])
-      s.add_dependency(%q<wbzyl-sinatra-maruku>, [">= 0"])
+      s.add_dependency(%q<sinatra-content-for>, [">= 0"])
+      s.add_dependency(%q<rack-test>, [">= 0"])
       s.add_dependency(%q<haml>, [">= 2.1.0"])
       s.add_dependency(%q<chriseppstein-compass>, [">= 0"])
     end
   else
     s.add_dependency(%q<templater>, [">= 0"])
-    s.add_dependency(%q<yui-compressor>, [">= 0"])
     s.add_dependency(%q<sprockets>, [">= 0"])
     s.add_dependency(%q<sinatra>, [">= 0"])
-    s.add_dependency(%q<foca-sinatra-content-for>, [">= 0"])
-    s.add_dependency(%q<brynary-rack-test>, [">= 0"])
-    s.add_dependency(%q<markaby>, [">= 0"])
-    s.add_dependency(%q<sbfaulkner-sinatra-markaby>, [">= 0"])
-    s.add_dependency(%q<maruku>, [">= 0"])
-    s.add_dependency(%q<wbzyl-sinatra-maruku>, [">= 0"])
+    s.add_dependency(%q<sinatra-content-for>, [">= 0"])
+    s.add_dependency(%q<rack-test>, [">= 0"])
     s.add_dependency(%q<haml>, [">= 2.1.0"])
     s.add_dependency(%q<chriseppstein-compass>, [">= 0"])
   end
