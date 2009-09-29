@@ -13,15 +13,10 @@ begin
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
     gem.executables = %w(mm-init mm-build mm-server)
     gem.add_dependency("templater")
-    gem.add_dependency("yui-compressor")
     gem.add_dependency("sprockets")
     gem.add_dependency("sinatra")
     gem.add_dependency("foca-sinatra-content-for")
     gem.add_dependency("brynary-rack-test")
-    gem.add_dependency("markaby")
-    gem.add_dependency("sbfaulkner-sinatra-markaby")
-    gem.add_dependency("maruku")
-    gem.add_dependency("wbzyl-sinatra-maruku")
     gem.add_dependency("haml", ">=2.1.0")
     gem.add_dependency("chriseppstein-compass")
   end
@@ -30,7 +25,7 @@ begin
     rubyforge.doc_task = "rdoc"
   end
 rescue LoadError
-  puts "Jeweler (or a dependency) not available. Install it with: sudo gem install jeweler"
+  puts "Jeweler (or a dependency) not available. Install it with: gem install jeweler"
 end
 
 require 'spec/rake/spectask'

@@ -1,11 +1,10 @@
 #!/usr/bin/env ruby
 
-# Require app
 require 'templater'
-  
-MIDDLEMAN_BUILDER = true
-require 'middleman'
 require 'rack-test'
+  
+# Require app
+require 'middleman/builder'
 
 module Generators
   extend Templater::Manifold
@@ -69,50 +68,11 @@ module Generators
   add :build, Builder
 end
 
-class BuildConfig
-  def self.render(source, destination)
-    renderer.render(source, destination)
-  end
-  
-  def self.renderer
-    @@renderer ||= BuildRenderer
-  end
-  
-  def self.renderer=(val)
-    @@renderer = val
-  end
-end
-
 # Monkey-patch to use a dynamic renderer
 class Templater::Actions::Template
   def render
-    BuildConfig.render(source, destination)
+    ::Middleman::Builder.render(source, destination)
   end
 end
-
-# Default render through middleman
-class BuildRenderer
-  def self.render(source, destination)
-    request_path = destination.gsub(File.join(Dir.pwd, 'build'), "")
-    browser = Rack::Test::Session.new(Rack::MockSession.new(Middleman))
-    browser.get(request_path)
-    browser.last_response.body
-  end
-end
-
-class SprocketsRenderer < BuildRenderer
-  def self.render(source, destination)
-    if File.extname(source) == '.js'
-      secretary = Sprockets::Secretary.new( :asset_root   => "public",
-                                          :load_path    => ["public/assets/javascripts/**/*.js"],
-                                          :source_files => [source] )
-      compressor = YUI::JavaScriptCompressor.new(:munge => true)
-      compressor.compress(secretary.concatenation.to_s)
-    else
-      super
-    end
-  end
-end
-BuildConfig.renderer = SprocketsRenderer
 
 Generators.run_cli(Dir.pwd, 'mm-build', 1,  %w(build --force).concat(ARGV))

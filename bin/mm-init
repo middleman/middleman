@@ -9,6 +9,9 @@ module Generators
     desc "Creates a new staticmatic scaffold."
     first_argument :location, :required => true, :desc => "Project location"
 
+    # css_dir
+    # images_dir
+
     def destination_root
       File.expand_path(location)
     end
