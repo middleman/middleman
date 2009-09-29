@@ -3,6 +3,11 @@ require 'haml'
 require 'sinatra/base'
 require 'middleman/helpers'
 
+def mime(ext, type)
+  ext = ".#{ext}" unless ext.to_s[0] == ?.
+  Rack::Mime::MIME_TYPES[ext.to_s] = type
+end
+
 module Middleman
   class Base < Sinatra::Base
     set :app_file, __FILE__
@@ -28,6 +33,7 @@ module Middleman
     # include helpers
     helpers Middleman::Helpers
     
+    # Default build features
     configure :build do
       enable :minify_css
       enable :minify_javascript

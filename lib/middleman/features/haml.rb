@@ -2,7 +2,7 @@ module Middleman
   module Haml
     def self.included(base)
       base.supported_formats << "haml"
-      # base.helpers Middleman::HamlHelpers
+      base.helpers Middleman::HamlHelpers
     end
     
     def render_path(path)
