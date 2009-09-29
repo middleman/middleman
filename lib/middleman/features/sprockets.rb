@@ -7,6 +7,10 @@ end
 
 module Middleman
   module Sprockets
+    def self.included(base)
+      base.supported_formats << "js"
+    end
+    
     def render_path(path)
       source = File.join(options.public, path)
       if File.extname(path) == '.js' && File.exists?(source)
@@ -18,8 +22,8 @@ module Middleman
       end
     end
   end
-  
-  class Base
-    include Middleman::Sprockets
-  end
+end
+
+class Middleman::Base
+  include Middleman::Sprockets
 end

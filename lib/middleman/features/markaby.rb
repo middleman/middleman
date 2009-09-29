@@ -6,6 +6,10 @@ end
 
 module Middleman
   module Markaby
+    def self.included(base)
+      base.supported_formats << "mab"
+    end
+    
     def render_path(path)
       if template_exists?(path, :mab)
         markaby path.to_sym
@@ -34,6 +38,6 @@ module Middleman
   end
   
   class Base
-    include Middlman::Markaby
+    include Middleman::Markaby
   end
 end

@@ -15,8 +15,8 @@ begin
     gem.add_dependency("templater")
     gem.add_dependency("sprockets")
     gem.add_dependency("sinatra")
-    gem.add_dependency("foca-sinatra-content-for")
-    gem.add_dependency("brynary-rack-test")
+    gem.add_dependency("sinatra-content-for")
+    gem.add_dependency("rack-test")
     gem.add_dependency("haml", ">=2.1.0")
     gem.add_dependency("chriseppstein-compass")
   end

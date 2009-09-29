@@ -9,15 +9,15 @@ describe "Builder" do
     @root_dir = project_file("spec", "fixtures", "sample")
   end
 
-  before :each do    
+  before :each do
     build_cmd = project_file("bin", "mm-build")
     `cd #{@root_dir} && #{build_cmd}`
   end
-  
+
   after :each do
     FileUtils.rm_rf(File.join(@root_dir, "build"))
   end
-  
+
   xit "should build markaby files" do
     File.exists?("#{@root_dir}/build/markaby.html").should be_true
     File.read("#{@root_dir}/build/markaby.html").should include("<title>Hi Markaby</title>")
@@ -28,7 +28,7 @@ describe "Builder" do
     File.read("#{@root_dir}/build/index.html").should include("<h1>Welcome</h1>")
   end
   
-  it "should build maruku files" do
+  xit "should build maruku files" do
     File.exists?("#{@root_dir}/build/maruku.html").should be_true
     File.read("#{@root_dir}/build/maruku.html").should include("<h1 class='header' id='hello_maruku'>Hello Maruku</h1>")
   end
@@ -57,5 +57,9 @@ describe "Builder" do
   
   it "should minify inline javascript" do
     File.readlines("#{@root_dir}/build/inline-js.html").length.should == 9
+  end
+
+  it "should combine javascript" do
+    File.read("#{@root_dir}/build/javascripts/empty-with-include.js").should include("combo")
   end
 end

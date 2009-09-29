@@ -7,10 +7,12 @@ module Middleman
   class Base < Sinatra::Base
     set :app_file, __FILE__
     set :root, Dir.pwd
-    set :environment, :development
+    set :environment, ENV['MM_ENV'] || :development
+    set :supported_formats, []
     set :index_file, 'index.html'
     set :css_dir, "stylesheets"
     set :images_dir, "images"
+    set :build_dir, "build"
 
     enable :compass
     enable :content_for
@@ -71,6 +73,7 @@ module Middleman
     end
     
     def self.run!(options={}, &block)
+      init!
       set options
       handler      = detect_rack_handler
       handler_name = handler.name.gsub(/.*::/, '')
@@ -111,8 +114,6 @@ module Middleman
           require "middleman/features/#{feature_name}"
         end
       end
-      
-      run!
     end
   end
 end

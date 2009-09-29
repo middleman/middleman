@@ -6,4 +6,4 @@ require File.join(File.dirname(__FILE__), '..', 'lib', 'middleman')
 # Start Middleman
 Middleman::Base.set({ :server => %w[thin webrick],
                       :root   => Dir.pwd })
-Middleman::Base.init!
+Middleman::Base.run!

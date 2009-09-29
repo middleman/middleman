@@ -6,6 +6,10 @@ end
 
 module Middleman
   module Maruku
+    def self.included(base)
+      base.supported_formats << "maruku"
+    end
+    
     def render_path(path)
       if template_exists?(path, :maruku)
         maruku path.to_sym
@@ -33,6 +37,6 @@ module Middleman
   end
   
   class Base
-    include Middlman::Maruku
+    include Middleman::Maruku
   end
 end

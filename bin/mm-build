@@ -1,10 +1,14 @@
 #!/usr/bin/env ruby
 
 require 'templater'
-require 'rack-test'
-  
+
+ENV['MM_ENV'] = "build"
+
 # Require app
+require File.join(File.dirname(__FILE__), "..", "lib", "middleman")
 require 'middleman/builder'
+
+Middleman::Base.init!
 
 module Generators
   extend Templater::Manifold
@@ -13,56 +17,35 @@ module Generators
   class Builder < Templater::Generator
     # Define source and desintation
     def self.source_root; Dir.pwd; end
-    def destination_root; File.join(Dir.pwd, 'build'); end
+    def destination_root; File.join(Dir.pwd, Middleman::Base.build_dir); end
 
     # Override template to ask middleman for the correct extension to output
     def self.template(name, *args, &block)
-      return if args.first.include?('layout')
+      return if args[0].include?('layout')
+      
       args.first.split('/').each do |part|
         return if part[0,1] == '_'
       end
       
       if (args[0] === args[1])
-        file_name_parts = File.basename(args.first).split('.')
-        
-        if file_name_parts.length > 2
-          # static ext embedded in filename
-          newext = ""
-        else
-          # use defaults
-          newext = case file_name_parts.last
-          when 'haml', 'erb', 'mab', 'maruku'
-            '.html'
-          when 'sass'
-            '.css'
-          end
-        end
-        
-        args[1] = args[0].gsub(".#{file_name_parts.last}", newext).gsub('views/', '')
+        args[1] = args[0].gsub("#{File.basename(Middleman::Base.views)}/", "")
+                         .gsub("#{File.basename(Middleman::Base.public)}/", "")
+        args[1] = args[1].gsub!(File.extname(args[1]), "") if File.basename(args[1]).split('.').length > 2
       end
       
       super(name, *args, &block)
     end
 
     def self.file(name, *args, &block)
-      args[1] = args[0].gsub('views/', '') if (args[0] === args[1])
+      if (args[0] === args[1])
+        args[1] = args[0].gsub("#{File.basename(Middleman::Base.views)}/", "")
+                         .gsub("#{File.basename(Middleman::Base.public)}/", "")
+      end
       super(name, *args, &block)
     end
-
-    public_files_glob = File.join(source_root, "public", '**/*')
-    Dir[public_files_glob].each do |action|
-      next if File.directory?(action)
-      action = action.sub("#{source_root}/", '')
-      template_sym = action.downcase.gsub(/[^a-z0-9]+/, '_').to_sym
-      
-      if File.extname(action) == '.js' && !action.include?('min')
-        template(template_sym, action, action.gsub('public/', ''))
-      else
-        file(template_sym, action, action.gsub('public/', ''))
-      end
-    end
-
-    glob! "views", (Middleman.supported_formats << "sass")
+    
+    glob! File.basename(Middleman::Base.views),  Middleman::Base.supported_formats
+    glob! File.basename(Middleman::Base.public), Middleman::Base.supported_formats
   end
 
   add :build, Builder
@@ -71,7 +54,7 @@ end
 # Monkey-patch to use a dynamic renderer
 class Templater::Actions::Template
   def render
-    ::Middleman::Builder.render(source, destination)
+    ::Middleman::Builder.render_file(source, destination)
   end
 end
 
