@@ -32,7 +32,7 @@ module Middleman
       enable :minify_css
       enable :minify_javascript
       enable :cache_buster
-      disable :slickmap
+      # disable :slickmap
     end
   
     def template_exists?(path, renderer=nil)
@@ -51,7 +51,7 @@ module Middleman
   
     # All other files
     disable :static
-    not_found do      
+    not_found do
       path = request.path
       path << options.index_file if path.match(%r{/$})
       path.gsub!(%r{^/}, '')

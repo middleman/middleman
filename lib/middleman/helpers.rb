@@ -1,18 +1,5 @@
 module Middleman
   module Helpers
-    def find_and_include_related_css_file
-      path = request.path_info.dup
-      path << "index.html" if path.match(%r{/$})
-      path.gsub!(%r{^/}, '')
-      path.gsub!(File.extname(path), '')
-      path.gsub!('/', '-')
-
-      sass_file = File.join(File.basename(self.class.views), "stylesheets", "#{path}.sass")
-      if File.exists? sass_file
-        stylesheet_link_tag "stylesheets/#{path}.css"
-      end
-    end
-
     def page_classes(*additional)
       path = request.path_info
       path << "index.html" if path.match(%r{/$})
