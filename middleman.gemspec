@@ -67,12 +67,12 @@ Gem::Specification.new do |s|
      "spec/spec_helper.rb"
   ]
   s.has_rdoc = true
-  s.homepage = %q{http://github.com/tdreyno/middleman}
+  s.homepage = %q{http://wiki.github.com/tdreyno/middleman}
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
   s.rubyforge_project = %q{middleman}
   s.rubygems_version = %q{1.3.1}
-  s.summary = %q{A static site generator utilizing Haml and Sass}
+  s.summary = %q{A static site generator utilizing Haml, Sass and providing YUI compression and cache busting}
   s.test_files = [
     "spec/builder_spec.rb",
      "spec/fixtures/sample/init.rb",
