@@ -17,6 +17,7 @@ begin
     gem.add_dependency("sinatra")
     gem.add_dependency("sinatra-content-for")
     gem.add_dependency("rack-test")
+    gem.add_dependency("yui-compressor")
     gem.add_dependency("haml", ">=2.1.0")
     gem.add_dependency("chriseppstein-compass")
   end
@@ -24,6 +25,8 @@ begin
   Jeweler::RubyforgeTasks.new do |rubyforge|
     rubyforge.doc_task = "rdoc"
   end
+  
+  Jeweler::GemcutterTasks.new
 rescue LoadError
   puts "Jeweler (or a dependency) not available. Install it with: gem install jeweler"
 end
