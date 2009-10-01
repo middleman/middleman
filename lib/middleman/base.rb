@@ -1,5 +1,4 @@
 require 'rubygems' unless ENV['NO_RUBYGEMS']
-require 'haml'
 require 'sinatra/base'
 require 'middleman/helpers'
 
@@ -15,14 +14,16 @@ module Middleman
     set :environment, ENV['MM_ENV'] || :development
     set :supported_formats, []
     set :index_file, 'index.html'
+    set :js_dir, "javascripts"
     set :css_dir, "stylesheets"
     set :images_dir, "images"
     set :build_dir, "build"
+    set :http_prefix, "/"
 
     enable :compass
     enable :content_for
     enable :sprockets
-    #enable :slickmap
+    disable :slickmap
     disable :cache_buster
     disable :minify_css
     disable :minify_javascript
@@ -38,7 +39,6 @@ module Middleman
       enable :minify_css
       enable :minify_javascript
       enable :cache_buster
-      # disable :slickmap
     end
   
     def template_exists?(path, renderer=nil)

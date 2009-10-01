@@ -1,3 +1,5 @@
+require 'haml'
+
 module Middleman
   module Haml
     def self.included(base)

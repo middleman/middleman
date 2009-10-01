@@ -8,12 +8,14 @@ class Middleman::Base
   end
   
   helpers do
-    def asset_url(path)
+    alias_method :pre_relative_asset_url, :asset_url
+    def asset_url(path, prefix="")
+      path = pre_relative_asset_url(path, prefix)
       if path.include?("://")
         path
       else
         request_path = request.path_info.dup
-        request_path << "index.html" if path.match(%r{/$})
+        request_path << self.index_file if path.match(%r{/$})
         request_path.gsub!(%r{^/}, '')
         parts = request_path.split('/')
       

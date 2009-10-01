@@ -17,9 +17,9 @@ class Middleman::Base
           false
         end
       end
-    
-      config.http_images_path = "/#{self.images_dir}"
-      config.http_stylesheets_path = "/#{self.css_dir}"
+        
+      config.http_images_path = File.join(self.http_prefix, self.images_dir)
+      config.http_stylesheets_path = File.join(self.http_prefix, self.css_dir)
       config.add_import_path(config.sass_dir)
     end
     
