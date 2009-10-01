@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{middleman}
-  s.version = "0.9.6"
+  s.version = "0.9.7"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Thomas Reynolds"]
@@ -45,6 +45,9 @@ Gem::Specification.new do |s|
      "lib/middleman/features/sprockets.rb",
      "lib/middleman/helpers.rb",
      "lib/middleman/template/init.rb",
+     "lib/middleman/template/views/index.html.haml",
+     "lib/middleman/template/views/layout.html.haml",
+     "lib/middleman/template/views/stylesheets/site.css.sass",
      "middleman.gemspec",
      "spec/builder_spec.rb",
      "spec/cache_buster_spec.rb",
