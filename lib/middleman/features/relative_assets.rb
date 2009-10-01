@@ -14,8 +14,9 @@ class Middleman::Base
       if path.include?("://")
         path
       else
+        path = path[1,path.length-1] if path[0,1] == '/'
         request_path = request.path_info.dup
-        request_path << self.index_file if path.match(%r{/$})
+        request_path << options.index_file if path.match(%r{/$})
         request_path.gsub!(%r{^/}, '')
         parts = request_path.split('/')
       

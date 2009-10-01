@@ -1,7 +1,10 @@
+# Be nice to other library systems, like the wonderful Rip
 require 'rubygems' unless ENV['NO_RUBYGEMS']
-require 'sinatra/base'
-require 'middleman/helpers'
 
+# We're riding on Sinatra, so let's include it
+require 'sinatra/base'
+
+# Rack helper for adding mime-types during local preview
 def mime(ext, type)
   ext = ".#{ext}" unless ext.to_s[0] == ?.
   Rack::Mime::MIME_TYPES[ext.to_s] = type
@@ -20,9 +23,12 @@ module Middleman
     set :build_dir, "build"
     set :http_prefix, "/"
 
+    # Features enabled by default
     enable :compass
     enable :content_for
     enable :sprockets
+    
+    # Features disabled by default
     disable :slickmap
     disable :cache_buster
     disable :minify_css
@@ -31,9 +37,6 @@ module Middleman
     disable :markaby
     disable :maruku
     
-    # include helpers
-    helpers Middleman::Helpers
-    
     # Default build features
     configure :build do
       enable :minify_css
@@ -41,6 +44,7 @@ module Middleman
       enable :cache_buster
     end
   
+    # Convenience function to discover if a tempalte exists for the requested renderer (haml, sass, etc)
     def template_exists?(path, renderer=nil)
       template_path = path.dup
       template_path << ".#{renderer}" if renderer
@@ -55,21 +59,25 @@ module Middleman
     end
     include StaticRender
   
-    # All other files
+    # Disable static asset handling in Rack, so we can customize it here
     disable :static
+    
+    # This will match all requests not overridden in the project's init.rb
     not_found do
+      # Normalize the path and add index if we're looking at a directory
       path = request.path
       path << options.index_file if path.match(%r{/$})
       path.gsub!(%r{^/}, '')
     
+      # If the enabled renderers succeed, return the content, mime-type and an HTTP 200
       if content = render_path(path)
         content_type media_type(File.extname(path)), :charset => 'utf-8'
         status 200
         content
       else
-        # Otherwise, send the static file
+        # If no template handler renders the template, return the static file if it exists
         path = File.join(options.public, request.path)
-        if File.exists?(path)
+        if !File.directory?(path) && File.exists?(path)
           status 200
           send_file(path)
         else
@@ -78,6 +86,8 @@ module Middleman
       end
     end
     
+    # Copy, pasted & edited version of the setup in Sinatra.
+    # Basically just changed the app's name and call out feature & configuration init.
     def self.run!(options={}, &block)
       init!
       set options
@@ -101,15 +111,21 @@ module Middleman
       puts "== The Middleman is already standing watch on port #{port}!"
     end
     
+    # Require the features for this project
     def self.init!
-      # Check for local config
+      # Built-in helpers
+      require 'middleman/helpers'
+      helpers Middleman::Helpers
+
+      # Haml is required & includes helpers
+      require "middleman/features/haml"
+      
+      # Check for and evaluate local configuration
       local_config = File.join(self.root, "init.rb")
       if File.exists? local_config
         puts "== Local config at: #{local_config}"
         class_eval File.read(local_config)
       end
-
-      require "middleman/features/haml"
       
       # loop over enabled feature
       features_path = File.expand_path("features/*.rb", File.dirname(__FILE__))

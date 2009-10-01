@@ -2,21 +2,17 @@
 helpers do
 end
 
-# Or inject more templating languages
-# helpers Sinatra::Markdown
+# Generic configuration
+# enable :slickmap
 
 # Build-specific configuration
 configure :build do
-  Compass.configuration do |config|
-    # For example, change the Compass output style for deployment
-    # config.output_style = :compressed
-    
-    # Or use a different image path
-    # config.http_images_path = "/Content/images/"
-    
-    # Disable cache buster
-    # config.asset_cache_buster do
-    #   false
-    # end
-  end
+  # For example, change the Compass output style for deployment
+  # enable :minified_css
+  
+  # Or use a different image path
+  # set :http_path, "/Content/images/"
+  
+  # Disable cache buster
+  # disable :cache_buster
 end

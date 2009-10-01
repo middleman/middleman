@@ -1,9 +1,19 @@
 #!/usr/bin/env ruby
 
+require 'optparse'
+
 # Require Middleman
 require File.join(File.dirname(__FILE__), '..', 'lib', 'middleman')
 
-# Start Middleman
-Middleman::Base.set({ :server => %w[thin webrick],
-                      :root   => Dir.pwd })
-Middleman::Base.run!
+class Middleman::Base
+  set :root, Dir.pwd
+
+  OptionParser.new { |op|
+    op.on('-e env')    { |val| set :environment, val.to_sym }
+    op.on('-s server') { |val| set :server, val }
+    op.on('-p port')   { |val| set :port, val.to_i }
+  }.parse!(ARGV.dup)
+
+  # Start Middleman
+  run!
+end
