@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{middleman}
-  s.version = "0.9.4"
+  s.version = "0.9.5"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Thomas Reynolds"]
-  s.date = %q{2009-09-30}
+  s.date = %q{2009-10-01}
   s.email = %q{tdreyno@gmail.com}
   s.executables = ["mm-init", "mm-build", "mm-server"]
   s.extra_rdoc_files = [
@@ -50,6 +50,7 @@ Gem::Specification.new do |s|
      "lib/middleman/template/views/stylesheets/site.sass",
      "middleman.gemspec",
      "spec/builder_spec.rb",
+     "spec/cache_buster_spec.rb",
      "spec/fixtures/sample/init.rb",
      "spec/fixtures/sample/public/javascripts/empty-with-include.js",
      "spec/fixtures/sample/public/javascripts/to-be-included.js",
@@ -64,6 +65,7 @@ Gem::Specification.new do |s|
      "spec/fixtures/sample/views/services/index.html.haml",
      "spec/fixtures/sample/views/stylesheets/site.css.sass",
      "spec/generator_spec.rb",
+     "spec/relative_assets_spec.rb",
      "spec/spec_helper.rb"
   ]
   s.has_rdoc = true
@@ -75,8 +77,10 @@ Gem::Specification.new do |s|
   s.summary = %q{A static site generator utilizing Haml, Sass and providing YUI compression and cache busting}
   s.test_files = [
     "spec/builder_spec.rb",
+     "spec/cache_buster_spec.rb",
      "spec/fixtures/sample/init.rb",
      "spec/generator_spec.rb",
+     "spec/relative_assets_spec.rb",
      "spec/spec_helper.rb"
   ]
 
