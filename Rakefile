@@ -62,6 +62,7 @@ Rake::RDocTask.new do |rdoc|
   rdoc.title = "middleman #{version}"
   rdoc.rdoc_files.include('README*')
   rdoc.rdoc_files.include('lib/**/*.rb')
+  rdoc.rdoc_files.exclude('lib/middleman/features/sprockets+ruby19.rb')
 end
 
 desc "Build and publish documentation using GitHub Pages."

@@ -4,12 +4,6 @@ require 'rubygems' unless ENV['NO_RUBYGEMS']
 # We're riding on Sinatra, so let's include it
 require 'sinatra/base'
 
-# Rack helper for adding mime-types during local preview
-def mime(ext, type)
-  ext = ".#{ext}" unless ext.to_s[0] == ?.
-  Rack::Mime::MIME_TYPES[ext.to_s] = type
-end
-
 module Middleman
   class Base < Sinatra::Base
     set :app_file, __FILE__
@@ -45,6 +39,12 @@ module Middleman
       enable :cache_buster
     end
   
+    # Rack helper for adding mime-types during local preview
+    def mime(ext, type)
+      ext = ".#{ext}" unless ext.to_s[0] == ?.
+      Rack::Mime::MIME_TYPES[ext.to_s] = type
+    end
+    
     # Convenience function to discover if a tempalte exists for the requested renderer (haml, sass, etc)
     def template_exists?(path, renderer=nil)
       template_path = path.dup

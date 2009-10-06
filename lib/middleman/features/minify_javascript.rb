@@ -12,20 +12,20 @@ module Middleman
 END
       end
     end
-  end
   
-  module Compressor
-    def render_path(path)
-      if template_exists?(path, :js)
-        compressor = YUI::JavaScriptCompressor.new(:munge => true)
-        compressor.compress(super)
-      else
-        super
+    module StaticJavascript
+      def render_path(path)
+        if template_exists?(path, :js)
+          compressor = YUI::JavaScriptCompressor.new(:munge => true)
+          compressor.compress(super)
+        else
+          super
+        end
       end
     end
   end
   
   class Base
-    include Middleman::Compressor
+    include Middleman::Minified::StaticJavascript
   end
 end
