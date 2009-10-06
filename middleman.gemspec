@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{middleman}
-  s.version = "0.9.7"
+  s.version = "0.9.8"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Thomas Reynolds"]
-  s.date = %q{2009-10-01}
+  s.date = %q{2009-10-06}
   s.email = %q{tdreyno@gmail.com}
   s.executables = ["mm-init", "mm-build", "mm-server"]
   s.extra_rdoc_files = [
@@ -41,10 +41,11 @@ Gem::Specification.new do |s|
      "lib/middleman/features/minify_javascript.rb",
      "lib/middleman/features/relative_assets.rb",
      "lib/middleman/features/slickmap.rb",
+     "lib/middleman/features/smush_pngs.rb",
      "lib/middleman/features/sprockets+ruby19.rb",
      "lib/middleman/features/sprockets.rb",
      "lib/middleman/helpers.rb",
-     "lib/middleman/template/init.rb",
+     "lib/middleman/template/init.rbt",
      "lib/middleman/template/views/index.html.haml",
      "lib/middleman/template/views/layout.html.haml",
      "lib/middleman/template/views/stylesheets/site.css.sass",
