@@ -25,9 +25,9 @@ module Generators
     glob! :views
     glob! :public
     
-    empty_directory :stylesheets, File.join("public", css_dir)
-    empty_directory :javascripts, File.join("public", js_dir)
-    empty_directory :images,      File.join("public", images_dir)
+    empty_directory :stylesheets, "public/stylesheets"#, File.join("public", css_dir)
+    empty_directory :javascripts, "public/javascripts"#, File.join("public", js_dir)
+    empty_directory :images, "public/images"#,      File.join("public", images_dir)
   end
 
   add :setup, NewSite

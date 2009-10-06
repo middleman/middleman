@@ -48,6 +48,10 @@ module Generators
     
     glob! File.basename(Middleman::Base.public), Middleman::Base.supported_formats
     glob! File.basename(Middleman::Base.views),  Middleman::Base.supported_formats
+    
+    if Middleman::Base.slickmap?
+      template :slickmap, "sitemap.html", "sitemap.html"
+    end
   end
 
   add :build, Builder
@@ -72,7 +76,7 @@ class Templater::Actions::Template
   
   def identical?
     if ::File.exists?(destination)
-      return true if File.mtime(source) < File.mtime(destination)
+      return true if File.exists?(source) && File.mtime(source) < File.mtime(destination)
       ::File.read(destination) == render 
     else
       false
