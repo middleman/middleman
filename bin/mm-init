@@ -8,9 +8,10 @@ module Generators
   class NewSite < Templater::Generator
     desc "Creates a new staticmatic scaffold."
     first_argument :location, :required => true, :desc => "Project location"
-
-    # css_dir
-    # images_dir
+    
+    option :css_dir, :desc => 'The path to the css files'
+    option :js_dir, :desc => 'The path to the javascript files'
+    option :images_dir, :desc => 'The path to the image files'
 
     def destination_root
       File.expand_path(location)
@@ -20,12 +21,13 @@ module Generators
       File.join(File.dirname(__FILE__), '..', 'lib', 'middleman', 'template')
     end
     
-    file :init, "init.rb"
+    template :init, "init.rb"
     glob! :views
     glob! :public
-    empty_directory :stylesheets, "public/stylesheets"
-    empty_directory :javascripts, "public/javascripts"
-    empty_directory :images,      "public/images"
+    
+    empty_directory :stylesheets, File.join("public", css_dir)
+    empty_directory :javascripts, File.join("public", js_dir)
+    empty_directory :images,      File.join("public", images_dir)
   end
 
   add :setup, NewSite

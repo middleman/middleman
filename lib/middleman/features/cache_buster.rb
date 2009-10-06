@@ -1,17 +1,14 @@
 class Middleman::Base
+  alias_method :pre_cache_buster_asset_url, :asset_url
   helpers do
-    alias_method :pre_cache_buster_asset_url, :asset_url
     def asset_url(path, prefix="")
-      path = pre_cache_buster_asset_url(path, prefix)
-      if path.include?("://")
-        path
+      http_path = pre_cache_buster_asset_url(path, prefix)
+      if http_path.include?("://") || !%w(.css .png .jpg .js .gif).include?(File.extname(http_path))
+        http_path
       else
-        real_path = File.join(options.public, path)
-        if File.readable?(real_path)
-          path << "?" + File.mtime(real_path).strftime("%s")
-        else
-          $stderr.puts "WARNING: '#{File.basename(path)}' was not found (or cannot be read) in #{File.dirname(real_path)}"
-        end
+        real_path = File.join(self.class.environment == "build" ? options.build_dir : options.public, prefix, path)
+        http_path << "?" + File.mtime(real_path).strftime("%s") if File.readable?(real_path)        
+        http_path
       end
     end
   end

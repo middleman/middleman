@@ -72,7 +72,7 @@ module Middleman
           static_version = options.public + request.path_info
           send_file(static_version) if File.exists? static_version
 
-          location_of_sass_file = options.environment == "build" ? "build" : "public"
+          location_of_sass_file = options.environment == "build" ? File.join(options.build_dir, options.css_dir) : "public"
           css_filename = File.join(Dir.pwd, location_of_sass_file) + request.path_info
           sass(path.to_sym, Compass.sass_engine_options.merge({ :css_filename => css_filename }))
         rescue Exception => e

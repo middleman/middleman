@@ -15,8 +15,8 @@ module Middleman
     set :app_file, __FILE__
     set :root, Dir.pwd
     set :environment, ENV['MM_ENV'] || :development
-    set :supported_formats, []
-    set :index_file, 'index.html'
+    set :supported_formats, ["erb"]
+    set :index_file, "index.html"
     set :js_dir, "javascripts"
     set :css_dir, "stylesheets"
     set :images_dir, "images"
@@ -36,6 +36,7 @@ module Middleman
     disable :relative_assets
     disable :markaby
     disable :maruku
+    disable :smush_pngs
     
     # Default build features
     configure :build do

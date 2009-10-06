@@ -54,9 +54,29 @@ module Generators
 end
 
 # Monkey-patch to use a dynamic renderer
+class Templater::Actions::File
+  def identical?
+    if exists?
+      return true if File.mtime(source) < File.mtime(destination)
+      ::FileUtils.identical?(source, destination)
+    else
+      false
+    end
+  end
+end
+
 class Templater::Actions::Template
   def render
     ::Middleman::Builder.render_file(source, destination)
+  end
+  
+  def identical?
+    if ::File.exists?(destination)
+      return true if File.mtime(source) < File.mtime(destination)
+      ::File.read(destination) == render 
+    else
+      false
+    end
   end
 end
 

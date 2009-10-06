@@ -1,3 +1,7 @@
+<% if css_dir %>set :css_dir, "<%= css_dir -%>"<% end %>
+<% if js_dir %>set :js_dir, "<%= js_dir -%>"<% end %>
+<% if images_dir %>set :images_dir, "<%= images_dir -%>"<% end %>
+
 # Helpers
 helpers do
 end
