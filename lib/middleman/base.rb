@@ -40,7 +40,7 @@ module Middleman
     end
   
     # Rack helper for adding mime-types during local preview
-    def mime(ext, type)
+    def self.mime(ext, type)
       ext = ".#{ext}" unless ext.to_s[0] == ?.
       Rack::Mime::MIME_TYPES[ext.to_s] = type
     end
