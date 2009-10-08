@@ -17,18 +17,13 @@ describe "Builder" do
   after :each do
     FileUtils.rm_rf(File.join(@root_dir, "build"))
   end
-
-  xit "should build markaby files" do
-    File.exists?("#{@root_dir}/build/markaby.html").should be_true
-    File.read("#{@root_dir}/build/markaby.html").should include("<title>Hi Markaby</title>")
-  end
   
   it "should build haml files" do
     File.exists?("#{@root_dir}/build/index.html").should be_true
     File.read("#{@root_dir}/build/index.html").should include("<h1>Welcome</h1>")
   end
   
-  xit "should build maruku files" do
+  it "should build maruku files" do
     File.exists?("#{@root_dir}/build/maruku.html").should be_true
     File.read("#{@root_dir}/build/maruku.html").should include("<h1 class='header' id='hello_maruku'>Hello Maruku</h1>")
   end

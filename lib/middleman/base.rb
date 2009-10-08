@@ -28,7 +28,6 @@ module Middleman
     disable :minify_css
     disable :minify_javascript
     disable :relative_assets
-    disable :markaby
     disable :maruku
     disable :smush_pngs
     

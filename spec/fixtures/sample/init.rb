@@ -1,2 +1,1 @@
-# enable :maruku
-# enable :markaby
+enable :maruku

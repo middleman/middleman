@@ -1,5 +1,0 @@
-mab.html do
-  head do
-    title "Hi Markaby"
-  end
-end
