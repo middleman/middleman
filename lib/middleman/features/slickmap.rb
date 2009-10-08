@@ -6,7 +6,6 @@ rescue LoadError
 end
 
 if Middleman::Base.environment == "build"
-  require "middleman/builder"
   Middleman::Builder.template :slickmap, "sitemap.html", "sitemap.html"
 end
 

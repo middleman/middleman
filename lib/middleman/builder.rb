@@ -36,8 +36,10 @@ module Middleman
       super(name, *args, &block)
     end
 
-    glob! File.basename(Middleman::Base.public), Middleman::Base.supported_formats
-    glob! File.basename(Middleman::Base.views),  Middleman::Base.supported_formats
+    def self.init!
+      glob! File.basename(Middleman::Base.public), Middleman::Base.supported_formats
+      glob! File.basename(Middleman::Base.views),  Middleman::Base.supported_formats
+    end
   end
   
   module Generators

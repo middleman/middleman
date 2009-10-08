@@ -4,7 +4,9 @@ ENV['MM_ENV'] = "build"
 
 # Require app
 require File.join(File.dirname(__FILE__), "..", "lib", "middleman")
-Middleman::Base.init!
-
 require 'middleman/builder'
+
+Middleman::Base.init!
+Middleman::Builder.init!
+
 Middleman::Generators.run_cli(Dir.pwd, 'mm-build', 1,  %w(build --force).concat(ARGV))
