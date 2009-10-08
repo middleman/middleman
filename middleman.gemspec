@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{middleman}
-  s.version = "0.9.13"
+  s.version = "0.9.14"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Thomas Reynolds"]
@@ -35,7 +35,6 @@ Gem::Specification.new do |s|
      "lib/middleman/features/content_for.rb",
      "lib/middleman/features/growl.rb",
      "lib/middleman/features/haml.rb",
-     "lib/middleman/features/markaby.rb",
      "lib/middleman/features/maruku.rb",
      "lib/middleman/features/minify_css.rb",
      "lib/middleman/features/minify_javascript.rb",
@@ -62,7 +61,6 @@ Gem::Specification.new do |s|
      "spec/fixtures/sample/views/index.html.haml",
      "spec/fixtures/sample/views/inline-js.html.haml",
      "spec/fixtures/sample/views/layout.haml",
-     "spec/fixtures/sample/views/markaby.html.mab",
      "spec/fixtures/sample/views/maruku.html.maruku",
      "spec/fixtures/sample/views/services/index.html.haml",
      "spec/fixtures/sample/views/stylesheets/site.css.sass",
