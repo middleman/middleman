@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{middleman}
-  s.version = "0.9.10"
+  s.version = "0.9.11"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Thomas Reynolds"]
@@ -49,6 +49,7 @@ Gem::Specification.new do |s|
      "lib/middleman/template/views/index.html.haml",
      "lib/middleman/template/views/layout.html.haml",
      "lib/middleman/template/views/stylesheets/site.css.sass",
+     "lib/middleman/templater+dynamic_renderer.rb",
      "middleman.gemspec",
      "spec/builder_spec.rb",
      "spec/cache_buster_spec.rb",
