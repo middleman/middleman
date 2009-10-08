@@ -6,7 +6,7 @@ module Generators
   desc "Generator for streamlining staticmatic"
 
   class NewSite < Templater::Generator
-    desc "Creates a new staticmatic scaffold."
+    desc "Creates a new middleman scaffold."
     first_argument :location, :required => true, :desc => "Project location"
     
     option :css_dir, :desc => 'The path to the css files'

@@ -5,12 +5,14 @@ rescue LoadError
   puts "Slickmap not available. Install it with: gem install compass-slickmap"
 end
 
+if Middleman::Base.environment == "build"
+  Middleman::Builder.template :slickmap, "sitemap.html", "sitemap.html"
+end
+
 Entry = Struct.new(:dir, :children)
 
 class Middleman::Base
-  def build_sitemap(&block)
-    html_files = Dir[File.join(File.dirname(Middleman::Base.views), "**", "*.html*")]
-    
+  def build_sitemap(&block)    
     @@utility = []
     [recurse_sitemap(Middleman::Base.views, &block), @@utility]
   end

@@ -6,7 +6,7 @@ base.set :root, File.join(File.dirname(__FILE__), "fixtures", "sample")
 describe "Cache Buster Feature" do
   before do
     base.disable :cache_buster
-    base.init!
+    base.init!(true)
     @app = base.new
   end
   
@@ -18,7 +18,7 @@ end
 describe "Cache Buster Feature" do
   before do
     base.enable :cache_buster
-    base.init!
+    base.init!(true)
     @app = base.new
   end
 

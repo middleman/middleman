@@ -55,7 +55,11 @@ module Middleman
     # Base case renderer (do nothing), Should be over-ridden
     module StaticRender
       def render_path(path)
-        false
+        if template_exists?(path, :erb)
+          erb(path.to_sym)
+        else
+          false
+        end
       end
     end
     include StaticRender
@@ -113,7 +117,7 @@ module Middleman
     end
     
     # Require the features for this project
-    def self.init!
+    def self.init!(quiet=false)
       # Built-in helpers
       require 'middleman/helpers'
       helpers Middleman::Helpers
@@ -124,7 +128,7 @@ module Middleman
       # Check for and evaluate local configuration
       local_config = File.join(self.root, "init.rb")
       if File.exists? local_config
-        puts "== Local config at: #{local_config}"
+        puts "== Local config at: #{local_config}" unless quiet
         class_eval File.read(local_config)
       end
       
