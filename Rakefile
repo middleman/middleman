@@ -18,7 +18,7 @@ begin
     gem.add_dependency("rack-test")
     gem.add_dependency("yui-compressor")
     gem.add_dependency("haml", ">=2.1.0")
-    gem.add_dependency("chriseppstein-compass")
+    gem.add_dependency("compass")
   end
   
   Jeweler::RubyforgeTasks.new do |rubyforge|
