@@ -19,6 +19,8 @@ begin
     gem.add_dependency("yui-compressor")
     gem.add_dependency("haml", ">=2.1.0")
     gem.add_dependency("compass")
+    gem.add_development_dependency("rspec")
+    gem.add_development_dependency("sdoc")
   end
   
   Jeweler::RubyforgeTasks.new do |rubyforge|

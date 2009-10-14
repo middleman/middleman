@@ -21,8 +21,8 @@ class Templater::Actions::Template
 
   def identical?
     if File.exists?(destination)
-      extension = File.extname(destination)
-      return true if !%w(.css .js).include?(extension) && File.exists?(source) && File.mtime(source) < File.mtime(destination)
+      extension = File.extname(source)
+      return true if !%w(.sass .js .haml).include?(extension) && File.exists?(source) && File.mtime(source) < File.mtime(destination)
       File.read(destination) == render 
     else
       false
