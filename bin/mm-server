@@ -2,16 +2,7 @@
 
 require 'optparse'
 
-# Require Middleman
-require File.join(File.dirname(__FILE__), '..', 'lib', 'middleman')
-
-class Middleman::Base
-  set :root, Dir.pwd
-  set :logging, false
-  enable :static
-end
-
-env = ENV['RACK_ENV'] || 'development'
+env = ENV['MM_ENV'] || ENV['RACK_ENV'] || 'development'
 options = { :Port => 4567, :Host => 'localhost', :AccessLog => [] }
 
 OptionParser.new { |opts|
@@ -28,47 +19,21 @@ OptionParser.new { |opts|
   opts.parse! ARGV
 }
 
-require 'rack'
-require 'rack/utils'
-require 'rack/request'
-require 'rack/response'
-require 'rack/showexceptions'
-
-module Middleman
-  class Static
-    def initialize(app, options={})
-      @app = app
-      root = Middleman::Base.public
-      @file_server = Rack::File.new(root)
-    end
-
-    def call(env)
-      path = env["PATH_INFO"]
-      if path.include?("favicon.ico") || File.exists?(File.join(Middleman::Base.public, path))
-        @file_server.call(env)
-      else
-        @app.call(env)
-      end
-    end
-  end
-end
-
-app_wrapper = lambda do |inner_app|
-  Rack::Builder.new {
-    use Rack::ShowExceptions
-    use Middleman::Static
-    run Middleman::Base
-  }.to_app
-end
-
 ENV['RACK_ENV'] = env
 
+# Require Middleman
+require File.join(File.dirname(__FILE__), '..', 'lib', 'middleman')
+
+class Middleman::Base
+  set :root, Dir.pwd
+  set :logging, false
+end
+
 require 'shotgun'
-require 'thin'
-
 config = File.join(File.dirname(__FILE__), '..', 'lib', 'middleman', 'config.ru')
-app = Shotgun.new(config, app_wrapper)
+app = Shotgun.new(config, lambda { |inner_app| Middleman::Base.new })
 
+require 'thin'
 Thin::Logging.silent = true
 
 Rack::Handler::Thin.run app, options do |inst|

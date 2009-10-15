@@ -1,3 +1,5 @@
+require 'rack/test' # Use Rack::Test to access Sinatra without starting up a full server
+
 # Monkey-patch to use a dynamic renderer
 class Templater::Actions::File
   def identical?

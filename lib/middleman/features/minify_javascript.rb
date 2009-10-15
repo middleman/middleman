@@ -12,20 +12,21 @@ module Middleman
 END
       end
     end
+  end
   
-    module StaticJavascript
-      def render_path(path)
-        if template_exists?(path, :js)
-          compressor = YUI::JavaScriptCompressor.new(:munge => true)
-          compressor.compress(super)
-        else
-          super
-        end
+  class Builder
+    alias_method :pre_yui_after_run, :after_run
+    def after_run
+      pre_yui_after_run
+      
+      compressor = ::YUI::JavaScriptCompressor.new(:munge => true)
+      Dir[File.join(Middleman::Base.build_dir, Middleman::Base.js_dir, "**", "*.js")].each do |path|
+        compressed_js = compressor.compress(File.read(path))
+        File.open(path, 'w') { |f| f.write(compressed_js) }
+        say "<%= color('#{"[COMPRESSED]".rjust(12)}', :yellow) %>  " + path.gsub(Middleman::Base.build_dir+"/", '')
       end
     end
-  end
-  
-  class Base
-    include Middleman::Minified::StaticJavascript
-  end
+  end if Middleman::Base.environment == "build"
 end
+
+Middleman::Base.supported_formats << "js"

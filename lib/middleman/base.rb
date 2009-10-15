@@ -9,7 +9,7 @@ module Middleman
     set :app_file, __FILE__
     set :root, Dir.pwd
     set :environment, ENV['MM_ENV'] || :development
-    set :supported_formats, ["erb"]
+    set :supported_formats, %w(erb)
     set :index_file, "index.html"
     set :js_dir, "javascripts"
     set :css_dir, "stylesheets"
@@ -17,9 +17,28 @@ module Middleman
     set :build_dir, "build"
     set :http_prefix, "/"
 
+    require 'sinatra/content_for'
+    helpers Sinatra::ContentFor
+    
+    require 'middleman/helpers'
+    helpers Middleman::Helpers
+    
+    # Static files in public/
+    enable :static
+    require 'middleman/rack/static'
+    use Middleman::Rack::Static
+    
+    @@features = []
+    def self.enable(*opts)
+      @@features << opts
+      super
+    end
+    def self.disable(*opts)
+      @@features -= opts
+      super
+    end
+    
     # Features enabled by default
-    enable :compass
-    enable :content_for
     enable :sprockets
     
     # Features disabled by default
@@ -66,26 +85,19 @@ module Middleman
     # This will match all requests not overridden in the project's init.rb
     not_found do
       self.class.init!(true, false)
-      
+
       # Normalize the path and add index if we're looking at a directory
       path = request.path
       path << options.index_file if path.match(%r{/$})
       path.gsub!(%r{^/}, '')
-    
+
       # If the enabled renderers succeed, return the content, mime-type and an HTTP 200
       if content = render_path(path)
         content_type media_type(File.extname(path)), :charset => 'utf-8'
         status 200
         content
       else
-        # If no template handler renders the template, return the static file if it exists
-        path = File.join(options.public, request.path)
-        if !File.directory?(path) && File.exists?(path)
-          status 200
-          send_file(path)
-        else
-          status 404
-        end
+        status 404
       end
     end
     
@@ -94,31 +106,24 @@ module Middleman
     def self.init!(quiet=false, rerun=true)
       return if @@inited && !rerun
       
-      # Built-in helpers
-      require 'middleman/helpers'
-      helpers Middleman::Helpers
-
-      # Haml is required & includes helpers
-      require "middleman/features/haml"
-      
       # Check for and evaluate local configuration
       local_config = File.join(self.root, "init.rb")
       if File.exists? local_config
-        puts "== Local config at: #{local_config}" unless quiet
+        puts "== Reading:  Local config" unless quiet
         class_eval File.read(local_config)
       end
-      
+        
       # loop over enabled feature
-      features_path = File.expand_path("features/*.rb", File.dirname(__FILE__))
-      Dir[features_path].each do |f|
-        feature_name = File.basename(f, '.rb')
-        option_name = :"#{feature_name}?"
-        if respond_to?(option_name) && send(option_name) === true
-          require "middleman/features/#{feature_name}"
-        end
+      @@features.flatten.each do |feature_name|
+        puts "== Enabling: #{feature_name.capitalize}" unless quiet
+        require "middleman/features/#{feature_name}"
       end
       
       @@inited = true
     end
   end
 end
+
+# Haml is required & includes helpers
+require "middleman/haml"
+require "middleman/sass"

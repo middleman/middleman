@@ -1,4 +1,11 @@
 module Middleman
+  class Base
+    def self.asset_url(path, prefix="")
+      base_url = File.join(self.http_prefix, prefix)
+      path.include?("://") ? path : File.join(base_url, path)
+    end
+  end
+  
   module Helpers
     def page_classes(*additional)
       path = request.path_info
@@ -14,15 +21,14 @@ module Middleman
       classes.join(' ')
     end
     
+    def asset_url(*args)
+      self.class.asset_url(*args)
+    end
+    
     def link_to(title, url="#", params={})
       params.merge!(:href => url)
       params = params.map { |k,v| %Q{#{k}="#{v}"}}.join(' ')
       %Q{<a #{params}>#{title}</a>}
-    end
-    
-    def asset_url(path, prefix="")
-      base_url = File.join(options.http_prefix, prefix)
-      path.include?("://") ? path : File.join(base_url, path)
     end
 
     def image_tag(path, params={})

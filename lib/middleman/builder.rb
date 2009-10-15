@@ -1,6 +1,5 @@
 require 'templater'
 require 'middleman/templater+dynamic_renderer.rb'
-require 'rack/test' # Use Rack::Test to access Sinatra without starting up a full server
 
 # Placeholder for any methods the builder needs to abstract to allow feature integration
 module Middleman
@@ -37,8 +36,11 @@ module Middleman
     end
 
     def self.init!
-      glob! File.basename(Middleman::Base.public), Middleman::Base.supported_formats
+      glob! File.basename(Middleman::Base.public), []
       glob! File.basename(Middleman::Base.views),  Middleman::Base.supported_formats
+    end
+    
+    def after_run
     end
   end
   
