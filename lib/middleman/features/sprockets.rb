@@ -16,6 +16,7 @@ module Middleman
       if File.extname(path) == '.js' && File.exists?(source)
         secretary = ::Sprockets::Secretary.new( :asset_root   => options.public,
                                                 :source_files => [source] )
+                                                # may need to rejigger since sprockets will only read views/ now
         secretary.concatenation.to_s
       else
         super

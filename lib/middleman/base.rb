@@ -62,12 +62,11 @@ module Middleman
       end
     end
     include StaticRender
-  
-    # Disable static asset handling in Rack, so we can customize it here
-    disable :static
     
     # This will match all requests not overridden in the project's init.rb
     not_found do
+      self.class.init!(true, false)
+      
       # Normalize the path and add index if we're looking at a directory
       path = request.path
       path << options.index_file if path.match(%r{/$})
@@ -90,33 +89,11 @@ module Middleman
       end
     end
     
-    # Copy, pasted & edited version of the setup in Sinatra.
-    # Basically just changed the app's name and call out feature & configuration init.
-    def self.run!(options={}, &block)
-      init!
-      set options
-      handler      = detect_rack_handler
-      handler_name = handler.name.gsub(/.*::/, '')
-      puts "== The Middleman is standing watch on port #{port}"
-      handler.run self, :Host => host, :Port => port do |server|
-        trap(:INT) do
-          ## Use thins' hard #stop! if available, otherwise just #stop
-          server.respond_to?(:stop!) ? server.stop! : server.stop
-          puts "\n== The Middleman has ended his patrol"
-        end
-      
-        if block_given?
-          block.call
-          ## Use thins' hard #stop! if available, otherwise just #stop
-          server.respond_to?(:stop!) ? server.stop! : server.stop
-        end
-      end
-    rescue Errno::EADDRINUSE => e
-      puts "== The Middleman is already standing watch on port #{port}!"
-    end
-    
+    @@inited = false
     # Require the features for this project
-    def self.init!(quiet=false)
+    def self.init!(quiet=false, rerun=true)
+      return if @@inited && !rerun
+      
       # Built-in helpers
       require 'middleman/helpers'
       helpers Middleman::Helpers
@@ -140,6 +117,8 @@ module Middleman
           require "middleman/features/#{feature_name}"
         end
       end
+      
+      @@inited = true
     end
   end
 end

@@ -18,14 +18,4 @@ class Templater::Actions::Template
     browser.get(request_path)
     browser.last_response.body
   end
-
-  def identical?
-    if File.exists?(destination)
-      extension = File.extname(source)
-      return true if !%w(.sass .js .haml).include?(extension) && File.exists?(source) && File.mtime(source) < File.mtime(destination)
-      File.read(destination) == render 
-    else
-      false
-    end
-  end
 end

@@ -7,13 +7,70 @@ require File.join(File.dirname(__FILE__), '..', 'lib', 'middleman')
 
 class Middleman::Base
   set :root, Dir.pwd
+  set :logging, false
+  enable :static
+end
 
-  OptionParser.new { |op|
-    op.on('-e env')    { |val| set :environment, val.to_sym }
-    op.on('-s server') { |val| set :server, val }
-    op.on('-p port')   { |val| set :port, val.to_i }
-  }.parse!(ARGV.dup)
+env = ENV['RACK_ENV'] || 'development'
+options = { :Port => 4567, :Host => 'localhost', :AccessLog => [] }
 
-  # Start Middleman
-  run!
+OptionParser.new { |opts|
+  opts.banner = "Usage: mm-server [rack options]"
+  opts.separator ""
+  opts.separator "Rack options:"
+  opts.on("-p", "--port PORT", "use PORT (default: 4567)") { |port|
+    options[:Port] = port
+  }
+  opts.on("-E", "--env ENVIRONMENT", "use ENVIRONMENT for defaults (default: development)") { |e|
+    env = e
+  }
+  
+  opts.parse! ARGV
+}
+
+require 'rack'
+require 'rack/utils'
+require 'rack/request'
+require 'rack/response'
+require 'rack/showexceptions'
+
+module Middleman
+  class Static
+    def initialize(app, options={})
+      @app = app
+      root = Middleman::Base.public
+      @file_server = Rack::File.new(root)
+    end
+
+    def call(env)
+      path = env["PATH_INFO"]
+      if path.include?("favicon.ico") || File.exists?(File.join(Middleman::Base.public, path))
+        @file_server.call(env)
+      else
+        @app.call(env)
+      end
+    end
+  end
+end
+
+app_wrapper = lambda do |inner_app|
+  Rack::Builder.new {
+    use Rack::ShowExceptions
+    use Middleman::Static
+    run Middleman::Base
+  }.to_app
+end
+
+ENV['RACK_ENV'] = env
+
+require 'shotgun'
+require 'thin'
+
+config = File.join(File.dirname(__FILE__), '..', 'lib', 'middleman', 'config.ru')
+app = Shotgun.new(config, app_wrapper)
+
+Thin::Logging.silent = true
+
+Rack::Handler::Thin.run app, options do |inst|
+  puts "== The Middleman is standing watch on port #{options[:Port]}"
 end
