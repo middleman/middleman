@@ -1,6 +1,6 @@
 module Middleman
   class Base
-    def self.asset_url(path, prefix="")
+    def self.asset_url(path, prefix="", request=nil)
       base_url = File.join(self.http_prefix, prefix)
       path.include?("://") ? path : File.join(base_url, path)
     end
@@ -21,8 +21,8 @@ module Middleman
       classes.join(' ')
     end
     
-    def asset_url(*args)
-      self.class.asset_url(*args)
+    def asset_url(path, prefix="")
+      self.class.asset_url(path, prefix, request)
     end
     
     def link_to(title, url="#", params={})

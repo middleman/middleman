@@ -8,6 +8,8 @@ module Middleman
   class Base < Sinatra::Base
     set :app_file, __FILE__
     set :root, Dir.pwd
+    set :reload, false
+    set :logging, false
     set :environment, ENV['MM_ENV'] || :development
     set :supported_formats, %w(erb)
     set :index_file, "index.html"
@@ -16,60 +18,34 @@ module Middleman
     set :images_dir, "images"
     set :build_dir, "build"
     set :http_prefix, "/"
-
-    require 'sinatra/content_for'
-    helpers Sinatra::ContentFor
     
-    require 'middleman/helpers'
-    helpers Middleman::Helpers
+    use Rack::ConditionalGet if environment == :development
     
-    # Static files in public/
-    enable :static
-    require 'middleman/rack/static'
-    use Middleman::Rack::Static
+    set :features, [:compass]
     
-    @@features = []
     def self.enable(*opts)
-      @@features << opts
+      self.features << opts
       super
     end
+    
     def self.disable(*opts)
-      @@features -= opts
+      self.features -= opts
       super
     end
     
-    # Features enabled by default
-    enable :sprockets
-    
-    # Features disabled by default
-    disable :slickmap
-    disable :cache_buster
-    disable :minify_css
-    disable :minify_javascript
-    disable :relative_assets
-    disable :maruku
-    disable :smush_pngs
-    
-    # Default build features
-    configure :build do
-      enable :minify_css
-      enable :minify_javascript
-      enable :cache_buster
-    end
-  
     # Rack helper for adding mime-types during local preview
     def self.mime(ext, type)
       ext = ".#{ext}" unless ext.to_s[0] == ?.
       Rack::Mime::MIME_TYPES[ext.to_s] = type
     end
-    
+
     # Convenience function to discover if a tempalte exists for the requested renderer (haml, sass, etc)
     def template_exists?(path, renderer=nil)
       template_path = path.dup
       template_path << ".#{renderer}" if renderer
       File.exists? File.join(options.views, template_path)
     end
-    
+
     # Base case renderer (do nothing), Should be over-ridden
     module StaticRender
       def render_path(path)
@@ -81,11 +57,9 @@ module Middleman
       end
     end
     include StaticRender
-    
+
     # This will match all requests not overridden in the project's init.rb
     not_found do
-      self.class.init!(true, false)
-
       # Normalize the path and add index if we're looking at a directory
       path = request.path
       path << options.index_file if path.match(%r{/$})
@@ -100,30 +74,54 @@ module Middleman
         status 404
       end
     end
-    
-    @@inited = false
-    # Require the features for this project
-    def self.init!(quiet=false, rerun=true)
-      return if @@inited && !rerun
-      
-      # Check for and evaluate local configuration
-      local_config = File.join(self.root, "init.rb")
-      if File.exists? local_config
-        puts "== Reading:  Local config" unless quiet
-        class_eval File.read(local_config)
-      end
-        
-      # loop over enabled feature
-      @@features.flatten.each do |feature_name|
-        puts "== Enabling: #{feature_name.capitalize}" unless quiet
-        require "middleman/features/#{feature_name}"
-      end
-      
-      @@inited = true
-    end
   end
 end
 
 # Haml is required & includes helpers
 require "middleman/haml"
 require "middleman/sass"
+require 'sinatra/content_for'
+require 'middleman/helpers'
+require 'middleman/rack/static'
+require 'middleman/rack/sprockets'
+
+class Middleman::Base
+  helpers Sinatra::ContentFor
+  helpers Middleman::Helpers
+  
+  use Middleman::Rack::Static
+  use Middleman::Rack::Sprockets
+  
+  # Features disabled by default
+  disable :slickmap
+  disable :cache_buster
+  disable :minify_css
+  disable :minify_javascript
+  disable :relative_assets
+  disable :maruku
+  disable :smush_pngs
+  
+  # Default build features
+  configure :build do
+    enable :minify_css
+    enable :minify_javascript
+    enable :cache_buster
+  end
+  
+  def self.new(*args, &bk)
+    # Check for and evaluate local configuration
+    local_config = File.join(self.root, "init.rb")
+    if File.exists? local_config
+      puts "== Reading:  Local config" if logging?
+      class_eval File.read(local_config)
+    end
+    
+    # loop over enabled feature
+    self.features.flatten.each do |feature_name|
+      puts "== Enabling: #{feature_name.capitalize}" if logging?
+      require "middleman/features/#{feature_name}"
+    end
+    
+    super
+  end
+end

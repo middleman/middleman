@@ -1,10 +1,10 @@
 begin
   require 'sprockets'
-  require 'middleman/features/sprockets+ruby19' # Sprockets ruby 1.9 duckpunch
+  require 'middleman/rack/sprockets+ruby19' # Sprockets ruby 1.9 duckpunch
 rescue LoadError
   puts "Sprockets not available. Install it with: gem install sprockets"
 end
-
+  
 module Middleman
   module Rack
     class Sprockets
@@ -31,5 +31,4 @@ module Middleman
   end
 end
 
-Middleman::Base.use Middleman::Rack::Sprockets
 Middleman::Base.supported_formats << "js"

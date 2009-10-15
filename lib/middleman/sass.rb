@@ -1,5 +1,5 @@
 require "sass"
-require "middleman/compass"
+require 'compass'
 
 module Middleman
   module Sass  

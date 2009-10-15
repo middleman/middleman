@@ -2,6 +2,9 @@
 
 require 'optparse'
 
+# Require Middleman
+require File.join(File.dirname(__FILE__), '..', 'lib', 'middleman')
+
 env = ENV['MM_ENV'] || ENV['RACK_ENV'] || 'development'
 options = { :Port => 4567, :Host => 'localhost', :AccessLog => [] }
 
@@ -15,23 +18,22 @@ OptionParser.new { |opts|
   opts.on("-E", "--env ENVIRONMENT", "use ENVIRONMENT for defaults (default: development)") { |e|
     env = e
   }
+  opts.on("--debug", "Debug mode") {
+    ::Middleman::Base.set :logging, true
+  }
   
   opts.parse! ARGV
 }
 
 ENV['RACK_ENV'] = env
 
-# Require Middleman
-require File.join(File.dirname(__FILE__), '..', 'lib', 'middleman')
-
 class Middleman::Base
   set :root, Dir.pwd
-  set :logging, false
 end
 
 require 'shotgun'
 config = File.join(File.dirname(__FILE__), '..', 'lib', 'middleman', 'config.ru')
-app = Shotgun.new(config, lambda { |inner_app| Middleman::Base.new })
+app = Shotgun.new(config, lambda { |inner_app| Middleman::Base })
 
 require 'thin'
 Thin::Logging.silent = true

@@ -1,7 +1,7 @@
 class << Middleman::Base
   alias_method :pre_cache_buster_asset_url, :asset_url
-  def asset_url(path, prefix="")
-    http_path = pre_cache_buster_asset_url(path, prefix)
+  def asset_url(path, prefix="", request=nil)
+    http_path = pre_cache_buster_asset_url(path, prefix, request)
     if http_path.include?("://") || !%w(.css .png .jpg .js .gif).include?(File.extname(http_path))
       http_path
     else

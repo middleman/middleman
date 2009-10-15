@@ -1,5 +1,3 @@
-require 'compass'
-
 class Middleman::Base
   configure do
     ::Compass.configuration do |config|
