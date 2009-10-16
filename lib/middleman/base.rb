@@ -36,7 +36,7 @@ module Middleman
     # Rack helper for adding mime-types during local preview
     def self.mime(ext, type)
       ext = ".#{ext}" unless ext.to_s[0] == ?.
-      Rack::Mime::MIME_TYPES[ext.to_s] = type
+      ::Rack::Mime::MIME_TYPES[ext.to_s] = type
     end
 
     # Convenience function to discover if a tempalte exists for the requested renderer (haml, sass, etc)

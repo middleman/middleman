@@ -9,7 +9,8 @@ module Middleman
 
       def call(env)
         path = env["PATH_INFO"]
-        if path.include?("favicon.ico") || File.exists?(File.join(Middleman::Base.public, path))
+        file_path = File.join(Middleman::Base.public, path)
+        if path.include?("favicon.ico") || (File.exists?(file_path) && !File.directory?(file_path))
           @file_server.call(env)
         else
           @app.call(env)
