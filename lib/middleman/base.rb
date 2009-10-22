@@ -21,15 +21,15 @@ module Middleman
     
     use Rack::ConditionalGet if environment == :development
     
-    set :features, [:compass]
+    @@features = []
     
     def self.enable(*opts)
-      self.features << opts
+      @@features << opts
       super
     end
     
     def self.disable(*opts)
-      self.features -= opts
+      @@features -= opts
       super
     end
     
@@ -92,6 +92,8 @@ class Middleman::Base
   use Middleman::Rack::Static
   use Middleman::Rack::Sprockets
   
+  enable :compass
+  
   # Features disabled by default
   disable :slickmap
   disable :cache_buster
@@ -117,7 +119,8 @@ class Middleman::Base
     end
     
     # loop over enabled feature
-    self.features.flatten.each do |feature_name|
+    @@features.flatten.each do |feature_name|
+      next unless send(:"#{feature_name}?")
       puts "== Enabling: #{feature_name.capitalize}" if logging?
       require "middleman/features/#{feature_name}"
     end
