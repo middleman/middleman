@@ -33,7 +33,8 @@ module Middleman
 
     def image_tag(path, params={})
       params[:alt] ||= ""
-      params = params.merge(:src => asset_url(path, options.images_dir))
+      prefix = options.http_images_path rescue options.images_dir
+      params = params.merge(:src => asset_url(path, prefix))
       params = params.map { |k,v| %Q{#{k}="#{v}"}}.join(' ')
       "<img #{params} />"
     end

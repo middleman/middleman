@@ -5,6 +5,11 @@ end
 class << Middleman::Base
   alias_method :pre_relative_asset_url, :asset_url
   def asset_url(path, prefix="", request=nil)
+    begin
+      prefix = self.images_dir if prefix == self.http_images_path
+    rescue
+    end
+    
     path = pre_relative_asset_url(path, prefix, request)
     if path.include?("://")
       path

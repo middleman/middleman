@@ -93,6 +93,8 @@ class Middleman::Base
   use Middleman::Rack::Sprockets
   
   enable :compass
+  require "middleman/features/compass"
+  @@features -= [:compass]
   
   # Features disabled by default
   disable :slickmap
@@ -123,6 +125,11 @@ class Middleman::Base
       next unless send(:"#{feature_name}?")
       puts "== Enabling: #{feature_name.capitalize}" if logging?
       require "middleman/features/#{feature_name}"
+    end
+    
+    ::Compass.configuration do |config|
+      config.http_images_path      = self.http_images_path rescue File.join(self.http_prefix, self.images_dir)
+      config.http_stylesheets_path = self.http_css_path rescue File.join(self.http_prefix, self.css_dir)
     end
     
     super

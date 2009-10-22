@@ -5,8 +5,13 @@ class << Middleman::Base
     if http_path.include?("://") || !%w(.css .png .jpg .js .gif).include?(File.extname(http_path))
       http_path
     else
+      begin
+        prefix = self.images_dir if prefix == self.http_images_path
+      rescue
+      end
+      
       real_path = File.join(self.environment == "build" ? self.build_dir : self.public, prefix, path)
-      http_path << "?" + File.mtime(real_path).strftime("%s") if File.readable?(real_path)        
+      http_path << "?" + File.mtime(real_path).strftime("%s") if File.readable?(real_path)
       http_path
     end
   end
