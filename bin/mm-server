@@ -6,7 +6,7 @@ require 'optparse'
 require File.join(File.dirname(__FILE__), '..', 'lib', 'middleman')
 
 env = ENV['MM_ENV'] || ENV['RACK_ENV'] || 'development'
-options = { :Port => 4567, :Host => 'localhost', :AccessLog => [] }
+options = { :Port => 4567, :AccessLog => [] }
 
 OptionParser.new { |opts|
   opts.banner = "Usage: mm-server [rack options]"

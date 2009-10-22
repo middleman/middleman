@@ -21,9 +21,12 @@ END
       
       compressor = ::YUI::JavaScriptCompressor.new(:munge => true)
       Dir[File.join(Middleman::Base.build_dir, Middleman::Base.js_dir, "**", "*.js")].each do |path|
-        compressed_js = compressor.compress(File.read(path))
-        File.open(path, 'w') { |f| f.write(compressed_js) }
-        say "<%= color('#{"[COMPRESSED]".rjust(12)}', :yellow) %>  " + path.gsub(Middleman::Base.build_dir+"/", '')
+        lines = IO.readlines(path)
+        if lines.length > 1
+          compressed_js = compressor.compress(lines.join($/))
+          File.open(path, 'w') { |f| f.write(compressed_js) }
+          say "<%= color('#{"[COMPRESSED]".rjust(12)}', :yellow) %>  " + path.gsub(Middleman::Base.build_dir+"/", '')
+        end
       end
     end
   end if Middleman::Base.environment == "build"
