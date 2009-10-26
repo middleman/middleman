@@ -105,6 +105,7 @@ class Middleman::Base
   disable :relative_assets
   disable :maruku
   disable :smush_pngs
+  disable :automatic_image_sizes
   
   # Default build features
   configure :build do
