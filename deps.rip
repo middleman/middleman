@@ -1,0 +1,7 @@
+git://github.com/jnicklas/templater.git
+git://github.com/sstephenson/sprockets.git
+git://github.com/sinatra/sinatra.git
+git://github.com/nex3/haml.git
+git://github.com/chriseppstein/compass.git
+git://github.com/foca/sinatra-content-for.git
+git://github.com/brynary/rack-test.git
