@@ -1,5 +1,5 @@
 require "sass"
-require 'compass'
+require "compass"
 
 module Middleman
   module Sass  
@@ -13,7 +13,7 @@ module Middleman
           static_version = options.public + request.path_info
           send_file(static_version) if File.exists? static_version
 
-          location_of_sass_file = options.environment == "build" ? File.join(options.build_dir, options.css_dir) : "public"
+          location_of_sass_file = options.environment == "build" ? options.build_dir : options.public
           css_filename = File.join(Dir.pwd, location_of_sass_file) + request.path_info
           sass(path.to_sym, ::Compass.sass_engine_options.merge({ :css_filename => css_filename }))
         rescue Exception => e
@@ -67,4 +67,35 @@ end
 
 class Middleman::Base
   include Middleman::Sass
+  
+  configure do
+    ::Compass.configuration do |config|
+      config.project_path     = Dir.pwd
+      config.sass_dir         = File.join(File.basename(self.views), self.css_dir)
+      config.output_style     = :nested
+      config.css_dir          = File.join(File.basename(self.public), self.css_dir)
+      config.images_dir       = File.join(File.basename(self.public), self.images_dir)
+      config.add_import_path(config.sass_dir)
+    end
+  end
+
+  configure :build do
+    ::Compass.configuration do |config|
+      config.css_dir          = File.join(File.basename(self.build_dir), self.css_dir)
+      config.images_dir       = File.join(File.basename(self.build_dir), self.images_dir)
+    end
+  end
+  
+  after do 
+    ::Compass.configuration do |config|
+      config.http_images_path      = self.http_images_path rescue File.join(self.http_prefix, self.images_dir)
+      config.http_stylesheets_path = self.http_css_path rescue File.join(self.http_prefix, self.css_dir)
+    
+      config.asset_cache_buster do
+        false
+      end if !self.cache_buster?
+    end
+
+    ::Compass.configure_sass_plugin!
+  end
 end

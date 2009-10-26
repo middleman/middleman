@@ -1,4 +1,5 @@
 require "yui/compressor"
+require "middleman/builder"
 
 module Middleman
   module Minified
@@ -29,7 +30,7 @@ END
         end
       end
     end
-  end if Middleman::Base.environment == "build"
+  end
 end
 
 Middleman::Base.supported_formats << "js"

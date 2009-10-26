@@ -33,6 +33,11 @@ module Middleman
       super
     end
     
+    @@afters = []
+    def self.after(&block)
+      @@afters << block
+    end
+    
     # Rack helper for adding mime-types during local preview
     def self.mime(ext, type)
       ext = ".#{ext}" unless ext.to_s[0] == ?.
@@ -80,10 +85,10 @@ end
 # Haml is required & includes helpers
 require "middleman/haml"
 require "middleman/sass"
-require 'sinatra/content_for'
-require 'middleman/helpers'
-require 'middleman/rack/static'
-require 'middleman/rack/sprockets'
+require "sinatra/content_for"
+require "middleman/helpers"
+require "middleman/rack/static"
+require "middleman/rack/sprockets"
 
 class Middleman::Base
   helpers Sinatra::ContentFor
@@ -91,10 +96,6 @@ class Middleman::Base
   
   use Middleman::Rack::Static
   use Middleman::Rack::Sprockets
-  
-  enable :compass
-  require "middleman/features/compass"
-  @@features -= [:compass]
   
   # Features disabled by default
   disable :slickmap
@@ -127,10 +128,7 @@ class Middleman::Base
       require "middleman/features/#{feature_name}"
     end
     
-    ::Compass.configuration do |config|
-      config.http_images_path      = self.http_images_path rescue File.join(self.http_prefix, self.images_dir)
-      config.http_stylesheets_path = self.http_css_path rescue File.join(self.http_prefix, self.css_dir)
-    end
+    @@afters.each { |block| class_eval(&block) }
     
     super
   end
