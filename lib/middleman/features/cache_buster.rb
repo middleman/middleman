@@ -11,7 +11,7 @@ class << Middleman::Base
       rescue
       end
       
-      real_path = File.join(self.environment == "build" ? self.build_dir : self.public, prefix, path)
+      real_path = File.join(self.public, prefix, path)
       http_path << "?" + File.mtime(real_path).strftime("%s") if File.readable?(real_path)
       http_path
     end

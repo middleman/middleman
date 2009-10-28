@@ -83,6 +83,7 @@ class Middleman::Base
     
       if self.cache_buster?
         config.asset_cache_buster do |path, real_path|
+          # real_path = real_path.gsub(self.build_dir, self.public)
           if File.readable?(real_path)
             File.mtime(real_path).strftime("%s") 
           else
