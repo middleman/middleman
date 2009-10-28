@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{middleman}
-  s.version = "0.9.20"
+  s.version = "0.9.21"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Thomas Reynolds"]
-  s.date = %q{2009-10-22}
+  s.date = %q{2009-10-28}
   s.email = %q{tdreyno@gmail.com}
   s.executables = ["mm-init", "mm-build", "mm-server"]
   s.extra_rdoc_files = [
@@ -31,8 +31,9 @@ Gem::Specification.new do |s|
      "lib/middleman/base.rb",
      "lib/middleman/builder.rb",
      "lib/middleman/config.ru",
+     "lib/middleman/fastimage.rb",
+     "lib/middleman/features/automatic_image_sizes.rb",
      "lib/middleman/features/cache_buster.rb",
-     "lib/middleman/features/compass.rb",
      "lib/middleman/features/growl.rb",
      "lib/middleman/features/maruku.rb",
      "lib/middleman/features/minify_css.rb",
@@ -40,6 +41,7 @@ Gem::Specification.new do |s|
      "lib/middleman/features/relative_assets.rb",
      "lib/middleman/features/slickmap.rb",
      "lib/middleman/features/smush_pngs.rb",
+     "lib/middleman/features/sprockets.rb",
      "lib/middleman/haml.rb",
      "lib/middleman/helpers.rb",
      "lib/middleman/rack/sprockets+ruby19.rb",
@@ -52,19 +54,23 @@ Gem::Specification.new do |s|
      "lib/middleman/template/views/stylesheets/site.css.sass",
      "lib/middleman/templater+dynamic_renderer.rb",
      "middleman.gemspec",
+     "spec/auto_image_sizes.rb",
      "spec/builder_spec.rb",
      "spec/cache_buster_spec.rb",
      "spec/fixtures/sample/init.rb",
+     "spec/fixtures/sample/public/images/blank.gif",
      "spec/fixtures/sample/public/javascripts/to-be-included.js",
      "spec/fixtures/sample/public/static.html",
      "spec/fixtures/sample/public/stylesheets/static.css",
      "spec/fixtures/sample/views/_partial.haml",
+     "spec/fixtures/sample/views/auto-image-sizes.html.haml",
      "spec/fixtures/sample/views/index.html.haml",
      "spec/fixtures/sample/views/inline-js.html.haml",
      "spec/fixtures/sample/views/javascripts/empty-with-include.js",
      "spec/fixtures/sample/views/layout.haml",
      "spec/fixtures/sample/views/maruku.html.maruku",
      "spec/fixtures/sample/views/services/index.html.haml",
+     "spec/fixtures/sample/views/stylesheets/relative_assets.css.sass",
      "spec/fixtures/sample/views/stylesheets/site.css.sass",
      "spec/generator_spec.rb",
      "spec/relative_assets_spec.rb",
@@ -77,7 +83,8 @@ Gem::Specification.new do |s|
   s.rubygems_version = %q{1.3.5}
   s.summary = %q{A static site generator utilizing Haml, Sass and providing YUI compression and cache busting}
   s.test_files = [
-    "spec/builder_spec.rb",
+    "spec/auto_image_sizes.rb",
+     "spec/builder_spec.rb",
      "spec/cache_buster_spec.rb",
      "spec/fixtures/sample/init.rb",
      "spec/generator_spec.rb",
