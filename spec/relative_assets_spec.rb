@@ -1,28 +1,23 @@
-# require File.join(File.dirname(__FILE__), "spec_helper")
-# 
-# base = ::Middleman::Base
-# base.set :root, File.join(File.dirname(__FILE__), "fixtures", "sample")
-# 
-# describe "Relative Assets Feature" do
-#   before do
-#     base.disable :relative_assets
-#     base.init!
-#     @app = base.new
-#   end
-#   
-#   it "should not contain ../ if off" do
-#     @app.asset_url("stylesheets/static.css").should_not include("?")
-#   end
-# end
-# 
-# describe "Relative Assets Feature" do
-#   before do
-#     base.enable :relative_assets
-#     base.init!
-#     @app = base.new
-#   end
-#   
-#   it "should contain ../ if on" do
-#     @app.asset_url("stylesheets/static.css").should include("?")
-#   end
-# end
+require 'rack/test'
+require File.join(File.dirname(__FILE__), "spec_helper")
+
+base = ::Middleman::Base
+base.set :root, File.join(File.dirname(__FILE__), "fixtures", "sample")
+
+describe "Relative Assets Feature" do
+  it "should not contain ../ if off" do
+    base.disable :relative_assets
+    browser = Rack::Test::Session.new(Rack::MockSession.new(base.new))
+    browser.get("/stylesheets/relative_assets.css")
+    browser.last_response.body.should_not include("../")
+  end
+end
+
+describe "Relative Assets Feature" do
+  it "should contain ../ if on" do
+    base.enable :relative_assets
+    browser = Rack::Test::Session.new(Rack::MockSession.new(base.new))
+    browser.get("/stylesheets/relative_assets.css")
+    browser.last_response.body.should include("../")
+  end
+end

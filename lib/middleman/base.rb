@@ -120,13 +120,18 @@ class Middleman::Base
     if File.exists? local_config
       puts "== Reading:  Local config" if logging?
       class_eval File.read(local_config)
+      set :app_file, File.expand_path(local_config)
     end
     
     # loop over enabled feature
     @@features.flatten.each do |feature_name|
       next unless send(:"#{feature_name}?")
-      puts "== Enabling: #{feature_name.capitalize}" if logging?
-      require "middleman/features/#{feature_name}"
+      
+      feature_path = "features/#{feature_name}"
+      if File.exists? File.join(File.dirname(__FILE__), "#{feature_path}.rb")
+        puts "== Enabling: #{feature_name.to_s.capitalize}" if logging?
+        require "middleman/#{feature_path}"
+      end
     end
     
     @@afters.each { |block| class_eval(&block) }

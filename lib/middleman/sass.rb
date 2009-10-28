@@ -68,34 +68,41 @@ end
 class Middleman::Base
   include Middleman::Sass
   
-  configure do
+  after do 
     ::Compass.configuration do |config|
-      config.project_path     = Dir.pwd
+      config.project_path     = self.root
       config.sass_dir         = File.join(File.basename(self.views), self.css_dir)
       config.output_style     = :nested
       config.css_dir          = File.join(File.basename(self.public), self.css_dir)
       config.images_dir       = File.join(File.basename(self.public), self.images_dir)
-      config.add_import_path(config.sass_dir)
-    end
-  end
 
-  configure :build do
-    ::Compass.configuration do |config|
-      config.css_dir          = File.join(File.basename(self.build_dir), self.css_dir)
-      config.images_dir       = File.join(File.basename(self.build_dir), self.images_dir)
-    end
-  end
-  
-  after do 
-    ::Compass.configuration do |config|
+      config.add_import_path(config.sass_dir)
+      
       config.http_images_path      = self.http_images_path rescue File.join(self.http_prefix, self.images_dir)
       config.http_stylesheets_path = self.http_css_path rescue File.join(self.http_prefix, self.css_dir)
     
-      config.asset_cache_buster do
-        false
-      end if !self.cache_buster?
+      if self.cache_buster?
+        config.asset_cache_buster do |path, real_path|
+          if File.readable?(real_path)
+            File.mtime(real_path).strftime("%s") 
+          else
+            $stderr.puts "WARNING: '#{File.basename(path)}' was not found (or cannot be read) in #{File.dirname(real_path)}"
+          end
+        end
+      else
+        config.asset_cache_buster do
+          false
+        end
+      end
     end
 
+    configure :build do
+      ::Compass.configuration do |config|
+        config.css_dir          = File.join(File.basename(self.build_dir), self.css_dir)
+        config.images_dir       = File.join(File.basename(self.build_dir), self.images_dir)
+      end
+    end
+    
     ::Compass.configure_sass_plugin!
   end
 end
