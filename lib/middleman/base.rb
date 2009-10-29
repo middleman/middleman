@@ -34,7 +34,7 @@ module Middleman
     end
     
     @@afters = []
-    def self.after(&block)
+    def self.after_feature_init(&block)
       @@afters << block
     end
     

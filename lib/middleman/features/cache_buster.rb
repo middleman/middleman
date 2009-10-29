@@ -1,3 +1,22 @@
+class Middleman::Base
+  include Middleman::Sass
+  
+  after_feature_init do 
+    ::Compass.configuration do |config|
+      config.asset_cache_buster do |path, real_path|
+        # real_path = real_path.gsub(self.build_dir, self.public)
+        if File.readable?(real_path)
+          File.mtime(real_path).strftime("%s") 
+        else
+          $stderr.puts "WARNING: '#{File.basename(path)}' was not found (or cannot be read) in #{File.dirname(real_path)}"
+        end
+      end
+    end
+    
+    ::Compass.configure_sass_plugin!
+  end
+end
+    
 class << Middleman::Base    
   alias_method :pre_cache_buster_asset_url, :asset_url
   def asset_url(path, prefix="", request=nil)
