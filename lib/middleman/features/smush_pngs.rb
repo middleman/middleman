@@ -1,58 +1,35 @@
-require 'json'
-require 'open-uri'
-
-begin
-  require 'httpclient'
-rescue LoadError
-  puts "httpclient not available. Install it with: gem install httpclient"
-end
+require "smusher"
+require "middleman/builder"
 
 module Middleman
-  module SmushPngs
-    def self.included(base)
-      base.supported_formats << "png"
-    end
-    
-    def render_path(file)
-      if File.extname(file) == ".png"
-        file = File.join(options.public, file)
-        optimized = optimized_image_data_for(file)
-
-        begin
-          raise "Error: got larger" if size(file) < optimized.size
-          raise "Error: empty file downloaded" if optimized.size < 20
-
-          optimized
-        rescue
-          File.read(file)
-        end
+  class Builder
+    alias_method :pre_smush_after_run, :after_run
+    def after_run
+      pre_smush_after_run
+      smush_dir = File.join(Middleman::Base.build_dir, Middleman::Base.images_dir)
+      
+      # Read cache
+      cache_file = File.join(Middleman::Base.root, ".smush-cache")
+      cache_data = if File.exists?(cache_file)
+        Marshal.restore(File.read(cache_file))
       else
-        super
+        {}
+      end
+      
+      ::Smusher.class_eval do
+        images_in_folder(smush_dir).each do |file|
+          original_file_size = size(file)
+          return if original_file_size.zero?
+          return if cache_data[file] && cache_data[file] == original_file_size
+
+          with_logging(file, true) do
+            write_optimized_data(file)
+            cache_data[file] = size(file) # Add or update cache
+            File.open(cache_file, "w") { |f| f.write Marshal.dump(cache_data) } # Write cache
+            say "<%= color('#{"[SMUSHED]".rjust(12)}', :yellow) %>  " + file.gsub(Middleman::Base.build_dir+"/", '')
+          end
+        end
       end
     end
-
-  protected
-    def size(file)
-      File.exist?(file) ? File.size(file) : 0
-    end
-    
-    def optimized_image_data_for(file)
-      # I leave these urls here, just in case it stops working again...
-      # url = "http://smush.it/ws.php" # original, redirects to somewhere else..
-      url = 'http://ws1.adq.ac4.yahoo.com/ysmush.it/ws.php'
-      # url = "http://developer.yahoo.com/yslow/smushit/ws.php" # official but does not work
-      # url = "http://smushit.com/ysmush.it/ws.php" # used at the new page but does not hande uploads
-      # url = "http://smushit.eperf.vip.ac4.yahoo.com/ysmush.it/ws.php" # used at the new page but does not hande uploads
-      response = HTTPClient.post url, { 'files[]' => File.new(file) }
-      response = JSON.parse(response.body.content)
-      raise "smush.it: #{response['error']}" if response['error']
-      image_url = response['dest']
-      raise "no dest path found" unless image_url
-      open(image_url) { |source| source.read() }
-    end
-  end
-  
-  class Base
-    include Middleman::SmushPngs
   end
 end
