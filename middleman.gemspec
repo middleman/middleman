@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{middleman}
-  s.version = "0.10.1"
+  s.version = "0.10.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Thomas Reynolds"]
-  s.date = %q{2009-10-29}
+  s.date = %q{2009-11-02}
   s.email = %q{tdreyno@gmail.com}
   s.executables = ["mm-init", "mm-build", "mm-server"]
   s.extra_rdoc_files = [
@@ -50,7 +50,7 @@ Gem::Specification.new do |s|
      "lib/middleman/sass.rb",
      "lib/middleman/template/init.rbt",
      "lib/middleman/template/views/index.html.haml",
-     "lib/middleman/template/views/layout.html.haml",
+     "lib/middleman/template/views/layout.haml",
      "lib/middleman/template/views/stylesheets/site.css.sass",
      "lib/middleman/templater+dynamic_renderer.rb",
      "middleman.gemspec",
