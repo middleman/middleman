@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{middleman}
-  s.version = "0.10.5"
+  s.version = "0.10.6"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Thomas Reynolds"]
-  s.date = %q{2009-11-02}
+  s.date = %q{2009-11-03}
   s.email = %q{tdreyno@gmail.com}
   s.executables = ["mm-init", "mm-build", "mm-server"]
   s.extra_rdoc_files = [
@@ -73,6 +73,7 @@ Gem::Specification.new do |s|
      "spec/fixtures/sample/views/stylesheets/relative_assets.css.sass",
      "spec/fixtures/sample/views/stylesheets/site.css.sass",
      "spec/generator_spec.rb",
+     "spec/minify_javascript_spec.rb",
      "spec/relative_assets_spec.rb",
      "spec/spec_helper.rb"
   ]
@@ -88,6 +89,7 @@ Gem::Specification.new do |s|
      "spec/cache_buster_spec.rb",
      "spec/fixtures/sample/init.rb",
      "spec/generator_spec.rb",
+     "spec/minify_javascript_spec.rb",
      "spec/relative_assets_spec.rb",
      "spec/spec_helper.rb"
   ]
