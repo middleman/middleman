@@ -70,6 +70,8 @@ module Middleman
       path << options.index_file if path.match(%r{/$})
       path.gsub!(%r{^/}, '')
 
+      # layout(:"layout.html") # Insert the .html into the layout name like the rest of the templates
+
       # If the enabled renderers succeed, return the content, mime-type and an HTTP 200
       if content = render_path(path)
         content_type media_type(File.extname(path)), :charset => 'utf-8'

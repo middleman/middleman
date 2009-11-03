@@ -18,6 +18,13 @@ describe "Generator" do
     FileUtils.rm_rf(@root_dir)
   end
   
+  it "should use layout file" do
+    build_cmd = project_file("bin", "mm-build")
+    `cd #{@root_dir} && #{build_cmd}`
+    File.exists?("#{@root_dir}/build/index.html").should be_true
+    File.read("#{@root_dir}/build/index.html").should include("Comment in layout")
+  end
+  
   it "should copy template files" do
     template_dir = project_file("lib", "template", "**/*")
     Dir[template_dir].each do |f|

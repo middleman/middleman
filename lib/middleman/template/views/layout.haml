@@ -1,7 +1,9 @@
 %html
   %head
-    %title The Middleman!
+    // Comment in layout
+    = stylesheet_link_tag "site.css"
     = yield_content :head
     
   %body
-    = yield
+    #frame
+      = yield
