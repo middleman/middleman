@@ -11,9 +11,7 @@ describe "Relative Assets Feature" do
     browser.get("/stylesheets/relative_assets.css")
     browser.last_response.body.should_not include("../")
   end
-end
-
-describe "Relative Assets Feature" do
+  
   it "should contain ../ if on" do
     base.enable :relative_assets
     browser = Rack::Test::Session.new(Rack::MockSession.new(base.new))

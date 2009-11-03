@@ -7,17 +7,33 @@ module Middleman
   end
   
   module Helpers
-    def page_classes(*additional)
-      path = request.path_info
+    def haml_partial(name, options = {})
+      haml name.to_sym, options.merge(:layout => false)
+    end
+    
+    def auto_stylesheet_link_tag
+      path = request.path_info.dup
+      path << self.class.index_file if path.match(%r{/$})
+      path = path.gsub(%r{^/}, '')
+      path = path.gsub(File.extname(path), '')
+      path = path.gsub('/', '-')
+
+      css_file = File.join(File.basename(self.class.public), self.class.css_dir, "#{path}.css")
+      sass_file = File.join(File.basename(self.class.views), self.class.css_dir, "#{path}.css.sass")
+      if File.exists?(css_file) || File.exists?(sass_file)
+        stylesheet_link_tag "#{path}.css"
+      end
+    end
+    
+    def page_classes
+      path = request.path_info.dup
       path << options.index_file if path.match(%r{/$})
-      path.gsub!(%r{^/}, '')
+      path = path.gsub(%r{^/}, '')
   
       classes = []
       parts = path.split('.')[0].split('/')
       parts.each_with_index { |path, i| classes << parts.first(i+1).join('_') }
-
-      classes << "index" if classes.empty?
-      classes += additional unless additional.empty?
+      
       classes.join(' ')
     end
     
