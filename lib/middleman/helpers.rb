@@ -16,10 +16,10 @@ module Middleman
       path << self.class.index_file if path.match(%r{/$})
       path = path.gsub(%r{^/}, '')
       path = path.gsub(File.extname(path), '')
-      path = path.gsub('/', '-')
 
-      css_file = File.join(File.basename(self.class.public), self.class.css_dir, "#{path}.css")
-      sass_file = File.join(File.basename(self.class.views), self.class.css_dir, "#{path}.css.sass")
+      css_file = File.join(self.class.public, self.class.css_dir, "#{path}.css")
+      sass_file = File.join(self.class.views, self.class.css_dir, "#{path}.css.sass")
+    
       if File.exists?(css_file) || File.exists?(sass_file)
         stylesheet_link_tag "#{path}.css"
       end
