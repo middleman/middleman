@@ -111,8 +111,7 @@ class Middleman::Base
   
   # Default build features
   configure :build do
-    enable :minify_css
-    enable :minify_javascript
+    enable :relative_assets
     enable :cache_buster
   end
   
