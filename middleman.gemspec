@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{middleman}
-  s.version = "0.10.7"
+  s.version = "0.10.8"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Thomas Reynolds"]
-  s.date = %q{2009-11-03}
+  s.date = %q{2009-11-06}
   s.email = %q{tdreyno@gmail.com}
   s.executables = ["mm-init", "mm-build", "mm-server"]
   s.extra_rdoc_files = [
@@ -61,18 +61,24 @@ Gem::Specification.new do |s|
      "spec/fixtures/sample/public/images/blank.gif",
      "spec/fixtures/sample/public/javascripts/to-be-included.js",
      "spec/fixtures/sample/public/static.html",
+     "spec/fixtures/sample/public/stylesheets/auto-css.css",
      "spec/fixtures/sample/public/stylesheets/static.css",
+     "spec/fixtures/sample/public/stylesheets/sub1/auto-css.css",
+     "spec/fixtures/sample/public/stylesheets/sub1/sub2/auto-css.css",
      "spec/fixtures/sample/views/_partial.haml",
+     "spec/fixtures/sample/views/auto-css.html.haml",
      "spec/fixtures/sample/views/auto-image-sizes.html.haml",
      "spec/fixtures/sample/views/index.html.haml",
      "spec/fixtures/sample/views/inline-js.html.haml",
      "spec/fixtures/sample/views/javascripts/empty-with-include.js",
      "spec/fixtures/sample/views/layout.haml",
      "spec/fixtures/sample/views/maruku.html.maruku",
+     "spec/fixtures/sample/views/page-classes.html.haml",
      "spec/fixtures/sample/views/services/index.html.haml",
      "spec/fixtures/sample/views/stylesheets/relative_assets.css.sass",
      "spec/fixtures/sample/views/stylesheets/site.css.sass",
      "spec/generator_spec.rb",
+     "spec/helpers_spec.rb",
      "spec/minify_javascript_spec.rb",
      "spec/relative_assets_spec.rb",
      "spec/spec_helper.rb"
