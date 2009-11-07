@@ -1,8 +1,7 @@
 module Middleman
   class Base
     def self.asset_url(path, prefix="", request=nil)
-      base_url = File.join(self.http_prefix, prefix)
-      path.include?("://") ? path : File.join(base_url, path)
+      path.include?("://") ? path : File.join(self.http_prefix || "/", prefix, path)
     end
   end
   

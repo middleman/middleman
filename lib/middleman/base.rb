@@ -17,7 +17,7 @@ module Middleman
     set :css_dir, "stylesheets"
     set :images_dir, "images"
     set :build_dir, "build"
-    set :http_prefix, "/"
+    set :http_prefix, nil
     
     use Rack::ConditionalGet if environment == :development
     

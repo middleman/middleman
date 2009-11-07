@@ -10,18 +10,23 @@ class << Middleman::Base
     rescue
     end
     
-    path = pre_relative_asset_url(path, prefix, request)
     if path.include?("://")
+      pre_relative_asset_url(path, prefix, request)
+    elsif path[0,1] == "/"
       path
     else
-      path = path[1,path.length-1] if path[0,1] == '/'
+      path = File.join(prefix, path) if prefix.length > 0
       request_path = request.path_info.dup
-      request_path << self.class.index_file if path.match(%r{/$})
+      request_path << self.index_file if path.match(%r{/$})
       request_path.gsub!(%r{^/}, '')
       parts = request_path.split('/')
-    
+
       if parts.length > 1
-        "../" * (parts.length - 1) + path
+        arry = []
+        (parts.length - 1).times { arry << ".." }
+        arry << path
+        File.join(*arry)
+        #"../" * (parts.length - 1) + path
       else
         path
       end
