@@ -1,5 +1,22 @@
 #!/usr/bin/env ruby
 
+# Non-blocking site rebuilding
+trap("TSTP") do 
+  fork do
+    require "open3"
+    first_run = true
+    Open3.popen3(%Q{cd "#{Dir.pwd}" && mm-build | grep FORCED}) do |stdin, stdout, stderr|
+      puts "\n== Building the site..."
+      stdout.readlines.each do |l|
+        puts "== Updated:" if first_run
+        puts " " + l.split("[FORCED]").last.chomp
+        first_run = false
+      end
+      puts "== Build complete"
+    end
+  end
+end
+
 require 'optparse'
 
 # Require Middleman
