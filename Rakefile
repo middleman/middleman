@@ -1,5 +1,6 @@
 require 'rubygems'
 require 'rake'
+require 'cucumber/rake/task'
 
 begin
   require 'jeweler'
@@ -23,6 +24,7 @@ begin
     gem.add_dependency("compass")
     gem.add_development_dependency("rspec")
     gem.add_development_dependency("sdoc")
+    gem.add_development_dependency("cucumber")
   end
   
   Jeweler::GemcutterTasks.new
