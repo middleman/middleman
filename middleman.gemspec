@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{middleman}
-  s.version = "0.10.8"
+  s.version = "0.10.9"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Thomas Reynolds"]
-  s.date = %q{2009-11-06}
+  s.date = %q{2009-11-10}
   s.email = %q{tdreyno@gmail.com}
   s.executables = ["mm-init", "mm-build", "mm-server"]
   s.extra_rdoc_files = [
@@ -118,6 +118,7 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<compass>, [">= 0"])
       s.add_development_dependency(%q<rspec>, [">= 0"])
       s.add_development_dependency(%q<sdoc>, [">= 0"])
+      s.add_development_dependency(%q<cucumber>, [">= 0"])
     else
       s.add_dependency(%q<thin>, [">= 0"])
       s.add_dependency(%q<shotgun>, [">= 0"])
@@ -131,6 +132,7 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<compass>, [">= 0"])
       s.add_dependency(%q<rspec>, [">= 0"])
       s.add_dependency(%q<sdoc>, [">= 0"])
+      s.add_dependency(%q<cucumber>, [">= 0"])
     end
   else
     s.add_dependency(%q<thin>, [">= 0"])
@@ -145,6 +147,7 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<compass>, [">= 0"])
     s.add_dependency(%q<rspec>, [">= 0"])
     s.add_dependency(%q<sdoc>, [">= 0"])
+    s.add_dependency(%q<cucumber>, [">= 0"])
   end
 end
 
