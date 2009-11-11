@@ -29,8 +29,7 @@ module Middleman
 
     def self.file(name, *args, &block)
       if (args[0] === args[1])
-        args[1] = args[0].gsub("#{File.basename(Middleman::Base.views)}/", "")
-                         .gsub("#{File.basename(Middleman::Base.public)}/", "")
+        args[1] = args[0].gsub("#{File.basename(Middleman::Base.views)}/", "").gsub("#{File.basename(Middleman::Base.public)}/", "")
       end
       super(name, *args, &block)
     end

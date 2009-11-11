@@ -5,7 +5,7 @@ trap("TSTP") do
   fork do
     require "open3"
     first_run = true
-    Open3.popen3(%Q{cd "#{Dir.pwd}" && mm-build | grep FORCED}) do |stdin, stdout, stderr|
+    Open3.popen3(%Q{cd "#{Dir.pwd}" && #{File.join(File.dirname(__FILE__), "mm-build")} | grep FORCED}) do |stdin, stdout, stderr|
       puts "\n== Building the site..."
       stdout.readlines.each do |l|
         puts "== Updated:" if first_run
