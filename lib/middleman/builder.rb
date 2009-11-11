@@ -17,8 +17,7 @@ module Middleman
       end
 
       if (args[0] === args[1])
-        args[1] = args[0].gsub("#{File.basename(Middleman::Base.views)}/", "")
-                         .gsub("#{File.basename(Middleman::Base.public)}/", "")
+        args[1] = args[0].gsub("#{File.basename(Middleman::Base.views)}/", "").gsub("#{File.basename(Middleman::Base.public)}/", "")
         if File.extname(args[1]) != ".js"
           args[1] = args[1].gsub!(File.extname(args[1]), "") if File.basename(args[1]).split('.').length > 2
         end
