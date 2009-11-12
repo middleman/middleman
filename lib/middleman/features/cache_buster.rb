@@ -4,7 +4,8 @@ class Middleman::Base
   after_feature_init do 
     ::Compass.configuration do |config|
       config.asset_cache_buster do |path, real_path|
-        # real_path = real_path.gsub(self.build_dir, self.public)
+        real_path = real_path.path if real_path.is_a? File
+        real_path = real_path.gsub(File.join(self.root, self.build_dir), self.public)
         if File.readable?(real_path)
           File.mtime(real_path).strftime("%s") 
         else
