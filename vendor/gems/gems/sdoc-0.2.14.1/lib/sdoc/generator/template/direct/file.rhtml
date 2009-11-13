@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title><%= h file.name %></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=<%= @options.charset %>" />
+    <link rel="stylesheet" href="<%= "#{rel_prefix}/css/reset.css" %>" type="text/css" media="screen" />
+    <link rel="stylesheet" href="<%= "#{rel_prefix}/css/main.css" %>" type="text/css" media="screen" />
+    <script src="<%= "#{rel_prefix}/js/jquery-1.3.2.min.js" %>" type="text/javascript" charset="utf-8"></script>
+    <script src="<%= "#{rel_prefix}/js/jquery-effect.js" %>" type="text/javascript" charset="utf-8"></script>
+    <script src="<%= "#{rel_prefix}/js/main.js" %>" type="text/javascript" charset="utf-8"></script>
+</head>
+
+<body>     
+    <div class="banner">
+        <h1>
+            <%= h file.name %>
+        </h1>
+        <ul class="files">
+            <li><%= h file.relative_name %></li>
+            <li>Last modified: <%= file.file_stat.mtime %></li>
+        </ul>
+    </div>
+
+    <div id="bodyContent">
+        <%= include_template '_context.rhtml', {:context => file, :rel_prefix => rel_prefix} %>
+    </div>
+  </body>
+</html>

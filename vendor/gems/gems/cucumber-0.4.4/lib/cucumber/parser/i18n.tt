@@ -1,0 +1,44 @@
+module Cucumber
+  module Parser
+    module I18n
+      grammar <%= keywords('grammar_name', true) %>
+        include Common
+        include Feature
+        include Table
+        include PyString
+
+        rule feature
+          feature_sub
+        end
+
+        rule background_keyword
+          (<%= keywords('background') %>) ':'
+        end
+
+        rule scenario_keyword
+          (<%= keywords('scenario') %>) ':'
+        end
+
+        rule scenario_outline_keyword
+          (<%= keywords('scenario_outline') %>) ':'
+        end
+
+        rule step_keyword
+          (<%= keywords('given') %>) /
+          (<%= keywords('when') %>) /
+          (<%= keywords('then') %>) /
+          (<%= keywords('and') %>) /
+          (<%= keywords('but') %>)
+        end
+
+        rule keyword_space
+          <%= keywords('space_after_keyword', true) ? 'space+' : 'space*' %>
+        end
+
+        rule examples_keyword
+          (<%= keywords('examples') %>) ':'?
+        end
+      end
+    end
+  end
+end

@@ -1,0 +1,44 @@
+=no-link-icon
+  :background transparent none !important
+  :padding 0 !important
+  :margin 0 !important
+
+=link-icon-base
+  :padding 2px 22px 2px 0
+  :margin -2px 0
+  :background-repeat no-repeat
+  :background-position right center
+
+=link-icon(!name, !include_base = true)
+  @if !include_base
+    +link-icon-base
+  :background-image= image_url("link_icons/#{!name}")
+
+=link-icons
+  a[href^="http:"],
+  a[href^="mailto:"],
+  a[href^="http:"]:visited,
+  a[href$=".pdf"],
+  a[href$=".doc"],
+  a[href$=".xls"],
+  a[href$=".rss"], 
+  a[href$=".rdf"],
+  a[href^="aim:"]
+    +link-icon-base
+  a[href^="http:"]
+    +link-icon("external.png", false)
+  a[href^="mailto:"]
+    +link-icon("email.png", false)
+  a[href^="http:"]:visited
+    +link-icon("visited.png", false)
+  a[href$=".pdf"]
+    +link-icon("pdf.png", false)
+  a[href$=".doc"]
+    +link-icon("doc.png", false)
+  a[href$=".xls"]
+    +link-icon("xls.png", false)
+  a[href$=".rss"],
+  a[href$=".rdf"]
+    +link-icon("feed.png", false)
+  a[href^="aim:"]
+    +link-icon("im.png", false)

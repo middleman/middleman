@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title><%= h file.name %></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=<%= @options.charset %>" />
+    <link rel="stylesheet" href="<%= "#{rel_prefix}/css/main.css" %>" type="text/css" media="screen" />
+    <script src="<%= "#{rel_prefix}/js/main.js" %>" type="text/javascript" charset="utf-8"></script>
+</head>
+
+<body>     
+    <table border='0' cellpadding='0' cellspacing='0' width="100%" class='banner'>
+      <tr><td>
+        <table width="100%" border='0' cellpadding='0' cellspacing='0'><tr>
+          <td class="file-title" colspan="2"><span class="file-title-prefix">File</span><br /><%= h file.name %></td>
+          <td align="right">
+            <table border='0' cellspacing="0" cellpadding="2">
+              <tr>
+                <td>Path:</td>
+                <td><%= h file.relative_name %></td>
+              </tr>
+              <tr>
+                <td>Modified:</td>
+                <td><%= file.file_stat.mtime %></td>
+              </tr>
+            </table>
+          </td></tr>
+        </table>
+      </td></tr>
+    </table><br />
+
+    <div id="bodyContent">
+        <%= include_template '_context.rhtml', {:context => file, :rel_prefix => rel_prefix} %>
+    </div>
+  </body>
+</html>

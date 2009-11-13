@@ -1,0 +1,134 @@
+// Based on Eric Meyer's reset http://meyerweb.com/eric/thoughts/2007/05/01/reset-reloaded/
+
+// Global reset rules.
+// For more specific resets, use the reset mixins provided below
+=global-reset
+  html, body, div, span, applet, object, iframe,
+  h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+  a, abbr, acronym, address, big, cite, code,
+  del, dfn, em, font, img, ins, kbd, q, s, samp,
+  small, strike, strong, sub, sup, tt, var,
+  dl, dt, dd, ol, ul, li,
+  fieldset, form, label, legend,
+  table, caption, tbody, tfoot, thead, tr, th, td
+    +reset-box-model
+    +reset-font
+  
+  *:focus
+    +reset-focus
+  
+  body
+    +reset-body
+    
+  ol, ul
+    +reset-list-style
+
+  /* tables still need 'cellspacing="0"' in the markup 
+  table
+    +reset-table
+  
+  caption, th, td
+    +reset-table-cell
+  
+  q, blockquote
+    +reset-quotation
+    
+  img a
+    +reset-image-anchor-border
+ 
+ 
+// Reset all elements within some selector scope.To reset the selector itself,
+// mixin the appropriate reset mixin for that element type as well. This could be
+// useful if you want to style a part of your page in a dramatically different way.
+=nested-reset
+  div, span, object, iframe, h1, h2, h3, h4, h5, h6, p,
+  pre, a, abbr, acronym, address, code, del, dfn, em, img,
+  dl, dt, dd, ol, ul, li, fieldset, form, label, legend, caption, tbody, tfoot, thead, tr
+    +reset-box-model
+    +reset-font
+
+  /* tables still need 'cellspacing="0"' in the markup 
+  table
+    +reset-table
+  
+  caption, th, td
+    +reset-table-cell
+  
+  q, blockquote
+    +reset-quotation
+  
+  img a
+    +reset-image-anchor-border
+ 
+//Mixins partials
+=reset-box-model
+  :margin 0
+  :padding 0
+  :border 0
+  :outline 0
+ 
+=reset-font
+  :font
+    :weight inherit
+    :style inherit
+    :size 100%
+    :family inherit
+  :vertical-align baseline
+ 
+=reset-focus
+  :outline 0
+ 
+=reset-body
+  :line-height 1em
+  :color = #000
+  :background #fff
+ 
+=reset-list-style
+  :list-style none
+ 
+=reset-table
+  :border-collapse separate
+  :border-spacing 0
+  :vertical-align middle
+ 
+=reset-table-cell
+  :text-align left
+  :font-weight normal
+  :vertical-align middle
+ 
+=reset-quotation
+  :quotes "" ""
+  &:before, &:after
+    :content ""
+ 
+=reset-image-anchor-border
+  :border none
+
+=reset-html5
+  section, article, aside, header, footer, nav, dialog, figure
+    display: block
+
+//**
+  Resets the display of inline and block elements to their default display
+  according to their tag type. Elements that have a default display that varies across
+  versions of html or browser are not handled here, but this covers the 90% use case.
+  Usage Example:
+    // Turn off the display for both of these classes
+    .unregistered-only, .registered-only
+      :display none
+    // Now turn only one of them back on depending on some other context.
+    body.registered
+      +reset-display(".registered-only")
+    body.unregistered
+      +reset-display(".unregistered-only")
+=reset-display(!selector = "", !important = false)
+  #{append_selector(elements_of_type("inline"), !selector)}
+    @if !important
+      display: inline !important
+    @else
+      display: inline
+  #{append_selector(elements_of_type("block"), !selector)}
+    @if !important
+      display: block !important
+    @else
+      display: block

@@ -1,0 +1,12 @@
+#!/usr/bin/env ruby -KU
+
+require File.dirname(__FILE__) + '/../lib/sdoc' # add extensions
+require 'sdoc/merge'
+
+begin
+  m = SDoc::Merge.new
+  m.merge(ARGV)
+rescue RDoc::RDocError => e
+  $stderr.puts e.message
+  exit(1)
+end

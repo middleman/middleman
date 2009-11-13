@@ -1,4 +1,5 @@
 require 'rubygems'
+#require 'lib/middleman'
 require 'rake'
 require 'cucumber/rake/task'
 
@@ -25,6 +26,9 @@ begin
     gem.add_development_dependency("rspec")
     gem.add_development_dependency("sdoc")
     gem.add_development_dependency("cucumber")
+    
+    # Ignore vendored files
+    #gem.files = gem.files.exclude("vendor/*")
   end
   
   Jeweler::GemcutterTasks.new

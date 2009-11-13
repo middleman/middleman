@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <title><%= h klass.full_name %></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=<%= @options.charset %>" />
+    <link rel="stylesheet" href="<%= "#{rel_prefix}/css/main.css" %>" type="text/css" media="screen" />
+    <script src="<%= "#{rel_prefix}/js/main.js" %>" type="text/javascript" charset="utf-8"></script>
+</head>
+
+<body>     
+    <table width="100%" border='0' cellpadding='0' cellspacing='0' class='banner'>
+        <tr>
+            <td class="file-title"><span class="file-title-prefix"><%= klass.module? ? 'Module' : 'Class' %></span><br /><%= h klass.full_name %></td>
+            <td align="right">
+                <table cellspacing="0" cellpadding="2">
+                    <tr valign="top">
+                        <td>In:</td>
+                        <td>
+                            <% klass.in_files.each do |file| %>
+                            <a href="<%= "#{rel_prefix}/#{h file.path}" %>"><%= h file.absolute_name %></a>
+                            <% end  %>
+                        </td>
+                    </tr>
+                    <% if klass.type == 'class' %>
+                    <tr>
+                        <td>Parent:</td>
+                        <td>
+                            <% if String === klass.superclass %>
+                            <%= klass.superclass %>
+                            <% elsif !klass.superclass.nil? %>
+                            <a href="<%= klass.aref_to klass.superclass.path %>"><%= h klass.superclass.full_name %></a>
+                            <% end %>
+                        </td>
+                    </tr>
+                    <% end %>
+                </table>
+            </td>
+        </tr>
+    </table>
+    <div id="bodyContent">
+        <%= include_template '_context.rhtml', {:context => klass, :rel_prefix => rel_prefix} %>
+    </div>
+  </body>
+</html>    

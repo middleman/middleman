@@ -1,0 +1,260 @@
+=== 2.4.3 / 2009-04-01
+
+* 2 Bug Fixes
+  * Corrected patch for file links
+  * Corrected display of file popup
+
+=== 2.4.2 / 2009-03-25
+
+* 2 Minor Enhancements
+  * Added --pipe for turning RDoc on stdin into HTML
+  * Added rdoc/task.rb containing a replacement for rake/rdoctask.rb.  Use
+    RDoc::Task now instead of Rake::RDocTask.
+
+* 10 Bug Fixes
+  * Writing the ri cache file to the proper directory.  Bug #24459 by Lars
+    Christensen.
+  * Possible fix for Dir::[] and Pathname interaction on 1.9.  Bug #24650 by
+    tiburon.
+  * Fixed scanning constants for if/end, etc. pairs.  Bug #24609 by Ryan
+    Davis.
+  * Fixed private methods in the C parser.  Bug #24599 by Aaron Patterson.
+  * Fixed display of markup on RDoc main page.  Bug #24168 by rhubarb.
+  * Fixed display of \\ character in documentation proceeding words.
+    Bug #22112 by James Gray.  See RDoc for details.
+  * Fixed parsing and display of arg params for some corner cases.  Bug #21113
+    by Csiszár Attila.
+  * Fixed links in Files box.  Patch #24403 by Eric Wong.
+  * Toplevel methods now appear in Object.  Bug #22677 by Ryan Davis.
+  * Added back --promiscuous which didn't do anything you cared about.  Why
+    did you enable it?  Nobody looked at that page!  Oh, it warns, too.
+
+=== 2.4.1 / 2009-02-26
+
+* 1 Minor Enhancements
+  * Added :attr:, :attr_reader:, :attr_writer:, :attr_accessor: directives.
+    Replaces --accessor.  See RDoc::Parser::Ruby for details.
+
+* 3 Bug Fixes
+  * Don't complain when exiting normally.  Bug by Matt Neuburg.
+  * Restore --inline-source that warns
+  * Fixed links to files in Darkfish output
+
+=== 2.4.0 / 2009-02-24
+
+* 9 Minor Enhancements
+  * `ri -f html` is now XHTML-happy
+  * Clarified RDoc::Markup link syntax.  Bug #23517 by Eric Armstrong.
+  * Number of threads to parse with is now configurable
+  * Darkfish can now use alternate templates from $LOAD_PATH via -T
+  * Removed F95 parser in favor of the rdoc-f95 gem
+  * Moved HTML and XML generators to unmaintained
+    * No gem will be provided as it's too difficult to make them work
+    * Removed options --one-file, --style=, --inline-source, --promiscuous,
+      --op-name
+  * Removed support for --accessor, use regular documentation or
+    the method directive instead.  See RDoc::Parser::Ruby
+  * Removed --ri-system as it is unused by Ruby's makefiles
+  * Added method list to index.html
+
+* 6 Bug Fixes
+  * nodoc'd classes no longer appear in the index.  Bug #23751 by Clifford
+    Heath.
+  * Fix 1.9 compatibility issues.  Bug #23815 by paddor.
+  * Darkfish now respects --charset
+  * RDoc no longer attempts to be lazy when building HTML.  This is a
+    workaround.  Bug #23893 by Stefano Crocco.
+  * RDoc doesn't crash with def (blah).foo() end
+  * RDoc doesn't crash with #define functions
+
+=== 2.3.0 / 2009-01-28
+
+* 3 Major Enhancements
+  * Michael Granger's Darkfish generator is now the default for HTML output
+  * Various rdoc generation speedups by Hongli Lai.  Patches #22555, #22556,
+    #22557, #22562, #22565.
+  * rdoc/discover.rb files are loaded automatically from installed gems
+
+* 8 Minor Enhancements
+  * Added a space after the commas in ri class method lists.  RubyForge
+    enhancement #22182.
+  * Improved ri --interactive
+  * Generators can now override generated file locations
+  * Moved unmaintained CHM generator to it's own package
+  * Moved unmaintained extra HTML templates to their own package
+  * Removed experimental texinfo generator
+  * Converted to minitest
+  * Known classes and modules list outputs once per line now for grep
+
+* 11 Bug Fixes
+  * Fix missing superclass in ri output
+  * Fix an RDoc crash when told to parse an empty file
+  * Ignore nonexistent files instead of crashing
+  * .txt and .rdoc files are always considered text.  Patch #22897 by Aaron
+    Patterson.
+  * When merging ri data with a nonexistant directory, RDoc no longer crashes
+  * Fix visibility of methods in XML output.  Issue by Yehuda Katz.
+  * Fixed relative link generation
+  * Fix crash, RDoc now ignores comments above local variable assignments in
+    modules
+  * RDoc now only accepts adjacent comments for rb_define_module and
+    rb_define_class
+  * C file RDoc is no longer included in token stream
+  * Scan all gem paths to match gem name for ri output
+
+=== 2.2.1 / 2008-09-24
+This version provides some minor fixes and enhancements to 2.2.0 intended
+to polish RDoc for Ruby 1.9.1.
+
+* 3 Minor Enhancements
+  * Support for parsing RDoc from SWIG.  Ruby patch #10742 by Gonzalo
+    Garramuno, #13993 by Steven Jenkins.
+  * Simple support for Perl POD documentation.  Patch by Hugh Sasse.
+  * Changed the default character set of RDoc's output from iso-8859-1 to
+    utf-8.
+
+* 9 Bug Fixes
+  * Explicitly set the html template's text color, so that the generated
+    documentation will display correctly on browsers with custom text and
+    background color settings (patch by Luther Thompson).
+  * Ensure that RDoc correctly will associate an alias and a method, even
+    if it encounters the alias first because the alias lives in a different
+    file.
+  * Fix the parsing of multiline constants (patch by Chris Alfeld and
+    Joel VanderWerf)
+  * Make --exclude usuable.  Ruby patch #11671 by Trans.
+  * Detect inline C functions.  Ruby Bug #11993 by Florian Frank.
+  * Fix an issue in which RDoc might not document a class'
+    superclass correctly if the class was defined in multiple files and
+    depending on the order in which RDoc processed the files.  This should
+    ensure that the child class -> parent class relationship is correct in
+    ri documentation, allowing ri to lookup inherited methods (i.e., File.read).
+  * Stop ri from crashing when it looks for a completely bogus method (i.e.,
+    File#reada).  Now, ri exits with a helpful error message.
+  * Fixed missing display of constant values in ri.
+  * Fixed display of constants in ri's html output.
+
+=== 2.2.0 / 2008-09-19
+This version includes some significant enhancements to ri.  See RI.txt for
+documentation about ri.
+
+* 5 Major Enhancements
+  * More extensive unit tests (special thanks to Chris Lowis for contributing
+    a test).
+  * Made ri twice as fast for the most common use case of displaying
+    information for a class or a fully-qualified method
+    (i.e., ri Array#flatten, after ri has created a cache the first time that
+    it runs).
+  * Made ri many times faster when searching for an unqualified method (i.e.,
+    ri read, again after the first such search has populated ri's cache)
+  * Changed ri to do regular expression searches for unqualified methods;
+    now, a regular expression for a method can be passed to ri on the
+    command-line.
+  * Added an interactive mode to ri (patch by Daniel Choi).  Now, when ri
+    is given a -i argument, it will allow the user to disambiguate
+    unqualified methods if more than one is present and also will allow a
+    user to get information for a class' method.
+
+* 8 Minor Enhancements
+  * RDoc now adds the package title to the web pages that it generates
+    for files and classes/modules, which helps them appear better in
+    search engine results.
+  * RDoc now automatically generates cross-reference links for classes and
+    methods specified relative to the global namespace (i.e., ::A::B::C#method).
+  * All built-in templates now output valid, strict XHTML.
+  * The documentation is slightly better organized (the markup details were
+    merged into the RDoc module's documentation).
+  * Improved rdoc's HTML generation speed by about 20% (on Windows, the
+    boost seems larger).
+  * Provided an ri command-line option to control its caching behavior.
+  * Improved RDoc's documentation.  Added RI.txt to document ri.
+  * Allow HTML templates distributed as gems to be loaded with the -T option,
+    just like the standard templates in rdoc/generator/html (so an HTML
+    template lib/new_template.rb in a gem can be used with rdoc -T new_template)
+
+* 25 Bug fixes:
+  * Fixed prototype detection in C parser.  Can process ruby 1.8 C files
+    again.
+  * Fixed the main page for frameless template.  Patch by Marcin Raczkowski.
+  * Fixed the main page for frame templates.  Now, if no main page is
+    specified, RDoc will default to the README.
+  * Fixed missing stylesheet in generated chm.  Patch by Gordon Thiesfeld.
+  * Fixed the parsing of module names starting with '::'.  Patch by
+    Giuseppe Bilotta.
+  * Fixed a case where RDoc first would encounter Foo::Bar and then would
+    encounter class Foo.  Previously, RDoc erroneously would have considered
+    that both a Foo class and a Foo module existed.
+  * Fix a clase where RDoc would not generate correct cross-reference links
+    to a class contained within a module of the same name (i.e. RDoc::RDoc)
+  * Prevented RDoc from trying to parse binary files, which would produce
+    garbage output.
+  * RDoc now correctly converts ' characters to apostrophes, opening single
+    quotes, and closing single quotes in most cases (smart single quotes).
+  * RDoc now correctly converts " characters to opening double quotes and
+    and closing double quotes in most cases (smart double quotes).
+  * (c) correctly is converted into the copyright symbol.
+  * '&' characters in text now correctly are translated to HTML character codes.
+  * Fixed missing stylesheet in generated chm.  Patch by Gordon Thiesfeld.
+  * Fixed broken method links in the built-in templates.
+  * RDoc properly links to files and classes in the one page HTML template.
+  * The kilmer and hefss templates properly syntax highlight when inlining
+    source code.
+  * The kilmer and hefss template class pages properly display methods again.
+  * Fixed broken class, file, and method links in the frameless template.
+  * Fixed the clipping of source code in the html and frameless templates when
+    the source code cannot fit into the window; a scrollbar now will allow
+    all of the source code to be viewed.
+  * Fixed the missing constant descriptions in the html and frameless
+    templates.
+  * Fixed the ri command-line options that customize the directories to be
+    searched for documentation.
+  * Fixed the XML generator.  Patch by Anthony Durity.
+  * Stopped the XML template from generating invalid XML due to malformed
+    embedded ruby.
+  * Adding missing information about a class' constants to the XML template.
+  * Fixed the horizontal rule markup (---) so that it correctly adds a
+    horizontal rule rather than suppressing all text that follows.
+
+=== 2.1.0 / 2008-07-20
+
+* 3 Major Enhancements:
+  * RDoc now knows about meta-programmed methods, see RDoc::Parser::Ruby
+  * Reorganized parsers under RDoc::Parser base class
+  * ri now walks the ancestors of a class looking for a method e.g. ri
+    File#read displays documentation for IO#read (may require regeneration of
+    ri data)
+* 5 Minor Enhancements:
+  * Allow links to files
+  * Default options now taken from RDOCOPT environment variable
+  * Class method documentation can be found at toplevel now (def X.foo)
+  * Allow HTML templates distributed as gems to be loaded with the -T option,
+    just like the standard templates in rdoc/generator/html (so an HTML
+    template lib/new_template.rb in a gem can be used with rdoc -T new_template)
+  * `rdoc -v` prints out files, classes, modules and methods as it goes
+* 11 Bug Fixes:
+  * `ri Foo.bar` now looks for class methods also
+  * Sections work in the default template again
+  * Doesn't warn about :foo:: list item being an unrecognized directive
+  * RDoc no longer converts characters inside tt tags
+  * Fixed "unitialized constant RDoc::Markup::ToHtml::HTML"
+  * Fixed generation of relative links
+  * Fixed various diagram generation issues
+  * Fixed templates broken by switch to erb
+  * Fixed issue with <!-- --> style comments
+  * Lowercase words are no longer rdoc'd as methods without leading #, as
+    described in the documentation
+  * RDoc now correctly sets superclasses if they were originally unknown
+
+=== 2.0.0 / 2008-04-10
+
+* 3 Major Enhancements:
+  * Renamespaced everything RDoc under the RDoc module.
+  * New `ri` implementation.
+    * Reads from a cache in ~/.ri/ for enhanced speed.
+    * RubyGems aware, only searches latest gem versions.
+  * Now up to over 100 tests and 200 assertions.
+* 4 Minor Enhancements:
+  * Switched to an ERb-based TemplatePage, see RDoc::TemplatePage.
+  * Class/module ri now displays attribute and constant comments.
+  * Cross-references can be disabled with a leading \.
+  * Relaxed parsing for some RDoc inline markup.

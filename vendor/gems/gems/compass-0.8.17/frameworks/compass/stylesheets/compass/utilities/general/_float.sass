@@ -1,0 +1,17 @@
+//**\\
+  Float
+
+@import clearfix.sass
+
+// Implementation of float:left with fix for double-margin bug
+=float-left
+  +float("left")
+
+// Implementation of float:right with fix for double-margin bug
+=float-right
+  +float("right")
+
+// Available as alternate syntax with just +float
+=float(!side = "left")
+  :display inline
+  :float= !side

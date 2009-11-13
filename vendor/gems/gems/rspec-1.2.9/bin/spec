@@ -1,0 +1,5 @@
+#!/usr/bin/env ruby
+rspec_dir = File.expand_path(File.join(File.dirname(__FILE__), '..', 'lib'))
+$LOAD_PATH.unshift(rspec_dir) unless $LOAD_PATH.include?(rspec_dir)
+require 'spec/autorun'
+exit ::Spec::Runner::CommandLine.run

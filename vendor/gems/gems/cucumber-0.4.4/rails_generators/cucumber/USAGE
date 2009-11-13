@@ -1,0 +1,11 @@
+Description:
+    Sets up Cucumber in your Rails project. After running this generator you will
+    get a new rake task called features.
+    
+    This also generates the necessary files in the features directory.
+    
+    Also see the feature generator, which you can use to generate skeletons
+    for new features.
+    
+Examples:
+    `./script/generate cucumber`

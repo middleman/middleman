@@ -1,0 +1,1 @@
+require 'cucumber/webrat/element_locator'

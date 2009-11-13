@@ -1,0 +1,56 @@
+// Global reset rules.
+// For more specific resets, use the reset mixins provided below
+=blueprint-global-reset
+  html, body
+    +blueprint-reset
+  +blueprint-nested-reset
+
+// Reset all elements within some selector scope.To reset the selector itself,
+// mixin the appropriate reset mixin for that element type as well. This could be
+// useful if you want to style a part of your page in a dramatically different way.
+=blueprint-nested-reset
+  div, span, object, iframe, h1, h2, h3, h4, h5, h6, p,
+  pre, a, abbr, acronym, address, code, del, dfn, em, img,
+  dl, dt, dd, ol, ul, li, fieldset, form, label, legend, caption, tbody, tfoot, thead, tr
+    +blueprint-reset
+  blockquote, q
+    +blueprint-reset-quotation
+  th, td, caption
+    +blueprint-reset-table-cell
+  table
+    +blueprint-reset-table
+  a img
+    :border none
+
+=blueprint-reset-box-model
+  :margin 0
+  :padding 0
+  :border 0
+
+=blueprint-reset
+  +blueprint-reset-box-model
+  :font
+    :weight inherit
+    :style inherit
+    :size 100%
+    :family inherit
+  :vertical-align baseline
+
+=blueprint-reset-quotation
+  +blueprint-reset
+  :quotes "" ""
+  &:before,
+  &:after
+    :content ""
+
+=blueprint-reset-table-cell
+  +blueprint-reset
+  :text-align left
+  :font-weight normal
+  :vertical-align middle
+
+=blueprint-reset-table
+  +blueprint-reset
+  :border-collapse separate
+  :border-spacing 0
+  :vertical-align middle

@@ -1,0 +1,3 @@
+//= provide "../assets"
+
+var ScriptWithAssets = { };

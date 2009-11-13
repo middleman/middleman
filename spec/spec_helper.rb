@@ -1,9 +1,8 @@
 require 'rubygems'
 require 'spec'
+require 'rack/test'
 
-$LOAD_PATH.unshift(File.dirname(__FILE__))
-$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
-require 'middleman'
+require File.join(File.dirname(File.dirname(__FILE__)), 'lib', 'middleman')
 
 Spec::Runner.configure do |config|
   

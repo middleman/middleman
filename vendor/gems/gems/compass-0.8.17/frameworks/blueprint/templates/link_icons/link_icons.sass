@@ -1,0 +1,13 @@
+@import blueprint/modules/link_icons.sass
+
+// This turns link icons on for all links. You can change the scoping selector from
+// body to something more specific if you prefer.
+body
+  +link-icons
+  // Use this class if a link gets an icon when it shouldn't.
+  a.noicon
+    +no-link-icon
+  // Not all links have a url structure that can be detected,
+  // So you can set them explicitly yourself like so:
+  a#this-is-a-pdf-link
+    +link-icon("pdf.png")

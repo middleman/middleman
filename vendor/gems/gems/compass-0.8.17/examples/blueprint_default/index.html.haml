@@ -1,0 +1,85 @@
+!!!
+%html{ :lang => "en" }
+  %head
+    %meta{ :content => "text/html; charset=utf-8", "http-equiv" => "Content-Type" }
+    %title
+      Blueprint test pages
+    /
+      Framework CSS
+    %link{ :href => "stylesheets/screen.css", :rel => "stylesheet", :media => "screen, projection", :type => "text/css" }
+    %link{ :href => "stylesheets/index.css", :rel => "stylesheet", :media => "screen, projection", :type => "text/css" }
+    %link{ :href => "stylesheets/print.css", :rel => "stylesheet", :media => "print", :type => "text/css" }
+    /
+      [if IE]><link rel="stylesheet" href="stylesheets/ie.css" type="text/css" media="screen, projection"><![endif]
+  %body
+    .container
+      %h1
+        Blueprint test pages
+      %hr
+      %p
+        Welcome to the Blueprint test pages. The HTML files below tests most HTML elements, and especially classes provided
+        by&nbsp;Blueprint.
+      %table{ :cellspacing => "0", :border => "0", :cellpadding => "0" }
+        %tr
+          %th.span-6
+            Test page
+          %th.span-8
+            Main files tested
+          %th.span-10
+            Description
+        %tr
+          %td
+            %a{ :href => "parts/grid.html" }
+              Grid
+          %td
+            %a{ :href => "../../frameworks/blueprint/stylesheets/blueprint/modules/_grid.sass" }
+              grid.sass
+          %td
+            Tests classes provided by the grid module.
+        %tr.even
+          %td
+            %a{ :href => "parts/elements.html" }
+              Typography
+          %td
+            %a{ :href => "../../frameworks/blueprint/stylesheets/blueprint/modules/_typography.sass" }
+              typography.sass
+          %td
+            Tests HTML elements which gets set in the typography module.
+        %tr
+          %td
+            %a{ :href => "parts/forms.html" }
+              Forms
+          %td
+            %a{ :href => "../../frameworks/blueprint/stylesheets/blueprint/modules/_form.sass" }
+              form.sass
+          %td
+            Tests classes and default look provided by the form module.
+      %p
+        %em
+          %strong
+            Note about the css files:
+        These test files utilize the css files that are generated from
+        %a{ :href => "http://haml.hamptoncatlin.com/docs/rdoc/classes/Sass.html" }
+          Sass templates
+        \.
+        In other words, if you change any of the source files,
+        you'll have to re-build them with
+        %code
+          rake examples
+        to see any&nbsp;changes.
+      .box
+        %p
+          For more information and help, try these resources:
+        %ul.bottom
+          %li
+            %a{ :href => "http://code.google.com/p/blueprintcss" }
+              The Blueprint home page.
+          %li
+            %a{ :href => "http://groups.google.com/group/blueprintcss" }
+              Our anything-goes mailing list.
+          %li
+            %a{ :href => "http://bjorkoy.com" }
+              The blog where news about Blueprint gets posted.
+      %p
+        %a{ :href => "http://validator.w3.org/check?uri=referer" }
+          %img.top{ :src => "parts/valid.png", :height => "31", :alt => "Valid HTML 4.01 Strict", :width => "88" }

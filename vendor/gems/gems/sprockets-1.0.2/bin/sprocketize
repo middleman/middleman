@@ -1,0 +1,54 @@
+#!/usr/bin/env ruby
+
+require File.join(File.dirname(__FILE__), *%w".. lib sprockets")
+require "optparse"
+
+load_path = (ENV["SPROCKETS_PATH"] || "").split(":")
+filenames = []
+options = { :load_path => load_path, :source_files => filenames, :expand_paths => false }
+
+OptionParser.new do |opts|
+  opts.summary_width = 28
+  opts.banner = "Usage: sprocketize [options] filename [filename ...]"
+  
+  def opts.show_usage
+    puts self
+    exit
+  end
+  
+  opts.on("-C DIRECTORY", "--directory=DIRECTORY", "Change to DIRECTORY before doing anything") do |directory|
+    Dir.chdir(directory)
+  end
+  
+  opts.on("-I DIRECTORY", "--include-dir=DIRECTORY", "Adds the directory to the Sprockets load path") do |directory|
+    load_path << directory
+  end
+  
+  opts.on("-a DIRECTORY", "--asset-root=DIRECTORY", "Copy provided assets into DIRECTORY") do |directory|
+    options[:asset_root] = directory
+  end
+  
+  opts.on_tail("-h", "--help", "Shows this help message") do
+    opts.show_usage
+  end
+  
+  opts.on_tail("-v", "--version", "Shows version") do
+    puts Sprockets::Version::STRING
+    exit
+  end
+  
+  opts.show_usage if ARGV.empty?
+  
+  begin
+    opts.order(ARGV) do |filename|
+      filenames << filename
+    end
+  rescue OptionParser::ParseError => e
+    opts.warn e.message
+    opts.show_usage
+  end
+end
+
+secretary = Sprockets::Secretary.new(options)
+secretary.install_assets if options[:asset_root]
+print secretary.concatenation

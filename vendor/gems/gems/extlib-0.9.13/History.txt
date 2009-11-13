@@ -1,0 +1,77 @@
+=== 0.9.13 / 2009-10-15
+
+* 3 minor enhancements:
+  * Updated LazyArray#head, #tail and #lazy_possible? to be public
+  * Refactored Time#to_datetime to not use DateTime.parse
+  * Updated Logger to use Array#join instead of Array#to_s to make
+    it compatible with Ruby 1.9
+
+=== 0.9.12 / 2009-05-05
+
+* 4 bug fixes
+
+  * Fixed constant lookup for nested constructs
+  * Moved ByteArray to the Extlib module
+  * Fix specs for recent RSpec versions
+  * Fix compatibility with ActiveSupport
+
+=== 0.9.11 / 2009-03-29
+
+* 1 major enhancement:
+
+  * Added LazyModule, providing similar capabilities to traits in
+    Smalltalk
+
+* 5 minor enhancements:
+
+  * Added Array#to_hash and Array#to_mash
+  * Silenced warnings when running in verbose mode
+  * Add ByteArray for representing binary data explicitly
+  * Alias Pathname#to_s to Pathname#to_str when not defined
+  * Added Object#try_call
+
+* 2 bug fixes:
+
+  * Updated Module.find_const to use const_missing if constant not found
+  * Fixed LazyArray#equal? to compare object_ids
+
+=== 0.9.10 / 2009-01-19
+
+* 1 major enhancement:
+
+  * Ruby 1.9.1 compatibility
+
+* 1 minor enhancement:
+
+  * Updated LazyArray#eql? and LazyArray#== to compare without lazy
+    loading if possible.
+
+* 3 bug fixes:
+
+  * Fix for inheritance and hooks
+  * Fix for Class inheritable accessor to use #try_dup
+  * Fix for LazyArray to be more explicit in delegating to Array,
+    to lessen conflicts in subclasses
+
+=== 0.9.9 / 2008-12-07
+
+* 1 major enhancement:
+
+  * Updated LazyArray to have a tail/head so that it can append/prepend
+    without lazy-loading.  This will eliminate some too-eager loading
+    from DataMapper::Collection, and (in certain cases) will boost
+    performance significantly.
+
+* 3 minor enhancements:
+
+  * Minor Ruby 1.9.1 fixes.  RSpec still needs to be updated to support
+    1.9.1 before everything can be verified completely.
+  * Updated Extlib::Inflection so that the plural of "cow" is now
+    "cows" instead of "kine".
+  * Misc documentation updates.
+
+* 2 bug fixes:
+
+  * Fixed Extlib::Pooling Threading issue on JRuby and Windows.
+  * Removed Object#encoded_hash.  It was not used by DataMapper or Merb,
+    and the specs were failing for JRuby.

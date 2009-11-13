@@ -1,0 +1,31 @@
+Feature: Manage <%= plural_name %>
+  In order to [goal]
+  [stakeholder]
+  wants [behaviour]
+  
+  Scenario: Register new <%= singular_name %>
+    Given I am on the new <%= singular_name %> page
+<% keyword = 'When' -%>
+<% named_args.each do |arg| -%>
+    <%= keyword %> I fill in "<%= arg.name.humanize %>" with "<%= arg.value(1) %>"
+<% keyword = 'And' -%>
+<% end -%>
+    And I press "Create"
+<% keyword = 'Then' -%>
+<% named_args.each do |arg| -%>
+    <%= keyword %> I should see "<%= arg.value(1) %>"
+<% keyword = 'And' -%>
+<% end -%>
+
+  Scenario: Delete <%= singular_name %>
+    Given the following <%= plural_name %>:
+      |<%= named_args.map(&:name).join('|') %>|
+<% (1..4).each do |n| -%>
+      |<%= named_args.map{|arg| arg.value(n)}.join('|') %>|
+<% end -%>
+    When I delete the 3rd <%= singular_name %>
+    Then I should see the following <%= plural_name %>:
+      |<%= named_args.map{|arg| arg.name.humanize}.join('|') %>|
+<% [1,2,4].each do |n| -%>
+      |<%= named_args.map{|arg| arg.value(n)}.join('|') %>|
+<% end -%>

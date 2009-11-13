@@ -1,0 +1,84 @@
+@import compass/utilities/general/inline_block.sass
+@import compass/utilities/general/float.sass
+
+// Button Font
+!blueprint_button_font_family ||= "\"Lucida Grande\", Tahoma, Arial, Verdana, sans-serif"
+
+// Default Button Colors
+!blueprint_button_border_color ||= #DEDEDE
+!blueprint_button_background_color ||= #F5F5F5
+!blueprint_button_font_color ||= #565656
+
+// Default Button Hover Colors
+!blueprint_button_hover_border_color ||= #C2E1EF
+!blueprint_button_hover_background_color ||= #DFF4FF
+!blueprint_button_hover_font_color ||= #336699
+
+// Default Button Active Colors
+!blueprint_button_active_border_color ||= #6299C5
+!blueprint_button_active_background_color ||= #6299C5
+!blueprint_button_active_font_color ||= #FFF
+
+//**
+  Sets the colors for a button
+  @param border_highlight_color
+    The highlight color defaults to whatever is the value of the border_color but it's one shade lighter.
+=button-colors(!font_color = !blueprint_button_font_color, !bg_color = !blueprint_button_background_color, !border_color = !blueprint_button_border_color, !border_highlight_color = !border_color + #101010)
+  :background-color= !bg_color
+  :border-color= !border_highlight_color !border_color !border_color !border_highlight_color
+  :color= !font_color
+
+//**
+  Sets the colors for a button in the active state
+  @param border_highlight_color
+    The highlight color defaults to whatever is the value of the border_color but it's one shade lighter.
+=button-active-colors(!font_color = !blueprint_button_active_font_color, !bg_color = !blueprint_button_active_background_color, !border_color = !blueprint_button_active_border_color, !border_highlight_color = !border_color + #101010)
+  &:active
+    +button-colors(!font_color, !bg_color, !border_color, !border_highlight_color)
+
+//**
+  Sets the colors for a button in the hover state.
+  @param border_highlight_color
+    The highlight color defaults to whatever is the value of the border_color but it's one shade lighter.
+=button-hover-colors(!font_color = !blueprint_button_hover_font_color, !bg_color = !blueprint_button_hover_background_color, !border_color = !blueprint_button_hover_border_color, !border_highlight_color = !border_color + #101010)
+  &:hover
+    +button-colors(!font_color, !bg_color, !border_color, !border_highlight_color)
+
+=button-base(!float = false)
+  @if !float
+    :display block
+    +float(!float)
+  @else
+    +inline-block
+  :margin 0.7em 0.5em 0.7em 0
+  :border-width 1px
+  :border-style solid
+  :font-family= !blueprint_button_font_family
+  :font-size 100%
+  :line-height 130%
+  :text-decoration none
+  :font-weight bold
+  :cursor pointer
+  img
+    :margin 0 3px -3px 0 !important
+    :padding 0
+    :border none
+    :width 16px
+    :height 16px
+    :float none
+    
+
+=anchor-button(!float = false)
+  +button-base(!float)
+  :padding 5px 10px 5px 7px
+
+=button-button(!float = false)
+  +button-base(!float)
+  :width auto
+  :overflow visible
+  :padding 4px 10px 3px 7px
+  &[type]
+    :padding 4px 10px 4px 7px
+    :line-height 17px
+  *:first-child+html &[type]
+    :padding 4px 10px 3px 7px
