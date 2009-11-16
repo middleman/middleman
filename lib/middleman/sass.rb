@@ -8,7 +8,7 @@ module Middleman
       base.supported_formats << "sass"
     end
 
-    def render_path(path)
+    def render_path(path, layout)
       if template_exists?(path, :sass)
         begin
           static_version = options.public + request.path_info

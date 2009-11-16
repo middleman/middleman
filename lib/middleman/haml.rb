@@ -8,11 +8,12 @@ module Middleman
         base.helpers Middleman::Haml::Helpers
       end
     
-      def render_path(path)
+      def render_path(path, layout)
         if template_exists?(path, :haml)
           result = nil
           begin
-            result = haml(path.to_sym, :layout => File.extname(path) != ".xml")
+            layout = false if File.extname(path) == ".xml"
+            result = haml(path.to_sym, :layout => layout)
           rescue ::Haml::Error => e
             result = "Haml Error: #{e}"
             result << "<pre>Backtrace: #{e.backtrace.join("\n")}</pre>"

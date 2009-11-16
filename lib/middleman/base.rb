@@ -4,6 +4,10 @@ require 'rubygems' unless ENV['NO_RUBYGEMS']
 # We're riding on Sinatra, so let's include it
 require 'sinatra/base'
 
+class Sinatra::Request
+  attr_accessor :layout
+end
+
 module Middleman
   class Base < Sinatra::Base
     set :app_file, __FILE__
@@ -53,9 +57,9 @@ module Middleman
 
     # Base case renderer (do nothing), Should be over-ridden
     module StaticRender
-      def render_path(path)
+      def render_path(path, layout)
         if template_exists?(path, :erb)
-          erb(path.to_sym)
+          erb(path.to_sym, :layout => layout)
         else
           false
         end
@@ -63,8 +67,7 @@ module Middleman
     end
     include StaticRender
 
-    # This will match all requests not overridden in the project's init.rb
-    not_found do
+    def process_request
       # Normalize the path and add index if we're looking at a directory
       path = request.path
       path << options.index_file if path.match(%r{/$})
@@ -73,13 +76,38 @@ module Middleman
       # layout(:"layout.html") # Insert the .html into the layout name like the rest of the templates
 
       # If the enabled renderers succeed, return the content, mime-type and an HTTP 200
-      if content = render_path(path)
+      if content = render_path(path, (request.layout || :layout))
         content_type media_type(File.extname(path)), :charset => 'utf-8'
         status 200
         content
       else
         status 404
       end
+    end
+    
+    def self.page(url, options={}, &block)
+      get(url) do
+        request.layout = @@layout if (@@layout ||= nil)
+        request.layout = options[:layout] if options[:layout]
+        
+        if block_given?
+          yield
+        else
+          process_request
+        end
+      end
+    end
+    
+    def self.with_layout(layout, &block)
+      @@layout = layout
+      class_eval(&block)
+    ensure
+      @@layout = nil
+    end
+    
+    # This will match all requests not overridden in the project's init.rb
+    not_found do
+      process_request
     end
   end
 end
@@ -108,11 +136,11 @@ class Middleman::Base
   disable :maruku
   disable :smush_pngs
   disable :automatic_image_sizes
+  disable :relative_assets
+  disable :cache_buster
   
   # Default build features
   configure :build do
-    enable :relative_assets
-    enable :cache_buster
   end
   
   def self.new(*args, &bk)

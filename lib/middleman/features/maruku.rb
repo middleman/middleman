@@ -11,7 +11,7 @@ module Middleman
       base.set :maruku, {}
     end
     
-    def render_path(path)
+    def render_path(path, layout)
       if template_exists?(path, :maruku)
         render :maruku, path.to_sym
       else
