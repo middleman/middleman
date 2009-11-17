@@ -52,35 +52,37 @@ task :spec => :check_dependencies
 
 task :default => :spec
 
-require 'rake/rdoctask'
-require 'sdoc'
+unless ENV["RUN_CODE_RUN"]
+  require 'rake/rdoctask'
+  require 'sdoc'
 
-Rake::RDocTask.new do |rdoc|
-  if File.exist?('VERSION')
-    version = File.read('VERSION')
-  else
-    version = ""
-  end
+  Rake::RDocTask.new do |rdoc|
+    if File.exist?('VERSION')
+      version = File.read('VERSION')
+    else
+      version = ""
+    end
   
-  # rdoc.template = 'direct'
+    # rdoc.template = 'direct'
 
-  rdoc.rdoc_dir = 'rdoc'
-  rdoc.title = "middleman #{version}"
-  rdoc.rdoc_files.include('README*')
-  rdoc.rdoc_files.include('lib/**/*.rb')
-  rdoc.rdoc_files.exclude('lib/middleman/features/sprockets+ruby19.rb')
-  rdoc.rdoc_files.exclude('lib/middleman/templater+dynamic_renderer.rb')
-end
-
-desc "Build and publish documentation using GitHub Pages."
-task :pages do
-  if !`git status`.include?('nothing to commit')
-    abort "dirty index - not publishing!"
+    rdoc.rdoc_dir = 'rdoc'
+    rdoc.title = "middleman #{version}"
+    rdoc.rdoc_files.include('README*')
+    rdoc.rdoc_files.include('lib/**/*.rb')
+    rdoc.rdoc_files.exclude('lib/middleman/features/sprockets+ruby19.rb')
+    rdoc.rdoc_files.exclude('lib/middleman/templater+dynamic_renderer.rb')
   end
+
+  desc "Build and publish documentation using GitHub Pages."
+  task :pages do
+    if !`git status`.include?('nothing to commit')
+      abort "dirty index - not publishing!"
+    end
  
-  Rake::Task[:rerdoc].invoke
-  `git checkout gh-pages`
-  `ls -1 | grep -v rdoc | xargs rm -rf; mv rdoc/* .; rm -rf rdoc`
-  `git commit -a -m "update docs"; git push origin gh-pages`
-  `git checkout master`
+    Rake::Task[:rerdoc].invoke
+    `git checkout gh-pages`
+    `ls -1 | grep -v rdoc | xargs rm -rf; mv rdoc/* .; rm -rf rdoc`
+    `git commit -a -m "update docs"; git push origin gh-pages`
+    `git checkout master`
+  end
 end
