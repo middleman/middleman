@@ -1,215 +1,163 @@
-have_var: checking for rb_trap_immediate in ruby.h,rubysig.h... -------------------- yes
+have_var: checking for rb_trap_immediate in ruby.h,rubysig.h... -------------------- no
 
-"gcc -I. -I/System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/universal-darwin10.0 -I.  -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -arch i386 -arch x86_64 -g -Os -pipe -fno-common -DENABLE_DTRACE  -fno-common  -pipe -fno-common     -c conftest.c"
+"gcc -o conftest -I/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/include/ruby-1.9.1/i386-darwin10.0.0 -I/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/include/ruby-1.9.1/ruby/backward -I/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/include/ruby-1.9.1 -I. -I/Users/tdreyno/homebrew/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE  -I/Users/tdreyno/homebrew/include -O3 -march=core2 -m64 -mmmx -msse4.1 -w -pipe -fomit-frame-pointer -mmacosx-version-min=10.6 -O2 -g -Wall -Wno-parentheses  -fno-common -pipe -fno-common conftest.c  -L. -L/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/lib -L. -L/Users/tdreyno/homebrew/lib -L/usr/local/lib     -lruby-static  -lpthread -ldl -lobjc  "
 checked program was:
 /* begin */
-1: #include <ruby.h>
-2: #include <rubysig.h>
-3: 
-4: /*top*/
-5: int main() { return 0; }
-6: int t() { const volatile void *volatile p; p = &(&rb_trap_immediate)[0]; return 0; }
+1: #include "ruby.h"
+2: 
+3: int main() {return 0;}
+/* end */
+
+"gcc -I/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/include/ruby-1.9.1/i386-darwin10.0.0 -I/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/include/ruby-1.9.1/ruby/backward -I/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/include/ruby-1.9.1 -I. -I/Users/tdreyno/homebrew/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE  -I/Users/tdreyno/homebrew/include -O3 -march=core2 -m64 -mmmx -msse4.1 -w -pipe -fomit-frame-pointer -mmacosx-version-min=10.6 -O2 -g -Wall -Wno-parentheses  -fno-common -pipe -fno-common   -c conftest.c"
+conftest.c: In function ‘t’:
+conftest.c:8: error: ‘rb_trap_immediate’ undeclared (first use in this function)
+conftest.c:8: error: (Each undeclared identifier is reported only once
+conftest.c:8: error: for each function it appears in.)
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: #include <ruby.h>
+4: #include <rubysig.h>
+5: 
+6: /*top*/
+7: int main() {return 0;}
+8: int t() { const volatile void *volatile p; p = &(&rb_trap_immediate)[0]; return 0; }
 /* end */
 
 --------------------
 
-have_func: checking for rb_thread_blocking_region()... -------------------- no
+have_func: checking for rb_thread_blocking_region()... -------------------- yes
 
-"gcc -o conftest -I. -I/System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/universal-darwin10.0 -I.  -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -arch i386 -arch x86_64 -g -Os -pipe -fno-common -DENABLE_DTRACE  -fno-common  -pipe -fno-common   conftest.c  -L. -L/System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib -L. -arch i386 -arch x86_64      -lruby  -lpthread -ldl  "
-conftest.c: In function ‘t’:
-conftest.c:3: error: ‘rb_thread_blocking_region’ undeclared (first use in this function)
-conftest.c:3: error: (Each undeclared identifier is reported only once
-conftest.c:3: error: for each function it appears in.)
-conftest.c: In function ‘t’:
-conftest.c:3: error: ‘rb_thread_blocking_region’ undeclared (first use in this function)
-conftest.c:3: error: (Each undeclared identifier is reported only once
-conftest.c:3: error: for each function it appears in.)
-lipo: can't figure out the architecture type of: /var/folders/f-/f-fz+8IRHg8gx0qhO9ZpxU+++TI/-Tmp-//cccEYdM5.out
+"gcc -o conftest -I/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/include/ruby-1.9.1/i386-darwin10.0.0 -I/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/include/ruby-1.9.1/ruby/backward -I/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/include/ruby-1.9.1 -I. -I/Users/tdreyno/homebrew/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE  -I/Users/tdreyno/homebrew/include -O3 -march=core2 -m64 -mmmx -msse4.1 -w -pipe -fomit-frame-pointer -mmacosx-version-min=10.6 -O2 -g -Wall -Wno-parentheses  -fno-common -pipe -fno-common conftest.c  -L. -L/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/lib -L. -L/Users/tdreyno/homebrew/lib -L/usr/local/lib     -lruby-static  -lpthread -ldl -lobjc  "
 checked program was:
 /* begin */
-1: /*top*/
-2: int main() { return 0; }
-3: int t() { void ((*volatile p)()); p = (void ((*)()))rb_thread_blocking_region; return 0; }
-/* end */
-
-"gcc -o conftest -I. -I/System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/universal-darwin10.0 -I.  -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -arch i386 -arch x86_64 -g -Os -pipe -fno-common -DENABLE_DTRACE  -fno-common  -pipe -fno-common   conftest.c  -L. -L/System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib -L. -arch i386 -arch x86_64      -lruby  -lpthread -ldl  "
-Undefined symbols for architecture i386:
-  "_rb_thread_blocking_region", referenced from:
-      _t in ccz9fwnI.o
-ld: symbol(s) not found for architecture i386
-collect2: ld returned 1 exit status
-Undefined symbols for architecture x86_64:
-  "_rb_thread_blocking_region", referenced from:
-      _t in ccDQtliL.o
-ld: symbol(s) not found for architecture x86_64
-collect2: ld returned 1 exit status
-lipo: can't open input file: /var/folders/f-/f-fz+8IRHg8gx0qhO9ZpxU+++TI/-Tmp-//ccNtcUAe.out (No such file or directory)
-checked program was:
-/* begin */
-1: /*top*/
-2: int main() { return 0; }
-3: int t() { rb_thread_blocking_region(); return 0; }
+1: #include "ruby.h"
+2: 
+3: /*top*/
+4: int main() {return 0;}
+5: int t() { void ((*volatile p)()); p = (void ((*)()))rb_thread_blocking_region; return 0; }
 /* end */
 
 --------------------
 
 have_func: checking for inotify_init() in sys/inotify.h... -------------------- no
 
-"gcc -o conftest -I. -I/System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/universal-darwin10.0 -I.  -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -arch i386 -arch x86_64 -g -Os -pipe -fno-common -DENABLE_DTRACE  -fno-common  -pipe -fno-common   conftest.c  -L. -L/System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib -L. -arch i386 -arch x86_64      -lruby  -lpthread -ldl  "
-conftest.c:1:25: error: sys/inotify.h: No such file or directory
+"gcc -o conftest -I/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/include/ruby-1.9.1/i386-darwin10.0.0 -I/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/include/ruby-1.9.1/ruby/backward -I/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/include/ruby-1.9.1 -I. -I/Users/tdreyno/homebrew/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE  -I/Users/tdreyno/homebrew/include -O3 -march=core2 -m64 -mmmx -msse4.1 -w -pipe -fomit-frame-pointer -mmacosx-version-min=10.6 -O2 -g -Wall -Wno-parentheses  -fno-common -pipe -fno-common conftest.c  -L. -L/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/lib -L. -L/Users/tdreyno/homebrew/lib -L/usr/local/lib     -lruby-static  -lpthread -ldl -lobjc  "
+conftest.c:3:25: error: sys/inotify.h: No such file or directory
 conftest.c: In function ‘t’:
-conftest.c:5: error: ‘inotify_init’ undeclared (first use in this function)
-conftest.c:5: error: (Each undeclared identifier is reported only once
-conftest.c:5: error: for each function it appears in.)
-conftest.c:1:25: error: sys/inotify.h: No such file or directory
-conftest.c: In function ‘t’:
-conftest.c:5: error: ‘inotify_init’ undeclared (first use in this function)
-conftest.c:5: error: (Each undeclared identifier is reported only once
-conftest.c:5: error: for each function it appears in.)
-lipo: can't figure out the architecture type of: /var/folders/f-/f-fz+8IRHg8gx0qhO9ZpxU+++TI/-Tmp-//ccUG0Q0r.out
+conftest.c:7: error: ‘inotify_init’ undeclared (first use in this function)
+conftest.c:7: error: (Each undeclared identifier is reported only once
+conftest.c:7: error: for each function it appears in.)
 checked program was:
 /* begin */
-1: #include <sys/inotify.h>
+1: #include "ruby.h"
 2: 
-3: /*top*/
-4: int main() { return 0; }
-5: int t() { void ((*volatile p)()); p = (void ((*)()))inotify_init; return 0; }
+3: #include <sys/inotify.h>
+4: 
+5: /*top*/
+6: int main() {return 0;}
+7: int t() { void ((*volatile p)()); p = (void ((*)()))inotify_init; return 0; }
 /* end */
 
-"gcc -o conftest -I. -I/System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/universal-darwin10.0 -I.  -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -arch i386 -arch x86_64 -g -Os -pipe -fno-common -DENABLE_DTRACE  -fno-common  -pipe -fno-common   conftest.c  -L. -L/System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib -L. -arch i386 -arch x86_64      -lruby  -lpthread -ldl  "
-conftest.c:1:25: error: sys/inotify.h: No such file or directory
-conftest.c:1:25: error: sys/inotify.h: No such file or directory
-lipo: can't figure out the architecture type of: /var/folders/f-/f-fz+8IRHg8gx0qhO9ZpxU+++TI/-Tmp-//cc5C3qNQ.out
+"gcc -o conftest -I/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/include/ruby-1.9.1/i386-darwin10.0.0 -I/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/include/ruby-1.9.1/ruby/backward -I/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/include/ruby-1.9.1 -I. -I/Users/tdreyno/homebrew/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE  -I/Users/tdreyno/homebrew/include -O3 -march=core2 -m64 -mmmx -msse4.1 -w -pipe -fomit-frame-pointer -mmacosx-version-min=10.6 -O2 -g -Wall -Wno-parentheses  -fno-common -pipe -fno-common conftest.c  -L. -L/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/lib -L. -L/Users/tdreyno/homebrew/lib -L/usr/local/lib     -lruby-static  -lpthread -ldl -lobjc  "
+conftest.c:3:25: error: sys/inotify.h: No such file or directory
 checked program was:
 /* begin */
-1: #include <sys/inotify.h>
+1: #include "ruby.h"
 2: 
-3: /*top*/
-4: int main() { return 0; }
-5: int t() { inotify_init(); return 0; }
+3: #include <sys/inotify.h>
+4: 
+5: /*top*/
+6: int main() {return 0;}
+7: int t() { inotify_init(); return 0; }
 /* end */
 
 --------------------
 
 have_macro: checking for __NR_inotify_init in sys/syscall.h... -------------------- no
 
-"gcc -I. -I/System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/universal-darwin10.0 -I.  -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -arch i386 -arch x86_64 -g -Os -pipe -fno-common -DENABLE_DTRACE  -fno-common  -pipe -fno-common     -c conftest.c"
-conftest.c:4:3: error: #error 
-conftest.c:5: error: expected identifier or ‘(’ before ‘>>’ token
-conftest.c:4:3: error: #error 
-conftest.c:5: error: expected identifier or ‘(’ before ‘>>’ token
-lipo: can't open input file: /var/folders/f-/f-fz+8IRHg8gx0qhO9ZpxU+++TI/-Tmp-//ccbXD11s.out (No such file or directory)
+"gcc -I/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/include/ruby-1.9.1/i386-darwin10.0.0 -I/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/include/ruby-1.9.1/ruby/backward -I/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/include/ruby-1.9.1 -I. -I/Users/tdreyno/homebrew/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE  -I/Users/tdreyno/homebrew/include -O3 -march=core2 -m64 -mmmx -msse4.1 -w -pipe -fomit-frame-pointer -mmacosx-version-min=10.6 -O2 -g -Wall -Wno-parentheses  -fno-common -pipe -fno-common   -c conftest.c"
+conftest.c:6:3: error: #error 
+conftest.c:7: error: expected identifier or ‘(’ before ‘>>’ token
 checked program was:
 /* begin */
-1: #include <sys/syscall.h>
-2: /*top*/
-3: #ifndef __NR_inotify_init
-4: # error
-5: >>>>>> __NR_inotify_init undefined <<<<<<
-6: #endif
+1: #include "ruby.h"
+2: 
+3: #include <sys/syscall.h>
+4: /*top*/
+5: #ifndef __NR_inotify_init
+6: # error
+7: >>>>>> __NR_inotify_init undefined <<<<<<
+8: #endif
 /* end */
 
 --------------------
 
 have_func: checking for writev() in sys/uio.h... -------------------- yes
 
-"gcc -o conftest -I. -I/System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/universal-darwin10.0 -I.  -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -arch i386 -arch x86_64 -g -Os -pipe -fno-common -DENABLE_DTRACE  -fno-common  -pipe -fno-common   conftest.c  -L. -L/System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib -L. -arch i386 -arch x86_64      -lruby  -lpthread -ldl  "
+"gcc -o conftest -I/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/include/ruby-1.9.1/i386-darwin10.0.0 -I/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/include/ruby-1.9.1/ruby/backward -I/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/include/ruby-1.9.1 -I. -I/Users/tdreyno/homebrew/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE  -I/Users/tdreyno/homebrew/include -O3 -march=core2 -m64 -mmmx -msse4.1 -w -pipe -fomit-frame-pointer -mmacosx-version-min=10.6 -O2 -g -Wall -Wno-parentheses  -fno-common -pipe -fno-common conftest.c  -L. -L/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/lib -L. -L/Users/tdreyno/homebrew/lib -L/usr/local/lib     -lruby-static  -lpthread -ldl -lobjc  "
 checked program was:
 /* begin */
-1: #include <sys/uio.h>
+1: #include "ruby.h"
 2: 
-3: /*top*/
-4: int main() { return 0; }
-5: int t() { void ((*volatile p)()); p = (void ((*)()))writev; return 0; }
+3: #include <sys/uio.h>
+4: 
+5: /*top*/
+6: int main() {return 0;}
+7: int t() { void ((*volatile p)()); p = (void ((*)()))writev; return 0; }
 /* end */
 
 --------------------
 
-have_func: checking for rb_thread_check_ints()... -------------------- no
+have_func: checking for rb_thread_check_ints()... -------------------- yes
 
-"gcc -o conftest -I. -I/System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/universal-darwin10.0 -I.  -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -arch i386 -arch x86_64 -g -Os -pipe -fno-common -DENABLE_DTRACE  -fno-common  -pipe -fno-common   conftest.c  -L. -L/System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib -L. -arch i386 -arch x86_64      -lruby  -lpthread -ldl  "
-conftest.c: In function ‘t’:
-conftest.c:3: error: ‘rb_thread_check_ints’ undeclared (first use in this function)
-conftest.c:3: error: (Each undeclared identifier is reported only once
-conftest.c:3: error: for each function it appears in.)
-conftest.c: In function ‘t’:
-conftest.c:3: error: ‘rb_thread_check_ints’ undeclared (first use in this function)
-conftest.c:3: error: (Each undeclared identifier is reported only once
-conftest.c:3: error: for each function it appears in.)
-lipo: can't figure out the architecture type of: /var/folders/f-/f-fz+8IRHg8gx0qhO9ZpxU+++TI/-Tmp-//cc2APTbR.out
+"gcc -o conftest -I/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/include/ruby-1.9.1/i386-darwin10.0.0 -I/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/include/ruby-1.9.1/ruby/backward -I/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/include/ruby-1.9.1 -I. -I/Users/tdreyno/homebrew/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE  -I/Users/tdreyno/homebrew/include -O3 -march=core2 -m64 -mmmx -msse4.1 -w -pipe -fomit-frame-pointer -mmacosx-version-min=10.6 -O2 -g -Wall -Wno-parentheses  -fno-common -pipe -fno-common conftest.c  -L. -L/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/lib -L. -L/Users/tdreyno/homebrew/lib -L/usr/local/lib     -lruby-static  -lpthread -ldl -lobjc  "
 checked program was:
 /* begin */
-1: /*top*/
-2: int main() { return 0; }
-3: int t() { void ((*volatile p)()); p = (void ((*)()))rb_thread_check_ints; return 0; }
-/* end */
-
-"gcc -o conftest -I. -I/System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/universal-darwin10.0 -I.  -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -arch i386 -arch x86_64 -g -Os -pipe -fno-common -DENABLE_DTRACE  -fno-common  -pipe -fno-common   conftest.c  -L. -L/System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib -L. -arch i386 -arch x86_64      -lruby  -lpthread -ldl  "
-Undefined symbols for architecture i386:
-  "_rb_thread_check_ints", referenced from:
-      _t in cc62yllm.o
-ld: symbol(s) not found for architecture i386
-collect2: ld returned 1 exit status
-Undefined symbols for architecture x86_64:
-  "_rb_thread_check_ints", referenced from:
-      _t in ccvcprgK.o
-ld: symbol(s) not found for architecture x86_64
-collect2: ld returned 1 exit status
-lipo: can't open input file: /var/folders/f-/f-fz+8IRHg8gx0qhO9ZpxU+++TI/-Tmp-//cc3Nkwrn.out (No such file or directory)
-checked program was:
-/* begin */
-1: /*top*/
-2: int main() { return 0; }
-3: int t() { rb_thread_check_ints(); return 0; }
+1: #include "ruby.h"
+2: 
+3: /*top*/
+4: int main() {return 0;}
+5: int t() { void ((*volatile p)()); p = (void ((*)()))rb_thread_check_ints; return 0; }
 /* end */
 
 --------------------
 
 have_func: checking for rb_time_new()... -------------------- yes
 
-"gcc -o conftest -I. -I/System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/universal-darwin10.0 -I.  -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -arch i386 -arch x86_64 -g -Os -pipe -fno-common -DENABLE_DTRACE  -fno-common  -pipe -fno-common   conftest.c  -L. -L/System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib -L. -arch i386 -arch x86_64      -lruby  -lpthread -ldl  "
-conftest.c: In function ‘t’:
-conftest.c:3: error: ‘rb_time_new’ undeclared (first use in this function)
-conftest.c:3: error: (Each undeclared identifier is reported only once
-conftest.c:3: error: for each function it appears in.)
-conftest.c: In function ‘t’:
-conftest.c:3: error: ‘rb_time_new’ undeclared (first use in this function)
-conftest.c:3: error: (Each undeclared identifier is reported only once
-conftest.c:3: error: for each function it appears in.)
-lipo: can't figure out the architecture type of: /var/folders/f-/f-fz+8IRHg8gx0qhO9ZpxU+++TI/-Tmp-//ccOLS696.out
+"gcc -o conftest -I/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/include/ruby-1.9.1/i386-darwin10.0.0 -I/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/include/ruby-1.9.1/ruby/backward -I/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/include/ruby-1.9.1 -I. -I/Users/tdreyno/homebrew/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE  -I/Users/tdreyno/homebrew/include -O3 -march=core2 -m64 -mmmx -msse4.1 -w -pipe -fomit-frame-pointer -mmacosx-version-min=10.6 -O2 -g -Wall -Wno-parentheses  -fno-common -pipe -fno-common conftest.c  -L. -L/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/lib -L. -L/Users/tdreyno/homebrew/lib -L/usr/local/lib     -lruby-static  -lpthread -ldl -lobjc  "
 checked program was:
 /* begin */
-1: /*top*/
-2: int main() { return 0; }
-3: int t() { void ((*volatile p)()); p = (void ((*)()))rb_time_new; return 0; }
-/* end */
-
-"gcc -o conftest -I. -I/System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/universal-darwin10.0 -I.  -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -arch i386 -arch x86_64 -g -Os -pipe -fno-common -DENABLE_DTRACE  -fno-common  -pipe -fno-common   conftest.c  -L. -L/System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib -L. -arch i386 -arch x86_64      -lruby  -lpthread -ldl  "
-checked program was:
-/* begin */
-1: /*top*/
-2: int main() { return 0; }
-3: int t() { rb_time_new(); return 0; }
+1: #include "ruby.h"
+2: 
+3: /*top*/
+4: int main() {return 0;}
+5: int t() { void ((*volatile p)()); p = (void ((*)()))rb_time_new; return 0; }
 /* end */
 
 --------------------
 
 have_header: checking for sys/event.h... -------------------- yes
 
-"gcc -E -I. -I/System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/universal-darwin10.0 -I.  -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE     -g -Os -pipe -fno-common -DENABLE_DTRACE  -fno-common  -pipe -fno-common    conftest.c -o conftest.i"
+"gcc -E -I/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/include/ruby-1.9.1/i386-darwin10.0.0 -I/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/include/ruby-1.9.1/ruby/backward -I/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/include/ruby-1.9.1 -I. -I/Users/tdreyno/homebrew/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE  -I/Users/tdreyno/homebrew/include -O3 -march=core2 -m64 -mmmx -msse4.1 -w -pipe -fomit-frame-pointer -mmacosx-version-min=10.6 -O2 -g -Wall -Wno-parentheses  -fno-common -pipe -fno-common  conftest.c -o conftest.i"
 checked program was:
 /* begin */
-1: #include <sys/event.h>
+1: #include "ruby.h"
+2: 
+3: #include <sys/event.h>
 /* end */
 
 --------------------
 
 have_header: checking for sys/queue.h... -------------------- yes
 
-"gcc -E -I. -I/System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/universal-darwin10.0 -I.  -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE     -g -Os -pipe -fno-common -DENABLE_DTRACE  -fno-common  -pipe -fno-common    conftest.c -o conftest.i"
+"gcc -E -I/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/include/ruby-1.9.1/i386-darwin10.0.0 -I/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/include/ruby-1.9.1/ruby/backward -I/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/include/ruby-1.9.1 -I. -I/Users/tdreyno/homebrew/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE  -I/Users/tdreyno/homebrew/include -O3 -march=core2 -m64 -mmmx -msse4.1 -w -pipe -fomit-frame-pointer -mmacosx-version-min=10.6 -O2 -g -Wall -Wno-parentheses  -fno-common -pipe -fno-common  conftest.c -o conftest.i"
 checked program was:
 /* begin */
-1: #include <sys/queue.h>
+1: #include "ruby.h"
+2: 
+3: #include <sys/queue.h>
 /* end */
 
 --------------------
@@ -217,65 +165,77 @@ checked program was:
 package configuration for openssl is not found
 have_library: checking for main() in -lssl... -------------------- yes
 
-"gcc -o conftest -I. -I/System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/universal-darwin10.0 -I.  -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -arch i386 -arch x86_64 -g -Os -pipe -fno-common -DENABLE_DTRACE  -fno-common  -pipe -fno-common   conftest.c  -L. -L/System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib -L. -arch i386 -arch x86_64      -lruby -lssl  -lpthread -ldl  "
+"gcc -o conftest -I/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/include/ruby-1.9.1/i386-darwin10.0.0 -I/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/include/ruby-1.9.1/ruby/backward -I/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/include/ruby-1.9.1 -I. -I/Users/tdreyno/homebrew/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE  -I/Users/tdreyno/homebrew/include -O3 -march=core2 -m64 -mmmx -msse4.1 -w -pipe -fomit-frame-pointer -mmacosx-version-min=10.6 -O2 -g -Wall -Wno-parentheses  -fno-common -pipe -fno-common conftest.c  -L. -L/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/lib -L. -L/Users/tdreyno/homebrew/lib -L/usr/local/lib     -lruby-static -lssl  -lpthread -ldl -lobjc  "
 checked program was:
 /* begin */
-1: /*top*/
-2: int main() { return 0; }
-3: int t() { void ((*volatile p)()); p = (void ((*)()))main; return 0; }
+1: #include "ruby.h"
+2: 
+3: /*top*/
+4: int main() {return 0;}
+5: int t() { void ((*volatile p)()); p = (void ((*)()))main; return 0; }
 /* end */
 
 --------------------
 
 have_library: checking for main() in -lcrypto... -------------------- yes
 
-"gcc -o conftest -I. -I/System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/universal-darwin10.0 -I.  -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -arch i386 -arch x86_64 -g -Os -pipe -fno-common -DENABLE_DTRACE  -fno-common  -pipe -fno-common   conftest.c  -L. -L/System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib -L. -arch i386 -arch x86_64     -lssl  -lruby -lcrypto -lssl  -lpthread -ldl  "
+"gcc -o conftest -I/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/include/ruby-1.9.1/i386-darwin10.0.0 -I/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/include/ruby-1.9.1/ruby/backward -I/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/include/ruby-1.9.1 -I. -I/Users/tdreyno/homebrew/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE  -I/Users/tdreyno/homebrew/include -O3 -march=core2 -m64 -mmmx -msse4.1 -w -pipe -fomit-frame-pointer -mmacosx-version-min=10.6 -O2 -g -Wall -Wno-parentheses  -fno-common -pipe -fno-common conftest.c  -L. -L/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/lib -L. -L/Users/tdreyno/homebrew/lib -L/usr/local/lib    -lssl  -lruby-static -lcrypto -lssl  -lpthread -ldl -lobjc  "
 checked program was:
 /* begin */
-1: /*top*/
-2: int main() { return 0; }
-3: int t() { void ((*volatile p)()); p = (void ((*)()))main; return 0; }
+1: #include "ruby.h"
+2: 
+3: /*top*/
+4: int main() {return 0;}
+5: int t() { void ((*volatile p)()); p = (void ((*)()))main; return 0; }
 /* end */
 
 --------------------
 
 have_library: checking for main() in -lC... -------------------- yes
 
-"gcc -o conftest -I. -I/System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/universal-darwin10.0 -I.  -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -arch i386 -arch x86_64 -g -Os -pipe -fno-common -DENABLE_DTRACE  -fno-common  -pipe -fno-common   conftest.c  -L. -L/System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib -L. -arch i386 -arch x86_64     -lcrypto -lssl  -lruby -lC -lcrypto -lssl  -lpthread -ldl  "
+"gcc -o conftest -I/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/include/ruby-1.9.1/i386-darwin10.0.0 -I/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/include/ruby-1.9.1/ruby/backward -I/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/include/ruby-1.9.1 -I. -I/Users/tdreyno/homebrew/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE  -I/Users/tdreyno/homebrew/include -O3 -march=core2 -m64 -mmmx -msse4.1 -w -pipe -fomit-frame-pointer -mmacosx-version-min=10.6 -O2 -g -Wall -Wno-parentheses  -fno-common -pipe -fno-common conftest.c  -L. -L/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/lib -L. -L/Users/tdreyno/homebrew/lib -L/usr/local/lib    -lcrypto -lssl  -lruby-static -lC -lcrypto -lssl  -lpthread -ldl -lobjc  "
 checked program was:
 /* begin */
-1: /*top*/
-2: int main() { return 0; }
-3: int t() { void ((*volatile p)()); p = (void ((*)()))main; return 0; }
+1: #include "ruby.h"
+2: 
+3: /*top*/
+4: int main() {return 0;}
+5: int t() { void ((*volatile p)()); p = (void ((*)()))main; return 0; }
 /* end */
 
 --------------------
 
 have_header: checking for openssl/ssl.h... -------------------- yes
 
-"gcc -E -I. -I/System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/universal-darwin10.0 -I.  -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE     -g -Os -pipe -fno-common -DENABLE_DTRACE  -fno-common  -pipe -fno-common    conftest.c -o conftest.i"
+"gcc -E -I/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/include/ruby-1.9.1/i386-darwin10.0.0 -I/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/include/ruby-1.9.1/ruby/backward -I/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/include/ruby-1.9.1 -I. -I/Users/tdreyno/homebrew/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE  -I/Users/tdreyno/homebrew/include -O3 -march=core2 -m64 -mmmx -msse4.1 -w -pipe -fomit-frame-pointer -mmacosx-version-min=10.6 -O2 -g -Wall -Wno-parentheses  -fno-common -pipe -fno-common  conftest.c -o conftest.i"
 checked program was:
 /* begin */
-1: #include <openssl/ssl.h>
+1: #include "ruby.h"
+2: 
+3: #include <openssl/ssl.h>
 /* end */
 
 --------------------
 
 have_header: checking for openssl/err.h... -------------------- yes
 
-"gcc -E -I. -I/System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/universal-darwin10.0 -I.  -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE     -g -Os -pipe -fno-common -DENABLE_DTRACE  -fno-common  -pipe -fno-common    conftest.c -o conftest.i"
+"gcc -E -I/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/include/ruby-1.9.1/i386-darwin10.0.0 -I/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/include/ruby-1.9.1/ruby/backward -I/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/include/ruby-1.9.1 -I. -I/Users/tdreyno/homebrew/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE  -I/Users/tdreyno/homebrew/include -O3 -march=core2 -m64 -mmmx -msse4.1 -w -pipe -fomit-frame-pointer -mmacosx-version-min=10.6 -O2 -g -Wall -Wno-parentheses  -fno-common -pipe -fno-common  conftest.c -o conftest.i"
 checked program was:
 /* begin */
-1: #include <openssl/err.h>
+1: #include "ruby.h"
+2: 
+3: #include <openssl/err.h>
 /* end */
 
 --------------------
 
-" -o conftest -I. -I/System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/universal-darwin10.0 -I.  -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE   -arch i386 -arch x86_64 -g -Os -pipe -fno-common -DENABLE_DTRACE  -fno-common  -pipe -fno-common   conftest.c  -L. -L/System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib -L. -arch i386 -arch x86_64     -lC -lcrypto -lssl  -lruby -lstdc++ -lpthread -ldl  "
+"g++ -o conftest -I/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/include/ruby-1.9.1/i386-darwin10.0.0 -I/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/include/ruby-1.9.1/ruby/backward -I/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/include/ruby-1.9.1 -I. -I/Users/tdreyno/homebrew/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE  -I/Users/tdreyno/homebrew/include -O3 -march=core2 -m64 -mmmx -msse4.1 -w -pipe -fomit-frame-pointer -mmacosx-version-min=10.6 -O2 -g -Wall -Wno-parentheses  -fno-common -pipe -fno-common conftest.c  -L. -L/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/lib -L. -L/Users/tdreyno/homebrew/lib -L/usr/local/lib    -lC -lcrypto -lssl  -lruby-static -lstdc++ -lpthread -ldl -lobjc  "
 checked program was:
 /* begin */
-1:   #include <utility>
-2:   using namespace std;
-3:   int main(){ pair<int,int> tuple = make_pair(1,2); }
+1: #include "ruby.h"
+2: 
+3:   #include <utility>
+4:   using namespace std;
+5:   int main(){ pair<int,int> tuple = make_pair(1,2); }
 /* end */
 

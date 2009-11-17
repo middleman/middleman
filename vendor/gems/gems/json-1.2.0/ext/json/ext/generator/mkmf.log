@@ -1,20 +1,31 @@
 have_header: checking for ruby/st.h... -------------------- yes
 
-"gcc -E -I. -I/System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/universal-darwin10.0 -I.  -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE     -g -Os -pipe -fno-common -DENABLE_DTRACE  -fno-common  -pipe -fno-common   -Wall  conftest.c -o conftest.i"
+"gcc -o conftest -I/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/include/ruby-1.9.1/i386-darwin10.0.0 -I/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/include/ruby-1.9.1/ruby/backward -I/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/include/ruby-1.9.1 -I. -I/Users/tdreyno/homebrew/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE  -I/Users/tdreyno/homebrew/include -O3 -march=core2 -m64 -mmmx -msse4.1 -w -pipe -fomit-frame-pointer -mmacosx-version-min=10.6 -O2 -g -Wall -Wno-parentheses  -fno-common -pipe -fno-common -Wall conftest.c  -L. -L/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/lib -L. -L/Users/tdreyno/homebrew/lib -L/usr/local/lib     -lruby-static  -lpthread -ldl -lobjc  "
 checked program was:
 /* begin */
-1: #include <ruby/st.h>
+1: #include "ruby.h"
+2: 
+3: int main() {return 0;}
+/* end */
+
+"gcc -E -I/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/include/ruby-1.9.1/i386-darwin10.0.0 -I/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/include/ruby-1.9.1/ruby/backward -I/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/include/ruby-1.9.1 -I. -I/Users/tdreyno/homebrew/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE  -I/Users/tdreyno/homebrew/include -O3 -march=core2 -m64 -mmmx -msse4.1 -w -pipe -fomit-frame-pointer -mmacosx-version-min=10.6 -O2 -g -Wall -Wno-parentheses  -fno-common -pipe -fno-common -Wall  conftest.c -o conftest.i"
+checked program was:
+/* begin */
+1: #include "ruby.h"
+2: 
+3: #include <ruby/st.h>
 /* end */
 
 --------------------
 
-have_header: checking for ruby/encoding.h... -------------------- no
+have_header: checking for ruby/encoding.h... -------------------- yes
 
-"gcc -E -I. -I/System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/universal-darwin10.0 -I.  -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE     -g -Os -pipe -fno-common -DENABLE_DTRACE  -fno-common  -pipe -fno-common   -Wall  conftest.c -o conftest.i"
-conftest.c:1:27: error: ruby/encoding.h: No such file or directory
+"gcc -E -I/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/include/ruby-1.9.1/i386-darwin10.0.0 -I/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/include/ruby-1.9.1/ruby/backward -I/Users/tdreyno/homebrew/Cellar/ruby/1.9.1-p243/include/ruby-1.9.1 -I. -I/Users/tdreyno/homebrew/include -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE  -I/Users/tdreyno/homebrew/include -O3 -march=core2 -m64 -mmmx -msse4.1 -w -pipe -fomit-frame-pointer -mmacosx-version-min=10.6 -O2 -g -Wall -Wno-parentheses  -fno-common -pipe -fno-common -Wall  conftest.c -o conftest.i"
 checked program was:
 /* begin */
-1: #include <ruby/encoding.h>
+1: #include "ruby.h"
+2: 
+3: #include <ruby/encoding.h>
 /* end */
 
 --------------------
