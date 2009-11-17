@@ -1,5 +1,4 @@
 require "uri"
-require "time"
 
 module Rack
   module Test
