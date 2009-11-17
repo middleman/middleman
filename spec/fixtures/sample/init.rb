@@ -1,8 +1,12 @@
 # enable :maruku
+
+get "/inline-css.html" do
+  haml :"inline-css.html", :layout => false
+end
+
 get "/inline-js.html" do
   haml :"inline-js.html", :layout => false
 end
-
 
 get "/page-class.html" do
   haml :"page-classes.html", :layout => false

@@ -1,5 +1,9 @@
-# Otherwise use YUI
-# Fine a way to minify inline/css
-::Compass.configuration do |config|
-  config.output_style = :compressed
+class Middleman::Base
+  after_feature_init do
+    ::Compass.configuration do |config|
+      config.output_style = :compressed
+    end
+
+    ::Compass.configure_sass_plugin!
+  end
 end
