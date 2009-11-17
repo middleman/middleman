@@ -1,5 +1,5 @@
 require 'rubygems'
-#require 'lib/middleman'
+require 'lib/middleman'
 require 'rake'
 require 'cucumber/rake/task'
 
