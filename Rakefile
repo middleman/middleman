@@ -1,4 +1,3 @@
-require 'rubygems'
 require 'lib/middleman'
 require 'rake'
 require 'cucumber/rake/task'
@@ -24,6 +23,7 @@ begin
     gem.add_dependency("smusher")
     gem.add_dependency("haml", ">=2.1.0")
     gem.add_dependency("compass")
+    gem.add_development_dependency("rdoc")
     gem.add_development_dependency("rspec")
     gem.add_development_dependency("sdoc")
     gem.add_development_dependency("cucumber")
@@ -53,37 +53,35 @@ task :spec => :check_dependencies
 
 task :default => :spec
 
-unless ENV["RUN_CODE_RUN"]
-  require 'rake/rdoctask'
-  require 'sdoc'
+require 'rake/rdoctask'
+require 'sdoc'
 
-  Rake::RDocTask.new do |rdoc|
-    if File.exist?('VERSION')
-      version = File.read('VERSION')
-    else
-      version = ""
-    end
-  
-    # rdoc.template = 'direct'
-
-    rdoc.rdoc_dir = 'rdoc'
-    rdoc.title = "middleman #{version}"
-    rdoc.rdoc_files.include('README*')
-    rdoc.rdoc_files.include('lib/**/*.rb')
-    rdoc.rdoc_files.exclude('lib/middleman/features/sprockets+ruby19.rb')
-    rdoc.rdoc_files.exclude('lib/middleman/templater+dynamic_renderer.rb')
+Rake::RDocTask.new do |rdoc|
+  if File.exist?('VERSION')
+    version = File.read('VERSION')
+  else
+    version = ""
   end
 
-  desc "Build and publish documentation using GitHub Pages."
-  task :pages do
-    if !`git status`.include?('nothing to commit')
-      abort "dirty index - not publishing!"
-    end
- 
-    Rake::Task[:rerdoc].invoke
-    `git checkout gh-pages`
-    `ls -1 | grep -v rdoc | xargs rm -rf; mv rdoc/* .; rm -rf rdoc`
-    `git commit -a -m "update docs"; git push origin gh-pages`
-    `git checkout master`
+  # rdoc.template = 'direct'
+
+  rdoc.rdoc_dir = 'rdoc'
+  rdoc.title = "middleman #{version}"
+  rdoc.rdoc_files.include('README*')
+  rdoc.rdoc_files.include('lib/**/*.rb')
+  rdoc.rdoc_files.exclude('lib/middleman/features/sprockets+ruby19.rb')
+  rdoc.rdoc_files.exclude('lib/middleman/templater+dynamic_renderer.rb')
+end
+
+desc "Build and publish documentation using GitHub Pages."
+task :pages do
+  if !`git status`.include?('nothing to commit')
+    abort "dirty index - not publishing!"
   end
+
+  Rake::Task[:rerdoc].invoke
+  `git checkout gh-pages`
+  `ls -1 | grep -v rdoc | xargs rm -rf; mv rdoc/* .; rm -rf rdoc`
+  `git commit -a -m "update docs"; git push origin gh-pages`
+  `git checkout master`
 end

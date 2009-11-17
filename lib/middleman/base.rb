@@ -1,6 +1,3 @@
-# Be nice to other library systems, like the wonderful Rip
-require 'rubygems' unless ENV['NO_RUBYGEMS']
-
 # We're riding on Sinatra, so let's include it
 require 'sinatra/base'
 
