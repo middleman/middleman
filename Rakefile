@@ -28,7 +28,7 @@ begin
     gem.add_development_dependency("cucumber")
     
     # Ignore vendored files
-    #gem.files = gem.files.exclude("vendor/*")
+    gem.files = gem.files.exclude("vendor/*")
   end
   
   Jeweler::GemcutterTasks.new
