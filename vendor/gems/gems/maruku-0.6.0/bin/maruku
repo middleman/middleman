@@ -1,0 +1,181 @@
+#!/usr/bin/env ruby
+
+require 'maruku'
+require 'optparse'
+
+
+def cli_puts(s)
+	$stderr.puts(s) if MaRuKu::Globals[:verbose]	
+end
+
+
+export = :html
+break_on_error = false
+using_math = false
+using_mathml = false
+output_file = nil
+
+opt = OptionParser.new do |opts|
+	opts.banner = "Usage: maruku [options] [file1.md [file2.md ..."
+
+	opts.on("-v", "--[no-]verbose", "Run verbosely") do |v|
+		MaRuKu::Globals[:verbose] = v end
+	opts.on("-u", "--[no-]unsafe", "Use unsafe features") do |v|
+		MaRuKu::Globals[:unsafe_features] = v end
+
+	opts.on("-b", "Break on error") do |v|
+		break_on_error = true end
+
+
+	opts.on("-i", "--math-images ENGINE", "Uses ENGINE to render TeX to PNG.") do |s|
+		using_math = true
+		MaRuKu::Globals[:html_math_output_png] = true
+		MaRuKu::Globals[:html_math_output_mathml] = false
+		MaRuKu::Globals[:html_png_engine] = s
+		cli_puts "Using png engine #{s}."
+	end
+
+	opts.on("-m", "--math-engine ENGINE", "Uses ENGINE to render MathML") do |s|
+		MaRuKu::Globals[:html_math_output_png] = false
+		MaRuKu::Globals[:html_math_output_mathml] = true
+		using_math = true
+		using_mathml = true
+		MaRuKu::Globals[:html_math_engine] = s
+	end
+
+	opts.on("-o", "--output FILE", "Output filename") do |s|
+		output_file = s
+	end
+
+	opts.on_tail("--pdf",  "Write PDF","First writes LaTeX, then calls pdflatex." ) do export = :pdf  end
+	opts.on_tail("--s5", "Write S5 slideshow") do export = :s5 end
+	opts.on_tail("--html", "Write HTML") do export = :html end
+	opts.on_tail("--html-frag", "Write the contents of the BODY.") do export = :html_frag end
+	opts.on_tail("--tex",  "Write LaTeX" ) do export = :tex  end
+	opts.on_tail("--inspect",  "Shows the parsing result" ) do export = :inspect  end
+
+	opts.on_tail("--version", "Show version") do
+		puts "Maruku #{MaRuKu::Version}"; exit
+	end
+
+	opts.on_tail("--ext EXTENSIONS",  "Use maruku extensions (comma separated)" ) do |s|
+	  s.split(",").each do |e| require "maruku/ext/#{e}"; end
+	end
+
+	opts.on_tail("-h", "--help", "Show this message") do
+		puts opts
+		exit
+	end
+
+end
+
+begin 
+opt.parse!
+rescue OptionParser::InvalidOption=>e
+	$stderr.puts e
+	$stderr.puts opt
+	exit
+end
+
+
+if using_math
+	cli_puts "Using Math extensions."
+	require 'maruku/ext/math'
+end
+
+#p ARGV
+#p MaRuKu::Globals
+
+
+inputs =
+# If we are given filenames, convert each file 
+if not ARGV.empty?
+	ARGV.map do |f|
+		# read file content
+		cli_puts "Reading from file #{f.inspect}." 
+		[f, File.open(f,'r').read]
+	end
+else
+	export = :html_frag if export == :html
+	export = :tex_frag if export == :tex
+	
+	cli_puts  "Reading from standard input."
+	[[nil, $stdin.read]]
+end
+
+inputs.each do |f, input|
+	
+		# create Maruku
+		params = {}
+		params[:on_error] = break_on_error ? :raise : :warning
+
+		t = Time.now
+		doc = Maruku.new(input, params)
+
+		cli_puts ("Parsing in %.2f seconds." % (Time.now-t))
+
+		out=""; suffix = "?"
+		t = Time.now
+		case export
+		when :html 
+			suffix = using_mathml ? '.xhtml' : '.html'
+			out = doc.to_html_document( {:indent => -1})
+		when :html_frag 
+			suffix='.html_frag'
+			out = doc.to_html( {:indent => -1})
+		when :pdf, :tex
+			suffix='.tex'
+			out = doc.to_latex_document
+		when :tex_frag
+			suffix='.tex_frag'
+			out = doc.to_latex
+		when :inspect
+			suffix='.txt'
+			out = doc.inspect
+		when :markdown
+			suffix='.pretty_md'
+			out = doc.to_markdown
+		when :s5
+			suffix='_s5slides.html'
+			out = doc.to_s5({:content_only => false})
+		end
+
+		cli_puts("Rendering in %.2f seconds." % (Time.now-t))
+	
+		# write to file or stdout
+		if f
+			
+			if not output_file 
+				dir = File.dirname(f)
+				job = File.join(dir, File.basename(f, File.extname(f)))
+				output_file = job  + suffix
+			else
+				job = File.basename(output_file, File.extname(output_file))
+			end
+			
+			if output_file == "-"
+				cli_puts "Writing to standard output"
+				$stdout.puts out
+			else
+			
+				if not (export == :pdf)
+					cli_puts "Writing to #{output_file}"
+					File.open(output_file,'w') do |f| f.puts out end
+				else
+					cli_puts "Writing to #{job}.tex"
+					File.open("#{job}.tex",'w') do |f| f.puts out end
+					cmd = "pdflatex '#{job}.tex' -interaction=nonstopmode "+
+					      "'-output-directory=#{dir}' "
+					cli_puts "maruku: executing $ #{cmd}"
+					# run twice for cross references
+					system cmd 
+					system cmd
+				end
+			
+			end
+		else # write to stdout
+			cli_puts "Writing to standard output"
+			$stdout.puts out
+		end
+	end
+	

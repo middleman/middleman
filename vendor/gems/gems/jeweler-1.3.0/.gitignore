@@ -1,0 +1,10 @@
+coverage
+pkg
+doc
+rdoc
+tags
+test/tmp
+test/jeweler/version_tmp
+test/version_tmp
+tmp
+.yardoc

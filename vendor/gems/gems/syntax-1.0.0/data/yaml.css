@@ -1,0 +1,12 @@
+.yaml .normal {}
+.yaml .document { font-weight: bold; color: #07F; }
+.yaml .type { font-weight: bold; color: #05C; }
+.yaml .key { color: #F88; }
+.yaml .comment { color: #005; font-style: italic; }
+.yaml .punct { color: #447; font-weight: bold; }
+.yaml .string { color: #944; }
+.yaml .number { color: #F99; }
+.yaml .time { color: #F99; }
+.yaml .date { color: #F99; }
+.yaml .ref { color: #944; }
+.yaml .anchor { color: #944; }
