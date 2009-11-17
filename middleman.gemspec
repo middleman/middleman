@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{middleman}
-  s.version = "0.11.1"
+  s.version = "0.11.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Thomas Reynolds"]
@@ -57,7 +57,8 @@ Gem::Specification.new do |s|
      "middleman.gemspec",
      "spec/auto_image_sizes.rb",
      "spec/builder_spec.rb",
-     "spec/cache_buster_spec.rb",
+     "spec/cache_buster_off_spec.rb",
+     "spec/cache_buster_on_spec.rb",
      "spec/fixtures/sample/init.rb",
      "spec/fixtures/sample/public/images/blank.gif",
      "spec/fixtures/sample/public/javascripts/to-be-included.js",
@@ -69,6 +70,7 @@ Gem::Specification.new do |s|
      "spec/fixtures/sample/views/_partial.haml",
      "spec/fixtures/sample/views/auto-css.html.haml",
      "spec/fixtures/sample/views/auto-image-sizes.html.haml",
+     "spec/fixtures/sample/views/cache-buster.html.haml",
      "spec/fixtures/sample/views/custom-layout.html.haml",
      "spec/fixtures/sample/views/custom.haml",
      "spec/fixtures/sample/views/index.html.haml",
@@ -98,7 +100,8 @@ Gem::Specification.new do |s|
   s.test_files = [
     "spec/auto_image_sizes.rb",
      "spec/builder_spec.rb",
-     "spec/cache_buster_spec.rb",
+     "spec/cache_buster_off_spec.rb",
+     "spec/cache_buster_on_spec.rb",
      "spec/fixtures/sample/init.rb",
      "spec/generator_spec.rb",
      "spec/helpers_spec.rb",
