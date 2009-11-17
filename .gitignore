@@ -26,3 +26,4 @@ bin/spec
 bin/sprocketize
 bin/thin
 bin/tt
+bin/smusher

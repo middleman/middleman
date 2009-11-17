@@ -1,0 +1,39 @@
+#!/usr/bin/env ruby
+require 'rubygems'
+require 'optparse'
+require 'smusher'
+
+options = {}
+OptionParser.new do |opts|
+  opts.banner = <<BANNER
+Optimize a single image or a whole folder in the cloud.
+
+gif`s:
+ - called with a folder gif`s will not be optimized
+ - called on a singe .gif, it will be optimized if it is optimizeable
+
+Usage:
+    smusher /apps/x/public/images [options]
+    smusher /apps/x/public/images/x.png [options]
+    smusher /apps/x/public/images/*.png [options]
+
+Options are:
+BANNER
+  opts.on("-q", "--quiet","no output") { options[:quiet]=true }
+  opts.on("--service S", String, "use service: PunyPng or default SmushIt") {|x| options[:service]=x }
+  opts.on("-c", "--convert-gifs","convert all .gif`s in the given folder") { options[:convert_gifs]=true }
+  opts.on("-h", "--help","Show this.") { puts opts; exit }
+  opts.on('-v', '--version','Show Version'){ puts Smusher::VERSION; exit}
+end.parse!
+
+path = ARGV.first
+if path.to_s.empty? or not File.exist?(path)
+  puts "Usage instructions: autotest --help"
+  exit
+end
+
+if File.directory?(path)
+  Smusher.optimize_images_in_folder(path,options)
+else
+  Smusher.optimize_image(ARGV,options)
+end

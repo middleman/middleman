@@ -11,6 +11,7 @@ gem "rack-test"
 gem "yui-compressor"
 gem "haml"
 gem "compass"
+gem "smusher"
 
 gem "rspec"
 gem "sdoc"

@@ -26,9 +26,9 @@ configure :build do
   # Shrink/smush PNG/JPEGs on build
   # enable :smush_pngs
   
+  # Enable cache buster
+  # enable :cache_buster
+  
   # Or use a different image path
   # set :http_path, "/Content/images/"
-  
-  # Disable cache buster
-  # disable :cache_buster
 end
