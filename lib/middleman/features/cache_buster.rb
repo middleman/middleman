@@ -1,6 +1,4 @@
-class Middleman::Base
-  include Middleman::Sass
-  
+class Middleman::Base  
   after_feature_init do 
     ::Compass.configuration do |config|
       config.asset_cache_buster do |path, real_path|
@@ -31,8 +29,12 @@ class << Middleman::Base
       rescue
       end
       
-      real_path = File.join(self.public, prefix, path)
-      http_path << "?" + File.mtime(real_path).strftime("%s") if File.readable?(real_path)
+      real_path_static  = File.join(self.public, prefix, path)
+      real_path_dynamic = File.join(self.views, prefix, path)
+      real_path_dynamic << ".sass" if File.extname(real_path_dynamic) == ".css"
+
+      http_path << "?" + File.mtime(real_path_static).strftime("%s") if File.readable?(real_path_static)
+      http_path << "?" + File.mtime(real_path_dynamic).strftime("%s") if File.readable?(real_path_dynamic)
       http_path
     end
   end
