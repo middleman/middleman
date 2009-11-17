@@ -1,0 +1,1 @@
+documentation is at http://github.com/grosser/smusher
