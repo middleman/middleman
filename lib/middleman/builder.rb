@@ -27,6 +27,9 @@ module Middleman
     end
 
     def self.file(name, *args, &block)
+      file_ext = File.extname(args[0])
+      return if Middleman::Base.supported_formats.include? file_ext[1..file_ext.length]
+      
       if (args[0] === args[1])
         args[1] = args[0].gsub("#{File.basename(Middleman::Base.views)}/", "").gsub("#{File.basename(Middleman::Base.public)}/", "")
       end
@@ -35,7 +38,8 @@ module Middleman
 
     def self.init!
       glob! File.basename(Middleman::Base.public), []
-      glob! File.basename(Middleman::Base.views),  Middleman::Base.supported_formats
+      glob! File.basename(Middleman::Base.views),  %w(sass js)
+      glob! File.basename(Middleman::Base.views),  Middleman::Base.supported_formats - %w(sass js)
     end
     
     def after_run

@@ -1,8 +1,15 @@
 begin
   require 'sprockets'
   require 'middleman/rack/sprockets+ruby19' # Sprockets ruby 1.9 duckpunch
+  
 rescue LoadError
   puts "Sprockets not available. Install it with: gem install sprockets"
+end
+
+begin
+  require "yui/compressor"
+rescue LoadError
+  puts "Sprockets not available. Install it with: gem install yui-compressor"
 end
   
 module Middleman
@@ -21,8 +28,15 @@ module Middleman
                                                   :source_files => [ File.join("views", path) ],
                                                   :load_path    => [ File.join("public", Middleman::Base.js_dir),
                                                                      File.join("views", Middleman::Base.js_dir) ])
+          
+          result = secretary.concatenation.to_s
+          
+          if @app.class.respond_to?(:minify_javascript?) && @app.class.minify_javascript?
+            compressor = ::YUI::JavaScriptCompressor.new(:munge => true)
+            result = compressor.compress(result)
+          end
 
-          [200, { "Content-Type" => "text/javascript" }, [secretary.concatenation.to_s]]
+          [200, { "Content-Type" => "text/javascript" }, [result]]
         else
           @app.call(env)
         end

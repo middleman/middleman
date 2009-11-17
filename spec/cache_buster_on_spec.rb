@@ -13,9 +13,9 @@ describe "Cache Buster Feature in CSS" do
     browser.last_response.body.should include("?")
   end
 
-  it "should append query string in HTML if on" do
+  it "should not append query string in HTML if on IN DEVELOPMENT" do
     browser = Rack::Test::Session.new(Rack::MockSession.new(@base.new))
     browser.get("/cache-buster.html")
-    browser.last_response.body.count("?").should == 2
+    browser.last_response.body.count("?").should == 0
   end
 end

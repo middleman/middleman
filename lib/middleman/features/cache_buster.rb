@@ -30,11 +30,14 @@ class << Middleman::Base
       end
       
       real_path_static  = File.join(self.public, prefix, path)
-      real_path_dynamic = File.join(self.views, prefix, path)
-      real_path_dynamic << ".sass" if File.extname(real_path_dynamic) == ".css"
-
-      http_path << "?" + File.mtime(real_path_static).strftime("%s") if File.readable?(real_path_static)
-      http_path << "?" + File.mtime(real_path_dynamic).strftime("%s") if File.readable?(real_path_dynamic)
+      
+      if File.readable?(real_path_static)
+        http_path << "?" + File.mtime(real_path_static).strftime("%s") 
+      elsif Middleman::Base.environment == "build"
+        real_path_dynamic = File.join(self.root, self.build_dir, prefix, path)
+        http_path << "?" + File.mtime(real_path_dynamic).strftime("%s") if File.readable?(real_path_dynamic)
+      end
+      
       http_path
     end
   end
