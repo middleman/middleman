@@ -1,6 +1,11 @@
 require "sass"
-#gem "compass-edge"
 require "compass"
+
+begin
+  require "yui/compressor"
+rescue LoadError
+  puts "YUI-Compressor not available. Install it with: gem install yui-compressor"
+end
 
 module Middleman
   module Sass  
@@ -17,7 +22,12 @@ module Middleman
           location_of_sass_file = options.environment == "build" ? File.join(Dir.pwd, options.build_dir) : options.public
           
           css_filename = File.join(location_of_sass_file, request.path_info)
-          sass(path.to_sym, ::Compass.sass_engine_options.merge({ :css_filename => css_filename }))
+          result = sass(path.to_sym, ::Compass.sass_engine_options.merge({ :css_filename => css_filename }))
+          if options.respond_to?(:minify_css?) && options.minify_css?
+            YUI::CssCompressor.new.compress(result) 
+          else
+            result
+          end
         rescue Exception => e
           sass_exception_string(e)
         end

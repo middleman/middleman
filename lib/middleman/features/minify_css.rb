@@ -1,9 +1,18 @@
-class Middleman::Base
-  after_feature_init do
-    ::Compass.configuration do |config|
-      config.output_style = :compressed
-    end
+module Middleman
+  module Minified
+    module Sass
+      include ::Haml::Filters::Base
 
-    ::Compass.configure_sass_plugin!
+      def render(text)
+        result = ::Sass::Engine.new(text, ::Sass::Plugin.engine_options).render
+        
+        if Middleman::Base.respond_to?(:minify_css?) && Middleman::Base.minify_css?
+          compressor = YUI::CssCompressor.new
+          compressor.compress(result)
+        else
+          result
+        end
+      end
+    end
   end
 end

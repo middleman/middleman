@@ -9,7 +9,7 @@ end
 begin
   require "yui/compressor"
 rescue LoadError
-  puts "Sprockets not available. Install it with: gem install yui-compressor"
+  puts "YUI-Compressor not available. Install it with: gem install yui-compressor"
 end
   
 module Middleman

@@ -1,5 +1,6 @@
 # We're riding on Sinatra, so let's include it
-require 'sinatra/base'
+require "sinatra/base"
+require "sinatra/content_for"
 
 class Sinatra::Request
   attr_accessor :layout
@@ -21,6 +22,7 @@ module Middleman
     set :http_prefix, nil
     
     use Rack::ConditionalGet if environment == :development
+    helpers Sinatra::ContentFor
     
     @@features = []
     
@@ -45,11 +47,11 @@ module Middleman
       ::Rack::Mime::MIME_TYPES[ext.to_s] = type
     end
 
-    # Convenience function to discover if a tempalte exists for the requested renderer (haml, sass, etc)
+    # Convenience function to discover if a template exists for the requested renderer (haml, sass, etc)
     def template_exists?(path, renderer=nil)
       template_path = path.dup
       template_path << ".#{renderer}" if renderer
-      File.exists? File.join(options.views, template_path)
+      File.readable? File.join(options.views, template_path)
     end
 
     # Base case renderer (do nothing), Should be over-ridden
@@ -63,24 +65,6 @@ module Middleman
       end
     end
     include StaticRender
-
-    def process_request
-      # Normalize the path and add index if we're looking at a directory
-      path = request.path
-      path << options.index_file if path.match(%r{/$})
-      path.gsub!(%r{^/}, '')
-
-      # layout(:"layout.html") # Insert the .html into the layout name like the rest of the templates
-
-      # If the enabled renderers succeed, return the content, mime-type and an HTTP 200
-      if content = render_path(path, (request.layout || :layout))
-        content_type media_type(File.extname(path)), :charset => 'utf-8'
-        status 200
-        content
-      else
-        status 404
-      end
-    end
     
     def self.page(url, options={}, &block)
       get(url) do
@@ -106,19 +90,34 @@ module Middleman
     not_found do
       process_request
     end
+
+  private
+    def process_request
+      # Normalize the path and add index if we're looking at a directory
+      path = request.path
+      path << options.index_file if path.match(%r{/$})
+      path.gsub!(%r{^/}, '')
+
+      # If the enabled renderers succeed, return the content, mime-type and an HTTP 200
+      if content = render_path(path, (request.layout || :layout))
+        content_type media_type(File.extname(path)), :charset => 'utf-8'
+        status 200
+        content
+      else
+        status 404
+      end
+    end
   end
 end
 
 # Haml is required & includes helpers
 require "middleman/haml"
 require "middleman/sass"
-require "sinatra/content_for"
 require "middleman/helpers"
 require "middleman/rack/static"
 require "middleman/rack/sprockets"
 
 class Middleman::Base
-  helpers Sinatra::ContentFor
   helpers Middleman::Helpers
   
   use Middleman::Rack::Static
