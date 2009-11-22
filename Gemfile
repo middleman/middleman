@@ -1,5 +1,5 @@
-source "http://gemcutter.org"
-bin_path "vendor/bin"
+bundle_path "lib/middleman/vendor/gems"
+bin_path "lib/middleman/vendor/bin"
 # disable_rubygems
 # disable_system_gems
 
@@ -14,11 +14,3 @@ gem "haml"
 gem "compass"
 gem "smusher"
 gem "compass-slickmap"
-gem "maruku"
-gem "markaby"
-
-gem "jeweler"
-gem "rspec"
-gem "rdoc"
-gem "sdoc"
-gem "cucumber"

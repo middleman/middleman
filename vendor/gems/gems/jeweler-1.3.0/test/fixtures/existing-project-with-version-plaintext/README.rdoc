@@ -1,7 +1,0 @@
-= existing-project-with-version
-
-Description goes here.
-
-== Copyright
-
-Copyright (c) 2009 Josh Nichols. See LICENSE for details.

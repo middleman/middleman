@@ -1,5 +1,0 @@
-default: --require features features -t ~@wip
-pending: --require features features-pending
-no_heckle: --require features features --exclude heckle
-focus: --require features features -t focus
-wip: --require features features -t @wip
