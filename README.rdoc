@@ -2,6 +2,10 @@
 
 The Middleman is ever-vigilant against tag-soup, unreadable CSS and repetition. He stands-watch over your Haml and Sass producing only the cleanest and efficient markup.
 
+== Getting Started
+
+Everything you need to know is on the wiki: http://wiki.github.com/tdreyno/middleman
+
 == Copyright
 
 Copyright (c) 2009 Thomas Reynolds. See LICENSE for details.
