@@ -37,7 +37,7 @@ module Middleman
     end
 
     def self.init!
-      glob! File.basename(Middleman::Base.public), []
+      glob! File.basename(Middleman::Base.public), Middleman::Base.supported_formats
       glob! File.basename(Middleman::Base.views),  %w(sass js)
       glob! File.basename(Middleman::Base.views),  Middleman::Base.supported_formats - %w(sass js)
     end

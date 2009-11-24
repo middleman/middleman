@@ -23,15 +23,20 @@ module Middleman
         path   = env["PATH_INFO"]
         source = File.join(Middleman::Base.views, path)
             
-        if path.match(/\.js$/) && File.exists?(source)
-          secretary = ::Sprockets::Secretary.new( :root   => Middleman::Base.root,
-                                                  :source_files => [ File.join("views", path) ],
-                                                  :load_path    => [ File.join("public", Middleman::Base.js_dir),
-                                                                     File.join("views", Middleman::Base.js_dir) ])
+        if path.match(/\.js$/)
+          if File.exists?(source)
+            secretary = ::Sprockets::Secretary.new( :root   => Middleman::Base.root,
+                                                    :source_files => [ File.join("views", path) ],
+                                                    :load_path    => [ File.join("public", Middleman::Base.js_dir),
+                                                                       File.join("views", Middleman::Base.js_dir) ])
           
-          result = secretary.concatenation.to_s
+            result = secretary.concatenation.to_s
+          else
+            result = File.read(File.join(Middleman::Base.public, path))
+          end
           
-          if @app.class.respond_to?(:minify_javascript?) && @app.class.minify_javascript?
+          
+          if Middleman::Base.respond_to?(:minify_javascript?) && Middleman::Base.minify_javascript?
             compressor = ::YUI::JavaScriptCompressor.new(:munge => true)
             result = compressor.compress(result)
           end

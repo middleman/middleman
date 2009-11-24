@@ -5,7 +5,7 @@ Gem::Specification.new do |s|
   s.version = "0.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
-  s.authors = ["Nicol\303\241s Sanguinetti"]
+  s.authors = ["Nicolás Sanguinetti"]
   s.date = %q{2009-05-08}
   s.description = %q{Small Sinatra extension to add a content_for helper similar to Rails'}
   s.email = %q{contacto@nicolassanguinetti.info}

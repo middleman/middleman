@@ -1,4 +1,3 @@
-require "smusher"
 require "middleman/builder"
 
 module Middleman
@@ -16,6 +15,8 @@ module Middleman
         {}
       end
       
+      require "smusher"
+      require "json/pure"
       ::Smusher.class_eval do
         images_in_folder(smush_dir).each do |file|
           original_file_size = size(file)
