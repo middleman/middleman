@@ -1,0 +1,147 @@
+//** DEFAULT STYLES **//
+// Don't forget to set your default styles.
+
+
+// Get all the details and mixins from base.sass
+@import base.sass
+// Reset browser defaults, and prepare block-level HTML5 elements
+@import susy/reset.sass
+
+
+/* @group defaults */
+
+body
+  +sans-family
+  color= !main
+
+/* @group links */
+
+\:focus
+  outline= 1px "dotted" !alt
+
+a
+  &:link, &:visited
+    color= !alt
+  &:focus, &:hover, &:active
+    color= !alt - #222
+    text-decoration: none
+
+/* @end */
+
+
+/* @group headers */
+
+h1, h2, h3, h4, h5, h6
+  font-weight: bold
+
+/* @end */
+
+
+/* @group forms */
+
+form *:focus
+  outline: none
+
+fieldset
+  margin= !base_line_height 0
+
+legend
+  font-weight: bold
+  font-variant: small-caps
+
+label
+  display: block
+  margin-top= !base_line_height
+
+legend + label
+  margin-top: 0
+
+textarea, input[type="text"]
+  +box-sizing("border-box")
+  width: 100%
+
+/* @end */
+
+
+/* @group tables */
+
+/* tables still need 'cellspacing="0"' in the markup */
+
+table
+  :width 100%
+  :border= 1/16 + "em solid" !main + #333
+    :left none
+    :right none
+  :padding= 7/16 + "em 0"
+  :margin= 8/16 + "em 0"
+
+th
+  :font-weight bold
+
+/* @end */
+
+
+/* @group block tags */
+
+p
+  :margin= !base_line_height 0
+
+=list-default(!ol = false)
+  :margin= !base_line_height
+  @if !ol
+    :list-style decimal
+  @else
+    :list-style disc
+
+=no-style-list
+  +no-bullets
+  :margin 0
+  :padding 0
+
+ol
+  +list-default("ol")
+
+ul
+  +list-default
+
+blockquote
+  :margin= !base_line_height
+  +serif-family
+
+/* @end */
+
+
+/* @group inline tags */
+
+cite
+  :font-style italic
+
+em
+  :font-style italic
+
+strong
+  :font-weight bold
+
+ins
+  :text-decoration underline
+
+del
+  :text-decoration line-through
+
+q
+  :font-style italic
+  em
+    :font-style normal
+
+/* @end */
+
+
+/* @group replaced tags */
+
+img
+  :vertical-align bottom
+
+/* @end */
+
+
+/* @end */

@@ -11,21 +11,21 @@ describe "Builder" do
 
   before :each do
     build_cmd = project_file("bin", "mm-build")
-    `cd #{@root_dir} && #{build_cmd}`
+    `cd #{@root_dir} && MM_DIR="#{@root_dir}" #{build_cmd}`
   end
 
   after :each do
     FileUtils.rm_rf(File.join(@root_dir, "build"))
   end
   
+  it "should use layout" do
+    File.exists?("#{@root_dir}/build/index.html").should be_true
+    File.read("#{@root_dir}/build/index.html").should include("Comment in layout")
+  end
+  
   it "should build haml files" do
     File.exists?("#{@root_dir}/build/index.html").should be_true
     File.read("#{@root_dir}/build/index.html").should include("<h1>Welcome</h1>")
-  end
-  
-  xit "should build maruku files" do
-    File.exists?("#{@root_dir}/build/maruku.html").should be_true
-    File.read("#{@root_dir}/build/maruku.html").should include("<h1 class='header' id='hello_maruku'>Hello Maruku</h1>")
   end
   
   it "should build static files" do

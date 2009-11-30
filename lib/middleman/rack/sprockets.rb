@@ -5,12 +5,6 @@ begin
 rescue LoadError
   puts "Sprockets not available. Install it with: gem install sprockets"
 end
-
-begin
-  require "yui/compressor"
-rescue LoadError
-  puts "YUI-Compressor not available. Install it with: gem install yui-compressor"
-end
   
 module Middleman
   module Rack
@@ -20,31 +14,26 @@ module Middleman
       end
 
       def call(env)
-        path   = env["PATH_INFO"]
-        source = File.join(Middleman::Base.views, path)
-            
-        if path.match(/\.js$/)
-          if File.exists?(source)
-            secretary = ::Sprockets::Secretary.new( :root   => Middleman::Base.root,
-                                                    :source_files => [ File.join("views", path) ],
-                                                    :load_path    => [ File.join("public", Middleman::Base.js_dir),
-                                                                       File.join("views", Middleman::Base.js_dir) ])
+        path = env["PATH_INFO"]
+        
+        source_pub  = File.join(Middleman::Base.views, path)
+        source_view = File.join(Middleman::Base.views, path)
+        source = "public" if File.exists?(source_pub) 
+        source = "views" if File.exists?(source_view)
+        
+        if env["DOWNSTREAM"] && path.match(/\.js$/) && source
+          source_file = env["DOWNSTREAM"][2].is_a?(::Rack::File) ? env["DOWNSTREAM"][2].path : env["DOWNSTREAM"][2]
           
-            result = secretary.concatenation.to_s
-          else
-            result = File.read(File.join(Middleman::Base.public, path))
-          end
-          
-          
-          if Middleman::Base.respond_to?(:minify_javascript?) && Middleman::Base.minify_javascript?
-            compressor = ::YUI::JavaScriptCompressor.new(:munge => true)
-            result = compressor.compress(result)
-          end
-
-          [200, { "Content-Type" => "text/javascript" }, [result]]
-        else
-          @app.call(env)
+          secretary = ::Sprockets::Secretary.new( :root         => Middleman::Base.root,
+                                                  :source_files => [ source_file ],
+                                                  :load_path    => [ File.join("public", Middleman::Base.js_dir),
+                                                                     File.join("views", Middleman::Base.js_dir) ])
+        
+          env["DOWNSTREAM"][2] = secretary.concatenation.to_s
+          env["DOWNSTREAM"][1]["Content-Length"] = ::Rack::Utils.bytesize(env["DOWNSTREAM"][2]).to_s
         end
+        
+        @app.call(env)
       end
     end
   end

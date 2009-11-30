@@ -1,0 +1,100 @@
+//** DEFAULT STYLES **//
+// Don't forget to set your default styles.
+
+
+// Get all the details and mixins from base.sass
+@import base.sass
+// Reset browser defaults, and prepare block-level HTML5 elements
+@import susy/reset.sass
+
+
+/* @group defaults */
+
+
+/* @group links */
+
+\:focus
+  outline: 1px dotted
+
+a
+  &:link, &:visited
+    color= !links
+    text-decoration: none
+  &:focus, &:hover, &:active
+    color= !light
+    border-bottom:
+      width= px2em(2) + "em"
+      style: dashed
+
+/* @end */
+
+
+/* @group headers */
+
+h1
+  +serif-family
+  text-transform: lowercase
+  font-size: 3em
+  line-height: 1
+  font-weight: bold
+  color= !links
+
+h2
+  font-weight: bold
+  text-transform: uppercase
+
+/* @end */
+
+
+/* @group block tags */
+p
+  margin: 0 0 1.5em 0
+
+pre
+  border-left= ".5em solid" !light
+  margin: 0 0 1.5em 0
+  padding: 1.5em
+
+=list-default(!ol = false)
+  @if !ol
+    list-style: decimal
+    margin: 0 1.5em 1.5em 1.5em
+  @else
+    list-style: disc
+    margin: 0 1.5em 1.5em 1.5em
+
+ol
+  +list-default("ol")
+
+ul
+  +list-default
+
+/* @end */
+
+
+/* @group inline tags */
+
+em
+  font-style: italic
+
+strong
+  font-weight: bold
+
+ins
+  text-decoration: underline
+
+del
+  text-decoration: line-through
+
+/* @end */
+
+
+/* @group replaced tags */
+
+img
+  vertical-align: bottom
+
+/* @end */
+
+
+/* @end */

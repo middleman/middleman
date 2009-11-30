@@ -3,25 +3,21 @@ module Middleman
     class Static
       def initialize(app, options={})
         @app = app
-        root = Middleman::Base.public
-        @file_server = ::Rack::File.new(root)
-      end
-
-      def templatize_js?(path)
-        path.match(/\.js$/) && Middleman::Base.respond_to?(:minify_javascript?) && Middleman::Base.minify_javascript?
       end
 
       def call(env)
-        path = env["PATH_INFO"]
-        file_path = File.join(Middleman::Base.public, path)
-        
-        if templatize_js?(path)
-          @app.call(env)
-        elsif path.include?("favicon.ico") || (File.exists?(file_path) && !File.directory?(file_path))
-          @file_server.call(env)
-        else
-          @app.call(env)
+        public_file_path = File.join(Middleman::Base.public, env["PATH_INFO"])
+        view_file_path   = File.join(Middleman::Base.views, env["PATH_INFO"])
+
+        if File.exists?(public_file_path) && !File.directory?(public_file_path)
+          file_server = ::Rack::File.new(Middleman::Base.public)
+          env["DOWNSTREAM"] = file_server.call(env)
+        elsif File.exists?(view_file_path) && !File.directory?(view_file_path)
+          file_server = ::Rack::File.new(Middleman::Base.views)
+          env["DOWNSTREAM"] = file_server.call(env)
         end
+        
+        @app.call(env)
       end
     end
   end

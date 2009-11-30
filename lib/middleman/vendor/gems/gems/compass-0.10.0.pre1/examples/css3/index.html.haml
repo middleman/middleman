@@ -1,0 +1,55 @@
+!!!
+%html
+  %head
+    %link(href="stylesheets/fancy-fonts.css" rel="stylesheet" type="text/css")
+    %link(href="stylesheets/main.css" rel="stylesheet" type="text/css")
+    %link(href="stylesheets/gradient.css" rel="stylesheet" type="text/css")
+  %body
+    %h1 Compass CSS3 Module
+    #container
+      .examples
+        #background-clip.example
+          %h2 Background Clip &amp; Origin
+          %pre.padding-box
+            %code<>
+              +background-clip("padding-box")<br />+background-origin("padding-box")
+          %pre.border-box
+            %code<>
+              +background-clip("border-box")<br />+background-origin("border-box")
+        .gutter
+        #background-size.example
+          %h2 Background Size
+          %pre.top-left
+            %code<>
+              +background-size(50% 50%)
+          %pre.centered
+            %code<>
+              +background-size(50% 50%)<br />background-position: center center
+        .gutter
+        #gradients.example
+          %h2 Gradients
+          %pre.horizontal
+            %code<>
+              +h-gradient(#d92626, #2626d9)
+          %pre.vertical
+            %code<>
+              +v-gradient(#d92626, #2626d9)
+          %pre.diagonal
+            %code<
+              +linear-gradient("left top",
+              "right bottom",
+              \#d92626, #2626d9)
+          %pre.radial
+            %code<>
+              +radial-gradient(<br />  "center center, 10, center center, 100",<br />  #d92626, #2626d9)
+      .examples
+        #border-radius.example
+          %h2 Border Radius
+        .gutter
+        #box-shadow.example
+          %h2 Box Shadow
+        .gutter
+        #box-sizing.example
+          %h2 Box Sizing
+
+

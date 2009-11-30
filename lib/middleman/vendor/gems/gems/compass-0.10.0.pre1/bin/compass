@@ -1,0 +1,26 @@
+#!/usr/bin/env ruby
+# The compass command line utility
+
+# This allows compass to run easily from a git checkout without install.
+def fallback_load_path(path)
+  retried = false
+  begin
+    yield
+  rescue LoadError
+    unless retried
+      $: << path
+      retried = true
+      retry
+    end
+    raise
+  end
+end
+
+fallback_load_path(File.join(File.dirname(__FILE__), '..', 'lib')) do
+  require 'compass'
+  require 'compass/exec'
+end
+
+
+command_line_class = Compass::Exec::Helpers.select_appropriate_command_line_ui(ARGV)
+exit command_line_class.new(ARGV).run!

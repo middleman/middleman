@@ -9,7 +9,7 @@ end
 module Middleman
   class Base < Sinatra::Base
     set :app_file, __FILE__
-    set :root, Dir.pwd
+    set :root, ENV["MM_DIR"] || Dir.pwd
     set :reload, false
     set :logging, false
     set :environment, ENV['MM_ENV'] || :development
@@ -18,21 +18,23 @@ module Middleman
     set :js_dir, "javascripts"
     set :css_dir, "stylesheets"
     set :images_dir, "images"
+    set :fonts_dir, "fonts"
     set :build_dir, "build"
     set :http_prefix, nil
     
     use Rack::ConditionalGet if environment == :development
     helpers Sinatra::ContentFor
     
-    @@features = []
-    
+    set :features, []
     def self.enable(*opts)
-      @@features << opts
+      set :features, (self.features << opts).flatten
       super
     end
     
     def self.disable(*opts)
-      @@features -= opts
+      current = self.features
+      current -= opts.flatten
+      set :features, current
       super
     end
     
@@ -67,14 +69,14 @@ module Middleman
     include StaticRender
     
     def self.page(url, options={}, &block)
+      layout = @@layout
+      layout = options[:layout] if !options[:layout].nil?
+      
       get(url) do
-        request.layout = @@layout if (@@layout ||= nil)
-        request.layout = options[:layout] if options[:layout]
-        
         if block_given?
           yield
         else
-          process_request
+          process_request(layout)
         end
       end
     end
@@ -85,21 +87,26 @@ module Middleman
     ensure
       @@layout = nil
     end
-    
+
     # This will match all requests not overridden in the project's init.rb
     not_found do
       process_request
     end
+    
+    def self.enabled?(name)
+      name = (name.to_s << "?").to_sym
+      self.respond_to?(name) && self.send(name)
+    end
 
   private
-    def process_request
+    def process_request(layout = :layout)
       # Normalize the path and add index if we're looking at a directory
       path = request.path
       path << options.index_file if path.match(%r{/$})
       path.gsub!(%r{^/}, '')
 
       # If the enabled renderers succeed, return the content, mime-type and an HTTP 200
-      if content = render_path(path, (request.layout || :layout))
+      if content = render_path(path, layout)
         content_type media_type(File.extname(path)), :charset => 'utf-8'
         status 200
         content
@@ -116,12 +123,12 @@ require "middleman/sass"
 require "middleman/helpers"
 require "middleman/rack/static"
 require "middleman/rack/sprockets"
+require "middleman/rack/minify_javascript"
+require "middleman/rack/minify_css"
+require "middleman/rack/downstream"
 
 class Middleman::Base
   helpers Middleman::Helpers
-  
-  use Middleman::Rack::Static
-  use Middleman::Rack::Sprockets
   
   # Features disabled by default
   disable :slickmap
@@ -139,17 +146,23 @@ class Middleman::Base
   configure :build do
   end
   
-  def self.new(*args, &bk)
-    # Check for and evaluate local configuration
-    local_config = File.join(self.root, "init.rb")
-    if File.exists? local_config
-      puts "== Reading:  Local config" if logging?
-      class_eval File.read(local_config)
-      set :app_file, File.expand_path(local_config)
-    end
-    
+  # Check for and evaluate local configuration
+  local_config = File.join(self.root, "init.rb")  
+  if File.exists? local_config
+    puts "== Reading:  Local config" if logging?
+    Middleman::Base.class_eval File.read(local_config)
+    set :app_file, File.expand_path(local_config)
+  end
+  
+  use Middleman::Rack::Static
+  use Middleman::Rack::Sprockets
+  use Middleman::Rack::MinifyJavascript
+  use Middleman::Rack::MinifyCSS
+  use Middleman::Rack::Downstream
+  
+  def self.new(*args, &bk)    
     # loop over enabled feature
-    @@features.flatten.each do |feature_name|
+    features.flatten.each do |feature_name|
       next unless send(:"#{feature_name}?")
       
       feature_path = "features/#{feature_name}"

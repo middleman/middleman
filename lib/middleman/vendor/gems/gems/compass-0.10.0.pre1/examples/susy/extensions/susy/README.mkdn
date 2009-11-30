@@ -1,0 +1,235 @@
+Susy - Compass Plugin 
+=====================
+
+Susy is a semantic CSS framework creator entirely native to
+[Compass](http://compass-style.org/).
+Susy is an expert at fluid grids in an elastic (or fluid, or fixed) shell that
+will never activate that bloody side-scroll bar. Susy sets your width on the
+outer element (`container`), adds a `max-width` of `100%` and builds the rest
+of your grid in percentages. The philosophy and technique are based on
+[Natalie Downe](http://natbat.net/)'s "[CSS
+Systems](http://natbat.net/2008/Sep/28/css-systems/)" - which introduces
+difficult math in the service of beautiful structure. With the power of
+Compass/Sass, Susy will do that math for you.
+
+Using simple mixins, columns can be created, suffixed, prefixed, and nested
+easily - and always in flexible percentages.
+
+Install 
+=======
+
+    sudo gem sources --add http://gemcutter.org/ 
+    sudo gem install compass-susy-plugin
+
+Create a Susy-based Compass Project 
+===================================
+
+    compass -r susy -f susy <project name>
+
+Then edit your `_base.sass`, `_defaults.sass`, `screen.sass` and `print.sass`
+files accordingly. A reset is added automatically, and includes help for some
+HTML5 elements.
+
+Philosophy and Goals
+--------------------
+
+The method comes from [Natalie Downe](http://natbat.net/)'s "[CSS
+Systems](http://natbat.net/2008/Sep/28/css-systems/)", but I'll cover it here.
+
+It is important for accessibility and usability that we are:
+
+* Responsive to text sizing: In order for our site to be accessible we need to
+  allow different font-sizes to be set by the client. In order to maintain
+  design integrity of proportions and line-lengths, the grid needs to respond
+  to those sizes.
+
+* Responsive to window sizing: In order to maintain usability across
+  platforms/monitors, our grid needs to respond to the size of the viewport.
+  This is mainly an issue as the viewport shrinks and we are given a
+  side-scroll bar. No one likes that. On the large end our design integrity
+  and line lengths are more important than taking up all the possible space.
+
+In order to achieve both goals we need to combine the best of the elastic
+(em-based) and fluid (%-based) models. The solution is simple: First we build
+a fluid grid, then place it inside an elastic shell, and apply a maximum width
+to that shell so that it never exceeds the size of the viewport. It's simple
+in theory, but daunting in practice, as you constantly have to adjust your
+math based on the context.
+
+But Susy harnesses the power of Compass and Sass to do all the math for you.
+
+Grid Basics
+===========
+
+* Set up your default grid values (total columns, column width, gutter
+  width, side gutter width), your base font size, and important mixins
+  in `_base.sass`.
+
+* Set defaults for all the important HTML tags in `_defaults.sass`. It's
+  better than using the browser defaults. And better than using ours.
+
+* Create your grid in `screen.sass`: apply the `+susy` mixin to the `body`
+  element and the `+container` mixin to the element that contains the page
+  grid.
+
+* Use the `+columns` mixin to declare the width in columns of an element,
+  or `+full` for any element spanning the full width of its context.
+
+* Use `+alpha` and `+omega` to declare elements which include the first or
+  last column within their parent element (`+full` to declare both `+alpha`
+  and `+omega`). Note: `+alpha` is actually only needed in the very top level,
+  and does nothing in nested contexts. Neither is needed on a `+full` element.
+
+* Use `+prefix` or `+suffix` to give the width (in columns) of an elements
+  left or right margin, or `+pad` to give both `+prefix` and `+suffix` at
+  once.
+
+* In nested contexts, all of these mixins take an extra final argument, the
+  width in columns of the parent (nesting) element.
+
+That's it for the basics! Here's a sample Susy grid layout:
+
+    body
+      +susy
+     
+    #page
+      +container
+     
+    #brand
+      +full
+      +pad(1,1)
+      h1
+        +full(8)
+        +pad(1,2,8)
+        
+    #nav
+      +columns(2)
+      +alpha
+     
+    #content
+      +columns(8)
+      +omega
+      #description
+        +columns(5,8)
+      #credit
+        +columns(3,8)
+        +omega(8)
+
+Tutorial
+========
+
+For more details, read [the tutorial](http://www.oddbird.net/susy/tutorial/).  
+It's also included with Susy in the docs/ folder.
+
+Extra Utility Mixins 
+=====================
+
+Extra utilities are included in Susy's `utils.sass` file, with additional list
+options, experimental (CSS3/proprietary) CSS, and more.
+
+* `+show-grid(!src)` - Repeat the specified grid image on an element. Good for
+  testing your baseline grid.
+
+* `+inline-block-list([!horizontalpadding])` - Make list items inline-block
+  when floating just won't do the trick (if you need them centered or right).
+
+* `+hide` - Hide content from visual browsers while keeping accessability
+  intact.
+
+* `+skip-link([!top = 0, !right, !bottom, !left])` - Hide a link, and then show
+  it again on focus. the TRBL settings allow you to place it absolutely on
+  display. Default will be top left of the positioning context.
+
+And then the fun stuff in `_CSS3.sass`:
+
+* `+opacity(!opacity)` - add cross-browser opacity settings (takes a range of
+  0 to 1). `+transprent` and `+opaque` are available as shortcuts.
+
+* `+border-radius(!radius)` - Rounded corners in supporting browsers.
+  `+border-bottom-left-radius` etc. all work.
+
+* `+box-sizing(!model)` - Set the box sizing model in supporting browsers.
+
+* `+box-shadow(!verticaloffset, !horizontaloffset, !blur, !color)` -
+  Box-shadow in supporting browsers.
+
+* `+column-count(!number)`, `+column-gap(!length)`, `+column-width(!length)`,
+  and `+column-rule(!width, !style, !color)` - CSS columns in supporting
+  browsers.
+
+Advanced Options
+================
+
+Susy is built for flexibility, so that you always write the code you want to
+write. While everything should 'just work' out of the box, there are plenty of
+advanced options hidden inside. Here's a few:
+
+* `!hacks` is a boolean constant that you can set in your base.sass file to
+  choose between using targeted hacks for IE (a variation of the star hack in
+  most cases) in your screen.css, or using a conditional-comment targeted
+  ie.css. All the needed mixins are available for either setting. `!hacks` is
+  true by default so there is no extra work maintaining multiple files unless
+  you want to.
+
+    Example 1:
+    
+        !hacks = true
+    
+        #nav
+          +inline-block-list
+    
+    Example 2:
+    
+        !hacks = false
+      
+        (in screen.sass)
+        #nav
+          +inline-block-list
+        
+        (in ie.sass)
+        #nav li
+          +ie-inline-block
+
+    It requires more maintenance on your part, but the result is a
+    hack-free output.
+    
+    The Susy mixins that use either hacks or targeted mixins are
+    `+omega` (`+ie-omega([!right-floated = false])`), `+inline-block`
+    (`+ie-inline-block`), and `+inline-block-list` which sets
+    `+inline-block` on the list items.
+    
+    The ie-specific mixins only add the needed ie-specific adjustments,
+    so they need to be used in addition to their counterparts, not on
+    their own.
+
+* `gutter(!context)` is a function that you can call at any time to return the
+  size of a gutter in your given context using percentages. The number is
+  returned without units so that you can perform math on it. In order to use
+  it, you will have to add "%" to it.
+
+    Example:
+        
+        #nav
+          padding-right= gutter(5) + "%"
+
+* `columns(!number, !context)` returns the span of `!number` columns in
+  `!context` as a percentage (again without the units declared). This span
+  includes any gutters between the columns spanned.
+
+    Example:
+        
+        #nav
+          padding-left= columns(3,5) + "%"
+
+* `side_gutter()` is also available and takes no arguments since it is always
+  used at the top nesting level.
+
+* `px2em()` takes one numeric argument representing the number of pixels you
+  want to mimic. The return is an em value (with no units declared) that
+  approximates that number of pixels. Useful for keeping your entire design
+  fluid.
+  
+    Example:
+    
+        #nav
+          border-bottom= px2em(2) + "em"

@@ -23,7 +23,7 @@ module Middleman
           
           css_filename = File.join(location_of_sass_file, request.path_info)
           result = sass(path.to_sym, ::Compass.sass_engine_options.merge({ :css_filename => css_filename }))
-          if options.respond_to?(:minify_css?) && options.minify_css?
+          if options.enabled?(:minify_css?)
             YUI::CssCompressor.new.compress(result) 
           else
             result
@@ -84,7 +84,9 @@ class Middleman::Base
     ::Compass.configuration do |config|
       config.project_path          = self.root
       config.sass_dir              = File.join(File.basename(self.views), self.css_dir)
-      config.output_style          = :nested
+      config.output_style          = self.enabled?(:minify_css) ? :compressed : :nested
+      config.line_comments         = false
+      config.fonts_dir             = File.join(File.basename(self.public), self.fonts_dir)
       config.css_dir               = File.join(File.basename(self.public), self.css_dir)
       config.images_dir            = File.join(File.basename(self.public), self.images_dir)      
       config.http_images_path      = self.http_images_path rescue File.join(self.http_prefix || "/", self.images_dir)
@@ -102,5 +104,6 @@ class Middleman::Base
     end
     
     ::Compass.configure_sass_plugin!
+    Sass::Plugin.options.update(:line_comments => false)
   end
 end

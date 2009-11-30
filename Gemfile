@@ -1,6 +1,6 @@
 bundle_path "lib/middleman/vendor/gems"
 bin_path "lib/middleman/vendor/bin"
-disable_rubygems
+# disable_rubygems
 # disable_system_gems
 
 gem "shotgun"
@@ -11,7 +11,7 @@ gem "sinatra-content-for"
 gem "rack-test"
 gem "yui-compressor"
 gem "haml"
-gem "compass"
+gem "compass", "0.10.0.pre1"
 gem "json_pure"
 gem "smusher"
 gem "compass-slickmap"
