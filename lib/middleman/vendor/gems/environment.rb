@@ -38,18 +38,18 @@ module Bundler
   $LOAD_PATH.unshift File.expand_path("#{dir}/gems/shotgun-0.4/lib")
   $LOAD_PATH.unshift File.expand_path("#{dir}/gems/sinatra-0.9.4/bin")
   $LOAD_PATH.unshift File.expand_path("#{dir}/gems/sinatra-0.9.4/lib")
+  $LOAD_PATH.unshift File.expand_path("#{dir}/gems/haml-2.2.15/bin")
+  $LOAD_PATH.unshift File.expand_path("#{dir}/gems/haml-2.2.15/lib")
+  $LOAD_PATH.unshift File.expand_path("#{dir}/gems/sinatra-content-for-0.2/bin")
+  $LOAD_PATH.unshift File.expand_path("#{dir}/gems/sinatra-content-for-0.2/lib")
   $LOAD_PATH.unshift File.expand_path("#{dir}/gems/smusher-0.4.2/bin")
   $LOAD_PATH.unshift File.expand_path("#{dir}/gems/smusher-0.4.2/lib")
   $LOAD_PATH.unshift File.expand_path("#{dir}/gems/yui-compressor-0.9.1/bin")
   $LOAD_PATH.unshift File.expand_path("#{dir}/gems/yui-compressor-0.9.1/lib")
-  $LOAD_PATH.unshift File.expand_path("#{dir}/gems/sinatra-content-for-0.2/bin")
-  $LOAD_PATH.unshift File.expand_path("#{dir}/gems/sinatra-content-for-0.2/lib")
-  $LOAD_PATH.unshift File.expand_path("#{dir}/gems/haml-2.2.14/bin")
-  $LOAD_PATH.unshift File.expand_path("#{dir}/gems/haml-2.2.14/lib")
-  $LOAD_PATH.unshift File.expand_path("#{dir}/gems/compass-0.10.0.pre1/bin")
-  $LOAD_PATH.unshift File.expand_path("#{dir}/gems/compass-0.10.0.pre1/lib")
-  $LOAD_PATH.unshift File.expand_path("#{dir}/gems/compass-slickmap-0.2.1/bin")
-  $LOAD_PATH.unshift File.expand_path("#{dir}/gems/compass-slickmap-0.2.1/lib")
+  $LOAD_PATH.unshift File.expand_path("#{dir}/gems/compass-0.10.0.pre2/bin")
+  $LOAD_PATH.unshift File.expand_path("#{dir}/gems/compass-0.10.0.pre2/lib")
+  $LOAD_PATH.unshift File.expand_path("#{dir}/gems/compass-slickmap-0.2.3/bin")
+  $LOAD_PATH.unshift File.expand_path("#{dir}/gems/compass-slickmap-0.2.3/lib")
 
   @gemfile = "#{dir}/../../../../Gemfile"
 
@@ -86,18 +86,18 @@ module Bundler
   @bundled_specs["shotgun"].loaded_from = "#{dir}/specifications/shotgun-0.4.gemspec"
   @bundled_specs["sinatra"] = eval(File.read("#{dir}/specifications/sinatra-0.9.4.gemspec"))
   @bundled_specs["sinatra"].loaded_from = "#{dir}/specifications/sinatra-0.9.4.gemspec"
+  @bundled_specs["haml"] = eval(File.read("#{dir}/specifications/haml-2.2.15.gemspec"))
+  @bundled_specs["haml"].loaded_from = "#{dir}/specifications/haml-2.2.15.gemspec"
+  @bundled_specs["sinatra-content-for"] = eval(File.read("#{dir}/specifications/sinatra-content-for-0.2.gemspec"))
+  @bundled_specs["sinatra-content-for"].loaded_from = "#{dir}/specifications/sinatra-content-for-0.2.gemspec"
   @bundled_specs["smusher"] = eval(File.read("#{dir}/specifications/smusher-0.4.2.gemspec"))
   @bundled_specs["smusher"].loaded_from = "#{dir}/specifications/smusher-0.4.2.gemspec"
   @bundled_specs["yui-compressor"] = eval(File.read("#{dir}/specifications/yui-compressor-0.9.1.gemspec"))
   @bundled_specs["yui-compressor"].loaded_from = "#{dir}/specifications/yui-compressor-0.9.1.gemspec"
-  @bundled_specs["sinatra-content-for"] = eval(File.read("#{dir}/specifications/sinatra-content-for-0.2.gemspec"))
-  @bundled_specs["sinatra-content-for"].loaded_from = "#{dir}/specifications/sinatra-content-for-0.2.gemspec"
-  @bundled_specs["haml"] = eval(File.read("#{dir}/specifications/haml-2.2.14.gemspec"))
-  @bundled_specs["haml"].loaded_from = "#{dir}/specifications/haml-2.2.14.gemspec"
-  @bundled_specs["compass"] = eval(File.read("#{dir}/specifications/compass-0.10.0.pre1.gemspec"))
-  @bundled_specs["compass"].loaded_from = "#{dir}/specifications/compass-0.10.0.pre1.gemspec"
-  @bundled_specs["compass-slickmap"] = eval(File.read("#{dir}/specifications/compass-slickmap-0.2.1.gemspec"))
-  @bundled_specs["compass-slickmap"].loaded_from = "#{dir}/specifications/compass-slickmap-0.2.1.gemspec"
+  @bundled_specs["compass"] = eval(File.read("#{dir}/specifications/compass-0.10.0.pre2.gemspec"))
+  @bundled_specs["compass"].loaded_from = "#{dir}/specifications/compass-0.10.0.pre2.gemspec"
+  @bundled_specs["compass-slickmap"] = eval(File.read("#{dir}/specifications/compass-slickmap-0.2.3.gemspec"))
+  @bundled_specs["compass-slickmap"].loaded_from = "#{dir}/specifications/compass-slickmap-0.2.3.gemspec"
 
   def self.add_specs_to_loaded_specs
     Gem.loaded_specs.merge! @bundled_specs
