@@ -13,6 +13,7 @@ begin
     gem.authors = ["Thomas Reynolds"]
     gem.rubyforge_project = "middleman"
     gem.executables = %w(mm-init mm-build mm-server)
+    gem.add_dependency("rack")
     gem.add_dependency("thin")
     gem.add_development_dependency("rspec")
     gem.add_development_dependency("cucumber")
