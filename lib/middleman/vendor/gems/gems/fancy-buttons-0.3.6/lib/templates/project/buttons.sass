@@ -1,0 +1,57 @@
+@import fancy_buttons.sass
+
+body
+  text-align: center
+  padding-top: 10px
+h1, h2, h3
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif
+  color: #333
+  letter-spacing: -1px
+h1
+  font-size: 50px
+h2
+  font-size: 30px
+div
+  margin-top: 15px
+
+!green = darken(#57b42c, 8)
+!blue = adjust_hue(!green, 110)
+!red = adjust_hue(!green, -100)
+!heart_button = saturate(lighten(!red, 2), 20)
+
+=custom-fancy-gradient(!color1, !color2)
+  +radial-gradient("50% 10%, 10, 50% 10%, 30", !color1, darken(!color2, 5))
+=invert-custom-fancy-gradient(!color1, !color2)
+  +custom-fancy-gradient(lighten(!color2, 10), lighten(!color2, 25))
+  
+a.button, button  
+  +fancy-button-structure
+  +fancy-button-colors
+  margin: 0 2px
+  vertical-align: middle
+  &.light
+    +fancy-button-colors-matte(#ddd)
+  &.matte-blue
+    +fancy-button-colors-matte(!blue)
+  &.green
+    +fancy-button-colors(!green)
+  &.blue
+    +fancy-button-size(32px, 32px, 3px)
+    +fancy-button-colors(!blue)
+  &.red
+    +fancy-button-colors(!red)
+  &.yellow
+    +fancy-button-colors(darken(desaturate(yellow, 35), 5))
+  &.custom
+    +fancy-button-size(30px, 10px)
+    +fancy-button-padding(2px, 12px, 2px)
+  &.heart
+    +fancy-button-colors-custom(!heart_button)
+  &.arrow
+    +fancy-button-size(30px, 30px)
+    +fancy-button-colors-custom(#ddd)
+    +fancy-button-padding(2px, 6px, 2px)
+  &.spade
+    +fancy-button-colors-custom(!blue)
+    +fancy-button-padding(2px, 8px, 2px)
+    //color: #333 !important

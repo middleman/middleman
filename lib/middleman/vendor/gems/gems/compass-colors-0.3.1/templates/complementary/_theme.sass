@@ -1,0 +1,20 @@
+// In theory the lightness and saturation values of corresponding colors should not change.
+// In reality, these values should be adjusted to create a more pleasant color combination.
+// There is not any mathematical formula for this, but you can use the lighten, darken,
+// saturate and desaturate functions to adjust your main colors.
+!base_color ||= red
+!complementary_color = complement(!base_color)
+
+!dark_base_color     = darken(!base_color, 25)
+!darker_base_color   = darken(!base_color, 50)
+!darkest_base_color  = darken(!base_color, 75)
+!light_base_color    = lighten(!base_color, 25)
+!lighter_base_color  = lighten(!base_color, 50)
+!lightest_base_color = lighten(!base_color, 75)
+
+!dark_complementary_color     = darken(!complementary_color, 25)
+!darker_complementary_color   = darken(!complementary_color, 50)
+!darkest_complementary_color  = darken(!complementary_color, 75)
+!light_complementary_color    = lighten(!complementary_color, 25)
+!lighter_complementary_color  = lighten(!complementary_color, 50)
+!lightest_complementary_color = lighten(!complementary_color, 75)

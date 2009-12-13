@@ -68,6 +68,7 @@ module Middleman
     end
     include StaticRender
     
+    @@layout = nil
     def self.page(url, options={}, &block)
       layout = @@layout
       layout = options[:layout] if !options[:layout].nil?
