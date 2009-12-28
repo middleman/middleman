@@ -10,11 +10,12 @@ module Middleman
       haml name.to_sym, options.merge(:layout => false)
     end
     
-    def auto_stylesheet_link_tag
+    def auto_stylesheet_link_tag(separator="/")
       path = request.path_info.dup
       path << self.class.index_file if path.match(%r{/$})
       path = path.gsub(%r{^/}, '')
       path = path.gsub(File.extname(path), '')
+      path = path.gsub("/", separator)
 
       css_file = File.join(self.class.public, self.class.css_dir, "#{path}.css")
       sass_file = File.join(self.class.views, self.class.css_dir, "#{path}.css.sass")
