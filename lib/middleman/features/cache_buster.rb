@@ -1,7 +1,7 @@
 class Middleman::Base  
   after_feature_init do 
     ::Compass.configuration do |config|
-      if self.respond_to?(:cache_buster?) && self.cache_buster?
+      if self.enabled?(:cache_buster)
         config.asset_cache_buster do |path, real_path|
           real_path = real_path.path if real_path.is_a? File
           real_path = real_path.gsub(File.join(self.root, self.build_dir), self.public)
@@ -25,7 +25,7 @@ class << Middleman::Base
   def asset_url(path, prefix="", request=nil)
     http_path = pre_cache_buster_asset_url(path, prefix, request)
     
-    return http_path unless self.respond_to?(:cache_buster?) && self.cache_buster?
+    return http_path unless self.enabled?(:cache_buster)
     
     if http_path.include?("://") || !%w(.css .png .jpg .js .gif).include?(File.extname(http_path))
       http_path

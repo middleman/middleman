@@ -7,6 +7,7 @@ class Sinatra::Request
 end
 
 module Middleman
+  module Rack; end
   class Base < Sinatra::Base
     set :app_file, __FILE__
     set :root, ENV["MM_DIR"] || Dir.pwd
@@ -22,7 +23,7 @@ module Middleman
     set :build_dir, "build"
     set :http_prefix, nil
     
-    use Rack::ConditionalGet if environment == :development
+    use ::Rack::ConditionalGet if environment == :development
     helpers Sinatra::ContentFor
     
     set :features, []
@@ -74,17 +75,14 @@ module Middleman
       layout = options[:layout] if !options[:layout].nil?
       
       get(url) do
-        if block_given?
-          yield
-        else
-          process_request(layout)
-        end
+        return yield if block_given?
+        process_request(layout)
       end
     end
     
     def self.with_layout(layout, &block)
       @@layout = layout
-      class_eval(&block)
+      class_eval(&block) if block_given?
     ensure
       @@layout = nil
     end
@@ -137,7 +135,6 @@ class Middleman::Base
   disable :minify_css
   disable :minify_javascript
   disable :relative_assets
-  disable :maruku
   disable :smush_pngs
   disable :automatic_image_sizes
   disable :relative_assets
@@ -148,7 +145,7 @@ class Middleman::Base
   end
   
   # Check for and evaluate local configuration
-  local_config = File.join(self.root, "init.rb")  
+  local_config = File.join(self.root, "init.rb")
   if File.exists? local_config
     puts "== Reading:  Local config" if logging?
     Middleman::Base.class_eval File.read(local_config)
@@ -161,7 +158,7 @@ class Middleman::Base
   use Middleman::Rack::MinifyCSS
   use Middleman::Rack::Downstream
   
-  def self.new(*args, &bk)    
+  def self.new(*args, &block)
     # loop over enabled feature
     features.flatten.each do |feature_name|
       next unless send(:"#{feature_name}?")

@@ -1,0 +1,45 @@
+Mixin: fancy-type()
+--------------------
+To install the fancy type plugin:
+  1. import the fancy_type module: @import blueprint/fancy_type
+  2. mixin +fancy-type to your project's body or at the top level of your stylesheet:
+    body
+      +fancy-type
+
+Mixin: sibling-indentation()
+-----------------------------
+Indentation instead of line shifts for sibling paragraphs. Mixin to a style like p + p
+
+Mixin: alt()
+-------------
+For great looking type, use this code instead of asdf: 
+<span class="alt">asdf</span>  
+Best used on prepositions and ampersands.
+
+Mixin: dquo(!offset)
+--------------
+For great looking quote marks in titles, replace "asdf" with:
+<span class="dquo">&#8220;</span>asdf&#8221;
+(That is, when the title starts with a quote mark). 
+(You may have to change this value depending on your font size).
+
+Mixin: incr(!font_size)
+--------------
+Reduced size type with incremental leading
+(http://www.markboulton.co.uk/journal/comments/incremental_leading/)
+
+This could be used for side notes. For smaller type, you don't necessarily want to 
+follow the 1.5x vertical rhythm -- the line-height is too much. 
+
+Using this mixin, reduces your font size and line-height so that for 
+every four lines of normal sized type, there is five lines of the sidenote. eg:
+
+Arguments:
+  font_size - The desired font size in pixels. This will be converted to ems for you. Defaults to 10px.
+  base_font_size - The base font size in pixels. Defaults to 12px
+  old_line_height - The old line height. Defaults to 1.5 times the base_font_size
+
+Mixin: caps()
+--------------
+Surround uppercase words and abbreviations with this class.
+Based on work by Jørgen Arnor Gårdsø Lom [http://twistedintellect.com/]

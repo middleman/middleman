@@ -1,3 +1,3 @@
 #!/System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/bin/ruby
-require File.expand_path(File.join(File.dirname(__FILE__), "../gems/environment"))
-load File.expand_path(File.join(File.dirname(__FILE__), "../gems/gems/shotgun-0.4/bin/shotgun"))
+require File.expand_path(File.join(File.dirname(__FILE__), "../gems/ruby/1.8/environment"))
+load File.expand_path(File.join(File.dirname(__FILE__), "../gems/ruby/1.8/gems/shotgun-0.5/bin/shotgun"))

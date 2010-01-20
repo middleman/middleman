@@ -9,62 +9,64 @@ rescue LoadError
   puts "YUI-Compressor not available. Install it with: gem install yui-compressor"
 end
 
-module Middleman
-  module Sass  
-    def self.included(base)
-      base.supported_formats << "sass"
-    end
+module Middleman::Sass  
+  def self.included(base)
+    base.supported_formats << "sass"
+  end
 
-    def render_path(path, layout)
-      if template_exists?(path, :sass)
-        begin
-          static_version = options.public + request.path_info
-          send_file(static_version) if File.exists? static_version
+  def render_path(path, layout)
+    if template_exists?(path, :sass)
+      begin
+        static_version = options.public + request.path_info
+        send_file(static_version) if File.exists? static_version
 
-          location_of_sass_file = options.environment == "build" ? File.join(Dir.pwd, options.build_dir) : options.public
-          
-          css_filename = File.join(location_of_sass_file, request.path_info)
-          result = sass(path.to_sym, ::Compass.sass_engine_options.merge({ :css_filename => css_filename }))
-          if options.enabled?(:minify_css?)
-            YUI::CssCompressor.new.compress(result) 
-          else
-            result
-          end
-        rescue Exception => e
-          sass_exception_string(e)
+        location_of_sass_file = options.environment == "build" ? 
+                                  File.join(Dir.pwd, options.build_dir) : 
+                                  options.public
+        
+        css_filename = File.join(location_of_sass_file, request.path_info)
+        result = sass(path.to_sym, ::Compass.sass_engine_options.merge({ :css_filename => css_filename }))
+        
+        if options.enabled?(:minify_css?)
+          ::YUI::CssCompressor.new.compress(result) 
+        else
+          result
         end
-      else
-        super
+      rescue Exception => e
+        sass_exception_string(e)
       end
+    else
+      super
     end
+  end
 
-    # Handle Sass errors
-    def sass_exception_string(e)
-      e_string = "#{e.class}: #{e.message}"
+  # Handle Sass errors
+  def sass_exception_string(e)
+    e_string = "#{e.class}: #{e.message}"
 
-      if e.is_a? ::Sass::SyntaxError
-        e_string << "\non line #{e.sass_line}"
+    if e.is_a? ::Sass::SyntaxError
+      e_string << "\non line #{e.sass_line}"
 
-        if e.sass_filename
-          e_string << " of #{e.sass_filename}"
+      if e.sass_filename
+        e_string << " of #{e.sass_filename}"
 
-          if File.exists?(e.sass_filename)
-            e_string << "\n\n"
+        if File.exists?(e.sass_filename)
+          e_string << "\n\n"
 
-            min = [e.sass_line - 5, 0].max
-            begin
-              File.read(e.sass_filename).rstrip.split("\n")[
-                min .. e.sass_line + 5
-              ].each_with_index do |line, i|
-                e_string << "#{min + i + 1}: #{line}\n"
-              end
-            rescue
-              e_string << "Couldn't read sass file: #{e.sass_filename}"
+          min = [e.sass_line - 5, 0].max
+          begin
+            File.read(e.sass_filename).rstrip.split("\n")[
+              min .. e.sass_line + 5
+            ].each_with_index do |line, i|
+              e_string << "#{min + i + 1}: #{line}\n"
             end
+          rescue
+            e_string << "Couldn't read sass file: #{e.sass_filename}"
           end
         end
       end
-      <<END
+    end
+    <<END
 /*
 #{e_string}
 
@@ -75,15 +77,15 @@ white-space: pre;
 font-family: monospace;
 content: "#{e_string.gsub('"', '\"').gsub("\n", '\\A ')}"; }
 END
-    end
   end
 end
 
 class Middleman::Base
   include Middleman::Sass
-  
-  after_feature_init do 
+
+  after_feature_init do
     ::Compass.configuration do |config|
+      config.cache_path            = File.join(self.root, ".sassc") # For sassc files
       config.project_path          = self.root
       config.sass_dir              = File.join(File.basename(self.views), self.css_dir)
       config.output_style          = self.enabled?(:minify_css) ? :compressed : :nested

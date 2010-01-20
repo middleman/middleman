@@ -1,0 +1,21 @@
+have_header: checking for ruby/st.h... -------------------- yes
+
+"gcc -E -I. -I/System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/universal-darwin10.0 -I.  -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE     -g -Os -pipe -fno-common -DENABLE_DTRACE  -fno-common  -pipe -fno-common   -Wall  conftest.c -o conftest.i"
+checked program was:
+/* begin */
+1: #include <ruby/st.h>
+/* end */
+
+--------------------
+
+have_header: checking for ruby/encoding.h... -------------------- no
+
+"gcc -E -I. -I/System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/universal-darwin10.0 -I.  -D_XOPEN_SOURCE -D_DARWIN_C_SOURCE     -g -Os -pipe -fno-common -DENABLE_DTRACE  -fno-common  -pipe -fno-common   -Wall  conftest.c -o conftest.i"
+conftest.c:1:27: error: ruby/encoding.h: No such file or directory
+checked program was:
+/* begin */
+1: #include <ruby/encoding.h>
+/* end */
+
+--------------------
+

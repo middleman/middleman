@@ -1,17 +1,9 @@
-module Middleman
-  module Rack
-    class Downstream
-      def initialize(app, options={})
-        @app = app
-      end
+class Middleman::Rack::Downstream
+  def initialize(app, options={})
+    @app = app
+  end
 
-      def call(env)
-        if env["DOWNSTREAM"]
-          env["DOWNSTREAM"]
-        else
-          @app.call(env)
-        end
-      end
-    end
+  def call(env)
+    env["DOWNSTREAM"] || @app.call(env)
   end
 end

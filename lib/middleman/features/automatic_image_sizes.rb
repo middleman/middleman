@@ -4,7 +4,7 @@ class Middleman::Base
   alias_method :pre_automatic_image_tag, :image_tag
   helpers do
     def image_tag(path, params={})
-      if !options.respond_to?(:automatic_image_sizes?) || !options.automatic_image_sizes?
+      if !options.enabled?(:automatic_image_sizes)
         return pre_automatic_image_tag(path, params)
       end
 

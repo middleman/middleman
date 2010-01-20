@@ -2,10 +2,10 @@ class Middleman::Base
   after_feature_init do 
     ::Compass.configuration do |config|
       config.relative_assets = Proc.new do
-        Middleman::Base.respond_to?(:relative_assets?) && Middleman::Base.relative_assets?
+        Middleman::Base.enabled?(:relative_assets)
       end
     end
-    
+
     ::Compass.configure_sass_plugin!
   end
 end
@@ -13,7 +13,7 @@ end
 class << Middleman::Base
   alias_method :pre_relative_asset_url, :asset_url
   def asset_url(path, prefix="", request=nil)
-    if !self.respond_to?(:relative_assets?) || !self.relative_assets?
+    if !self.enabled?(:relative_assets)
       return pre_relative_asset_url(path, prefix, request)
     end
     
