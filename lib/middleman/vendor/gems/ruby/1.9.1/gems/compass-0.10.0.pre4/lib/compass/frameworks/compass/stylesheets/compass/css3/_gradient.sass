@@ -1,0 +1,40 @@
+=gradient(!type, !coords, !color_start, !color_end, !color_stop = false)
+  !gradient= "#{!coords}, from(#{!color_start}), to(#{!color_end})"
+  @if !color_stop
+    !gradient= !gradient + ", " + !color_stop
+  background: -webkit-gradient(#{!type}, #{!gradient})
+  background: -moz-#{!type}-gradient(#{!gradient})
+
+//*
+  // This will yeild a radial gradient with an apparent specular highlight
+  +radial-gradient("45 45, 10, 52 50, 30", Cyan, DodgerBlue)
+    
+=radial-gradient(!coords, !color1, !color2, !color_stop = false)
+  +gradient("radial", !coords, !color1, !color2, !color_stop)
+
+//* 
+  // This yields a linear gradient spanning from !start to !end coordinates
+  +linear-gradient("left top", "left bottom", #fff, #ddd)
+
+=linear-gradient(!start, !end, !color1, !color2, !color_stop = false)
+  !coords = !start + ", " + !end
+  +gradient("linear", !coords, !color1, !color2, !color_stop)
+
+//*
+  // This yields a gradient starting at the top with #fff, ending in #aaa
+  +v-gradient(#fff, #aaa)
+  // Same as above but with a #ccc at the halfway point
+  +v-gradient(#fff, #aaa, color_stop(50%, #ccc))
+  // Same as the first example but with #ccc at the 30% from the top, and #bbb at 70% from the top
+  +v-gradient(#fff, #aaa, color_stop(30%, #ccc, 70%, #bbb))
+
+=v-gradient(!color1, !color2, !color_stop = false)
+  +linear-gradient("left top", "left bottom", !color1, !color2, !color_stop)
+
+//* 
+  // This yields a horizontal linear gradient spanning from left to right
+  // It can be used just like v-gradient above
+  h-gradient(#fff, #ddd)
+  
+=h-gradient(!color1, !color2, !color_stop = false)
+  +linear-gradient("left top", "right top", !color1, !color2, !color_stop)

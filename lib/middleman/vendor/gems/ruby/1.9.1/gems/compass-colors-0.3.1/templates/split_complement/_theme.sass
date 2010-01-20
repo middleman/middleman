@@ -1,0 +1,28 @@
+// In theory the lightness and saturation values of corresponding colors should not change.
+// In reality, these values should be adjusted to create a more pleasant color combination.
+// There is not any mathematical formula for this, but you can use the lighten, darken,
+// saturate and desaturate functions to adjust your main colors.
+!base_color ||= red
+!complement_support_color = adjust_hue(!base_color, 180 + 30)
+!complement_accent_color  = adjust_hue(!base_color, 180 - 30)
+
+!dark_base_color     = darken(!base_color, 25)
+!darker_base_color   = darken(!base_color, 50)
+!darkest_base_color  = darken(!base_color, 75)
+!light_base_color    = lighten(!base_color, 25)
+!lighter_base_color  = lighten(!base_color, 50)
+!lightest_base_color = lighten(!base_color, 75)
+
+!dark_complement_support_color     = darken(!complement_support_color, 25)
+!darker_complement_support_color   = darken(!complement_support_color, 50)
+!darkest_complement_support_color  = darken(!complement_support_color, 75)
+!light_complement_support_color    = lighten(!complement_support_color, 25)
+!lighter_complement_support_color  = lighten(!complement_support_color, 50)
+!lightest_complement_support_color = lighten(!complement_support_color, 75)
+
+!dark_complement_accent_color     = darken(!complement_accent_color, 25)
+!darker_complement_accent_color   = darken(!complement_accent_color, 50)
+!darkest_complement_accent_color  = darken(!complement_accent_color, 75)
+!light_complement_accent_color    = lighten(!complement_accent_color, 25)
+!lighter_complement_accent_color  = lighten(!complement_accent_color, 50)
+!lightest_complement_accent_color = lighten(!complement_accent_color, 75)

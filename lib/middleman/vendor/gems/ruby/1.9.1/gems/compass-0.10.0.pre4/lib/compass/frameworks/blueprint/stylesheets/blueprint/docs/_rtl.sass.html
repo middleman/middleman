@@ -1,0 +1,38 @@
+Variable: !blueprint_grid_columns
+----------------------------------
+Main layout grid, override these constants to build your grid and container sizes.
+Mixin: container()
+-------------------
+Main layout grid, override these constants to build your grid and container sizes.
+
+Mixin: last()
+--------------
+you must set text-align left on your container element in an IE stylesheet.
+
+Mixin: append(!n)
+----------------
+TODO add this to span mixin when we have optional arguments
+
+Mixin: prepend(!n)
+-----------------
+Mixin to a column to append n empty cols.
+
+Mixin: pull(!n)
+--------------
+Mixin to a column to prepend n empty cols.
+
+Mixin: push(!n)
+--------------
+mixin to a column to move it n columns to the left
+
+Mixin: border()
+----------------
+mixin to a column to push it n columns to the right
+
+Mixin: colborder()
+-------------------
+Border on left hand side of a column.
+
+Mixin: rtl-typography(!body_selector)
+------------------------
+Border with more whitespace, spans one column.

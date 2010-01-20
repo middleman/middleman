@@ -1,0 +1,67 @@
+!!!
+%html{ :lang => "en" }
+  %head
+    %meta{ :content => "text/html; charset=utf-8", "http-equiv" => "Content-Type" }
+    %title
+      Blueprint Buttons Sample Page
+    /
+      Framework CSS
+    %link{ :href => "../stylesheets/screen.css", :rel => "stylesheet", :media => "screen, projection", :type => "text/css" }
+    %link{ :href => "../stylesheets/print.css", :rel => "stylesheet", :media => "print", :type => "text/css" }
+    /
+      [if IE]><link rel="stylesheet" href="../stylesheets/ie.css" type="text/css" media="screen, projection"><![endif]
+    %link{ :href => "../stylesheets/buttons.css", :rel => "stylesheet", :media => "screen, projection", :type => "text/css" }
+  %body
+    .container
+      %h1
+        A Button Example Page
+      %hr
+      %h2.alt
+        This sample page demonstrates what you can do with the Buttons plugin.
+      %hr
+      .span-12
+        %h3
+          Link Buttons
+        %a.button
+          Link Button
+        %a.button.positive
+          Positive Button
+        %a.button.negative
+          Negative Button
+      .span-12.last
+        %h3
+          Real Buttons
+        %button
+          Normal Button
+        %button.positive
+          Positive Button
+        %button.negative
+          Negative Button
+      .span-12
+        %h3
+          Link Buttons with Images
+        %a.button
+          %img{ :src => "../images/buttons/tick.png", :alt => "" }
+          Save
+        %a.button.positive
+          %img{ :src => "../images/buttons/key.png", :alt => "" }
+          Change Password
+        %a.button.negative
+          %img{ :src => "../images/buttons/cross.png", :alt => "" }
+          Cancel
+      .span-12.last
+        %h3
+          Real Buttons with Images
+        %button
+          %img{ :src => "../images/buttons/tick.png", :alt => "" }
+          Save
+        %button.positive
+          %img{ :src => "../images/buttons/key.png", :alt => "" }
+          Change Password
+        %button.negative
+          %img{ :src => "../images/buttons/cross.png", :alt => "" }
+          Cancel
+      .span-24
+        %p
+          %a{ :href => "http://validator.w3.org/check?uri=referer" }
+            %img.top{ :src => "valid.png", :height => "31", :alt => "Valid HTML 4.01 Strict", :width => "88" }

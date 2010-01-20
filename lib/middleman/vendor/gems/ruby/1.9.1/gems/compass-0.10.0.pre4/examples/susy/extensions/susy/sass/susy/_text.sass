@@ -1,0 +1,15 @@
+//** Susy Text Settings **//
+// Updated 11.20.2009 by Eric A. Meyer
+
+
+// The font size and line height are declared in pixels.
+// You override these default settings in base.sass
+!base_font_size_px ||= 16
+!base_line_height_px ||= 24
+
+
+// Susy will do the math to make those sizes relative.
+// We call base_font_size function (even though we could do the math here)
+// because Susy needs to "remember" our base_font_size_px for px2em()
+!base_font_size = base_font_size(!base_font_size_px) + "%"
+!base_line_height = (!base_line_height_px / !base_font_size_px) + "em"

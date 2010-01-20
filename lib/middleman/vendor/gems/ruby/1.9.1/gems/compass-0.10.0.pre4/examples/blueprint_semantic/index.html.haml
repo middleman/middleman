@@ -1,0 +1,86 @@
+!!!
+%html{ :lang => "en" }
+  %head
+    %meta{ :content => "text/html; charset=utf-8", "http-equiv" => "Content-Type" }
+    %title
+      Blueprint test pages
+    /
+      Framework CSS
+    %link{ :href => "stylesheets/screen.css", :rel => "stylesheet", :media => "screen, projection", :type => "text/css" }
+    %link{ :href => "stylesheets/print.css", :rel => "stylesheet", :media => "print", :type => "text/css" }
+    /
+      [if IE]><link rel="stylesheet" href="stylesheets/ie.css" type="text/css" media="screen, projection"><![endif]
+  %body#index.blueprint
+    .container
+      %h1
+        Blueprint Semantic Test Pages
+      %hr
+      %p
+        Welcome to the Blueprint Semantic test pages. The HTML files below test the assignment of styles to semantic classes and ids using Sass mixins.
+      %table{ :cellspacing => "0", :border => "0", :cellpadding => "0" }
+        %tr
+          %th#page-header
+            Test page
+          %th#files-header
+            Main files tested
+          %th#description-header
+            Description
+        %tr
+          %td
+            %a{ :href => "parts/fancy_type.html" }
+              Fancy Type
+          %td
+            %a{ :href => "../../frameworks/blueprint/stylesheets/blueprint/modules/_grid.sass" }
+              grid.sass
+            ,
+            %a{ :href => "../../frameworks/blueprint/stylesheets/blueprint/modules/_typography.sass" }
+              typography.sass
+            ,
+            %a{ :href => "../../frameworks/blueprint/stylesheets/blueprint/modules/_fancy_type.sass" }
+              fancy_type.sass
+          %td
+            A simple sample page, with common elements and fancy type.
+        %tr
+          %td
+            %a{ :href => "parts/liquid.html" }
+              Liquid Grid
+          %td
+            %a{ :href => "../../frameworks/blueprint/stylesheets/blueprint/modules/_liquid.sass" }
+              liquid.sass
+            ,
+            %a{ :href => "../../frameworks/blueprint/stylesheets/blueprint/modules/_typography.sass" }
+              typography.sass
+            ,
+            %a{ :href => "../../frameworks/blueprint/stylesheets/blueprint/modules/_fancy_type.sass" }
+              fancy_type.sass
+          %td
+            Like Fancy Type, but using a liquid percent based grid.
+      %p
+        %em
+          %strong
+            Note about the css files:
+        These test files utilize the css files that are generated from
+        %a{ :href => "http://haml.hamptoncatlin.com/docs/rdoc/classes/Sass.html" }
+          Sass templates
+        \.
+        In other words, if you change any of the source files,
+        you'll have to re-build them with
+        %code
+          rake examples
+        to see any&nbsp;changes.
+      #info
+        %p
+          For more information and help, try these resources:
+        %ul
+          %li
+            %a{ :href => "http://code.google.com/p/blueprintcss" }
+              The Blueprint home page.
+          %li
+            %a{ :href => "http://groups.google.com/group/blueprintcss" }
+              Our anything-goes mailing list.
+          %li
+            %a{ :href => "http://bjorkoy.com" }
+              The blog where news about Blueprint gets posted.
+      %p
+        %a{ :href => "http://validator.w3.org/check?uri=referer" }
+          %img#w3c{ :src => "parts/valid.png", :height => "31", :alt => "Valid HTML 4.01 Strict", :width => "88" }

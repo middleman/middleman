@@ -1,0 +1,80 @@
+@import blueprint/reset.sass
+@import base.sass
+
+!border_color = #aaa
+
+#container
+  +container
+
+!min_width = 340px
+.examples
+  margin-bottom: 1em
+  +row
+  min-width= !min_width * 3 + 20px * 2 + 20px
+
+h1
+  text-align: center
+
+.example, .gutter
+  min-height: 21em
+
+.example
+  +column
+  width: 30%
+  min-width= !min_width
+  border: 4px solid #{!border_color}
+  +border-radius(0.667em)
+  +box-shadow(darken(!border_color, 40), 5px, 5px, 2px)
+  margin-bottom: 1em
+  h2
+    font-family: Angelina
+    margin: 0.5em 0 1em
+    text-align: center
+
+.gutter
+  display: block
+  float: left
+  width: 2.5%
+  min-width: 20px
+  content: " "
+
+.example
+  +v-gradient(#fff, #ccc)
+  pre
+    padding: 1em
+    margin: 1em
+    color: white
+    text-shadow: 1px 1px 2px #000
+    font-weight: bold
+#background-clip
+  pre
+    background: transparent #{image-url("fresh-peas.jpg")} no-repeat
+    border: 1em solid #{transparentize(red, .75)}
+  .padding-box
+    +background-clip("padding-box")
+    +background-origin("padding-box")
+  .border-box
+    +background-clip("border-box")
+    +background-origin("border-box")
+
+#background-size
+  pre
+    background: transparent #{image-url("fresh-peas.jpg")} no-repeat
+    border: 1em solid #{transparentize(red, .75)}
+  .top-left
+    +background-size(50% 50%)
+  .centered
+    +background-size(50% 50%)
+    background-position: center center
+
+#gradients
+  .horizontal
+    +h-gradient(#d92626, #2626d9)
+  .vertical
+    +v-gradient(#d92626, #2626d9)
+  .diagonal
+    +linear-gradient("left top", "right bottom", #d92626, #2626d9)
+  .radial
+    +radial-gradient("center center, 10, center center, 100", #d92626, #2626d9) 
+    background-color: #2626d9
+

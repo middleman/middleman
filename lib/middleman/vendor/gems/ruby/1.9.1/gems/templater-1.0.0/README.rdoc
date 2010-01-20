@@ -1,0 +1,266 @@
+= Templater
+
+* http://github.com/jnicklas/templater
+
+== Summary
+
+Templater is a Ruby framework for building code generators.
+
+== Description
+
+Templater has the ability to both copy files from A to B and also to render templates using ERB. Templater consists of four parts:
+
+- Actions (File copying routines, templates generation and directories creation routines).
+- Generators (set of rules).
+- Manifolds (generator suites).
+- The command line interface.
+
+Hierarchy is pretty simple: manifold has one or many public and private generators. Public ones are supposed to be called
+by end user. Generators have one or more action that specify what they do, where they take files, how they name resulting
+files and so forth.
+
+== Idea behind Templater
+
+Templater is designed to be flexible and designed to be reflective. Generators created with templater are definitions of what goes where, they provide no interface for the user. This allows you to use templater generators inside your own code, or with the bundled CLI interface, or with your own interface.
+
+== Example
+
+This is how to create a very simple system for generating things:
+
+    module MyGenerators
+
+      extend Templater::Manifold
+
+      class BlogGenerator < Templater::Generator
+        # directory this generator uses as source root when searching
+				# for files, directories, templates
+        def self.source_root
+          File.join(File.dirname(__FILE__), 'templates')
+        end
+
+				# uses blog.rbt template (note conventional trailing t)
+				# placing resulting file to blog.rb relatively to
+				# destination root
+        template :blog, 'blog.rb'
+
+				# does simple copy of me.jpg placing resulting file to me.jpg relatively to
+				# destination root
+        file :me, 'me.jpg'
+
+				# creates empty directory public/javascripts relatively to
+				# destination root
+				empty_directory :javascripts, File.join("public", "javascripts")
+      end
+
+      class WikiGenerator < Templater::Generator
+
+        def self.source_root
+          File.join(File.dirname(__FILE__), 'templates')
+        end
+
+        template :wiki, 'wiki.rb'
+        file :img, 'wiki.jpg'
+
+      end
+
+			# The generators are added to the manifold, and assigned the names 'wiki' and 'blog'.
+			# So you can call them <script name> blog merb-blog-in-10-minutes and
+			# <script name> blog merb-wiki-in-10-minutes, respectively
+      add :blog, BlogGenerator
+      add :wiki, WikiGenerator
+
+    end
+
+		# registers manifold with command line interface
+    MyGenerators.run_cli Dir.pwd, 'my_generators', '0.1', ARGV
+  
+The generator classes override the source_root method to specify where templates will be located. All subclasses of Templater::Generator that have any actions must do this. The +template+ and +file+ methods add actions to the generator. In the first case, a template that is rendered with ERB and then put in its destination location, in the other case a file that is copied. +empty_directory+ action creates empty directory under destination root.
+
+Neither manifolds or generators actually do anything by themselves, they are just abstract represenations. The last line invokes the command-line-interface, which fetches the desired generator, tells it to render its templates and checks with the user if there are any problems. The generators can easily be used without the command-line-interface, so it is easy to construct an alternative interface.
+
+== Invoking other generators
+
+Generators can invoke other generators, a WikiBlog generator that creates both a Wiki and a Blog could look like this:
+
+    module MyGenerators
+
+      extend Templater::Manifold
+
+      class WikiBlogGenerator < Templater::Generator
+
+        invoke :wiki
+        invoke :blog
+
+      end
+      
+      add :wiki_blog, WikiBlogGenerator
+
+    end
+    
+It needs no source_root, since it has no actions. The generators are invoked by their name in the manifold, not by their class name; this gives the system a great deal of flexibility.
+
+== Automatically adding actions
+
+It can get tedious to declare each action, instead you can search in a given directory and automatically add all files to your generator, this is done with the glob! function.
+
+    class MyGenerator < Templater::Generator
+     
+      def self.source_root
+        File.join(File.dirname(__FILE__), 'templates')
+      end
+      
+      glob!
+    
+    end
+    
+This will search the source root and add all files as actions.
+
+== Templates
+
+Templates are processed using generator instance scope as binding, so every instance method available on your
+generator is available in template body.
+
+There are a lot of ways of adding templates:
+
+    template :one_argument, 'source_and_destination.rb'
+  
+    template :two_arguments, 'source.rb', 'destination.rb'
+  
+    template :block do
+      source('source.rb')
+      destination(some_instance_method)
+    end
+  
+    template :expression, 'source.rb' '%some_instance_method%.rb'
+
+In the last example, the characters enclosed in percentage signs will be replaced with the results of the instance method +some_instance_method+
+
+Inside the templates normal ERB can be used. The templates are rendered in the same context as the generator instance, so generator instance methods can be called from inside the template.
+
+    <% if name %>
+    puts "My name is <%= name %>"
+    <% else %>
+    puts "I have no name"
+    <% end %>
+    
+If you need to render templates where the result should contain actual erb, simply use a double percentage sign, this will prevent the statement from being executed.
+
+    <%= 2 + 2 %>
+    <%%= 2 + 2 %>
+
+will result in
+
+    4
+    <%= 2 + 2 %>
+    
+== Callbacks
+
+Sometimes it might be desirable to add a callback to your actions, an example might be to chmod a binary file after it is created.
+
+    class MyGenerator < Templater::Generator
+      template :something, 'something.rb', :after => :chmod
+    
+      def chmod(action)
+        File.chmod(action.destination, 0750)
+      end
+    end
+
+== An advanced example
+
+A generator for creating a model class, such as it used by Merb or Rails, could look like this:
+
+    module Merb::Generators
+  
+      class ModelGenerator < ComponentGenerator
+
+        def self.source_root
+          File.join(super, 'model')
+        end
+
+				# description end users see next to generator name
+        desc <<-DESC
+          This is a model generator
+        DESC
+
+				# options generator takes, their metadata, like description or arguments type
+        option :testing_framework, :desc => 'Specify which testing framework to use (spec, test_unit)'
+        option :orm, :desc => 'Specify which Object-Relation Mapper to use (none, activerecord, datamapper, sequel)'
+
+				# you may use shortcuts for first 4 option positions
+        first_argument :name, :required => true
+        second_argument :attributes, :as => :hash, :default => {}
+
+        invoke :migration do |generator|
+          generator.new(destination_root, options.merge(:model => true), name, attributes)
+        end
+    
+        template :model, :orm => :none do
+          source('model.rbt')
+          destination('app/models/' + file_name + '.rb')
+        end
+    
+        template :model_activerecord, :orm => :activerecord do
+          source('model_activerecord.rbt')
+          destination('app/models/' + file_name + '.rb')
+        end
+    
+        template :model_datamapper, :orm => :datamapper do
+          source('model_datamapper.rbt')
+          destination('app/models/' + file_name + '.rb')
+        end
+    
+        template :model_sequel, :orm => :sequel do
+          source('model_sequel.rbt')
+          destination('app/models/' + file_name + '.rb')
+        end
+    
+        template :spec, :testing_framework => :rspec do
+          source('spec.rbt')
+          destination('spec/models/' + file_name + '_spec.rb')
+        end
+    
+        template :test_unit, :testing_framework => :test_unit do
+          source('test_unit.rbt')
+          destination('test/models/' + file_name + '_test.rb')
+        end
+    
+        def class_name
+          self.name.camel_case
+        end
+    
+        def test_class_name
+          self.class_name + "Test"
+        end
+    
+        def file_name
+          self.name.snake_case
+        end
+    
+      end
+  
+      add :model, ModelGenerator
+  
+    end
+
+== License
+
+Copyright (c) 2008 Jonas Nicklas, Michael S. Klishin
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

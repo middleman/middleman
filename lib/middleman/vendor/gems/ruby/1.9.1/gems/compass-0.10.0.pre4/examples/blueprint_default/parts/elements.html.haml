@@ -1,0 +1,282 @@
+!!!
+%html{ :lang => "en" }
+  %head
+    %meta{ :content => "text/html; charset=utf-8", "http-equiv" => "Content-Type" }
+    %title
+      Blueprint HTML Elements Tests
+    /
+      Framework CSS
+    %link{ :href => "../stylesheets/screen.css", :rel => "stylesheet", :media => "screen, projection", :type => "text/css" }
+    %link{ :href => "../stylesheets/print.css", :rel => "stylesheet", :media => "print", :type => "text/css" }
+    /
+      [if IE]><link rel="stylesheet" href="../stylesheets/ie.css" type="text/css" media="screen, projection"><![endif]
+  %body
+    .container.showgrid
+      %h2
+        Tests for common HTML elements
+      %hr
+      %h5
+        PARAGRAPHS
+        %span.alt
+          \&amp;
+        BOXES
+      .span-8
+        %p
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+        %p
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
+          %sub
+            sub text
+          ut labore et
+          %sup
+            sup text
+          magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+      .span-8
+        %p.small
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+        %p
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+        %p.large
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+      .span-8.last
+        .box
+          %p.last
+            Aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+        %blockquote
+          %p
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+      %hr
+      %h5
+        LISTS
+      .span-8
+        %ul
+          %li
+            Unordered list test
+          %li
+            Another list element. Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+          %li
+            Yet another element in the list
+          %li
+            Some long text. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Lorem ipsum dolor sit amet, consectetur adipisicing elit.
+        %ol
+          %li
+            Ordered list test
+          %li
+            Another list element
+          %li
+            Yet another element in the list
+      .span-8
+        %ol
+          %li
+            Ordered list
+          %li
+            Here's a nested unordered list
+            %ul
+              %li
+                Nested Unordered list
+              %li
+                Nested ordered list
+                %ol
+                  %li
+                    The first
+                  %li
+                    And the second
+          %li
+            Ordered List item
+          %li
+            Nested Ordered list
+            %ol
+              %li
+                Some point
+              %li
+                Nested Unordered list
+                %ul
+                  %li
+                    The first
+                  %li
+                    And the second
+      .span-8.last
+        %dl
+          %dt
+            definition list dt
+          %dd
+            definition list dd
+          %dt
+            definition list dt
+          %dd
+            definition list dd
+          %dt
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit adipisicing elit adipisicing elit
+          %dd
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit adipisicing elit adipisicing elit
+          %dt
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit adipisicing elit adipisicing elit
+          %dd
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit adipisicing elit adipisicing elit
+      %hr
+      %h5
+        HEADINGS
+      .span-8
+        %h1
+          H1: Lorem ipsum dolor sit amet
+        %h2
+          H2: Lorem ipsum dolor sit amet, consectetur elit
+        %h3
+          H3: Lorem ipsum dolor sit amet, consectetur adipisicing elit
+        %h4
+          H4: Lorem ipsum dolor sit amet, consectetur adipisicing elit adipis
+        %h5
+          H5: Lorem ipsum dolor sit amet, consectetur adipisicing elit adipisicing elit adipisicing elit
+        %h6
+          H6: Lorem ipsum dolor sit amet, consectetur adipisicing elit adipisicing elit adipisicing elit
+      .span-8
+        %h1
+          Heading 1
+        %hr
+        %h2
+          Heading 2
+        %hr
+        %h3
+          Heading 3
+        %hr
+        %h4
+          Heading 4
+        %hr
+        %h5
+          Heading 5
+        %hr
+        %h6
+          Heading 6
+      .span-8.last
+        %h1
+          Heading 1
+        %h2
+          Heading 2
+        %h3
+          Heading 3
+        %h4
+          Heading 4
+        %h5
+          Heading 5
+        %h6
+          Heading 6
+      %hr
+      %h5
+        MISC ELEMENTS
+      .span-8
+        %p
+          %strong
+            \&lt;strong&gt;
+          %br
+          %del
+            \&lt;del&gt; deleted
+          %br
+          %dfn
+            \&lt;dfn&gt; dfn
+          %br
+          %em
+            \&lt;em&gt; emphasis
+        %p
+          %a
+            \&lt;a&gt; anchor
+          %br
+          %a{ :href => "http://www.google.com" }
+            \&lt;a&gt; a + href
+        %p
+          %abbr{ :title => "extended abbr text should show when mouse over" }
+            \&lt;abbr&gt; abbr - extended text when mouseover.
+          %br
+          %acronym{ :title => "extended acronym text should show when mouse over" }
+            \&lt;acronym&gt; acronym - extended text when mouseover.
+        %address
+          \&lt;address&gt;
+          %br
+          Donald Duck
+          %br
+          Box 555
+          %br
+          Disneyland
+        %p
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore dolore.
+      .span-8
+        %table{ :cellspacing => "0", :border => "0", :summary => "This is the summary text for this table.", :cellpadding => "0" }
+          %caption
+            %em
+              A standard test table with a caption, tr, td elements
+          %tr
+            %th.span-4
+              Table Header One
+            %th.span-4.last
+              Table Header Two
+          %tr
+            %td
+              TD One
+            %td
+              TD Two
+          %tr
+            %td{ :colspan => "2" }
+              TD colspan 2
+        %table{ :cellspacing => "0", :border => "0", :summary => "This is the summary text for this table.", :cellpadding => "0" }
+          %caption
+            %em
+              A test table with a thead, tfoot, and tbody elements
+          %thead
+            %tr
+              %th.span-4
+                Table Header One
+              %th.span-4.last
+                Table Header Two
+          %tfoot
+            %tr
+              %td{ :colspan => "2" }
+                tfoot footer
+          %tbody
+            %tr
+              %td
+                TD One
+              %td
+                TD Two
+            %tr
+              %td
+                TD One
+              %td
+                TD Two
+          %tbody
+            %tr
+              %td
+                TD One
+              %td
+                TD Two
+            %tr
+              %td
+                TD One
+              %td
+                TD Two
+      .span-8.last
+        %pre
+          \&lt;pre&gt;
+          pre  space1
+          pre  space1
+          pre    space2
+          pre    space2
+          pre	tab
+          pre	tab
+        %code
+          \&lt;code&gt;
+          Not indented
+          indent1
+          indent1
+          indent2
+          indent3
+        %tt
+          \&lt;tt&gt;
+          This tt text should be monospaced
+          and
+          wrap as if
+          one line of text
+          even though the code has newlines, spaces, and tabs.
+          It should be the same size as &lt;p&gt; text.
+      %hr
+      %p
+        %a{ :href => "http://validator.w3.org/check?uri=referer" }
+          %img.top{ :src => "valid.png", :height => "31", :alt => "Valid HTML 4.01 Strict", :width => "88" }
