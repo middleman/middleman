@@ -27,7 +27,7 @@ module Middleman
     
     def page_classes
       path = request.path_info.dup
-      path << options.index_file if path.match(%r{/$})
+      path << settings.index_file if path.match(%r{/$})
       path = path.gsub(%r{^/}, '')
   
       classes = []
@@ -49,21 +49,21 @@ module Middleman
 
     def image_tag(path, params={})
       params[:alt] ||= ""
-      prefix = options.http_images_path rescue options.images_dir
+      prefix = settings.http_images_path rescue settings.images_dir
       params = params.merge(:src => asset_url(path, prefix))
       params = params.map { |k,v| %Q{#{k}="#{v}"}}.join(' ')
       "<img #{params} />"
     end
 
     def javascript_include_tag(path, params={})
-      params = params.merge(:src => asset_url(path, options.js_dir), :type => "text/javascript")
+      params = params.merge(:src => asset_url(path, settings.js_dir), :type => "text/javascript")
       params = params.map { |k,v| %Q{#{k}="#{v}"}}.join(' ')
       "<script #{params}></script>"
     end
 
     def stylesheet_link_tag(path, params={})
       params[:rel] ||= "stylesheet"
-      params = params.merge(:href => asset_url(path, options.css_dir), :type => "text/css")
+      params = params.merge(:href => asset_url(path, settings.css_dir), :type => "text/css")
       params = params.map { |k,v| %Q{#{k}="#{v}"}}.join(' ')
       "<link #{params} />"
     end

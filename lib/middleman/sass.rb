@@ -17,17 +17,17 @@ module Middleman::Sass
   def render_path(path, layout)
     if template_exists?(path, :sass)
       begin
-        static_version = options.public + request.path_info
+        static_version = settings.public + request.path_info
         send_file(static_version) if File.exists? static_version
 
-        location_of_sass_file = options.environment == "build" ? 
-                                  File.join(Dir.pwd, options.build_dir) : 
-                                  options.public
+        location_of_sass_file = settings.environment == "build" ? 
+                                  File.join(Dir.pwd, settings.build_dir) : 
+                                  settings.public
         
         css_filename = File.join(location_of_sass_file, request.path_info)
         result = sass(path.to_sym, ::Compass.sass_engine_options.merge({ :css_filename => css_filename }))
         
-        if options.enabled?(:minify_css?)
+        if enabled?(:minify_css)
           ::YUI::CssCompressor.new.compress(result) 
         else
           result

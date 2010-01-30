@@ -54,7 +54,7 @@ module Middleman
     def template_exists?(path, renderer=nil)
       template_path = path.dup
       template_path << ".#{renderer}" if renderer
-      File.readable? File.join(options.views, template_path)
+      File.readable? File.join(settings.views, template_path)
     end
 
     # Base case renderer (do nothing), Should be over-ridden
@@ -96,17 +96,21 @@ module Middleman
       name = (name.to_s << "?").to_sym
       self.respond_to?(name) && self.send(name)
     end
+    
+    def enabled?(name)
+      self.class.enabled?(name)
+    end
 
   private
     def process_request(layout = :layout)
       # Normalize the path and add index if we're looking at a directory
       path = request.path
-      path << options.index_file if path.match(%r{/$})
+      path << settings.index_file if path.match(%r{/$})
       path.gsub!(%r{^/}, '')
 
       # If the enabled renderers succeed, return the content, mime-type and an HTTP 200
       if content = render_path(path, layout)
-        content_type media_type(File.extname(path)), :charset => 'utf-8'
+        content_type mime_type(File.extname(path)), :charset => 'utf-8'
         status 200
         content
       else

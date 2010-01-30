@@ -6,8 +6,6 @@ module Bundler
   ENV["PATH"]     = "#{dir}/../../../bin:#{ENV["PATH"]}"
   ENV["RUBYOPT"]  = "-r#{file} #{ENV["RUBYOPT"]}"
 
-  $LOAD_PATH.unshift File.expand_path("#{dir}/gems/configuration-1.1.0/bin")
-  $LOAD_PATH.unshift File.expand_path("#{dir}/gems/configuration-1.1.0/lib")
   $LOAD_PATH.unshift File.expand_path("#{dir}/gems/json_pure-1.2.0/bin")
   $LOAD_PATH.unshift File.expand_path("#{dir}/gems/json_pure-1.2.0/lib")
   $LOAD_PATH.unshift File.expand_path("#{dir}/gems/extlib-0.9.14/bin")
@@ -20,48 +18,44 @@ module Bundler
   $LOAD_PATH.unshift File.expand_path("#{dir}/gems/yui-compressor-0.9.1/lib")
   $LOAD_PATH.unshift File.expand_path("#{dir}/gems/rack-1.1.0/bin")
   $LOAD_PATH.unshift File.expand_path("#{dir}/gems/rack-1.1.0/lib")
+  $LOAD_PATH.unshift File.expand_path("#{dir}/gems/shotgun-0.6/bin")
+  $LOAD_PATH.unshift File.expand_path("#{dir}/gems/shotgun-0.6/lib")
   $LOAD_PATH.unshift File.expand_path("#{dir}/gems/rack-test-0.5.3/bin")
   $LOAD_PATH.unshift File.expand_path("#{dir}/gems/rack-test-0.5.3/lib")
-  $LOAD_PATH.unshift File.expand_path("#{dir}/gems/sinatra-0.9.4/bin")
-  $LOAD_PATH.unshift File.expand_path("#{dir}/gems/sinatra-0.9.4/lib")
   $LOAD_PATH.unshift File.expand_path("#{dir}/gems/haml-2.2.17/bin")
   $LOAD_PATH.unshift File.expand_path("#{dir}/gems/haml-2.2.17/lib")
+  $LOAD_PATH.unshift File.expand_path("#{dir}/gems/sinatra-1.0.a/bin")
+  $LOAD_PATH.unshift File.expand_path("#{dir}/gems/sinatra-1.0.a/lib")
   $LOAD_PATH.unshift File.expand_path("#{dir}/gems/sprockets-1.0.2/bin")
   $LOAD_PATH.unshift File.expand_path("#{dir}/gems/sprockets-1.0.2/lib")
-  $LOAD_PATH.unshift File.expand_path("#{dir}/gems/rake-0.8.7/bin")
-  $LOAD_PATH.unshift File.expand_path("#{dir}/gems/rake-0.8.7/lib")
-  $LOAD_PATH.unshift File.expand_path("#{dir}/gems/launchy-0.3.5/bin")
-  $LOAD_PATH.unshift File.expand_path("#{dir}/gems/launchy-0.3.5/lib")
-  $LOAD_PATH.unshift File.expand_path("#{dir}/gems/shotgun-0.5/bin")
-  $LOAD_PATH.unshift File.expand_path("#{dir}/gems/shotgun-0.5/lib")
   $LOAD_PATH.unshift File.expand_path("#{dir}/gems/diff-lcs-1.1.2/bin")
   $LOAD_PATH.unshift File.expand_path("#{dir}/gems/diff-lcs-1.1.2/lib")
   $LOAD_PATH.unshift File.expand_path("#{dir}/gems/highline-1.5.1/bin")
   $LOAD_PATH.unshift File.expand_path("#{dir}/gems/highline-1.5.1/lib")
   $LOAD_PATH.unshift File.expand_path("#{dir}/gems/templater-1.0.0/bin")
   $LOAD_PATH.unshift File.expand_path("#{dir}/gems/templater-1.0.0/lib")
+  $LOAD_PATH.unshift File.expand_path("#{dir}/gems/rake-0.8.7/bin")
+  $LOAD_PATH.unshift File.expand_path("#{dir}/gems/rake-0.8.7/lib")
   $LOAD_PATH.unshift File.expand_path("#{dir}/gems/httpclient-2.1.5.2/bin")
   $LOAD_PATH.unshift File.expand_path("#{dir}/gems/httpclient-2.1.5.2/lib")
-  $LOAD_PATH.unshift File.expand_path("#{dir}/gems/compass-0.10.0.pre4/bin")
-  $LOAD_PATH.unshift File.expand_path("#{dir}/gems/compass-0.10.0.pre4/lib")
+  $LOAD_PATH.unshift File.expand_path("#{dir}/gems/sinatra-content-for-0.2/bin")
+  $LOAD_PATH.unshift File.expand_path("#{dir}/gems/sinatra-content-for-0.2/lib")
+  $LOAD_PATH.unshift File.expand_path("#{dir}/gems/compass-0.10.0.pre5/bin")
+  $LOAD_PATH.unshift File.expand_path("#{dir}/gems/compass-0.10.0.pre5/lib")
   $LOAD_PATH.unshift File.expand_path("#{dir}/gems/compass-slickmap-0.2.3/bin")
   $LOAD_PATH.unshift File.expand_path("#{dir}/gems/compass-slickmap-0.2.3/lib")
   $LOAD_PATH.unshift File.expand_path("#{dir}/gems/smusher-0.4.2/bin")
   $LOAD_PATH.unshift File.expand_path("#{dir}/gems/smusher-0.4.2/lib")
-  $LOAD_PATH.unshift File.expand_path("#{dir}/gems/sinatra-content-for-0.2/bin")
-  $LOAD_PATH.unshift File.expand_path("#{dir}/gems/sinatra-content-for-0.2/lib")
   $LOAD_PATH.unshift File.expand_path("#{dir}/gems/compass-colors-0.3.1/bin")
   $LOAD_PATH.unshift File.expand_path("#{dir}/gems/compass-colors-0.3.1/lib")
-  $LOAD_PATH.unshift File.expand_path("#{dir}/gems/fancy-buttons-0.3.7/bin")
-  $LOAD_PATH.unshift File.expand_path("#{dir}/gems/fancy-buttons-0.3.7/lib")
+  $LOAD_PATH.unshift File.expand_path("#{dir}/gems/fancy-buttons-0.3.9/bin")
+  $LOAD_PATH.unshift File.expand_path("#{dir}/gems/fancy-buttons-0.3.9/lib")
 
   @gemfile = "#{dir}/../../../../../../Gemfile"
 
   require "rubygems" unless respond_to?(:gem) # 1.9 already has RubyGems loaded
 
   @bundled_specs = {}
-  @bundled_specs["configuration"] = eval(File.read("#{dir}/specifications/configuration-1.1.0.gemspec"))
-  @bundled_specs["configuration"].loaded_from = "#{dir}/specifications/configuration-1.1.0.gemspec"
   @bundled_specs["json_pure"] = eval(File.read("#{dir}/specifications/json_pure-1.2.0.gemspec"))
   @bundled_specs["json_pure"].loaded_from = "#{dir}/specifications/json_pure-1.2.0.gemspec"
   @bundled_specs["extlib"] = eval(File.read("#{dir}/specifications/extlib-0.9.14.gemspec"))
@@ -72,40 +66,38 @@ module Bundler
   @bundled_specs["yui-compressor"].loaded_from = "#{dir}/specifications/yui-compressor-0.9.1.gemspec"
   @bundled_specs["rack"] = eval(File.read("#{dir}/specifications/rack-1.1.0.gemspec"))
   @bundled_specs["rack"].loaded_from = "#{dir}/specifications/rack-1.1.0.gemspec"
+  @bundled_specs["shotgun"] = eval(File.read("#{dir}/specifications/shotgun-0.6.gemspec"))
+  @bundled_specs["shotgun"].loaded_from = "#{dir}/specifications/shotgun-0.6.gemspec"
   @bundled_specs["rack-test"] = eval(File.read("#{dir}/specifications/rack-test-0.5.3.gemspec"))
   @bundled_specs["rack-test"].loaded_from = "#{dir}/specifications/rack-test-0.5.3.gemspec"
-  @bundled_specs["sinatra"] = eval(File.read("#{dir}/specifications/sinatra-0.9.4.gemspec"))
-  @bundled_specs["sinatra"].loaded_from = "#{dir}/specifications/sinatra-0.9.4.gemspec"
   @bundled_specs["haml"] = eval(File.read("#{dir}/specifications/haml-2.2.17.gemspec"))
   @bundled_specs["haml"].loaded_from = "#{dir}/specifications/haml-2.2.17.gemspec"
+  @bundled_specs["sinatra"] = eval(File.read("#{dir}/specifications/sinatra-1.0.a.gemspec"))
+  @bundled_specs["sinatra"].loaded_from = "#{dir}/specifications/sinatra-1.0.a.gemspec"
   @bundled_specs["sprockets"] = eval(File.read("#{dir}/specifications/sprockets-1.0.2.gemspec"))
   @bundled_specs["sprockets"].loaded_from = "#{dir}/specifications/sprockets-1.0.2.gemspec"
-  @bundled_specs["rake"] = eval(File.read("#{dir}/specifications/rake-0.8.7.gemspec"))
-  @bundled_specs["rake"].loaded_from = "#{dir}/specifications/rake-0.8.7.gemspec"
-  @bundled_specs["launchy"] = eval(File.read("#{dir}/specifications/launchy-0.3.5.gemspec"))
-  @bundled_specs["launchy"].loaded_from = "#{dir}/specifications/launchy-0.3.5.gemspec"
-  @bundled_specs["shotgun"] = eval(File.read("#{dir}/specifications/shotgun-0.5.gemspec"))
-  @bundled_specs["shotgun"].loaded_from = "#{dir}/specifications/shotgun-0.5.gemspec"
   @bundled_specs["diff-lcs"] = eval(File.read("#{dir}/specifications/diff-lcs-1.1.2.gemspec"))
   @bundled_specs["diff-lcs"].loaded_from = "#{dir}/specifications/diff-lcs-1.1.2.gemspec"
   @bundled_specs["highline"] = eval(File.read("#{dir}/specifications/highline-1.5.1.gemspec"))
   @bundled_specs["highline"].loaded_from = "#{dir}/specifications/highline-1.5.1.gemspec"
   @bundled_specs["templater"] = eval(File.read("#{dir}/specifications/templater-1.0.0.gemspec"))
   @bundled_specs["templater"].loaded_from = "#{dir}/specifications/templater-1.0.0.gemspec"
+  @bundled_specs["rake"] = eval(File.read("#{dir}/specifications/rake-0.8.7.gemspec"))
+  @bundled_specs["rake"].loaded_from = "#{dir}/specifications/rake-0.8.7.gemspec"
   @bundled_specs["httpclient"] = eval(File.read("#{dir}/specifications/httpclient-2.1.5.2.gemspec"))
   @bundled_specs["httpclient"].loaded_from = "#{dir}/specifications/httpclient-2.1.5.2.gemspec"
-  @bundled_specs["compass"] = eval(File.read("#{dir}/specifications/compass-0.10.0.pre4.gemspec"))
-  @bundled_specs["compass"].loaded_from = "#{dir}/specifications/compass-0.10.0.pre4.gemspec"
+  @bundled_specs["sinatra-content-for"] = eval(File.read("#{dir}/specifications/sinatra-content-for-0.2.gemspec"))
+  @bundled_specs["sinatra-content-for"].loaded_from = "#{dir}/specifications/sinatra-content-for-0.2.gemspec"
+  @bundled_specs["compass"] = eval(File.read("#{dir}/specifications/compass-0.10.0.pre5.gemspec"))
+  @bundled_specs["compass"].loaded_from = "#{dir}/specifications/compass-0.10.0.pre5.gemspec"
   @bundled_specs["compass-slickmap"] = eval(File.read("#{dir}/specifications/compass-slickmap-0.2.3.gemspec"))
   @bundled_specs["compass-slickmap"].loaded_from = "#{dir}/specifications/compass-slickmap-0.2.3.gemspec"
   @bundled_specs["smusher"] = eval(File.read("#{dir}/specifications/smusher-0.4.2.gemspec"))
   @bundled_specs["smusher"].loaded_from = "#{dir}/specifications/smusher-0.4.2.gemspec"
-  @bundled_specs["sinatra-content-for"] = eval(File.read("#{dir}/specifications/sinatra-content-for-0.2.gemspec"))
-  @bundled_specs["sinatra-content-for"].loaded_from = "#{dir}/specifications/sinatra-content-for-0.2.gemspec"
   @bundled_specs["compass-colors"] = eval(File.read("#{dir}/specifications/compass-colors-0.3.1.gemspec"))
   @bundled_specs["compass-colors"].loaded_from = "#{dir}/specifications/compass-colors-0.3.1.gemspec"
-  @bundled_specs["fancy-buttons"] = eval(File.read("#{dir}/specifications/fancy-buttons-0.3.7.gemspec"))
-  @bundled_specs["fancy-buttons"].loaded_from = "#{dir}/specifications/fancy-buttons-0.3.7.gemspec"
+  @bundled_specs["fancy-buttons"] = eval(File.read("#{dir}/specifications/fancy-buttons-0.3.9.gemspec"))
+  @bundled_specs["fancy-buttons"].loaded_from = "#{dir}/specifications/fancy-buttons-0.3.9.gemspec"
 
   def self.add_specs_to_loaded_specs
     Gem.loaded_specs.merge! @bundled_specs
