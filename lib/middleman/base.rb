@@ -39,6 +39,13 @@ module Middleman
       super
     end
     
+    def self.set(option, value=self, &block)
+      if block_given?
+        value = Proc.new { block }
+      end
+      super(option, value)
+    end
+    
     @@afters = []
     def self.after_feature_init(&block)
       @@afters << block
@@ -134,6 +141,7 @@ class Middleman::Base
   helpers Middleman::Helpers
   
   # Features disabled by default
+  enable :asset_host
   disable :slickmap
   disable :cache_buster
   disable :minify_css
