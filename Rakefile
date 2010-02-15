@@ -15,8 +15,25 @@ begin
     gem.executables = %w(mm-init mm-build mm-server)
     gem.add_dependency("rack")
     gem.add_dependency("thin")
+    
+    gem.add_dependency("shotgun")
+    gem.add_dependency("templater")
+    gem.add_dependency("sprockets")
+    gem.add_dependency("sinatra", "1.0.a")
+    gem.add_dependency("sinatra-content-for")
+    gem.add_dependency("rack-test")
+    gem.add_dependency("yui-compressor")
+    gem.add_dependency("haml")
+    gem.add_dependency("compass", "0.10.0.pre5")
+    gem.add_dependency("compass-colors")
+    gem.add_dependency("fancy-buttons")
+    gem.add_dependency("json_pure")
+    gem.add_dependency("smusher")
+    gem.add_dependency("compass-slickmap")
+    
     gem.add_development_dependency("rspec")
     gem.add_development_dependency("cucumber")
+    gem.add_development_dependency("jeweler")
   end
   
   Jeweler::GemcutterTasks.new
