@@ -12,7 +12,7 @@ class Middleman::Rack::MinifyJavascript
   def call(env)
     status, headers, response = @app.call(env)
     
-    if Middleman::Base.enabled?(:minify_javascript) && env["PATH_INFO"].match(/\.js$/) 
+    if env["PATH_INFO"].match(/\.js$/)
       compressor = ::YUI::JavaScriptCompressor.new(:munge => true)
       
       uncompressed_source = response.is_a?(::Rack::File) ? File.read(response.path) : response

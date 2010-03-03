@@ -157,24 +157,15 @@ class Middleman::Base
   configure :build do
   end
   
-  # Check for and evaluate local configuration
-  local_config = File.join(self.root, "init.rb")
-  if File.exists? local_config
-    puts "== Reading:  Local config" if logging?
-    Middleman::Base.class_eval File.read(local_config)
-    set :app_file, File.expand_path(local_config)
-  end
-  
-  # use Rack::Static, :urls => [/.*/], :root => Middleman::Base.public
-  # use Rack::Static, :urls => [/.*/], :root => Middleman::Base.views
-  # use Middleman::Rack::Static
-  use Middleman::Rack::Sprockets, :root => Middleman::Base.root, 
-                                  :load_path => [ File.join("public", Middleman::Base.js_dir),
-                                                  File.join("views", Middleman::Base.js_dir) ]
-  use Middleman::Rack::MinifyJavascript
-  use Middleman::Rack::MinifyCSS
-  
   def self.new(*args, &block)
+    # Check for and evaluate local configuration
+    local_config = File.join(self.root, "init.rb")
+    if File.exists? local_config
+      puts "== Reading:  Local config" if logging?
+      Middleman::Base.class_eval File.read(local_config)
+      set :app_file, File.expand_path(local_config)
+    end
+    
     # loop over enabled feature
     features.flatten.each do |feature_name|
       next unless send(:"#{feature_name}?")
@@ -185,6 +176,14 @@ class Middleman::Base
         require "middleman/#{feature_path}"
       end
     end
+
+    use Middleman::Rack::MinifyJavascript if minify_javascript?
+    use Middleman::Rack::MinifyCSS        if minify_css?
+    
+    # Built-in javascript combination
+    use Middleman::Rack::Sprockets, :root      => Middleman::Base.root, 
+                                    :load_path => [ File.join("public", Middleman::Base.js_dir),
+                                                    File.join("views",  Middleman::Base.js_dir) ]
     
     @@afters.each { |block| class_eval(&block) }
     
