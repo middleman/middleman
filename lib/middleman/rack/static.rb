@@ -8,11 +8,11 @@ class Middleman::Rack::Static
     view_file_path   = File.join(Middleman::Base.views, env["PATH_INFO"])
 
     if File.exists?(public_file_path) && !File.directory?(public_file_path)
-      env["DOWNSTREAM"] = ::Rack::File.new(Middleman::Base.public).call(env)
+      ::Rack::File.new(Middleman::Base.public).call(env)
     elsif File.exists?(view_file_path) && !File.directory?(view_file_path)
-      env["DOWNSTREAM"] = ::Rack::File.new(Middleman::Base.views).call(env)
+      ::Rack::File.new(Middleman::Base.views).call(env)
+    else
+      @app.call(env)
     end
-    
-    @app.call(env)
   end
 end

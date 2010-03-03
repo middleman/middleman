@@ -8,27 +8,23 @@ end
 class Middleman::Rack::Sprockets
   def initialize(app, options={})
     @app = app
+    @options = options
   end
 
   def call(env)
-    path = env["PATH_INFO"]
-    
-    if env["DOWNSTREAM"] && path.match(/\.js$/)
-      source = "public" if File.exists?(File.join(Middleman::Base.views, path)) 
-      source = "views" if File.exists?(File.join(Middleman::Base.views, path))
+    if env["PATH_INFO"].match(/\.js$/)
+      public_file_path = File.join(Middleman::Base.public, env["PATH_INFO"])
+      view_file_path   = File.join(Middleman::Base.views,  env["PATH_INFO"])
       
-      if source
-        source_file = env["DOWNSTREAM"][2].is_a?(::Rack::File) ? 
-                        env["DOWNSTREAM"][2].path : 
-                        env["DOWNSTREAM"][2]
+      source_file = Rack::File.new(Middleman::Base.public) if File.exists?(public_file_path) 
+      source_file = Rack::File.new(Middleman::Base.views)  if File.exists?(view_file_path)
       
-        secretary = ::Sprockets::Secretary.new( :root         => Middleman::Base.root,
-                                                :source_files => [ source_file ],
-                                                :load_path    => [ File.join("public", Middleman::Base.js_dir),
-                                                                   File.join("views", Middleman::Base.js_dir) ])
-    
-        env["DOWNSTREAM"][2] = secretary.concatenation.to_s
-        env["DOWNSTREAM"][1]["Content-Length"] = ::Rack::Utils.bytesize(env["DOWNSTREAM"][2]).to_s
+      if source_file
+        status, headers, response = source_file.call(env)
+        secretary = ::Sprockets::Secretary.new(@options.merge( :source_files => [ response.path ] ))
+        response = secretary.concatenation.to_s
+        headers["Content-Length"] = ::Rack::Utils.bytesize(response).to_s
+        return [status, headers, response]
       end
     end
     

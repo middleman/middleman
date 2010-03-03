@@ -23,7 +23,7 @@ module Middleman
     set :build_dir, "build"
     set :http_prefix, nil
     
-    use ::Rack::ConditionalGet if environment == :development
+    #use ::Rack::ConditionalGet if environment == :development
     helpers Sinatra::ContentFor
     
     set :features, []
@@ -137,7 +137,6 @@ require "middleman/rack/static"
 require "middleman/rack/sprockets"
 require "middleman/rack/minify_javascript"
 require "middleman/rack/minify_css"
-require "middleman/rack/downstream"
 
 class Middleman::Base
   helpers Middleman::Helpers
@@ -166,11 +165,14 @@ class Middleman::Base
     set :app_file, File.expand_path(local_config)
   end
   
-  use Middleman::Rack::Static
-  use Middleman::Rack::Sprockets
+  # use Rack::Static, :urls => [/.*/], :root => Middleman::Base.public
+  # use Rack::Static, :urls => [/.*/], :root => Middleman::Base.views
+  # use Middleman::Rack::Static
+  use Middleman::Rack::Sprockets, :root => Middleman::Base.root, 
+                                  :load_path => [ File.join("public", Middleman::Base.js_dir),
+                                                  File.join("views", Middleman::Base.js_dir) ]
   use Middleman::Rack::MinifyJavascript
   use Middleman::Rack::MinifyCSS
-  use Middleman::Rack::Downstream
   
   def self.new(*args, &block)
     # loop over enabled feature

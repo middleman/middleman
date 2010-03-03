@@ -10,19 +10,16 @@ class Middleman::Rack::MinifyJavascript
   end
 
   def call(env)
-    if Middleman::Base.enabled?(:minify_javascript) &&
-       env["DOWNSTREAM"] && env["PATH_INFO"].match(/\.js$/) 
-      
+    status, headers, response = @app.call(env)
+    
+    if Middleman::Base.enabled?(:minify_javascript) && env["PATH_INFO"].match(/\.js$/) 
       compressor = ::YUI::JavaScriptCompressor.new(:munge => true)
       
-      source = env["DOWNSTREAM"][2].is_a?(::Rack::File) ?
-                 File.read(env["DOWNSTREAM"][2].path) :
-                 env["DOWNSTREAM"][2]
-
-      env["DOWNSTREAM"][2] = compressor.compress(source)
-      env["DOWNSTREAM"][1]["Content-Length"] = ::Rack::Utils.bytesize(env["DOWNSTREAM"][2]).to_s
+      uncompressed_source = response.is_a?(::Rack::File) ? File.read(response.path) : response
+      response = compressor.compress(uncompressed_source)
+      headers["Content-Length"] = ::Rack::Utils.bytesize(response).to_s
     end
     
-    @app.call(env)
+    [status, headers, response]
   end
 end
