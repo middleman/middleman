@@ -12,6 +12,7 @@ module Middleman
     set :app_file, __FILE__
     set :root, ENV["MM_DIR"] || Dir.pwd
     set :reload, false
+    set :sessions, false
     set :logging, false
     set :environment, ENV['MM_ENV'] || :development
     set :supported_formats, %w(erb)
@@ -23,7 +24,6 @@ module Middleman
     set :build_dir, "build"
     set :http_prefix, nil
     
-    #use ::Rack::ConditionalGet if environment == :development
     helpers Sinatra::ContentFor
     
     set :features, []
@@ -69,11 +69,8 @@ module Middleman
     # Base case renderer (do nothing), Should be over-ridden
     module StaticRender
       def render_path(path, layout)
-        if template_exists?(path, :erb)
-          erb(path.to_sym, :layout => layout)
-        else
-          false
-        end
+        return false if !template_exists?(path, :erb)
+        erb(path.to_sym, :layout => layout)
       end
     end
     include StaticRender
@@ -95,11 +92,6 @@ module Middleman
     ensure
       @@layout = nil
     end
-
-    # This will match all requests not overridden in the project's init.rb
-    not_found do
-      process_request
-    end
     
     def self.enabled?(name)
       name = (name.to_s << "?").to_sym
@@ -108,6 +100,11 @@ module Middleman
     
     def enabled?(name)
       self.class.enabled?(name)
+    end
+
+    # This will match all requests not overridden in the project's init.rb
+    not_found do
+      process_request
     end
 
   private
@@ -132,11 +129,6 @@ end
 # Haml is required & includes helpers
 require "middleman/haml"
 require "middleman/sass"
-require "middleman/helpers"
-require "middleman/rack/static"
-require "middleman/rack/sprockets"
-require "middleman/rack/minify_javascript"
-require "middleman/rack/minify_css"
 
 class Middleman::Base
   helpers Middleman::Helpers
@@ -176,7 +168,8 @@ class Middleman::Base
         require "middleman/#{feature_path}"
       end
     end
-
+    
+    use ::Rack::ConditionalGet            if environment == :development
     use Middleman::Rack::MinifyJavascript if minify_javascript?
     use Middleman::Rack::MinifyCSS        if minify_css?
     
