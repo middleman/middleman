@@ -89,7 +89,6 @@ class Middleman::Base
       config.project_path          = self.root
       config.sass_dir              = File.join(File.basename(self.views), self.css_dir)
       config.output_style          = self.enabled?(:minify_css) ? :compressed : :nested
-      config.line_comments         = false
       config.fonts_dir             = File.join(File.basename(self.public), self.fonts_dir)
       config.css_dir               = File.join(File.basename(self.public), self.css_dir)
       config.images_dir            = File.join(File.basename(self.public), self.images_dir)      
@@ -99,15 +98,19 @@ class Middleman::Base
       
       config.add_import_path(config.sass_dir)
     end
-
-    configure :build do
-      ::Compass.configuration do |config|
-        config.css_dir    = File.join(File.basename(self.build_dir), self.css_dir)
-        config.images_dir = File.join(File.basename(self.build_dir), self.images_dir)
-      end
-    end
     
     ::Compass.configure_sass_plugin!
-    Sass::Plugin.options.update(:line_comments => false)
+    Sass::Plugin.options.update(:line_comments => true, :debug_info => true)
+    
+    configure :build do
+      ::Compass.configuration do |config|
+        config.line_comments = false
+        config.css_dir       = File.join(File.basename(self.build_dir), self.css_dir)
+        config.images_dir    = File.join(File.basename(self.build_dir), self.images_dir)
+      end
+      
+      ::Compass.configure_sass_plugin!
+      Sass::Plugin.options.update(:line_comments => false, :debug_info => false)
+    end
   end
 end
