@@ -19,7 +19,7 @@ begin
     gem.add_dependency("shotgun")
     gem.add_dependency("templater")
     gem.add_dependency("sprockets")
-    gem.add_dependency("sinatra", "1.0.a")
+    gem.add_dependency("sinatra", ">=1.0")
     gem.add_dependency("sinatra-content-for")
     gem.add_dependency("rack-test")
     gem.add_dependency("yui-compressor")
