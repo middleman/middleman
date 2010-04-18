@@ -4,3 +4,4 @@ rdoc
 pkg
 .sass-cache
 .sassc
+.tmp

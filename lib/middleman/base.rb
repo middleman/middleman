@@ -42,8 +42,10 @@ module Middleman
     def self.set(option, value=self, &block)
       if block_given?
         value = Proc.new { block }
+        super(option, value, &nil)
+      else
+        super
       end
-      super(option, value)
     end
     
     @@afters = []

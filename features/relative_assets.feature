@@ -4,9 +4,9 @@ Feature: Relative Assets
   Scenario: Rendering css with the feature disabled
     Given "relative_assets" feature is "disabled"
     When I go to "/stylesheets/relative_assets.css"
-    Then I should not see "../"
+    Then I should not see "url('../"
 
   Scenario: Rendering css with the feature enabled
     Given "relative_assets" feature is "enabled"
     When I go to "/stylesheets/relative_assets.css"
-    Then I should see "../"
+    Then I should see "url('../"

@@ -104,7 +104,6 @@ class Middleman::Base
     
     configure :build do
       ::Compass.configuration do |config|
-        config.line_comments = false
         config.css_dir       = File.join(File.basename(self.build_dir), self.css_dir)
         config.images_dir    = File.join(File.basename(self.build_dir), self.images_dir)
       end
