@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{middleman}
-  s.version = "0.13.2.pre"
+  s.version = "0.14.0.pre2"
 
   s.required_rubygems_version = Gem::Requirement.new("> 1.3.1") if s.respond_to? :required_rubygems_version=
   s.authors = ["Thomas Reynolds"]
-  s.date = %q{2010-04-18}
+  s.date = %q{2010-04-28}
   s.email = %q{tdreyno@gmail.com}
   s.executables = ["mm-init", "mm-build", "mm-server"]
   s.extra_rdoc_files = [
@@ -43,6 +43,7 @@ Gem::Specification.new do |s|
      "lib/middleman/base.rb",
      "lib/middleman/builder.rb",
      "lib/middleman/config.ru",
+     "lib/middleman/erb.rb",
      "lib/middleman/fastimage.rb",
      "lib/middleman/features/asset_host.rb",
      "lib/middleman/features/automatic_image_sizes.rb",
@@ -54,12 +55,9 @@ Gem::Specification.new do |s|
      "lib/middleman/features/smush_pngs.rb",
      "lib/middleman/haml.rb",
      "lib/middleman/helpers.rb",
-     "lib/middleman/rack/downstream.rb",
      "lib/middleman/rack/minify_css.rb",
      "lib/middleman/rack/minify_javascript.rb",
-     "lib/middleman/rack/sprockets+ruby19.rb",
      "lib/middleman/rack/sprockets.rb",
-     "lib/middleman/rack/static.rb",
      "lib/middleman/sass.rb",
      "lib/middleman/template/init.rbt",
      "lib/middleman/template/views/index.html.haml",
@@ -124,7 +122,7 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<sinatra-content-for>, [">= 0"])
       s.add_runtime_dependency(%q<rack-test>, [">= 0"])
       s.add_runtime_dependency(%q<yui-compressor>, [">= 0"])
-      s.add_runtime_dependency(%q<haml>, [">= 3.0.0.beta.3"])
+      s.add_runtime_dependency(%q<haml>, [">= 3.0.0.rc.1"])
       s.add_runtime_dependency(%q<compass>, [">= 0.10.0.rc3"])
       s.add_runtime_dependency(%q<fancy-buttons>, [">= 0"])
       s.add_runtime_dependency(%q<json_pure>, [">= 0"])
@@ -143,7 +141,7 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<sinatra-content-for>, [">= 0"])
       s.add_dependency(%q<rack-test>, [">= 0"])
       s.add_dependency(%q<yui-compressor>, [">= 0"])
-      s.add_dependency(%q<haml>, [">= 3.0.0.beta.3"])
+      s.add_dependency(%q<haml>, [">= 3.0.0.rc.1"])
       s.add_dependency(%q<compass>, [">= 0.10.0.rc3"])
       s.add_dependency(%q<fancy-buttons>, [">= 0"])
       s.add_dependency(%q<json_pure>, [">= 0"])
@@ -163,7 +161,7 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<sinatra-content-for>, [">= 0"])
     s.add_dependency(%q<rack-test>, [">= 0"])
     s.add_dependency(%q<yui-compressor>, [">= 0"])
-    s.add_dependency(%q<haml>, [">= 3.0.0.beta.3"])
+    s.add_dependency(%q<haml>, [">= 3.0.0.rc.1"])
     s.add_dependency(%q<compass>, [">= 0.10.0.rc3"])
     s.add_dependency(%q<fancy-buttons>, [">= 0"])
     s.add_dependency(%q<json_pure>, [">= 0"])
