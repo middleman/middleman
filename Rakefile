@@ -23,7 +23,7 @@ begin
     gem.add_dependency("sinatra-content-for")
     gem.add_dependency("rack-test")
     gem.add_dependency("yui-compressor")
-    gem.add_dependency("haml", ">=3.0.0.beta.3")
+    gem.add_dependency("haml", ">=3.0.0.rc.1")
     gem.add_dependency("compass", ">=0.10.0.rc3")
     gem.add_dependency("fancy-buttons")
     gem.add_dependency("json_pure")
