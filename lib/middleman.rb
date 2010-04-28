@@ -12,7 +12,9 @@ module Middleman
   end
 
   autoload :Base,    "middleman/base"
+  autoload :ERb,     "middleman/erb"
   autoload :Haml,    "middleman/haml"
+  autoload :Sass,    "middleman/sass"
   autoload :Helpers, "middleman/helpers"
   
 end

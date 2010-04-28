@@ -9,7 +9,7 @@ rescue LoadError
   puts "YUI-Compressor not available. Install it with: gem install yui-compressor"
 end
 
-module Middleman::Sass  
+module Middleman::Sass
   def self.included(base)
     base.supported_formats << "sass"
   end

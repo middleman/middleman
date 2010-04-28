@@ -126,6 +126,7 @@ module Middleman
   end
 end
 
+require "middleman/erb"
 # Haml is required & includes helpers
 require "middleman/haml"
 require "middleman/sass"
@@ -144,6 +145,7 @@ class Middleman::Base
   disable :automatic_image_sizes
   disable :relative_assets
   disable :cache_buster
+  disable :ugly_haml
   
   # Default build features
   configure :build do
