@@ -1,6 +1,5 @@
 require "sass"
 require "compass"
-require "compass-colors"
 require "fancy-buttons"
 
 begin

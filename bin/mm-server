@@ -50,7 +50,7 @@ end
 
 require 'shotgun'
 config = File.join(File.dirname(__FILE__), '..', 'lib', 'middleman', 'config.ru')
-app = Shotgun.new(config, lambda { |inner_app| Middleman::Base })
+app = Shotgun.new(config, &lambda { |inner_app| Middleman::Base })
 
 require 'rubygems'
 require 'thin'
