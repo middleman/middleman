@@ -1,8 +1,8 @@
 require "erb"
 
 module Middleman
-  module ERb
-    module Renderer
+  module Renderers
+    module ERb
       def self.included(base)
         base.supported_formats << "erb"
       end
@@ -20,5 +20,5 @@ module Middleman
 end
 
 class Middleman::Base
-  include Middleman::ERb::Renderer
+  include Middleman::Renderers::ERb
 end

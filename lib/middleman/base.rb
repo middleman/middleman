@@ -126,10 +126,11 @@ module Middleman
   end
 end
 
-require "middleman/erb"
-# Haml is required & includes helpers
-require "middleman/haml"
-require "middleman/sass"
+require "middleman/renderers/erb"
+require "middleman/renderers/haml"
+require "middleman/renderers/sass"
+require "middleman/renderers/less"
+require "middleman/renderers/builder"
 
 class Middleman::Base
   helpers Middleman::Helpers
