@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{middleman}
-  s.version = "0.14.0"
+  s.version = "0.14.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Thomas Reynolds"]
-  s.date = %q{2010-08-03}
+  s.date = %q{2010-09-04}
   s.email = %q{tdreyno@gmail.com}
   s.executables = ["mm-init", "mm-build", "mm-server"]
   s.extra_rdoc_files = [
@@ -43,7 +43,6 @@ Gem::Specification.new do |s|
      "lib/middleman/base.rb",
      "lib/middleman/builder.rb",
      "lib/middleman/config.ru",
-     "lib/middleman/erb.rb",
      "lib/middleman/fastimage.rb",
      "lib/middleman/features/asset_host.rb",
      "lib/middleman/features/automatic_image_sizes.rb",
@@ -53,12 +52,15 @@ Gem::Specification.new do |s|
      "lib/middleman/features/relative_assets.rb",
      "lib/middleman/features/slickmap.rb",
      "lib/middleman/features/smush_pngs.rb",
-     "lib/middleman/haml.rb",
      "lib/middleman/helpers.rb",
      "lib/middleman/rack/minify_css.rb",
      "lib/middleman/rack/minify_javascript.rb",
      "lib/middleman/rack/sprockets.rb",
-     "lib/middleman/sass.rb",
+     "lib/middleman/renderers/builder.rb",
+     "lib/middleman/renderers/erb.rb",
+     "lib/middleman/renderers/haml.rb",
+     "lib/middleman/renderers/less.rb",
+     "lib/middleman/renderers/sass.rb",
      "lib/middleman/template/init.rbt",
      "lib/middleman/template/views/index.html.haml",
      "lib/middleman/template/views/layout.haml",
@@ -120,6 +122,8 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<sprockets>, [">= 0"])
       s.add_runtime_dependency(%q<sinatra>, [">= 1.0"])
       s.add_runtime_dependency(%q<sinatra-content-for>, [">= 0"])
+      s.add_runtime_dependency(%q<less>, [">= 0"])
+      s.add_runtime_dependency(%q<builder>, [">= 0"])
       s.add_runtime_dependency(%q<rack-test>, [">= 0"])
       s.add_runtime_dependency(%q<yui-compressor>, [">= 0"])
       s.add_runtime_dependency(%q<haml>, [">= 3.0"])
@@ -139,6 +143,8 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<sprockets>, [">= 0"])
       s.add_dependency(%q<sinatra>, [">= 1.0"])
       s.add_dependency(%q<sinatra-content-for>, [">= 0"])
+      s.add_dependency(%q<less>, [">= 0"])
+      s.add_dependency(%q<builder>, [">= 0"])
       s.add_dependency(%q<rack-test>, [">= 0"])
       s.add_dependency(%q<yui-compressor>, [">= 0"])
       s.add_dependency(%q<haml>, [">= 3.0"])
@@ -159,6 +165,8 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<sprockets>, [">= 0"])
     s.add_dependency(%q<sinatra>, [">= 1.0"])
     s.add_dependency(%q<sinatra-content-for>, [">= 0"])
+    s.add_dependency(%q<less>, [">= 0"])
+    s.add_dependency(%q<builder>, [">= 0"])
     s.add_dependency(%q<rack-test>, [">= 0"])
     s.add_dependency(%q<yui-compressor>, [">= 0"])
     s.add_dependency(%q<haml>, [">= 3.0"])
