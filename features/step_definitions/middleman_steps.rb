@@ -23,6 +23,6 @@ Then /^I should not see "([^\"]*)"$/ do |expected|
 end
 
 Then /^I should see "([^\"]*)" lines$/ do |lines|
-  puts @browser.last_response.body
+  $stderr.puts @browser.last_response.body
   @browser.last_response.body.chomp.split($/).length.should == lines.to_i
 end

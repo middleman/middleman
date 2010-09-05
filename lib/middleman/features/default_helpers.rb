@@ -1,15 +1,9 @@
-module Middleman
-  class Base
-    def self.asset_url(path, prefix="", request=nil)
-      path.include?("://") ? path : File.join(self.http_prefix || "/", prefix, path)
-    end
+class Middleman::Features::DefaultHelpers
+  def initialize(app)
+    Middleman::Base.helpers Helpers
   end
   
   module Helpers
-    def haml_partial(name, options = {})
-      haml name.to_sym, options.merge(:layout => false)
-    end
-    
     def auto_stylesheet_link_tag(separator="/")
       path = request.path_info.dup
       path << self.class.index_file if path.match(%r{/$})
@@ -19,8 +13,9 @@ module Middleman
 
       css_file = File.join(self.class.public, self.class.css_dir, "#{path}.css")
       sass_file = File.join(self.class.views, self.class.css_dir, "#{path}.css.sass")
+      scss_file = File.join(self.class.views, self.class.css_dir, "#{path}.css.scss")
     
-      if File.exists?(css_file) || File.exists?(sass_file)
+      if File.exists?(css_file) || File.exists?(sass_file) || File.exists?(scss_file)
         stylesheet_link_tag "#{path}.css"
       end
     end
@@ -38,7 +33,7 @@ module Middleman
     end
     
     def asset_url(path, prefix="")
-      self.class.asset_url(path, prefix, request)
+      Middleman::Assets.get_url(path, prefix, request)
     end
     
     def link_to(title, url="#", params={})
@@ -69,3 +64,5 @@ module Middleman
     end
   end
 end
+
+Middleman::Features.register :default_helpers, Middleman::Features::DefaultHelpers, { :auto_enable => true }

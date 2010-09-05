@@ -42,6 +42,16 @@ describe "Builder" do
     File.read("#{@root_dir}/build/stylesheets/site.css").gsub(/\s/, "").should include("html,body,div,span,applet,object,iframe")
   end
 
+  it "should build less files" do
+    File.exists?("#{@root_dir}/build/stylesheets/test_less.css").should be_true
+    File.read("#{@root_dir}/build/stylesheets/test_less.css").should include("666")
+  end
+
+  it "should build scss files" do
+    File.exists?("#{@root_dir}/build/stylesheets/site_scss.css").should be_true
+    File.read("#{@root_dir}/build/stylesheets/site_scss.css").gsub(/\s/, "").should include("html,body,div,span,applet,object,iframe")
+  end
+
   it "should build static css files" do
     File.exists?("#{@root_dir}/build/stylesheets/static.css").should be_true
   end

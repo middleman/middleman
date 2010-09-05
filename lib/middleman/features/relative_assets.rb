@@ -1,46 +1,35 @@
-class Middleman::Base  
-  after_feature_init do 
-    ::Compass.configuration do |config|
-      config.relative_assets = Proc.new do
-        Middleman::Base.enabled?(:relative_assets)
+class Middleman::Features::RelativeAssets
+  def initialize(app)
+    ::Compass.configuration.relative_assets = true
+  
+    Middleman::Assets.register :relative_assets do |path, prefix, request|
+      begin
+        prefix = Middleman::Base.images_dir if prefix == Middleman::Base.http_images_path
+      rescue
       end
-    end
-
-    ::Compass.configure_sass_plugin!
-  end
-end
-
-class << Middleman::Base
-  alias_method :pre_relative_asset_url, :asset_url
-  def asset_url(path, prefix="", request=nil)
-    if !self.enabled?(:relative_assets)
-      return pre_relative_asset_url(path, prefix, request)
-    end
     
-    begin
-      prefix = self.images_dir if prefix == self.http_images_path
-    rescue
-    end
-    
-    if path.include?("://")
-      pre_relative_asset_url(path, prefix, request)
-    elsif path[0,1] == "/"
-      path
-    else
-      path = File.join(prefix, path) if prefix.length > 0
-      request_path = request.path_info.dup
-      request_path << self.index_file if path.match(%r{/$})
-      request_path.gsub!(%r{^/}, '')
-      parts = request_path.split('/')
-
-      if parts.length > 1
-        arry = []
-        (parts.length - 1).times { arry << ".." }
-        arry << path
-        File.join(*arry)
-      else
+      if path.include?("://")
+        Middleman::Assets.before(:relative_assets, path, prefix, request)
+      elsif path[0,1] == "/"
         path
+      else
+        path = File.join(prefix, path) if prefix.length > 0
+        request_path = request.path_info.dup
+        request_path << Middleman::Base.index_file if path.match(%r{/$})
+        request_path.gsub!(%r{^/}, '')
+        parts = request_path.split('/')
+
+        if parts.length > 1
+          arry = []
+          (parts.length - 1).times { arry << ".." }
+          arry << path
+          File.join(*arry)
+        else
+          path
+        end
       end
     end
   end
 end
+
+Middleman::Features.register :relative_assets, Middleman::Features::RelativeAssets

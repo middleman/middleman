@@ -1,6 +1,14 @@
-<% if css_dir %>set :css_dir, "<%= css_dir -%>"<% end %>
-<% if js_dir %>set :js_dir, "<%= js_dir -%>"<% end %>
-<% if images_dir %>set :images_dir, "<%= images_dir -%>"<% end %>
+# Automatic sitemaps
+# enable :slickmap
+
+# Automatic image dimension calculations
+# enable :automatic_image_sizes
+
+# Per-page layout changes
+# With no layout
+# page "/path/to/file.html", :layout => false
+# With alternative layout
+# page "/path/to/file.html", :layout => :otherlayout
 
 # Helpers
 helpers do
@@ -9,11 +17,26 @@ helpers do
   end
 end
 
-# Automatic sitemaps
-# enable :slickmap
+<% if css_dir %>
+set :css_dir, "<%= css_dir -%>"
+<% else %>
+# Change the CSS directory
+# set :css_dir, "alternative_css_directory"
+<% end %>
 
-# Automatic image dimension calculations
-# enable :automatic_image_sizes
+<% if js_dir %>
+set :js_dir, "<%= js_dir -%>"
+<% else %>
+# Change the JS directory
+# set :js_dir, "alternative_js_directory"
+<% end %>
+
+<% if images_dir %>
+set :images_dir, "<%= images_dir -%>"
+<% else %>
+# Change the images directory
+# set :images_dir, "alternative_image_directory"
+<% end %>
 
 # Build-specific configuration
 configure :build do

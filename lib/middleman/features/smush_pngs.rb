@@ -1,9 +1,9 @@
-require "middleman/builder"
+class Middleman::Features::SmushPngs
+  def initialize(app)
+    require "middleman/builder"
 
-module Middleman
-  class Builder
-    alias_method :pre_smush_after_run, :after_run
-    def after_run
+    Middleman::Base.alias_method  :pre_smush_after_run, :after_run
+    Middleman::Base.define_method :after_run do
       pre_smush_after_run
       smush_dir = File.join(Middleman::Base.build_dir, Middleman::Base.images_dir)
       
@@ -34,3 +34,5 @@ module Middleman
     end
   end
 end
+
+Middleman::Features.register :smush_pngs, Middleman::Features::SmushPngs

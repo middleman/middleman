@@ -1,30 +1,7 @@
 require "haml"
 
 module Middleman
-  module Haml
-    module Renderer
-      def self.included(base)
-        base.supported_formats << "haml"
-        base.helpers Middleman::Haml::Helpers
-      end
-    
-      def render_path(path, layout)
-        if template_exists?(path, :haml)
-          result = nil
-          begin
-            layout = false if File.extname(path) == ".xml"
-            result = haml(path.to_sym, :layout => layout, :ugly => Middleman::Base.enabled?(:ugly_haml))
-          rescue ::Haml::Error => e
-            result = "Haml Error: #{e}"
-            result << "<pre>Backtrace: #{e.backtrace.join("\n")}</pre>"
-          end
-          result
-        else
-          super
-        end
-      end
-    end
-  
+  module Haml  
     module Helpers
       def haml_partial(name, options = {})
         item_name = name.to_sym
@@ -66,5 +43,5 @@ module Middleman
 end
 
 class Middleman::Base
-  include Middleman::Haml::Renderer
+  helpers Middleman::Haml::Helpers
 end

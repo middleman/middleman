@@ -1,50 +1,43 @@
-class Middleman::Base  
-  after_feature_init do 
-    ::Compass.configuration do |config|
-      if self.enabled?(:cache_buster)
+class Middleman::Features::CacheBuster
+  def initialize(app)
+    Middleman::Assets.register :cache_buster do |path, prefix, request|
+      http_path = Middleman::Assets.before(:cache_buster, path, prefix, request)
+
+      if http_path.include?("://") || !%w(.css .png .jpg .js .gif).include?(File.extname(http_path))
+        http_path
+      else
+        begin
+          prefix = Middleman::Base.images_dir if prefix == Middleman::Base.http_images_path
+        rescue
+        end
+
+        real_path_static  = File.join(Middleman::Base.public, prefix, path)
+
+        if File.readable?(real_path_static)
+          http_path << "?" + File.mtime(real_path_static).strftime("%s") 
+        elsif Middleman::Base.environment == "build"
+          real_path_dynamic = File.join(Middleman::Base.root, Middleman::Base.build_dir, prefix, path)
+          http_path << "?" + File.mtime(real_path_dynamic).strftime("%s") if File.readable?(real_path_dynamic)
+        end
+
+        http_path
+      end
+    end
+    
+    Middleman::Base.after_feature_init do 
+      ::Compass.configuration do |config|
         config.asset_cache_buster do |path, real_path|
           real_path = real_path.path if real_path.is_a? File
-          real_path = real_path.gsub(File.join(self.root, self.build_dir), self.public)
+          real_path = real_path.gsub(File.join(Middleman::Base.root, Middleman::Base.build_dir), Middleman::Base.public)
           if File.readable?(real_path)
             File.mtime(real_path).strftime("%s") 
           else
             $stderr.puts "WARNING: '#{File.basename(path)}' was not found (or cannot be read) in #{File.dirname(real_path)}"
           end
         end
-      else
-        config.asset_cache_buster { false }
       end
-    end
-    
-    ::Compass.configure_sass_plugin!
-  end
-end
-    
-class << Middleman::Base    
-  alias_method :pre_cache_buster_asset_url, :asset_url
-  def asset_url(path, prefix="", request=nil)
-    http_path = pre_cache_buster_asset_url(path, prefix, request)
-    
-    return http_path unless self.enabled?(:cache_buster)
-    
-    if http_path.include?("://") || !%w(.css .png .jpg .js .gif).include?(File.extname(http_path))
-      http_path
-    else
-      begin
-        prefix = self.images_dir if prefix == self.http_images_path
-      rescue
-      end
-      
-      real_path_static  = File.join(self.public, prefix, path)
-      
-      if File.readable?(real_path_static)
-        http_path << "?" + File.mtime(real_path_static).strftime("%s") 
-      elsif Middleman::Base.environment == "build"
-        real_path_dynamic = File.join(self.root, self.build_dir, prefix, path)
-        http_path << "?" + File.mtime(real_path_dynamic).strftime("%s") if File.readable?(real_path_dynamic)
-      end
-      
-      http_path
     end
   end
 end
+
+Middleman::Features.register :cache_buster, Middleman::Features::CacheBuster

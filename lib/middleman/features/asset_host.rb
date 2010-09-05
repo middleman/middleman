@@ -1,24 +1,21 @@
-class Middleman::Base
-  after_feature_init do
-    ::Compass.configuration do |config|
-      config.asset_host(&self.asset_host)
+class Middleman::Features::AssetHost
+  def initialize(app)
+    Middleman::Base.after_feature_init do
+      if Middleman::Base.asset_host.is_a?(Proc)
+        ::Compass.configuration.asset_host(&Middleman::Base.asset_host)
+      end
     end
-  end if self.enabled?(:asset_host) && self.asset_host && self.asset_host.is_a?(Proc)
-end
+    
+    Middleman::Assets.register :asset_host do |path, prefix, request|
+      original_output = Middleman::Assets.before(:asset_host, path, prefix, request)
 
-class << Middleman::Base
-  alias_method :pre_asset_host_asset_url, :asset_url
-  def asset_url(path, prefix="", request=nil)
-    original_output = pre_asset_host_asset_url(path, prefix, request)
-    
-    valid_extensions = %w(.png .gif .jpg .jpeg .js .css)
-    
-    if !self.enabled?(:asset_host) || path.include?("://") || !valid_extensions.include?(File.extname(path)) || !self.asset_host || !self.asset_host.is_a?(Proc) || !self.asset_host.respond_to?(:call)
-      return original_output
+      valid_extensions = %w(.png .gif .jpg .jpeg .js .css)
+
+      asset_prefix = Middleman::Base.asset_host.call(original_output)
+
+      File.join(asset_prefix, original_output)
     end
-
-    asset_prefix = self.asset_host.call(original_output)
-    
-    return File.join(asset_prefix, original_output)
   end
 end
+
+Middleman::Features.register :asset_host, Middleman::Features::AssetHost
