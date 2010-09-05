@@ -14,25 +14,24 @@ module Middleman
       feature_class = @@features[feature_name]
       feature_class.new(scope) unless feature_class.nil?
     end
-  
+
     def self.all
       @@features
     end
-    
+
   end
 end
 
+# livereload
 %w(asset_host 
    automatic_image_sizes
    cache_buster
    default_helpers
-   livereload
    minify_css
    minify_javascript
    relative_assets
    slickmap
    smush_pngs
-   sprockets
    ugly_haml).each do |feature| 
      
   require File.join("middleman/features", feature)

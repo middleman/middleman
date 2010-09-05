@@ -1,9 +1,13 @@
+require 'middleman/base'
 require 'templater'
 require 'middleman/templater+dynamic_renderer.rb'
 
 # Placeholder for any methods the builder needs to abstract to allow feature integration
 module Middleman
   class Builder < ::Templater::Generator
+    
+    @@template_extensions = ::Tilt.mappings.keys << "js"
+    
     # Define source and desintation
     def self.source_root; Dir.pwd; end
     def destination_root; File.join(Dir.pwd, Middleman::Base.build_dir); end
@@ -28,7 +32,8 @@ module Middleman
 
     def self.file(name, *args, &block)
       file_ext = File.extname(args[0])
-      return if Middleman::Base.supported_formats.include? file_ext[1..file_ext.length]
+      
+      return unless ::Tilt[file_ext].nil?
       
       if (args[0] === args[1])
         args[1] = args[0].gsub("#{File.basename(Middleman::Base.views)}/", "").gsub("#{File.basename(Middleman::Base.public)}/", "")
@@ -37,9 +42,8 @@ module Middleman
     end
 
     def self.init!
-      glob! File.basename(Middleman::Base.public), Middleman::Base.supported_formats
-      glob! File.basename(Middleman::Base.views),  %w(sass js)
-      glob! File.basename(Middleman::Base.views),  Middleman::Base.supported_formats - %w(sass js)
+      glob! File.basename(Middleman::Base.public),  @@template_extensions
+      glob! File.basename(Middleman::Base.views),   @@template_extensions
     end
     
     def after_run

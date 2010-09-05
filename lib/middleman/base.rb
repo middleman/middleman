@@ -14,7 +14,6 @@ module Middleman
     set :sessions, false
     set :logging, false
     set :environment, ENV['MM_ENV'] || :development
-    set :supported_formats, %w(erb)
     set :index_file, "index.html"
     set :js_dir, "javascripts"
     set :css_dir, "stylesheets"

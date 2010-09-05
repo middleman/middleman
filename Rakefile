@@ -17,7 +17,6 @@ begin
     gem.add_dependency("thin",                "~>1.2.0")
     gem.add_dependency("shotgun",             "~>0.8.0")
     gem.add_dependency("templater",           "~>1.0.0")
-    gem.add_dependency("sprockets",           "~>1.0.0")
     gem.add_dependency("sinatra",             "~>1.0")
     gem.add_dependency("sinatra-content-for", "~>0.2.0")
     gem.add_dependency("rack-test",           "~>0.5.0")
@@ -27,7 +26,7 @@ begin
     gem.add_dependency("json_pure",           "~>1.4.0")
     gem.add_dependency("smusher",             "~>0.4.5")
     gem.add_dependency("compass-slickmap",    "~>0.3.0")
-    gem.add_dependency("livereload",          "~>1.4.0")
+    # gem.add_dependency("livereload",          "~>1.4.0")
     
     gem.add_development_dependency("rspec")
     gem.add_development_dependency("cucumber")

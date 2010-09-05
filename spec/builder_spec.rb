@@ -59,8 +59,4 @@ describe "Builder" do
   it "should not build partial files" do
     File.exists?("#{@root_dir}/build/_partial.html").should be_false
   end
-
-  it "should combine javascript" do
-    File.read("#{@root_dir}/build/javascripts/empty-with-include.js").should include("combo")
-  end
 end
