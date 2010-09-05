@@ -5,9 +5,9 @@
 
 Gem::Specification.new do |s|
   s.name = %q{middleman}
-  s.version = "0.14.1"
+  s.version = "0.9.0.pre"
 
-  s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
+  s.required_rubygems_version = Gem::Requirement.new("> 1.3.1") if s.respond_to? :required_rubygems_version=
   s.authors = ["Thomas Reynolds"]
   s.date = %q{2010-09-04}
   s.email = %q{tdreyno@gmail.com}
@@ -40,26 +40,27 @@ Gem::Specification.new do |s|
      "features/step_definitions/middleman_steps.rb",
      "features/step_definitions/page_layout_steps.rb",
      "lib/middleman.rb",
+     "lib/middleman/assets.rb",
      "lib/middleman/base.rb",
      "lib/middleman/builder.rb",
      "lib/middleman/config.ru",
-     "lib/middleman/fastimage.rb",
+     "lib/middleman/features.rb",
      "lib/middleman/features/asset_host.rb",
      "lib/middleman/features/automatic_image_sizes.rb",
+     "lib/middleman/features/automatic_image_sizes/fastimage.rb",
      "lib/middleman/features/cache_buster.rb",
+     "lib/middleman/features/default_helpers.rb",
+     "lib/middleman/features/livereload.rb",
      "lib/middleman/features/minify_css.rb",
      "lib/middleman/features/minify_javascript.rb",
+     "lib/middleman/features/minify_javascript/rack.rb",
      "lib/middleman/features/relative_assets.rb",
      "lib/middleman/features/slickmap.rb",
      "lib/middleman/features/smush_pngs.rb",
-     "lib/middleman/helpers.rb",
-     "lib/middleman/rack/minify_css.rb",
-     "lib/middleman/rack/minify_javascript.rb",
-     "lib/middleman/rack/sprockets.rb",
-     "lib/middleman/renderers/builder.rb",
-     "lib/middleman/renderers/erb.rb",
+     "lib/middleman/features/ugly_haml.rb",
+     "lib/middleman/renderers.rb",
+     "lib/middleman/renderers/coffee.rb",
      "lib/middleman/renderers/haml.rb",
-     "lib/middleman/renderers/less.rb",
      "lib/middleman/renderers/sass.rb",
      "lib/middleman/template/init.rbt",
      "lib/middleman/template/views/index.html.haml",
@@ -70,7 +71,6 @@ Gem::Specification.new do |s|
      "spec/builder_spec.rb",
      "spec/fixtures/sample/init.rb",
      "spec/fixtures/sample/public/images/blank.gif",
-     "spec/fixtures/sample/public/javascripts/to-be-included.js",
      "spec/fixtures/sample/public/static.html",
      "spec/fixtures/sample/public/stylesheets/auto-css.css",
      "spec/fixtures/sample/public/stylesheets/static.css",
@@ -86,7 +86,6 @@ Gem::Specification.new do |s|
      "spec/fixtures/sample/views/index.html.haml",
      "spec/fixtures/sample/views/inline-css.html.haml",
      "spec/fixtures/sample/views/inline-js.html.haml",
-     "spec/fixtures/sample/views/javascripts/empty-with-include.js",
      "spec/fixtures/sample/views/layout.haml",
      "spec/fixtures/sample/views/maruku.html.maruku",
      "spec/fixtures/sample/views/page-classes.html.haml",
@@ -94,6 +93,8 @@ Gem::Specification.new do |s|
      "spec/fixtures/sample/views/stylesheets/asset_host.css.sass",
      "spec/fixtures/sample/views/stylesheets/relative_assets.css.sass",
      "spec/fixtures/sample/views/stylesheets/site.css.sass",
+     "spec/fixtures/sample/views/stylesheets/site_scss.css.scss",
+     "spec/fixtures/sample/views/stylesheets/test_less.css.less",
      "spec/helpers_spec.rb",
      "spec/spec_helper.rb"
   ]
@@ -115,66 +116,54 @@ Gem::Specification.new do |s|
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency(%q<rack>, [">= 0"])
-      s.add_runtime_dependency(%q<thin>, [">= 0"])
-      s.add_runtime_dependency(%q<shotgun>, [">= 0.8"])
-      s.add_runtime_dependency(%q<templater>, [">= 0"])
-      s.add_runtime_dependency(%q<sprockets>, [">= 0"])
-      s.add_runtime_dependency(%q<sinatra>, [">= 1.0"])
-      s.add_runtime_dependency(%q<sinatra-content-for>, [">= 0"])
-      s.add_runtime_dependency(%q<less>, [">= 0"])
-      s.add_runtime_dependency(%q<builder>, [">= 0"])
-      s.add_runtime_dependency(%q<rack-test>, [">= 0"])
-      s.add_runtime_dependency(%q<yui-compressor>, [">= 0"])
-      s.add_runtime_dependency(%q<haml>, [">= 3.0"])
-      s.add_runtime_dependency(%q<compass>, [">= 0.10"])
-      s.add_runtime_dependency(%q<fancy-buttons>, [">= 0"])
-      s.add_runtime_dependency(%q<json_pure>, [">= 0"])
-      s.add_runtime_dependency(%q<smusher>, [">= 0"])
-      s.add_runtime_dependency(%q<compass-slickmap>, [">= 0"])
+      s.add_runtime_dependency(%q<rack>, ["~> 1.0"])
+      s.add_runtime_dependency(%q<thin>, ["~> 1.2.0"])
+      s.add_runtime_dependency(%q<shotgun>, ["~> 0.8.0"])
+      s.add_runtime_dependency(%q<templater>, ["~> 1.0.0"])
+      s.add_runtime_dependency(%q<sinatra>, ["~> 1.0"])
+      s.add_runtime_dependency(%q<sinatra-content-for>, ["~> 0.2.0"])
+      s.add_runtime_dependency(%q<rack-test>, ["~> 0.5.0"])
+      s.add_runtime_dependency(%q<yui-compressor>, ["~> 0.9.0"])
+      s.add_runtime_dependency(%q<haml>, ["~> 3.0"])
+      s.add_runtime_dependency(%q<compass>, ["~> 0.10.0"])
+      s.add_runtime_dependency(%q<json_pure>, ["~> 1.4.0"])
+      s.add_runtime_dependency(%q<smusher>, ["~> 0.4.5"])
+      s.add_runtime_dependency(%q<compass-slickmap>, ["~> 0.3.0"])
       s.add_development_dependency(%q<rspec>, [">= 0"])
       s.add_development_dependency(%q<cucumber>, [">= 0"])
       s.add_development_dependency(%q<jeweler>, [">= 0"])
     else
-      s.add_dependency(%q<rack>, [">= 0"])
-      s.add_dependency(%q<thin>, [">= 0"])
-      s.add_dependency(%q<shotgun>, [">= 0.8"])
-      s.add_dependency(%q<templater>, [">= 0"])
-      s.add_dependency(%q<sprockets>, [">= 0"])
-      s.add_dependency(%q<sinatra>, [">= 1.0"])
-      s.add_dependency(%q<sinatra-content-for>, [">= 0"])
-      s.add_dependency(%q<less>, [">= 0"])
-      s.add_dependency(%q<builder>, [">= 0"])
-      s.add_dependency(%q<rack-test>, [">= 0"])
-      s.add_dependency(%q<yui-compressor>, [">= 0"])
-      s.add_dependency(%q<haml>, [">= 3.0"])
-      s.add_dependency(%q<compass>, [">= 0.10"])
-      s.add_dependency(%q<fancy-buttons>, [">= 0"])
-      s.add_dependency(%q<json_pure>, [">= 0"])
-      s.add_dependency(%q<smusher>, [">= 0"])
-      s.add_dependency(%q<compass-slickmap>, [">= 0"])
+      s.add_dependency(%q<rack>, ["~> 1.0"])
+      s.add_dependency(%q<thin>, ["~> 1.2.0"])
+      s.add_dependency(%q<shotgun>, ["~> 0.8.0"])
+      s.add_dependency(%q<templater>, ["~> 1.0.0"])
+      s.add_dependency(%q<sinatra>, ["~> 1.0"])
+      s.add_dependency(%q<sinatra-content-for>, ["~> 0.2.0"])
+      s.add_dependency(%q<rack-test>, ["~> 0.5.0"])
+      s.add_dependency(%q<yui-compressor>, ["~> 0.9.0"])
+      s.add_dependency(%q<haml>, ["~> 3.0"])
+      s.add_dependency(%q<compass>, ["~> 0.10.0"])
+      s.add_dependency(%q<json_pure>, ["~> 1.4.0"])
+      s.add_dependency(%q<smusher>, ["~> 0.4.5"])
+      s.add_dependency(%q<compass-slickmap>, ["~> 0.3.0"])
       s.add_dependency(%q<rspec>, [">= 0"])
       s.add_dependency(%q<cucumber>, [">= 0"])
       s.add_dependency(%q<jeweler>, [">= 0"])
     end
   else
-    s.add_dependency(%q<rack>, [">= 0"])
-    s.add_dependency(%q<thin>, [">= 0"])
-    s.add_dependency(%q<shotgun>, [">= 0.8"])
-    s.add_dependency(%q<templater>, [">= 0"])
-    s.add_dependency(%q<sprockets>, [">= 0"])
-    s.add_dependency(%q<sinatra>, [">= 1.0"])
-    s.add_dependency(%q<sinatra-content-for>, [">= 0"])
-    s.add_dependency(%q<less>, [">= 0"])
-    s.add_dependency(%q<builder>, [">= 0"])
-    s.add_dependency(%q<rack-test>, [">= 0"])
-    s.add_dependency(%q<yui-compressor>, [">= 0"])
-    s.add_dependency(%q<haml>, [">= 3.0"])
-    s.add_dependency(%q<compass>, [">= 0.10"])
-    s.add_dependency(%q<fancy-buttons>, [">= 0"])
-    s.add_dependency(%q<json_pure>, [">= 0"])
-    s.add_dependency(%q<smusher>, [">= 0"])
-    s.add_dependency(%q<compass-slickmap>, [">= 0"])
+    s.add_dependency(%q<rack>, ["~> 1.0"])
+    s.add_dependency(%q<thin>, ["~> 1.2.0"])
+    s.add_dependency(%q<shotgun>, ["~> 0.8.0"])
+    s.add_dependency(%q<templater>, ["~> 1.0.0"])
+    s.add_dependency(%q<sinatra>, ["~> 1.0"])
+    s.add_dependency(%q<sinatra-content-for>, ["~> 0.2.0"])
+    s.add_dependency(%q<rack-test>, ["~> 0.5.0"])
+    s.add_dependency(%q<yui-compressor>, ["~> 0.9.0"])
+    s.add_dependency(%q<haml>, ["~> 3.0"])
+    s.add_dependency(%q<compass>, ["~> 0.10.0"])
+    s.add_dependency(%q<json_pure>, ["~> 1.4.0"])
+    s.add_dependency(%q<smusher>, ["~> 0.4.5"])
+    s.add_dependency(%q<compass-slickmap>, ["~> 0.3.0"])
     s.add_dependency(%q<rspec>, [">= 0"])
     s.add_dependency(%q<cucumber>, [">= 0"])
     s.add_dependency(%q<jeweler>, [">= 0"])
