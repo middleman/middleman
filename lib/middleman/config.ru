@@ -1,2 +1,2 @@
 require 'middleman'
-run Middleman::Base
+run Middleman::Server

@@ -22,7 +22,7 @@ module Generators
       File.join(File.dirname(__FILE__), '..', 'lib', 'middleman', 'template')
     end
     
-    template :init, "init.rb"
+    template :config, "config.rb"
     glob! :views
     glob! :public
     

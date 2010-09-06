@@ -29,5 +29,5 @@ module Middleman
 end
 
 Middleman::Assets.register :base do |path, prefix, request|
-  path.include?("://") ? path : File.join(Middleman::Base.http_prefix || "/", prefix, path)
+  path.include?("://") ? path : File.join(Middleman::Server.http_prefix || "/", prefix, path)
 end

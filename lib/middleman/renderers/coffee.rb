@@ -1,4 +1,4 @@
-class Middleman::Base
+class Middleman::Server
   def coffee(template, options={}, locals={})
     options[:layout] = false
     render :coffee, template, options, locals

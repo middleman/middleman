@@ -7,14 +7,16 @@ module Middleman
     
       # Default to disabled, unless the class asks to auto-enable
       activate_method = (options.has_key?(:auto_enable) && options[:auto_enable]) ? :enable : :disable
-      Middleman::Base.send(activate_method, feature_name)
+      Middleman::Server.send(activate_method, feature_name)
     end
     
-    def self.run(feature_name, scope)
+    # Initialize a feature
+    def self.run(feature_name, feature_config, scope)
       feature_class = @@features[feature_name]
-      feature_class.new(scope) unless feature_class.nil?
+      feature_class.new(scope, feature_config) unless feature_class.nil?
     end
 
+    # Get a list of all features
     def self.all
       @@features
     end

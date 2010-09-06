@@ -1,9 +1,9 @@
 class Middleman::Features::AutomaticImageSizes
-  def initialize(app)
+  def initialize(app, config)
     require "middleman/features/automatic_image_sizes/fastimage"
 
-    Middleman::Base.send :alias_method, :pre_automatic_image_tag, :image_tag
-    Middleman::Base.helpers do
+    Middleman::Server.send :alias_method, :pre_automatic_image_tag, :image_tag
+    Middleman::Server.helpers do
       def image_tag(path, params={})
         if (!params[:width] || !params[:height]) && !path.include?("://")
           params[:alt] ||= ""

@@ -1,8 +1,8 @@
 class Middleman::Features::AssetHost
-  def initialize(app)
-    Middleman::Base.after_feature_init do
-      if Middleman::Base.asset_host.is_a?(Proc)
-        ::Compass.configuration.asset_host(&Middleman::Base.asset_host)
+  def initialize(app, config)
+    Middleman::Server.after_feature_init do
+      if Middleman::Server.asset_host.is_a?(Proc)
+        ::Compass.configuration.asset_host(&Middleman::Server.asset_host)
       end
     end
     
@@ -11,7 +11,7 @@ class Middleman::Features::AssetHost
 
       valid_extensions = %w(.png .gif .jpg .jpeg .js .css)
 
-      asset_prefix = Middleman::Base.asset_host.call(original_output)
+      asset_prefix = Middleman::Server.asset_host.call(original_output)
 
       File.join(asset_prefix, original_output)
     end

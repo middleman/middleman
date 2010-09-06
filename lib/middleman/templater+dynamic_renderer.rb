@@ -14,11 +14,11 @@ end
 
 class Templater::Actions::Template
   def render
-    @@rack_test ||= Rack::Test::Session.new(Rack::MockSession.new(Middleman::Base))
+    @@rack_test ||= Rack::Test::Session.new(Rack::MockSession.new(Middleman::Server))
     
     @render_cache ||= begin
       # The default render just requests the page over Rack and writes the response
-      request_path = destination.gsub(File.join(Dir.pwd, Middleman::Base.build_dir), "")
+      request_path = destination.gsub(File.join(Dir.pwd, Middleman::Server.build_dir), "")
       @@rack_test.get(request_path)
       @@rack_test.last_response.body
     end

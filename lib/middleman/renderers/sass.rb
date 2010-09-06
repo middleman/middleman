@@ -1,7 +1,7 @@
 require "sass"
 require "compass"
 
-class Middleman::Base
+class Middleman::Server
   def scss(template, options={}, locals={})
     options[:layout] = false
     render :scss, template, options, locals
@@ -34,13 +34,13 @@ end
 
 class Tilt::SassPlusCSSFilenameTemplate < Tilt::SassTemplate
   def sass_options
-    location_of_sass_file = Middleman::Base.environment == "build" ? 
-                              File.join(Middleman::Base.root, Middleman::Base.build_dir) : 
-                              Middleman::Base.public
+    location_of_sass_file = Middleman::Server.environment == :build ? 
+                              File.join(Middleman::Server.root, Middleman::Server.build_dir) : 
+                              Middleman::Server.public
 
     parts = basename.split('.')
     parts.pop
-    css_filename = File.join(location_of_sass_file, Middleman::Base.css_dir, parts.join("."))
+    css_filename = File.join(location_of_sass_file, Middleman::Server.css_dir, parts.join("."))
     super.merge(::Compass.configuration.to_sass_engine_options).merge(:css_filename => css_filename)
   end
 end

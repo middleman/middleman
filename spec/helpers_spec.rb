@@ -1,6 +1,6 @@
 require File.join(File.dirname(__FILE__), "spec_helper")
 
-base = ::Middleman::Base
+base = ::Middleman::Server
 
 describe "page_classes helper" do
   it "should generate root paths correctly" do

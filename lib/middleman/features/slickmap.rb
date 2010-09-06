@@ -1,44 +1,16 @@
 Entry = Struct.new(:dir, :children)
 
 class Middleman::Features::Slickmap
-  def initialize(app)
+  def initialize(app, config)
     require 'slickmap'
 
-    if Middleman::Base.environment == "build"
-      Middleman::Builder.template :slickmap, "sitemap.html", "sitemap.html"
-    end
+    @sitemap_url = config[:url] || "sitemap.html"
 
-    def build_sitemap(&block)    
-      @@utility = []
-      [recurse_sitemap(Middleman::Base.views, &block), @@utility]
-    end
-
-    def recurse_sitemap(path, &block)
-      bad_ext = path.split('.html')[1]
-      path = path.gsub(bad_ext, '') if bad_ext
-      entry = Entry.new(path, [])
-
-      #no "." or ".." dirs
-      Dir[File.join(path, "*")].each do |e|
-        next if !File.directory?(e) && !e.include?(".html")
-        if File.directory?(e)
-          entry.children << recurse_sitemap(e, &block)
-        elsif block_given?
-          how_to_handle = block.call(e)
-          if how_to_handle == :valid
-            entry.children << recurse_sitemap(e, &block)
-          elsif how_to_handle == :utility
-            bad_ext = e.split('.html')[1]
-            e = e.gsub(bad_ext, '') if bad_ext
-            @@utility << e.gsub(Middleman::Base.views + "/", '')
-          end
-        end
-      end
-
-      entry
+    if Middleman::Server.environment == :build
+      Middleman::Builder.template :slickmap, @sitemap_url, @sitemap_url
     end
     
-    Middleman::Base.helpers do
+    Middleman::Server.helpers do
       def sitemap_node(n, first=false)
         if n.children.length < 1
           if !first && File.extname(n.dir).length > 0
@@ -72,47 +44,45 @@ class Middleman::Features::Slickmap
       end
     end
 
-    Middleman::Base.get '/sitemap.html' do
+    Middleman::Server.get "/#{@sitemap_url}" do
       # Return :utility to put it util top menu. False to ignore
-      @tree, @utility = build_sitemap do |file_name|
+      @tree, @utility = Middleman::Features::Slickmap.build_sitemap do |file_name|
         :valid
       end
-      haml :sitemap, :layout => false
+      
+      haml "template.html".to_sym, :layout => false, :views => File.expand_path(File.join(File.dirname(__FILE__), "slickmap"))
+    end
+  end
+  
+  def self.build_sitemap(&block)    
+    @@utility = []
+    [recurse_sitemap(Middleman::Server.views, &block), @@utility]
+  end
+
+  def self.recurse_sitemap(path, &block)
+    bad_ext = path.split('.html')[1]
+    path = path.gsub(bad_ext, '') if bad_ext
+    entry = Entry.new(path, [])
+
+    #no "." or ".." dirs
+    Dir[File.join(path, "*")].each do |e|
+      next if !File.directory?(e) && !e.include?(".html")
+      if File.directory?(e)
+        entry.children << recurse_sitemap(e, &block)
+      elsif block_given?
+        how_to_handle = block.call(e)
+        if how_to_handle == :valid
+          entry.children << recurse_sitemap(e, &block)
+        elsif how_to_handle == :utility
+          bad_ext = e.split('.html')[1]
+          e = e.gsub(bad_ext, '') if bad_ext
+          @@utility << e.gsub(Middleman::Server.views + "/", '')
+        end
+      end
     end
 
-    Middleman::Base.use_in_file_templates!
+    entry
   end
 end
 
 Middleman::Features.register :slickmap, Middleman::Features::Slickmap
-
-__END__
-
-@@ sitemap
-!!!
-%html{ :xmlns => "http://www.w3.org/1999/xhtml" }
-  %head
-    %meta{ :content => "text/html; charset=utf-8", "http-equiv" => "Content-type" }
-    %title Sitemap
-    %style{ :type => "text/css" }
-      :sass
-        @import "slickmap"
-        +slickmap
-    :javascript
-      window.onload = function() {
-        document.getElementById('primaryNav').className = "col" + document.querySelectorAll("#primaryNav > li:not(#home)").length;
-      };
-
-  %body
-    .logo
-      %h1= @project_name || "Sitemap"
-      - if @project_subtitle
-        %h2= @project_subtitle
-    
-      - if @utility.length > 0
-        %ul#utilityNav
-          - @utility.each do |u|
-            %li= link_to u, u
-    
-    %ul#primaryNav
-      - sitemap_node(@tree, true)

@@ -1,6 +1,6 @@
 class Middleman::Features::DefaultHelpers
-  def initialize(app)
-    Middleman::Base.helpers Helpers
+  def initialize(app, config)
+    Middleman::Server.helpers Helpers
   end
   
   module Helpers

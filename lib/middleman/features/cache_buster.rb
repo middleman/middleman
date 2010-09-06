@@ -1,5 +1,5 @@
 class Middleman::Features::CacheBuster
-  def initialize(app)
+  def initialize(app, config)
     Middleman::Assets.register :cache_buster do |path, prefix, request|
       http_path = Middleman::Assets.before(:cache_buster, path, prefix, request)
 
@@ -7,16 +7,16 @@ class Middleman::Features::CacheBuster
         http_path
       else
         begin
-          prefix = Middleman::Base.images_dir if prefix == Middleman::Base.http_images_path
+          prefix = Middleman::Server.images_dir if prefix == Middleman::Server.http_images_path
         rescue
         end
 
-        real_path_static  = File.join(Middleman::Base.public, prefix, path)
+        real_path_static  = File.join(Middleman::Server.public, prefix, path)
 
         if File.readable?(real_path_static)
           http_path << "?" + File.mtime(real_path_static).strftime("%s") 
-        elsif Middleman::Base.environment == "build"
-          real_path_dynamic = File.join(Middleman::Base.root, Middleman::Base.build_dir, prefix, path)
+        elsif Middleman::Server.environment == :build
+          real_path_dynamic = File.join(Middleman::Server.root, Middleman::Server.build_dir, prefix, path)
           http_path << "?" + File.mtime(real_path_dynamic).strftime("%s") if File.readable?(real_path_dynamic)
         end
 
@@ -24,11 +24,11 @@ class Middleman::Features::CacheBuster
       end
     end
     
-    Middleman::Base.after_feature_init do 
+    Middleman::Server.after_feature_init do 
       ::Compass.configuration do |config|
         config.asset_cache_buster do |path, real_path|
           real_path = real_path.path if real_path.is_a? File
-          real_path = real_path.gsub(File.join(Middleman::Base.root, Middleman::Base.build_dir), Middleman::Base.public)
+          real_path = real_path.gsub(File.join(Middleman::Server.root, Middleman::Server.build_dir), Middleman::Server.public)
           if File.readable?(real_path)
             File.mtime(real_path).strftime("%s") 
           else

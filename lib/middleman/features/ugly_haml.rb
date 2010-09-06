@@ -1,6 +1,6 @@
 class Middleman::Features::UglyHaml
-  def initialize(app)
-    Middleman::Base.set :haml, Middleman::Base.settings.haml.merge({ :ugly_haml => true })
+  def initialize(app, config)
+    Middleman::Server.set :haml, Middleman::Server.settings.haml.merge({ :ugly_haml => true })
   end
 end
 

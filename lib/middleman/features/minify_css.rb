@@ -1,6 +1,6 @@
 class Middleman::Features::MinifyCSS
-  def initialize(app)
-    Middleman::Base.after_feature_init do
+  def initialize(app, config)
+    Middleman::Server.after_feature_init do
       ::Compass.configuration.output_style = :compressed
     end
   end

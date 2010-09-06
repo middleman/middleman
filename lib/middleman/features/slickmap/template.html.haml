@@ -1,0 +1,27 @@
+!!!
+%html{ :xmlns => "http://www.w3.org/1999/xhtml" }
+  %head
+    %meta{ :content => "text/html; charset=utf-8", "http-equiv" => "Content-type" }
+    %title Sitemap
+    %style{ :type => "text/css" }
+      :sass
+        @import "slickmap"
+        +slickmap
+    :javascript
+      window.onload = function() {
+        document.getElementById('primaryNav').className = "col" + document.querySelectorAll("#primaryNav > li:not(#home)").length;
+      };
+
+  %body
+    .logo
+      %h1= @project_name || "Sitemap"
+      - if @project_subtitle
+        %h2= @project_subtitle
+    
+      - if @utility.length > 0
+        %ul#utilityNav
+          - @utility.each do |u|
+            %li= link_to u, u
+    
+    %ul#primaryNav
+      - sitemap_node(@tree, true)

@@ -1,6 +1,6 @@
 class Middleman::Features::LiveReload
-  def initialize(app)
-    return unless Middleman::Base.environment == :development
+  def initialize(app, config)
+    return unless Middleman::Server.environment == :development
     
     begin
       require 'livereload'
@@ -12,7 +12,7 @@ class Middleman::Features::LiveReload
       config.exts = %w(haml sass scss coffee less builder)
     end
   
-    ::LiveReload.run [Middleman::Base.public, Middleman::Base.views], new_config
+    ::LiveReload.run [Middleman::Server.public, Middleman::Server.views], new_config
   end
 end
 

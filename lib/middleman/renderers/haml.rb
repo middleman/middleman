@@ -42,6 +42,6 @@ module Middleman
   end
 end
 
-class Middleman::Base
+class Middleman::Server
   helpers Middleman::Haml::Helpers
 end

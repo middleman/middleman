@@ -1,5 +1,5 @@
 class Middleman::Features::MinifyJavascript
-  def initialize(app)
+  def initialize(app, config)
     Haml::Javascript.send :include, ::Haml::Filters::Base
     
     require "middleman/features/minify_javascript/rack"
