@@ -1,7 +1,13 @@
 require 'fileutils'
 
+Given /^generated directory at "([^\"]*)"$/ do |dirname|
+  target = File.join(File.dirname(File.dirname(File.dirname(__FILE__))), "fixtures", dirname)
+  init_cmd = File.expand_path(File.join(File.dirname(File.dirname(File.dirname(__FILE__))), "bin", "mm-init"))
+  `cd #{File.dirname(target)} && #{init_cmd} #{File.basename(target)}`
+end
+
 Then /^template files should exist at "([^\"]*)"$/ do |dirname|
-  target = File.join(File.dirname(File.dirname(File.dirname(__FILE__))), "spec", "fixtures", dirname)
+  target = File.join(File.dirname(File.dirname(File.dirname(__FILE__))), "fixtures", dirname)
   template_glob = File.join(File.dirname(File.dirname(File.dirname(__FILE__))), "lib", "middleman", "template", "*/**/*")
   
   Dir[template_glob].each do |f|
@@ -11,7 +17,7 @@ Then /^template files should exist at "([^\"]*)"$/ do |dirname|
 end
 
 Then /^empty directories should exist at "([^\"]*)"$/ do |dirname|
-  target = File.join(File.dirname(File.dirname(File.dirname(__FILE__))), "spec", "fixtures", dirname)
+  target = File.join(File.dirname(File.dirname(File.dirname(__FILE__))), "fixtures", dirname)
   
   %w(views/stylesheets public/stylesheets public/javascripts public/images).each do |d|
     File.exists?("#{target}/#{d}").should be_true
@@ -19,6 +25,6 @@ Then /^empty directories should exist at "([^\"]*)"$/ do |dirname|
 end
 
 Then /^cleanup at "([^\"]*)"$/ do |dirname|
-  target = File.join(File.dirname(File.dirname(File.dirname(__FILE__))), "spec", "fixtures", dirname)
+  target = File.join(File.dirname(File.dirname(File.dirname(__FILE__))), "fixtures", dirname)
   FileUtils.rm_rf(target)
 end

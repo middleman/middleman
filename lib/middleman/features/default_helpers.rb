@@ -45,22 +45,32 @@ class Middleman::Features::DefaultHelpers
     def image_tag(path, params={})
       params[:alt] ||= ""
       prefix = settings.http_images_path rescue settings.images_dir
-      params = params.merge(:src => asset_url(path, prefix))
       params = params.map { |k,v| %Q{#{k}="#{v}"}}.join(' ')
-      "<img #{params} />"
+      params << " " if params.length > 0
+      "<img src=\"#{asset_url(path, prefix)}\" #{params}/>"
     end
 
     def javascript_include_tag(path, params={})
-      params = params.merge(:src => asset_url(path, settings.js_dir), :type => "text/javascript")
+      path = path.to_s
+      path << ".js" unless path =~ /\.js$/
+      
+      params.delete(:type)
+      params.delete(:src)
       params = params.map { |k,v| %Q{#{k}="#{v}"}}.join(' ')
-      "<script #{params}></script>"
+      params = " " + params if params.length > 0
+      "<script type=\"text/javascript\" src=\"#{asset_url(path, settings.js_dir)}\"#{params}></script>"
     end
 
     def stylesheet_link_tag(path, params={})
-      params[:rel] ||= "stylesheet"
-      params = params.merge(:href => asset_url(path, settings.css_dir), :type => "text/css")
+      path = path.to_s
+      path << ".css" unless path =~ /\.css$/
+      
+      params.delete(:type)
+      params.delete(:rel)
+      params.delete(:href)
       params = params.map { |k,v| %Q{#{k}="#{v}"}}.join(' ')
-      "<link #{params} />"
+      params << " " if params.length > 0
+      "<link type=\"text/css\" rel=\"stylesheet\" href=\"#{asset_url(path, settings.css_dir)}\" #{params}/>"
     end
   end
 end

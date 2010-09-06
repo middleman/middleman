@@ -4,10 +4,8 @@ Given /^"([^\"]*)" feature is "([^\"]*)"$/ do |feature, state|
   @browser = Rack::Test::Session.new(Rack::MockSession.new(Middleman::Server.new))
 end
 
-Given /^generated directory at "([^\"]*)"$/ do |dirname|
-  target = File.join(File.dirname(File.dirname(File.dirname(__FILE__))), "spec", "fixtures", dirname)
-  init_cmd = File.expand_path(File.join(File.dirname(File.dirname(File.dirname(__FILE__))), "bin", "mm-init"))
-  `cd #{File.dirname(target)} && #{init_cmd} #{File.basename(target)}`
+Given /^the Server is running$/ do
+  @browser = Rack::Test::Session.new(Rack::MockSession.new(Middleman::Server.new))
 end
 
 When /^I go to "([^\"]*)"$/ do |url|
@@ -15,6 +13,9 @@ When /^I go to "([^\"]*)"$/ do |url|
 end
 
 Then /^I should see "([^\"]*)"$/ do |expected|
+  @browser.last_response.body.should include(expected)
+end
+Then /^I should see '([^\']*)'$/ do |expected|
   @browser.last_response.body.should include(expected)
 end
 
