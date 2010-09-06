@@ -23,6 +23,11 @@ describe "Builder" do
     File.read("#{@root_dir}/build/index.html").should include("Comment in layout")
   end
   
+  it "should build coffee files" do
+    File.exists?("#{@root_dir}/build/javascripts/coffee_test.js").should be_true
+    File.read("#{@root_dir}/build/javascripts/coffee_test.js").should include("Array.prototype.slice")
+  end
+  
   it "should build haml files" do
     File.exists?("#{@root_dir}/build/index.html").should be_true
     File.read("#{@root_dir}/build/index.html").should include("<h1>Welcome</h1>")
