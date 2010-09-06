@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{middleman}
-  s.version = "0.99.0.pre"
+  s.version = "0.99.1.pre"
 
   s.required_rubygems_version = Gem::Requirement.new("> 1.3.1") if s.respond_to? :required_rubygems_version=
   s.authors = ["Thomas Reynolds"]
@@ -41,7 +41,6 @@ Gem::Specification.new do |s|
      "features/step_definitions/page_layout_steps.rb",
      "lib/middleman.rb",
      "lib/middleman/assets.rb",
-     "lib/middleman/base.rb",
      "lib/middleman/builder.rb",
      "lib/middleman/config.ru",
      "lib/middleman/features.rb",
@@ -56,20 +55,22 @@ Gem::Specification.new do |s|
      "lib/middleman/features/minify_javascript/rack.rb",
      "lib/middleman/features/relative_assets.rb",
      "lib/middleman/features/slickmap.rb",
+     "lib/middleman/features/slickmap/template.html.haml",
      "lib/middleman/features/smush_pngs.rb",
      "lib/middleman/features/ugly_haml.rb",
      "lib/middleman/renderers.rb",
      "lib/middleman/renderers/coffee.rb",
      "lib/middleman/renderers/haml.rb",
      "lib/middleman/renderers/sass.rb",
-     "lib/middleman/template/init.rbt",
+     "lib/middleman/server.rb",
+     "lib/middleman/template/config.rbt",
      "lib/middleman/template/views/index.html.haml",
      "lib/middleman/template/views/layout.haml",
      "lib/middleman/template/views/stylesheets/site.css.sass",
      "lib/middleman/templater+dynamic_renderer.rb",
      "middleman.gemspec",
      "spec/builder_spec.rb",
-     "spec/fixtures/sample/init.rb",
+     "spec/fixtures/sample/config.rb",
      "spec/fixtures/sample/public/images/blank.gif",
      "spec/fixtures/sample/public/static.html",
      "spec/fixtures/sample/public/stylesheets/auto-css.css",
@@ -106,7 +107,7 @@ Gem::Specification.new do |s|
   s.summary = %q{A static site generator utilizing Haml, Sass and providing YUI compression and cache busting}
   s.test_files = [
     "spec/builder_spec.rb",
-     "spec/fixtures/sample/init.rb",
+     "spec/fixtures/sample/config.rb",
      "spec/helpers_spec.rb",
      "spec/spec_helper.rb"
   ]
@@ -128,7 +129,7 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<compass>, ["~> 0.10.0"])
       s.add_runtime_dependency(%q<json_pure>, ["~> 1.4.0"])
       s.add_runtime_dependency(%q<smusher>, ["~> 0.4.5"])
-      s.add_runtime_dependency(%q<compass-slickmap>, ["~> 0.3.0"])
+      s.add_runtime_dependency(%q<compass-slickmap>, ["~> 0.4.0"])
       s.add_development_dependency(%q<rspec>, [">= 0"])
       s.add_development_dependency(%q<cucumber>, [">= 0"])
       s.add_development_dependency(%q<jeweler>, [">= 0"])
@@ -145,7 +146,7 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<compass>, ["~> 0.10.0"])
       s.add_dependency(%q<json_pure>, ["~> 1.4.0"])
       s.add_dependency(%q<smusher>, ["~> 0.4.5"])
-      s.add_dependency(%q<compass-slickmap>, ["~> 0.3.0"])
+      s.add_dependency(%q<compass-slickmap>, ["~> 0.4.0"])
       s.add_dependency(%q<rspec>, [">= 0"])
       s.add_dependency(%q<cucumber>, [">= 0"])
       s.add_dependency(%q<jeweler>, [">= 0"])
@@ -163,7 +164,7 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<compass>, ["~> 0.10.0"])
     s.add_dependency(%q<json_pure>, ["~> 1.4.0"])
     s.add_dependency(%q<smusher>, ["~> 0.4.5"])
-    s.add_dependency(%q<compass-slickmap>, ["~> 0.3.0"])
+    s.add_dependency(%q<compass-slickmap>, ["~> 0.4.0"])
     s.add_dependency(%q<rspec>, [">= 0"])
     s.add_dependency(%q<cucumber>, [">= 0"])
     s.add_dependency(%q<jeweler>, [">= 0"])
