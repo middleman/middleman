@@ -25,10 +25,10 @@ module Middleman
 end
 
 # livereload
-%w(asset_host 
+%w(default_helpers
+   asset_host 
    automatic_image_sizes
    cache_buster
-   default_helpers
    minify_css
    minify_javascript
    relative_assets
