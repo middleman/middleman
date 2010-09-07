@@ -1,11 +1,14 @@
-class Middleman::Features::MinifyJavascript
-  def initialize(app, config)
-    Haml::Javascript.send :include, ::Haml::Filters::Base
-    
-    require "middleman/features/minify_javascript/rack"
-    app.use Middleman::Rack::MinifyJavascript
+module Middleman::Features::MinifyJavascript
+  class << self
+    def registered(app)
+      Middleman::Features::MinifyJavascript::Haml::Javascript.send :include, ::Haml::Filters::Base
+
+      require "middleman/features/minify_javascript/rack"
+      app.use Middleman::Rack::MinifyJavascript
+    end
+    alias :included :registered
   end
-  
+
   module Haml
     module Javascript
       def render_with_options(text, options)
@@ -16,5 +19,3 @@ class Middleman::Features::MinifyJavascript
     end
   end
 end
-
-Middleman::Features.register :minify_javascript, Middleman::Features::MinifyJavascript

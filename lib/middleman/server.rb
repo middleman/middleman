@@ -1,14 +1,9 @@
 # We're riding on Sinatra, so let's include it.
 require "sinatra/base"
 
-# The content_for plugin allows Sinatra to use the throw/yield block
-# system similar to Rails views.
-require "sinatra/content_for"
-
-# Monkey-patch Sinatra to expose the layout parameter
-class Sinatra::Request
-  attr_accessor :layout
-end
+# Use the padrino project's helpers
+require "padrino-core/application/rendering"
+require "padrino-helpers"
 
 module Middleman
   class Server < Sinatra::Base
@@ -20,8 +15,7 @@ module Middleman
     set :logging,     false
     set :environment, (ENV['MM_ENV'] && ENV['MM_ENV'].to_sym) || :development
     
-    # Import content_for methods
-    helpers Sinatra::ContentFor
+    # Import padrino helper methods
     
     # Middleman-specific options
     set :index_file,  "index.html"  # What file responds to folder requests
@@ -36,20 +30,18 @@ module Middleman
     set :build_dir,   "build"       # Which folder are builds output to
     set :http_prefix, nil           # During build, add a prefix for absolute paths
     
-    # A hash of enabled features
-    @@enabled_features = {}
+    # Use Padrino Helpers
+    register Padrino::Helpers
+    set :asset_stamp, false         # Disable Padrino cache buster until explicitly enabled
     
-    # Override Sinatra's enable to keep track of enabled features
-    def self.enable(feature_name, config={})
-      @@enabled_features[feature_name] = config
-      super(feature_name)
-    end
+    # Activate custom features
+    register Middleman::Features
     
-    # Disable a feature, then pass to Sinatra's method
-    def self.disable(feature_name)
-      @@enabled_features.delete(feature_name)
-      super(feature_name)
-    end
+    # Activate built-in helpers
+    register Middleman::Features::DefaultHelpers
+    
+    # Tilt-aware renderer
+    register Padrino::Rendering
     
     # Override Sinatra's set to accept a block
     def self.set(option, value=self, &block)
@@ -68,37 +60,48 @@ module Middleman
       @@run_after_features << block
     end
     
+    # Activate custom renderers
+    register Middleman::Renderers::CoffeeScript
+    register Middleman::Renderers::Haml
+    register Middleman::Renderers::Sass
+    
     # Rack helper for adding mime-types during local preview
     def self.mime(ext, type)
       ext = ".#{ext}" unless ext.to_s[0] == ?.
       ::Rack::Mime::MIME_TYPES[ext.to_s] = type
     end
     
-    # Keep track of a block-specific layout
-    @@layout = nil
+    # Default layout name
+    layout :layout
+    
+    def self.current_layout
+      @layout
+    end
     
     # Takes a block which allows many pages to have the same layout
     # with_layout :admin do
     #   page "/admin/"
     #   page "/admin/login.html"
     # end
-    def self.with_layout(layout, &block)
-      @@layout = layout
+    def self.with_layout(layout_name, &block)
+      old_layout = current_layout
+      
+      layout(layout_name)
       class_eval(&block) if block_given?
     ensure
-      @@layout = nil
+      layout(old_layout)
     end
     
     # The page method allows the layout to be set on a specific path
     # page "/about.html", :layout => false
     # page "/", :layout => :homepage_layout
     def self.page(url, options={}, &block)
-      layout = @@layout
-      layout = options[:layout] if !options[:layout].nil?
-      
+      url << settings.index_file if url.match(%r{/$})
+  
+      options[:layout] ||= current_layout
       get(url) do
         return yield if block_given?
-        process_request(layout)
+        process_request(options)
       end
     end
 
@@ -109,20 +112,21 @@ module Middleman
     
   private
     # Internal method to look for templates and evaluate them if found
-    def process_request(layout = :layout)
+    def process_request(options={})
       # Normalize the path and add index if we're looking at a directory
       path = request.path
       path << settings.index_file if path.match(%r{/$})
       path.gsub!(%r{^/}, '')
-
-      if template_path = Dir.glob(File.join(settings.views, "#{path}.*")).first
+      
+      old_layout = settings.current_layout
+      settings.layout(options[:layout]) if !options[:layout].nil?
+      result = render(path, :layout => settings.fetch_layout_path.to_sym)
+      settings.layout(old_layout)
+      
+      if result
         content_type mime_type(File.extname(path)), :charset => 'utf-8'
-        
-        renderer = Middleman::Renderers.get_method(template_path)
-        if respond_to? renderer
-          status 200
-          return send(renderer, path.to_sym, { :layout => layout })
-        end
+        status 200
+        return result
       end
       
       status 404
@@ -131,8 +135,6 @@ module Middleman
 end
 
 require "middleman/assets"
-require "middleman/renderers"
-require "middleman/features"
 
 # The Rack App
 class Middleman::Server
@@ -150,13 +152,6 @@ class Middleman::Server
       $stderr.puts "== Reading:  Local config" if logging?
       Middleman::Server.class_eval File.read(local_config)
       set :app_file, File.expand_path(local_config)
-    end
-    
-    # loop over enabled feature
-    @@enabled_features.each do |feature_name, feature_config|
-      next unless send(:"#{feature_name}?")
-      $stderr.puts "== Enabling: #{feature_name.to_s.capitalize}" if logging?
-      Middleman::Features.run(feature_name, feature_config, self)
     end
     
     use ::Rack::ConditionalGet if environment == :development

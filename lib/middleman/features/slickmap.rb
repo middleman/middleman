@@ -1,57 +1,60 @@
 Entry = Struct.new(:dir, :children)
 
-class Middleman::Features::Slickmap
-  def initialize(app, config)
-    require 'slickmap'
+module Middleman::Features::Slickmap
+  class << self
+    def registered(app)
+      require 'slickmap'
 
-    @sitemap_url = config[:url] || "sitemap.html"
+      @sitemap_url = config[:url] || "sitemap.html"
 
-    if Middleman::Server.environment == :build
-      Middleman::Builder.template :slickmap, @sitemap_url, @sitemap_url
-    end
-    
-    Middleman::Server.helpers do
-      def sitemap_node(n, first=false)
-        if n.children.length < 1
-          if !first && File.extname(n.dir).length > 0
-            haml_tag :li do
-              path = n.dir.gsub(self.class.views, '')
-              haml_concat link_to(File.basename(path), path)
-            end
-          end
-        else  
-          haml_tag(:li, :id => first ? "home" : nil) do
-            if first
-              haml_concat link_to("Homepage", "/" + self.class.index_file)
-            else
-              # we are a dir
-              index = n.children.find { |c| c.dir.include?(self.class.index_file) }
-              haml_concat link_to(index.dir.gsub(self.class.views + "/", '').gsub("/" + File.basename(index.dir), '').capitalize, index.dir.gsub(self.class.views, ''))
-            end
+      if Middleman::Server.environment == :build
+        Middleman::Builder.template :slickmap, @sitemap_url, @sitemap_url
+      end
 
-            other_children = n.children.select { |c| !c.dir.include?(self.class.index_file) }
-            if other_children.length > 0
-              if first
-                other_children.each { |i| sitemap_node(i) }
-              else
-                haml_tag :ul do
-                  other_children.each { |i| sitemap_node(i) }
-                end
+      Middleman::Server.helpers do
+        def sitemap_node(n, first=false)
+          if n.children.length < 1
+            if !first && File.extname(n.dir).length > 0
+              haml_tag :li do
+                path = n.dir.gsub(self.class.views, '')
+                haml_concat link_to(File.basename(path), path)
               end
             end
-          end  
+          else  
+            haml_tag(:li, :id => first ? "home" : nil) do
+              if first
+                haml_concat link_to("Homepage", "/" + self.class.index_file)
+              else
+                # we are a dir
+                index = n.children.find { |c| c.dir.include?(self.class.index_file) }
+                haml_concat link_to(index.dir.gsub(self.class.views + "/", '').gsub("/" + File.basename(index.dir), '').capitalize, index.dir.gsub(self.class.views, ''))
+              end
+
+              other_children = n.children.select { |c| !c.dir.include?(self.class.index_file) }
+              if other_children.length > 0
+                if first
+                  other_children.each { |i| sitemap_node(i) }
+                else
+                  haml_tag :ul do
+                    other_children.each { |i| sitemap_node(i) }
+                  end
+                end
+              end
+            end  
+          end
         end
       end
-    end
 
-    Middleman::Server.get "/#{@sitemap_url}" do
-      # Return :utility to put it util top menu. False to ignore
-      @tree, @utility = Middleman::Features::Slickmap.build_sitemap do |file_name|
-        :valid
+      Middleman::Server.get "/#{@sitemap_url}" do
+        # Return :utility to put it util top menu. False to ignore
+        @tree, @utility = Middleman::Features::Slickmap.build_sitemap do |file_name|
+          :valid
+        end
+
+        haml "template.html".to_sym, :layout => false, :views => File.expand_path(File.join(File.dirname(__FILE__), "slickmap"))
       end
-      
-      haml "template.html".to_sym, :layout => false, :views => File.expand_path(File.join(File.dirname(__FILE__), "slickmap"))
     end
+    alias :included :registered
   end
   
   def self.build_sitemap(&block)    
@@ -84,5 +87,3 @@ class Middleman::Features::Slickmap
     entry
   end
 end
-
-Middleman::Features.register :slickmap, Middleman::Features::Slickmap

@@ -1,32 +1,36 @@
 require "sass"
 require "compass"
 
-class Middleman::Server
-  def scss(template, options={}, locals={})
-    options[:layout] = false
-    render :scss, template, options, locals
-  end
+module Middleman
+  module Renderers
+    module Sass
+      class << self
+        def registered(app)
+          app.after_feature_init do
+            ::Compass.configuration do |config|
+              config.cache_path            = File.join(self.root, ".sass-cache") # For sassc files
+              config.project_path          = self.root
+              config.sass_dir              = File.join(File.basename(self.views), self.css_dir)
+              config.output_style          = :nested
+              config.fonts_dir             = File.join(File.basename(self.public), self.fonts_dir)
+              config.css_dir               = File.join(File.basename(self.public), self.css_dir)
+              config.images_dir            = File.join(File.basename(self.public), self.images_dir)      
+              config.http_images_path      = self.http_images_path rescue File.join(self.http_prefix || "/", self.images_dir)
+              config.http_stylesheets_path = self.http_css_path rescue File.join(self.http_prefix || "/", self.css_dir)
+              config.asset_cache_buster { false }
 
-  after_feature_init do
-    ::Compass.configuration do |config|
-      config.cache_path            = File.join(self.root, ".sass-cache") # For sassc files
-      config.project_path          = self.root
-      config.sass_dir              = File.join(File.basename(self.views), self.css_dir)
-      config.output_style          = :nested
-      config.fonts_dir             = File.join(File.basename(self.public), self.fonts_dir)
-      config.css_dir               = File.join(File.basename(self.public), self.css_dir)
-      config.images_dir            = File.join(File.basename(self.public), self.images_dir)      
-      config.http_images_path      = self.http_images_path rescue File.join(self.http_prefix || "/", self.images_dir)
-      config.http_stylesheets_path = self.http_css_path rescue File.join(self.http_prefix || "/", self.css_dir)
-      config.asset_cache_buster { false }
-      
-      config.add_import_path(config.sass_dir)
-    end
-    
-    configure :build do
-      ::Compass.configuration do |config|
-        config.css_dir       = File.join(File.basename(self.build_dir), self.css_dir)
-        config.images_dir    = File.join(File.basename(self.build_dir), self.images_dir)
+              config.add_import_path(config.sass_dir)
+            end
+
+            configure :build do
+              ::Compass.configuration do |config|
+                config.css_dir       = File.join(File.basename(self.build_dir), self.css_dir)
+                config.images_dir    = File.join(File.basename(self.build_dir), self.images_dir)
+              end
+            end
+          end
+        end
+        alias :included :registered
       end
     end
   end
@@ -45,7 +49,6 @@ class Tilt::SassPlusCSSFilenameTemplate < Tilt::SassTemplate
   end
 end
 Tilt.register 'sass', Tilt::SassPlusCSSFilenameTemplate
-Middleman::Renderers.register(:sass, Tilt::SassPlusCSSFilenameTemplate)
 
 class Tilt::ScssPlusCSSFilenameTemplate < Tilt::SassPlusCSSFilenameTemplate
   def sass_options
@@ -53,10 +56,9 @@ class Tilt::ScssPlusCSSFilenameTemplate < Tilt::SassPlusCSSFilenameTemplate
   end
 end
 Tilt.register 'scss', Tilt::ScssPlusCSSFilenameTemplate
-Middleman::Renderers.register(:scss, Tilt::ScssPlusCSSFilenameTemplate)
 
 
-module Middleman::Haml
+module Middleman::Renderers::Haml
   module Sass
     include ::Haml::Filters::Base
 

@@ -1,6 +1,7 @@
 Given /^"([^\"]*)" feature is "([^\"]*)"$/ do |feature, state|
-  enable_or_disable = (state == "enabled") ? :enable : :disable
-  Middleman::Server.send(enable_or_disable, feature.to_sym)
+  if state == "enabled"
+    Middleman::Server.activate(feature.to_sym)
+  end
   @browser = Rack::Test::Session.new(Rack::MockSession.new(Middleman::Server.new))
 end
 

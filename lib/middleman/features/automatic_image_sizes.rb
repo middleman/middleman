@@ -1,31 +1,33 @@
-class Middleman::Features::AutomaticImageSizes
-  def initialize(app, config)
-    require "middleman/features/automatic_image_sizes/fastimage"
+module Middleman::Features::AutomaticImageSizes
+  class << self
+    def registered(app)
+      require "middleman/features/automatic_image_sizes/fastimage"
 
-    Middleman::Server.helpers do
-      alias_method :pre_automatic_image_tag, :image_tag
-      def image_tag(path, params={})
-        if (!params[:width] || !params[:height]) && !path.include?("://")
-          params[:alt] ||= ""
-          http_prefix = settings.http_images_path rescue settings.images_dir
+      app.helpers Helpers
+    end
+    alias :included :registered
+  end
+  
+  module Helpers
+    def image_tag(path, params={})
+      if (!params[:width] || !params[:height]) && !path.include?("://")
+        params[:alt] ||= ""
+        http_prefix = settings.http_images_path rescue settings.images_dir
 
-          begin
-            real_path = File.join(settings.public, settings.images_dir, path)
-            if File.exists? real_path
-              dimensions = ::FastImage.size(real_path, :raise_on_failure => true)
-              params[:width]  ||= dimensions[0]
-              params[:height] ||= dimensions[1]
-            end
-          rescue
+        begin
+          real_path = File.join(settings.public, settings.images_dir, path)
+          if File.exists? real_path
+            dimensions = ::FastImage.size(real_path, :raise_on_failure => true)
+            params[:width]  ||= dimensions[0]
+            params[:height] ||= dimensions[1]
           end
-
-          capture_haml { haml_tag(:img, params.merge(:src => asset_url(path, http_prefix))) }
-        else
-          pre_automatic_image_tag(path, params)
+        rescue
         end
+
+        super(asset_url(path, http_prefix), params)
+      else
+        super(path, params)
       end
     end
   end
 end
-
-Middleman::Features.register :automatic_image_sizes, Middleman::Features::AutomaticImageSizes

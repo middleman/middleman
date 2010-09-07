@@ -1,4 +1,4 @@
-class Middleman::Features::LiveReload
+module Middleman::Features::LiveReload
   def initialize(app, config)
     return unless Middleman::Server.environment == :development
     

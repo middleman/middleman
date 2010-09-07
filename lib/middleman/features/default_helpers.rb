@@ -1,6 +1,9 @@
-class Middleman::Features::DefaultHelpers
-  def initialize(app, config)
-    Middleman::Server.helpers Helpers
+module Middleman::Features::DefaultHelpers
+  class << self
+    def registered(app)
+      app.helpers Middleman::Features::DefaultHelpers::Helpers
+    end
+    alias :included :registered
   end
   
   module Helpers
@@ -14,8 +17,9 @@ class Middleman::Features::DefaultHelpers
       css_file = File.join(self.class.public, self.class.css_dir, "#{path}.css")
       sass_file = File.join(self.class.views, self.class.css_dir, "#{path}.css.sass")
       scss_file = File.join(self.class.views, self.class.css_dir, "#{path}.css.scss")
+      less_file = File.join(self.class.views, self.class.css_dir, "#{path}.css.less")
     
-      if File.exists?(css_file) || File.exists?(sass_file) || File.exists?(scss_file)
+      if File.exists?(css_file) || File.exists?(sass_file) || File.exists?(scss_file) || File.exists?(less_file)
         stylesheet_link_tag "#{path}.css"
       end
     end
@@ -36,43 +40,22 @@ class Middleman::Features::DefaultHelpers
       Middleman::Assets.get_url(path, prefix, request)
     end
     
-    def link_to(title, url="#", params={})
-      params.merge!(:href => url)
-      params = params.map { |k,v| %Q{#{k}="#{v}"}}.join(' ')
-      %Q{<a #{params}>#{title}</a>}
-    end
-
-    def image_tag(path, params={})
-      params[:alt] ||= ""
-      prefix = settings.http_images_path rescue settings.images_dir
-      params = params.map { |k,v| %Q{#{k}="#{v}"}}.join(' ')
-      params << " " if params.length > 0
-      "<img src=\"#{asset_url(path, prefix)}\" #{params}/>"
-    end
-
-    def javascript_include_tag(path, params={})
-      path = path.to_s
-      path << ".js" unless path =~ /\.js$/
-      
-      params.delete(:type)
-      params.delete(:src)
-      params = params.map { |k,v| %Q{#{k}="#{v}"}}.join(' ')
-      params = " " + params if params.length > 0
-      "<script type=\"text/javascript\" src=\"#{asset_url(path, settings.js_dir)}\"#{params}></script>"
-    end
-
-    def stylesheet_link_tag(path, params={})
-      path = path.to_s
-      path << ".css" unless path =~ /\.css$/
-      
-      params.delete(:type)
-      params.delete(:rel)
-      params.delete(:href)
-      params = params.map { |k,v| %Q{#{k}="#{v}"}}.join(' ')
-      params << " " if params.length > 0
-      "<link type=\"text/css\" rel=\"stylesheet\" href=\"#{asset_url(path, settings.css_dir)}\" #{params}/>"
-    end
+    # Padrino's asset handling needs to pass through ours
+    def asset_path(kind, source)
+       return source if source =~ /^http/
+       asset_folder  = case kind
+         when :css    then settings.css_dir
+         when :js     then settings.js_dir
+         when :images then settings.images_dir
+         else kind.to_s
+       end
+       source = source.to_s.gsub(/\s/, '')
+       ignore_extension = (asset_folder.to_s == kind.to_s) # don't append extension
+       source << ".#{kind}" unless ignore_extension or source =~ /\.#{kind}/
+       result_path   = source if source =~ %r{^/} # absolute path
+       result_path ||= asset_url(source, asset_folder)
+       timestamp = asset_timestamp(result_path)
+       "#{result_path}#{timestamp}"
+     end
   end
 end
-
-Middleman::Features.register :default_helpers, Middleman::Features::DefaultHelpers, { :auto_enable => true }

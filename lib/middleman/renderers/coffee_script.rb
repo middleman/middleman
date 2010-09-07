@@ -1,7 +1,13 @@
-class Middleman::Server
-  def coffee(template, options={}, locals={})
-    options[:layout] = false
-    render :coffee, template, options, locals
+module Middleman
+  module Renderers
+    module CoffeeScript
+      class << self
+        def registered(app)
+          Tilt.register 'coffee', Tilt::CoffeeTemplate
+        end
+        alias :included :registered
+      end
+    end
   end
 end
 
@@ -22,7 +28,4 @@ unless defined? Tilt::CoffeeTemplate
       @output ||= ::CoffeeScript::compile(data, options)
     end
   end
-  Tilt.register 'coffee', Tilt::CoffeeTemplate
 end
-
-Middleman::Renderers.register(:coffee, Tilt::CoffeeTemplate)
