@@ -7,7 +7,6 @@ module Middleman
   autoload :Server, "middleman/server"
   
   module Renderers
-    autoload :CoffeeScript, "middleman/renderers/coffee_script"
     autoload :Haml,         "middleman/renderers/haml"
     autoload :Sass,         "middleman/renderers/sass"
   end

@@ -1,10 +1,10 @@
 = middleman
 
-The Middleman is ever-vigilant against tag-soup, unreadable CSS and repetition. He stands-watch over your Haml and Sass producing only the cleanest and efficient markup.
+The Middleman is ever-vigilant against tag-soup, unreadable CSS and repetition. He stands-watch over your Haml, Sass, Less and CoffeeScript producing only the cleanest and efficient markup.
 
 == Getting Started
 
-Everything you need to know is on the wiki: http://wiki.github.com/tdreyno/middleman
+Everything you need to know is on the wiki: http://github.com/tdreyno/middleman/wiki
 
 == Copyright
 

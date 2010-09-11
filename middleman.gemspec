@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{middleman}
-  s.version = "0.99.1.pre"
+  s.version = "0.99.2.pre"
 
   s.required_rubygems_version = Gem::Requirement.new("> 1.3.1") if s.respond_to? :required_rubygems_version=
   s.authors = ["Thomas Reynolds"]
-  s.date = %q{2010-09-05}
+  s.date = %q{2010-09-11}
   s.email = %q{tdreyno@gmail.com}
   s.executables = ["mm-init", "mm-build", "mm-server"]
   s.extra_rdoc_files = [
@@ -26,19 +26,54 @@ Gem::Specification.new do |s|
      "bin/mm-build",
      "bin/mm-init",
      "bin/mm-server",
-     "features/asset_host.feature",
-     "features/automatic_image_sizes.feature",
-     "features/cache_buster.feature",
+     "features/builder.feature",
+     "features/coffee-script.feature",
      "features/generator.feature",
+     "features/helpers_auto_stylesheet_link_tag.feature",
+     "features/helpers_page_classes.feature",
+     "features/less-css.feature",
      "features/minify_css.feature",
      "features/minify_javascript.feature",
+     "features/padrino_helpers.feature",
      "features/page_alias_and_layouts.feature",
-     "features/relative_assets.feature",
+     "features/scss-support.feature",
      "features/step_definitions/asset_host_steps.rb",
+     "features/step_definitions/builder_steps.rb",
      "features/step_definitions/env.rb",
      "features/step_definitions/generator_steps.rb",
      "features/step_definitions/middleman_steps.rb",
      "features/step_definitions/page_layout_steps.rb",
+     "features/w_asset_host.feature",
+     "features/x_automatic_image_sizes.feature",
+     "features/y_cache_buster.feature",
+     "features/z_relative_assets.feature",
+     "fixtures/test-app/config.rb",
+     "fixtures/test-app/public/images/blank.gif",
+     "fixtures/test-app/public/static.html",
+     "fixtures/test-app/public/stylesheets/auto-css.css",
+     "fixtures/test-app/public/stylesheets/static.css",
+     "fixtures/test-app/public/stylesheets/sub1/auto-css.css",
+     "fixtures/test-app/public/stylesheets/sub1/sub2/auto-css.css",
+     "fixtures/test-app/views/_partial.haml",
+     "fixtures/test-app/views/asset_host.html.haml",
+     "fixtures/test-app/views/auto-css.html.haml",
+     "fixtures/test-app/views/auto-image-sizes.html.haml",
+     "fixtures/test-app/views/cache-buster.html.haml",
+     "fixtures/test-app/views/custom-layout.html.haml",
+     "fixtures/test-app/views/index.html.haml",
+     "fixtures/test-app/views/inline-css.html.haml",
+     "fixtures/test-app/views/inline-js.html.haml",
+     "fixtures/test-app/views/javascripts/coffee_test.js.coffee",
+     "fixtures/test-app/views/layout.haml",
+     "fixtures/test-app/views/layouts/custom.haml",
+     "fixtures/test-app/views/padrino_test.html.haml",
+     "fixtures/test-app/views/page-classes.html.haml",
+     "fixtures/test-app/views/services/index.html.haml",
+     "fixtures/test-app/views/stylesheets/asset_host.css.sass",
+     "fixtures/test-app/views/stylesheets/relative_assets.css.sass",
+     "fixtures/test-app/views/stylesheets/site.css.sass",
+     "fixtures/test-app/views/stylesheets/site_scss.css.scss",
+     "fixtures/test-app/views/stylesheets/test_less.css.less",
      "lib/middleman.rb",
      "lib/middleman/assets.rb",
      "lib/middleman/builder.rb",
@@ -58,8 +93,6 @@ Gem::Specification.new do |s|
      "lib/middleman/features/slickmap/template.html.haml",
      "lib/middleman/features/smush_pngs.rb",
      "lib/middleman/features/ugly_haml.rb",
-     "lib/middleman/renderers.rb",
-     "lib/middleman/renderers/coffee.rb",
      "lib/middleman/renderers/haml.rb",
      "lib/middleman/renderers/sass.rb",
      "lib/middleman/server.rb",
@@ -68,36 +101,7 @@ Gem::Specification.new do |s|
      "lib/middleman/template/views/layout.haml",
      "lib/middleman/template/views/stylesheets/site.css.sass",
      "lib/middleman/templater+dynamic_renderer.rb",
-     "middleman.gemspec",
-     "spec/builder_spec.rb",
-     "spec/fixtures/sample/config.rb",
-     "spec/fixtures/sample/public/images/blank.gif",
-     "spec/fixtures/sample/public/static.html",
-     "spec/fixtures/sample/public/stylesheets/auto-css.css",
-     "spec/fixtures/sample/public/stylesheets/static.css",
-     "spec/fixtures/sample/public/stylesheets/sub1/auto-css.css",
-     "spec/fixtures/sample/public/stylesheets/sub1/sub2/auto-css.css",
-     "spec/fixtures/sample/views/_partial.haml",
-     "spec/fixtures/sample/views/asset_host.html.haml",
-     "spec/fixtures/sample/views/auto-css.html.haml",
-     "spec/fixtures/sample/views/auto-image-sizes.html.haml",
-     "spec/fixtures/sample/views/cache-buster.html.haml",
-     "spec/fixtures/sample/views/custom-layout.html.haml",
-     "spec/fixtures/sample/views/custom.haml",
-     "spec/fixtures/sample/views/index.html.haml",
-     "spec/fixtures/sample/views/inline-css.html.haml",
-     "spec/fixtures/sample/views/inline-js.html.haml",
-     "spec/fixtures/sample/views/layout.haml",
-     "spec/fixtures/sample/views/maruku.html.maruku",
-     "spec/fixtures/sample/views/page-classes.html.haml",
-     "spec/fixtures/sample/views/services/index.html.haml",
-     "spec/fixtures/sample/views/stylesheets/asset_host.css.sass",
-     "spec/fixtures/sample/views/stylesheets/relative_assets.css.sass",
-     "spec/fixtures/sample/views/stylesheets/site.css.sass",
-     "spec/fixtures/sample/views/stylesheets/site_scss.css.scss",
-     "spec/fixtures/sample/views/stylesheets/test_less.css.less",
-     "spec/helpers_spec.rb",
-     "spec/spec_helper.rb"
+     "middleman.gemspec"
   ]
   s.homepage = %q{http://wiki.github.com/tdreyno/middleman}
   s.rdoc_options = ["--charset=UTF-8"]
@@ -105,12 +109,6 @@ Gem::Specification.new do |s|
   s.rubyforge_project = %q{middleman}
   s.rubygems_version = %q{1.3.7}
   s.summary = %q{A static site generator utilizing Haml, Sass and providing YUI compression and cache busting}
-  s.test_files = [
-    "spec/builder_spec.rb",
-     "spec/fixtures/sample/config.rb",
-     "spec/helpers_spec.rb",
-     "spec/spec_helper.rb"
-  ]
 
   if s.respond_to? :specification_version then
     current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION
@@ -121,8 +119,10 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<thin>, ["~> 1.2.0"])
       s.add_runtime_dependency(%q<shotgun>, ["~> 0.8.0"])
       s.add_runtime_dependency(%q<templater>, ["~> 1.0.0"])
+      s.add_runtime_dependency(%q<tilt>, ["~> 1.1"])
       s.add_runtime_dependency(%q<sinatra>, ["~> 1.0"])
-      s.add_runtime_dependency(%q<sinatra-content-for>, ["~> 0.2.0"])
+      s.add_runtime_dependency(%q<padrino-core>, ["~> 0.9.0"])
+      s.add_runtime_dependency(%q<padrino-helpers>, ["~> 0.9.0"])
       s.add_runtime_dependency(%q<rack-test>, ["~> 0.5.0"])
       s.add_runtime_dependency(%q<yui-compressor>, ["~> 0.9.0"])
       s.add_runtime_dependency(%q<haml>, ["~> 3.0"])
@@ -130,7 +130,6 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<json_pure>, ["~> 1.4.0"])
       s.add_runtime_dependency(%q<smusher>, ["~> 0.4.5"])
       s.add_runtime_dependency(%q<compass-slickmap>, ["~> 0.4.0"])
-      s.add_development_dependency(%q<rspec>, [">= 0"])
       s.add_development_dependency(%q<cucumber>, [">= 0"])
       s.add_development_dependency(%q<jeweler>, [">= 0"])
     else
@@ -138,8 +137,10 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<thin>, ["~> 1.2.0"])
       s.add_dependency(%q<shotgun>, ["~> 0.8.0"])
       s.add_dependency(%q<templater>, ["~> 1.0.0"])
+      s.add_dependency(%q<tilt>, ["~> 1.1"])
       s.add_dependency(%q<sinatra>, ["~> 1.0"])
-      s.add_dependency(%q<sinatra-content-for>, ["~> 0.2.0"])
+      s.add_dependency(%q<padrino-core>, ["~> 0.9.0"])
+      s.add_dependency(%q<padrino-helpers>, ["~> 0.9.0"])
       s.add_dependency(%q<rack-test>, ["~> 0.5.0"])
       s.add_dependency(%q<yui-compressor>, ["~> 0.9.0"])
       s.add_dependency(%q<haml>, ["~> 3.0"])
@@ -147,7 +148,6 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<json_pure>, ["~> 1.4.0"])
       s.add_dependency(%q<smusher>, ["~> 0.4.5"])
       s.add_dependency(%q<compass-slickmap>, ["~> 0.4.0"])
-      s.add_dependency(%q<rspec>, [">= 0"])
       s.add_dependency(%q<cucumber>, [">= 0"])
       s.add_dependency(%q<jeweler>, [">= 0"])
     end
@@ -156,8 +156,10 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<thin>, ["~> 1.2.0"])
     s.add_dependency(%q<shotgun>, ["~> 0.8.0"])
     s.add_dependency(%q<templater>, ["~> 1.0.0"])
+    s.add_dependency(%q<tilt>, ["~> 1.1"])
     s.add_dependency(%q<sinatra>, ["~> 1.0"])
-    s.add_dependency(%q<sinatra-content-for>, ["~> 0.2.0"])
+    s.add_dependency(%q<padrino-core>, ["~> 0.9.0"])
+    s.add_dependency(%q<padrino-helpers>, ["~> 0.9.0"])
     s.add_dependency(%q<rack-test>, ["~> 0.5.0"])
     s.add_dependency(%q<yui-compressor>, ["~> 0.9.0"])
     s.add_dependency(%q<haml>, ["~> 3.0"])
@@ -165,7 +167,6 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<json_pure>, ["~> 1.4.0"])
     s.add_dependency(%q<smusher>, ["~> 0.4.5"])
     s.add_dependency(%q<compass-slickmap>, ["~> 0.4.0"])
-    s.add_dependency(%q<rspec>, [">= 0"])
     s.add_dependency(%q<cucumber>, [">= 0"])
     s.add_dependency(%q<jeweler>, [">= 0"])
   end

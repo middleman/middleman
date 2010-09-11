@@ -61,7 +61,6 @@ module Middleman
     end
     
     # Activate custom renderers
-    register Middleman::Renderers::CoffeeScript
     register Middleman::Renderers::Haml
     register Middleman::Renderers::Sass
     

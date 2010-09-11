@@ -16,6 +16,7 @@ begin
     gem.add_dependency("thin",                "~>1.2.0")
     gem.add_dependency("shotgun",             "~>0.8.0")
     gem.add_dependency("templater",           "~>1.0.0")
+    gem.add_dependency("tilt",                "~>1.1")
     gem.add_dependency("sinatra",             "~>1.0")
     gem.add_dependency("padrino-core",        "~>0.9.0")
     gem.add_dependency("padrino-helpers",     "~>0.9.0")
