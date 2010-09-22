@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{middleman}
-  s.version = "0.99.4.pre"
+  s.version = "1.0.0.pre"
 
   s.required_rubygems_version = Gem::Requirement.new("> 1.3.1") if s.respond_to? :required_rubygems_version=
   s.authors = ["Thomas Reynolds"]
@@ -83,7 +83,9 @@ Gem::Specification.new do |s|
      "lib/middleman/features/automatic_image_sizes.rb",
      "lib/middleman/features/automatic_image_sizes/fastimage.rb",
      "lib/middleman/features/cache_buster.rb",
+     "lib/middleman/features/code_ray.rb",
      "lib/middleman/features/default_helpers.rb",
+     "lib/middleman/features/live_reload.rb",
      "lib/middleman/features/minify_css.rb",
      "lib/middleman/features/minify_javascript.rb",
      "lib/middleman/features/minify_javascript/rack.rb",
