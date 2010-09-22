@@ -1,6 +1,9 @@
 # Automatic sitemaps
 # activate :slickmap
 
+# CodeRay syntax highlighting in Haml
+# activate :code_ray
+
 # Automatic image dimension calculations
 # activate :automatic_image_sizes
 
@@ -51,6 +54,10 @@ configure :build do
   
   # Enable cache buster
   # activate :cache_buster
+
+  # Generate ugly/obfuscated HTML from Haml
+  # activate :ugly_haml
+
   
   # Or use a different image path
   # set :http_path, "/Content/images/"

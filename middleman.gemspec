@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{middleman}
-  s.version = "0.99.3.pre"
+  s.version = "0.99.4.pre"
 
   s.required_rubygems_version = Gem::Requirement.new("> 1.3.1") if s.respond_to? :required_rubygems_version=
   s.authors = ["Thomas Reynolds"]
-  s.date = %q{2010-09-11}
+  s.date = %q{2010-09-21}
   s.email = %q{tdreyno@gmail.com}
   s.executables = ["mm-init", "mm-build", "mm-server"]
   s.extra_rdoc_files = [
@@ -84,7 +84,6 @@ Gem::Specification.new do |s|
      "lib/middleman/features/automatic_image_sizes/fastimage.rb",
      "lib/middleman/features/cache_buster.rb",
      "lib/middleman/features/default_helpers.rb",
-     "lib/middleman/features/livereload.rb",
      "lib/middleman/features/minify_css.rb",
      "lib/middleman/features/minify_javascript.rb",
      "lib/middleman/features/minify_javascript/rack.rb",

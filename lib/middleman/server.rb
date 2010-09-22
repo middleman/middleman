@@ -129,6 +129,9 @@ module Middleman
       end
       
       status 404
+    rescue Padrino::Rendering::TemplateNotFound
+      $stderr.puts "File not found: #{request.path}"
+      status 404
     end
   end
 end

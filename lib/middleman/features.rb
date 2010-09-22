@@ -9,6 +9,8 @@ module Middleman::Features
   autoload :MinifyJavascript,    "middleman/features/minify_javascript"
   autoload :Slickmap,            "middleman/features/slickmap"
   autoload :SmushPNGs,           "middleman/features/smush_pngs"
+  autoload :CodeRay,             "middleman/features/code_ray"
+  # autoload :LiveReload,          "middleman/features/live_reload"
   
   class << self
     def registered(app)
