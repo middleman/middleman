@@ -127,6 +127,7 @@ Gem::Specification.new do |s|
       s.add_runtime_dependency(%q<yui-compressor>, ["~> 0.9.0"])
       s.add_runtime_dependency(%q<haml>, ["~> 3.0"])
       s.add_runtime_dependency(%q<compass>, ["~> 0.10.0"])
+      s.add_runtime_dependency(%q<lemonade>, ["1.0.0.beta.1"])
       s.add_runtime_dependency(%q<json_pure>, ["~> 1.4.0"])
       s.add_runtime_dependency(%q<smusher>, ["~> 0.4.5"])
       s.add_runtime_dependency(%q<compass-slickmap>, ["~> 0.4.0"])
@@ -145,6 +146,7 @@ Gem::Specification.new do |s|
       s.add_dependency(%q<yui-compressor>, ["~> 0.9.0"])
       s.add_dependency(%q<haml>, ["~> 3.0"])
       s.add_dependency(%q<compass>, ["~> 0.10.0"])
+      s.add_dependency(%q<lemonade>, ["1.0.0.beta.1"])
       s.add_dependency(%q<json_pure>, ["~> 1.4.0"])
       s.add_dependency(%q<smusher>, ["~> 0.4.5"])
       s.add_dependency(%q<compass-slickmap>, ["~> 0.4.0"])
@@ -164,6 +166,7 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<yui-compressor>, ["~> 0.9.0"])
     s.add_dependency(%q<haml>, ["~> 3.0"])
     s.add_dependency(%q<compass>, ["~> 0.10.0"])
+    s.add_dependency(%q<lemonade>, ["1.0.0.beta.1"])
     s.add_dependency(%q<json_pure>, ["~> 1.4.0"])
     s.add_dependency(%q<smusher>, ["~> 0.4.5"])
     s.add_dependency(%q<compass-slickmap>, ["~> 0.4.0"])
@@ -171,4 +174,3 @@ Gem::Specification.new do |s|
     s.add_dependency(%q<jeweler>, [">= 0"])
   end
 end
-
