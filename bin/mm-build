@@ -9,4 +9,8 @@ require 'middleman/builder'
 # Middleman::Server.init!
 Middleman::Builder.init!
 
+# Hack to copy sprite images before sass runs
+require 'fileutils'
+FileUtils.cp_r(File.join(Dir.pwd, 'public/images'), File.join(Dir.pwd, 'build'))
+
 Middleman::Generators.run_cli(Dir.pwd, 'mm-build', 1,  %w(build --force).concat(ARGV))

@@ -5,10 +5,10 @@ require 'middleman/templater+dynamic_renderer.rb'
 # Placeholder for any methods the builder needs to abstract to allow feature integration
 module Middleman
   class Builder < ::Templater::Generator
-    
+
     # Support all Tilt-enabled templates and treat js like a template
     @@template_extensions = ::Tilt.mappings.keys << "js"
-    
+
     # Define source and desintation
     def self.source_root; Dir.pwd; end
     def destination_root; File.join(Dir.pwd, Middleman::Server.build_dir); end
@@ -33,9 +33,9 @@ module Middleman
 
     def self.file(name, *args, &block)
       file_ext = File.extname(args[0])
-      
+
       return unless ::Tilt[file_ext].nil?
-      
+
       if (args[0] === args[1])
         args[1] = args[0].gsub("#{File.basename(Middleman::Server.views)}/", "").gsub("#{File.basename(Middleman::Server.public)}/", "")
       end
@@ -46,11 +46,11 @@ module Middleman
       glob! File.basename(Middleman::Server.public),  @@template_extensions
       glob! File.basename(Middleman::Server.views),   @@template_extensions
     end
-    
+
     def after_run
     end
   end
-  
+
   module Generators
     extend ::Templater::Manifold
     desc "Build a static site"
