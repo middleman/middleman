@@ -2,6 +2,15 @@ require "sass"
 require "compass"
 require "lemonade"
 
+module Sass::Script
+  class SpriteInfo < Literal
+    def url
+      puts 'blaat'
+      "url('#{@sprite[:file]}')"
+    end
+  end
+end
+
 module Middleman
   module Renderers
     module Sass

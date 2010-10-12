@@ -14,3 +14,13 @@ require 'fileutils'
 FileUtils.cp_r(File.join(Dir.pwd, 'public/images'), File.join(Dir.pwd, 'build'))
 
 Middleman::Generators.run_cli(Dir.pwd, 'mm-build', 1,  %w(build --force).concat(ARGV))
+
+# Hack to change lemonade sprite urls to relative
+filename = File.join(Dir.pwd, 'build/stylesheets/site.css')
+File.open(filename) do |source|
+  @result = source.read.gsub('/images', 'images')
+end
+FileUtils.rm_f(filename)
+File.open(filename, 'w') do |f|
+  f.write(@result)
+end

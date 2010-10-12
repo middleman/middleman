@@ -5,7 +5,7 @@ require 'rubygems'
 
 module Middleman
   autoload :Server, "middleman/server"
-  
+
   module Renderers
     autoload :Haml, "middleman/renderers/haml"
     autoload :Sass, "middleman/renderers/sass"
