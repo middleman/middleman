@@ -5,8 +5,9 @@ module Middleman::Features::Slickmap
     def registered(app)
       require 'slickmap'
 
-      @sitemap_url = config[:url] || "sitemap.html"
-
+      @sitemap_url = "sitemap.html"
+      @sitemap_url = Middleman::Server.sitemap_url if (Middleman::Server.respond_to? :sitemap_url)
+      
       if Middleman::Server.environment == :build
         Middleman::Builder.template :slickmap, @sitemap_url, @sitemap_url
       end
