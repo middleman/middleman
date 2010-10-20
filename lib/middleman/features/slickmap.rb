@@ -5,13 +5,14 @@ module Middleman::Features::Slickmap
     def registered(app)
       require 'slickmap'
 
-      @sitemap_url = config[:url] || "sitemap.html"
+      @sitemap_url = "sitemap.html"
+      @sitemap_url = app.sitemap_url if app.respond_to?(:slickmap_url)
 
-      if Middleman::Server.environment == :build
+      if app.environment == :build
         Middleman::Builder.template :slickmap, @sitemap_url, @sitemap_url
       end
 
-      Middleman::Server.helpers do
+      app.helpers do
         def sitemap_node(n, first=false)
           if n.children.length < 1
             if !first && File.extname(n.dir).length > 0
@@ -45,7 +46,7 @@ module Middleman::Features::Slickmap
         end
       end
 
-      Middleman::Server.get "/#{@sitemap_url}" do
+      app.get "/#{@sitemap_url}" do
         # Return :utility to put it util top menu. False to ignore
         @tree, @utility = Middleman::Features::Slickmap.build_sitemap do |file_name|
           :valid
