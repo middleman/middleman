@@ -6,6 +6,9 @@ ENV['MM_ENV'] = "build"
 require File.join(File.dirname(__FILE__), "..", "lib", "middleman")
 require 'middleman/builder'
 
+# Initialize server once so features are loaded
+Middleman::Server.new
+
 # Middleman::Server.init!
 Middleman::Builder.init!
 
