@@ -5,3 +5,4 @@ pkg
 .sass-cache
 .sassc
 .tmp
+Gemfile.lock
