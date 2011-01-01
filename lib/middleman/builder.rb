@@ -6,9 +6,6 @@ require 'middleman/templater+dynamic_renderer.rb'
 module Middleman
   class Builder < ::Templater::Generator
     
-    # Support all Tilt-enabled templates and treat js like a template
-    @@template_extensions = ::Tilt.mappings.keys << "js"
-    
     # Define source and desintation
     def self.source_root; Dir.pwd; end
     def destination_root; File.join(Dir.pwd, Middleman::Server.build_dir); end
@@ -43,6 +40,8 @@ module Middleman
     end
 
     def self.init!
+      # Support all Tilt-enabled templates and treat js like a template
+      @@template_extensions ||= ::Tilt.mappings.keys << "js"
       glob! File.basename(Middleman::Server.public),  @@template_extensions
       glob! File.basename(Middleman::Server.views),   @@template_extensions
     end
