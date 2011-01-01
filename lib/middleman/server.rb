@@ -97,7 +97,7 @@ module Middleman
     def self.page(url, options={}, &block)
       url << settings.index_file if url.match(%r{/$})
   
-      options[:layout] ||= current_layout
+      options[:layout] = current_layout if options[:layout].nil?
       get(url) do
         return yield if block_given?
         process_request(options)
@@ -119,7 +119,9 @@ module Middleman
       
       old_layout = settings.current_layout
       settings.layout(options[:layout]) if !options[:layout].nil?
-      result = render(path, :layout => settings.fetch_layout_path.to_sym)
+      layout = settings.fetch_layout_path.to_sym
+      layout = false if options[:layout] == false or path =~ /\.(css|js)$/
+      result = render(path, :layout => layout, :layout_engine => options[:layout_engine])
       settings.layout(old_layout)
       
       if result
