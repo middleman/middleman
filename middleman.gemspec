@@ -30,7 +30,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency("yui-compressor", ["~> 0.9.0"])
   s.add_runtime_dependency("haml", ["~> 3.0"])
   s.add_runtime_dependency("sass", ["3.1.0.alpha.214"])
-  s.add_runtime_dependency("compass", ["0.11.0.alpha.4"])
+  s.add_runtime_dependency("compass", ["0.11.0.beta.0"])
   s.add_runtime_dependency("json_pure", ["~> 1.4.0"])
   s.add_runtime_dependency("smusher", ["~> 0.4.5"])
   s.add_runtime_dependency("compass-slickmap", ["~> 0.4.0"])
