@@ -10,6 +10,7 @@ module Middleman::Features
   autoload :Slickmap,            "middleman/features/slickmap"
   autoload :SmushPNGs,           "middleman/features/smush_pngs"
   autoload :CodeRay,             "middleman/features/code_ray"
+  autoload :Lorem,               "middleman/features/lorem"
   # autoload :LiveReload,          "middleman/features/live_reload"
   
   class << self
