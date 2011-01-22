@@ -40,6 +40,9 @@ module Middleman
     # Activate built-in helpers
     register Middleman::Features::DefaultHelpers
     
+    # Activate Lorem helpers
+    register Middleman::Features::Lorem
+    
     # Tilt-aware renderer
     register Padrino::Rendering
     
