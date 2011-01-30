@@ -12,7 +12,7 @@ module Middleman
       source  = File.expand_path(find_in_source_paths(source.to_s))
       context = instance_eval('binding')
 
-      @@rack_test ||= Rack::Test::Session.new(Rack::MockSession.new(Middleman::Server))
+      @@rack_test ||= ::Rack::Test::Session.new(::Rack::MockSession.new(Middleman::Server))
 
       create_file destination, nil, config do
         # The default render just requests the page over Rack and writes the response
@@ -28,6 +28,7 @@ module Middleman
     include Middleman::ThorActions
     
     def initialize(*args)
+      Middleman::Server.new
       ::Tilt.mappings.keys << "js"
       super
     end
@@ -45,6 +46,17 @@ module Middleman
     
     def build_dynamic_files
       action Directory.new(self, Middleman::Server.views, Middleman::Server.build_dir)
+    end
+    
+    @@hooks = {}
+    def self.after_run(name, &block)
+      @@hooks[name] = block
+    end
+    
+    def run_hooks
+      @@hooks.each do |name, proc|
+        instance_eval(&proc)
+      end
     end
   end
   
