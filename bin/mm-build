@@ -4,10 +4,10 @@ ENV['MM_ENV'] = "build"
 
 # Require app
 require File.join(File.dirname(__FILE__), "..", "lib", "middleman")
-require 'middleman/thor_builder'
+require 'middleman/builder'
 
 # Initialize server once so features are loaded
 Middleman::Server.new
 
 # Middleman::ThorBuilder.source_root(Dir.pwd)
-Middleman::ThorBuilder.start
+Middleman::Builder.start

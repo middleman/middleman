@@ -23,7 +23,7 @@ module Middleman
     end
   end
   
-  class ThorBuilder < Thor::Group
+  class Builder < Thor::Group
     include Thor::Actions
     include Middleman::ThorActions
     
