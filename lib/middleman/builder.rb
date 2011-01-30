@@ -1,59 +1,95 @@
 require 'middleman/server'
-require 'templater'
-require 'middleman/templater+dynamic_renderer.rb'
+require "thor"
+require "thor/group"
+require 'rack/test'
 
-# Placeholder for any methods the builder needs to abstract to allow feature integration
-module Middleman
-  class Builder < ::Templater::Generator
-    
-    # Define source and desintation
-    def self.source_root; Dir.pwd; end
-    def destination_root; File.join(Dir.pwd, Middleman::Server.build_dir); end
+module Middleman  
+  module ThorActions
+    def tilt_template(source, *args, &block)
+      config = args.last.is_a?(Hash) ? args.pop : {}
+      destination = args.first || source
 
-    # Override template to ask middleman for the correct extension to output
-    def self.template(name, *args, &block)
-      return if args[0].include?('layout')
+      source  = File.expand_path(find_in_source_paths(source.to_s))
+      context = instance_eval('binding')
 
-      args.first.split('/').each do |part|
-        return if part[0,1] == '_'
+      @@rack_test ||= Rack::Test::Session.new(Rack::MockSession.new(Middleman::Server))
+
+      create_file destination, nil, config do
+        # The default render just requests the page over Rack and writes the response
+        request_path = destination.gsub(Middleman::Server.build_dir, "")
+        @@rack_test.get(request_path)
+        @@rack_test.last_response.body
       end
-
-      if (args[0] === args[1])
-        args[1] = args[0].gsub("#{File.basename(Middleman::Server.views)}/", "").gsub("#{File.basename(Middleman::Server.public)}/", "")
-        if File.extname(args[1]) != ".js"
-          args[1] = args[1].gsub!(File.extname(args[1]), "") if File.basename(args[1]).split('.').length > 2
-        end
-      end
-
-      super(name, *args, &block)
-    end
-
-    def self.file(name, *args, &block)
-      file_ext = File.extname(args[0])
-      
-      return unless ::Tilt[file_ext].nil?
-      
-      if (args[0] === args[1])
-        args[1] = args[0].gsub("#{File.basename(Middleman::Server.views)}/", "").gsub("#{File.basename(Middleman::Server.public)}/", "")
-      end
-      super(name, *args, &block)
-    end
-
-    def self.init!
-      # Support all Tilt-enabled templates and treat js like a template
-      @@template_extensions ||= ::Tilt.mappings.keys << "js"
-      glob! File.basename(Middleman::Server.public),  @@template_extensions
-      glob! File.basename(Middleman::Server.views),   @@template_extensions
-    end
-    
-    def after_run
     end
   end
   
-  module Generators
-    extend ::Templater::Manifold
-    desc "Build a static site"
+  class ThorBuilder < Thor::Group
+    include Thor::Actions
+    include Middleman::ThorActions
+    
+    def initialize(*args)
+      ::Tilt.mappings.keys << "js"
+      super
+    end
+    
+    def source_paths
+      [
+        Middleman::Server.public,
+        Middleman::Server.views
+      ]
+    end
+    
+    def build_static_files
+      action Directory.new(self, Middleman::Server.public, Middleman::Server.build_dir)
+    end
+    
+    def build_dynamic_files
+      action Directory.new(self, Middleman::Server.views, Middleman::Server.build_dir)
+    end
+  end
+  
+  class Directory < ::Thor::Actions::EmptyDirectory
+    attr_reader :source
 
-    add :build, ::Middleman::Builder
+    def initialize(base, source, destination=nil, config={}, &block)
+      @source = File.expand_path(base.find_in_source_paths(source.to_s))
+      @block  = block
+      super(base, destination, { :recursive => true }.merge(config))
+    end
+
+    def invoke!
+      base.empty_directory given_destination, config
+      execute!
+    end
+
+    def revoke!
+      execute!
+    end
+
+    protected
+
+      def execute!
+        lookup = config[:recursive] ? File.join(source, '**') : source
+        lookup = File.join(lookup, '{*,.[a-z]*}')
+        
+        Dir[lookup].sort.each do |file_source|
+          next if File.directory?(file_source)
+          next if file_source.include?('layout')
+          next unless file_source.split('/').select { |p| p[0,1] == '_' }.empty?
+          
+          file_extension = File.extname(file_source)
+          file_destination = File.join(given_destination, file_source.gsub(source, '.'))
+          file_destination.gsub!('/./', '/')
+          
+          handled_by_tilt = ::Tilt.mappings.keys.include?(file_extension.gsub(/^\./, ""))
+          if handled_by_tilt
+            file_destination.gsub!(file_extension, "")
+            destination = base.tilt_template(file_source, file_destination, config, &@block)
+          else  
+            destination = base.copy_file(file_source, file_destination, config, &@block)
+          end
+        end
+      end
+
   end
 end

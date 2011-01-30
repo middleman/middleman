@@ -21,7 +21,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency("rack", ["~> 1.0"])
   s.add_runtime_dependency("thin", ["~> 1.2.0"])
   s.add_runtime_dependency("shotgun", ["~> 0.8.0"])
-  s.add_runtime_dependency("templater", ["~> 1.0.0"])
+  s.add_runtime_dependency("thor", ["~> 0.14.0"])
   s.add_runtime_dependency("tilt", ["~> 1.1"])
   s.add_runtime_dependency("sinatra", ["~> 1.0"])
   s.add_runtime_dependency("padrino-core", ["~> 0.9.0"])
