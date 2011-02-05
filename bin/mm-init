@@ -1,37 +1,30 @@
 #!/usr/bin/env ruby
 require File.join(File.dirname(File.dirname(__FILE__)), 'lib', 'middleman')
-require 'templater'
+require "thor"
+require "thor/group"
 
-module Generators
-  extend Templater::Manifold
-  desc "Generator for streamlining staticmatic"
-
-  class NewSite < Templater::Generator
-    desc "Creates a new middleman scaffold."
-    first_argument :location, :required => true, :desc => "Project location"
+module Middleman
+  class Generator < ::Thor::Group
+    include Thor::Actions
     
-    option :css_dir, :desc => 'The path to the css files'
-    option :js_dir, :desc => 'The path to the javascript files'
-    option :images_dir, :desc => 'The path to the image files'
-
-    def destination_root
-      File.expand_path(location)
-    end
-
     def self.source_root
       File.join(File.dirname(__FILE__), '..', 'lib', 'middleman', 'template')
     end
     
-    template :config, "config.rb"
-    glob! :views
-    glob! :public
+    argument :location, :type => :string, :desc => "New project location"
     
-    empty_directory :stylesheets, "public/stylesheets"#, File.join("public", css_dir)
-    empty_directory :javascripts, "public/javascripts"#, File.join("public", js_dir)
-    empty_directory :images, "public/images"#,      File.join("public", images_dir)
+    class_option :css_dir, :default => "stylesheets", :desc => 'The path to the css files'
+    class_option :js_dir, :default => "javascripts", :desc => 'The path to the javascript files'
+    class_option :images_dir, :default => "images", :desc => 'The path to the image files'
+    
+    def create_project
+      template "config.tt", File.join(location, "config.rb")
+      directory "views", File.join(location, "views")
+      empty_directory File.join(location, "public", options[:css_dir])
+      empty_directory File.join(location, "public", options[:js_dir])
+      empty_directory File.join(location, "public", options[:images_dir])
+    end
   end
-
-  add :setup, NewSite
 end
 
-Generators.run_cli(Dir.pwd, 'mm-init', 1, %w(setup).concat(ARGV))
+Middleman::Generator.start
