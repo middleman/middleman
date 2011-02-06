@@ -29,7 +29,6 @@ module Middleman
     
     def initialize(*args)
       Middleman::Server.new
-      ::Tilt.mappings.keys << "js"
       super
     end
     
@@ -41,11 +40,11 @@ module Middleman
     end
     
     def build_static_files
-      action Directory.new(self, Middleman::Server.public, Middleman::Server.build_dir)
+      action Directory.new(self, Middleman::Server.public, Middleman::Server.build_dir, { :force => true })
     end
     
     def build_dynamic_files
-      action Directory.new(self, Middleman::Server.views, Middleman::Server.build_dir)
+      action Directory.new(self, Middleman::Server.views, Middleman::Server.build_dir, { :force => true })
     end
     
     @@hooks = {}
@@ -78,30 +77,29 @@ module Middleman
       execute!
     end
 
-    protected
+  protected
 
-      def execute!
-        lookup = config[:recursive] ? File.join(source, '**') : source
-        lookup = File.join(lookup, '{*,.[a-z]*}')
+    def execute!
+      lookup = config[:recursive] ? File.join(source, '**') : source
+      lookup = File.join(lookup, '{*,.[a-z]*}')
+      
+      Dir[lookup].sort.each do |file_source|
+        next if File.directory?(file_source)
+        next if file_source.include?('layout')
+        next unless file_source.split('/').select { |p| p[0,1] == '_' }.empty?
         
-        Dir[lookup].sort.each do |file_source|
-          next if File.directory?(file_source)
-          next if file_source.include?('layout')
-          next unless file_source.split('/').select { |p| p[0,1] == '_' }.empty?
-          
-          file_extension = File.extname(file_source)
-          file_destination = File.join(given_destination, file_source.gsub(source, '.'))
-          file_destination.gsub!('/./', '/')
-          
-          handled_by_tilt = ::Tilt.mappings.keys.include?(file_extension.gsub(/^\./, ""))
-          if handled_by_tilt
-            file_destination.gsub!(file_extension, "")
-            destination = base.tilt_template(file_source, file_destination, config, &@block)
-          else  
-            destination = base.copy_file(file_source, file_destination, config, &@block)
-          end
+        file_extension = File.extname(file_source)
+        file_destination = File.join(given_destination, file_source.gsub(source, '.'))
+        file_destination.gsub!('/./', '/')
+        
+        handled_by_tilt = ::Tilt.mappings.keys.include?(file_extension.gsub(/^\./, ""))
+        if handled_by_tilt || (file_extension == ".js")
+          file_destination.gsub!(file_extension, "") unless file_extension == ".js"
+          destination = base.tilt_template(file_source, file_destination, config, &@block)
+        else  
+          destination = base.copy_file(file_source, file_destination, config, &@block)
         end
       end
-
+    end
   end
 end

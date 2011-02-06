@@ -48,9 +48,10 @@ class Middleman::Server
   set :root, Dir.pwd
 end
 
-require 'shotgun'
-config = File.join(File.dirname(__FILE__), '..', 'lib', 'middleman', 'config.ru')
-app = Shotgun.new(config, &lambda { |inner_app| Middleman::Server })
+# require 'shotgun'
+# config = File.join(File.dirname(__FILE__), '..', 'lib', 'middleman', 'config.ru')
+# app = Shotgun.new(config, &lambda { |inner_app| Middleman::Server })
+app = Middleman::Server.new
 
 require 'rubygems'
 require 'thin'

@@ -161,7 +161,8 @@ class Middleman::Server
       set :app_file, File.expand_path(local_config)
     end
     
-    use ::Rack::ConditionalGet if environment == :development
+    use ::Rack::ConditionalGet
+    use ::Rack::Static, :urls => ["/#{self.images_dir}"], :root => "public"
     
     @@run_after_features.each { |block| class_eval(&block) }
     
