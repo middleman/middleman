@@ -1,0 +1,3 @@
+[submodule "lib/middleman/templates/html5boilerplate/source"]
+	path = lib/middleman/templates/html5boilerplate/source
+	url = git://github.com/paulirish/html5-boilerplate.git
