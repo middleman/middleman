@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>middleman.rb</title>
+  <link rel="stylesheet" href="http://jashkenas.github.com/docco/resources/docco.css">
+</head>
+<body>
+<div id='container'>
+  <div id="background"></div>
+  <table cellspacing=0 cellpadding=0>
+  <thead>
+    <tr>
+      <th class=docs><h1>middleman.rb</h1></th>
+      <th class=code></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr id='section-1'>
+      <td class=docs>
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-1">#</a>
+        </div>
+        <p> Middleman is a static site renderer that provides all the conveniences of
+ a modern web stack, like Ruby on Rails, while remaining focused on building
+ the fastest, most-professional sites possible</p>
+
+<p> Install Middleman:</p>
+
+<pre><code> gem install middleman
+</code></pre>
+
+<p> To accomplish its goals, Middleman supports provides access to:</p>
+
+<h3>Command-line tools:</h3>
+
+<ul>
+<li><strong>mm-init</strong>: A tool for creating to new static sites.</li>
+<li><strong>mm-server</strong>: A tool for rapidly developing your static site.</li>
+<li><strong>mm-build</strong>: A tool for exporting your site into optimized HTML, CSS &amp; JS.</li>
+</ul>
+
+
+<h3>Tons of templating languages including:</h3>
+
+<ul>
+<li>ERB                        (.erb)</li>
+<li>Interpolated String        (.str)</li>
+<li>Sass                       (.sass)</li>
+<li>Scss                       (.scss)</li>
+<li>Haml                       (.haml)</li>
+<li>Sass                       (.sass)</li>
+<li>Less CSS                   (.less)</li>
+<li>Builder                    (.builder)</li>
+<li>Liquid                     (.liquid)</li>
+<li>RDiscount                  (.markdown)</li>
+<li>RedCloth                   (.textile)</li>
+<li>RDoc                       (.rdoc)</li>
+<li>Radius                     (.radius)</li>
+<li>Markaby                    (.mab)</li>
+<li>Nokogiri                   (.nokogiri)</li>
+<li>Mustache                   (.mustache)</li>
+<li>CoffeeScript               (.coffee)</li>
+</ul>
+
+
+<h3>Compile-time Optimiztions</h3>
+
+<ul>
+<li>Javascript Minifiers: YUI, Google Closure &amp; UglifyJS</li>
+<li>Smush.it Image Compression</li>
+<li>CSS Minification</li>
+</ul>
+
+
+<h3>Robust Extensions:</h3>
+
+<p> Add your own runtime and build-time features!</p>
+
+<h3>Next Steps:</h3>
+
+<ul>
+<li><a href="http://middlemanapp.com">Visit the website</a></li>
+<li><a href="https://github.com/tdreyno/middleman/wiki">Read the wiki</a></li>
+<li><a href="http://groups.google.com/group/middleman-users">Email the users group</a></li>
+<li><a href="https://github.com/tdreyno/middleman/issues">Submit bug reports</a></li>
+</ul>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre></pre></div>
+      </td>
+    </tr>
+    <tr id='section-2'>
+      <td class=docs>
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-2">#</a>
+        </div>
+        <p> Setup out load paths</p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><span class="n">libdir</span> <span class="o">=</span> <span class="no">File</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="bp">__FILE__</span><span class="p">)</span>
+<span class="vg">$LOAD_PATH</span><span class="o">.</span><span class="n">unshift</span><span class="p">(</span><span class="n">libdir</span><span class="p">)</span> <span class="k">unless</span> <span class="vg">$LOAD_PATH</span><span class="o">.</span><span class="n">include?</span><span class="p">(</span><span class="n">libdir</span><span class="p">)</span></pre></div>
+      </td>
+    </tr>
+    <tr id='section-3'>
+      <td class=docs>
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-3">#</a>
+        </div>
+        <p> Require Rubygems (probably not necessary)</p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><span class="nb">require</span> <span class="s1">&#39;rubygems&#39;</span></pre></div>
+      </td>
+    </tr>
+    <tr id='section-4'>
+      <td class=docs>
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-4">#</a>
+        </div>
+        <p> Top-level Middleman object</p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre><span class="k">module</span> <span class="nn">Middleman</span></pre></div>
+      </td>
+    </tr>
+    <tr id='section-5'>
+      <td class=docs>
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-5">#</a>
+        </div>
+        <p> Auto-load modules on-demand</p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre>  <span class="nb">autoload</span> <span class="ss">:Server</span><span class="p">,</span> <span class="s2">&quot;middleman/server&quot;</span>
+  </pre></div>
+      </td>
+    </tr>
+    <tr id='section-6'>
+      <td class=docs>
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-6">#</a>
+        </div>
+        <p> Custom Renderers</p>
+      </td>
+      <td class=code>
+        <div class='highlight'><pre>  <span class="k">module</span> <span class="nn">Renderers</span>
+    <span class="nb">autoload</span> <span class="ss">:Haml</span><span class="p">,</span> <span class="s2">&quot;middleman/renderers/haml&quot;</span>
+    <span class="nb">autoload</span> <span class="ss">:Sass</span><span class="p">,</span> <span class="s2">&quot;middleman/renderers/sass&quot;</span>
+  <span class="k">end</span></pre></div>
+      </td>
+    </tr>
+    <tr id='section-7'>
+      <td class=docs>
+        <div class="octowrap">
+          <a class="octothorpe" href="#section-7">#</a>
+        </div>
+        <p> Features API</p>
+
+      </td>
+      <td class=code>
+        <div class='highlight'><pre>  <span class="nb">autoload</span> <span class="ss">:Features</span><span class="p">,</span> <span class="s2">&quot;middleman/features&quot;</span>
+<span class="k">end</span></pre></div>
+      </td>
+    </tr>
+  </table>
+</div>
+</body>

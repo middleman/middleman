@@ -8,3 +8,9 @@ Cucumber::Rake::Task.new(:cucumber, 'Run features that should pass') do |t|
 end
 
 task :test => :cucumber
+
+namespace :build do
+  task :docs do
+    `rocco lib/*.rb --output=docs`
+  end
+end
