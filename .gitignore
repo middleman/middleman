@@ -6,3 +6,4 @@ pkg
 .sassc
 .tmp
 Gemfile.lock
+docs
