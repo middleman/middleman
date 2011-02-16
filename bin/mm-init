@@ -7,22 +7,30 @@ module Middleman
   class Generator < ::Thor::Group
     include Thor::Actions
     
-    def self.source_root
-      File.join(File.dirname(__FILE__), '..', 'lib', 'middleman', 'template')
-    end
-    
     argument :location, :type => :string, :desc => "New project location"
+    
+    class_option :template, :aliases => "-T", :default => "default", :desc => 'Optionally use a pre-defined project template: html5, default'
+    
+    def self.source_root
+      File.join(File.dirname(__FILE__), '..', 'lib', 'middleman', 'templates')
+    end
     
     class_option :css_dir, :default => "stylesheets", :desc => 'The path to the css files'
     class_option :js_dir, :default => "javascripts", :desc => 'The path to the javascript files'
     class_option :images_dir, :default => "images", :desc => 'The path to the image files'
     
     def create_project
-      template "config.tt", File.join(location, "config.rb")
-      directory "views", File.join(location, "views")
-      empty_directory File.join(location, "public", options[:css_dir])
-      empty_directory File.join(location, "public", options[:js_dir])
-      empty_directory File.join(location, "public", options[:images_dir])
+      if options[:template] == "html5"
+        template "html5boilerplate/config.tt", File.join(location, "config.rb")
+        directory "html5boilerplate/public", File.join(location, "public")
+        empty_directory File.join(location, "views")
+      else
+        template "default/config.tt", File.join(location, "config.rb")
+        directory "default/views", File.join(location, "views")
+        empty_directory File.join(location, "public", options[:css_dir])
+        empty_directory File.join(location, "public", options[:js_dir])
+        empty_directory File.join(location, "public", options[:images_dir])
+      end
     end
   end
 end

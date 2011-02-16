@@ -1,0 +1,51 @@
+# html5boilerplate uses "css"
+set :css_dir, "css"
+
+# html5boilerplate uses "js"
+set :js_dir, "js"
+
+# html5boilerplate uses "images"
+set :images_dir, "images"
+
+# Per-page layout changes
+# With no layout
+# page "/path/to/file.html", :layout => false
+# With alternative layout
+# page "/path/to/file.html", :layout => :otherlayout
+
+# Helpers
+helpers do
+  def some_helper(*args)
+    "Helping"
+  end
+end
+
+# Automatic sitemaps
+# activate :slickmap
+
+# CodeRay syntax highlighting in Haml
+# activate :code_ray
+
+# Automatic image dimension calculations in Haml
+# activate :automatic_image_sizes
+
+# Build-specific configuration
+configure :build do
+  # For example, change the Compass output style for deployment
+  # activate :minify_css
+  
+  # Minify Javascript on build
+  # activate :minify_javascript
+  
+  # Shrink/smush PNG/JPEGs on build
+  # activate :smush_pngs
+  
+  # Enable cache buster
+  # activate :cache_buster
+
+  # Generate ugly/obfuscated HTML from Haml
+  # activate :ugly_haml
+  
+  # Or use a different image path
+  # set :http_path, "/Content/images/"
+end
