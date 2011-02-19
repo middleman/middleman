@@ -39,5 +39,6 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency("less", ["~> 1.2.0"])
   s.add_development_dependency("cucumber", ["~> 0.10.0"])
   s.add_development_dependency("rspec", [">= 0"])
+  s.add_development_dependency("rocco", [">= 0"])
 end
 
