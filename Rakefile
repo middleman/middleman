@@ -24,8 +24,8 @@ directory 'docs/'
 
 
 # Make index.html a copy of rocco.html
-file 'docs/index.html' => 'docs/lib/middleman.html' do |f|
-  cp 'docs/lib/middleman.html', 'docs/index.html', :preserve => true
+file 'docs/index.html' => 'docs/middleman.html' do |f|
+  cp 'docs/middleman.html', 'docs/index.html', :preserve => true
 end
 task :docs => 'docs/index.html'
 CLEAN.include 'docs/index.html'
