@@ -75,8 +75,9 @@ module Middleman::Features
   # paragraphs, fake images, names and email addresses.
   autoload :Lorem,               "middleman/features/lorem"
 
-  # auto-reload browser after changes
-  autoload :LiveReload,          "middleman/features/live_reload"
+  # LiveReload will auto-reload browsers with the live reload extension installed after changes
+  # Currently disabled and untested.
+  #autoload :LiveReload,          "middleman/features/live_reload"
 
   # The Feature API is itself a Feature. Mind blowing!
   class << self
