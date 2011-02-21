@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
 # Non-blocking site rebuilding
-trap("TSTP") do 
+trap("TSTP") do
   fork do
     require "open3"
     first_run = true
@@ -38,7 +38,7 @@ OptionParser.new { |opts|
   opts.on("--debug", "Debug mode") {
     ::Middleman::Server.set :logging, true
   }
-  
+
   opts.parse! ARGV
 }
 
@@ -54,9 +54,16 @@ end
 app = Middleman::Server.new
 
 require 'rubygems'
-require 'thin'
-Thin::Logging.silent = true
 
-Rack::Handler::Thin.run app, options do |inst|
+unless defined?(JRUBY_VERSION)
+  require 'thin'
+  handler = Rack::Handler::Thin
+else
+  require 'kirk'
+  require 'rack/handler/kirk'
+  handler = Rack::Handler::Kirk
+end
+
+handler.run app, options do |inst|
   puts "== The Middleman is standing watch on port #{options[:Port]}"
 end
