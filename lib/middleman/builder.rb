@@ -87,7 +87,8 @@ module Middleman
         next if File.directory?(file_source)
         next if file_source.include?('layout')
         next unless file_source.split('/').select { |p| p[0,1] == '_' }.empty?
-        
+        next unless file_source.split('/').last.split('.').length == 3
+      
         file_extension = File.extname(file_source)
         file_destination = File.join(given_destination, file_source.gsub(source, '.'))
         file_destination.gsub!('/./', '/')
