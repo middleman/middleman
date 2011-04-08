@@ -26,6 +26,7 @@ module Middleman
         empty_directory File.join(location, "views")
       else
         template "default/config.tt", File.join(location, "config.rb")
+        template "default/config.ru", File.join(location, "config.ru")
         directory "default/views", File.join(location, "views")
         empty_directory File.join(location, "public", options[:css_dir])
         empty_directory File.join(location, "public", options[:js_dir])
