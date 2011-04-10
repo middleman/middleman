@@ -78,31 +78,37 @@ module Middleman
     end
 
   protected
-
-    def execute!
-      lookup = config[:recursive] ? File.join(source, '**') : source
+    def handle_directory(lookup)
       lookup = File.join(lookup, '{*,.[a-z]*}')
       
       Dir[lookup].sort.each do |file_source|
-        next if File.directory?(file_source)
+        if File.directory?(file_source)
+          handle_directory(file_source)
+          next
+        end
+        
         next if file_source.include?('layout')
         next unless file_source.split('/').select { |p| p[0,1] == '_' }.empty?
-        
+      
         file_extension = File.extname(file_source)
         file_destination = File.join(given_destination, file_source.gsub(source, '.'))
         file_destination.gsub!('/./', '/')
-        
+      
         handled_by_tilt = ::Tilt.mappings.keys.include?(file_extension.gsub(/^\./, ""))
         if handled_by_tilt || (file_extension == ".js")
           new_file_extension = ""
           next if file_source.split('/').last.split('.').length < 3
-          
+        
           file_destination.gsub!(file_extension, new_file_extension)
           destination = base.tilt_template(file_source, file_destination, config, &@block)
         else  
           destination = base.copy_file(file_source, file_destination, config, &@block)
         end
       end
+    end
+
+    def execute!
+      handle_directory(source)
     end
   end
 end
