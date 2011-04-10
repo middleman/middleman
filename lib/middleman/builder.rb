@@ -94,7 +94,10 @@ module Middleman
         
         handled_by_tilt = ::Tilt.mappings.keys.include?(file_extension.gsub(/^\./, ""))
         if handled_by_tilt || (file_extension == ".js")
-          file_destination.gsub!(file_extension, "") unless file_extension == ".js"
+          new_file_extension = ""
+          next if file_source.split('/').last.split('.').length < 3
+          
+          file_destination.gsub!(file_extension, new_file_extension)
           destination = base.tilt_template(file_source, file_destination, config, &@block)
         else  
           destination = base.copy_file(file_source, file_destination, config, &@block)

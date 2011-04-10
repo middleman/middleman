@@ -9,7 +9,7 @@ Feature: Minify CSS
   Scenario: Rendering external css with the feature disabled
     Given "minify_css" feature is "disabled"
     When I go to "/stylesheets/site.css"
-    Then I should see "51" lines
+    Then I should see "56" lines
 
   Scenario: Rendering inline css with the feature enabled
     Given "minify_css" feature is "enabled"
