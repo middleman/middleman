@@ -117,8 +117,13 @@ module Middleman
     def process_request(options={})
       # Normalize the path and add index if we're looking at a directory
       path = request.path
-      path << settings.index_file if path.match(%r{/$})
+      path = File.join(path, settings.index_file) if path.split('/').last.split('.').length == 1
       path.gsub!(%r{^/}, '')
+      static_path = File.join(Middleman::Server.public, path)
+      if File.exists? static_path
+        send_file static_path
+        return
+      end
       
       old_layout = settings.current_layout
       settings.layout(options[:layout]) if !options[:layout].nil?
