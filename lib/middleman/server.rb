@@ -9,7 +9,7 @@ module Middleman
   class Server < Sinatra::Base
     # Basic Sinatra config
     set :app_file,    __FILE__
-    set :root,        ENV["MM_DIR"] || Dir.pwd
+    #set :root,        ENV["MM_DIR"] || Dir.pwd
     set :reload,      false
     set :sessions,    false
     set :logging,     false
@@ -117,13 +117,17 @@ module Middleman
     def process_request(options={})
       # Normalize the path and add index if we're looking at a directory
       path = request.path
-      path = File.join(path, settings.index_file) if path.split('/').last.split('.').length == 1
-      path.gsub!(%r{^/}, '')
-      static_path = File.join(Middleman::Server.public, path)
-      if File.exists? static_path
-        send_file static_path
-        return
+      parts = path ? path.split('/') : []
+      if parts.last.nil? || parts.last.split('.').length == 1
+        path = File.join(path, settings.index_file) 
       end
+      path.gsub!(%r{^/}, '')
+      
+      static_path = File.join(Middleman::Server.public, path)
+      # if File.exists? static_path
+      #   send_file static_path
+      #   return
+      # end
       
       old_layout = settings.current_layout
       settings.layout(options[:layout]) if !options[:layout].nil?
@@ -150,16 +154,9 @@ require "middleman/assets"
 
 # The Rack App
 class Middleman::Server
-  def self.new(*args, &block)
-    # If the old init.rb exists, use it, but issue warning
-    old_config = File.join(self.root, "init.rb")
-    if File.exists? old_config
-      $stderr.puts "== Warning: The init.rb file has been renamed to config.rb"
-      local_config = old_config
-    end
-    
+  def self.new(*args, &block)    
     # Check for and evaluate local configuration
-    local_config ||= File.join(self.root, "config.rb")
+    local_config = File.join(self.root, "config.rb")
     if File.exists? local_config
       $stderr.puts "== Reading:  Local config" if logging?
       Middleman::Server.class_eval File.read(local_config)

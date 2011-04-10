@@ -44,13 +44,41 @@ OptionParser.new { |opts|
 
 ENV['RACK_ENV'] = env
 
-class Middleman::Server
-  set :root, Dir.pwd
+@current_path = Dir.pwd
+@path_parts = @current_path.split("/")
+@found_root = false
+
+while (!@found_root && (@path_parts.length > 0))
+  @current_path = File.join(*@path_parts)
+  
+  public_folder = File.join(@current_path, "public")
+  views_folder  = File.join(@current_path, "views")
+  
+  if File.exists?(public_folder) && File.exists?(views_folder)
+    @found_root = true
+    next
+  end
+  
+  @path_parts.pop
 end
+
+if !@found_root
+  $stderr.puts "== Error: Could not find a Middleman project structure, perhaps you are in the wrong folder?"
+  exit
+end
+
+# If the old init.rb exists, use it, but issue warning
+old_config = File.join(@current_path, "init.rb")
+if File.exists? old_config
+  $stderr.puts "== Error: The init.rb file (deprecated) needs to be be renamed to config.rb"
+  exit
+end
+
 
 # require 'shotgun'
 # config = File.join(File.dirname(__FILE__), '..', 'lib', 'middleman', 'config.ru')
 # app = Shotgun.new(config, &lambda { |inner_app| Middleman::Server })
+Middleman::Server.root = @current_path
 app = Middleman::Server.new
 
 require 'rubygems'
