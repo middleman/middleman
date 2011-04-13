@@ -8,7 +8,7 @@ end
 
 Then /^template files should exist at "([^\"]*)"$/ do |dirname|
   target = File.join(File.dirname(File.dirname(File.dirname(__FILE__))), "fixtures", dirname)
-  template_glob = File.join(File.dirname(File.dirname(File.dirname(__FILE__))), "lib", "middleman", "template", "*/**/*")
+  template_glob = File.join(File.dirname(File.dirname(File.dirname(__FILE__))), "lib", "middleman", "templates", "default", "*/**/*")
   
   Dir[template_glob].each do |f|
     next if File.directory?(f)

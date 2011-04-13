@@ -9,7 +9,7 @@ module Middleman
   class Server < Sinatra::Base
     # Basic Sinatra config
     set :app_file,    __FILE__
-    #set :root,        ENV["MM_DIR"] || Dir.pwd
+    set :root,        ENV["MM_DIR"] || Dir.pwd
     set :reload,      false
     set :sessions,    false
     set :logging,     false
@@ -154,7 +154,7 @@ require "middleman/assets"
 
 # The Rack App
 class Middleman::Server
-  def self.new(*args, &block)    
+  def self.new(*args, &block)  
     # Check for and evaluate local configuration
     local_config = File.join(self.root, "config.rb")
     if File.exists? local_config
@@ -162,7 +162,7 @@ class Middleman::Server
       Middleman::Server.class_eval File.read(local_config)
       set :app_file, File.expand_path(local_config)
     end
-    
+      
     use ::Rack::ConditionalGet
     use ::Rack::Static, :urls => ["/#{self.images_dir}"], :root => "public"
     

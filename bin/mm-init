@@ -1,7 +1,6 @@
 #!/usr/bin/env ruby
 require File.join(File.dirname(File.dirname(__FILE__)), 'lib', 'middleman')
-require "thor"
-require "thor/group"
+require "middleman/templates"
 
 module Middleman
   class Generator < ::Thor::Group
@@ -9,29 +8,18 @@ module Middleman
     
     argument :location, :type => :string, :desc => "New project location"
     
-    class_option :template, :aliases => "-T", :default => "default", :desc => 'Optionally use a pre-defined project template: html5, default'
-    
-    def self.source_root
-      File.join(File.dirname(__FILE__), '..', 'lib', 'middleman', 'templates')
-    end
+    available_templates = Middleman::Templates.registered_names.join(", ")
+    class_option :template, :aliases => "-T", :default => "default", :desc => "Optionally use a pre-defined project template: #{available_templates}"
     
     class_option :css_dir, :default => "stylesheets", :desc => 'The path to the css files'
     class_option :js_dir, :default => "javascripts", :desc => 'The path to the javascript files'
     class_option :images_dir, :default => "images", :desc => 'The path to the image files'
     
     def create_project
-      if options[:template] == "html5"
-        template "html5boilerplate/config.tt", File.join(location, "config.rb")
-        directory "html5boilerplate/public", File.join(location, "public")
-        empty_directory File.join(location, "views")
-      else
-        template "default/config.tt", File.join(location, "config.rb")
-        template "default/config.ru", File.join(location, "config.ru")
-        directory "default/views", File.join(location, "views")
-        empty_directory File.join(location, "public", options[:css_dir])
-        empty_directory File.join(location, "public", options[:js_dir])
-        empty_directory File.join(location, "public", options[:images_dir])
-      end
+      key = options[:template].to_sym
+      key = :default unless Middleman::Templates.registered_templates.has_key?(key)
+      
+      Middleman::Templates.registered_templates[key].start
     end
   end
 end
