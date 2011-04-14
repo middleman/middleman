@@ -75,6 +75,10 @@ module Middleman::Features
   # paragraphs, fake images, names and email addresses.
   autoload :Lorem,               "middleman/features/lorem"
 
+  # Data looks at the data/ folder for YAML files and makes them available
+  # to dynamic requests.
+  autoload :Data,                "middleman/features/data"
+
   # LiveReload will auto-reload browsers with the live reload extension installed after changes
   # Currently disabled and untested.
   #autoload :LiveReload,          "middleman/features/live_reload"

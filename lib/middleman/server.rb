@@ -40,6 +40,9 @@ module Middleman
     # Activate built-in helpers
     register Middleman::Features::DefaultHelpers
     
+    # Activate Yaml Data package
+    register Middleman::Features::Data
+    
     # Activate Lorem helpers
     register Middleman::Features::Lorem
     
