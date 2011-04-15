@@ -96,7 +96,7 @@ module Middleman
       
         handled_by_tilt = ::Tilt.mappings.keys.include?(file_extension.gsub(/^\./, ""))
         if handled_by_tilt || (file_extension == ".js")
-          new_file_extension = ""
+          new_file_extension = (file_extension == ".js") ? ".js" : ""
           next if file_source.split('/').last.split('.').length < 3
         
           file_destination.gsub!(file_extension, new_file_extension)
