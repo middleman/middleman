@@ -19,13 +19,18 @@ module Middleman::Templates
     include Thor::Actions
     
     argument :location, :type => :string
-    class_option :css_dir, :default => "stylesheets", :desc => 'The path to the css files'
-    class_option :js_dir, :default => "javascripts", :desc => 'The path to the javascript files'
-    class_option :images_dir, :default => "images", :desc => 'The path to the image files'
+    class_option :template, :default => "default"
+    class_option :css_dir, :default => "stylesheets"
+    class_option :js_dir, :default => "javascripts"
+    class_option :images_dir, :default => "images"
   end
 end
 
 # Default template
 require "middleman/templates/default"
+
 # HTML5 template
 require "middleman/templates/html5"
+
+# Local templates
+require "middleman/templates/local"
