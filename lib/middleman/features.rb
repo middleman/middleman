@@ -64,10 +64,6 @@ module Middleman::Features
   # will attempt to generate a `sitemap.html` file from your project.
   autoload :Slickmap,            "middleman/features/slickmap"
 
-  # SmushPngs uses Yahoo's Smush.it API to compresses PNGs and JPGs. Often times
-  # the service can decrease the size of Photoshop-exported images by 30-50%
-  autoload :SmushPngs,           "middleman/features/smush_pngs"
-
   # CodeRay is a syntax highlighter.
   autoload :CodeRay,             "middleman/features/code_ray"
 

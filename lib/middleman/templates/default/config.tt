@@ -49,9 +49,6 @@ configure :build do
   # Minify Javascript on build
   # activate :minify_javascript
   
-  # Shrink/smush PNG/JPEGs on build
-  # activate :smush_pngs
-  
   # Enable cache buster
   # activate :cache_buster
 

@@ -34,8 +34,6 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency("compass", ["0.11.beta.6"])
   s.add_runtime_dependency("chunky_png", ["~> 1.1.0"])
   s.add_runtime_dependency("oily_png", ["~> 1.0"]) unless defined?(JRUBY_VERSION)
-  s.add_runtime_dependency("json", [">= 0"])
-  s.add_runtime_dependency("smusher", ["~> 0.4.5"])
   s.add_runtime_dependency("compass-slickmap", ["~> 0.4.0"])
   s.add_runtime_dependency("coffee-script", ["~> 2.1.0"])
   s.add_runtime_dependency("less", ["~> 1.2.0"])
