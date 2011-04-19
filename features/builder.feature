@@ -14,3 +14,8 @@ Feature: Builder
     Then "stylesheets/static.css" should exist and include "body"
     Then "_partial.html" should not exist
     And cleanup built test app
+    
+  Scenario: Force relative assets
+    Given a built test app with flags "--relative"
+    Then "stylesheets/site.css" should exist and include "../"
+    And cleanup built test app

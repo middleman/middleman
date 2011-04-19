@@ -51,10 +51,12 @@ configure :build do
   
   # Enable cache buster
   # activate :cache_buster
+  
+  # Use relative URLs
+  # activate :relative_assets
 
   # Generate ugly/obfuscated HTML from Haml
   # activate :ugly_haml
-
   
   # Or use a different image path
   # set :http_path, "/Content/images/"

@@ -27,9 +27,15 @@ module Middleman
     include Thor::Actions
     include Middleman::ThorActions
     
+    class_option :relative, :type => :boolean, :aliases => "-r", :default => false, :desc => 'Override the config.rb file and force relative urls'
+    
     def initialize(*args)
-      Middleman::Server.new
       super
+      
+      Middleman::Server.new
+      if options.has_key?("relative") && options["relative"]
+        Middleman::Server.activate :relative_assets
+      end
     end
     
     def source_paths
