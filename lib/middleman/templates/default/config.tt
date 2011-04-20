@@ -1,8 +1,9 @@
-# Automatic sitemaps
-# activate :slickmap
-
 # CodeRay syntax highlighting in Haml
 # activate :code_ray
+
+# Automatic sitemaps (gem install middleman-slickmap)
+# require "middleman-slickmap"
+# activate :slickmap
 
 # Automatic image dimension calculations
 # activate :automatic_image_sizes
@@ -54,6 +55,10 @@ configure :build do
   
   # Use relative URLs
   # activate :relative_assets
+  
+  # Compress PNGs after build (gem install middleman-smusher)
+  # require "middleman-smusher"
+  # activate :smusher
 
   # Generate ugly/obfuscated HTML from Haml
   # activate :ugly_haml

@@ -38,8 +38,9 @@ module Middleman
       end
     end
     
+    
     def source_paths
-      [
+      @source_paths ||= [
         Middleman::Server.public,
         Middleman::Server.views
       ]

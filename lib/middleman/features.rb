@@ -60,10 +60,6 @@ module Middleman::Features
   # MinifyJavascript uses the YUI compressor to shrink JS files
   autoload :MinifyJavascript,    "middleman/features/minify_javascript"
 
-  # Slickmap (http://astuteo.com/slickmap/) is a beautiful sitemap tool which
-  # will attempt to generate a `sitemap.html` file from your project.
-  autoload :Slickmap,            "middleman/features/slickmap"
-
   # CodeRay is a syntax highlighter.
   autoload :CodeRay,             "middleman/features/code_ray"
 

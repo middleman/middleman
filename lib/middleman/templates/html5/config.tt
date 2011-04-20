@@ -20,11 +20,12 @@ helpers do
   end
 end
 
-# Automatic sitemaps
-# activate :slickmap
-
 # CodeRay syntax highlighting in Haml
 # activate :code_ray
+
+# Automatic sitemaps (gem install middleman-slickmap)
+# require "middleman-slickmap"
+# activate :slickmap
 
 # Automatic image dimension calculations in Haml
 # activate :automatic_image_sizes
@@ -42,9 +43,10 @@ configure :build do
   
   # Use relative URLs
   # activate :relative_assets
-
-  # Generate ugly/obfuscated HTML from Haml
-  # activate :ugly_haml
+  
+  # Compress PNGs after build (gem install middleman-smusher)
+  # require "middleman-smusher"
+  # activate :smusher
   
   # Or use a different image path
   # set :http_path, "/Content/images/"
