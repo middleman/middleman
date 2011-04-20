@@ -23,11 +23,9 @@ module Middleman::Features::AutomaticImageSizes
           end
         rescue
         end
-
-        super(asset_url(path, http_prefix), params)
-      else
-        super(path, params)
       end
+      
+      super(path, params)
     end
   end
 end
