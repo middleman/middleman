@@ -101,12 +101,20 @@ module Middleman
     # page "/about.html", :layout => false
     # page "/", :layout => :homepage_layout
     def self.page(url, options={}, &block)
-      url << settings.index_file if url.match(%r{/$})
+      url = url.gsub(%r{#{settings.index_file}$}, "")
+      url = url.gsub(%r{(\/)$}, "") if url.length > 1
+      
+      paths = [url]
+      paths << "#{url}/" if url.length > 1 && url.split("/").last.split('.').length <= 1
+      paths << "/#{path_to_index(url)}"
   
       options[:layout] = current_layout if options[:layout].nil?
-      get(url) do
-        return yield if block_given?
-        process_request(options)
+
+      paths.each do |p|
+        get(p) do
+          return yield if block_given?
+          process_request(options)
+        end
       end
     end
 
@@ -116,15 +124,18 @@ module Middleman
     end
     
   private
-    # Internal method to look for templates and evaluate them if found
-    def process_request(options={})
-      # Normalize the path and add index if we're looking at a directory
-      path = request.path
+    def self.path_to_index(path)
       parts = path ? path.split('/') : []
       if parts.last.nil? || parts.last.split('.').length == 1
         path = File.join(path, settings.index_file) 
       end
-      path.gsub!(%r{^/}, '')
+      path.gsub(%r{^/}, '')
+    end
+  
+    # Internal method to look for templates and evaluate them if found
+    def process_request(options={})
+      # Normalize the path and add index if we're looking at a directory
+      path = self.class.path_to_index(request.path)
       
       static_path = File.join(Middleman::Server.public, path)
       # if File.exists? static_path

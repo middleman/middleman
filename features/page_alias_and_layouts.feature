@@ -10,3 +10,30 @@ Feature: Custom layouts
     Given "/custom-layout.html" with_layout block has layout "custom"
     When I go to "/custom-layout.html"
     Then I should see "Custom Layout"
+    
+  Scenario: Using custom :layout attribute with folders
+    Given page "/custom-layout-dir/" has layout "custom"
+    When I go to "/custom-layout-dir"
+    Then I should see "Custom Layout"
+    When I go to "/custom-layout-dir/"
+    Then I should see "Custom Layout"
+    When I go to "/custom-layout-dir/index.html"
+    Then I should see "Custom Layout"
+    
+  Scenario: Using custom :layout attribute with folders
+    Given page "/custom-layout-dir" has layout "custom"
+    When I go to "/custom-layout-dir"
+    Then I should see "Custom Layout"
+    When I go to "/custom-layout-dir/"
+    Then I should see "Custom Layout"
+    When I go to "/custom-layout-dir/index.html"
+    Then I should see "Custom Layout"
+    
+  Scenario: Using custom :layout attribute with folders
+    Given page "/custom-layout-dir/index.html" has layout "custom"
+    When I go to "/custom-layout-dir"
+    Then I should see "Custom Layout"
+    When I go to "/custom-layout-dir/"
+    Then I should see "Custom Layout"
+    When I go to "/custom-layout-dir/index.html"
+    Then I should see "Custom Layout"
