@@ -31,7 +31,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency("yui-compressor", ["~> 0.9.0"])
   s.add_runtime_dependency("haml", ["~> 3.1.0"])
   s.add_runtime_dependency("sass", ["~> 3.1.0"])
-  s.add_runtime_dependency("compass", ["0.11.beta.7"])
+  s.add_runtime_dependency("compass", [">= 0.11.0"])
   s.add_runtime_dependency("chunky_png", ["~> 1.1.0"])
   s.add_runtime_dependency("oily_png", ["~> 1.0"]) unless defined?(JRUBY_VERSION)
   s.add_runtime_dependency("coffee-script", ["~> 2.1.0"])
