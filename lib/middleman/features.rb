@@ -71,6 +71,9 @@ module Middleman::Features
   # to dynamic requests.
   autoload :Data,                "middleman/features/data"
 
+  # Automatically resize images for mobile devises
+  # autoload :TinySrc,             "middleman/features/tiny_src"
+
   # LiveReload will auto-reload browsers with the live reload extension installed after changes
   # Currently disabled and untested.
   #autoload :LiveReload,          "middleman/features/live_reload"
