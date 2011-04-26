@@ -18,9 +18,14 @@ module Middleman
         if env["PATH_INFO"].match(/\.js$/)
           compressor = ::YUI::JavaScriptCompressor.new(:munge => true)
       
-          uncompressed_source = response.is_a?(::Rack::File) ? File.read(response.path) : response
-          response = compressor.compress(uncompressed_source)
-          headers["Content-Length"] = ::Rack::Utils.bytesize(response).to_s
+          if response.is_a?(::Rack::File) or response.is_a?(Sinatra::Helpers::StaticFile)
+            uncompressed_source = File.read(response.path)
+          else
+            uncompressed_source = response.join
+          end
+          minified = compressor.compress(uncompressed_source)
+          headers["Content-Length"] = ::Rack::Utils.bytesize(minified).to_s
+          response = [minified]
         end
     
         [status, headers, response]
