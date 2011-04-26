@@ -147,7 +147,10 @@ module Middleman
       settings.layout(options[:layout]) if !options[:layout].nil?
       layout = settings.fetch_layout_path.to_sym
       layout = false if options[:layout] == false or path =~ /\.(css|js)$/
-      result = render(path, :layout => layout, :layout_engine => options[:layout_engine])
+      
+      render_options = { :layout => layout }
+      render_options[:layout_engine] = options[:layout_engine] if options.has_key? :layout_engine
+      result = render(path, render_options)
       settings.layout(old_layout)
       
       if result
