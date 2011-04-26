@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.authors     = ["Thomas Reynolds"]
   s.email       = ["tdreyno@gmail.com"]
   s.homepage    = "http://wiki.github.com/tdreyno/middleman"
-  s.summary     = "A static site generator utilizing Haml, Sass and providing YUI compression and cache busting"
+  s.summary     = "A static site generator based on Sinatra. Providing Haml, Sass, Compass, Less, Coffee Script and including minification, compression and cache busting."
 
   s.rubyforge_project = "middleman"
 
@@ -31,7 +31,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency("yui-compressor", ["~> 0.9.0"])
   s.add_runtime_dependency("haml", ["~> 3.1.0"])
   s.add_runtime_dependency("sass", ["~> 3.1.0"])
-  s.add_runtime_dependency("compass", [">= 0.11.1"])
+  s.add_runtime_dependency("compass", ["~> 0.11.1"])
   s.add_runtime_dependency("chunky_png", ["~> 1.1.0"])
   s.add_runtime_dependency("oily_png", ["~> 1.0"]) unless defined?(JRUBY_VERSION)
   s.add_runtime_dependency("coffee-script", ["~> 2.1.0"])

@@ -34,3 +34,6 @@ require "middleman/templates/html5"
 
 # Local templates
 require "middleman/templates/local"
+
+# Compass templates
+# require "middleman/templates/compass"
