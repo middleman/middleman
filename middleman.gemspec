@@ -28,7 +28,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency("padrino-core", ["~> 0.9.23"])
   s.add_runtime_dependency("padrino-helpers", ["~> 0.9.23"])
   s.add_runtime_dependency("rack-test", ["~> 0.5.0"])
-  s.add_runtime_dependency("yui-compressor", ["~> 0.9.0"])
+  s.add_runtime_dependency("uglifier", ["~> 0.5.0"])
   s.add_runtime_dependency("haml", ["~> 3.1.0"])
   s.add_runtime_dependency("sass", ["~> 3.1.0"])
   s.add_runtime_dependency("compass", ["~> 0.11.1"])

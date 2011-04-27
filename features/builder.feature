@@ -10,7 +10,6 @@ Feature: Builder
     Then "services/index.html" should exist and include "Services"
     Then "stylesheets/site.css" should exist and include "html, body, div, span"
     Then "stylesheets/site_scss.css" should exist and include "html, body, div, span"
-    Then "stylesheets/test_less.css" should exist and include "666"
     Then "stylesheets/static.css" should exist and include "body"
     Then "_partial.html" should not exist
     And cleanup built test app
