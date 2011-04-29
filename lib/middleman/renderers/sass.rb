@@ -47,6 +47,14 @@ class Tilt::SassPlusCSSFilenameTemplate < Tilt::SassTemplate
     css_filename = File.join(location_of_sass_file, Middleman::Server.css_dir, parts.join("."))
     super.merge(::Compass.configuration.to_sass_engine_options).merge(:css_filename => css_filename)
   end
+  
+  def evaluate(scope, locals, &block)
+    begin
+      super
+    rescue Sass::SyntaxError => e
+      Sass::SyntaxError.exception_to_css(e, :full_exception => true)
+    end
+  end
 end
 Tilt.register 'sass', Tilt::SassPlusCSSFilenameTemplate
 
