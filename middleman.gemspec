@@ -35,6 +35,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency("sass", ["~> 3.1.0"])
   s.add_runtime_dependency("compass", ["~> 0.11.1"])
   s.add_runtime_dependency("coffee-script", ["~> 2.1.0"])
+  s.add_runtime_dependency("httparty", ["~> 0.7.0"])
   # s.add_runtime_dependency("fssm", ["~> 0.2.0"])
   s.add_development_dependency("cucumber", ["~> 0.10.0"])
   s.add_development_dependency("rspec", [">= 0"])
