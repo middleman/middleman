@@ -29,6 +29,9 @@ end
 # Default template
 require "middleman/templates/default"
 
+# XHMTL template
+require "middleman/templates/xhtml"
+
 # HTML5 template
 require "middleman/templates/html5"
 

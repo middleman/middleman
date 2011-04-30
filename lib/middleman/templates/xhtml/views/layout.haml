@@ -1,0 +1,13 @@
+!!! Strict
+%html{ :xmlns => "http://www.w3.org/1999/xhtml", "xml:lang" => "en", :lang => "en" }
+  %head
+    %meta{ :content => "text/html; charset=utf-8", "http-equiv" => "Content-Type" }
+    / Comment in layout
+    = stylesheet_link_tag "site.css"
+    :javascript
+      // Comment in javascript
+    = yield_content :head
+    
+  %body{ :class => page_classes }
+    #frame
+      = yield
