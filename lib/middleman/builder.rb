@@ -47,11 +47,11 @@ module Middleman
     end
     
     def build_static_files
-      action Directory.new(self, Middleman::Server.public, Middleman::Server.build_dir, { :force => true })
+      action Directory.new(self, Middleman::Server.public, :public, Middleman::Server.build_dir, { :force => true })
     end
     
     def build_dynamic_files
-      action Directory.new(self, Middleman::Server.views, Middleman::Server.build_dir, { :force => true })
+      action Directory.new(self, Middleman::Server.views, :dynamic, Middleman::Server.build_dir, { :force => true })
     end
     
     @@hooks = {}
@@ -69,7 +69,8 @@ module Middleman
   class Directory < ::Thor::Actions::EmptyDirectory
     attr_reader :source
 
-    def initialize(base, source, destination=nil, config={}, &block)
+    def initialize(base, source, mode, destination=nil, config={}, &block)
+      @mode = mode
       @source = File.expand_path(base.find_in_source_paths(source.to_s))
       @block  = block
       super(base, destination, { :recursive => true }.merge(config))
@@ -104,7 +105,7 @@ module Middleman
         handled_by_tilt = ::Tilt.mappings.keys.include?(file_extension.gsub(/^\./, ""))
         if handled_by_tilt || (file_extension == ".js")
           new_file_extension = (file_extension == ".js") ? ".js" : ""
-          next if file_source.split('/').last.split('.').length < 3
+          next if @mode == :dynamic && file_source.split('/').last.split('.').length < 3
         
           file_destination.gsub!(file_extension, new_file_extension)
           destination = base.tilt_template(file_source, file_destination, config, &@block)
