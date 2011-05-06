@@ -71,6 +71,9 @@ module Middleman::Features
   # to dynamic requests.
   autoload :Data,                "middleman/features/data"
 
+  # Proxy web services requests in dev mode only
+  # autoload :Proxy,               "middleman/features/proxy"
+  
   # Automatically resize images for mobile devises
   # autoload :TinySrc,             "middleman/features/tiny_src"
 

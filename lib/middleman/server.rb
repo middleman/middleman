@@ -43,6 +43,9 @@ module Middleman
     # Activate Yaml Data package
     register Middleman::Features::Data
     
+    # Activate Webservices Proxy package
+    # register Middleman::Features::Proxy
+    
     # Activate Lorem helpers
     register Middleman::Features::Lorem
     
