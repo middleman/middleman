@@ -16,7 +16,7 @@ module Middleman
 
       create_file destination, nil, config do
         # The default render just requests the page over Rack and writes the response
-        request_path = destination.gsub(Middleman::Server.build_dir, "")
+        request_path = destination.sub(/^#{Middleman::Server.build_dir}/, "")
         @@rack_test.get(request_path)
         @@rack_test.last_response.body
       end
@@ -87,7 +87,7 @@ module Middleman
 
   protected
     def handle_directory(lookup)
-      lookup = File.join(lookup, '{*,.[a-z]*}')
+      lookup = File.join(lookup, '*')
       
       Dir[lookup].sort.each do |file_source|
         if File.directory?(file_source)
