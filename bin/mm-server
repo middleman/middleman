@@ -15,7 +15,7 @@ trap("TSTP") do
       puts "== Build complete"
     end
   end
-end
+end if Signal.list.has_key? "TSTP"
 
 require 'optparse'
 
