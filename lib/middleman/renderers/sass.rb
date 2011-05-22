@@ -1,4 +1,5 @@
 require "sass"
+require "sass/plugin"
 require "compass"
 
 module Middleman
