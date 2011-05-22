@@ -1,4 +1,5 @@
 require "haml"
+require "coffee-filter"
 
 module Middleman
   module Renderers
