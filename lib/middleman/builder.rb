@@ -8,7 +8,7 @@ module Middleman
     def tilt_template(source, *args, &block)
       config = args.last.is_a?(Hash) ? args.pop : {}
       destination = args.first || source
-
+      
       source  = File.expand_path(find_in_source_paths(source.to_s))
       context = instance_eval('binding')
 
@@ -33,6 +33,7 @@ module Middleman
       super
       
       Middleman::Server.new
+      
       if options.has_key?("relative") && options["relative"]
         Middleman::Server.activate :relative_assets
       end
@@ -41,17 +42,12 @@ module Middleman
     
     def source_paths
       @source_paths ||= [
-        Middleman::Server.public,
-        Middleman::Server.views
+        Middleman::Server.root
       ]
     end
     
-    def build_static_files
-      action Directory.new(self, Middleman::Server.public, :public, Middleman::Server.build_dir, { :force => true })
-    end
-    
-    def build_dynamic_files
-      action Directory.new(self, Middleman::Server.views, :dynamic, Middleman::Server.build_dir, { :force => true })
+    def build_all_files
+      action Directory.new(self, Middleman::Server.views, Middleman::Server.build_dir, { :force => true })
     end
     
     @@hooks = {}
@@ -69,8 +65,7 @@ module Middleman
   class Directory < ::Thor::Actions::EmptyDirectory
     attr_reader :source
 
-    def initialize(base, source, mode, destination=nil, config={}, &block)
-      @mode = mode
+    def initialize(base, source, destination=nil, config={}, &block)
       @source = File.expand_path(base.find_in_source_paths(source.to_s))
       @block  = block
       super(base, destination, { :recursive => true }.merge(config))
@@ -96,22 +91,20 @@ module Middleman
         end
         
         next if file_source.include?('layout')
+        
+        # Skip partials prefixed with an underscore
         next unless file_source.split('/').select { |p| p[0,1] == '_' }.empty?
-      
+        
         file_extension = File.extname(file_source)
         file_destination = File.join(given_destination, file_source.gsub(source, '.'))
         file_destination.gsub!('/./', '/')
-      
-        handled_by_tilt = ::Tilt.mappings.keys.include?(file_extension.gsub(/^\./, ""))
-        if handled_by_tilt || (file_extension == ".js")
-          new_file_extension = (file_extension == ".js") ? ".js" : ""
-          next if @mode == :dynamic && file_source.split('/').last.split('.').length < 3
         
-          file_destination.gsub!(file_extension, new_file_extension)
-          destination = base.tilt_template(file_source, file_destination, config, &@block)
-        else  
-          destination = base.copy_file(file_source, file_destination, config, &@block)
+        handled_by_tilt = ::Tilt.mappings.has_key?(file_extension.gsub(/^\./, ""))
+        if handled_by_tilt
+          file_destination.gsub!(file_extension, "")
         end
+        
+        destination = base.tilt_template(file_source, file_destination, config, &@block)
       end
     end
 

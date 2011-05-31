@@ -15,8 +15,6 @@ module Middleman
     set :logging,     false
     set :environment, (ENV['MM_ENV'] && ENV['MM_ENV'].to_sym) || :development
     
-    # Import padrino helper methods
-    
     # Middleman-specific options
     set :index_file,  "index.html"  # What file responds to folder requests
                                     # Such as the homepage (/) or subfolders (/about/)
@@ -30,9 +28,14 @@ module Middleman
     set :build_dir,   "build"       # Which folder are builds output to
     set :http_prefix, nil           # During build, add a prefix for absolute paths
     
+    set :static, false
+    set :views, "source"
+    
+    # Disable Padrino cache buster until explicitly enabled
+    set :asset_stamp, false
+    
     # Use Padrino Helpers
     register Padrino::Helpers
-    set :asset_stamp, false         # Disable Padrino cache buster until explicitly enabled
     
     # Activate custom features
     register Middleman::Features
@@ -140,11 +143,12 @@ module Middleman
       # Normalize the path and add index if we're looking at a directory
       path = self.class.path_to_index(request.path)
       
-      static_path = File.join(Middleman::Server.public, path)
-      # if File.exists? static_path
-      #   send_file static_path
-      #   return
-      # end
+      extensionless_path, template_engine = resolve_template(path)
+      
+      if !::Tilt.mappings.has_key?(template_engine.to_s)
+        send_file File.join(Middleman::Server.views, path)
+        return
+      end
       
       old_layout = settings.current_layout
       settings.layout(options[:layout]) if !options[:layout].nil?
@@ -182,9 +186,6 @@ class Middleman::Server
       Middleman::Server.class_eval File.read(local_config)
       set :app_file, File.expand_path(local_config)
     end
-      
-    use ::Rack::ConditionalGet
-    use ::Rack::Static, :urls => ["/#{self.images_dir}"], :root => "public"
     
     @@run_after_features.each { |block| class_eval(&block) }
     

@@ -1,0 +1,4 @@
+2.0.0
+=====
+
+- Combine views/ and public/ into a single source/ folder.

@@ -1,22 +1,5 @@
 #!/usr/bin/env ruby
 
-# Non-blocking site rebuilding
-trap("TSTP") do
-  fork do
-    require "open3"
-    first_run = true
-    Open3.popen3(%Q{cd "#{Dir.pwd}" && #{File.join(File.dirname(__FILE__), "mm-build")} | grep FORCED}) do |stdin, stdout, stderr|
-      puts "\n== Building the site..."
-      stdout.readlines.each do |l|
-        puts "== Updated:" if first_run
-        puts " " + l.split("[FORCED]").last.chomp
-        first_run = false
-      end
-      puts "== Build complete"
-    end
-  end
-end if Signal.list.has_key? "TSTP"
-
 require 'optparse'
 
 # Require Middleman
@@ -25,6 +8,7 @@ require File.join(File.dirname(__FILE__), '..', 'lib', 'middleman')
 env = ENV['MM_ENV'] || ENV['RACK_ENV'] || 'development'
 options = { :Port => 4567, :AccessLog => [] }
 
+# TODO: Switch to Thor
 OptionParser.new { |opts|
   opts.banner = "Usage: mm-server [rack options]"
   opts.separator ""
@@ -51,10 +35,9 @@ ENV['RACK_ENV'] = env
 while (!@found_root && (@path_parts.length > 0))
   @current_path = File.join(*@path_parts)
   
-  public_folder = File.join(@current_path, "public")
-  views_folder  = File.join(@current_path, "views")
+  source_folder = File.join(@current_path, "source")
   
-  if File.exists?(public_folder) && File.exists?(views_folder)
+  if File.exists?(source_folder)
     @found_root = true
     next
   end
@@ -67,20 +50,25 @@ if !@found_root
   exit
 end
 
-# If the old init.rb exists, use it, but issue warning
+# If the old init.rb exists, issue warning
 old_config = File.join(@current_path, "init.rb")
 if File.exists? old_config
   $stderr.puts "== Error: The init.rb file (deprecated) needs to be be renamed to config.rb"
   exit
 end
 
+# If the old directories exists, use it, but issue warning
+old_views = File.join(@current_path, "views")
+old_public = File.join(@current_path, "public")
+if File.exists?(old_views) || File.exists?(old_public)
+  $stderr.puts "== Error: The views and public folders are have been combined. Create a new 'source' folder, add the contents of views and public to it and then remove the empty views and public folders."
+  exit
+end
 
-# require 'shotgun'
-# config = File.join(File.dirname(__FILE__), '..', 'lib', 'middleman', 'config.ru')
-# app = Shotgun.new(config, &lambda { |inner_app| Middleman::Server })
 Middleman::Server.root = @current_path
 app = Middleman::Server.new
 
+# TODO: Remove this
 require 'rubygems'
 
 unless defined?(JRUBY_VERSION)

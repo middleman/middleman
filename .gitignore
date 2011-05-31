@@ -7,3 +7,4 @@ pkg
 .tmp
 Gemfile.lock
 docs
+.rvmrc

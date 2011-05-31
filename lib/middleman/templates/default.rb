@@ -6,10 +6,10 @@ class Middleman::Templates::Default < Middleman::Templates::Base
   def build_scaffold
     template "config.tt", File.join(location, "config.rb")
     template "config.ru", File.join(location, "config.ru")
-    directory "views", File.join(location, "views")
-    empty_directory File.join(location, "public", options[:css_dir])
-    empty_directory File.join(location, "public", options[:js_dir])
-    empty_directory File.join(location, "public", options[:images_dir])
+    directory "source", File.join(location, "source")
+    empty_directory File.join(location, "source", options[:css_dir])
+    empty_directory File.join(location, "source", options[:js_dir])
+    empty_directory File.join(location, "source", options[:images_dir])
   end  
 end
 

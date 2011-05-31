@@ -19,7 +19,7 @@ end
 Then /^empty directories should exist at "([^\"]*)"$/ do |dirname|
   target = File.join(File.dirname(File.dirname(File.dirname(__FILE__))), "fixtures", dirname)
   
-  %w(views/stylesheets public/stylesheets public/javascripts public/images).each do |d|
+  %w(source/stylesheets source/javascripts source/images).each do |d|
     File.exists?("#{target}/#{d}").should be_true
   end
 end

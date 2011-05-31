@@ -5,8 +5,8 @@ class Middleman::Templates::Html5 < Middleman::Templates::Base
   
   def build_scaffold
     template "config.tt", File.join(location, "config.rb")
-    directory "public", File.join(location, "public")
-    empty_directory File.join(location, "views")
+    directory "source", File.join(location, "source")
+    empty_directory File.join(location, "source")
   end
 end
 
