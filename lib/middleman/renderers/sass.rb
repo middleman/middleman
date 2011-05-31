@@ -13,9 +13,9 @@ module Middleman
               config.project_path          = self.root
               config.sass_dir              = File.join(File.basename(self.views), self.css_dir)
               config.output_style          = :nested
-              config.fonts_dir             = File.join(File.basename(self.public), self.fonts_dir)
-              config.css_dir               = File.join(File.basename(self.public), self.css_dir)
-              config.images_dir            = File.join(File.basename(self.public), self.images_dir)      
+              config.fonts_dir             = File.join(File.basename(self.views), self.fonts_dir)
+              config.css_dir               = File.join(File.basename(self.views), self.css_dir)
+              config.images_dir            = File.join(File.basename(self.views), self.images_dir)      
               config.http_images_path      = self.http_images_path rescue File.join(self.http_prefix || "/", self.images_dir)
               config.http_stylesheets_path = self.http_css_path rescue File.join(self.http_prefix || "/", self.css_dir)
               config.asset_cache_buster { false }
@@ -43,7 +43,7 @@ class Tilt::SassPlusCSSFilenameTemplate < Tilt::SassTemplate
     
     location_of_sass_file = Middleman::Server.environment == :build ? 
                               File.join(Middleman::Server.root, Middleman::Server.build_dir) : 
-                              Middleman::Server.public
+                              Middleman::Server.views
 
     parts = basename.split('.')
     parts.pop
