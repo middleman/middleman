@@ -14,7 +14,7 @@ module Middleman::Features::DefaultHelpers
       path = path.gsub(File.extname(path), '')
       path = path.gsub("/", separator)
 
-      css_file = File.join(self.class.public, self.class.css_dir, "#{path}.css")
+      css_file = File.join(self.class.views, self.class.css_dir, "#{path}.css")
       sass_file = File.join(self.class.views, self.class.css_dir, "#{path}.css.sass")
       scss_file = File.join(self.class.views, self.class.css_dir, "#{path}.css.scss")
       less_file = File.join(self.class.views, self.class.css_dir, "#{path}.css.less")

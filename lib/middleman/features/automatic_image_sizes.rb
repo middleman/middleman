@@ -15,7 +15,7 @@ module Middleman::Features::AutomaticImageSizes
         http_prefix = settings.http_images_path rescue settings.images_dir
 
         begin
-          real_path = File.join(settings.public, settings.images_dir, path)
+          real_path = File.join(settings.views, settings.images_dir, path)
           if File.exists? real_path
             dimensions = ::FastImage.size(real_path, :raise_on_failure => true)
             params[:width]  ||= dimensions[0]

@@ -12,7 +12,7 @@ module Middleman::Features::CacheBuster
           rescue
           end
 
-          real_path_static  = File.join(Middleman::Server.public, prefix, path)
+          real_path_static  = File.join(Middleman::Server.views, prefix, path)
 
           if File.readable?(real_path_static)
             http_path << "?" + File.mtime(real_path_static).strftime("%s") 
@@ -29,7 +29,7 @@ module Middleman::Features::CacheBuster
         ::Compass.configuration do |config|
           config.asset_cache_buster do |path, real_path|
             real_path = real_path.path if real_path.is_a? File
-            real_path = real_path.gsub(File.join(Middleman::Server.root, Middleman::Server.build_dir), Middleman::Server.public)
+            real_path = real_path.gsub(File.join(Middleman::Server.root, Middleman::Server.build_dir), Middleman::Server.views)
             if File.readable?(real_path)
               File.mtime(real_path).strftime("%s") 
             else
