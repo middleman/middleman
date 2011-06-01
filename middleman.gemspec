@@ -23,7 +23,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency("kirk", ["~> 0.1.8"]) if defined?(JRUBY_VERSION)
   s.add_runtime_dependency("shotgun", ["~> 0.8.0"])
   s.add_runtime_dependency("thor", ["~> 0.14.0"])
-  s.add_runtime_dependency("tilt", ["~> 1.3.0"])
+  s.add_runtime_dependency("tilt", ["~> 1.3.1"])
   s.add_runtime_dependency("sinatra", ["~> 1.2.0"])
   s.add_runtime_dependency("padrino-core", ["~> 0.9.23"])
   s.add_runtime_dependency("padrino-helpers", ["~> 0.9.23"])
