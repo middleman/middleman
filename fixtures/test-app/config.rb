@@ -1,6 +1,7 @@
 with_layout false do
   page "/inline-css.html"
   page "/inline-js.html"
+  page "/inline-coffeescript.html"
 end
 
 get "/page-class.html" do

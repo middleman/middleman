@@ -30,6 +30,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency("rack-test", ["~> 0.5.0"])
   s.add_runtime_dependency("uglifier", ["~> 0.5.0"])
   s.add_runtime_dependency("haml", ["~> 3.1.0"])
+  s.add_runtime_dependency("coffee-filter", ["~> 0.1.0"])
   s.add_runtime_dependency("sass", ["~> 3.1.0"])
   s.add_runtime_dependency("compass", ["~> 0.11.1"])
   s.add_runtime_dependency("coffee-script", ["~> 2.2.0"])
