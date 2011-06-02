@@ -31,7 +31,11 @@ module Middleman
         if env["PATH_INFO"].match(/\.html$/)
           compressor = ::Uglifier.new
 
-          uncompressed_source = response.join
+          if response.is_a?(::Rack::File) or response.is_a?(Sinatra::Helpers::StaticFile)
+            uncompressed_source = File.read(response.path)
+          else
+            uncompressed_source = response.join
+          end
 
           minified = uncompressed_source.gsub(/(<scri.*?\/\/<!\[CDATA\[\n)(.*?)(\/\/\]\].*?<\/script>)/m) do |m|
             first = $1
