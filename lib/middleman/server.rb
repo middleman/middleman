@@ -73,6 +73,7 @@ module Middleman
     end
     
     # Activate custom renderers
+    register Middleman::Renderers::Slim
     register Middleman::Renderers::Haml
     register Middleman::Renderers::Sass
     

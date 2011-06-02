@@ -67,6 +67,7 @@ module Middleman
   module Renderers
     autoload :Haml, "middleman/renderers/haml"
     autoload :Sass, "middleman/renderers/sass"
+    autoload :Slim, "middleman/renderers/slim"
   end
 
   # Features API
