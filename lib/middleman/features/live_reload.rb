@@ -10,11 +10,16 @@ module Middleman::Features::LiveReload
       end
 
       new_config = ::LiveReload::Config.new do |config|
-        config.exts = ::Tilt.mappings.keys
+        ::Tilt.mappings.each do |key, v|
+          config.exts << key
+        end
       end
+      
+      pid = fork {      
+        require 'livereload'
+        ::LiveReload.run [Middleman::Server.views], new_config
+      }
 
-      # Middleman::Server.public
-      ::LiveReload.run [Middleman::Server.views], new_config
     end
     alias :included :registered
   end
