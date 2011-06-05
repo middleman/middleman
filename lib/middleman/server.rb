@@ -147,6 +147,8 @@ module Middleman
       extensionless_path, template_engine = resolve_template(path)
       
       if !::Tilt.mappings.has_key?(template_engine.to_s)
+        content_type mime_type(File.extname(path)), :charset => 'utf-8'
+        status 200
         send_file File.join(Middleman::Server.views, path)
         return
       end
