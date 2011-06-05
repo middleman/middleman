@@ -8,7 +8,7 @@ Everything you need to know is on the wiki: http://github.com/tdreyno/middleman/
 
 == Mailing List
 
-If you have questions, answers can be found on the mailing list: http://groups.google.com/group/middleman-users
+If you have questions, answers can be found on community forum: https://convore.com/middleman/
 
 == Copyright
 
