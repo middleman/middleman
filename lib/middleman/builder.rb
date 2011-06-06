@@ -93,7 +93,7 @@ module Middleman
         next if file_source.include?('layout')
         
         # Skip partials prefixed with an underscore
-        next unless file_source.split('/').select { |p| p[0,1] == '_' }.empty?
+        next unless file_source.gsub(Middleman::Server.root, '').split('/').select { |p| p[0,1] == '_' }.empty?
         
         file_extension = File.extname(file_source)
         file_destination = File.join(given_destination, file_source.gsub(source, '.'))
