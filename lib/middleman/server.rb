@@ -138,6 +138,23 @@ module Middleman
       end
       path.gsub(%r{^/}, '')
     end
+    
+    def self.parse_front_matter(path)
+      content = File.read(File.join(settings.views, path))
+      
+      if content =~ /^(---\s*\n.*?\n?)^(---\s*$\n?)/m
+        content = $POSTMATCH
+      
+        begin
+          data = YAML.load($1)
+        rescue => e
+          puts "YAML Exception: #{e.message}"
+        end
+      end
+      
+      data ||= {}
+      [data, content]
+    end
   
     # Internal method to look for templates and evaluate them if found
     def process_request(options={})
@@ -152,6 +169,19 @@ module Middleman
         send_file File.join(Middleman::Server.views, path)
         return
       end
+      
+      
+      full_file_path = "#{extensionless_path}.#{template_engine}"
+      data, content = self.class.parse_front_matter(full_file_path)
+      
+      %w(layout layout_engine).each do |opt|
+        if data.has_key?(opt)
+          options[opt.to_sym] = data.delete(opt)
+        end
+      end
+      
+      # Forward remaining data to helpers
+      self.class.data_content("page", data)
       
       old_layout = settings.current_layout
       settings.layout(options[:layout]) if !options[:layout].nil?

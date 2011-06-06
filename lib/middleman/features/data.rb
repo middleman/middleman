@@ -25,14 +25,18 @@ module Middleman::Features::Data
     def method_missing(path)
       response = nil
       
+      @@local_sources ||= {}
       @@remote_sources ||= {}
-      if @@remote_sources.has_key?(path.to_s)
-        response = HTTParty.get(@@remote_sources[path.to_s]).parsed_response
-      end
       
-      file_path = File.join(@app.class.root, "data", "#{path}.yml")      
-      if File.exists? file_path
-        response = YAML.load_file(file_path)
+      if @@local_sources.has_key?(path.to_s)
+        response = @@local_sources[path.to_s]
+      elsif @@remote_sources.has_key?(path.to_s)
+        response = HTTParty.get(@@remote_sources[path.to_s]).parsed_response
+      else
+        file_path = File.join(@app.class.root, "data", "#{path}.yml")      
+        if File.exists? file_path
+          response = YAML.load_file(file_path)
+        end
       end
       
       if response
@@ -43,6 +47,11 @@ module Middleman::Features::Data
     def self.add_source(name, json_url)
       @@remote_sources ||= {}
       @@remote_sources[name.to_s] = json_url
+    end
+
+    def self.data_content(name, content)
+      @@local_sources ||= {}
+      @@local_sources[name.to_s] = content
     end
   
   private
@@ -74,6 +83,10 @@ module Middleman::Features::Data
     #     data.my_json
     def data_source(name, url)
       Middleman::Features::Data::DataObject.add_source(name, url)
+    end
+    
+    def data_content(name, content)
+      Middleman::Features::Data::DataObject.data_content(name, content)
     end
   end
 end

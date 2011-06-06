@@ -2,3 +2,4 @@
 =====
 
 - Combine views/ and public/ into a single source/ folder.
+- Support YAML front-matter
