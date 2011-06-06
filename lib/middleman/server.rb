@@ -40,6 +40,9 @@ module Middleman
     # Activate custom features
     register Middleman::Features
     
+    # Activate Yaml Front Matter
+    register Middleman::Features::FrontMatter
+    
     # Activate built-in helpers
     register Middleman::Features::DefaultHelpers
     
@@ -138,23 +141,6 @@ module Middleman
       end
       path.gsub(%r{^/}, '')
     end
-    
-    def self.parse_front_matter(path)
-      content = File.read(File.join(settings.views, path))
-      
-      if content =~ /^(---\s*\n.*?\n?)^(---\s*$\n?)/m
-        content = $POSTMATCH
-      
-        begin
-          data = YAML.load($1)
-        rescue => e
-          puts "YAML Exception: #{e.message}"
-        end
-      end
-      
-      data ||= {}
-      [data, content]
-    end
   
     # Internal method to look for templates and evaluate them if found
     def process_request(options={})
@@ -172,7 +158,8 @@ module Middleman
       
       
       full_file_path = "#{extensionless_path}.#{template_engine}"
-      data, content = self.class.parse_front_matter(full_file_path)
+      system_path = File.join(settings.views, full_file_path)
+      data, content = self.class.parse_front_matter(File.read(system_path))
       
       %w(layout layout_engine).each do |opt|
         if data.has_key?(opt)

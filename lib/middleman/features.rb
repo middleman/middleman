@@ -71,6 +71,9 @@ module Middleman::Features
   # to dynamic requests.
   autoload :Data,                "middleman/features/data"
 
+  # Parse YAML metadata from templates
+  autoload :FrontMatter,         "middleman/features/front_matter"
+  
   # Proxy web services requests in dev mode only
   # autoload :Proxy,               "middleman/features/proxy"
   
