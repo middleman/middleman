@@ -40,9 +40,6 @@ module Middleman
     # Activate custom features
     register Middleman::Features
     
-    # Activate Yaml Front Matter
-    register Middleman::Features::FrontMatter
-    
     # Activate built-in helpers
     register Middleman::Features::DefaultHelpers
     
@@ -155,7 +152,6 @@ module Middleman
         send_file File.join(Middleman::Server.views, path)
         return
       end
-      
       
       full_file_path = "#{extensionless_path}.#{template_engine}"
       system_path = File.join(settings.views, full_file_path)

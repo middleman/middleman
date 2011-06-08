@@ -5,6 +5,13 @@ module Middleman::Features::FrontMatter
   class << self
     def registered(app)
       app.extend ClassMethods
+      
+      ::Tilt::register MarukuTemplate, 'markdown', 'mkd', 'md'
+      ::Tilt::register KramdownTemplate, 'markdown', 'mkd', 'md'
+      ::Tilt::register BlueClothTemplate, 'markdown', 'mkd', 'md'
+      ::Tilt::register RedcarpetTemplate, 'markdown', 'mkd', 'md'
+      ::Tilt::register RDiscountTemplate, 'markdown', 'mkd', 'md'
+      ::Tilt::register RedClothTemplate, 'textile'
     end
     alias :included :registered
   end
@@ -26,13 +33,37 @@ module Middleman::Features::FrontMatter
       [data, content]
     end
   end
-end
+  
+  module YamlAware
+    def prepare
+      options, @data = Middleman::Server.parse_front_matter(@data)
+      super
+    end
+  end
 
-# class FrontMatter < Tilt::RDiscountTemplate
-#   def prepare
-#     options, @data = Middleman::Server.parse_front_matter(@data)
-#     super
-#   end
-# end
-# 
-# Tilt.register 'markdown', FrontMatter
+  # MARKDOWN
+  class MarukuTemplate < ::Tilt::MarukuTemplate
+    include Middleman::Features::FrontMatter::YamlAware
+  end
+  
+  class KramdownTemplate < ::Tilt::KramdownTemplate
+    include Middleman::Features::FrontMatter::YamlAware
+  end
+  
+  class BlueClothTemplate < ::Tilt::BlueClothTemplate
+    include Middleman::Features::FrontMatter::YamlAware
+  end
+  
+  class RedcarpetTemplate < ::Tilt::RedcarpetTemplate
+    include Middleman::Features::FrontMatter::YamlAware
+  end
+  
+  class RDiscountTemplate < ::Tilt::RDiscountTemplate
+    include Middleman::Features::FrontMatter::YamlAware
+  end
+  
+  # TEXTILE
+  class RedClothTemplate < ::Tilt::RedClothTemplate
+    include Middleman::Features::FrontMatter::YamlAware
+  end
+end
