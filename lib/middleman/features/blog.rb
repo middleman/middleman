@@ -1,3 +1,5 @@
+require "rdiscount"
+
 module Middleman
   module Features
     module Blog
@@ -19,11 +21,19 @@ module Middleman
             end
             
             if !app.settings.respond_to? :blog_summary_separator
-              app.set :blog_summary_separator, "READMORE"
+              app.set :blog_summary_separator, /READMORE/
+            end
+            
+            if !app.settings.respond_to? :blog_summary_length
+              app.set :blog_summary_length, 250
             end
 
             if !app.settings.respond_to? :blog_layout_engine
               app.set :blog_layout_engine, "erb"
+            end
+
+            if !app.settings.respond_to? :blog_index_template
+              app.set :blog_index_template, "index_template"
             end
             
             if !app.settings.respond_to? :blog_article_template
@@ -31,6 +41,33 @@ module Middleman
             end
             
             $stderr.puts "== Blog: #{app.settings.blog_permalink}"
+            
+            articles_glob = File.join(app.views, app.settings.blog_permalink.gsub(/(:\w+)/, "*") + ".*")
+            
+            articles = Dir[articles_glob].map do |article|
+              template_content = File.read(article)
+              data, content = parse_front_matter(template_content)
+              data["date"] = Date.parse(data["date"])
+              
+              yaml_regex = /^(---\s*\n.*?\n?)^(---\s*$\n?)/m
+              data["raw"]  = template_content.split(yaml_regex).last
+              data["url"] = article.gsub(app.views, "").split(".html").first + ".html"
+              
+              all_content = Tilt.new(article).render              
+              data["body"] = all_content.gsub!(app.settings.blog_summary_separator, "")
+              
+              sum = if data["raw"] =~ app.settings.blog_summary_separator
+                data["raw"].split(app.settings.blog_summary_separator).first
+              else                data["raw"].match(/(.{1,#{app.settings.blog_summary_length}}.*?)(\n|\Z)/m).to_s
+              end
+              
+              engine = RDiscount.new(sum)
+              data["summary"] = engine.to_html
+              data
+            end.sort { |a, b| b["date"] <=> a["date"] }  
+            
+            app.data_content("blog", { :articles => articles })
+            
             app.get(app.settings.blog_permalink) do
               options = {}
               options[:layout] = settings.blog_layout
@@ -55,18 +92,15 @@ module Middleman
             end
           end
           
-          # Handle /archives/
-          require "middleman/builder"
-          Middleman::Builder.after_run "blog_archives" do
-            # source_paths << File.expand_path(File.join(File.dirname(__FILE__), "middleman-slickmap", "templates"))
-            # tilt_template "slickmap.html.haml", File.join(Middleman::Server.build_dir, sitemap_url), { :force => true }
-          end
-          
         end
         alias :included :registered
       end
       
       module Helpers
+        def is_blog_article?
+          !current_article_title.blank?
+        end
+        
         def blog_title
         end
         
