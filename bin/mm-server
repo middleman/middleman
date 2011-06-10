@@ -66,20 +66,8 @@ if File.exists?(old_views) || File.exists?(old_public)
 end
 
 Middleman::Server.root = @current_path
-app = Middleman::Server.new
+options[:app]    = Middleman::Server.new
+# options[:server] = 'webrick'
 
-# TODO: Remove this
-require 'rubygems'
-
-unless defined?(JRUBY_VERSION)
-  require 'thin'
-  handler = Rack::Handler::Thin
-else
-  require 'kirk'
-  require 'rack/handler/kirk'
-  handler = Rack::Handler::Kirk
-end
-
-handler.run app, options do |inst|
-  puts "== The Middleman is standing watch on port #{options[:Port]}"
-end
+puts "== The Middleman is standing watch on port #{options[:Port]}"
+Rack::Server.new(options).start
