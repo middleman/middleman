@@ -1,27 +1,34 @@
 @import "compass"
-@import "blueprint"
+@import "susy"
 
-$font-color:         #2a2a2a
 $link-color:         #0388a6
 $link-hover-color:   #009ce0
-$link-focus-color:   $link-color
-$link-active-color:  $link-color
-$link-visited-color: $link-color
+$link-focus-color:   false
+$link-active-color:  false
+$link-visited-color: false
 
-$blueprint-font-family:  'Century Gothic', 'Apple Gothic', 'Helvetica Neue', arial, sans-serif
-$blueprint-font-size:    13px
-$blueprint-grid-columns: 12
-$blueprint-grid-width:   60px
-$blueprint-grid-margin:  20px
+$font-color:  #2a2a2a
+$font-family: 'Helvetica Neue', sans-serif
+$base-font-size:   12px
+$base-line-height: 18px
+
+$total-cols: 12
+$col-width: 4em
+$gutter-width: 1em
+$side-gutter-width: $gutter-width
 
 +global-reset
 
-+blueprint-typography
++establish-baseline
+
+body
+  font-family: $font-family
+  color: $font-color
 
 a
   +link-colors($link-color, $link-hover-color, $link-focus-color, $link-active-color, $link-visited-color)
 
-#frame
+#main
   padding: 50px
-  text-align: center
   +container
+  +susy-grid-background
