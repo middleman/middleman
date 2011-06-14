@@ -50,7 +50,7 @@ module Middleman::Features::DefaultHelpers
          else kind.to_s
        end
        source = source.to_s.gsub(/\s/, '')
-       ignore_extension = (asset_folder.to_s == kind.to_s) # don't append extension
+       ignore_extension = (kind == :images) # don't append extension
        source << ".#{kind}" unless ignore_extension or source =~ /\.#{kind}/
        result_path   = source if source =~ %r{^/} # absolute path
        result_path ||= asset_url(source, asset_folder)
