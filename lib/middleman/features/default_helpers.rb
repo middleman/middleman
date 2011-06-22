@@ -8,22 +8,40 @@ module Middleman::Features::DefaultHelpers
   
   module Helpers
     def auto_stylesheet_link_tag(separator="/")
+      auto_tag(:css, separator) do |path|
+        stylesheet_link_tag path
+      end
+    end
+
+    def auto_javascript_include_tag(separator="/")
+      auto_tag(:js, separator) do |path|
+        javascript_include_tag path
+      end
+    end
+
+    def auto_tag(asset_ext, separator="/", asset_dir = '')
       path = request.path_info.dup
       path << self.class.index_file if path.match(%r{/$})
       path = path.gsub(%r{^/}, '')
       path = path.gsub(File.extname(path), '')
       path = path.gsub("/", separator)
+      path << ".#{asset_ext}"
 
-      css_file = File.join(self.class.views, self.class.css_dir, "#{path}.css")
-      sass_file = File.join(self.class.views, self.class.css_dir, "#{path}.css.sass")
-      scss_file = File.join(self.class.views, self.class.css_dir, "#{path}.css.scss")
-      less_file = File.join(self.class.views, self.class.css_dir, "#{path}.css.less")
-    
-      if File.exists?(css_file) || File.exists?(sass_file) || File.exists?(scss_file) || File.exists?(less_file)
-        stylesheet_link_tag "#{path}.css"
+      parent_dir =
+        case asset_ext
+        when :js  then self.class.js_dir
+        when :css then self.class.css_dir
+        else asset_dir
+        end
+      
+      public_file = File.join(self.class.public, parent_dir, path)
+      views = File.join(self.class.views, parent_dir, "#{path}.*")
+
+      if File.exist?(public_file) || Dir[views].any?
+        yield path
       end
     end
-    
+
     def page_classes
       path = request.path_info.dup
       path << settings.index_file if path.match(%r{/$})
