@@ -7,12 +7,12 @@ module Middleman::Features::DefaultHelpers
   end
   
   module Helpers
-		def auto_stylesheet_link_tag(separator="/")
-			auto_tag(:css, separator) do |path|
+    def auto_stylesheet_link_tag(separator="/")
+      auto_tag(:css, separator) do |path|
         stylesheet_link_tag path
-			end
+      end
     end
-		
+    
     def auto_javascript_include_tag(separator="/")
       auto_tag(:js, separator) do |path|
         javascript_include_tag path
@@ -27,15 +27,15 @@ module Middleman::Features::DefaultHelpers
         end
       end
       path = request.path_info.dup
-			# If the basename of the request as no extension, assume we are serving a
-			# directory and join index_file to the path.
-			path = File.join(path, self.class.index_file) if File.extname(path).empty?
+      # If the basename of the request as no extension, assume we are serving a
+      # directory and join index_file to the path.
+      path = File.join(path, self.class.index_file) if File.extname(path).empty?
       path = path.gsub(%r{^/}, '')
       path = path.gsub(File.extname(path), ".#{asset_ext}")
       path = path.gsub("/", separator)
 
-			views = Dir[File.join(self.class.views, asset_dir, "#{path}*")]
-      yield path if views.any?
+      view = File.join(self.class.views, asset_dir, path)
+      yield path if File.exists?(view) or Dir["#{view}.*"].any?
     end
 
     def page_classes
