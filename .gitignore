@@ -8,3 +8,4 @@ pkg
 Gemfile.lock
 docs
 .rvmrc
+.*.swp
