@@ -78,7 +78,7 @@ module Middleman::Features
   autoload :Blog,                "middleman/features/blog"
   
   # Proxy web services requests in dev mode only
-  # autoload :Proxy,               "middleman/features/proxy"
+  autoload :Proxy,               "middleman/features/proxy"
   
   # Automatically resize images for mobile devises
   # autoload :TinySrc,             "middleman/features/tiny_src"

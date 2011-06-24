@@ -4,7 +4,19 @@ Bundler::GemHelper.install_tasks
 require 'cucumber/rake/task'
 
 Cucumber::Rake::Task.new(:cucumber, 'Run features that should pass') do |t|
-  t.cucumber_opts = "--color --tags ~@wip --strict --format #{ENV['CUCUMBER_FORMAT'] || 'pretty'}"
+  t.cucumber_opts = "--drb --color --tags ~@wip --strict --format #{ENV['CUCUMBER_FORMAT'] || 'pretty'}"
+end
+
+namespace :spork do
+ desc "start spork in background"
+ task :start do
+   sh %{spork &}
+ end
+
+ desc "stop spork"
+ task :stop do
+   Process.kill(:TERM, `ps -ef | grep spork | grep -v grep | awk '{ print $2 }'`.to_i)
+ end
 end
 
 #$LOAD_PATH.unshift 'lib'
@@ -12,7 +24,7 @@ end
 require 'rake/testtask'
 require 'rake/clean'
 
-task :test => :cucumber
+task :test => ["spork:start", "cucumber", "spork:stop"]
 
 # rocco depends on rdiscount, which makes me sad.
 unless defined?(JRUBY_VERSION)

@@ -9,25 +9,27 @@ module Middleman
       class << self
         def registered(app)
           app.after_feature_init do
+            views_root = File.basename(self.views)
             ::Compass.configuration do |config|
               config.cache_path            = File.join(self.root, ".sass-cache") # For sassc files
               config.project_path          = self.root
-              config.sass_dir              = File.join(File.basename(self.views), self.css_dir)
+              config.sass_dir              = File.join(views_root, self.css_dir)
               config.output_style          = :nested
-              config.fonts_dir             = File.join(File.basename(self.views), self.fonts_dir)
-              config.css_dir               = File.join(File.basename(self.views), self.css_dir)
-              config.images_dir            = File.join(File.basename(self.views), self.images_dir)      
+              config.fonts_dir             = File.join(views_root, self.fonts_dir)
+              config.css_dir               = File.join(views_root, self.css_dir)
+              config.images_dir            = File.join(views_root, self.images_dir)      
               config.http_images_path      = self.http_images_path rescue File.join(self.http_prefix || "/", self.images_dir)
               config.http_stylesheets_path = self.http_css_path rescue File.join(self.http_prefix || "/", self.css_dir)
-              config.asset_cache_buster { false }
+              config.asset_cache_buster :none
 
               config.add_import_path(config.sass_dir)
             end
 
             configure :build do
+              build_root = File.basename(self.build_dir)
               ::Compass.configuration do |config|
-                config.css_dir       = File.join(File.basename(self.build_dir), self.css_dir)
-                config.images_dir    = File.join(File.basename(self.build_dir), self.images_dir)
+                config.css_dir    = File.join(build_root, self.css_dir)
+                config.images_dir = File.join(build_root, self.images_dir)
               end
             end
           end

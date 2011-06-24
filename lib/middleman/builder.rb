@@ -84,7 +84,25 @@ module Middleman
     def handle_directory(lookup)
       lookup = File.join(lookup, '*')
       
-      Dir[lookup].sort.each do |file_source|
+      results = Dir[lookup].sort do |a, b|
+        simple_a = a.gsub(Middleman::Server.root + "/", '')
+                    .gsub(Middleman::Server.views + "/", '') 
+        simple_b = b.gsub(Middleman::Server.root + "/", '')
+                    .gsub(Middleman::Server.views + "/", '')
+        
+        a_dir = simple_a.split("/").first
+        b_dir = simple_b.split("/").first
+        
+        if a_dir == Middleman::Server.images_dir
+          -1
+        elsif b_dir == Middleman::Server.images_dir
+          1
+        else
+          0
+        end
+      end
+      
+      results.each do |file_source|
         if File.directory?(file_source)
           handle_directory(file_source)
           next
