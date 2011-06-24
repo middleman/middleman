@@ -36,6 +36,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency("coffee-script", ["~> 2.2.0"])
   s.add_runtime_dependency("httparty", ["~> 0.7.0"])
   s.add_development_dependency("cucumber", ["~> 0.10.0"])
+  s.add_development_dependency("rake", ["0.8.7"])
   s.add_development_dependency("rspec", [">= 0"])
   s.add_development_dependency("rocco", [">= 0"]) unless defined?(JRUBY_VERSION)
 end
