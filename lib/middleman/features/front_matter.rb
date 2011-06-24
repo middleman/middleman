@@ -7,11 +7,14 @@ module Middleman::Features::FrontMatter
       app.extend ClassMethods
       
       ::Tilt::register MarukuTemplate, 'markdown', 'mkd', 'md'
+      ::Tilt::register MarukuTemplate, 'markdown', 'mkd', 'md'
       ::Tilt::register KramdownTemplate, 'markdown', 'mkd', 'md'
       ::Tilt::register BlueClothTemplate, 'markdown', 'mkd', 'md'
       ::Tilt::register RedcarpetTemplate, 'markdown', 'mkd', 'md'
       ::Tilt::register RDiscountTemplate, 'markdown', 'mkd', 'md'
       ::Tilt::register RedClothTemplate, 'textile'
+      ::Tilt::register ERBTemplate,    'erb', 'rhtml'
+      ::Tilt::register ErubisTemplate, 'erb', 'rhtml', 'erubis'
     end
     alias :included :registered
   end
@@ -64,6 +67,15 @@ module Middleman::Features::FrontMatter
   
   # TEXTILE
   class RedClothTemplate < ::Tilt::RedClothTemplate
+    include Middleman::Features::FrontMatter::YamlAware
+  end
+
+  # ERb
+  class ERBTemplate < ::Tilt::ERBTemplate
+    include Middleman::Features::FrontMatter::YamlAware
+  end
+  
+  class ErubisTemplate < ::Tilt::ErubisTemplate
     include Middleman::Features::FrontMatter::YamlAware
   end
 end

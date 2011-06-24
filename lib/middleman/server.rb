@@ -49,6 +49,8 @@ module Middleman
     # Activate Webservices Proxy package
     # register Middleman::Features::Proxy
     
+    register Middleman::Features::FrontMatter
+    
     # Activate Lorem helpers
     register Middleman::Features::Lorem
     

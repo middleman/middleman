@@ -1,6 +1,7 @@
 require "sass"
 require "sass/plugin"
 require "compass"
+require "susy"
 
 module Middleman
   module Renderers

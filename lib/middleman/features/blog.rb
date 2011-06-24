@@ -4,10 +4,7 @@ module Middleman
   module Features
     module Blog
       class << self
-        def registered(app)
-          # Depend on FrontMatter
-          app.activate Middleman::Features::FrontMatter
-          
+        def registered(app)          
           # Include helpers
           app.helpers Middleman::Features::Blog::Helpers
           

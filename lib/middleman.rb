@@ -19,7 +19,7 @@
 # * Sass                       (.sass)
 # * Scss                       (.scss)
 # * Haml                       (.haml)
-# * Sass                       (.sass)
+# * Slim                       (.slim)
 # * Less CSS                   (.less)
 # * Builder                    (.builder)
 # * Liquid                     (.liquid)
