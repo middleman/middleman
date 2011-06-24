@@ -9,3 +9,4 @@ Gemfile.lock
 docs
 .rvmrc
 fixtures/test-app/build
+.*.swp
