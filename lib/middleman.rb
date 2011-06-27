@@ -68,6 +68,8 @@ module Middleman
     autoload :Haml, "middleman/renderers/haml"
     autoload :Sass, "middleman/renderers/sass"
     autoload :Slim, "middleman/renderers/slim"
+    autoload :Markdown, "middleman/renderers/markdown"
+    autoload :CoffeeScript, "middleman/renderers/coffee_script"
   end
 
   # Features API

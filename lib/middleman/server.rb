@@ -78,6 +78,8 @@ module Middleman
     register Middleman::Renderers::Slim
     register Middleman::Renderers::Haml
     register Middleman::Renderers::Sass
+    register Middleman::Renderers::Markdown
+    register Middleman::Renderers::CoffeeScript
     
     # Rack helper for adding mime-types during local preview
     def self.mime(ext, type)

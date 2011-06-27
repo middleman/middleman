@@ -44,23 +44,7 @@ module Middleman::Features::FrontMatter
     end
   end
 
-  # MARKDOWN
-  class MarukuTemplate < ::Tilt::MarukuTemplate
-    include Middleman::Features::FrontMatter::YamlAware
-  end
-  
-  class KramdownTemplate < ::Tilt::KramdownTemplate
-    include Middleman::Features::FrontMatter::YamlAware
-  end
-  
-  class BlueClothTemplate < ::Tilt::BlueClothTemplate
-    include Middleman::Features::FrontMatter::YamlAware
-  end
-  
-  class RedcarpetTemplate < ::Tilt::RedcarpetTemplate
-    include Middleman::Features::FrontMatter::YamlAware
-  end
-  
+  # MARKDOWN  
   class RDiscountTemplate < ::Tilt::RDiscountTemplate
     include Middleman::Features::FrontMatter::YamlAware
   end
