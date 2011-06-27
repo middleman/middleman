@@ -186,8 +186,12 @@ module Middleman
       
       status 404
     rescue Padrino::Rendering::TemplateNotFound
-      $stderr.puts "File not found: #{request.path}"
-      status 404
+      if settings.environment == :development
+        raise $!
+      else
+        $stderr.puts "File not found: #{request.path}"
+        status 404
+      end
     end
   end
 end

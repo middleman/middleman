@@ -85,10 +85,8 @@ module Middleman
       lookup = File.join(lookup, '*')
       
       results = Dir[lookup].sort do |a, b|
-        simple_a = a.gsub(Middleman::Server.root + "/", '')
-                    .gsub(Middleman::Server.views + "/", '') 
-        simple_b = b.gsub(Middleman::Server.root + "/", '')
-                    .gsub(Middleman::Server.views + "/", '')
+        simple_a = a.gsub(Middleman::Server.root + "/", '').gsub(Middleman::Server.views + "/", '') 
+        simple_b = b.gsub(Middleman::Server.root + "/", '').gsub(Middleman::Server.views + "/", '')
         
         a_dir = simple_a.split("/").first
         b_dir = simple_b.split("/").first
