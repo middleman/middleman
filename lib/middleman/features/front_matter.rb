@@ -6,15 +6,10 @@ module Middleman::Features::FrontMatter
     def registered(app)
       app.extend ClassMethods
       
-      ::Tilt::register MarukuTemplate, 'markdown', 'mkd', 'md'
-      ::Tilt::register MarukuTemplate, 'markdown', 'mkd', 'md'
-      ::Tilt::register KramdownTemplate, 'markdown', 'mkd', 'md'
-      ::Tilt::register BlueClothTemplate, 'markdown', 'mkd', 'md'
-      ::Tilt::register RedcarpetTemplate, 'markdown', 'mkd', 'md'
       ::Tilt::register RDiscountTemplate, 'markdown', 'mkd', 'md'
-      ::Tilt::register RedClothTemplate, 'textile'
-      ::Tilt::register ERBTemplate,    'erb', 'rhtml'
-      ::Tilt::register ErubisTemplate, 'erb', 'rhtml', 'erubis'
+      ::Tilt::register RedClothTemplate,  'textile'
+      ::Tilt::register ERBTemplate,       'erb', 'rhtml'
+      ::Tilt::register ErubisTemplate,    'erb', 'rhtml', 'erubis'
     end
     alias :included :registered
   end
@@ -44,7 +39,7 @@ module Middleman::Features::FrontMatter
     end
   end
 
-  # MARKDOWN  
+  # MARKDOWN
   class RDiscountTemplate < ::Tilt::RDiscountTemplate
     include Middleman::Features::FrontMatter::YamlAware
   end
