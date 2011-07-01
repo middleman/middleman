@@ -5,3 +5,8 @@ Feature: Support SCSS Syntax
    Given the Server is running
    When I go to "/stylesheets/site_scss.css"
    Then I should see "html"
+
+ Scenario: Rendering scss
+   Given the Server is running
+   When I go to "/stylesheets/layout.css"
+   Then I should see "html"

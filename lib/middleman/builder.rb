@@ -106,7 +106,7 @@ module Middleman
           next
         end
         
-        next if file_source.include?('layout')
+        next if file_source.include?('layout') && !file_source.include?('.css')
         
         # Skip partials prefixed with an underscore
         next unless file_source.gsub(Middleman::Server.root, '').split('/').select { |p| p[0,1] == '_' }.empty?
