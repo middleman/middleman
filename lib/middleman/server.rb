@@ -6,7 +6,6 @@ module Middleman
     # Basic Sinatra config
     set :app_file,    __FILE__
     set :root,        ENV["MM_DIR"] || Dir.pwd
-    set :reload,      false
     set :sessions,    false
     set :logging,     false
     set :environment, (ENV['MM_ENV'] && ENV['MM_ENV'].to_sym) || :development
@@ -48,6 +47,9 @@ module Middleman
     # Parse YAML from templates
     register Middleman::CoreExtensions::FrontMatter
     
+    # with_layout and page routing
+    register Middleman::CoreExtensions::Routing
+    
     set :default_extensions, [
       :lorem
     ]
@@ -60,55 +62,10 @@ module Middleman
       end
       
       super(option, value, &nil)
-    end    
-    
-    # Rack helper for adding mime-types during local preview
-    def self.mime(ext, type)
-      ext = ".#{ext}" unless ext.to_s[0] == ?.
-      ::Rack::Mime::MIME_TYPES[ext.to_s] = type
     end
     
     # Default layout name
     layout :layout
-    
-    def self.current_layout
-      @layout
-    end
-    
-    # Takes a block which allows many pages to have the same layout
-    # with_layout :admin do
-    #   page "/admin/"
-    #   page "/admin/login.html"
-    # end
-    def self.with_layout(layout_name, &block)
-      old_layout = current_layout
-      
-      layout(layout_name)
-      class_eval(&block) if block_given?
-    ensure
-      layout(old_layout)
-    end
-    
-    # The page method allows the layout to be set on a specific path
-    # page "/about.html", :layout => false
-    # page "/", :layout => :homepage_layout
-    def self.page(url, options={}, &block)
-      url = url.gsub(%r{#{settings.index_file}$}, "")
-      url = url.gsub(%r{(\/)$}, "") if url.length > 1
-      
-      paths = [url]
-      paths << "#{url}/" if url.length > 1 && url.split("/").last.split('.').length <= 1
-      paths << "/#{path_to_index(url)}"
-  
-      options[:layout] = current_layout if options[:layout].nil?
-
-      paths.each do |p|
-        get(p) do
-          return yield if block_given?
-          process_request(options)
-        end
-      end
-    end
 
     # This will match all requests not overridden in the project's config.rb
     not_found do

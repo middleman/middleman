@@ -91,6 +91,9 @@ module Middleman
     
     # Extended version of Padrino's rendering
     autoload :Rendering,      "middleman/core_extensions/rendering"
+  
+    # Pass custom options to views
+    autoload :Routing,        "middleman/core_extensions/routing"
   end
 
   module Features
