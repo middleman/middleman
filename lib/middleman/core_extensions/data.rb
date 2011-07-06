@@ -5,6 +5,7 @@ require "thor"
 module Middleman::CoreExtensions::Data
   class << self
     def registered(app)
+      app.set :data_dir, "data"
       app.extend ClassMethods
       app.helpers Helpers
     end
@@ -33,7 +34,7 @@ module Middleman::CoreExtensions::Data
       elsif @@remote_sources.has_key?(path.to_s)
         response = HTTParty.get(@@remote_sources[path.to_s]).parsed_response
       else
-        file_path = File.join(@app.class.root, "data", "#{path}.yml")
+        file_path = File.join(@app.class.root, @app.class.data_dir, "#{path}.yml")
         if File.exists? file_path
           response = YAML.load_file(file_path)
         end
