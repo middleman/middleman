@@ -33,6 +33,7 @@ module Middleman::CoreExtensions::Features
   # The Feature API is itself a Feature. Mind blowing!
   class << self
     def registered(app)
+      app.set :default_extensions, []
       app.extend ClassMethods
     end
     alias :included :registered
@@ -78,12 +79,11 @@ module Middleman::CoreExtensions::Features
       local_config = File.join(self.root, "config.rb")
       if File.exists? local_config
         $stderr.puts "== Reading:  Local config" if logging?
-        Middleman::Server.class_eval File.read(local_config)
+        class_eval File.read(local_config)
         set :app_file, File.expand_path(local_config)
       end
       
       # Add in defaults
-      $stderr.puts default_extensions
       default_extensions.each do |ext|
         activate ext
       end
