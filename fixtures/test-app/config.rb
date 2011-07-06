@@ -3,6 +3,7 @@ with_layout false do
   page "/inline-js.html"
   page "/inline-coffeescript.html"
   page "/slim.html"
+  page "/data.html"
 end
 
 get "/page-class.html" do

@@ -13,7 +13,7 @@ module Middleman::CoreExtensions::Data
   
   module Helpers
     def data
-      @@data ||= Middleman::CoreExtensions::Data::DataObject.new(self)
+      @@data ||= DataObject.new(self)
     end
   end
   
@@ -33,7 +33,7 @@ module Middleman::CoreExtensions::Data
       elsif @@remote_sources.has_key?(path.to_s)
         response = HTTParty.get(@@remote_sources[path.to_s]).parsed_response
       else
-        file_path = File.join(@app.class.root, "data", "#{path}.yml")      
+        file_path = File.join(@app.class.root, "data", "#{path}.yml")
         if File.exists? file_path
           response = YAML.load_file(file_path)
         end
@@ -82,11 +82,11 @@ module Middleman::CoreExtensions::Data
     #
     #     data.my_json
     def data_source(name, url)
-      Middleman::CoreExtensions::Data::DataObject.add_source(name, url)
+      DataObject.add_source(name, url)
     end
     
     def data_content(name, content)
-      Middleman::CoreExtensions::Data::DataObject.data_content(name, content)
+      DataObject.data_content(name, content)
     end
   end
 end
