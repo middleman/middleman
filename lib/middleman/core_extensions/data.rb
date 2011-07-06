@@ -2,18 +2,18 @@ require "yaml"
 require "httparty"
 require "thor"
 
-module Middleman::Features::Data
+module Middleman::CoreExtensions::Data
   class << self
     def registered(app)
       app.extend ClassMethods
-      app.helpers Middleman::Features::Data::Helpers
+      app.helpers Helpers
     end
     alias :included :registered
   end
   
   module Helpers
     def data
-      @@data ||= Middleman::Features::Data::DataObject.new(self)
+      @@data ||= Middleman::CoreExtensions::Data::DataObject.new(self)
     end
   end
   
@@ -82,11 +82,11 @@ module Middleman::Features::Data
     #
     #     data.my_json
     def data_source(name, url)
-      Middleman::Features::Data::DataObject.add_source(name, url)
+      Middleman::CoreExtensions::Data::DataObject.add_source(name, url)
     end
     
     def data_content(name, content)
-      Middleman::Features::Data::DataObject.data_content(name, content)
+      Middleman::CoreExtensions::Data::DataObject.data_content(name, content)
     end
   end
 end

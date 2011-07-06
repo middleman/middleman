@@ -1,7 +1,13 @@
-module Middleman::Features::DefaultHelpers
+require "padrino-helpers"
+
+module Middleman::CoreExtensions::DefaultHelpers
   class << self
     def registered(app)
-      app.helpers Middleman::Features::DefaultHelpers::Helpers
+      # Use Padrino Helpers
+      app.register Padrino::Helpers
+      
+      # Middleman Helpers
+      app.helpers Helpers
     end
     alias :included :registered
   end

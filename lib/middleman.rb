@@ -71,6 +71,15 @@ module Middleman
     autoload :Markdown, "middleman/renderers/markdown"
     autoload :CoffeeScript, "middleman/renderers/coffee_script"
   end
+  
+  module CoreExtensions
+    # DefaultHelpers are the built-in dynamic template helpers.
+    autoload :DefaultHelpers, "middleman/core_extensions/default_helpers"
+  
+    # Data looks at the data/ folder for YAML files and makes them available
+    # to dynamic requests.
+    autoload :Data,           "middleman/core_extensions/data"
+  end
 
   # Features API
   autoload :Features, "middleman/features"

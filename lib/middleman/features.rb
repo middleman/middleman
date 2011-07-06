@@ -43,9 +43,6 @@ module Middleman::Features
   # browser caches failing to update to your new content.
   autoload :CacheBuster,         "middleman/features/cache_buster"
 
-  # DefaultHelpers are the built-in dynamic template helpers.
-  autoload :DefaultHelpers,      "middleman/features/default_helpers"
-
   # AutomaticImageSizes inspects the images used in your dynamic templates and
   # automatically adds width and height attributes to their HTML elements.
   autoload :AutomaticImageSizes, "middleman/features/automatic_image_sizes"
@@ -66,10 +63,6 @@ module Middleman::Features
   # Lorem provides a handful of helpful prototyping methods to generate words,
   # paragraphs, fake images, names and email addresses.
   autoload :Lorem,               "middleman/features/lorem"
-
-  # Data looks at the data/ folder for YAML files and makes them available
-  # to dynamic requests.
-  autoload :Data,                "middleman/features/data"
 
   # Parse YAML metadata from templates
   autoload :FrontMatter,         "middleman/features/front_matter"

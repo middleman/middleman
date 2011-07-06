@@ -3,7 +3,6 @@ require "sinatra/base"
 
 # Use the padrino project's helpers
 require "padrino-core/application/rendering"
-require "padrino-helpers"
 
 module Middleman
   class Server < Sinatra::Base
@@ -34,17 +33,14 @@ module Middleman
     # Disable Padrino cache buster until explicitly enabled
     set :asset_stamp, false
     
-    # Use Padrino Helpers
-    register Padrino::Helpers
+    # Activate built-in helpers
+    register Middleman::CoreExtensions::DefaultHelpers
+    
+    # Activate Yaml Data package
+    register Middleman::CoreExtensions::Data
     
     # Activate custom features
     register Middleman::Features
-    
-    # Activate built-in helpers
-    register Middleman::Features::DefaultHelpers
-    
-    # Activate Yaml Data package
-    register Middleman::Features::Data
     
     # Activate Webservices Proxy package
     # register Middleman::Features::Proxy
