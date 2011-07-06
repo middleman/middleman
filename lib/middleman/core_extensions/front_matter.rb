@@ -1,7 +1,7 @@
 require "yaml"
 require "tilt"
 
-module Middleman::Features::FrontMatter
+module Middleman::CoreExtensions::FrontMatter
   class << self
     def registered(app)
       app.extend ClassMethods
@@ -41,20 +41,20 @@ module Middleman::Features::FrontMatter
 
   # MARKDOWN
   class RDiscountTemplate < ::Tilt::RDiscountTemplate
-    include Middleman::Features::FrontMatter::YamlAware
+    include Middleman::CoreExtensions::FrontMatter::YamlAware
   end
   
   # TEXTILE
   class RedClothTemplate < ::Tilt::RedClothTemplate
-    include Middleman::Features::FrontMatter::YamlAware
+    include Middleman::CoreExtensions::FrontMatter::YamlAware
   end
 
   # ERb
   class ERBTemplate < ::Tilt::ERBTemplate
-    include Middleman::Features::FrontMatter::YamlAware
+    include Middleman::CoreExtensions::FrontMatter::YamlAware
   end
   
   class ErubisTemplate < ::Tilt::ErubisTemplate
-    include Middleman::Features::FrontMatter::YamlAware
+    include Middleman::CoreExtensions::FrontMatter::YamlAware
   end
 end

@@ -1,9 +1,6 @@
 # We're riding on Sinatra, so let's include it.
 require "sinatra/base"
 
-# Use the padrino project's helpers
-require "padrino-core/application/rendering"
-
 module Middleman
   class Server < Sinatra::Base
     # Basic Sinatra config
@@ -33,49 +30,34 @@ module Middleman
     # Disable Padrino cache buster until explicitly enabled
     set :asset_stamp, false
     
+    # Activate custom features
+    register Middleman::CoreExtensions::Features
+    
+    # Setup custom rendering
+    register Middleman::CoreExtensions::Rendering
+    
     # Activate built-in helpers
     register Middleman::CoreExtensions::DefaultHelpers
     
     # Activate Yaml Data package
     register Middleman::CoreExtensions::Data
     
-    # Activate custom features
-    register Middleman::Features
+    # Parse YAML from templates
+    register Middleman::CoreExtensions::FrontMatter
     
-    # Activate Webservices Proxy package
-    # register Middleman::Features::Proxy
-    
-    register Middleman::Features::FrontMatter
-    
-    # Activate Lorem helpers
-    register Middleman::Features::Lorem
-    
-    # Tilt-aware renderer
-    register Padrino::Rendering
+    set :default_extensions, [
+      :lorem
+    ]
     
     # Override Sinatra's set to accept a block
+    # Specifically for the asset_host feature
     def self.set(option, value=self, &block)
       if block_given?
         value = Proc.new { block }
       end
       
       super(option, value, &nil)
-    end
-    
-    # An array of callback procs to run after all features have been setup
-    @@run_after_features = []
-    
-    # Add a block/proc to be run after features have been setup
-    def self.after_feature_init(&block)
-      @@run_after_features << block
-    end
-    
-    # Activate custom renderers
-    register Middleman::Renderers::Slim
-    register Middleman::Renderers::Haml
-    register Middleman::Renderers::Sass
-    register Middleman::Renderers::Markdown
-    register Middleman::Renderers::CoffeeScript
+    end    
     
     # Rack helper for adding mime-types during local preview
     def self.mime(ext, type)
@@ -195,20 +177,3 @@ module Middleman
 end
 
 require "middleman/assets"
-
-# The Rack App
-class Middleman::Server
-  def self.new(*args, &block)  
-    # Check for and evaluate local configuration
-    local_config = File.join(self.root, "config.rb")
-    if File.exists? local_config
-      $stderr.puts "== Reading:  Local config" if logging?
-      Middleman::Server.class_eval File.read(local_config)
-      set :app_file, File.expand_path(local_config)
-    end
-    
-    @@run_after_features.each { |block| class_eval(&block) }
-    
-    super
-  end
-end
