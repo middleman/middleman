@@ -3,20 +3,20 @@ module Middleman::Features::RelativeAssets
     def registered(app)
       ::Compass.configuration.relative_assets = true
 
-      Middleman::Assets.register :relative_assets do |path, prefix, request|
+      app.register_asset_handler :relative_assets do |path, prefix, request|
         begin
-          prefix = Middleman::Server.images_dir if prefix == Middleman::Server.http_images_path
+          prefix = app.images_dir if prefix == app.http_images_path
         rescue
         end
 
         if path.include?("://")
-          Middleman::Assets.before(:relative_assets, path, prefix, request)
+          app.before_asset_handler(:relative_assets, path, prefix, request)
         elsif path[0,1] == "/"
           path
         else
           path = File.join(prefix, path) if prefix.length > 0
           request_path = request.path_info.dup
-          request_path << Middleman::Server.index_file if path.match(%r{/$})
+          request_path << app.index_file if path.match(%r{/$})
           request_path.gsub!(%r{^/}, '')
           parts = request_path.split('/')
 

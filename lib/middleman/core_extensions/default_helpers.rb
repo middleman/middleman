@@ -56,10 +56,6 @@ module Middleman::CoreExtensions::DefaultHelpers
       classes.join(' ')
     end
     
-    def asset_url(path, prefix="")
-      Middleman::Assets.get_url(path, prefix, request)
-    end
-    
     # Padrino's asset handling needs to pass through ours
     def asset_path(kind, source)
        return source if source =~ /^http/

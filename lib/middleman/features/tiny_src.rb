@@ -1,8 +1,8 @@
 module Middleman::Features::TinySrc
   class << self
     def registered(app)
-      Middleman::Assets.register :tiny_src do |path, prefix, request|
-        original_output = Middleman::Assets.before(:tiny_src, path, prefix, request)
+      app.register_asset_handler :tiny_src do |path, prefix, request|
+        original_output = app.before_asset_handler(:tiny_src, path, prefix, request)
         "http://i.tinysrc.mobi/#{original_output}"
       end
     end

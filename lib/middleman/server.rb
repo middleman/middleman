@@ -36,6 +36,9 @@ module Middleman
     # Setup custom rendering
     register Middleman::CoreExtensions::Rendering
     
+    # Setup asset path pipeline
+    register Middleman::CoreExtensions::Assets
+    
     # Activate built-in helpers
     register Middleman::CoreExtensions::DefaultHelpers
     
@@ -175,5 +178,3 @@ module Middleman
     end
   end
 end
-
-require "middleman/assets"

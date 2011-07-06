@@ -76,6 +76,9 @@ module Middleman
     # Custom Feature API
     autoload :Features,      "middleman/core_extensions/features"
   
+    # Asset Path Pipeline
+    autoload :Assets,        "middleman/core_extensions/assets"
+  
     # DefaultHelpers are the built-in dynamic template helpers.
     autoload :DefaultHelpers, "middleman/core_extensions/default_helpers"
   
