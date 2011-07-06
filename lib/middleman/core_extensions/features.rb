@@ -83,6 +83,7 @@ module Middleman::CoreExtensions::Features
       end
       
       # Add in defaults
+      $stderr.puts default_extensions
       default_extensions.each do |ext|
         activate ext
       end
