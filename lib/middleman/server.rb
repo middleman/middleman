@@ -43,11 +43,11 @@ module Middleman
     # Activate Yaml Data package
     register Middleman::CoreExtensions::Data
     
-    # Parse YAML from templates
-    register Middleman::CoreExtensions::FrontMatter
-    
     # with_layout and page routing
     register Middleman::CoreExtensions::Routing
+    
+    # Parse YAML from templates
+    register Middleman::CoreExtensions::FrontMatter
     
     set :default_extensions, [
       :lorem
@@ -92,6 +92,8 @@ module Middleman
   private
     # Internal method to look for templates and evaluate them if found
     def process_request(options={})
+      options.merge!(request['custom_options'] || {})
+      
       old_layout = settings.current_layout
       settings.layout(options[:layout]) if !options[:layout].nil?
       layout = settings.fetch_layout_path.to_sym

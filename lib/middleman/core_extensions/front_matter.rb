@@ -9,18 +9,21 @@ module Middleman::CoreExtensions::FrontMatter
       ::Tilt::register RDiscountTemplate, 'markdown', 'mkd', 'md'
       ::Tilt::register RedClothTemplate,  'textile'
       ::Tilt::register ERBTemplate,       'erb', 'rhtml'
-      ::Tilt::register ErubisTemplate,    'erb', 'rhtml', 'erubis'
+      ::Tilt::register SlimTemplate,      'slim'
+      ::Tilt::register HamlTemplate,      'haml'
       
       app.before do
         result = resolve_template(request.path_info, :raise_exceptions => false)
         if result
+          extensionless_path, template_engine = result
           full_file_path = "#{extensionless_path}.#{template_engine}"
           system_path = File.join(settings.views, full_file_path)
           data, content = app.parse_front_matter(File.read(system_path))
       
+          request['custom_options'] = {}
           %w(layout layout_engine).each do |opt|
             if data.has_key?(opt)
-              options[opt.to_sym] = data.delete(opt)
+              request['custom_options'][opt.to_sym] = data.delete(opt)
             end
           end
       
@@ -57,22 +60,23 @@ module Middleman::CoreExtensions::FrontMatter
     end
   end
 
-  # MARKDOWN
   class RDiscountTemplate < ::Tilt::RDiscountTemplate
     include Middleman::CoreExtensions::FrontMatter::YamlAware
   end
   
-  # TEXTILE
   class RedClothTemplate < ::Tilt::RedClothTemplate
     include Middleman::CoreExtensions::FrontMatter::YamlAware
   end
-
-  # ERb
+ 
   class ERBTemplate < ::Tilt::ERBTemplate
     include Middleman::CoreExtensions::FrontMatter::YamlAware
   end
+
+  class HamlTemplate < ::Tilt::HamlTemplate
+    include Middleman::CoreExtensions::FrontMatter::YamlAware
+  end
   
-  class ErubisTemplate < ::Tilt::ErubisTemplate
+  class SlimTemplate < ::Slim::Template
     include Middleman::CoreExtensions::FrontMatter::YamlAware
   end
 end
