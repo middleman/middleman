@@ -2,6 +2,11 @@ module Middleman::CoreExtensions::Routing
   class << self
     def registered(app)
       app.extend ClassMethods
+      
+      # Normalize the path and add index if we're looking at a directory
+      app.before do
+        request.path_info = self.class.path_to_index(request.path)
+      end
     end
     alias :included :registered
   end
@@ -9,6 +14,14 @@ module Middleman::CoreExtensions::Routing
   module ClassMethods
     def current_layout
       @layout
+    end
+    
+    def path_to_index(path)
+      parts = path ? path.split('/') : []
+      if parts.last.nil? || parts.last.split('.').length == 1
+        path = File.join(path, settings.index_file) 
+      end
+      path.gsub(%r{^/}, '')
     end
   
     # Takes a block which allows many pages to have the same layout
@@ -34,7 +47,7 @@ module Middleman::CoreExtensions::Routing
     
       paths = [url]
       paths << "#{url}/" if url.length > 1 && url.split("/").last.split('.').length <= 1
-      paths << "/#{path_to_index(url)}"
+      paths << "#{path_to_index(url)}"
 
       options[:layout] = current_layout if options[:layout].nil?
 

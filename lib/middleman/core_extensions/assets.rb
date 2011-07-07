@@ -1,6 +1,9 @@
 module Middleman::CoreExtensions::Assets
   class << self
     def registered(app)
+      # Disable Padrino cache buster until explicitly enabled
+      app.set :asset_stamp, false
+      
       app.extend ClassMethods
       
       app.helpers Helpers
