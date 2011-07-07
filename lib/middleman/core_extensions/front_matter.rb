@@ -10,21 +10,24 @@ module Middleman::CoreExtensions::FrontMatter
       ::Tilt::register RedClothTemplate,  'textile'
       ::Tilt::register ERBTemplate,       'erb', 'rhtml'
       ::Tilt::register ErubisTemplate,    'erb', 'rhtml', 'erubis'
-      # 
-      # app.before do 
-      #   full_file_path = "#{extensionless_path}.#{template_engine}"
-      #   system_path = File.join(settings.views, full_file_path)
-      #   data, content = self.class.parse_front_matter(File.read(system_path))
-      # 
-      #   %w(layout layout_engine).each do |opt|
-      #     if data.has_key?(opt)
-      #       options[opt.to_sym] = data.delete(opt)
-      #     end
-      #   end
-      # 
-      #   # Forward remaining data to helpers
-      #   self.class.data_content("page", data)
-      # end
+      
+      app.before do
+        result = resolve_template(request.path_info, :raise_exceptions => false)
+        if result
+          full_file_path = "#{extensionless_path}.#{template_engine}"
+          system_path = File.join(settings.views, full_file_path)
+          data, content = app.parse_front_matter(File.read(system_path))
+      
+          %w(layout layout_engine).each do |opt|
+            if data.has_key?(opt)
+              options[opt.to_sym] = data.delete(opt)
+            end
+          end
+      
+          # Forward remaining data to helpers
+          app.data_content("page", data)
+        end
+      end
     end
     alias :included :registered
   end
