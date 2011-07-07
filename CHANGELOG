@@ -1,6 +1,8 @@
 2.0.0
 =====
 
+- Use sinatra before/after hooks for Blog and FrontMatter
+- Converted a lot of Middleman::Server in CoreExtensions
 - Combine views/ and public/ into a single source/ folder.
 - Support YAML front-matter
 - Blog-aware

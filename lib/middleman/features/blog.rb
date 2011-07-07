@@ -10,11 +10,11 @@ module Middleman
 
           app.after_feature_init do
             if !app.settings.respond_to? :blog_permalink
-              app.set :blog_permalink, "/:year/:month/:day/:title.html"
+              app.set :blog_permalink, ":year/:month/:day/:title.html"
             end
 
             if !app.settings.respond_to? :blog_taglink
-              app.set :blog_taglink, "/tags/:tag.html"
+              app.set :blog_taglink, "tags/:tag.html"
             end
 
             if !app.settings.respond_to? :blog_layout
@@ -43,71 +43,58 @@ module Middleman
 
             $stderr.puts "== Blog: #{app.settings.blog_permalink}"
 
-            articles_glob = File.join(app.views, app.settings.blog_permalink.gsub(/(:\w+)/, "*") + ".*")
+            app.before do
+              articles_glob = File.join(app.views, app.settings.blog_permalink.gsub(/(:\w+)/, "*") + ".*")
 
-            articles = Dir[articles_glob].map do |article|
-              template_content = File.read(article)
-              data, content = parse_front_matter(template_content)
-              data["date"] = Date.parse(data["date"])
+              articles = Dir[articles_glob].map do |article|
+                template_content = File.read(article)
+                data, content = app.parse_front_matter(template_content)
+                data["date"] = Date.parse(data["date"])
 
-              yaml_regex = /^(---\s*\n.*?\n?)^(---\s*$\n?)/m
-              data["raw"]  = template_content.split(yaml_regex).last
-              data["url"] = article.gsub(app.views, "").split(".html").first + ".html"
+                data["raw"] = content
+                data["url"] = article.gsub(app.views, "").split(".html").first + ".html"
 
-              all_content = Tilt.new(article).render
-              data["body"] = all_content.gsub!(app.settings.blog_summary_separator, "")
+                all_content = Tilt.new(article).render
+                data["body"] = all_content.gsub!(app.settings.blog_summary_separator, "")
 
-              sum = if data["raw"] =~ app.settings.blog_summary_separator
-                data["raw"].split(app.settings.blog_summary_separator).first
-              else
-                data["raw"].match(/(.{1,#{app.settings.blog_summary_length}}.*?)(\n|\Z)/m).to_s
-              end
+                sum = if data["raw"] =~ app.settings.blog_summary_separator
+                  data["raw"].split(app.settings.blog_summary_separator).first
+                else
+                  data["raw"].match(/(.{1,#{app.settings.blog_summary_length}}.*?)(\n|\Z)/m).to_s
+                end
 
-              engine = RDiscount.new(sum)
-              data["summary"] = engine.to_html
-              data
-            end.sort { |a, b| b["date"] <=> a["date"] }
+                engine = RDiscount.new(sum)
+                data["summary"] = engine.to_html
+                data
+              end.sort { |a, b| b["date"] <=> a["date"] }
 
-            tags = {}
-            articles.each do |article|
-              article["tags"] ||= ""
-              if !article["tags"].empty?
-                tags_array = article["tags"].split(',').map{|t| t.strip}
-                tags_array.each do |tag_title|
-                  tag_key = tag_title.parameterize
-                  tag_path = blog_taglink.gsub(/(:\w+)/, tag_key)
-                  (tags[tag_path] ||= {})["title"] = tag_title
-                  tags[tag_path]["ident"] = tag_key
-                  (tags[tag_path]["pages"] ||= {})[article["title"]] = article["url"]
+              tags = {}
+              articles.each do |article|
+                article["tags"] ||= ""
+                if !article["tags"].empty?
+                  tags_array = article["tags"].split(',').map{|t| t.strip}
+                  tags_array.each do |tag_title|
+                    tag_key = tag_title.parameterize
+                    tag_path = blog_taglink.gsub(/(:\w+)/, tag_key)
+                    (tags[tag_path] ||= {})["title"] = tag_title
+                    tags[tag_path]["ident"] = tag_key
+                    (tags[tag_path]["pages"] ||= {})[article["title"]] = article["url"]
+                  end
                 end
               end
+
+              app.data_content("blog", { :articles => articles, :tags => tags })
             end
-
-            app.data_content("blog", { :articles => articles, :tags => tags })
-
+            
             app.get(app.settings.blog_permalink) do
-              options = {}
-              options[:layout] = settings.blog_layout
-              options[:layout_engine] = settings.blog_layout_engine
-
-              extensionless_path, template_engine = resolve_template(request.path)
-
-              full_file_path = "#{extensionless_path}.#{template_engine}"
-              system_path = File.join(settings.views, full_file_path)
-              data, content = self.class.parse_front_matter(File.read(system_path))
-
-              # Forward remaining data to helpers
-              self.class.data_content("page", data)
-
-              output = render(request.path, options)
-
+              process_request({
+                :layout        => settings.blog_layout,
+                :layout_engine => settings.blog_layout_engine
+              })
+              
               # No need for separator on permalink page
-              output.gsub!(settings.blog_summary_separator, "")
-
-              status 200
-              output
+              body body.gsub!(settings.blog_summary_separator, "")
             end
-
           end
         end
         alias :included :registered

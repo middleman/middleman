@@ -82,16 +82,20 @@ module Middleman
           content_type mime_type(File.extname(request.path_info)), :charset => 'utf-8'
           status 200
           send_file File.join(Middleman::Server.views, request.path_info)
+          request["already_sent"] = true
         end
       else
         $stderr.puts "File not found: #{request.path_info}"
         status 404
+        request["already_sent"] = true
       end
     end
     
   private
     # Internal method to look for templates and evaluate them if found
     def process_request(options={})
+      return if request["already_sent"]
+      
       options.merge!(request['custom_options'] || {})
       
       old_layout = settings.current_layout
@@ -107,10 +111,10 @@ module Middleman
       if result
         content_type mime_type(File.extname(request.path_info)), :charset => 'utf-8'
         status 200
-        return result
+        body result
+      else
+        status 404
       end
-      
-      status 404
     end
   end
 end
