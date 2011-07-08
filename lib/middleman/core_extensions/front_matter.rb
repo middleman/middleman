@@ -7,10 +7,20 @@ module Middleman::CoreExtensions::FrontMatter
       app.extend ClassMethods
       
       ::Tilt::register RDiscountTemplate, 'markdown', 'mkd', 'md'
+      ::Tilt::register RedcarpetTemplate, 'markdown', 'mkd', 'md'
+      ::Tilt.prefer(RDiscountTemplate)
+      
       ::Tilt::register RedClothTemplate,  'textile'
+      ::Tilt.prefer(RedClothTemplate)
+      
       ::Tilt::register ERBTemplate,       'erb', 'rhtml'
+      ::Tilt.prefer(ERBTemplate)
+      
       ::Tilt::register SlimTemplate,      'slim'
+      ::Tilt.prefer(SlimTemplate)
+      
       ::Tilt::register HamlTemplate,      'haml'
+      ::Tilt.prefer(HamlTemplate)
       
       app.before do
         result = resolve_template(request.path_info, :raise_exceptions => false)
@@ -62,6 +72,9 @@ module Middleman::CoreExtensions::FrontMatter
   end
 
   class RDiscountTemplate < ::Tilt::RDiscountTemplate
+    include Middleman::CoreExtensions::FrontMatter::YamlAware
+  end
+  class RedcarpetTemplate < ::Tilt::RedcarpetTemplate
     include Middleman::CoreExtensions::FrontMatter::YamlAware
   end
   
