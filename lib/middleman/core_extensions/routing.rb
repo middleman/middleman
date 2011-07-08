@@ -11,11 +11,7 @@ module Middleman::CoreExtensions::Routing
     alias :included :registered
   end
   
-  module ClassMethods
-    def current_layout
-      @layout
-    end
-    
+  module ClassMethods    
     def path_to_index(path)
       parts = path ? path.split('/') : []
       if parts.last.nil? || parts.last.split('.').length == 1
@@ -30,12 +26,12 @@ module Middleman::CoreExtensions::Routing
     #   page "/admin/login.html"
     # end
     def with_layout(layout_name, &block)
-      old_layout = current_layout
+      old_layout = settings.layout
     
-      layout(layout_name)
+      set :layout, layout_name
       class_eval(&block) if block_given?
     ensure
-      layout(old_layout)
+      set :layout, old_layout
     end
   
     # The page method allows the layout to be set on a specific path
@@ -49,7 +45,7 @@ module Middleman::CoreExtensions::Routing
       paths << "#{url}/" if url.length > 1 && url.split("/").last.split('.').length <= 1
       paths << "#{path_to_index(url)}"
 
-      options[:layout] = current_layout if options[:layout].nil?
+      options[:layout] = settings.layout if options[:layout].nil?
 
       paths.each do |p|
         get(p) do

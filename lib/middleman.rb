@@ -136,6 +136,9 @@ module Middleman
 
     # Proxy web services requests in dev mode only
     autoload :Proxy,               "middleman/features/proxy"
+    
+    # Sprockets 2
+    # autoload :Sprockets,           "middleman/features/sprockets"
 
     # Automatically resize images for mobile devises
     # autoload :TinySrc,             "middleman/features/tiny_src"

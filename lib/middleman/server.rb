@@ -64,7 +64,7 @@ module Middleman
     end
     
     # Default layout name
-    layout :layout
+    set :layout, :layout
 
     # This will match all requests not overridden in the project's config.rb
     not_found do
@@ -98,15 +98,23 @@ module Middleman
       
       options.merge!(request['custom_options'] || {})
       
-      old_layout = settings.current_layout
-      settings.layout(options[:layout]) if !options[:layout].nil?
-      layout = settings.fetch_layout_path.to_sym
-      layout = false if options[:layout] == false or request.path_info =~ /\.(css|js)$/
+      old_layout = settings.layout
+      settings.set :layout, options[:layout] if !options[:layout].nil?
+      
+      layout = if settings.layout
+        if options[:layout] == false || request.path_info =~ /\.(css|js)$/
+          false
+        else
+          settings.fetch_layout_path(settings.layout).to_sym
+        end
+      else
+        false
+      end
       
       render_options = { :layout => layout }
       render_options[:layout_engine] = options[:layout_engine] if options.has_key? :layout_engine
       result = render(request.path_info, render_options)
-      settings.layout(old_layout)
+      settings.set :layout, old_layout
       
       if result
         content_type mime_type(File.extname(request.path_info)), :charset => 'utf-8'
