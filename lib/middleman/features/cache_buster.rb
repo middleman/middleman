@@ -25,7 +25,7 @@ module Middleman::Features::CacheBuster
         end
       end
 
-      app.after_feature_init do 
+      app.after_compass_init do 
         ::Compass.configuration do |config|
           config.asset_cache_buster do |path, real_path|
             real_path = real_path.path if real_path.is_a? File

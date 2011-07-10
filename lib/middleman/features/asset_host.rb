@@ -1,7 +1,7 @@
 module Middleman::Features::AssetHost
   class << self
     def registered(app)
-      app.after_feature_init do
+      app.after_compass_init do
         if app.asset_host.is_a?(Proc)
           ::Compass.configuration.asset_host(&app.asset_host)
         end

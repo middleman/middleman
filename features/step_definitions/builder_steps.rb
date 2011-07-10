@@ -14,7 +14,7 @@ end
 
 Given /^cleanup built test app$/ do
   target = File.join(File.dirname(File.dirname(File.dirname(__FILE__))), "fixtures", "test-app", "build")
-  # FileUtils.rm_rf(target)
+  FileUtils.rm_rf(target)
 end
 
 Then /^"([^"]*)" should exist and include "([^"]*)"$/ do |target_file, expected|

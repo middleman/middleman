@@ -1,41 +1,11 @@
 require "sass"
 require "sass/plugin"
-require "compass"
 
 module Middleman::Renderers::Sass
   class << self
     def registered(app)
-      # Susy grids
-      begin
-        require "susy"
-      rescue LoadError
-      end
-      
-      app.after_feature_init do
-        views_root = File.basename(app.views)
-        ::Compass.configuration do |config|
-          config.cache            = false # For sassc files
-          config.project_path          = app.root
-          config.sass_dir              = File.join(views_root, app.css_dir)
-          config.output_style          = :nested
-          config.fonts_dir             = File.join(views_root, app.fonts_dir)
-          config.css_dir               = File.join(views_root, app.css_dir)
-          config.images_dir            = File.join(views_root, app.images_dir)      
-          config.http_images_path      = app.http_images_path rescue File.join(app.http_prefix || "/", app.images_dir)
-          config.http_stylesheets_path = app.http_css_path rescue File.join(app.http_prefix || "/", app.css_dir)
-          config.asset_cache_buster :none
-
-          config.add_import_path(config.sass_dir)
-        end
-
-        # configure :build do
-        #   build_root = File.basename(self.build_dir)
-        #   ::Compass.configuration do |config|
-        #     config.css_dir    = File.join(build_root, self.css_dir)
-        #     config.images_dir = File.join(build_root, self.images_dir)
-        #   end
-        # end
-      end
+      # Default sass options
+      app.set :sass, {}
     end
     alias :included :registered
   end
@@ -44,14 +14,16 @@ module Middleman::Renderers::Sass
     def sass_options
       return super if basename.nil?
 
-      location_of_sass_file = Middleman::Server.environment == :build ? 
-                                File.join(Middleman::Server.root, Middleman::Server.build_dir) : 
-                                Middleman::Server.views
+      location_of_sass_file = if Middleman::Server.environment == :build
+        File.join(Middleman::Server.root, Middleman::Server.build_dir)
+      else
+        Middleman::Server.views
+      end
 
       parts = basename.split('.')
       parts.pop
       css_filename = File.join(location_of_sass_file, Middleman::Server.css_dir, parts.join("."))
-      super.merge(::Compass.configuration.to_sass_engine_options).merge(:css_filename => css_filename)
+      super.merge(Middleman::Server.settings.sass).merge(:css_filename => css_filename)
     end
 
     def evaluate(scope, locals, &block)
@@ -74,7 +46,7 @@ module Middleman::Renderers::Sass
   ::Tilt.prefer(ScssPlusCSSFilenameTemplate)
 end
 
-# Use compass settings in Haml filters
+# Use sass settings in Haml filters
 # Other, tilt-based filters (like those used in Slim) will
 # work automatically.
 module Middleman::Renderers::Haml
@@ -82,8 +54,8 @@ module Middleman::Renderers::Haml
     include ::Haml::Filters::Base
 
     def render(text)
-      compass_options = ::Compass.configuration.to_sass_engine_options
-      ::Sass::Engine.new(text, compass_options).render
+      sass_options = Middleman::Server.settings.sass
+      ::Sass::Engine.new(text, sass_options).render
     end
   end
 end

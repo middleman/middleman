@@ -3,6 +3,20 @@ require "sinatra/base"
 
 module Middleman
   class Server < Sinatra::Base
+    class << self
+      # Override Sinatra's set to accept a block
+      # Specifically for the asset_host feature
+      def set(option, value=self, &block)
+        if block_given?
+          value = Proc.new { block }
+        end
+      
+        super(option, value, &nil)
+      end
+      
+      def build?; environment == :build; end
+    end
+    
     # Basic Sinatra config
     set :app_file,    __FILE__
     set :root,        ENV["MM_DIR"] || Dir.pwd
@@ -28,11 +42,20 @@ module Middleman
     
     set :views, "source"
     
+    # Add Rack::Builder.map to Sinatra
+    register Middleman::CoreExtensions::RackMap
+    
     # Activate custom features
     register Middleman::CoreExtensions::Features
     
     # Setup custom rendering
     register Middleman::CoreExtensions::Rendering
+    
+    # Compass framework
+    register Middleman::CoreExtensions::Compass
+    
+    # Sprockets asset handling
+    register Middleman::CoreExtensions::Sprockets
     
     # Setup asset path pipeline
     register Middleman::CoreExtensions::Assets
@@ -52,16 +75,6 @@ module Middleman
     set :default_features, [
       :lorem
     ]
-    
-    # Override Sinatra's set to accept a block
-    # Specifically for the asset_host feature
-    def self.set(option, value=self, &block)
-      if block_given?
-        value = Proc.new { block }
-      end
-      
-      super(option, value, &nil)
-    end
     
     # Default layout name
     set :layout, :layout

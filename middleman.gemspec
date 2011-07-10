@@ -31,6 +31,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency("haml", ["~> 3.1.0"])
   s.add_runtime_dependency("sass", ["~> 3.1.0"])
   s.add_runtime_dependency("compass", ["~> 0.11.3"])
+  s.add_runtime_dependency("sprockets", ["2.0.0.beta.10"])
   s.add_runtime_dependency("httparty", ["~> 0.7.0"])
   s.add_development_dependency("spork", ["~> 0.9.0.rc8"])
   s.add_development_dependency("cucumber", ["~> 0.10.0"])

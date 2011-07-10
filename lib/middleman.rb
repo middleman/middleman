@@ -73,6 +73,9 @@ module Middleman
   end
   
   module CoreExtensions
+    # Add Rack::Builder.map support
+    autoload :RackMap,       "middleman/core_extensions/rack_map"
+    
     # Custom Feature API
     autoload :Features,      "middleman/core_extensions/features"
   
@@ -91,6 +94,12 @@ module Middleman
     
     # Extended version of Padrino's rendering
     autoload :Rendering,      "middleman/core_extensions/rendering"
+    
+    # Compass framework for Sass
+    autoload :Compass,         "middleman/core_extensions/compass"
+    
+    # Sprockets 2
+    autoload :Sprockets,       "middleman/core_extensions/sprockets"
   
     # Pass custom options to views
     autoload :Routing,        "middleman/core_extensions/routing"
@@ -130,9 +139,6 @@ module Middleman
 
     # Proxy web services requests in dev mode only
     autoload :Proxy,               "middleman/features/proxy"
-    
-    # Sprockets 2
-    # autoload :Sprockets,           "middleman/features/sprockets"
 
     # Automatically resize images for mobile devises
     # autoload :TinySrc,             "middleman/features/tiny_src"

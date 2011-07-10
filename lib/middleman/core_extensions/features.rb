@@ -84,7 +84,7 @@ module Middleman::CoreExtensions::Features
       end
       
       # Add in defaults
-      default_extensions.each do |ext|
+      default_features.each do |ext|
         activate ext
       end
       
