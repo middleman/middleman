@@ -25,11 +25,11 @@
 # page "/path/to/file.html", :layout => :otherlayout
 
 # Helpers
-helpers do
-  def some_helper(*args)
-    "Helping"
-  end
-end
+# helpers do
+#   def some_helper(*args)
+#     "Helping"
+#   end
+# end
 
 <% if options[:css_dir] != "stylesheets" -%>
 set :css_dir, "<%= options[:css_dir] -%>"
@@ -66,12 +66,10 @@ configure :build do
   # Use relative URLs
   # activate :relative_assets
   
-  # Compress PNGs after build (gem install middleman-smusher)
+  # Compress PNGs after build
+  # First: gem install middleman-smusher
   # require "middleman-smusher"
   # activate :smusher
-
-  # Generate ugly/obfuscated HTML from Haml
-  # activate :ugly_haml
   
   # Or use a different image path
   # set :http_path, "/Content/images/"

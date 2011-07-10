@@ -33,7 +33,7 @@ module Middleman::CoreExtensions::Features
   # The Feature API is itself a Feature. Mind blowing!
   class << self
     def registered(app)
-      app.set :default_extensions, []
+      app.set :default_features, []
       app.extend ClassMethods
     end
     alias :included :registered

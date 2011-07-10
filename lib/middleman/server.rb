@@ -49,7 +49,7 @@ module Middleman
     # Parse YAML from templates
     register Middleman::CoreExtensions::FrontMatter
     
-    set :default_extensions, [
+    set :default_features, [
       :lorem
     ]
     
