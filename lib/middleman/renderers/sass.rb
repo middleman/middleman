@@ -25,13 +25,13 @@ module Middleman
               config.add_import_path(config.sass_dir)
             end
 
-            configure :build do
-              build_root = File.basename(self.build_dir)
-              ::Compass.configuration do |config|
-                config.css_dir    = File.join(build_root, self.css_dir)
-                config.images_dir = File.join(build_root, self.images_dir)
-              end
-            end
+            # configure :build do
+            #   build_root = File.basename(self.build_dir)
+            #   ::Compass.configuration do |config|
+            #     config.css_dir    = File.join(build_root, self.css_dir)
+            #     config.images_dir = File.join(build_root, self.images_dir)
+            #   end
+            # end
           end
         end
         alias :included :registered
