@@ -1,21 +1,20 @@
-require "haml"
-require "coffee-filter"
+module Middleman::Renderers::Haml
+  class << self
+    def registered(app)
+      # Base library
+      require "haml"
 
-module Middleman
-  module Renderers
-    module Haml
-      class << self
-        def registered(app)
-          app.helpers Helpers
-        end
-        alias :included :registered
-      end
+      # Coffee-script filter for Haml
+      require "coffee-filter"
       
-      module Helpers
-        def haml_partial(name, options = {})
-          render(name, options)
-        end
-      end
+      app.helpers Helpers
+    end
+    alias :included :registered
+  end
+  
+  module Helpers
+    def haml_partial(name, options = {})
+      render(name, options)
     end
   end
 end
