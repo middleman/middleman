@@ -8,8 +8,8 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Thomas Reynolds"]
   s.email       = ["tdreyno@gmail.com"]
-  s.homepage    = "http://wiki.github.com/tdreyno/middleman"
-  s.summary     = "A static site generator based on Sinatra. Providing Haml, Sass, Compass, Less, Coffee Script and including minification, compression and cache busting."
+  s.homepage    = "http://middlemanapp.com"
+  s.summary     = "A static site generator based on Sinatra. Providing Haml, Sass, Compass, CoffeeScript and including minification, compression and cache busting."
 
   s.rubyforge_project = "middleman"
 
@@ -29,11 +29,8 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency("uglifier", ["~> 0.5.0"])
   s.add_runtime_dependency("slim", ["~> 0.9.4"])
   s.add_runtime_dependency("haml", ["~> 3.1.0"])
-  s.add_runtime_dependency("coffee-filter", ["~> 0.1.0"])
   s.add_runtime_dependency("sass", ["~> 3.1.0"])
   s.add_runtime_dependency("compass", ["~> 0.11.3"])
-  s.add_runtime_dependency("compass-susy-plugin", ["~> 0.9.0"])
-  s.add_runtime_dependency("coffee-script", ["~> 2.2.0"])
   s.add_runtime_dependency("httparty", ["~> 0.7.0"])
   s.add_development_dependency("spork", ["~> 0.9.0.rc8"])
   s.add_development_dependency("cucumber", ["~> 0.10.0"])

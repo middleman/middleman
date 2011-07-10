@@ -1,7 +1,17 @@
-# CodeRay syntax highlighting in Haml
-# activate :code_ray
+# Susy grids in Compass
+# First: gem install compass-susy-plugin
+# require 'susy'
 
-# Automatic sitemaps (gem install middleman-slickmap)
+# CodeRay syntax highlighting in Haml
+# First: gem install haml-coderay
+# require 'haml-coderay'
+
+# CoffeeScript filters in Haml
+# First: gem install coffee-filter
+# require 'coffee-filter'
+
+# Automatic sitemaps
+# First: gem install middleman-slickmap
 # require "middleman-slickmap"
 # activate :slickmap
 

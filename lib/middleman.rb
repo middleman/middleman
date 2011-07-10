@@ -101,22 +101,19 @@ module Middleman
     # relative to the root of the project or use an absolute URL.
     autoload :RelativeAssets,      "middleman/features/relative_assets"
 
-    # AssetHost allows you to setup multiple domains to host your static assets.
-    # Calls to asset paths in dynamic templates will then rotate through each of
-    # the asset servers to better spread the load.
+    # AssetHost allows you to setup multiple domains to host your static
+    # assets. Calls to asset paths in dynamic templates will then rotate
+    # through each of the asset servers to better spread the load.
     autoload :AssetHost,           "middleman/features/asset_host"
 
     # CacheBuster adds a query string to assets in dynamic templates to avoid
     # browser caches failing to update to your new content.
     autoload :CacheBuster,         "middleman/features/cache_buster"
 
-    # AutomaticImageSizes inspects the images used in your dynamic templates and
-    # automatically adds width and height attributes to their HTML elements.
+    # AutomaticImageSizes inspects the images used in your dynamic templates
+    # and automatically adds width and height attributes to their HTML
+    # elements.
     autoload :AutomaticImageSizes, "middleman/features/automatic_image_sizes"
-
-    # UglyHaml enables the non-indented output format from Haml templates. Useful
-    # for somewhat obfuscating the output and hiding the fact that you're using Haml.
-    autoload :UglyHaml,            "middleman/features/ugly_haml"
 
     # MinifyCss uses the YUI compressor to shrink CSS files
     autoload :MinifyCss,           "middleman/features/minify_css"
@@ -124,11 +121,8 @@ module Middleman
     # MinifyJavascript uses the YUI compressor to shrink JS files
     autoload :MinifyJavascript,    "middleman/features/minify_javascript"
 
-    # CodeRay is a syntax highlighter.
-    autoload :CodeRay,             "middleman/features/code_ray"
-
-    # Lorem provides a handful of helpful prototyping methods to generate words,
-    # paragraphs, fake images, names and email addresses.
+    # Lorem provides a handful of helpful prototyping methods to generate
+    # words, paragraphs, fake images, names and email addresses.
     autoload :Lorem,               "middleman/features/lorem"
 
     # Treat project as a blog
@@ -143,8 +137,8 @@ module Middleman
     # Automatically resize images for mobile devises
     # autoload :TinySrc,             "middleman/features/tiny_src"
 
-    # LiveReload will auto-reload browsers with the live reload extension installed after changes
-    # Currently disabled and untested.
+    # LiveReload will auto-reload browsers with the live reload extension
+    # installed after changes. Currently disabled and untested.
     # autoload :LiveReload,          "middleman/features/live_reload"
   end
 end

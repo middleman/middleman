@@ -5,9 +5,20 @@ module Middleman::Renderers::Haml
       require "haml"
 
       # Coffee-script filter for Haml
-      require "coffee-filter"
+      begin
+        require "coffee-filter"
+      rescue LoadError
+      end
+      
+      # Code-ray Syntax highlighting
+      begin
+        require 'haml-coderay'
+      rescue LoadError
+      end
       
       app.helpers Helpers
+      
+      #app.set :haml, app.settings.haml.merge({ :ugly_haml => true })
     end
     alias :included :registered
   end
