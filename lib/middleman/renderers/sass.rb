@@ -14,7 +14,7 @@ module Middleman::Renderers::Sass
     def sass_options
       return super if basename.nil?
 
-      location_of_sass_file = if Middleman::Server.environment == :build
+      location_of_sass_file = if Middleman::Server.build?
         File.join(Middleman::Server.root, Middleman::Server.build_dir)
       else
         Middleman::Server.views

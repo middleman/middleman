@@ -16,7 +16,7 @@ module Middleman::Features::CacheBuster
 
           if File.readable?(real_path_static)
             http_path << "?" + File.mtime(real_path_static).strftime("%s") 
-          elsif app.environment == :build
+          elsif app.build?
             real_path_dynamic = File.join(app.root, app.build_dir, prefix, path)
             http_path << "?" + File.mtime(real_path_dynamic).strftime("%s") if File.readable?(real_path_dynamic)
           end

@@ -1,7 +1,7 @@
 module Middleman::Features::LiveReload
   class << self
     def registered(app)
-      return unless Middleman::Server.environment == :development
+      return unless Middleman::Server.development?
 
       begin
         require 'livereload'

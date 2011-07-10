@@ -14,6 +14,7 @@ module Middleman
         super(option, value, &nil)
       end
       
+      # Convenience method to check if we're in build mode
       def build?; environment == :build; end
     end
     
