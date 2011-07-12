@@ -8,7 +8,7 @@ module Middleman::CoreExtensions::FrontMatter
       
       ::Tilt::register RDiscountTemplate, 'markdown', 'mkd', 'md'
       ::Tilt::register RedcarpetTemplate, 'markdown', 'mkd', 'md'
-      ::Tilt.prefer(RDiscountTemplate)
+      app.set :markdown_engine, RDiscountTemplate
       
       ::Tilt::register RedClothTemplate,  'textile'
       ::Tilt.prefer(RedClothTemplate)
