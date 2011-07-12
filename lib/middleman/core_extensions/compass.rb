@@ -14,7 +14,8 @@ module Middleman::CoreExtensions::Compass
       app.after_feature_init do
         views_root = File.basename(app.views)
         ::Compass.configuration do |config|
-          config.cache            = false # For sassc files
+          # config.cache            = false # For sassc files
+          config.cache_path            = File.join(app.root, ".sass-cache")
           config.project_path          = app.root
           config.sass_dir              = File.join(views_root, app.css_dir)
           config.output_style          = :nested
