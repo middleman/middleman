@@ -1,9 +1,8 @@
 2.0.0
 =====
 
-- Use sinatra before/after hooks for Blog and FrontMatter
-- Converted a lot of Middleman::Server in CoreExtensions
+- Sprockets JS
+- Refactored Dynamically Reloadable Core
 - Combine views/ and public/ into a single source/ folder.
 - Support YAML front-matter
-- Blog-aware
-- Replaced Blueprint CSS templates with Susy
+- Blog-aware Feature
