@@ -85,6 +85,12 @@ module Middleman
       process_request
     end
     
+    # Custom 404 handler (to be styled)
+    error Sinatra::NotFound do
+      content_type 'text/html'
+      "<html><body><h1>File Not Found</h1></body>"
+    end
+    
     # See if Tilt cannot handle this file
     before do
       result = resolve_template(request.path_info, :raise_exceptions => false)
