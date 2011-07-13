@@ -42,31 +42,35 @@ module Middleman::CoreExtensions::FrontMatter
           app.data_content("page", data)
         end
       end
+      
+      def parse_front_matter(content)
+        yaml_regex = /^(---\s*\n.*?\n?)^(---\s*$\n?)/m
+        if content =~ yaml_regex
+          begin
+            data = YAML.load($1)
+          rescue => e
+            puts "YAML Exception: #{e.message}"
+          end
+
+          content = content.split(yaml_regex).last
+        end
+
+        data ||= {}
+        [data, content]
+      end
     end
     alias :included :registered
   end
   
   module ClassMethods
     def parse_front_matter(content)
-      yaml_regex = /^(---\s*\n.*?\n?)^(---\s*$\n?)/m
-      if content =~ yaml_regex
-        begin
-          data = YAML.load($1)
-        rescue => e
-          puts "YAML Exception: #{e.message}"
-        end
-        
-        content = content.split(yaml_regex).last
-      end
-
-      data ||= {}
-      [data, content]
+      Middleman::CoreExtensions::FrontMatter.parse_front_matter(content)
     end
   end
   
   module YamlAware
     def prepare
-      options, @data = Middleman::Server.parse_front_matter(@data)
+      options, @data = Middleman::CoreExtensions::FrontMatter.parse_front_matter(@data)
       super
     end
   end

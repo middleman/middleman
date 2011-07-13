@@ -1,7 +1,9 @@
 Given /^I am using an asset host$/ do
-  Middleman::Server.activate :asset_host
-  Middleman::Server.set :asset_host do |asset|
-    "http://assets%d.example.com" % (asset.hash % 4)
+  sandbox_server = Middleman.server do
+    activate :asset_host
+    set :asset_host do |asset|
+      "http://assets%d.example.com" % (asset.hash % 4)
+    end
   end
-  @browser = Rack::Test::Session.new(Rack::MockSession.new(Middleman::Server.new))
+  @browser = Rack::Test::Session.new(Rack::MockSession.new(sandbox_server.new))
 end

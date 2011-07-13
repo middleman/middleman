@@ -25,8 +25,9 @@ module Middleman::CoreExtensions::RackMap
       builder.use ::Rack::Head
       middleware.each { |c,a,b| builder.use(c, *a, &b) }
       maps.each { |p,b| builder.map(p, &b) }
+      app = self
       builder.map "/" do
-        run Middleman::Server.new!(*args, &bk)
+        run app.new!(*args, &bk)
       end
       builder
     end

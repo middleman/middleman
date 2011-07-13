@@ -50,27 +50,27 @@ module Middleman::CoreExtensions::Features
     #
     #     activate MyFeatureModule
     def activate(feature)
-      feature = feature.to_s if feature.is_a? Symbol
+      if feature.is_a? Symbol
+        feature = feature.to_s 
+      end
 
       if feature.is_a? String
         feature = feature.camelize
         feature = Middleman::Features.const_get(feature)
       end
-
+      
+      $stderr.puts "== Activating:  #{feature}" if logging?
       register feature
-    end
-
-    # Deprecated API. Please use `activate` instead.
-    def enable(feature_name)
-      $stderr.puts "Warning: Feature activation has been renamed from enable to activate"
-      activate(feature_name)
-      super(feature_name)
     end
     
     # Add a block/proc to be run after features have been setup
     def after_feature_init(&block)
       @run_after_features ||= []
       @run_after_features << block
+    end
+    
+    def run_after_features
+      @run_after_features || []
     end
     
     # Load features before starting server
@@ -88,8 +88,14 @@ module Middleman::CoreExtensions::Features
         activate ext
       end
       
-      @run_after_features.each { |block| class_eval(&block) }
-  
+      run_after_features.each { |block| class_eval(&block) }
+      
+      if logging?
+        extensions.each do |ext|
+          $stderr.puts "== Extension: #{ext}"
+        end
+      end
+      
       super
     end
   end

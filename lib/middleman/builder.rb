@@ -1,7 +1,8 @@
-require 'middleman/server'
 require "thor"
 require "thor/group"
 require 'rack/test'
+
+SHARED_SERVER = Middleman.server
 
 module Middleman  
   module ThorActions
@@ -12,11 +13,11 @@ module Middleman
       source  = File.expand_path(find_in_source_paths(source.to_s))
       context = instance_eval('binding')
 
-      @@rack_test ||= ::Rack::Test::Session.new(::Rack::MockSession.new(Middleman::Server))
+      @@rack_test ||= ::Rack::Test::Session.new(::Rack::MockSession.new(SHARED_SERVER))
 
       create_file destination, nil, config do
         # The default render just requests the page over Rack and writes the response
-        request_path = destination.sub(/^#{Middleman::Server.build_dir}/, "")
+        request_path = destination.sub(/^#{SHARED_SERVER.build_dir}/, "")
         @@rack_test.get(request_path)
         @@rack_test.last_response.body
       end
@@ -32,22 +33,22 @@ module Middleman
     def initialize(*args)
       super
       
-      Middleman::Server.new
+      SHARED_SERVER.new
       
       if options.has_key?("relative") && options["relative"]
-        Middleman::Server.activate :relative_assets
+        SHARED_SERVER.activate :relative_assets
       end
     end
     
     
     def source_paths
       @source_paths ||= [
-        Middleman::Server.root
+        SHARED_SERVER.root
       ]
     end
     
     def build_all_files
-      action Directory.new(self, Middleman::Server.views, Middleman::Server.build_dir, { :force => true })
+      action Directory.new(self, SHARED_SERVER.views, SHARED_SERVER.build_dir, { :force => true })
     end
     
     @@hooks = {}
@@ -85,15 +86,15 @@ module Middleman
       lookup = File.join(lookup, '*')
       
       results = Dir[lookup].sort do |a, b|
-        simple_a = a.gsub(Middleman::Server.root + "/", '').gsub(Middleman::Server.views + "/", '') 
-        simple_b = b.gsub(Middleman::Server.root + "/", '').gsub(Middleman::Server.views + "/", '')
+        simple_a = a.gsub(SHARED_SERVER.root + "/", '').gsub(SHARED_SERVER.views + "/", '') 
+        simple_b = b.gsub(SHARED_SERVER.root + "/", '').gsub(SHARED_SERVER.views + "/", '')
         
         a_dir = simple_a.split("/").first
         b_dir = simple_b.split("/").first
         
-        if a_dir == Middleman::Server.images_dir
+        if a_dir == SHARED_SERVER.images_dir
           -1
-        elsif b_dir == Middleman::Server.images_dir
+        elsif b_dir == SHARED_SERVER.images_dir
           1
         else
           0
@@ -109,7 +110,7 @@ module Middleman
         next if file_source.include?('layout') && !file_source.include?('.css')
         
         # Skip partials prefixed with an underscore
-        next unless file_source.gsub(Middleman::Server.root, '').split('/').select { |p| p[0,1] == '_' }.empty?
+        next unless file_source.gsub(SHARED_SERVER.root, '').split('/').select { |p| p[0,1] == '_' }.empty?
         
         file_extension = File.extname(file_source)
         file_destination = File.join(given_destination, file_source.gsub(source, '.'))

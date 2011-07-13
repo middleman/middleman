@@ -1,13 +1,17 @@
 Given /^page "([^\"]*)" has layout "([^\"]*)"$/ do |url, layout|
-  Middleman::Server.set :root, File.join(File.dirname(File.dirname(File.dirname(__FILE__))), "fixtures", "test-app")
-  Middleman::Server.page(url, :layout => layout.to_sym)
-  @browser = Rack::Test::Session.new(Rack::MockSession.new(Middleman::Server.new))
+  sandbox_server = Middleman.server do
+    set :root, File.join(File.dirname(File.dirname(File.dirname(__FILE__))), "fixtures", "test-app")
+    page(url, :layout => layout.to_sym)
+  end
+  @browser = Rack::Test::Session.new(Rack::MockSession.new(sandbox_server.new))
 end
 
 Given /^"([^\"]*)" with_layout block has layout "([^\"]*)"$/ do |url, layout|
-  Middleman::Server.set :root, File.join(File.dirname(File.dirname(File.dirname(__FILE__))), "fixtures", "test-app")
-  Middleman::Server.with_layout(:layout => layout.to_sym) do
-    page(url)
+  sandbox_server = Middleman.server do
+    set :root, File.join(File.dirname(File.dirname(File.dirname(__FILE__))), "fixtures", "test-app")
+    with_layout(layout.to_sym) do
+      page(url)
+    end
   end
-  @browser = Rack::Test::Session.new(Rack::MockSession.new(Middleman::Server.new))
+  @browser = Rack::Test::Session.new(Rack::MockSession.new(sandbox_server.new))
 end

@@ -5,6 +5,8 @@ require 'optparse'
 # Require Middleman
 require File.join(File.dirname(__FILE__), '..', 'lib', 'middleman')
 
+sandboxed_server = Middleman.server
+
 env = ENV['MM_ENV'] || ENV['RACK_ENV'] || 'development'
 options = { :Port => 4567, :AccessLog => [] }
 
@@ -20,7 +22,7 @@ OptionParser.new { |opts|
     env = e
   }
   opts.on("--debug", "Debug mode") {
-    ::Middleman::Server.set :logging, true
+    sandboxed_server.set :logging, true
   }
 
   opts.parse! ARGV
@@ -65,8 +67,8 @@ if File.exists?(old_views) || File.exists?(old_public)
   exit
 end
 
-Middleman::Server.root = @current_path
-options[:app]    = Middleman::Server.new
+sandboxed_server.set :root, @current_path
+options[:app]    = sandboxed_server.new
 # options[:server] = 'webrick'
 
 puts "== The Middleman is standing watch on port #{options[:Port]}"

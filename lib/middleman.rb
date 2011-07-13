@@ -58,10 +58,14 @@ $LOAD_PATH.unshift(libdir) unless $LOAD_PATH.include?(libdir)
 # Require Rubygems (probably not necessary)
 require 'rubygems'
 
+# We're riding on Sinatra, so let's include it.
+require "sinatra/base"
+
 # Top-level Middleman object
 module Middleman
   # Auto-load modules on-demand
-  autoload :Server, "middleman/server"
+  autoload :Base,      "middleman/base"
+  autoload :Builder,   "middleman/builder"
   
   # Custom Renderers
   module Renderers
@@ -142,9 +146,12 @@ module Middleman
 
     # Automatically resize images for mobile devises
     # autoload :TinySrc,             "middleman/features/tiny_src"
-
-    # LiveReload will auto-reload browsers with the live reload extension
-    # installed after changes. Currently disabled and untested.
-    # autoload :LiveReload,          "middleman/features/live_reload"
+  end
+  
+  def self.server(&block)
+    sandbox = Class.new(Sinatra::Base)
+    sandbox.register Base
+    sandbox.class_eval(&block) if block_given?
+    sandbox
   end
 end
