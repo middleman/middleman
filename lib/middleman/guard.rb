@@ -8,23 +8,27 @@ module Middleman::Guard
     options.each do |k,v|
       options_hash << ", :#{k} => '#{v}'"
     end
-  
-    livereload_options_hash = ""
-    livereload.each do |k,v|
-      livereload_options_hash << ", :#{k} => '#{v}'"
-    end
     
-    ::Guard.start({
-      :guardfile_contents => %Q{
-        guard 'middleman'#{options_hash} do 
-          watch("config.rb")
-        end
-        
+    guardfile_contents = %Q{
+      guard 'middleman'#{options_hash} do 
+        watch("config.rb")
+      end
+    }
+    
+    if livereload
+      livereload_options_hash = ""
+      livereload.each do |k,v|
+        livereload_options_hash << ", :#{k} => '#{v}'"
+      end
+      
+      guardfile_contents << %Q{
         guard 'livereload'#{livereload_options_hash} do 
           watch(%r{^source/(.*)$})
         end
       }
-    })
+    end
+    
+    ::Guard.start({ :guardfile_contents => guardfile_contents })
   end
 end
 

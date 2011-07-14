@@ -1,43 +1,45 @@
 #!/usr/bin/env ruby
 
-require 'optparse'
+require "thor"
+require "thor/group"
 
 # Require Middleman
 require File.join(File.dirname(__FILE__), '..', 'lib', 'middleman')
 
-env = ENV['MM_ENV'] || ENV['RACK_ENV'] || 'development'
-options = {}
-livereload_options = {}
+module Middleman
+  class GuardServer < ::Thor::Group
+    include Thor::Actions
+    
+    class_option :environment, :aliases => "-e", :default => ENV['MM_ENV'] || ENV['RACK_ENV'] || 'development'
+    
+    class_option :port, :aliases => "-p", :default => "4567"
+    class_option :"livereload-port", :default => "35729"
+    class_option :"livereload", :default => true, :type => :boolean
+    
+    def start_guard
+      if !File.exists?("config.rb")
+        $stderr.puts "== Error: Could not find a Middleman project config, perhaps you are in the wrong folder?"
+        return
+      end
 
-# TODO: Switch to Thor
-OptionParser.new { |opts|
-  opts.banner = "Usage: mm-server [rack options]"
-  opts.separator ""
-  opts.separator "Rack options:"
-  opts.on("-p", "--port PORT", "use PORT (default: 4567)") { |port|
-    options[:port] = port
-  }
-  opts.on("-E", "--env ENVIRONMENT", "use ENVIRONMENT for defaults (default: development)") { |e|
-    env = e
-  }
-  opts.on("--livereload_port PORT", "use PORT (default: 35729)") { |port|
-    livereload_options[:port] = port
-  }
+      # If the old directories exists, use it, but issue warning
+      if File.exists?("views") || File.exists?("public")
+        $stderr.puts "== Error: The views and public folders are have been combined. Create a new 'source' folder, add the contents of views and public to it and then remove the empty views and public folders."
+        return
+      end
 
-  opts.parse! ARGV
-}
-
-ENV['RACK_ENV'] = env
-
-if !File.exists?("config.rb")
-  $stderr.puts "== Error: Could not find a Middleman project config, perhaps you are in the wrong folder?"
-  exit
+      ENV['RACK_ENV'] = options[:environment]
+      
+      livereload_options = {
+        :port => options[:"livereload-port"]
+      }
+      livereload_options = nil unless options[:"livereload"] 
+      
+      ::Middleman::Guard.start({
+        :port => options[:port],
+      }, livereload_options)
+    end
+  end
 end
 
-# If the old directories exists, use it, but issue warning
-if File.exists?("views") || File.exists?("public")
-  $stderr.puts "== Error: The views and public folders are have been combined. Create a new 'source' folder, add the contents of views and public to it and then remove the empty views and public folders."
-  exit
-end
-
-Middleman::Guard.start(options, livereload_options)
+Middleman::GuardServer.start
