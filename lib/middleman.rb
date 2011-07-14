@@ -66,6 +66,7 @@ module Middleman
   # Auto-load modules on-demand
   autoload :Base,      "middleman/base"
   autoload :Builder,   "middleman/builder"
+  autoload :Guard,     "middleman/guard"
   
   # Custom Renderers
   module Renderers

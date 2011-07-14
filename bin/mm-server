@@ -5,10 +5,8 @@ require 'optparse'
 # Require Middleman
 require File.join(File.dirname(__FILE__), '..', 'lib', 'middleman')
 
-sandboxed_server = Middleman.server
-
 env = ENV['MM_ENV'] || ENV['RACK_ENV'] || 'development'
-options = { :Port => 4567, :AccessLog => [] }
+options = {}
 
 # TODO: Switch to Thor
 OptionParser.new { |opts|
@@ -16,13 +14,10 @@ OptionParser.new { |opts|
   opts.separator ""
   opts.separator "Rack options:"
   opts.on("-p", "--port PORT", "use PORT (default: 4567)") { |port|
-    options[:Port] = port
+    options[:port] = port
   }
   opts.on("-E", "--env ENVIRONMENT", "use ENVIRONMENT for defaults (default: development)") { |e|
     env = e
-  }
-  opts.on("--debug", "Debug mode") {
-    sandboxed_server.set :logging, true
   }
 
   opts.parse! ARGV
@@ -30,46 +25,15 @@ OptionParser.new { |opts|
 
 ENV['RACK_ENV'] = env
 
-@current_path = Dir.pwd
-@path_parts = @current_path.split("/")
-@found_root = false
-
-while (!@found_root && (@path_parts.length > 0))
-  @current_path = File.join(*@path_parts)
-  
-  source_folder = File.join(@current_path, "source")
-  
-  if File.exists?(source_folder)
-    @found_root = true
-    next
-  end
-  
-  @path_parts.pop
-end
-
-if !@found_root
-  $stderr.puts "== Error: Could not find a Middleman project structure, perhaps you are in the wrong folder?"
-  exit
-end
-
-# If the old init.rb exists, issue warning
-old_config = File.join(@current_path, "init.rb")
-if File.exists? old_config
-  $stderr.puts "== Error: The init.rb file (deprecated) needs to be be renamed to config.rb"
+if !File.exists?("config.rb")
+  $stderr.puts "== Error: Could not find a Middleman project config, perhaps you are in the wrong folder?"
   exit
 end
 
 # If the old directories exists, use it, but issue warning
-old_views = File.join(@current_path, "views")
-old_public = File.join(@current_path, "public")
-if File.exists?(old_views) || File.exists?(old_public)
+if File.exists?("views") || File.exists?("public")
   $stderr.puts "== Error: The views and public folders are have been combined. Create a new 'source' folder, add the contents of views and public to it and then remove the empty views and public folders."
   exit
 end
 
-sandboxed_server.set :root, @current_path
-options[:app]    = sandboxed_server.new
-# options[:server] = 'webrick'
-
-puts "== The Middleman is standing watch on port #{options[:Port]}"
-Rack::Server.new(options).start
+Middleman::Guard.start(options)
