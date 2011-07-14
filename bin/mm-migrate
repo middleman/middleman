@@ -1,0 +1,5 @@
+#!/usr/bin/env ruby
+
+`mv public source`
+`ditto views source`
+`rm -rf views`
