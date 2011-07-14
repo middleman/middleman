@@ -28,3 +28,7 @@ with_layout false do
     page path
   end
 end
+
+get "/sinatra_test" do
+  "Ratpack"
+end

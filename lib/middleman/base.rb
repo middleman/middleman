@@ -78,7 +78,7 @@ module Middleman::Base
       end
 
       # See if Tilt cannot handle this file
-      app.before do
+      app.before_processing do
         if !settings.views.include?(settings.root)
           settings.set :views, File.join(settings.root, settings.views)
         end
@@ -92,12 +92,14 @@ module Middleman::Base
             content_type mime_type(File.extname(request.path_info)), :charset => 'utf-8'
             status 200
             send_file File.join(settings.views, request.path_info)
-            request["already_sent"] = true
+            false
+          else
+            true
           end
         else
           $stderr.puts "File not found: #{request.path_info}"
           status 404
-          request["already_sent"] = true
+          false
         end
       end
     end
@@ -115,6 +117,19 @@ module Middleman::Base
       super(option, value, &nil)
     end
     
+    def before_processing(&block)
+      @before_processes ||= []
+      @before_processes << block
+    end
+    
+    def execute_before_processing!(inst)
+      @before_processes ||= []
+      
+      @before_processes.all? do |block|
+        inst.instance_eval(&block)
+      end
+    end
+    
     # Convenience method to check if we're in build mode
     def build?; environment == :build; end
   end
@@ -122,7 +137,7 @@ module Middleman::Base
   module InstanceMethods
     # Internal method to look for templates and evaluate them if found
     def process_request(options={})
-      return if request["already_sent"]
+      return unless settings.execute_before_processing!(self)
 
       options.merge!(request['custom_options'] || {})
 

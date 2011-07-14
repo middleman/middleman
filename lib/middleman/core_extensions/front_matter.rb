@@ -23,25 +23,27 @@ module Middleman::CoreExtensions::FrontMatter
       ::Tilt.prefer(HamlTemplate)
       
       app.after_feature_init do
-        app.before do
+        app.before_processing do
           result = resolve_template(request.path_info, :raise_exceptions => false)
-          
+        
           if result && Tilt.mappings.has_key?(result[1].to_s)
             extensionless_path, template_engine = result
             full_file_path = "#{extensionless_path}.#{template_engine}"
             system_path = File.join(settings.views, full_file_path)
             data, content = app.parse_front_matter(File.read(system_path))
-    
+  
             request['custom_options'] = {}
             %w(layout layout_engine).each do |opt|
               if data.has_key?(opt)
                 request['custom_options'][opt.to_sym] = data.delete(opt)
               end
             end
-    
+  
             # Forward remaining data to helpers
             app.data_content("page", data)
           end
+        
+          true
         end
       end
     end

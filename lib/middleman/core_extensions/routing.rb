@@ -4,8 +4,9 @@ module Middleman::CoreExtensions::Routing
       app.extend ClassMethods
       
       # Normalize the path and add index if we're looking at a directory
-      app.before do
+      app.before_processing do
         request.path_info = self.class.path_to_index(request.path)
+        true
       end
     end
     alias :included :registered
@@ -43,7 +44,7 @@ module Middleman::CoreExtensions::Routing
     
       paths = [url]
       paths << "#{url}/" if url.length > 1 && url.split("/").last.split('.').length <= 1
-      paths << "#{path_to_index(url)}"
+      paths << "/#{path_to_index(url)}"
 
       options[:layout] = settings.layout if options[:layout].nil?
 
