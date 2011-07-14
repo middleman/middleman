@@ -22,44 +22,46 @@ module Middleman::CoreExtensions::FrontMatter
       ::Tilt::register HamlTemplate,      'haml'
       ::Tilt.prefer(HamlTemplate)
       
-      app.before do
-        result = resolve_template(request.path_info, :raise_exceptions => false)
-      
-        if result && Tilt.mappings.has_key?(result[1].to_s)
-          extensionless_path, template_engine = result
-          full_file_path = "#{extensionless_path}.#{template_engine}"
-          system_path = File.join(settings.views, full_file_path)
-          data, content = app.parse_front_matter(File.read(system_path))
+      app.after_feature_init do
+        app.before do
+          result = resolve_template(request.path_info, :raise_exceptions => false)
+          
+          if result && Tilt.mappings.has_key?(result[1].to_s)
+            extensionless_path, template_engine = result
+            full_file_path = "#{extensionless_path}.#{template_engine}"
+            system_path = File.join(settings.views, full_file_path)
+            data, content = app.parse_front_matter(File.read(system_path))
     
-          request['custom_options'] = {}
-          %w(layout layout_engine).each do |opt|
-            if data.has_key?(opt)
-              request['custom_options'][opt.to_sym] = data.delete(opt)
+            request['custom_options'] = {}
+            %w(layout layout_engine).each do |opt|
+              if data.has_key?(opt)
+                request['custom_options'][opt.to_sym] = data.delete(opt)
+              end
             end
-          end
     
-          # Forward remaining data to helpers
-          app.data_content("page", data)
-        end
-      end
-      
-      def parse_front_matter(content)
-        yaml_regex = /^(---\s*\n.*?\n?)^(---\s*$\n?)/m
-        if content =~ yaml_regex
-          begin
-            data = YAML.load($1)
-          rescue => e
-            puts "YAML Exception: #{e.message}"
+            # Forward remaining data to helpers
+            app.data_content("page", data)
           end
-
-          content = content.split(yaml_regex).last
         end
-
-        data ||= {}
-        [data, content]
       end
     end
     alias :included :registered
+    
+    def parse_front_matter(content)
+      yaml_regex = /^(---\s*\n.*?\n?)^(---\s*$\n?)/m
+      if content =~ yaml_regex
+        begin
+          data = YAML.load($1)
+        rescue => e
+          puts "YAML Exception: #{e.message}"
+        end
+
+        content = content.split(yaml_regex).last
+      end
+
+      data ||= {}
+      [data, content]
+    end
   end
   
   module ClassMethods
