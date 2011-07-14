@@ -7,6 +7,7 @@ require File.join(File.dirname(__FILE__), '..', 'lib', 'middleman')
 
 env = ENV['MM_ENV'] || ENV['RACK_ENV'] || 'development'
 options = {}
+livereload_options = {}
 
 # TODO: Switch to Thor
 OptionParser.new { |opts|
@@ -18,6 +19,9 @@ OptionParser.new { |opts|
   }
   opts.on("-E", "--env ENVIRONMENT", "use ENVIRONMENT for defaults (default: development)") { |e|
     env = e
+  }
+  opts.on("--livereload_port PORT", "use PORT (default: 35729)") { |port|
+    livereload_options[:port] = port
   }
 
   opts.parse! ARGV
@@ -36,4 +40,4 @@ if File.exists?("views") || File.exists?("public")
   exit
 end
 
-Middleman::Guard.start(options)
+Middleman::Guard.start(options, livereload_options)

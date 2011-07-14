@@ -144,6 +144,9 @@ module Middleman
 
     # Proxy web services requests in dev mode only
     autoload :Proxy,               "middleman/features/proxy"
+    
+    # guard-livereload
+    autoload :LiveReload,          "middleman/features/live_reload"
 
     # Automatically resize images for mobile devises
     # autoload :TinySrc,             "middleman/features/tiny_src"

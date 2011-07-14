@@ -1,17 +1,27 @@
 require "guard"
 require "guard/guard"
+require "guard/livereload"
 
 module Middleman::Guard
-  def self.start(options={})
+  def self.start(options={}, livereload={})
     options_hash = ""
     options.each do |k,v|
       options_hash << ", :#{k} => '#{v}'"
     end
+  
+    livereload_options_hash = ""
+    livereload.each do |k,v|
+      livereload_options_hash << ", :#{k} => '#{v}'"
+    end
     
     ::Guard.start({
       :guardfile_contents => %Q{
-        guard 'MiddlemanServer'#{options_hash} do 
+        guard 'middleman'#{options_hash} do 
           watch("config.rb")
+        end
+        
+        guard 'livereload'#{livereload_options_hash} do 
+          watch(%r{^source/(.*)$})
         end
       }
     })
@@ -19,7 +29,7 @@ module Middleman::Guard
 end
 
 module Guard
-  class MiddlemanServer < Guard
+  class Middleman < Guard
     def initialize(watchers = [], options = {})
       super
       @options = {
@@ -41,7 +51,7 @@ module Guard
       puts "== The Middleman is standing watch on port #{@options[:port]}"
       @server_options = { :Port => @options[:port], :AccessLog => [] }
       @server_job = fork do
-        @server_options[:app] = Middleman.server.new
+        @server_options[:app] = ::Middleman.server.new
         ::Rack::Server.new(@server_options).start
       end
     end

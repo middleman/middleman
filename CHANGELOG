@@ -1,6 +1,8 @@
 2.0.0
 =====
 
+- Guard-powered auto-reloading of config.rb
+- Guard LiveReload
 - Sprockets JS
 - Refactored Dynamically Reloadable Core
 - Combine views/ and public/ into a single source/ folder.

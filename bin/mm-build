@@ -4,6 +4,4 @@ ENV['MM_ENV'] = "build"
 
 # Require app
 require File.join(File.dirname(__FILE__), "..", "lib", "middleman")
-
-require 'middleman'
 Middleman::Builder.start
