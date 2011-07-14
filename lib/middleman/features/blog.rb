@@ -63,8 +63,8 @@ module Middleman
                   data["raw"].match(/(.{1,#{app.settings.blog_summary_length}}.*?)(\n|\Z)/m).to_s
                 end
 
-                engine = RDiscount.new(sum)
-                data["summary"] = engine.to_html
+                engine = app.settings.markdown_engine.new { sum }
+                data["summary"] = engine.render
                 data
               end.sort { |a, b| b["date"] <=> a["date"] }
 
