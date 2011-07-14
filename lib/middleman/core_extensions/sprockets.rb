@@ -17,7 +17,10 @@ module Middleman::CoreExtensions::Sprockets
 
   class MiddlemanEnvironment < Sprockets::Environment
     def initialize(app)
-      super File.expand_path(app.views)
+      full_path = app.views
+      full_path = File.join(app.root, app.views) unless app.views.include?(app.root)
+      
+      super File.expand_path(full_path)
     end
   end
     
@@ -31,8 +34,7 @@ module Middleman::CoreExtensions::Sprockets
       self.js_compressor = app.settings.js_compressor
 
       # configure search paths
-      javascripts_path = File.join(File.expand_path(app.views), app.js_dir)
-      append_path javascripts_path
+      append_path app.js_dir
     end
   end
   
