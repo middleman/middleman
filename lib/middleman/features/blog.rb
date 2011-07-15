@@ -42,6 +42,16 @@ module Middleman
             end
 
             $stderr.puts "== Blog: #{app.settings.blog_permalink}"
+            
+            app.get(app.settings.blog_permalink) do
+              process_request({
+                :layout        => settings.blog_layout,
+                :layout_engine => settings.blog_layout_engine
+              })
+
+              # No need for separator on permalink page
+              body body.gsub!(settings.blog_summary_separator, "")
+            end
           end
           
           app.before_processing do
@@ -86,16 +96,6 @@ module Middleman
 
             app.data_content("blog", { :articles => articles, :tags => tags })
             true
-          end
-          
-          app.get(app.settings.blog_permalink) do
-            process_request({
-              :layout        => settings.blog_layout,
-              :layout_engine => settings.blog_layout_engine
-            })
-            
-            # No need for separator on permalink page
-            body body.gsub!(settings.blog_summary_separator, "")
           end
         end
         alias :included :registered
