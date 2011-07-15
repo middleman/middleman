@@ -23,7 +23,7 @@ module Middleman::Guard
       
       guardfile_contents << %Q{
         guard 'livereload'#{livereload_options_hash} do 
-          watch(%r{^source/(.*)$})
+          watch(%r{^source/^[^\.](.*)$})
         end
       }
     end
