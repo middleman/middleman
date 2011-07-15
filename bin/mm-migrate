@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
 
 `mv public source`
-`ditto views source`
+`cp -R views/* source/`
 `rm -rf views`
