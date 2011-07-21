@@ -12,6 +12,7 @@ module Middleman::Guard
     guardfile_contents = %Q{
       guard 'middleman'#{options_hash} do 
         watch("config.rb")
+        watch(%r{^lib/^[^\.](.*)\.rb$})
       end
     }
     
