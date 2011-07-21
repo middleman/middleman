@@ -48,9 +48,11 @@ module Middleman::CoreExtensions::Routing
 
       options[:layout] = settings.layout if options[:layout].nil?
 
+      has_block = block_given?
+
       paths.each do |p|
         get(p) do
-          return yield if block_given?
+          instance_eval(&block) if has_block
           process_request(options)
         end
       end
