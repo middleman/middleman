@@ -18,7 +18,7 @@ module Middleman
       create_file destination, nil, config do
         # The default render just requests the page over Rack and writes the response
         request_path = destination.sub(/^#{SHARED_SERVER.build_dir}/, "")
-        @@rack_test.get(request_path)
+        @@rack_test.get(request_path.gsub(/\s/, "%20"))
         @@rack_test.last_response.body
       end
     end

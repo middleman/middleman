@@ -24,7 +24,8 @@ module Middleman::CoreExtensions::FrontMatter
       
       app.after_feature_init do
         app.before_processing do
-          result = resolve_template(request.path_info, :raise_exceptions => false)
+          request_path = request.path_info.gsub("%20", " ")
+          result = resolve_template(request_path, :raise_exceptions => false)
         
           if result && Tilt.mappings.has_key?(result[1].to_s)
             extensionless_path, template_engine = result

@@ -83,21 +83,23 @@ module Middleman::Base
           settings.set :views, File.join(settings.root, settings.views)
         end
 
-        result = resolve_template(request.path_info, :raise_exceptions => false)
+        request_path = request.path_info.gsub("%20", " ")
+        result = resolve_template(request_path, :raise_exceptions => false)
+        
         if result
           extensionless_path, template_engine = result
 
           # Return static files
           if !::Tilt.mappings.has_key?(template_engine.to_s)
-            content_type mime_type(File.extname(request.path_info)), :charset => 'utf-8'
+            content_type mime_type(File.extname(request_path)), :charset => 'utf-8'
             status 200
-            send_file File.join(settings.views, request.path_info)
+            send_file File.join(settings.views, request_path)
             false
           else
             true
           end
         else
-          $stderr.puts "File not found: #{request.path_info}"
+          $stderr.puts "File not found: #{request_path}"
           status 404
           false
         end
@@ -156,11 +158,12 @@ module Middleman::Base
 
       render_options = { :layout => layout }
       render_options[:layout_engine] = options[:layout_engine] if options.has_key? :layout_engine
-      result = render(request.path_info, render_options)
+      request_path = request.path_info.gsub("%20", " ")
+      result = render(request_path, render_options)
       settings.set :layout, old_layout
 
       if result
-        content_type mime_type(File.extname(request.path_info)), :charset => 'utf-8'
+        content_type mime_type(File.extname(request_path)), :charset => 'utf-8'
         status 200
         body result
       else

@@ -2,6 +2,7 @@ with_layout false do
   page "/inline-css.html"
   page "/inline-js.html"
   page "/inline-coffeescript.html"
+  page "/spaces in file.html"
   page "/slim.html"
   page "/data.html"
   page "/page-classes.html"

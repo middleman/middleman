@@ -12,6 +12,9 @@ Feature: Builder
     Then "stylesheets/site_scss.css" should exist and include "html, body, div, span"
     Then "stylesheets/static.css" should exist and include "body"
     Then "_partial.html" should not exist
+    Then "spaces in file.html" should exist and include "spaces"
+    Then "images/Read me (example).txt" should exist
+    Then "images/Child folder/regular_file(example).txt" should exist
     And cleanup built test app
     
   Scenario: Force relative assets
