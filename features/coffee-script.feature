@@ -10,3 +10,8 @@ Feature: Support coffee-script
     Given the Server is running
     When I go to "/inline-coffeescript.html"
     Then I should see "Array.prototype.slice"
+  
+  Scenario: Rendering broken coffee
+    Given the Server is running
+    When I go to "/javascripts/broken-coffee.js"
+    Then I should see "Reserved word"
