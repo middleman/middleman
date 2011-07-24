@@ -15,7 +15,7 @@ module Middleman
     
     class_option :port, :aliases => "-p", :default => "4567"
     class_option :"livereload-port", :default => "35729"
-    class_option :"livereload", :default => true, :type => :boolean
+    class_option :"livereload", :default => false, :type => :boolean
     
     def start_guard
       if !File.exists?("config.rb")

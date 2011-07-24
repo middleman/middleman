@@ -1,6 +1,7 @@
 require "guard"
 require "guard/guard"
 require "guard/livereload"
+require "webrick"
 
 module Middleman::Guard
   def self.start(options={}, livereload={})
@@ -53,12 +54,17 @@ module Guard
 
   private
     def server_start
-      puts "== The Middleman is standing watch on port #{@options[:port]}"
-      @server_options = { :Port => @options[:port], :AccessLog => [] }
+      @server_options = { 
+        :Port => @options[:port],
+        :Logger => ::WEBrick::Log.new('/dev/null'),
+        :AccessLog => ::WEBrick::Log.new('/dev/null')
+      }
       @server_job = fork do
         @server_options[:app] = ::Middleman.server.new
         ::Rack::Server.new(@server_options).start
       end
+
+      puts "== The Middleman is standing watch on port #{@options[:port]}"
     end
   
     def server_stop
