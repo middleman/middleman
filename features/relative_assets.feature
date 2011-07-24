@@ -6,7 +6,7 @@ Feature: Relative Assets
     And the Server is running
     When I go to "/stylesheets/relative_assets.css"
     Then I should not see "url('../"
-    And I should see "url('/images/blank.gif"
+    And I should see "/images/blank.gif"
     
   Scenario: Rendering html with the feature disabled
     Given "relative_assets" feature is "disabled"
