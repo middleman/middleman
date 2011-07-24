@@ -1,3 +1,11 @@
+page "/fake.html", :proxy => "/real.html", :layout => false
+
+%w(one two).each do |num|
+  page "/fake/#{num}.html", :proxy => "/real/index.html" do
+    @num = num
+  end
+end
+
 with_layout false do
   page "/inline-css.html"
   page "/inline-js.html"

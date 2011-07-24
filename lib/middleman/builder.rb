@@ -10,11 +10,11 @@ module Middleman
       config = args.last.is_a?(Hash) ? args.pop : {}
       destination = args.first || source
       
-      source  = File.expand_path(find_in_source_paths(source.to_s))
+      # source  = File.expand_path(find_in_source_paths(source.to_s))
       context = instance_eval('binding')
 
       @@rack_test ||= ::Rack::Test::Session.new(::Rack::MockSession.new(SHARED_SERVER))
-
+      
       create_file destination, nil, config do
         # The default render just requests the page over Rack and writes the response
         request_path = destination.sub(/^#{SHARED_SERVER.build_dir}/, "")
@@ -40,7 +40,6 @@ module Middleman
       end
     end
     
-    
     def source_paths
       @source_paths ||= [
         SHARED_SERVER.root
@@ -49,6 +48,10 @@ module Middleman
     
     def build_all_files
       action Directory.new(self, SHARED_SERVER.views, SHARED_SERVER.build_dir, { :force => true })
+      
+      SHARED_SERVER.proxied_paths.each do |url, proxy|
+        tilt_template(url.gsub(/^\//, "#{SHARED_SERVER.build_dir}/"), { :force => true })
+      end
     end
     
     @@hooks = {}

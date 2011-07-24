@@ -3,6 +3,8 @@ module Middleman::CoreExtensions::Routing
     def registered(app)
       app.extend ClassMethods
       
+      app.set :proxied_paths, {}
+      
       # Normalize the path and add index if we're looking at a directory
       app.before_processing do
         request.path_info = self.class.path_to_index(request.path)
@@ -35,23 +37,33 @@ module Middleman::CoreExtensions::Routing
       set :layout, old_layout
     end
   
-    # The page method allows the layout to be set on a specific path
-    # page "/about.html", :layout => false
-    # page "/", :layout => :homepage_layout
-    def page(url, options={}, &block)
+    def paths_for_url(url)
       url = url.gsub(%r{#{settings.index_file}$}, "")
       url = url.gsub(%r{(\/)$}, "") if url.length > 1
     
       paths = [url]
       paths << "#{url}/" if url.length > 1 && url.split("/").last.split('.').length <= 1
       paths << "/#{path_to_index(url)}"
-
-      options[:layout] = settings.layout if options[:layout].nil?
-
+      paths
+    end
+  
+    # The page method allows the layout to be set on a specific path
+    # page "/about.html", :layout => false
+    # page "/", :layout => :homepage_layout
+    def page(url, options={}, &block)
       has_block = block_given?
-
-      paths.each do |p|
+      options[:layout] = settings.layout if options[:layout].nil?
+      
+      if options.has_key?(:proxy)
+        settings.proxied_paths[url] = options[:proxy]
+      end
+    
+      paths_for_url(url).each do |p|
         get(p) do
+          if settings.proxied_paths.has_key?(url)
+            request.path_info = settings.proxied_paths[url]
+          end
+          
           instance_eval(&block) if has_block
           process_request(options)
         end
