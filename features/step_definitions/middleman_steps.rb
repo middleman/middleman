@@ -1,11 +1,14 @@
 Given /^"([^\"]*)" feature is "([^\"]*)"$/ do |feature, state|
-  sandbox_server = Middleman.server do
-    if state == "enabled"
-      activate(feature.to_sym)
-    end
-    set :environment, @current_env || :development
+  @server ||= Middleman.server
+  if state == "enabled"
+    @server.activate(feature.to_sym)
   end
-  @browser = Rack::Test::Session.new(Rack::MockSession.new(sandbox_server.new))
+  @server.set :environment, @current_env || :development
+end
+
+Given /^"([^\"]*)" is set to "([^\"]*)"$/ do |variable, value|
+  @server ||= Middleman.server
+  @server.set variable.to_sym, value
 end
 
 Given /^current environment is "([^\"]*)"$/ do |env|
@@ -13,8 +16,8 @@ Given /^current environment is "([^\"]*)"$/ do |env|
 end
 
 Given /^the Server is running$/ do
-  sandbox_server = Middleman.server
-  @browser = Rack::Test::Session.new(Rack::MockSession.new(sandbox_server.new))
+  @server ||= Middleman.server
+  @browser = Rack::Test::Session.new(Rack::MockSession.new(@server.new))
 end
 
 When /^I go to "([^\"]*)"$/ do |url|

@@ -7,6 +7,7 @@ page "/fake.html", :proxy => "/real.html", :layout => false
 end
 
 with_layout false do
+  page "/relative_image.html"
   page "/inline-css.html"
   page "/inline-js.html"
   page "/inline-coffeescript.html"
