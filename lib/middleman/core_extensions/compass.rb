@@ -27,17 +27,16 @@ module Middleman::CoreExtensions::Compass
         end
         
         ::Compass.configuration do |config|
-          views_root = File.basename(app.views)
-        
-          config.project_path          = views_root
+          config.project_path          = app.root
           config.environment           = :development
           config.cache_path            = File.join(app.root, ".sass-cache")
           
-          config.sass_dir              = app.css_dir
-          config.css_dir               = app.css_dir
-          config.javascripts_dir       = app.js_dir
-          config.fonts_dir             = app.fonts_dir
-          config.images_dir            = app.images_dir
+          views_root = File.basename(app.views)
+          config.sass_dir              = File.join(views_root, app.css_dir)
+          config.css_dir               = File.join(views_root, app.css_dir)
+          config.javascripts_dir       = File.join(views_root, app.js_dir)
+          config.fonts_dir             = File.join(views_root, app.fonts_dir)
+          config.images_dir            = File.join(views_root, app.images_dir)
           
           config.http_images_path = if app.respond_to? :http_images_path
             app.http_images_path

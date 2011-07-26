@@ -1,7 +1,9 @@
 module Middleman::Features::RelativeAssets
   class << self
     def registered(app)
-      ::Compass.configuration.relative_assets = true
+      app.compass_config do |config|
+        config.relative_assets = true
+      end
 
       app.register_asset_handler :relative_assets do |path, prefix, request|
         begin
