@@ -41,16 +41,19 @@ module Middleman
               app.set :blog_article_template, "article_template"
             end
 
-            $stderr.puts "== Blog: #{app.settings.blog_permalink}"
+            if !app.build?
+              $stderr.puts "== Blog: #{app.settings.blog_permalink}"
+            end
             
-            app.get(app.settings.blog_permalink) do
+            app.get("/#{app.blog_permalink}") do
+              $stderr.puts "*" * 500
               process_request({
-                :layout        => settings.blog_layout,
-                :layout_engine => settings.blog_layout_engine
+                :layout        => app.blog_layout,
+                :layout_engine => app.blog_layout_engine
               })
 
               # No need for separator on permalink page
-              body body.gsub!(settings.blog_summary_separator, "")
+              body body.gsub!(app.blog_summary_separator, "")
             end
           end
           

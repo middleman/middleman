@@ -1,0 +1,9 @@
+<% data.blog.articles[0...5].each_with_index do |article, i| %>
+  <article class="<%= (i == 0) ? 'first' : '' %>">
+    <h1><a href="<%= article.url %>"><%= article.title %></a> <span><%= article.date.strftime('%b %e %Y') %></span></h1>
+    
+    <%= article.summary %>
+    
+    <div class="more"><a href="<%= article.url %>">read on &raquo;</a></div>
+  </article>
+<% end %>

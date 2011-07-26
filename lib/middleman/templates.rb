@@ -29,14 +29,11 @@ end
 # Default template
 require "middleman/templates/default"
 
-# XHMTL template
-require "middleman/templates/xhtml"
+# Blog template
+require "middleman/templates/blog"
 
 # HTML5 template
 require "middleman/templates/html5"
 
 # Local templates
 require "middleman/templates/local"
-
-# Compass templates
-# require "middleman/templates/compass"

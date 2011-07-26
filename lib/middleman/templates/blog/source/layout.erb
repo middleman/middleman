@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv='X-UA-Compatible' content='IE=edge;chrome=1' />
+  </head>
+  <body>
+    
+    <div id="main" role="main">
+      <% if is_blog_article? %>
+        <% content_for :blog_article, yield %>
+        <%= partial settings.blog_article_template %>
+      <% else %>
+        <%= yield %>
+      <% end %>
+    </div>
+    
+    <aside>
+      <h2>
+        Recent Articles
+        <a href="/archives">Archive</a>
+      </h2>
+      <ol>
+        <% data.blog.articles[0...10].each do |article| %>
+          <li><a href="<%= article.url %>"><%= article.title %></a> <span><%= article.date.strftime('%b %e') %></span></li>
+        <% end %>
+      </li>
+    </aside>
+  </body>
+</html>

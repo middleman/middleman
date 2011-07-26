@@ -1,0 +1,10 @@
+<h1>Archive: <%# @path %></h1>
+<ul class="archives">
+  <% for entry in data.blog.articles %>
+    <li>
+      <a href="<%= entry.url %>"><%= entry.title %></a>
+      <span><%= entry.date.strftime('%b %e') %></span>
+    </li>
+  <% end %>
+</ul>
+

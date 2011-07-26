@@ -1,11 +1,14 @@
 class Middleman::Templates::Html5 < Middleman::Templates::Base
+  class_option :css_dir, :default => "css"
+  class_option :js_dir, :default => "js"
+
   def self.source_root
-    File.join(File.dirname(__FILE__), 'html5')
+    File.dirname(__FILE__)
   end
   
   def build_scaffold
-    template "config.tt", File.join(location, "config.rb")
-    directory "source", File.join(location, "source")
+    template "shared/config.tt", File.join(location, "config.rb")
+    directory "html5/source", File.join(location, "source")
     empty_directory File.join(location, "source")
   end
 end
