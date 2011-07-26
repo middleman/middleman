@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.version     = Middleman::VERSION
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Thomas Reynolds"]
-  s.email       = ["tdreyno@gmail.com"]
+  s.email       = ["me@tdreyno.com"]
   s.homepage    = "http://middlemanapp.com"
   s.summary     = "A static site generator based on Sinatra. Providing Haml, Sass, Compass, CoffeeScript and including minification, compression and cache busting."
 
