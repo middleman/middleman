@@ -56,11 +56,13 @@ module Guard
     def server_start
       @server_options = { 
         :Port => @options[:port],
-        :Logger => ::WEBrick::Log.new('/dev/null'),
-        :AccessLog => ::WEBrick::Log.new('/dev/null')
+        :AccessLog => []
+        # :AccessLog => ::WEBrick::Log.new('/dev/null'),
+        # :Logger => ::WEBrick::Log.new('/dev/null')
       }
       @server_job = fork do
         @server_options[:app] = ::Middleman.server.new
+        @server_options[:server] = 'thin'
         ::Rack::Server.new(@server_options).start
       end
 

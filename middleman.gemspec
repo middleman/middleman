@@ -19,6 +19,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   s.add_runtime_dependency("rack", ["~> 1.3.0"])
+  s.add_runtime_dependency("thin", ["~> 1.2.11"])
   s.add_runtime_dependency("thor", ["~> 0.14.0"])
   s.add_runtime_dependency("tilt", ["~> 1.3.1"])
   s.add_runtime_dependency("rdiscount", ["~> 1.6.8"])
