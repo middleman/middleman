@@ -33,8 +33,6 @@ module Middleman
     def initialize(*args)
       super
       
-      SHARED_SERVER.new
-      
       if options.has_key?("relative") && options["relative"]
         SHARED_SERVER.activate :relative_assets
       end
