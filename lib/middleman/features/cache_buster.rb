@@ -25,16 +25,14 @@ module Middleman::Features::CacheBuster
         end
       end
 
-      app.after_compass_init do 
-        ::Compass.configuration do |config|
-          config.asset_cache_buster do |path, real_path|
-            real_path = real_path.path if real_path.is_a? File
-            real_path = real_path.gsub(File.join(app.root, app.build_dir), app.views)
-            if File.readable?(real_path)
-              File.mtime(real_path).strftime("%s") 
-            else
-              $stderr.puts "WARNING: '#{File.basename(path)}' was not found (or cannot be read) in #{File.dirname(real_path)}"
-            end
+      app.compass_config do |config|
+        config.asset_cache_buster do |path, real_path|
+          real_path = real_path.path if real_path.is_a? File
+          real_path = real_path.gsub(File.join(app.root, app.build_dir), app.views)
+          if File.readable?(real_path)
+            File.mtime(real_path).strftime("%s") 
+          else
+            $stderr.puts "WARNING: '#{File.basename(path)}' was not found (or cannot be read) in #{File.dirname(real_path)}"
           end
         end
       end

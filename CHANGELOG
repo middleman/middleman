@@ -7,4 +7,6 @@
 - Refactored Dynamically Reloadable Core
 - Combine views/ and public/ into a single source/ folder.
 - Support YAML front-matter
+- Added callback to run code after Compass is configured
+- Added support for a compass.config file which is passed directly to Compass
 - Blog-aware Feature

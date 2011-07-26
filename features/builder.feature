@@ -19,5 +19,5 @@ Feature: Builder
     
   Scenario: Force relative assets
     Given a built test app with flags "--relative"
-    Then "stylesheets/site.css" should exist and include "../"
+    Then "stylesheets/relative_assets.css" should exist and include "../"
     And cleanup built test app
