@@ -27,27 +27,40 @@ module Middleman::CoreExtensions::Compass
         end
         
         ::Compass.configuration do |config|
-          config.project_path          = app.root
+          views_root = File.basename(app.views)
+        
+          config.project_path          = views_root
           config.environment           = :development
           config.cache_path            = File.join(app.root, ".sass-cache")
           
-          views_root = File.basename(app.views)
-          config.sass_dir              = File.join(views_root, app.css_dir)
-          config.css_dir               = File.join(views_root, app.css_dir)
-          config.javascripts_dir       = File.join(views_root, app.js_dir)
-          config.fonts_dir             = File.join(views_root, app.fonts_dir)
-          config.images_dir            = File.join(views_root, app.images_dir)
+          config.sass_dir              = app.css_dir
+          config.css_dir               = app.css_dir
+          config.javascripts_dir       = app.js_dir
+          config.fonts_dir             = app.fonts_dir
+          config.images_dir            = app.images_dir
           
-          if app.respond_to? :http_images_path
-            config.http_images_path = app.http_images_path
+          config.http_images_path = if app.respond_to? :http_images_path
+            app.http_images_path
+          else
+            File.join(app.http_prefix || "/", app.images_dir)
           end
           
-          if app.respond_to? :http_css_path
-            config.http_stylesheets_path = app.http_css_path
+          config.http_stylesheets_path = if app.respond_to? :http_css_path
+            app.http_css_path
+          else
+            File.join(app.http_prefix || "/", app.css_dir)
           end
           
-          if app.respond_to? :http_js_path
-            config.http_javascripts_path = app.http_js_path
+          config.http_javascripts_path = if app.respond_to? :http_js_path
+            app.http_js_path
+          else
+            File.join(app.http_prefix || "/", app.js_dir)
+          end
+
+          config.http_javascripts_path = if app.respond_to? :http_fonts_path
+            app.http_js_path
+          else
+            File.join(app.http_prefix || "/", app.fonts_dir)
           end
           
           config.asset_cache_buster :none
