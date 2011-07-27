@@ -5,6 +5,7 @@ require "middleman/templates"
 module Middleman
   class CLI < Thor
     include Thor::Actions
+    check_unknown_options!
     default_task :server
 
     def initialize(*)
