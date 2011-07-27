@@ -1,0 +1,3 @@
+#!/usr/bin/env ruby
+require 'middleman/cli'
+Middleman::CLI.start
