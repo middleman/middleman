@@ -62,7 +62,7 @@ module Guard
       }
       @server_job = fork do
         app = ::Middleman.server
-        app.set :environment, @options[:environment]
+        app.set :environment, @options[:environment].to_sym
         @server_options[:app] = app.new
         @server_options[:server] = 'thin'
         ::Rack::Server.new(@server_options).start
