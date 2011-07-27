@@ -17,6 +17,7 @@ end
 
 Given /^the Server is running$/ do
   @server ||= Middleman.server
+  @server.set :root, File.join(File.dirname(File.dirname(File.dirname(__FILE__))), "fixtures", "test-app")
   @browser = Rack::Test::Session.new(Rack::MockSession.new(@server.new))
 end
 
