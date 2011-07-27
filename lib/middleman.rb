@@ -51,12 +51,9 @@
 # [Email the users group]: http://groups.google.com/group/middleman-users
 # [Submit bug reports]:    https://github.com/tdreyno/middleman/issues
 
-# Setup out load paths
+# Setup our load paths
 libdir = File.dirname(__FILE__)
 $LOAD_PATH.unshift(libdir) unless $LOAD_PATH.include?(libdir)
-
-# Require Rubygems (probably not necessary)
-require 'rubygems'
 
 # We're riding on Sinatra, so let's include it.
 require "sinatra/base"
