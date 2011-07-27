@@ -1,7 +1,0 @@
-#!/usr/bin/env ruby
-
-ENV['MM_ENV'] = "build"
-
-# Require app
-require File.join(File.dirname(__FILE__), "..", "lib", "middleman")
-Middleman::Builder.start
