@@ -6,6 +6,10 @@ Feature: Dynamic Pages
     Then "fake.html" should exist and include "I am real"
     Then "fake/one.html" should exist and include "I am real: one"
     Then "fake/two.html" should exist and include "I am real: two"
+    Then "target_ignore.html" should exist and include "Ignore me"
+    Then "should_be_ignored.html" should not exist
+    Then "should_be_ignored2.html" should not exist
+    Then "should_be_ignored3.html" should not exist
     And cleanup built test app
     
   Scenario: Preview basic proxy

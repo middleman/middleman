@@ -4,6 +4,7 @@ module Middleman::CoreExtensions::Routing
       app.extend ClassMethods
       
       app.set :proxied_paths, {}
+      app.set :excluded_paths, []
       
       # Normalize the path and add index if we're looking at a directory
       app.before_processing do
@@ -47,6 +48,13 @@ module Middleman::CoreExtensions::Routing
       paths
     end
   
+    # Keep a path from building
+    def ignore(path)
+      settings.excluded_paths << paths_for_url(path)
+      settings.excluded_paths.flatten!
+      settings.excluded_paths.uniq!
+    end
+    
     # The page method allows the layout to be set on a specific path
     # page "/about.html", :layout => false
     # page "/", :layout => :homepage_layout
@@ -56,8 +64,15 @@ module Middleman::CoreExtensions::Routing
       
       if options.has_key?(:proxy)
         settings.proxied_paths[url] = options[:proxy]
+        if options.has_key?(:ignore) && options[:ignore]
+          settings.ignore(options[:proxy])
+        end
+      else
+        if options.has_key?(:ignore) && options[:ignore]
+          settings.ignore(url)
+        end
       end
-    
+      
       paths_for_url(url).each do |p|
         get(p) do
           if settings.proxied_paths.has_key?(url)

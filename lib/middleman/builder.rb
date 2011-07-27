@@ -5,7 +5,7 @@ require 'rack/test'
 SHARED_SERVER = Middleman.server
 SHARED_SERVER.set :environment, :build
 
-module Middleman  
+module Middleman
   module ThorActions
     def tilt_template(source, *args, &block)
       config = args.last.is_a?(Hash) ? args.pop : {}
@@ -13,14 +13,13 @@ module Middleman
       
       # source  = File.expand_path(find_in_source_paths(source.to_s))
       context = instance_eval('binding')
-
-      @@rack_test ||= ::Rack::Test::Session.new(::Rack::MockSession.new(SHARED_SERVER))
+      
+      request_path = destination.sub(/^#{SHARED_SERVER.build_dir}/, "")
+      return if SHARED_SERVER.excluded_paths.include?(request_path)
       
       create_file destination, nil, config do
-        # The default render just requests the page over Rack and writes the response
-        request_path = destination.sub(/^#{SHARED_SERVER.build_dir}/, "")
-        @@rack_test.get(request_path.gsub(/\s/, "%20"))
-        @@rack_test.last_response.body
+        Middleman::Builder.shared_rack.get(request_path.gsub(/\s/, "%20"))
+        Middleman::Builder.shared_rack.last_response.body
       end
     end
   end
@@ -28,6 +27,15 @@ module Middleman
   class Builder < Thor::Group
     include Thor::Actions
     include Middleman::ThorActions
+    
+    def self.shared_rack
+      @shared_rack ||= begin  
+        mock = ::Rack::MockSession.new(SHARED_SERVER)
+        sess = ::Rack::Test::Session.new(mock)
+        sess.get("/")
+        sess
+      end
+    end
     
     class_option :relative, :type => :boolean, :aliases => "-r", :default => false, :desc => 'Override the config.rb file and force relative urls'
     
@@ -46,6 +54,8 @@ module Middleman
     end
     
     def build_all_files
+      self.class.shared_rack
+      
       action Directory.new(self, SHARED_SERVER.views, SHARED_SERVER.build_dir, { :force => true })
       
       SHARED_SERVER.proxied_paths.each do |url, proxy|
