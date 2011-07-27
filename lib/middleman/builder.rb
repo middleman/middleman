@@ -3,6 +3,7 @@ require "thor/group"
 require 'rack/test'
 
 SHARED_SERVER = Middleman.server
+SHARED_SERVER.set :environment, :build
 
 module Middleman  
   module ThorActions

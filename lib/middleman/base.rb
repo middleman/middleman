@@ -6,7 +6,7 @@ module Middleman::Base
       
       # Basic Sinatra config
       app.set :app_file,    __FILE__
-      app.set :root,        ENV["MM_DIR"] || Dir.pwd
+      app.set :root,        Dir.pwd
       app.set :sessions,    false
       app.set :logging,     false
       app.set :environment, (ENV['MM_ENV'] && ENV['MM_ENV'].to_sym) || :development

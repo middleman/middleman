@@ -1,3 +1,9 @@
 #!/usr/bin/env ruby
-require 'middleman/cli'
+
+require "rubygems"
+
+libdir = File.join(File.dirname(File.dirname(__FILE__)), "lib")
+$LOAD_PATH.unshift(libdir) unless $LOAD_PATH.include?(libdir)
+
+require 'middleman'
 Middleman::CLI.start

@@ -2,7 +2,7 @@ require 'fileutils'
 
 Given /^generated directory at "([^\"]*)"$/ do |dirname|
   target = File.join(File.dirname(File.dirname(File.dirname(__FILE__))), "fixtures", dirname)
-  init_cmd = File.expand_path(File.join(File.dirname(File.dirname(File.dirname(__FILE__))), "bin", "mm-init"))
+  init_cmd = File.expand_path(File.join(File.dirname(File.dirname(File.dirname(__FILE__))), "bin", "mm init"))
   `cd #{File.dirname(target)} && #{init_cmd} #{File.basename(target)}`
 end
 

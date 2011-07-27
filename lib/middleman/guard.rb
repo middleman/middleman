@@ -61,7 +61,9 @@ module Guard
         # :Logger => ::WEBrick::Log.new('/dev/null')
       }
       @server_job = fork do
-        @server_options[:app] = ::Middleman.server.new
+        app = ::Middleman.server
+        app.set :environment, @options[:environment]
+        @server_options[:app] = app.new
         @server_options[:server] = 'thin'
         ::Rack::Server.new(@server_options).start
       end

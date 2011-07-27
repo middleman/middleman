@@ -8,10 +8,10 @@
 #
 # To accomplish its goals, Middleman supports provides access to:
 # 
-#### Command-line tools:
-# * **mm-init**: A tool for creating to new static sites.
-# * **mm-server**: A tool for rapidly developing your static site.
-# * **mm-build**: A tool for exporting your site into optimized HTML, CSS & JS.
+#### Command-line tool:
+# * **mm init**: A tool for creating to new static sites.
+# * **mm server**: A tool for rapidly developing your static site.
+# * **mm build**: A tool for exporting your site into optimized HTML, CSS & JS.
 #
 #### Tons of templating languages including:
 # * ERB                        (.erb)
@@ -63,6 +63,8 @@ module Middleman
   # Auto-load modules on-demand
   autoload :Base,      "middleman/base"
   autoload :Builder,   "middleman/builder"
+  autoload :CLI,       "middleman/cli"
+  autoload :Templates, "middleman/templates"
   autoload :Guard,     "middleman/guard"
   
   # Custom Renderers

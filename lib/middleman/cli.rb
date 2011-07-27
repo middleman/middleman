@@ -1,6 +1,4 @@
 require 'thor'
-require 'middleman'
-require "middleman/templates"
 
 module Middleman
   class CLI < Thor
@@ -11,8 +9,7 @@ module Middleman
     class_option "help", :type => :boolean, :default => false, :aliases => "-h"
     def initialize(*)
       super
-      config_check
-      help_check
+      help_check if options[:help]
     end
 
     desc "init NAME", "Create new Middleman project directory NAME"
@@ -23,31 +20,42 @@ module Middleman
     method_option "images_dir", :default => "images", :desc => 'The path to the image files'
     def init(name)
       key = options[:template].to_sym
-      key = :default unless Middleman::Templates.registered_templates.has_key?(key)
-
-      Middleman::Templates.registered_templates[key].start
+      unless Middleman::Templates.registered_templates.has_key?(key)
+        key = :default
+      end
+      
+      thor_group = Middleman::Templates.registered_templates[key]
+      thor_group.new([name], options).invoke_all
     end
 
     desc "server [-p 4567] [-e development]", "Starts the Middleman preview server"
     method_option "environment", :aliases => "-e", :default => ENV['MM_ENV'] || ENV['RACK_ENV'] || 'development', :desc => "The environment Middleman will run under"
     method_option "port", :aliases => "-p", :default => "4567", :desc => "The port Middleman will listen on"
-    method_option "livereload-port", :default => "35729", :desc => "The port Livereload will listen on"
     method_option "livereload", :default => false, :type => :boolean, :desc => "Whether to enable Livereload or not"
+    method_option "livereload-port", :default => "35729", :desc => "The port Livereload will listen on"
     def server
-      ENV['RACK_ENV'] = options[:environment]
-      livereload_options = {:port => options["livereload-port"]} if options["livereload"]
-      Middleman::Guard.start({:port => options[:port]}, livereload_options)
+      config_check
+      if options["livereload"]
+        livereload_options = {:port => options["livereload-port"]}
+      end
+      
+      Middleman::Guard.start({
+        :port        => options[:port],
+        :environment => options[:environment]
+      }, livereload_options)
     end
 
     desc "build", "Builds the static site for deployment"
     method_option "relative", :type => :boolean, :aliases => "-r", :default => false, :desc => 'Override the config.rb file and force relative urls'
     def build
-      ENV['MM_ENV'] = "build"
-      Middleman::Builder.start
+      config_check
+      thor_group = Middleman::Builder.new([], options).invoke_all
     end
 
     desc "migrate", "Migrates an older Middleman project to the 2.0 structure"
     def migrate
+      config_check
+      return if File.exists?("source")
       `mv public source`
       `cp -R views/* source/`
       `rm -rf views`
