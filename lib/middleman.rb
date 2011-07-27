@@ -9,9 +9,9 @@
 # To accomplish its goals, Middleman supports provides access to:
 # 
 #### Command-line tool:
-# * **mm init**: A tool for creating to new static sites.
-# * **mm server**: A tool for rapidly developing your static site.
-# * **mm build**: A tool for exporting your site into optimized HTML, CSS & JS.
+# * **middleman init**: A tool for creating to new static sites.
+# * **middleman server**: A tool for rapidly developing your static site.
+# * **middleman build**: A tool for exporting your site into optimized HTML, CSS & JS.
 #
 #### Tons of templating languages including:
 # * ERB                        (.erb)

@@ -3,13 +3,13 @@ require 'middleman/cli'
 
 Given /^a built test app$/ do
   target = File.join(File.dirname(File.dirname(File.dirname(__FILE__))), "fixtures", "test-app")
-  build_cmd = File.expand_path(File.join(File.dirname(File.dirname(File.dirname(__FILE__))), "bin", "mm build"))
+  build_cmd = File.expand_path(File.join(File.dirname(File.dirname(File.dirname(__FILE__))), "bin", "middleman build"))
   `cd #{target} && #{build_cmd}`
 end
 
 Given /^a built test app with flags "([^"]*)"$/ do |flags|
   target = File.join(File.dirname(File.dirname(File.dirname(__FILE__))), "fixtures", "test-app")
-  build_cmd = File.expand_path(File.join(File.dirname(File.dirname(File.dirname(__FILE__))), "bin", "mm build"))
+  build_cmd = File.expand_path(File.join(File.dirname(File.dirname(File.dirname(__FILE__))), "bin", "middleman build"))
   `cd #{target} && #{build_cmd} #{flags}`
 end
 
