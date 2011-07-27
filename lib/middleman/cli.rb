@@ -8,9 +8,11 @@ module Middleman
     check_unknown_options!
     default_task :server
 
+    class_option "help", :type => :boolean, :default => false, :aliases => "-h"
     def initialize(*)
-      config_check
       super
+      config_check
+      help_check
     end
 
     desc "init NAME", "Create new Middleman project directory NAME"
@@ -63,6 +65,11 @@ module Middleman
         $stderr.puts "== Error: The views and public folders are have been combined. Create a new 'source' folder, add the contents of views and public to it and then remove the empty views and public folders."
         exit 1
       end
+    end
+
+    def help_check
+      help self.class.send(:retrieve_task_name, ARGV.dup)
+      exit 0
     end
 
   end
