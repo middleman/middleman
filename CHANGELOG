@@ -10,3 +10,4 @@
 - Added callback to run code after Compass is configured
 - Added support for a compass.config file which is passed directly to Compass
 - Blog-aware Feature (and project template)
+- Thor-based, unified `mm` binary
