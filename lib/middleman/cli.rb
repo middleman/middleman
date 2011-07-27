@@ -14,10 +14,10 @@ module Middleman
 
     desc "init NAME", "Create new Middleman project directory NAME"
     available_templates = Middleman::Templates.registered_names.join(", ")
-    method_option :template, :aliases => "-T", :default => "default", :desc => "Optionally use a pre-defined project template: #{available_templates}"
-    method_option :css_dir, :default => "stylesheets", :desc => 'The path to the css files'
-    method_option :js_dir, :default => "javascripts", :desc => 'The path to the javascript files'
-    method_option :images_dir, :default => "images", :desc => 'The path to the image files'
+    method_option "template", :aliases => "-T", :default => "default", :desc => "Optionally use a pre-defined project template: #{available_templates}"
+    method_option "css_dir", :default => "stylesheets", :desc => 'The path to the css files'
+    method_option "js_dir", :default => "javascripts", :desc => 'The path to the javascript files'
+    method_option "images_dir", :default => "images", :desc => 'The path to the image files'
     def init(name)
       key = options[:template].to_sym
       key = :default unless Middleman::Templates.registered_templates.has_key?(key)
@@ -37,7 +37,7 @@ module Middleman
     end
 
     desc "build", "Builds the static site for deployment"
-    method_option :relative, :type => :boolean, :aliases => "-r", :default => false, :desc => 'Override the config.rb file and force relative urls'
+    method_option "relative", :type => :boolean, :aliases => "-r", :default => false, :desc => 'Override the config.rb file and force relative urls'
     def build
       ENV['MM_ENV'] = "build"
       Middleman::Builder.start
