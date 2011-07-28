@@ -5,20 +5,23 @@ module Middleman::Features::DirectoryIndexes
       app.extend ClassMethods
       
       app.build_reroute do |destination, request_path|
-        indexed_path = request_path.gsub(/\/$/, "") + ".html"
+        index_ext = File.extname(app.settings.index_file)
+        new_index_path = "/#{app.settings.index_file}"
+      
+        indexed_path = request_path.gsub(/\/$/, "") + index_ext
         
         if app.settings.ignored_directory_indexes.include?(request_path)
           false
         else
           [
-            destination.gsub(/\.html$/, "/index.html"),
-            request_path.gsub(/\.html$/, "/index.html")
+            destination.gsub(/#{index_ext.gsub(".", "\\.")}$/, new_index_path),
+            request_path.gsub(/#{index_ext.gsub(".", "\\.")}$/, new_index_path)
           ]
         end
       end
       
       app.before do
-        indexed_path = request.path_info.gsub(/\/$/, "") + ".html"
+        indexed_path = request.path_info.gsub(/\/$/, "") + File.extname(app.settings.index_file)
         
         if !settings.ignored_directory_indexes.include?(indexed_path)
           parts = request.path_info.split("/")
