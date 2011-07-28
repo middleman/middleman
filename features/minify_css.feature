@@ -8,7 +8,7 @@ Feature: Minify CSS
     
   Scenario: Rendering external css with the feature disabled
     Given "minify_css" feature is "disabled"
-    And the Server is running
+    And the Server is running at "test-app"
     When I go to "/stylesheets/site.css"
     Then I should see "55" lines
 
@@ -19,6 +19,6 @@ Feature: Minify CSS
     
   Scenario: Rendering external css with the feature enabled
     Given "minify_css" feature is "enabled"
-    And the Server is running
+    And the Server is running at "test-app"
     When I go to "/stylesheets/site.css"
     Then I should see "1" lines

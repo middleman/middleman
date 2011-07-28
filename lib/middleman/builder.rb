@@ -15,11 +15,15 @@ module Middleman
       context = instance_eval('binding')
       
       request_path = destination.sub(/^#{SHARED_SERVER.build_dir}/, "")
-      return if SHARED_SERVER.excluded_paths.include?(request_path)
       
-      create_file destination, nil, config do
-        Middleman::Builder.shared_rack.get(request_path.gsub(/\s/, "%20"))
-        Middleman::Builder.shared_rack.last_response.body
+      begin        
+        destination, request_page = SHARED_SERVER.reroute_builder(destination, request_path)
+      
+        create_file destination, nil, config do
+          Middleman::Builder.shared_rack.get(request_path.gsub(/\s/, "%20"))
+          Middleman::Builder.shared_rack.last_response.body
+        end
+      rescue
       end
     end
   end

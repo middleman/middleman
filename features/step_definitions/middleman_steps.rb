@@ -15,9 +15,10 @@ Given /^current environment is "([^\"]*)"$/ do |env|
   @current_env = env.to_sym
 end
 
-Given /^the Server is running$/ do
+Given /^the Server is running at "([^\"]*)"$/ do |app_path|
   @server ||= Middleman.server
-  @server.set :root, File.join(File.dirname(File.dirname(File.dirname(__FILE__))), "fixtures", "test-app")
+  root = File.dirname(File.dirname(File.dirname(__FILE__)))
+  @server.set :root, File.join(root, "fixtures", app_path)
   @browser = Rack::Test::Session.new(Rack::MockSession.new(@server.new))
 end
 

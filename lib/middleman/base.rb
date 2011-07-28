@@ -86,7 +86,9 @@ module Middleman::Base
         request_path = request.path_info.gsub("%20", " ")
         result = resolve_template(request_path, :raise_exceptions => false)
         
-        if result
+        should_be_ignored = !(request["is_proxy"]) && settings.excluded_paths.include?("/#{request_path}")
+        
+        if result && !should_be_ignored
           extensionless_path, template_engine = result
 
           # Return static files
@@ -117,6 +119,27 @@ module Middleman::Base
       end
     
       super(option, value, &nil)
+    end
+    
+    def build_reroute(&block)
+      @build_rerouters ||= []
+      @build_rerouters << block
+    end
+    
+    def reroute_builder(desination, request_path)
+      @build_rerouters ||= []
+      
+      result = [desination, request_path]
+      
+      @build_rerouters.each do |block|
+        output = block.call(desination, request_path)
+        if output
+          result = output
+          break
+        end
+      end
+      
+      result
     end
     
     def before_processing(&block)

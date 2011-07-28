@@ -11,3 +11,4 @@
 - Added support for a compass.config file which is passed directly to Compass
 - Blog-aware Feature (and project template)
 - Thor-based, unified `middleman` binary
+- :directory_indexes feature

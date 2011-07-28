@@ -46,7 +46,6 @@ module Middleman
             end
             
             app.get("/#{app.blog_permalink}") do
-              $stderr.puts "*" * 500
               process_request({
                 :layout        => app.blog_layout,
                 :layout_engine => app.blog_layout_engine

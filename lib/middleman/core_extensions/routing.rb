@@ -6,6 +6,10 @@ module Middleman::CoreExtensions::Routing
       app.set :proxied_paths, {}
       app.set :excluded_paths, []
       
+      app.build_reroute do |destination, request_path|
+        throw if app.settings.excluded_paths.include?(request_path)
+      end
+      
       # Normalize the path and add index if we're looking at a directory
       app.before_processing do
         request.path_info = self.class.path_to_index(request.path)
@@ -39,7 +43,7 @@ module Middleman::CoreExtensions::Routing
     end
   
     def paths_for_url(url)
-      url = url.gsub(%r{#{settings.index_file}$}, "")
+      url = url.gsub(%r{\/#{settings.index_file}$}, "")
       url = url.gsub(%r{(\/)$}, "") if url.length > 1
     
       paths = [url]
@@ -76,6 +80,7 @@ module Middleman::CoreExtensions::Routing
       paths_for_url(url).each do |p|
         get(p) do
           if settings.proxied_paths.has_key?(url)
+            request["is_proxy"] = true
             request.path_info = settings.proxied_paths[url]
           end
           
