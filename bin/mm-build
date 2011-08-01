@@ -1,2 +1,9 @@
-#!/bin/bash
-/usr/bin/env middleman build $@
+#!/usr/bin/env ruby
+require "rubygems"
+
+libdir = File.join(File.dirname(File.dirname(__FILE__)), "lib")
+$LOAD_PATH.unshift(libdir) unless $LOAD_PATH.include?(libdir)
+
+require 'middleman'
+args = ARGV.dup.unshift("build")
+Middleman::CLI.start(args)
