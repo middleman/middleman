@@ -1,5 +1,4 @@
 @import "compass";
-@import "susy";
 
 $link-color:         #0388a6;
 $link-hover-color:   #009ce0;
@@ -18,7 +17,6 @@ $gutter-width: 1em;
 $side-gutter-width: $gutter-width;
 
 @include global-reset;
-@include establish-baseline;
 
 body {
   font-family: $font-family;
@@ -31,6 +29,4 @@ a {
 
 #main {
   padding: 50px;
-  @include container;
-  @include susy-grid-background;
 }
