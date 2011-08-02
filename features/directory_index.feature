@@ -6,6 +6,8 @@ Feature: Directory Index
     Then "needs_index/index.html" should exist at "indexable-app" and include "Indexable"
     Then "a_folder/needs_index/index.html" should exist at "indexable-app" and include "Indexable"
     Then "leave_me_alone.html" should exist at "indexable-app" and include "Stay away"
+    Then "regular/index.html" should exist at "indexable-app" and include "Regular"
+    Then "regular/index/index.html" should not exist at "indexable-app"
     Then "needs_index.html" should not exist at "indexable-app"
     Then "a_folder/needs_index.html" should not exist at "indexable-app"
     Then "leave_me_alone/index.html" should not exist at "indexable-app"

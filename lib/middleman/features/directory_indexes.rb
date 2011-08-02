@@ -12,6 +12,8 @@ module Middleman::Features::DirectoryIndexes
         
         if app.settings.ignored_directory_indexes.include?(request_path)
           false
+        elsif request_path =~ /#{new_index_path}$/
+          false
         else
           [
             destination.gsub(/#{index_ext.gsub(".", "\\.")}$/, new_index_path),
@@ -21,16 +23,20 @@ module Middleman::Features::DirectoryIndexes
       end
       
       app.before do
-        indexed_path = request.path_info.gsub(/\/$/, "") + File.extname(app.settings.index_file)
+        indexed_path = request.path_info.gsub(/\/$/, "") + "/" + app.settings.index_file        
+        indexed_exists = resolve_template(indexed_path, :raise_exceptions => false)
+
+        extensioned_path = request.path_info.gsub(/\/$/, "") + File.extname(app.settings.index_file)
+        is_ingored = settings.ignored_directory_indexes.include?(extensioned_path)
         
-        if !settings.ignored_directory_indexes.include?(indexed_path)
+        if !indexed_exists && !is_ingored
           parts = request.path_info.split("/")
           last_part = parts.last
           last_part_ext = File.extname(last_part)
         
           if last_part_ext.blank?
             # This is a folder, redirect to index
-            request.path_info = indexed_path
+            request.path_info = extensioned_path
           end
         end
       end
