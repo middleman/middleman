@@ -140,9 +140,6 @@ module Middleman
 
     # Treat project as a blog
     autoload :Blog,                "middleman/features/blog"
-
-    # Proxy web services requests in dev mode only
-    autoload :Proxy,               "middleman/features/proxy"
     
     # guard-livereload
     autoload :LiveReload,          "middleman/features/live_reload"
