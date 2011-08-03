@@ -61,6 +61,12 @@ module Middleman
       `rm -rf views`
     end
 
+    desc "version", "Show Middleman version"
+    def version
+      require 'middleman/version'
+      say "Middleman #{Middleman::VERSION}"
+    end
+    
   private
 
     def config_check
