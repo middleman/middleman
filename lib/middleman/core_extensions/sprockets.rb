@@ -1,8 +1,8 @@
 require "sprockets"
-
+  
 module Middleman::CoreExtensions::Sprockets
   class << self
-    def registered(app)
+    def registered(app)      
       app.set :js_compressor, false
       
       app.map "/#{app.js_dir}" do
@@ -15,7 +15,7 @@ module Middleman::CoreExtensions::Sprockets
     alias :included :registered
   end
 
-  class MiddlemanEnvironment < Sprockets::Environment
+  class MiddlemanEnvironment < ::Sprockets::Environment
     def initialize(app)
       full_path = app.views
       full_path = File.join(app.root, app.views) unless app.views.include?(app.root)
@@ -35,6 +35,13 @@ module Middleman::CoreExtensions::Sprockets
 
       # configure search paths
       append_path app.js_dir
+      
+      # jQuery for Sprockets
+      # begin
+      #   require "jquery-rails"
+      #   jquery-rails / vendor / assets / javascripts
+      # rescue LoadError
+      # end
     end
   end
   
