@@ -34,7 +34,7 @@ module Middleman
     method_option "livereload", :default => false, :type => :boolean, :desc => "Whether to enable Livereload or not"
     method_option "livereload-port", :default => "35729", :desc => "The port Livereload will listen on"
     def server
-      config_check
+      config_check && v1_check
       if options["livereload"]
         livereload_options = {:port => options["livereload-port"]}
       end
@@ -48,7 +48,7 @@ module Middleman
     desc "build", "Builds the static site for deployment"
     method_option "relative", :type => :boolean, :aliases => "-r", :default => false, :desc => 'Override the config.rb file and force relative urls'
     def build
-      config_check
+      config_check && v1_check
       thor_group = Middleman::Builder.new([], options).invoke_all
     end
 
@@ -68,7 +68,9 @@ module Middleman
         $stderr.puts "== Error: Could not find a Middleman project config, perhaps you are in the wrong folder?"
         exit 1
       end
-
+    end
+    
+    def v1_check
       if File.exists?("views") || File.exists?("public")
         $stderr.puts "== Error: The views and public folders are have been combined. Create a new 'source' folder, add the contents of views and public to it and then remove the empty views and public folders."
         exit 1
