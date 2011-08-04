@@ -33,7 +33,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency("compass", ["~> 0.11.3"])
   s.add_runtime_dependency("coffee-script", ["~> 2.2.0"])
   s.add_runtime_dependency("sprockets", ["2.0.0.beta.12"])
-  s.add_runtime_dependency("httparty", ["~> 0.7.0"])
+  s.add_runtime_dependency("httparty", ["~> 0.7.8"])
   s.add_runtime_dependency("guard", ["~> 0.5.1"])
   s.add_runtime_dependency("guard-livereload", ["~> 0.2.1"])
   s.add_development_dependency("coffee-filter", ["~> 0.1.1"])
