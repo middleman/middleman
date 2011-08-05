@@ -1,5 +1,3 @@
-require "rdiscount"
-
 module Middleman
   module Features
     module Blog

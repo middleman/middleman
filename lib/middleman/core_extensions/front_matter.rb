@@ -8,7 +8,8 @@ module Middleman::CoreExtensions::FrontMatter
       
       ::Tilt::register RDiscountTemplate, 'markdown', 'mkd', 'md'
       ::Tilt::register RedcarpetTemplate, 'markdown', 'mkd', 'md'
-      app.set :markdown_engine, RDiscountTemplate
+      ::Tilt::register MarukuTemplate, 'markdown', 'mkd', 'md'
+      app.set :markdown_engine, MarukuTemplate
       
       ::Tilt::register RedClothTemplate,  'textile'
       ::Tilt.prefer(RedClothTemplate)
@@ -86,7 +87,9 @@ module Middleman::CoreExtensions::FrontMatter
   class RedcarpetTemplate < ::Tilt::RedcarpetTemplate
     include Middleman::CoreExtensions::FrontMatter::YamlAware
   end
-  
+  class MarukuTemplate < ::Tilt::MarukuTemplate
+    include Middleman::CoreExtensions::FrontMatter::YamlAware
+  end
   class RedClothTemplate < ::Tilt::RedClothTemplate
     include Middleman::CoreExtensions::FrontMatter::YamlAware
   end
