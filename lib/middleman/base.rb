@@ -127,27 +127,6 @@ module Middleman::Base
       super(option, value, &nil)
     end
     
-    def build_reroute(&block)
-      @build_rerouters ||= []
-      @build_rerouters << block
-    end
-    
-    def reroute_builder(desination, request_path)
-      @build_rerouters ||= []
-      
-      result = [desination, request_path]
-      
-      @build_rerouters.each do |block|
-        output = block.call(desination, request_path)
-        if output
-          result = output
-          break
-        end
-      end
-      
-      result
-    end
-    
     def before_processing(&block)
       @before_processes ||= []
       @before_processes << block
