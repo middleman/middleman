@@ -64,7 +64,7 @@ module Middleman::CoreExtensions::Features
     end
     
     # Add a block/proc to be run after features have been setup
-    def after_feature_init(&block)
+    def after_configuration(&block)
       @run_after_features ||= []
       @run_after_features << block
     end

@@ -22,7 +22,7 @@ module Middleman::CoreExtensions::FrontMatter
       ::Tilt::register HamlTemplate,      'haml'
       ::Tilt.prefer(HamlTemplate)
       
-      app.after_feature_init do
+      app.after_configuration do
         app.before_processing do
           request_path = request.path_info.gsub("%20", " ")
           result = resolve_template(request_path, :raise_exceptions => false)

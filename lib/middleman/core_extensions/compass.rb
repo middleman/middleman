@@ -11,7 +11,7 @@ module Middleman::CoreExtensions::Compass
       rescue LoadError
       end
 
-      app.after_feature_init do
+      app.after_configuration do
         # Support a stand-alone compass config file
         # Many options are overwritten by Middleman, but the config is a good
         # place to add:

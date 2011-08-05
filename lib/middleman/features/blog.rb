@@ -8,7 +8,7 @@ module Middleman
           # Include helpers
           app.helpers Middleman::Features::Blog::Helpers
 
-          app.after_feature_init do
+          app.after_configuration do
             if !app.settings.respond_to? :blog_permalink
               app.set :blog_permalink, ":year/:month/:day/:title.html"
             end
