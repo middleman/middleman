@@ -101,7 +101,10 @@ module Middleman::Base
             true
           end
         else
-          $stderr.puts "File not found: #{request_path}"
+          if !%w(favicon.ico).include?(request_path)
+            $stderr.puts "File not found: #{request_path}"
+          end
+          
           status 404
           false
         end
