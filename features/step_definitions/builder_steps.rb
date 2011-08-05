@@ -13,9 +13,10 @@ Then /^cleanup built app at "([^"]*)"$/ do |path|
   FileUtils.rm_rf(target)
 end
 
-Given /^a built test app with flags "([^"]*)"$/ do |flags|
-  target = File.join(File.dirname(File.dirname(File.dirname(__FILE__))), "fixtures", "test-app")
-  build_cmd = File.expand_path(File.join(File.dirname(File.dirname(File.dirname(__FILE__))), "bin", "middleman build"))
+Given /^a built app at "([^"]*)" with flags "([^"]*)"$/ do |path, flags|
+  root = File.dirname(File.dirname(File.dirname(__FILE__)))
+  target = File.join(root, "fixtures", path)
+  build_cmd = File.expand_path(File.join(root, "bin", "middleman build"))
   `cd #{target} && #{build_cmd} #{flags}`
 end
 
