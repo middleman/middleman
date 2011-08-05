@@ -77,6 +77,9 @@ module Middleman
   end
   
   module CoreExtensions
+    # Add Builder callbacks
+    autoload :Builder,       "middleman/core_extensions/builder"
+    
     # Add Rack::Builder.map support
     autoload :RackMap,       "middleman/core_extensions/rack_map"
     

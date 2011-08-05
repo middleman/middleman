@@ -29,6 +29,9 @@ module Middleman::Base
 
       app.set :views, "source"
 
+      # Add Builder Callbacks
+      app.register Middleman::CoreExtensions::Builder
+      
       # Add Rack::Builder.map to Sinatra
       app.register Middleman::CoreExtensions::RackMap
 

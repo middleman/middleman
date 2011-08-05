@@ -5,7 +5,7 @@ require 'rack/test'
 SHARED_SERVER = Middleman.server
 SHARED_SERVER.set :environment, :build
 
-module Middleman
+module Middleman  
   module ThorActions
     def tilt_template(source, *args, &block)
       config = args.last.is_a?(Hash) ? args.pop : {}
@@ -74,6 +74,10 @@ module Middleman
     
     def run_hooks
       @@hooks.each do |name, proc|
+        instance_eval(&proc)
+      end
+      
+      SHARED_SERVER.after_build_callbacks.each do |name, proc|
         instance_eval(&proc)
       end
     end
