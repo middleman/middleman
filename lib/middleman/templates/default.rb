@@ -5,7 +5,9 @@ class Middleman::Templates::Default < Middleman::Templates::Base
   
   def build_scaffold
     template "shared/config.tt", File.join(location, "config.rb")
-    template "shared/config.ru", File.join(location, "config.ru")
+    if options[:rack]
+      template "shared/config.ru", File.join(location, "config.ru")
+    end
     copy_file "default/source/index.html.erb", File.join(location, "source/index.html.erb")
     copy_file "default/source/layout.erb", File.join(location, "source/layout.erb")
     empty_directory File.join(location, "source", options[:css_dir])
