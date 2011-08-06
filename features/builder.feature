@@ -17,7 +17,7 @@ Feature: Builder
     Then "images/Child folder/regular_file(example).txt" should exist at "test-app"
     And cleanup built app at "test-app"
     
-  Scenario: Force relative assets
-    Given a built app at "relative-app" with flags "--relative"
-    Then "stylesheets/relative_assets.css" should exist at "relative-app" and include "../"
-    And cleanup built app at "relative-app"
+  # Scenario: Force relative assets
+  #   Given a built app at "relative-app" with flags "--relative"
+  #   Then "stylesheets/relative_assets.css" should exist at "relative-app" and include "../"
+  #   And cleanup built app at "relative-app"
