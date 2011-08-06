@@ -102,7 +102,7 @@ module Middleman
     end
 
   protected
-    def handle_directory(lookup)
+    def handle_directory(lookup, &block)
       lookup = File.join(lookup, '*')
       
       results = Dir[lookup].sort do |a, b|
@@ -121,13 +121,13 @@ module Middleman
         end
       end
       
+      results = results.select(&block) if block_given?
+      
       results.each do |file_source|
         if File.directory?(file_source)
           handle_directory(file_source)
           next
         end
-        
-        next if file_source.include?('layout') && !file_source.include?('.css')
         
         # Skip partials prefixed with an underscore
         next unless file_source.gsub(SHARED_SERVER.root, '').split('/').select { |p| p[0,1] == '_' }.empty?
@@ -146,7 +146,16 @@ module Middleman
     end
 
     def execute!
-      handle_directory(source)
+      handle_directory(source) do |path|
+        file_name = path.gsub(SHARED_SERVER.views + "/", "")
+        if file_name == "layouts"
+          false
+        elsif file_name.include?("layout.") && file_name.split(".").length == 2
+          false
+        else
+          true
+        end
+      end
     end
   end
 end
