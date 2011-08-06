@@ -19,6 +19,7 @@ module Middleman
     method_option "js_dir", :default => "javascripts", :desc => 'The path to the javascript files'
     method_option "images_dir", :default => "images", :desc => 'The path to the image files'
     method_option "rack", :type => :boolean, :default => false, :desc => 'Include a config.ru file'
+    method_option "bundler", :type => :boolean, :default => false, :desc => 'Create a Gemfile and use Bundler to manage gems'
     def init(name)
       key = options[:template].to_sym
       unless Middleman::Templates.registered_templates.has_key?(key)

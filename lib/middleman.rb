@@ -161,3 +161,5 @@ module Middleman
     sandbox
   end
 end
+
+require "middleman/version"
