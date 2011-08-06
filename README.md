@@ -1,8 +1,7 @@
-# middleman
+Middleman [![Build Status](http://travis-ci.org/tdreyno/middleman.png)](http://travis-ci.org/tdreyno/middleman)
+=========
 
-The Middleman is ever-vigilant against tag-soup, unreadable CSS and repetition. He stands-watch over your Haml, Sass, and CoffeeScript producing only the cleanest and most efficient markup.
-
-[![Build Status](http://travis-ci.org/tdreyno/middleman.png)](http://travis-ci.org/tdreyno/middleman)
+Middleman is ever-vigilant against tag-soup, unreadable CSS and repetition. He stands-watch over your Haml, Sass, and CoffeeScript producing only the cleanest and most efficient markup.
 
 [![Click here to lend your support to Middleman](http://www.pledgie.com/campaigns/15807.png)](http://www.pledgie.com/campaigns/15807)
 
