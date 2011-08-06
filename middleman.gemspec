@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   # TODO remove for 2.1.x
-  gem.post_install_message =<<eos
+  s.post_install_message =<<eos
 ******************************************************************************
 
   Welcome to Middleman 2.0
