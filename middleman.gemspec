@@ -56,11 +56,13 @@ eos
   
   case Config::CONFIG['host_os'].downcase
   when %r{mswin|mingw}
-  else
-    s.add_runtime_dependency("guard", ["~> 0.5.1"])
-    s.add_runtime_dependency("guard-livereload", ["~> 0.3.0"])
+    # s.add_runtime_dependency "windows-api", "= 0.4.0"
+    # s.add_runtime_dependency "windows-pr", "= 1.1.2"
+    s.add_runtime_dependency("win32-process", ["~> 0.6.5"])
   end
   
+  s.add_runtime_dependency("guard", ["~> 0.5.1"])
+  s.add_runtime_dependency("guard-livereload", ["~> 0.3.0"])
   s.add_development_dependency("coffee-filter", ["~> 0.1.1"])
   s.add_development_dependency("cucumber", ["~> 1.0.2"])
   s.add_development_dependency("rake", ["0.8.7"])

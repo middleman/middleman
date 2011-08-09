@@ -1,8 +1,12 @@
 require "guard"
 require "guard/guard"
 require "guard/livereload"
-require "webrick"
+require "rbconfig"
 
+if Config::CONFIG['host_os'].downcase =~ %r{mswin|mingw}
+  require "win32/process"
+end
+  
 module Middleman::Guard
   def self.start(options={}, livereload={})
     options_hash = ""
