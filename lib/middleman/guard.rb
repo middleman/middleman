@@ -59,8 +59,6 @@ module Guard
       @server_job = fork do
         ::Middleman.start_server(@options)
       end
-
-      puts "== The Middleman is standing watch on port #{@options[:port]}"
     end
   
     def server_stop
@@ -68,7 +66,7 @@ module Guard
       Process.kill("KILL", @server_job)
       Process.wait @server_job
       @server_job = nil
-      @server_options[:app] = nil
+      # @server_options[:app] = nil
     end
   end
 end

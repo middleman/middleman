@@ -171,6 +171,8 @@ module Middleman
     app.set :environment, options[:environment].to_sym
     opts[:app] = app.new
     opts[:server] = 'thin'
+
+    $stderr.puts "== The Middleman is standing watch on port #{opts[:Port]}"
     ::Rack::Server.new(opts).start
   end
 end
