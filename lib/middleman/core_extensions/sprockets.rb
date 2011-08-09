@@ -2,11 +2,13 @@ require "sprockets"
   
 module Middleman::CoreExtensions::Sprockets
   class << self
-    def registered(app)      
+    def registered(app)
       app.set :js_compressor, false
-      
-      app.map "/#{app.js_dir}" do
-        run JavascriptEnvironment.new(app)
+
+      app.after_configuration do
+        app.map "/#{app.js_dir}" do
+          run JavascriptEnvironment.new(app)
+        end
       end
       # app.map "/#{app.css_dir}" do
       #   run StylesheetEnvironment.new(app)
