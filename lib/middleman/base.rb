@@ -28,37 +28,37 @@ module Middleman::Base
       app.set :static, false
 
       app.set :views, "source"
-
+      
       # Add Builder Callbacks
       app.register Middleman::CoreExtensions::Builder
       
       # Add Rack::Builder.map to Sinatra
       app.register Middleman::CoreExtensions::RackMap
-
+      
       # Activate custom features
       app.register Middleman::CoreExtensions::Features
-
+      
       # Setup custom rendering
       app.register Middleman::CoreExtensions::Rendering
-
+      
       # Compass framework
       app.register Middleman::CoreExtensions::Compass
-
+      
       # Sprockets asset handling
       app.register Middleman::CoreExtensions::Sprockets
-
+      
       # Setup asset path pipeline
       app.register Middleman::CoreExtensions::Assets
-
+      
       # Activate built-in helpers
       app.register Middleman::CoreExtensions::DefaultHelpers
-
+      
       # Activate Yaml Data package
       app.register Middleman::CoreExtensions::Data
-
+      
       # with_layout and page routing
       app.register Middleman::CoreExtensions::Routing
-
+      
       # Parse YAML from templates
       app.register Middleman::CoreExtensions::FrontMatter
 
