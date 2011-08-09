@@ -7,13 +7,13 @@ module Middleman::CoreExtensions::Sprockets
 
       app.after_configuration do
         app.map "/#{app.js_dir}" do
-          run JavascriptEnvironment.new(app)
+          run Middleman::CoreExtensions::Sprockets::JavascriptEnvironment.new(app)
         end
+        
+        # app.map "/#{app.css_dir}" do
+        #   run Middleman::CoreExtensions::Sprockets::StylesheetEnvironment.new(app)
+        # end
       end
-      
-      # app.map "/#{app.css_dir}" do
-      #   run StylesheetEnvironment.new(app)
-      # end
     end
     alias :included :registered
   end
