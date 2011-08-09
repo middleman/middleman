@@ -160,6 +160,19 @@ module Middleman
     sandbox.class_eval(&block) if block_given?
     sandbox
   end
+  
+  def self.start_server(options={})
+    opts = {
+      :Port      => options[:port],
+      :AccessLog => []
+    }
+    
+    app = ::Middleman.server
+    app.set :environment, options[:environment].to_sym
+    opts[:app] = app.new
+    opts[:server] = 'thin'
+    ::Rack::Server.new(opts).start
+  end
 end
 
 require "middleman/version"

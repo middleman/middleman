@@ -38,9 +38,7 @@ module Guard
   class Middleman < Guard
     def initialize(watchers = [], options = {})
       super
-      @options = {
-        :port => '4567'
-      }.update(options)
+      @options = options
     end
     
     def start
@@ -54,18 +52,8 @@ module Guard
 
   private
     def server_start
-      @server_options = { 
-        :Port => @options[:port],
-        :AccessLog => []
-        # :AccessLog => ::WEBrick::Log.new('/dev/null'),
-        # :Logger => ::WEBrick::Log.new('/dev/null')
-      }
       @server_job = fork do
-        app = ::Middleman.server
-        app.set :environment, @options[:environment].to_sym
-        @server_options[:app] = app.new
-        @server_options[:server] = 'thin'
-        ::Rack::Server.new(@server_options).start
+        ::Middleman.start_server(@options)
       end
 
       puts "== The Middleman is standing watch on port #{@options[:port]}"

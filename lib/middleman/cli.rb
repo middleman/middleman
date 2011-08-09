@@ -1,4 +1,5 @@
 require 'thor'
+require 'rbconfig'
 
 module Middleman
   class CLI < Thor
@@ -37,14 +38,20 @@ module Middleman
     method_option "livereload-port", :default => "35729", :desc => "The port Livereload will listen on"
     def server
       v1_check
-      if options["livereload"]
-        livereload_options = {:port => options["livereload-port"]}
-      end
       
-      Middleman::Guard.start({
-        :port        => options[:port],
-        :environment => options[:environment]
-      }, livereload_options)
+      if Config::CONFIG['host_os'].downcase =~ %r{mswin|mingw}
+        ::Middleman.start_server(options)
+        puts "== The Middleman is standing watch on port #{options[:port]}"
+      else
+        if options["livereload"]
+          livereload_options = {:port => options["livereload-port"]}
+        end
+      
+        Middleman::Guard.start({
+          :port        => options[:port],
+          :environment => options[:environment]
+        }, livereload_options)
+      end
     end
 
     desc "build", "Builds the static site for deployment"

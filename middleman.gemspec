@@ -1,4 +1,6 @@
 # -*- encoding: utf-8 -*-
+require "rbconfig"
+
 $:.push File.expand_path("../lib", __FILE__)
 require "middleman/version"
 
@@ -51,8 +53,14 @@ eos
   s.add_runtime_dependency("coffee-script", ["~> 2.2.0"])
   s.add_runtime_dependency("sprockets", ["2.0.0.beta.13"])
   s.add_runtime_dependency("httparty", ["~> 0.7.8"])
-  s.add_runtime_dependency("guard", ["~> 0.5.1"])
-  s.add_runtime_dependency("guard-livereload", ["~> 0.2.1"])
+  
+  case Config::CONFIG['host_os'].downcase
+  when %r{mswin|mingw}
+  else
+    s.add_runtime_dependency("guard", ["~> 0.5.1"])
+    s.add_runtime_dependency("guard-livereload", ["~> 0.3.0"])
+  end
+  
   s.add_development_dependency("coffee-filter", ["~> 0.1.1"])
   s.add_development_dependency("cucumber", ["~> 1.0.2"])
   s.add_development_dependency("rake", ["0.8.7"])
