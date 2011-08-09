@@ -1,6 +1,6 @@
 module Middleman
   def self.templates_path
-    File.join(`cd ~ && pwd`.chomp, ".middleman")
+    File.join(File.expand_path("~/"), ".middleman")
   end
 end
 
