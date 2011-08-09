@@ -10,6 +10,7 @@ module Middleman::CoreExtensions::Sprockets
           run JavascriptEnvironment.new(app)
         end
       end
+      
       # app.map "/#{app.css_dir}" do
       #   run StylesheetEnvironment.new(app)
       # end
