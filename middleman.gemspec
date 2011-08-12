@@ -46,9 +46,9 @@ eos
   s.add_runtime_dependency("padrino-helpers", ["~> 0.10.0", '< 0.10.1'])
   s.add_runtime_dependency("rack-test", ["~> 0.6.1"])
   s.add_runtime_dependency("uglifier", ["~> 1.0.0"])
-  s.add_runtime_dependency("slim", ["~> 0.9.0"])
+  s.add_runtime_dependency("slim", ["~> 1.0.1"])
   s.add_runtime_dependency("haml", ["~> 3.1.0"])
-  s.add_runtime_dependency("sass", ["~> 3.1.5", '< 3.1.6'])
+  s.add_runtime_dependency("sass", ["~> 3.1.7"])
   s.add_runtime_dependency("compass", ["~> 0.11.3"])
   s.add_runtime_dependency("coffee-script", ["~> 2.2.0"])
   s.add_runtime_dependency("sprockets", ["2.0.0.beta.13"])
@@ -59,6 +59,7 @@ eos
     # s.add_runtime_dependency "windows-api", "= 0.4.0"
     # s.add_runtime_dependency "windows-pr", "= 1.1.2"
     s.add_runtime_dependency("win32-process", ["~> 0.6.5"])
+    s.add_runtime_dependency("win32console", ["~> 1.3.0"])
   end
   
   s.add_runtime_dependency("guard", ["~> 0.5.1"])

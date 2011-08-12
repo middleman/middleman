@@ -5,6 +5,7 @@ require "rbconfig"
 
 if Config::CONFIG['host_os'].downcase =~ %r{mswin|mingw}
   require "win32/process"
+  require 'win32console'
 end
   
 module Middleman::Guard
