@@ -9,6 +9,7 @@ module Middleman::CoreExtensions::FrontMatter
       ::Tilt::register RDiscountTemplate, 'markdown', 'mkd', 'md'
       ::Tilt::register RedcarpetTemplate, 'markdown', 'mkd', 'md'
       ::Tilt::register MarukuTemplate, 'markdown', 'mkd', 'md'
+      ::Tilt::register KramdownTemplate, 'markdown', 'mkd', 'md'
       app.set :markdown_engine, MarukuTemplate
       
       ::Tilt::register RedClothTemplate,  'textile'
@@ -91,6 +92,9 @@ module Middleman::CoreExtensions::FrontMatter
     include Middleman::CoreExtensions::FrontMatter::YamlAware
   end
   class RedClothTemplate < ::Tilt::RedClothTemplate
+    include Middleman::CoreExtensions::FrontMatter::YamlAware
+  end
+  class KramdownTemplate < ::Tilt::KramdownTemplate
     include Middleman::CoreExtensions::FrontMatter::YamlAware
   end
  
