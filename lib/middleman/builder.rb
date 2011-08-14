@@ -77,7 +77,7 @@ module Middleman
         instance_eval(&proc)
       end
       
-      SHARED_SERVER.after_build_callbacks.each do |name, proc|
+      SHARED_SERVER.after_build_callbacks.each do |proc|
         instance_eval(&proc)
       end
     end
