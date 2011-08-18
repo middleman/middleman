@@ -64,7 +64,7 @@ eos
     s.add_runtime_dependency("rb-fsevent", ["~> 0.4.2"])
   end
   
-  s.add_runtime_dependency("guard", ["~> 0.5.1"])
+  s.add_runtime_dependency("guard", ["~> 0.6.2"])
   s.add_runtime_dependency("guard-livereload", ["~> 0.3.0"])
   s.add_development_dependency("coffee-filter", ["~> 0.1.1"])
   s.add_development_dependency("cucumber", ["~> 1.0.2"])
