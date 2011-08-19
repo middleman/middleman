@@ -8,6 +8,7 @@ Gem::Specification.new do |s|
   s.name        = "middleman"
   s.version     = Middleman::VERSION
   s.platform    = Gem::Platform::RUBY
+  s.license     = "MIT"
   s.authors     = ["Thomas Reynolds"]
   s.email       = ["me@tdreyno.com"]
   s.homepage    = "http://middlemanapp.com"

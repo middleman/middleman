@@ -154,6 +154,23 @@ module Middleman
     autoload :DirectoryIndexes,    "middleman/features/directory_indexes"
   end
   
+  EXTENSION_FILE = "middleman_init.rb"
+  def self.load_extensions_in_path
+    # If newer Rubygems
+    extensions = if Gem::Specification.respond_to? :select
+      ::Gem::Specification.select do |spec| 
+        spec.contains_requirable_file?(EXTENSION_FILE)
+      end
+    else
+      ::Gem::GemPathSearcher.new.find_all(EXTENSION_FILE)
+    end
+    
+    extensions.each do |spec|
+      require spec.name
+      $stderr.puts "require: #{spec.name}"
+    end
+  end
+  
   def self.server(&block)
     sandbox = Class.new(Sinatra::Base)
     sandbox.register Base
@@ -178,3 +195,4 @@ module Middleman
 end
 
 require "middleman/version"
+Middleman.load_extensions_in_path
