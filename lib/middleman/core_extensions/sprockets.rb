@@ -46,6 +46,11 @@ module Middleman::CoreExtensions::Sprockets
       # rescue LoadError
       # end
     end
+    
+    def javascript_exception_response(exception)
+      expire_index!
+      super(exception)
+    end
   end
   
   # class StylesheetEnvironment < MiddlemanEnvironment
@@ -58,6 +63,11 @@ module Middleman::CoreExtensions::Sprockets
   #     # configure search paths
   #     stylesheets_path = File.join(File.expand_path(app.views), app.css_dir)
   #     append_path stylesheets_path
+  #   end
+  #
+  #   def css_exception_response(exception)
+  #     expire_index!
+  #     super(exception)
   #   end
   # end
 end
