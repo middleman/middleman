@@ -53,7 +53,6 @@ eos
   s.add_runtime_dependency("compass", ["~> 0.11.3"])
   s.add_runtime_dependency("coffee-script", ["~> 2.2.0"])
   s.add_runtime_dependency("sprockets", ["2.0.0.beta.14"])
-  s.add_runtime_dependency("httparty", ["~> 0.7.8"])
   
   case Config::CONFIG['host_os'].downcase
   when %r{mswin|mingw}

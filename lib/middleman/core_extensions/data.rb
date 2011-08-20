@@ -1,5 +1,4 @@
 require "yaml"
-require "httparty"
 require "thor"
 
 module Middleman::CoreExtensions::Data
@@ -27,12 +26,12 @@ module Middleman::CoreExtensions::Data
       response = nil
       
       @@local_sources ||= {}
-      @@remote_sources ||= {}
+      @@callback_sources ||= {}
       
       if @@local_sources.has_key?(path.to_s)
         response = @@local_sources[path.to_s]
-      elsif @@remote_sources.has_key?(path.to_s)
-        response = HTTParty.get(@@remote_sources[path.to_s]).parsed_response
+      elsif @@callback_sources.has_key?(path.to_s)
+        response = @@callback_sources[path.to_s].call()
       else
         file_path = File.join(@app.class.root, @app.class.data_dir, "#{path}.yml")
         if File.exists? file_path
@@ -44,15 +43,15 @@ module Middleman::CoreExtensions::Data
         recursively_enhance(response)
       end
     end
-    
-    def self.add_source(name, json_url)
-      @@remote_sources ||= {}
-      @@remote_sources[name.to_s] = json_url
-    end
 
     def self.data_content(name, content)
       @@local_sources ||= {}
       @@local_sources[name.to_s] = content
+    end
+    
+    def self.data_callback(name, proc)
+      @@callback_sources ||= {}
+      @@callback_sources[name.to_s] = proc
     end
   
   private
@@ -75,19 +74,14 @@ module Middleman::CoreExtensions::Data
   end
   
   module ClassMethods
-    # Makes HTTP json data available in the data object
-    #
-    #     data_source :my_json, "http://my/file.json"
-    #
-    # Available in templates as:
-    #
-    #     data.my_json
-    def data_source(name, url)
-      DataObject.add_source(name, url)
-    end
-    
+    # Makes a hash available on the data var with a given name
     def data_content(name, content)
       DataObject.data_content(name, content)
+    end
+    
+    # Makes a hash available on the data var with a given name
+    def data_callback(name, &block)
+      DataObject.data_callback(name, block)
     end
   end
 end
