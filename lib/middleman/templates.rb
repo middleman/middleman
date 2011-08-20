@@ -46,9 +46,6 @@ end
 # Default template
 require "middleman/templates/default"
 
-# Blog template
-require "middleman/templates/blog"
-
 # HTML5 template
 require "middleman/templates/html5"
 

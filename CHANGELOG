@@ -1,6 +1,14 @@
+2.0.3
+=====
+- Pulled out undocumented Blog feature into its own extension
+
+2.0.2
+=====
+- Fixed Sprockets circular error
+- Added auto-requiring extensions
+
 2.0.0
 =====
-
 - Guard-powered auto-reloading of config.rb
 - Guard LiveReload
 - Sprockets JS

@@ -140,9 +140,6 @@ module Middleman
     # Lorem provides a handful of helpful prototyping methods to generate
     # words, paragraphs, fake images, names and email addresses.
     autoload :Lorem,               "middleman/features/lorem"
-
-    # Treat project as a blog
-    autoload :Blog,                "middleman/features/blog"
     
     # guard-livereload
     autoload :LiveReload,          "middleman/features/live_reload"
