@@ -55,6 +55,12 @@
 libdir = File.dirname(__FILE__)
 $LOAD_PATH.unshift(libdir) unless $LOAD_PATH.include?(libdir)
 
+padrino_core_path = File.join(libdir, "middleman", "vendor", "padrino-core-0.10.0", "lib")
+$LOAD_PATH.unshift(padrino_core_path) unless $LOAD_PATH.include?(padrino_core_path)
+
+padrino_helpers_path = File.join(libdir, "middleman", "vendor", "padrino-helpers-0.10.0", "lib")
+$LOAD_PATH.unshift(padrino_helpers_path) unless $LOAD_PATH.include?(padrino_helpers_path)
+
 # We're riding on Sinatra, so let's include it.
 require "sinatra/base"
 
@@ -164,7 +170,7 @@ module Middleman
     
     extensions.each do |spec|
       require spec.name
-      $stderr.puts "require: #{spec.name}"
+      # $stderr.puts "require: #{spec.name}"
     end
   end
   

@@ -43,8 +43,6 @@ eos
   s.add_runtime_dependency("tilt", ["~> 1.3.1"])
   s.add_runtime_dependency("maruku", ["~> 0.6.0"])
   s.add_runtime_dependency("sinatra", ["~> 1.2.6"])
-  s.add_runtime_dependency("padrino-core", ["~> 0.10.0", '< 0.10.1'])
-  s.add_runtime_dependency("padrino-helpers", ["~> 0.10.0", '< 0.10.1'])
   s.add_runtime_dependency("rack-test", ["~> 0.6.1"])
   s.add_runtime_dependency("uglifier", ["~> 1.0.0"])
   s.add_runtime_dependency("slim", ["~> 1.0.1"])
@@ -53,6 +51,12 @@ eos
   s.add_runtime_dependency("compass", ["~> 0.11.3"])
   s.add_runtime_dependency("coffee-script", ["~> 2.2.0"])
   s.add_runtime_dependency("sprockets", ["2.0.0.beta.14"])
+  
+  # Padrino deps
+  s.add_runtime_dependency("activesupport", "~> 3.0.0")
+  
+  # Only in Padrino-helpers
+  s.add_runtime_dependency("i18n", "~> 0.5.0")
   
   case Config::CONFIG['host_os'].downcase
   when %r{mswin|mingw}

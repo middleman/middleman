@@ -1,3 +1,11 @@
+2.0.5
+=====
+- Vendored Padrino 0.10.0
+
+2.0.4
+=====
+- Pulled out undocumented remote data feature into its own extension
+
 2.0.3
 =====
 - Pulled out undocumented Blog feature into its own extension
