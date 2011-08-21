@@ -1,6 +1,5 @@
 require "guard"
 require "guard/guard"
-require "guard/livereload"
 require "rbconfig"
 
 if Config::CONFIG['host_os'].downcase =~ %r{mswin|mingw}
@@ -8,34 +7,34 @@ if Config::CONFIG['host_os'].downcase =~ %r{mswin|mingw}
   require 'win32console'
 end
   
-module Middleman::Guard
-  def self.start(options={}, livereload={})
-    options_hash = ""
-    options.each do |k,v|
-      options_hash << ", :#{k} => '#{v}'"
+module Middleman
+  module Guard
+    def self.add_guard(&block)
+      @additional_guards ||= []
+      @additional_guards << block
     end
-    
-    guardfile_contents = %Q{
-      guard 'middleman'#{options_hash} do 
-        watch("config.rb")
-        watch(%r{^lib/^[^\.](.*)\.rb$})
+  
+    def self.start(options={}, livereload={})
+      options_hash = ""
+      options.each do |k,v|
+        options_hash << ", :#{k} => '#{v}'"
       end
-    }
     
-    if livereload
-      livereload_options_hash = ""
-      livereload.each do |k,v|
-        livereload_options_hash << ", :#{k} => '#{v}'"
-      end
-      
-      guardfile_contents << %Q{
-        guard 'livereload'#{livereload_options_hash} do 
-          watch(%r{^source/([^\.].*)$})
+      guardfile_contents = %Q{
+        guard 'middleman'#{options_hash} do 
+          watch("config.rb")
+          watch(%r{^lib/^[^\.](.*)\.rb$})
         end
       }
-    end
     
-    ::Guard.start({ :guardfile_contents => guardfile_contents })
+      (@additional_guards || []).each do |block|
+        result = block.call(options, livereload)
+        guardfile_contents << result unless result.nil?
+      end
+    
+      $stderr.puts guardfile_contents
+      ::Guard.start({ :guardfile_contents => guardfile_contents })
+    end
   end
 end
 

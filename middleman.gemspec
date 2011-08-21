@@ -69,7 +69,7 @@ eos
   end
   
   s.add_runtime_dependency("guard", ["~> 0.6.2"])
-  s.add_runtime_dependency("guard-livereload", ["~> 0.3.0"])
+  s.add_runtime_dependency("middleman-livereload", ["~> 0.2.0"])
   s.add_development_dependency("coffee-filter", ["~> 0.1.1"])
   s.add_development_dependency("cucumber", ["~> 1.0.2"])
   s.add_development_dependency("rake", ["0.8.7"])

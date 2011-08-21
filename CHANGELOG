@@ -1,3 +1,7 @@
+2.0.6
+=====
+- Pulled out livereload feature into its own extension, still installed by default.
+
 2.0.5
 =====
 - Vendored Padrino 0.10.0
