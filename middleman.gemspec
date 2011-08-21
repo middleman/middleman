@@ -64,6 +64,7 @@ eos
     # s.add_runtime_dependency "windows-pr", "= 1.1.2"
     s.add_runtime_dependency("win32-process", ["~> 0.6.5"])
     s.add_runtime_dependency("win32console", ["~> 1.3.0"])
+    s.add_runtime_dependency("rb-fchange")
   when %r{darwin}  
     s.add_runtime_dependency("rb-fsevent", ["~> 0.4.2"])
   end

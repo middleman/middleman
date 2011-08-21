@@ -32,7 +32,6 @@ module Middleman
         guardfile_contents << result unless result.nil?
       end
     
-      $stderr.puts guardfile_contents
       ::Guard.start({ :guardfile_contents => guardfile_contents })
     end
   end
