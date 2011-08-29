@@ -157,7 +157,7 @@ module Middleman
     autoload :DirectoryIndexes,    "middleman/features/directory_indexes"
   end
   
-  EXTENSION_FILE = "middleman_init.rb"
+  EXTENSION_FILE = File.join("lib", "middleman_init.rb")
   def self.load_extensions_in_path
     extensions = rubygems_latest_specs.select do |spec|
       spec_has_file?(spec, EXTENSION_FILE)
