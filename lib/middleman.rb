@@ -160,8 +160,8 @@ module Middleman
   EXTENSION_FILE = "middleman_init.rb"
   def self.load_extensions_in_path
     # If newer Rubygems
-    extensions = if Gem::Specification.respond_to? :select
-      ::Gem::Specification.select do |spec| 
+    extensions = if Gem::Specification.respond_to? :latest_specs
+      ::Gem::Specification.latest_specs.select do |spec| 
         spec.contains_requirable_file?(EXTENSION_FILE)
       end
     else
