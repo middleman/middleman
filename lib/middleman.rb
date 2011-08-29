@@ -159,19 +159,28 @@ module Middleman
   
   EXTENSION_FILE = "middleman_init.rb"
   def self.load_extensions_in_path
-    # If newer Rubygems
-    extensions = if Gem::Specification.respond_to? :latest_specs
-      ::Gem::Specification.latest_specs.select do |spec| 
-        spec.contains_requirable_file?(EXTENSION_FILE)
-      end
-    else
-      ::Gem::GemPathSearcher.new.find_all(EXTENSION_FILE)
+    extensions = rubygems_latest_specs.select do |spec|
+      spec_has_file?(spec, EXTENSION_FILE)
     end
     
     extensions.each do |spec|
       require spec.name
       # $stderr.puts "require: #{spec.name}"
     end
+  end
+  
+  def self.rubygems_latest_specs
+    # If newer Rubygems
+    if Gem::Specification.respond_to? :latest_specs
+      Gem::Specification.latest_specs
+    else
+      Gem.source_index.latest_specs
+    end
+  end
+  
+  def self.spec_has_file?(spec, path)
+    full_path = File.join(spec.full_gem_path, path)
+    File.exists?(full_path)
   end
   
   def self.server(&block)
