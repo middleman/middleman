@@ -1,6 +1,10 @@
 module Middleman::Base
   class << self
     def registered(app)
+      # Explicitly require json support
+      require "active_support"
+      require "active_support/json"
+
       app.extend ClassMethods
       app.send :include, InstanceMethods
       
