@@ -149,9 +149,6 @@ module Middleman
     
     # guard-livereload
     autoload :LiveReload,          "middleman/features/live_reload"
-
-    # Automatically resize images for mobile devises
-    # autoload :TinySrc,             "middleman/features/tiny_src"
     
     # Automatically convert filename.html files into filename/index.html
     autoload :DirectoryIndexes,    "middleman/features/directory_indexes"
