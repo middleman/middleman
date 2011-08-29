@@ -1,13 +1,25 @@
+require 'pathname'
+require 'rbconfig'
 require "sprockets"
-  
+
 module Middleman::CoreExtensions::Sprockets
   class << self
     def registered(app)
       app.set :js_compressor, false
 
       app.after_configuration do
+        js_env = Middleman::CoreExtensions::Sprockets::JavascriptEnvironment.new(app)
+        
+        js_dir = File.join("vendor", "assets", "javascripts")
+        gems_with_js = ::Middleman.rubygems_latest_specs.select do |spec|
+          ::Middleman.spec_has_file?(spec, js_dir)
+        end.each do |spec|
+          js_env.append_path File.join(spec.full_gem_path, js_dir)
+        end
+        
+        # add paths to js_env (vendor/assets/javascripts)
         app.map "/#{app.js_dir}" do
-          run Middleman::CoreExtensions::Sprockets::JavascriptEnvironment.new(app)
+          run js_env
         end
         
         # app.map "/#{app.css_dir}" do
@@ -38,13 +50,6 @@ module Middleman::CoreExtensions::Sprockets
 
       # configure search paths
       append_path app.js_dir
-      
-      # jQuery for Sprockets
-      # begin
-      #   require "jquery-rails"
-      #   jquery-rails / vendor / assets / javascripts
-      # rescue LoadError
-      # end
     end
     
     def javascript_exception_response(exception)
