@@ -50,7 +50,7 @@ eos
   s.add_runtime_dependency("sass", ["~> 3.1.7"])
   s.add_runtime_dependency("compass", ["~> 0.11.3"])
   s.add_runtime_dependency("coffee-script", ["~> 2.2.0"])
-  s.add_runtime_dependency("sprockets", ["2.0.0.beta.14"])
+  s.add_runtime_dependency("sprockets", ["2.0.0.beta.15"])
   
   # Padrino deps
   s.add_runtime_dependency("activesupport", "~> 3.0.0")
