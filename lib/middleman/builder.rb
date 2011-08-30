@@ -18,11 +18,13 @@ module Middleman
       
       begin        
         destination, request_page = SHARED_SERVER.reroute_builder(destination, request_path)
-      
+        
+        request_path.gsub!(/\s/, "%20")
+        response = Middleman::Builder.shared_rack.get(request_path)
+        
         create_file destination, nil, config do
-          Middleman::Builder.shared_rack.get(request_path.gsub(/\s/, "%20"))
-          Middleman::Builder.shared_rack.last_response.body
-        end
+          response.body
+        end if response.status == 200
       rescue
       end
     end
