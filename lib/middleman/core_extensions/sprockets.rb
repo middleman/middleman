@@ -6,7 +6,19 @@ module Middleman::CoreExtensions::Sprockets
   class << self
     def registered(app)
       app.set :js_compressor, false
-
+      
+      # Cut off every extension after .js (which sprockets eats up)
+      app.build_reroute do |destination, request_path|
+        if !request_path.match(/\.js\./i)
+          false
+        else
+          [
+            destination.gsub(/\.js(\..*)$/, ".js"),
+            request_path.gsub(/\.js(\..*)$/, ".js")
+          ]
+        end
+      end
+      
       app.after_configuration do
         js_env = Middleman::CoreExtensions::Sprockets::JavascriptEnvironment.new(app)
         
