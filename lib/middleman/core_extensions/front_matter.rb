@@ -6,23 +6,23 @@ module Middleman::CoreExtensions::FrontMatter
     def registered(app)
       app.extend ClassMethods
       
-      ::Tilt::register RDiscountTemplate, 'markdown', 'mkd', 'md'
-      ::Tilt::register RedcarpetTemplate, 'markdown', 'mkd', 'md'
-      ::Tilt::register MarukuTemplate, 'markdown', 'mkd', 'md'
-      ::Tilt::register KramdownTemplate, 'markdown', 'mkd', 'md'
-      app.set :markdown_engine, MarukuTemplate
+      Tilt::register RDiscountTemplate, 'markdown', 'mkd', 'md'
+      Tilt::register RedcarpetTemplate, 'markdown', 'mkd', 'md'
+      Tilt::register MarukuTemplate, 'markdown', 'mkd', 'md'
+      Tilt::register KramdownTemplate, 'markdown', 'mkd', 'md'
+      app.set :markdown_engine_prefix, Middleman::CoreExtensions::FrontMatter
       
-      ::Tilt::register RedClothTemplate,  'textile'
-      ::Tilt.prefer(RedClothTemplate)
+      Tilt::register RedClothTemplate,  'textile'
+      Tilt.prefer(RedClothTemplate)
       
-      ::Tilt::register ERBTemplate,       'erb', 'rhtml'
-      ::Tilt.prefer(ERBTemplate)
+      Tilt::register ERBTemplate,       'erb', 'rhtml'
+      Tilt.prefer(ERBTemplate)
       
-      ::Tilt::register SlimTemplate,      'slim'
-      ::Tilt.prefer(SlimTemplate)
+      Tilt::register SlimTemplate,      'slim'
+      Tilt.prefer(SlimTemplate)
       
-      ::Tilt::register HamlTemplate,      'haml'
-      ::Tilt.prefer(HamlTemplate)
+      Tilt::register HamlTemplate,      'haml'
+      Tilt.prefer(HamlTemplate)
       
       app.after_configuration do
         app.before_processing do
@@ -82,27 +82,27 @@ module Middleman::CoreExtensions::FrontMatter
     end
   end
 
-  class RDiscountTemplate < ::Tilt::RDiscountTemplate
+  class RDiscountTemplate < Tilt::RDiscountTemplate
     include Middleman::CoreExtensions::FrontMatter::YamlAware
   end
-  class RedcarpetTemplate < ::Tilt::RedcarpetTemplate
+  class RedcarpetTemplate < Tilt::RedcarpetTemplate
     include Middleman::CoreExtensions::FrontMatter::YamlAware
   end
-  class MarukuTemplate < ::Tilt::MarukuTemplate
+  class MarukuTemplate < Tilt::MarukuTemplate
     include Middleman::CoreExtensions::FrontMatter::YamlAware
   end
-  class RedClothTemplate < ::Tilt::RedClothTemplate
+  class RedClothTemplate < Tilt::RedClothTemplate
     include Middleman::CoreExtensions::FrontMatter::YamlAware
   end
-  class KramdownTemplate < ::Tilt::KramdownTemplate
+  class KramdownTemplate < Tilt::KramdownTemplate
     include Middleman::CoreExtensions::FrontMatter::YamlAware
   end
  
-  class ERBTemplate < ::Tilt::ERBTemplate
+  class ERBTemplate < Tilt::ERBTemplate
     include Middleman::CoreExtensions::FrontMatter::YamlAware
   end
 
-  class HamlTemplate < ::Tilt::HamlTemplate
+  class HamlTemplate < Tilt::HamlTemplate
     include Middleman::CoreExtensions::FrontMatter::YamlAware
   end
   

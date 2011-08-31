@@ -11,6 +11,7 @@ page "/target_ignore.html", :proxy => "/should_be_ignored3.html", :ignore => tru
 end
 
 with_layout false do
+  page "/markdown.html"
   page "/relative_image.html"
   page "/inline-css.html"
   page "/inline-js.html"
