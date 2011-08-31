@@ -1,3 +1,8 @@
+2.0.8
+=====
+- Support accessing variables and data objects in ERb Sprockets files (library.js.coffee.erb)
+- Make :markdown_engine support simple symbol names (:maruku instead of ::Tilt::MarkukuTemplate)
+
 2.0.7
 =====
 - Updated HTML5 Boilerplate to v2
