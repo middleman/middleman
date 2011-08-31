@@ -13,7 +13,7 @@ module Middleman::CoreExtensions::Data
   
   module Helpers
     def data
-      @@data ||= DataObject.new(self)
+      self.class.data
     end
   end
   
@@ -33,7 +33,7 @@ module Middleman::CoreExtensions::Data
       elsif @@callback_sources.has_key?(path.to_s)
         response = @@callback_sources[path.to_s].call()
       else
-        file_path = File.join(@app.class.root, @app.class.data_dir, "#{path}.yml")
+        file_path = File.join(@app.root, @app.data_dir, "#{path}.yml")
         if File.exists? file_path
           response = YAML.load_file(file_path)
         end
@@ -74,6 +74,10 @@ module Middleman::CoreExtensions::Data
   end
   
   module ClassMethods
+    def data
+      @data ||= DataObject.new(self)
+    end
+    
     # Makes a hash available on the data var with a given name
     def data_content(name, content)
       DataObject.data_content(name, content)

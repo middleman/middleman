@@ -36,6 +36,18 @@ module Middleman::CoreExtensions::Sprockets
       full_path = File.join(app.root, app.views) unless app.views.include?(app.root)
       
       super File.expand_path(full_path)
+      
+      # Make the app context available to Sprockets
+      context_class.send(:define_method, :app) { app }
+      context_class.class_eval do
+        def method_missing(name)
+          if app.respond_to?(name)
+            app.send(name)
+          else
+            super
+          end
+        end
+      end
     end
   end
     

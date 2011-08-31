@@ -8,7 +8,7 @@ module Middleman::Renderers::Markdown
       app.set :markdown_engine, :maruku
       
       if !app.respond_to? :markdown_engine_prefix
-        app.set :markdown_engine_prefix, Tilt
+        app.set :markdown_engine_prefix, ::Tilt
       end
       
       app.after_configuration do
@@ -18,7 +18,7 @@ module Middleman::Renderers::Markdown
           engine = app.tilt_template_from_symbol(engine)
         end
         
-        Tilt.prefer(engine)
+        ::Tilt.prefer(engine)
       end
     end
     alias :included :registered

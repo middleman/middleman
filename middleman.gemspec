@@ -73,6 +73,7 @@ eos
   s.add_dependency("middleman-livereload", ["~> 0.2.0"])
   
   # Development and test
+  # s.add_development_dependency("jquery-rails")
   s.add_development_dependency("coffee-filter", ["~> 0.1.1"])
   s.add_development_dependency("cucumber", ["~> 1.0.2"])
   s.add_development_dependency("rake", ["0.8.7"])
