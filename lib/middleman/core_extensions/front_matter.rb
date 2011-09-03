@@ -18,6 +18,9 @@ module Middleman::CoreExtensions::FrontMatter
       ::Tilt::register ERBTemplate,       'erb', 'rhtml'
       ::Tilt.prefer(ERBTemplate)
       
+      ::Tilt::register LiquidTemplate,    'liquid'
+      ::Tilt.prefer(LiquidTemplate)
+      
       ::Tilt::register SlimTemplate,      'slim'
       ::Tilt.prefer(SlimTemplate)
       
@@ -99,6 +102,10 @@ module Middleman::CoreExtensions::FrontMatter
   end
  
   class ERBTemplate < ::Tilt::ERBTemplate
+    include Middleman::CoreExtensions::FrontMatter::YamlAware
+  end
+
+  class LiquidTemplate < ::Tilt::LiquidTemplate
     include Middleman::CoreExtensions::FrontMatter::YamlAware
   end
 
