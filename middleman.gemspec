@@ -38,6 +38,7 @@ Gem::Specification.new do |s|
 eos
 
   s.add_dependency("rack", ["~> 1.3.0"])
+  s.add_dependency("eventmachine", ["1.0.0.beta.3"])
   s.add_dependency("thin", ["~> 1.2.11"])
   s.add_dependency("thor", ["~> 0.14.0"])
   s.add_dependency("tilt", ["~> 1.3.1"])

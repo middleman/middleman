@@ -8,5 +8,6 @@ pkg
 Gemfile.lock
 docs
 .rvmrc
+.rbenv-version
 fixtures/test-app/build
 .*.swp
