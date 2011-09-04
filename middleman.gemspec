@@ -51,12 +51,8 @@ eos
   s.add_dependency("compass", ["~> 0.11.3"])
   s.add_dependency("coffee-script", ["~> 2.2.0"])
   s.add_dependency("sprockets", ["~> 2.0.0"])
-  
-  # Padrino deps
-  s.add_dependency("activesupport", "~> 3.0.0")
-  
-  # Only in Padrino-helpers
-  s.add_dependency("i18n", "~> 0.5.0")
+  s.add_dependency("padrino-core", ["~> 0.10.2"])
+  s.add_dependency("padrino-helpers", ["~> 0.10.2"])
   
   case Config::CONFIG['host_os'].downcase
   when %r{mswin|mingw}
