@@ -172,7 +172,12 @@ module Middleman::Base
       render_options = { :layout => layout }
       render_options[:layout_engine] = options[:layout_engine] if options.has_key? :layout_engine
       request_path = request.path_info.gsub("%20", " ")
-      result = render(request_path, render_options)
+      path, engine = resolve_template(request_path)
+      
+      locals = {}
+      locals[:data] = data.to_h if engine == :liquid
+      
+      result = render(engine, path, render_options, locals)
       settings.set :layout, old_layout
 
       if result

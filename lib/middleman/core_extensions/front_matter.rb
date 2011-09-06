@@ -80,7 +80,7 @@ module Middleman::CoreExtensions::FrontMatter
   
   module YamlAware
     def prepare
-      options, @data = Middleman::CoreExtensions::FrontMatter.parse_front_matter(@data)
+      @frontmatter, @data = Middleman::CoreExtensions::FrontMatter.parse_front_matter(@data)
       super
     end
   end

@@ -19,6 +19,7 @@ with_layout false do
   page "/spaces in file.html"
   page "/slim.html"
   page "/data.html"
+  page "/data2.html"
   page "/page-classes.html"
   page "/sub1/page-classes.html"
   page "/sub1/sub2/page-classes.html"

@@ -22,7 +22,7 @@ module Middleman::CoreExtensions::Data
       @app = app
     end
     
-    def method_missing(path)
+    def data_for_path(path)
       response = nil
       
       @@local_sources ||= {}
@@ -38,10 +38,36 @@ module Middleman::CoreExtensions::Data
           response = YAML.load_file(file_path)
         end
       end
+    end
+    
+    def method_missing(path)
+      result = data_for_path(path)
       
-      if response
-        recursively_enhance(response)
+      if result
+        recursively_enhance(result)
+      else
+        super
       end
+    end
+    
+    def to_h
+      data = {}
+      
+      (@@local_sources || {}).each do |k, v|
+        data[k] = data_for_path(k)
+      end
+      
+      (@@callback_sources || {}).each do |k, v|
+        data[k] = data_for_path(k)
+      end
+      
+      yaml_path = File.join(@app.root, @app.data_dir, "*.yml")
+      Dir[yaml_path].each do |f|
+        p = f.split("/").last.gsub(".yml", "")
+        data[p] = data_for_path(p)
+      end
+      
+      data
     end
 
     def self.data_content(name, content)

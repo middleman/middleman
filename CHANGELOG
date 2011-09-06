@@ -3,8 +3,8 @@
 - Support accessing variables and data objects in ERb Sprockets files (library.js.coffee.erb)
 - Make :markdown_engine support simple symbol names (:maruku instead of ::Tilt::MarkukuTemplate)
 - Update Padrino deps to 0.10.2
-- Update EventMachine to pre for Windows users
 - Include therubyracer on *nix
+- Enable frontmatter for Liquid templates
 
 2.0.7
 =====

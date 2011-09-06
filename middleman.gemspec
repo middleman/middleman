@@ -38,7 +38,7 @@ Gem::Specification.new do |s|
 eos
 
   s.add_dependency("rack", ["~> 1.3.0"])
-  s.add_dependency("eventmachine", ["1.0.0.beta.3"])
+  # s.add_dependency("eventmachine", ["1.0.0.beta.3"])
   s.add_dependency("thin", ["~> 1.2.11"])
   s.add_dependency("thor", ["~> 0.14.0"])
   s.add_dependency("tilt", ["~> 1.3.1"])
@@ -74,6 +74,7 @@ eos
   # Development and test
   # s.add_development_dependency("jquery-rails")
   s.add_development_dependency("coffee-filter", ["~> 0.1.1"])
+  s.add_development_dependency("liquid", ["~> 2.2.0"])
   s.add_development_dependency("cucumber", ["~> 1.0.2"])
   s.add_development_dependency("rake", ["0.8.7"])
   s.add_development_dependency("rspec", ["~> 2.6.0"])

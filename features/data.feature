@@ -5,3 +5,8 @@ Feature: Local Data API
     Given the Server is running at "test-app"
     When I go to "/data.html"
     Then I should see "One:Two"
+  
+  Scenario: Rendering liquid
+    Given the Server is running at "test-app"
+    When I go to "/data2.html"
+    Then I should see "OneTwo"
