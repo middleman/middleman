@@ -64,6 +64,8 @@ eos
     s.add_dependency("rb-fchange")
   when %r{darwin}  
     s.add_dependency("rb-fsevent", ["~> 0.4.2"])
+  when %r{linux}
+    s.add_dependency("therubyracer", ["~> 0.9.4"])
   end
   
   s.add_dependency("guard", ["~> 0.6.2"])
