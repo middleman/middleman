@@ -7,7 +7,7 @@ require "middleman/version"
 Gem::Specification.new do |s|
   s.name        = "middleman"
   s.version     = Middleman::VERSION
-  s.platform    = Gem::Platform::RUBY
+  s.platform    = "x86-mswin32"
   s.license     = "MIT"
   s.authors     = ["Thomas Reynolds"]
   s.email       = ["me@tdreyno.com"]
@@ -56,13 +56,13 @@ eos
   
   # case s.platform.to_s
   # when %r{mswin|mingw}
-  #   s.add_dependency("eventmachine", ["1.0.0.beta.3"])
-  #   s.add_dependency("win32-process", ["~> 0.6.5"])
-  #   s.add_dependency("win32console", ["~> 1.3.0"])
-  #   s.add_dependency("rb-fchange")
+    s.add_dependency("eventmachine", ["1.0.0.beta.3"])
+    s.add_dependency("win32-process", ["~> 0.6.5"])
+    s.add_dependency("win32console", ["~> 1.3.0"])
+    s.add_dependency("rb-fchange")
   # else
-    s.add_dependency("rb-fsevent", ["~> 0.4.2"])
-    s.add_dependency("therubyracer", ["~> 0.9.4"])
+  #   s.add_dependency("rb-fsevent", ["~> 0.4.2"])
+  #   s.add_dependency("therubyracer", ["~> 0.9.4"])
   # end
   
   s.add_dependency("guard", ["~> 0.6.2"])

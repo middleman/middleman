@@ -1,3 +1,3 @@
 source :rubygems
  
-gemspec
+gemspec :name => "middleman"
