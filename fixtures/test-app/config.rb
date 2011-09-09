@@ -20,6 +20,7 @@ with_layout false do
   page "/slim.html"
   page "/data.html"
   page "/data2.html"
+  page "/liquid_master.html"
   page "/page-classes.html"
   page "/sub1/page-classes.html"
   page "/sub1/sub2/page-classes.html"

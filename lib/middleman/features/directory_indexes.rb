@@ -17,13 +17,13 @@ module Middleman::Features::DirectoryIndexes
         else
           [
             destination.gsub(/#{index_ext.gsub(".", "\\.")}$/, new_index_path),
-            request_path.gsub(/#{index_ext.gsub(".", "\\.")}$/, new_index_path)
+            request_path
           ]
         end
       end
       
       app.before do
-        indexed_path = request.path_info.gsub(/\/$/, "") + "/" + app.settings.index_file        
+        indexed_path = request.path_info.gsub(/\/$/, "") + "/" + app.settings.index_file
         indexed_exists = resolve_template(indexed_path, :raise_exceptions => false)
 
         extensioned_path = request.path_info.gsub(/\/$/, "") + File.extname(app.settings.index_file)

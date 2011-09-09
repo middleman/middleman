@@ -9,12 +9,6 @@ module Middleman::CoreExtensions::Routing
       app.build_reroute do |destination, request_path|
         throw if app.settings.excluded_paths.include?(request_path)
       end
-      
-      # Normalize the path and add index if we're looking at a directory
-      app.before_processing do
-        request.path_info = self.class.path_to_index(request.path)
-        true
-      end
     end
     alias :included :registered
   end
@@ -76,7 +70,7 @@ module Middleman::CoreExtensions::Routing
           settings.ignore(url)
         end
       end
-      
+
       paths_for_url(url).each do |p|
         get(p) do
           if settings.proxied_paths.has_key?(url)

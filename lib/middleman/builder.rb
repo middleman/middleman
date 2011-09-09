@@ -17,7 +17,7 @@ module Middleman
       request_path = destination.sub(/^#{SHARED_SERVER.build_dir}/, "")
       
       begin        
-        destination, request_page = SHARED_SERVER.reroute_builder(destination, request_path)
+        destination, request_path = SHARED_SERVER.reroute_builder(destination, request_path)
         
         request_path.gsub!(/\s/, "%20")
         response = Middleman::Builder.shared_rack.get(request_path)

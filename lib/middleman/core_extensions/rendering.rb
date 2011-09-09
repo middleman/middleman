@@ -12,6 +12,7 @@ module Middleman::CoreExtensions::Rendering
       app.register Middleman::Renderers::Sass
       app.register Middleman::Renderers::Markdown
       app.register Middleman::Renderers::CoffeeScript
+      app.register Middleman::Renderers::Liquid
     end
     alias :included :registered
   end

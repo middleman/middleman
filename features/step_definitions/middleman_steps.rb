@@ -1,5 +1,6 @@
 Given /^"([^\"]*)" feature is "([^\"]*)"$/ do |feature, state|
   @server ||= Middleman.server
+  @server.set :show_exceptions, false
   if state == "enabled"
     @server.activate(feature.to_sym)
   end
@@ -8,6 +9,7 @@ end
 
 Given /^"([^\"]*)" is set to "([^\"]*)"$/ do |variable, value|
   @server ||= Middleman.server
+  @server.set :show_exceptions, false
   @server.set variable.to_sym, value
 end
 
@@ -17,6 +19,7 @@ end
 
 Given /^the Server is running at "([^\"]*)"$/ do |app_path|
   @server ||= Middleman.server
+  @server.set :show_exceptions, false
   root = File.dirname(File.dirname(File.dirname(__FILE__)))
   @server.set :root, File.join(root, "fixtures", app_path)
   @browser = Rack::Test::Session.new(Rack::MockSession.new(@server.new))

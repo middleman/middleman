@@ -62,7 +62,7 @@ eos
     s.add_dependency("win32-process", ["~> 0.6.5"])
     s.add_dependency("win32console", ["~> 1.3.0"])
     s.add_dependency("rb-fchange")
-  when %r{darwin}  
+  when %r{darwin}
     s.add_dependency("rb-fsevent", ["~> 0.4.2"])
   when %r{linux}
     s.add_dependency("therubyracer", ["~> 0.9.4"])

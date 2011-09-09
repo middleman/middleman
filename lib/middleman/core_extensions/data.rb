@@ -53,6 +53,9 @@ module Middleman::CoreExtensions::Data
     def to_h
       data = {}
       
+      @@local_sources ||= {}
+      @@callback_sources ||= {}
+      
       (@@local_sources || {}).each do |k, v|
         data[k] = data_for_path(k)
       end

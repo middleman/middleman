@@ -1,11 +1,12 @@
+require "i18n"
+  
+require "active_support"
+require "active_support/json"
+require "active_support/core_ext/class/attribute_accessors"
+
 module Middleman::Base
   class << self
-    def registered(app)
-      # Explicitly require json support
-      require "i18n"
-      require "active_support"
-      require "active_support/json"
-      
+    def registered(app)      
       app.extend ClassMethods
       app.send :include, InstanceMethods
       
@@ -43,6 +44,9 @@ module Middleman::Base
       # Activate custom features
       app.register Middleman::CoreExtensions::Features
       
+      # Activate Yaml Data package
+      app.register Middleman::CoreExtensions::Data
+      
       # Setup custom rendering
       app.register Middleman::CoreExtensions::Rendering
       
@@ -57,9 +61,6 @@ module Middleman::Base
       
       # Activate built-in helpers
       app.register Middleman::CoreExtensions::DefaultHelpers
-      
-      # Activate Yaml Data package
-      app.register Middleman::CoreExtensions::Data
       
       # with_layout and page routing
       app.register Middleman::CoreExtensions::Routing
@@ -86,14 +87,8 @@ module Middleman::Base
       end
 
       # See if Tilt cannot handle this file
-      app.before_processing do
-        if !settings.views.include?(settings.root)
-          settings.set :views, File.join(settings.root, settings.views)
-        end
-
+      app.before_processing(:base) do |result|
         request_path = request.path_info.gsub("%20", " ")
-        result = resolve_template(request_path, :raise_exceptions => false)
-        
         should_be_ignored = !(request["is_proxy"]) && settings.excluded_paths.include?("/#{request_path}")
         
         if result && !should_be_ignored
@@ -132,16 +127,16 @@ module Middleman::Base
       super(option, value, &nil)
     end
     
-    def before_processing(&block)
+    def before_processing(name=:unnamed, idx=-1, &block)
       @before_processes ||= []
-      @before_processes << block
+      @before_processes.insert(idx, [name, block])
     end
     
-    def execute_before_processing!(inst)
+    def execute_before_processing!(inst, resolved_template)
       @before_processes ||= []
       
-      @before_processes.all? do |block|
-        inst.instance_eval(&block)
+      @before_processes.all? do |name, block|
+        inst.instance_exec(resolved_template, &block)
       end
     end
     
@@ -152,14 +147,24 @@ module Middleman::Base
   module InstanceMethods
     # Internal method to look for templates and evaluate them if found
     def process_request(options={})
-      return unless settings.execute_before_processing!(self)
-
+      if !settings.views.include?(settings.root)
+        settings.set :views, File.join(settings.root, settings.views)
+      end  
+      
+      # Normalize the path and add index if we're looking at a directory
+      request.path_info = self.class.path_to_index(request.path)
+      
+      request_path = request.path_info.gsub("%20", " ")
+      found_template = resolve_template(request_path, :raise_exceptions => false)
+      return status(404) unless found_template
+      return unless settings.execute_before_processing!(self, found_template)
+      
       options.merge!(request['custom_options'] || {})
 
       old_layout = settings.layout
       settings.set :layout, options[:layout] if !options[:layout].nil?
 
-      layout = if settings.layout
+      local_layout = if settings.layout
         if options[:layout] == false || request.path_info =~ /\.(css|js)$/
           false
         else
@@ -169,23 +174,24 @@ module Middleman::Base
         false
       end
 
-      render_options = { :layout => layout }
+      render_options = { :layout => local_layout }
       render_options[:layout_engine] = options[:layout_engine] if options.has_key? :layout_engine
-      request_path = request.path_info.gsub("%20", " ")
-      path, engine = resolve_template(request_path)
       
-      locals = {}
-      locals[:data] = data.to_h if engine == :liquid
+      path, engine = found_template
+      locals = request['custom_locals'] || {}
       
-      result = render(engine, path, render_options, locals)
-      settings.set :layout, old_layout
-
-      if result
-        content_type mime_type(File.extname(request_path)), :charset => 'utf-8'
-        status 200
-        body result
-      else
-        status 404
+      begin
+        result = render(engine, path, render_options, locals)
+      
+        if result
+          content_type mime_type(File.extname(request_path)), :charset => 'utf-8'
+          status 200
+          body result
+        end
+      # rescue
+      #   status(404)
+      ensure
+        settings.set :layout, old_layout
       end
     end
   end
