@@ -7,7 +7,7 @@ require "middleman/version"
 Gem::Specification.new do |s|
   s.name        = "middleman"
   s.version     = Middleman::VERSION
-  s.platform    = "x86-mswin32"
+  s.platform    = "x86-mingw32"
   s.license     = "MIT"
   s.authors     = ["Thomas Reynolds"]
   s.email       = ["me@tdreyno.com"]
@@ -55,10 +55,9 @@ eos
   s.add_dependency("padrino-helpers", ["~> 0.10.2"])
   
   # case s.platform.to_s
-  # when %r{mswin|mingw}
+  # when %r{mingw}
     s.add_dependency("eventmachine", ["1.0.0.beta.3"])
     s.add_dependency("win32-process", ["~> 0.6.5"])
-    s.add_dependency("win32console", ["~> 1.3.0"])
     s.add_dependency("rb-fchange")
   # else
   #   s.add_dependency("rb-fsevent", ["~> 0.4.2"])

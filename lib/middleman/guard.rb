@@ -2,9 +2,8 @@ require "guard"
 require "guard/guard"
 require "rbconfig"
 
-if Config::CONFIG['host_os'].downcase =~ %r{mswin|mingw}
+if Config::CONFIG['host_os'].downcase =~ %r{mingw}
   require "win32/process"
-  require 'win32console'
 end
   
 module Middleman
