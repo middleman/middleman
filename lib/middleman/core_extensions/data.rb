@@ -1,4 +1,5 @@
 require "yaml"
+require "active_support/json"
 require "thor"
 
 module Middleman::CoreExtensions::Data
@@ -38,7 +39,12 @@ module Middleman::CoreExtensions::Data
           response = YAML.load_file(file_path) 
         else
           file_path = File.join(@app.root, @app.data_dir, "#{path}.yaml")
-          response = YAML.load_file(file_path) if File.exists? file_path
+          if File.exists? file_path
+            response = YAML.load_file(file_path)
+          else
+            file_path = File.join(@app.root, @app.data_dir, "#{path}.json")
+            response = ActiveSupport::JSON.decode(File.read(file_path)) if File.exists? file_path
+          end
         end
       end
       
@@ -72,6 +78,12 @@ module Middleman::CoreExtensions::Data
       yaml_path = File.join(@app.root, @app.data_dir, "*.{yaml,yml}")
       Dir[yaml_path].each do |f|
         p = f.split("/").last.gsub(".yml", "").gsub(".yaml", "")
+        data[p] = data_for_path(p)
+      end
+      
+      json_path = File.join(@app.root, @app.data_dir, "*.json")
+      Dir[json_path].each do |f|
+        p = f.split("/").last.gsub(".json", "")
         data[p] = data_for_path(p)
       end
       
