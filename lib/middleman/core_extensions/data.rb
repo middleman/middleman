@@ -35,9 +35,14 @@ module Middleman::CoreExtensions::Data
       else
         file_path = File.join(@app.root, @app.data_dir, "#{path}.yml")
         if File.exists? file_path
-          response = YAML.load_file(file_path)
+          response = YAML.load_file(file_path) 
+        else
+          file_path = File.join(@app.root, @app.data_dir, "#{path}.yaml")
+          response = YAML.load_file(file_path) if File.exists? file_path
         end
       end
+      
+      response
     end
     
     def method_missing(path)
@@ -64,9 +69,9 @@ module Middleman::CoreExtensions::Data
         data[k] = data_for_path(k)
       end
       
-      yaml_path = File.join(@app.root, @app.data_dir, "*.yml")
+      yaml_path = File.join(@app.root, @app.data_dir, "*.{yaml,yml}")
       Dir[yaml_path].each do |f|
-        p = f.split("/").last.gsub(".yml", "")
+        p = f.split("/").last.gsub(".yml", "").gsub(".yaml", "")
         data[p] = data_for_path(p)
       end
       
