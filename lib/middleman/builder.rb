@@ -38,12 +38,13 @@ module Middleman
       @shared_rack ||= begin  
         mock = ::Rack::MockSession.new(SHARED_SERVER)
         sess = ::Rack::Test::Session.new(mock)
-        sess.get("/")
+        # sess.get("/")
         sess
       end
     end
     
     class_option :relative, :type => :boolean, :aliases => "-r", :default => false, :desc => 'Override the config.rb file and force relative urls'
+    class_option :glob, :type => :string, :aliases => "-g", :default => nil, :desc => 'Build a subset of the project'
     
     def initialize(*args)
       super
@@ -62,10 +63,14 @@ module Middleman
     def build_all_files
       self.class.shared_rack
       
-      action Directory.new(self, SHARED_SERVER.views, SHARED_SERVER.build_dir, { :force => true })
+      if options.has_key?("glob")
+        action GlobAction.new(self, SHARED_SERVER.views, SHARED_SERVER.build_dir, { :force => true, :glob => options["glob"] })
+      else      
+        action DirectoryAction.new(self, SHARED_SERVER.views, SHARED_SERVER.build_dir, { :force => true })
       
-      SHARED_SERVER.proxied_paths.each do |url, proxy|
-        tilt_template(url.gsub(/^\//, "#{SHARED_SERVER.build_dir}/"), { :force => true })
+        SHARED_SERVER.proxied_paths.each do |url, proxy|
+          tilt_template(url.gsub(/^\//, "#{SHARED_SERVER.build_dir}/"), { :force => true })
+        end
       end
     end
     
@@ -75,6 +80,8 @@ module Middleman
     end
     
     def run_hooks
+      return if options.has_key?("glob")
+      
       @@hooks.each do |name, proc|
         instance_eval(&proc)
       end
@@ -85,7 +92,7 @@ module Middleman
     end
   end
   
-  class Directory < ::Thor::Actions::EmptyDirectory
+  class BaseAction < ::Thor::Actions::EmptyDirectory
     attr_reader :source
 
     def initialize(base, source, destination=nil, config={}, &block)
@@ -95,14 +102,58 @@ module Middleman
     end
 
     def invoke!
-      base.empty_directory given_destination, config
       execute!
     end
 
     def revoke!
       execute!
     end
+    
+  protected
+    def handle_path(file_source)
+      # Skip partials prefixed with an underscore
+      return unless file_source.gsub(SHARED_SERVER.root, '').split('/').select { |p| p[0,1] == '_' }.empty?
+      
+      file_extension = File.extname(file_source)
+      file_destination = File.join(given_destination, file_source.gsub(source, '.'))
+      file_destination.gsub!('/./', '/')
+      
+      handled_by_tilt = ::Tilt.mappings.has_key?(file_extension.gsub(/^\./, ""))
+      if handled_by_tilt
+        file_destination.gsub!(file_extension, "")
+      end
+      
+      destination = base.tilt_template(file_source, file_destination, config, &@block)
+    end
+  end
+  
+  class GlobAction < BaseAction
 
+  protected
+    def execute!
+      Dir[File.join(source, @config[:glob])].each do |path|
+        file_name = path.gsub(SHARED_SERVER.views + "/", "")
+        if file_name == "layouts"
+          false
+        elsif file_name.include?("layout.") && file_name.split(".").length == 2
+          false
+        else
+          next if File.directory?(path)
+
+          handle_path(path)
+
+          true
+        end
+      end
+    end
+  end
+  
+  class DirectoryAction < BaseAction
+    def invoke!
+      base.empty_directory given_destination, config
+      super
+    end
+    
   protected
     def handle_directory(lookup, &block)
       lookup = File.join(lookup, '*')
@@ -131,19 +182,7 @@ module Middleman
           next
         end
         
-        # Skip partials prefixed with an underscore
-        next unless file_source.gsub(SHARED_SERVER.root, '').split('/').select { |p| p[0,1] == '_' }.empty?
-        
-        file_extension = File.extname(file_source)
-        file_destination = File.join(given_destination, file_source.gsub(source, '.'))
-        file_destination.gsub!('/./', '/')
-        
-        handled_by_tilt = ::Tilt.mappings.has_key?(file_extension.gsub(/^\./, ""))
-        if handled_by_tilt
-          file_destination.gsub!(file_extension, "")
-        end
-        
-        destination = base.tilt_template(file_source, file_destination, config, &@block)
+        handle_path(file_source)
       end
     end
 
