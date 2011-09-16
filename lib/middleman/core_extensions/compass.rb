@@ -76,6 +76,7 @@ module Middleman::CoreExtensions::Compass
             build_root = File.basename(self.build_dir)
             config.css_dir     = File.join(build_root, self.css_dir)
             config.images_dir  = File.join(build_root, self.images_dir)
+            config.fonts_dir   = File.join(build_root, self.fonts_dir)
           end
         end
         

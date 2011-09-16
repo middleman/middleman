@@ -5,14 +5,14 @@ require 'rack/test'
 SHARED_SERVER = Middleman.server
 SHARED_SERVER.set :environment, :build
 
-module Middleman  
+module Middleman
   module ThorActions
     def tilt_template(source, *args, &block)
       config = args.last.is_a?(Hash) ? args.pop : {}
       destination = args.first || source
       
       # source  = File.expand_path(find_in_source_paths(source.to_s))
-      context = instance_eval('binding')
+      # context = instance_eval('binding')
       
       request_path = destination.sub(/^#{SHARED_SERVER.build_dir}/, "")
       

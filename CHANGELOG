@@ -1,3 +1,10 @@
+2.0.9
+=====
+- Added --glob option to build which only builds matching files
+- Allow data/ files to be in JSON format as well
+- Enabled Liquid {% include %} tag
+- RubyInstaller-specific gem
+
 2.0.8
 =====
 - Support accessing variables and data objects in ERb Sprockets files (library.js.coffee.erb)

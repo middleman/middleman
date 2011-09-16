@@ -6,7 +6,7 @@ require "active_support/core_ext/class/attribute_accessors"
 
 module Middleman::Base
   class << self
-    def registered(app)      
+    def registered(app)
       app.extend ClassMethods
       app.send :include, InstanceMethods
       

@@ -15,7 +15,7 @@ module Middleman::CoreExtensions::Assets
     alias :included :registered
   end
   
-  module ClassMethods    
+  module ClassMethods
     def register_asset_handler(handler_name, &block)
       @asset_handler_map   ||= []
       @asset_handler_stack ||= []
