@@ -1,6 +1,9 @@
 module Middleman::CoreExtensions::Compass
   class << self
     def registered(app)
+      # Where to look for fonts
+      app.set :fonts_dir, "fonts"
+    
       app.extend ClassMethods
         
       require "compass"
@@ -56,8 +59,8 @@ module Middleman::CoreExtensions::Compass
             File.join(app.http_prefix || "/", app.js_dir)
           end
 
-          config.http_javascripts_path = if app.respond_to? :http_fonts_path
-            app.http_js_path
+          config.http_fonts_path = if app.respond_to? :http_fonts_path
+            app.http_fonts_path
           else
             File.join(app.http_prefix || "/", app.fonts_dir)
           end

@@ -25,7 +25,6 @@ module Middleman::Base
       app.set :js_dir,      "javascripts" # Where to look for javascript files
       app.set :css_dir,     "stylesheets" # Where to look for CSS files
       app.set :images_dir,  "images"      # Where to look for images
-      app.set :fonts_dir,   "fonts"       # Where to look for fonts
 
       app.set :build_dir,   "build"       # Which folder are builds output to
       app.set :http_prefix, nil           # During build, add a prefix for absolute paths

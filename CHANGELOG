@@ -4,6 +4,7 @@
 - Allow data/ files to be in JSON format as well
 - Enabled Liquid {% include %} tag
 - RubyInstaller-specific gem
+- Allow access to data/ in config.rb
 
 2.0.8
 =====
