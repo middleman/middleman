@@ -35,10 +35,10 @@ module Middleman
     include Middleman::ThorActions
     
     def self.shared_rack
-      @shared_rack ||= begin  
+      @shared_rack ||= begin
         mock = ::Rack::MockSession.new(SHARED_SERVER)
         sess = ::Rack::Test::Session.new(mock)
-        # sess.get("/")
+        response = sess.get("__middleman__")
         sess
       end
     end
