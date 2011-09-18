@@ -1,3 +1,5 @@
+# require 'sinatra/synchrony'
+
 require "i18n"
   
 require "active_support"
@@ -7,6 +9,8 @@ require "active_support/core_ext/class/attribute_accessors"
 module Middleman::Base
   class << self
     def registered(app)
+      # app.register ::Sinatra::Synchrony
+      
       app.extend ClassMethods
       app.send :include, InstanceMethods
       
