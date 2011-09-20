@@ -20,7 +20,7 @@ Feature: Relative Assets
     When I go to "/stylesheets/relative_assets.css"
     Then I should see "url('../images/blank.gif"
     
-  Scenario: Rendering html with the feature disabled
+  Scenario: Rendering html with the feature enabled
     Given "relative_assets" feature is "enabled"
     And the Server is running at "test-app"
     When I go to "/relative_image.html"
@@ -42,3 +42,9 @@ Feature: Relative Assets
     Then I should not see "/images/blank.gif"
     Then I should not see "/img/blank.gif"
     And I should see "img/blank.gif"
+    
+  Scenario: Rendering scss with the feature enabled
+    Given "relative_assets" feature is "enabled"
+    And the Server is running at "fonts-app"
+    When I go to "/stylesheets/fonts.css"
+    Then I should see "url('../fonts/StMarie"

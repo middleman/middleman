@@ -1,9 +1,16 @@
-Given /^"([^\"]*)" feature is "([^\"]*)"$/ do |feature, state|
-  @server ||= Middleman.server
+Given /^a clean server$/ do
+  @server = Middleman.server
   @server.set :show_exceptions, false
+end
+
+Given /^"([^\"]*)" feature is "([^\"]*)"$/ do |feature, state|
+  @server = Middleman.server
+  @server.set :show_exceptions, false
+  
   if state == "enabled"
     @server.activate(feature.to_sym)
-  end
+  end  
+  
   @server.set :environment, @current_env || :development
 end
 
