@@ -9,3 +9,9 @@ Feature: Web Fonts
     Given the Server is running at "test-app"
     When I go to "/stylesheets/fonts.css"
     Then I should see "/fonts/StMarie-Thin.otf"
+    
+  Scenario: Rendering scss with the feature enabled
+    Given "relative_assets" feature is "enabled"
+    And the Server is running at "test-app"
+    When I go to "/stylesheets/fonts.css"
+    Then I should see "url('../fonts/StMarie"
