@@ -61,8 +61,8 @@ eos
   #   s.add_dependency("win32-process", ["~> 0.6.5"])
   #   s.add_dependency("rb-fchange")
   # else
-    s.add_dependency("rb-fsevent", ["~> 0.4.2"])
-    s.add_dependency("therubyracer", ["~> 0.9.4"])
+    # s.add_dependency("rb-fsevent", ["~> 0.4.2"])
+    # s.add_dependency("therubyracer", ["~> 0.9.4"])
   # end
   
   s.add_dependency("guard", ["~> 0.6.2"])
