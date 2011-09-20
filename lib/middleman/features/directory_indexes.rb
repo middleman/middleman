@@ -5,21 +5,16 @@ module Middleman::Features::DirectoryIndexes
       app.extend ClassMethods
       
       app.build_reroute do |destination, request_path|
-        $stderr.puts "_: " + request_path
         index_ext = File.extname(app.settings.index_file)
         new_index_path = "/#{app.settings.index_file}"
       
         indexed_path = request_path.gsub(/\/$/, "") + index_ext
         
-        $stderr.puts "*: " + request_path
         if app.settings.ignored_directory_indexes.include?(request_path)
-          $stderr.puts "1: " + request_path
           false
         elsif request_path =~ /#{new_index_path}$/
-          $stderr.puts "2: " + request_path
           false
         else
-          $stderr.puts "3: " + request_path
           [
             destination.gsub(/#{index_ext.gsub(".", "\\.")}$/, new_index_path),
             request_path
