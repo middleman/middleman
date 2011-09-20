@@ -99,7 +99,9 @@ module Middleman::Base
 
           # Return static files
           if !::Tilt.mappings.has_key?(template_engine.to_s)
-            content_type mime_type(File.extname(request_path)), :charset => 'utf-8'
+            matched_mime = mime_type(File.extname(request_path))
+            matched_mime = "application/octet-stream" if matched_mime.nil?
+            content_type matched_mime, :charset => 'utf-8'
             status 200
             send_file File.join(settings.views, request_path)
             false
