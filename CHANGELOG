@@ -5,6 +5,7 @@
 - Enabled Liquid {% include %} tag
 - RubyInstaller-specific gem
 - Allow access to data/ in config.rb
+- Add mobile html5boilerplate template
 
 2.0.8
 =====
