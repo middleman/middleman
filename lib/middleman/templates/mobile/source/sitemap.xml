@@ -4,7 +4,6 @@
     <!-- http://www.google.com/support/webmasters/bin/answer.py?answer=34648 -->
     <url>
         <!--<loc>http://mobile.example.com/index.html</loc>-->
-		
         <mobile:mobile/>
     </url>
 </urlset>
