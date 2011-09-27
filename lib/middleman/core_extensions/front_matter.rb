@@ -28,7 +28,7 @@ module Middleman::CoreExtensions::FrontMatter
       ::Tilt.prefer(HamlTemplate)
       
       app.after_configuration do
-        app.before_processing(:front_matter) do |result|
+        app.before_processing(:front_matter, 0) do |result|
           if result && Tilt.mappings.has_key?(result[1].to_s)
             extensionless_path, template_engine = result
             full_file_path = "#{extensionless_path}.#{template_engine}"

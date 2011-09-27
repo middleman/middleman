@@ -45,7 +45,7 @@ eos
   s.add_dependency("sinatra", ["~> 1.2.6"])
   s.add_dependency("rack-test", ["~> 0.6.1"])
   s.add_dependency("uglifier", ["~> 1.0.0"])
-  s.add_dependency("slim", ["~> 1.0.1"])
+  s.add_dependency("slim", ["~> 1.0.2"])
   s.add_dependency("haml", ["~> 3.1.0"])
   s.add_dependency("sass", ["~> 3.1.7"])
   s.add_dependency("compass", ["~> 0.11.3"])
