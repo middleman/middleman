@@ -42,7 +42,7 @@ eos
   s.add_dependency("thor", ["~> 0.14.0"])
   s.add_dependency("tilt", ["~> 1.3.1"])
   s.add_dependency("maruku", ["~> 0.6.0"])
-  s.add_dependency("sinatra", ["~> 1.2.6"])
+  s.add_dependency("sinatra", ["~> 1.3.0"])
   # s.add_dependency("sinatra-synchrony", ["~> 0.2.1"])
   s.add_dependency("rack-test", ["~> 0.6.1"])
   s.add_dependency("uglifier", ["~> 1.0.0"])
@@ -52,24 +52,13 @@ eos
   s.add_dependency("compass", ["~> 0.11.3"])
   s.add_dependency("coffee-script", ["~> 2.2.0"])
   s.add_dependency("sprockets", ["~> 2.0.0"])
-  s.add_dependency("padrino-core", ["~> 0.10.2"])
-  s.add_dependency("padrino-helpers", ["~> 0.10.2"])
-  
-  # case s.platform.to_s
-  # when %r{mingw}
-  #   s.add_dependency("eventmachine", ["1.0.0.beta.3"])
-  #   s.add_dependency("win32-process", ["~> 0.6.5"])
-  #   s.add_dependency("rb-fchange")
-  # else
-    # s.add_dependency("rb-fsevent", ["~> 0.4.2"])
-    # s.add_dependency("therubyracer", ["~> 0.9.4"])
-  # end
+  s.add_dependency("padrino-core", ["~> 0.10.3"])
+  s.add_dependency("padrino-helpers", ["~> 0.10.3"])
   
   s.add_dependency("guard", ["~> 0.6.2"])
   s.add_dependency("middleman-livereload", ["~> 0.2.0"])
   
   # Development and test
-  # s.add_development_dependency("jquery-rails")
   s.add_development_dependency("coffee-filter", ["~> 0.1.1"])
   s.add_development_dependency("liquid", ["~> 2.2.0"])
   s.add_development_dependency("cucumber", ["~> 1.0.2"])

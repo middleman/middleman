@@ -124,12 +124,12 @@ module Middleman::Base
   module ClassMethods
     # Override Sinatra's set to accept a block
     # Specifically for the asset_host feature
-    def set(option, value=self, &block)
+    def set(option, value = (not_set = true), ignore_setter = false, &block)
       if block_given?
         value = Proc.new { block }
       end
     
-      super(option, value, &nil)
+      super(option, value, ignore_setter, &nil)
     end
     
     def before_processing(name=:unnamed, idx=-1, &block)
@@ -150,6 +150,10 @@ module Middleman::Base
   end
   
   module InstanceMethods
+    def forward
+      raise ::Sinatra::NotFound
+    end
+  
     # Internal method to look for templates and evaluate them if found
     def process_request(options={})
       if !settings.views.include?(settings.root)

@@ -42,7 +42,7 @@ eos
   s.add_dependency("thor", ["~> 0.14.0"])
   s.add_dependency("tilt", ["~> 1.3.1"])
   s.add_dependency("maruku", ["~> 0.6.0"])
-  s.add_dependency("sinatra", ["~> 1.2.6"])
+  s.add_dependency("sinatra", ["~> 1.3.0"])
   s.add_dependency("rack-test", ["~> 0.6.1"])
   s.add_dependency("uglifier", ["~> 1.0.0"])
   s.add_dependency("slim", ["~> 1.0.2"])
@@ -51,17 +51,12 @@ eos
   s.add_dependency("compass", ["~> 0.11.3"])
   s.add_dependency("coffee-script", ["~> 2.2.0"])
   s.add_dependency("sprockets", ["~> 2.0.0"])
-  s.add_dependency("padrino-core", ["~> 0.10.2"])
-  s.add_dependency("padrino-helpers", ["~> 0.10.2"])
+  s.add_dependency("padrino-core", ["~> 0.10.3"])
+  s.add_dependency("padrino-helpers", ["~> 0.10.3"])
   
-  # case s.platform.to_s
-  # when %r{mingw}
-    s.add_dependency("eventmachine", ["1.0.0.beta.3"])
-    s.add_dependency("win32-process", ["~> 0.6.5"])
-    s.add_dependency("rb-fchange")
-  # else
-  #   s.add_dependency("rb-fsevent", ["~> 0.4.2"])
-  # end
+  s.add_dependency("eventmachine", ["1.0.0.beta.3"])
+  s.add_dependency("win32-process", ["~> 0.6.5"])
+  s.add_dependency("rb-fchange")
   
   s.add_dependency("guard", ["~> 0.6.2"])
   s.add_dependency("middleman-livereload", ["~> 0.2.0"])

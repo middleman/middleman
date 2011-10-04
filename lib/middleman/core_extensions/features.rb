@@ -20,7 +20,7 @@
 #     activate MyExtension
 #
 # This will call the `registered` method in your extension and provide you
-# with the `app` parameter which is a Middleman::Server context. From here
+# with the `app` parameter which is a Middleman::Base context. From here
 # you can choose to respond to requests for certain paths or simply attach
 # Rack middleware to the stack.
 #

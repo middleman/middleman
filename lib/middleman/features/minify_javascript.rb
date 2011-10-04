@@ -19,7 +19,7 @@ module Middleman::Features::MinifyJavascript
       if env["PATH_INFO"].match(/\.html$/)
         compressor = ::Uglifier.new
 
-        if response.is_a?(::Rack::File) or response.is_a?(::Sinatra::Helpers::StaticFile)
+        if response.is_a?(::Rack::File)# or response.is_a?(::Sinatra::Helpers::StaticFile)
           uncompressed_source = File.read(response.path)
         else
           uncompressed_source = response.join
