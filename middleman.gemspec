@@ -51,6 +51,7 @@ eos
   s.add_dependency("sass", ["~> 3.1.7"])
   s.add_dependency("compass", ["~> 0.11.3"])
   s.add_dependency("coffee-script", ["~> 2.2.0"])
+  s.add_dependency("execjs", ["~> 1.2.7"])
   s.add_dependency("sprockets", ["~> 2.0.0"])
   s.add_dependency("padrino-core", ["~> 0.10.3"])
   s.add_dependency("padrino-helpers", ["~> 0.10.3"])
