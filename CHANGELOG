@@ -1,3 +1,11 @@
+2.0.12
+====
+Sinatra 1.3.1 and Padrino 0.10.4
+
+2.0.11
+=====
+- Lock Padrino and Sinatra versions (for now)
+
 2.0.9
 =====
 - Added --glob option to build which only builds matching files
