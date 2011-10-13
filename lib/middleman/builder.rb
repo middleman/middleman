@@ -111,8 +111,8 @@ module Middleman
     
   protected
     def handle_path(file_source)
-      # Skip partials prefixed with an underscore
-      return unless file_source.gsub(SHARED_SERVER.root, '').split('/').select { |p| p[0,1] == '_' }.empty?
+      # Skip partials prefixed with an underscore while still handling files prefixed with 2 consecutive underscores
+      return unless file_source.gsub(SHARED_SERVER.root, '').split('/').select { |p| p[/^_[^_]/] }.empty?
       
       file_extension = File.extname(file_source)
       file_destination = File.join(given_destination, file_source.gsub(source, '.'))
