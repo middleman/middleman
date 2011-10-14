@@ -184,7 +184,7 @@ module Middleman
   
   def self.start_server(options={})
     opts = {
-      :Port      => options[:port],
+      :Port      => options[:port] || 4567,
       :AccessLog => []
     }
     

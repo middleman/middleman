@@ -33,6 +33,8 @@ module Middleman
     desc "server [-p 4567] [-e development]", "Starts the Middleman preview server"
     method_option "environment", :aliases => "-e", :default => ENV['MM_ENV'] || ENV['RACK_ENV'] || 'development', :desc => "The environment Middleman will run under"
     method_option "port", :aliases => "-p", :default => "4567", :desc => "The port Middleman will listen on"
+    
+    method_option "disable-watcher", :default => false, :type => :boolean, :desc => "Don't use config.rb watcher (also disables livereload)"
     method_option "livereload", :default => false, :type => :boolean, :desc => "Whether to enable Livereload or not"
     method_option "livereload-port", :default => "35729", :desc => "The port Livereload will listen on"
     def server
@@ -41,11 +43,17 @@ module Middleman
       if options["livereload"]
         livereload_options = {:port => options["livereload-port"]}
       end
-    
-      Middleman::Guard.start({
+      
+      params = {
         :port        => options[:port],
         :environment => options[:environment]
-      }, livereload_options)
+      }
+      
+      if options["disable-watcher"]
+        Middleman.start_server(params)
+      else
+        Middleman::Guard.start(params, livereload_options)
+      end
     end
 
     desc "build", "Builds the static site for deployment"

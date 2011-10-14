@@ -16,7 +16,7 @@ module Middleman
       
       request_path = destination.sub(/^#{SHARED_SERVER.build_dir}/, "")
       
-      begin        
+      begin
         destination, request_path = SHARED_SERVER.reroute_builder(destination, request_path)
         
         request_path.gsub!(/\s/, "%20")
