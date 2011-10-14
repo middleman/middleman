@@ -50,6 +50,7 @@ module Middleman
 
     desc "build", "Builds the static site for deployment"
     method_option :relative, :type => :boolean, :aliases => "-r", :default => false, :desc => 'Override the config.rb file and force relative urls'
+    method_option :clean, :type => :boolean, :aliases => "-c", :default => false, :desc => 'Builds a clean project removing any orpahand files or directories'
     method_option :glob, :type => :string, :aliases => "-g", :default => nil, :desc => 'Build a subset of the project'
     def build
       v1_check

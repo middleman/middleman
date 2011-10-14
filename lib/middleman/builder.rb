@@ -1,6 +1,7 @@
 require "thor"
 require "thor/group"
 require 'rack/test'
+require 'find'
 
 SHARED_SERVER = Middleman.server
 SHARED_SERVER.set :environment, :build
@@ -182,11 +183,13 @@ module Middleman
           next
         end
         
-        handle_path(file_source)
+        dequeue_file handle_path(file_source)
       end
     end
 
     def execute!
+      queue_current_paths @destination
+      
       handle_directory(source) do |path|
         file_name = path.gsub(SHARED_SERVER.views + "/", "")
         if file_name == "layouts"
@@ -197,6 +200,40 @@ module Middleman
           true
         end
       end
+      
+      clean_up_queue if base.options.has_key?("clean") && base.options["clean"]
+      
+    end
+        
+    def clean_up_queue
+      files       = @cleaning_queue.select { |q| File.file? q }
+      directories = @cleaning_queue.select { |q| File.directory? q }
+
+      files.each { |f| base.remove_file f, config }
+
+      directories.sort_by! {|d| d.length }.reverse!
+
+      directories.each do |d|
+        base.remove_file(d, config) if directory_empty? d 
+      end
+    end
+    
+    def directory_empty?(directory)
+      Dir["#{directory}/*"].empty?
+    end
+
+    def queue_current_paths(destination)
+      @cleaning_queue = []
+      Find.find(destination) do |path|
+        unless path == destination
+          @cleaning_queue << @relative_destination + path.sub(destination,'')
+        end
+      end
+    end
+    
+    def dequeue_file(path)
+      @cleaning_queue.delete_if {|q| q == path }
+      return path
     end
   end
 end
