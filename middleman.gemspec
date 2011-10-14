@@ -63,7 +63,7 @@ eos
   s.add_development_dependency("coffee-filter", ["~> 0.1.1"])
   s.add_development_dependency("liquid", ["~> 2.2.0"])
   s.add_development_dependency("cucumber", ["~> 1.0.2"])
-  s.add_development_dependency("rake", ["0.8.7"])
+  s.add_development_dependency("rake", ["~> 0.9.2"])
   s.add_development_dependency("rspec", ["~> 2.6.0"])
 end
 
