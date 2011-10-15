@@ -51,8 +51,8 @@ eos
   s.add_dependency("compass", ["~> 0.11.3"])
   s.add_dependency("coffee-script", ["~> 2.2.0"])
   s.add_dependency("sprockets", ["~> 2.0.0"])
-  s.add_dependency("padrino-core", ["~> 0.10.4"])
-  s.add_dependency("padrino-helpers", ["~> 0.10.4"])
+  s.add_dependency("padrino-core", ["~> 0.10.5"])
+  s.add_dependency("padrino-helpers", ["~> 0.10.5"])
   
   s.add_dependency("eventmachine", ["1.0.0.beta.3"])
   s.add_dependency("win32-process", ["~> 0.6.5"])

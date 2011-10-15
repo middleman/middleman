@@ -53,8 +53,8 @@ eos
   s.add_dependency("coffee-script", ["~> 2.2.0"])
   s.add_dependency("execjs", ["~> 1.2.7"])
   s.add_dependency("sprockets", ["~> 2.0.0"])
-  s.add_dependency("padrino-core", ["~> 0.10.4"])
-  s.add_dependency("padrino-helpers", ["~> 0.10.4"])
+  s.add_dependency("padrino-core", ["~> 0.10.5"])
+  s.add_dependency("padrino-helpers", ["~> 0.10.5"])
   
   s.add_dependency("guard", ["~> 0.6.2"])
   s.add_dependency("middleman-livereload", ["~> 0.2.0"])
