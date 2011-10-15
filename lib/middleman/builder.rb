@@ -211,7 +211,7 @@ module Middleman
 
       files.each { |f| base.remove_file f, config }
 
-      directories.sort_by! {|d| d.length }.reverse!
+      directories = directories.sort_by {|d| d.length }.reverse!
 
       directories.each do |d|
         base.remove_file(d, config) if directory_empty? d 
