@@ -23,12 +23,61 @@ module Middleman
         request_path.gsub!(/\s/, "%20")
         response = Middleman::Builder.shared_rack.get(request_path)
         
+        dequeue_file_from destination if cleaning?
+
         create_file destination, nil, config do
           response.body
         end if response.status == 200
       rescue
       end
     end
+    
+    
+    def clean!(destination)
+      return unless cleaning?
+      queue_current_paths_from destination
+      add_clean_up_callback
+    end
+    
+    def cleaning?
+      options.has_key?("clean") && options["clean"]
+    end
+    
+    def add_clean_up_callback
+      clean_up_callback = lambda do 
+        files       = @cleaning_queue.select { |q| File.file? q }
+        directories = @cleaning_queue.select { |q| File.directory? q }
+
+        files.each { |f| remove_file f, :force => true }
+
+        directories = directories.sort_by {|d| d.length }.reverse!
+
+        directories.each do |d|
+          remove_file d, :force => true if directory_empty? d 
+        end
+      end
+      self.class.after_run :clean_up_callback do
+        clean_up_callback.call
+      end
+    end
+
+    def directory_empty?(directory)
+      Dir["#{directory}/*"].empty?
+    end
+
+    def queue_current_paths_from(destination)
+      @cleaning_queue = []
+      Find.find(destination) do |path|
+        unless path == destination
+          @cleaning_queue << path.sub(destination, destination[/([^\/]+?)$/])
+        end
+      end
+    end
+
+    def dequeue_file_from(destination)
+      @cleaning_queue.delete_if {|q| q == destination }
+    end
+    
   end
   
   class Builder < Thor::Group
@@ -103,6 +152,7 @@ module Middleman
     end
 
     def invoke!
+      base.clean! destination
       execute!
     end
 
@@ -183,13 +233,11 @@ module Middleman
           next
         end
         
-        dequeue_file handle_path(file_source)
+        handle_path(file_source)
       end
     end
 
     def execute!
-      queue_current_paths @destination
-      
       handle_directory(source) do |path|
         file_name = path.gsub(SHARED_SERVER.views + "/", "")
         if file_name == "layouts"
@@ -200,40 +248,7 @@ module Middleman
           true
         end
       end
-      
-      clean_up_queue if base.options.has_key?("clean") && base.options["clean"]
-      
-    end
-        
-    def clean_up_queue
-      files       = @cleaning_queue.select { |q| File.file? q }
-      directories = @cleaning_queue.select { |q| File.directory? q }
-
-      files.each { |f| base.remove_file f, config }
-
-      directories = directories.sort_by {|d| d.length }.reverse!
-
-      directories.each do |d|
-        base.remove_file(d, config) if directory_empty? d 
-      end
     end
     
-    def directory_empty?(directory)
-      Dir["#{directory}/*"].empty?
-    end
-
-    def queue_current_paths(destination)
-      @cleaning_queue = []
-      Find.find(destination) do |path|
-        unless path == destination
-          @cleaning_queue << @relative_destination + path.sub(destination,'')
-        end
-      end
-    end
-    
-    def dequeue_file(path)
-      @cleaning_queue.delete_if {|q| q == path }
-      return path
-    end
   end
 end
