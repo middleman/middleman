@@ -37,7 +37,7 @@ Gem::Specification.new do |s|
 ********************************************************************************
 eos
 
-  s.add_dependency("rack", ["~> 1.3.0"])
+  s.add_dependency("rack", ["~> 1.3.5"])
   s.add_dependency("thin", ["~> 1.2.11"])
   s.add_dependency("thor", ["~> 0.14.0"])
   s.add_dependency("tilt", ["~> 1.3.1"])
@@ -52,9 +52,9 @@ eos
   s.add_dependency("compass", ["~> 0.11.3"])
   s.add_dependency("coffee-script", ["~> 2.2.0"])
   s.add_dependency("execjs", ["~> 1.2.7"])
-  s.add_dependency("sprockets", ["~> 2.0.0"])
-  s.add_dependency("padrino-core", ["~> 0.10.4"])
-  s.add_dependency("padrino-helpers", ["~> 0.10.4"])
+  s.add_dependency("sprockets", ["~> 2.0.3"])
+  s.add_dependency("padrino-core", ["~> 0.10.5"])
+  s.add_dependency("padrino-helpers", ["~> 0.10.5"])
   
   s.add_dependency("guard", ["~> 0.6.2"])
   s.add_dependency("middleman-livereload", ["~> 0.2.0"])
