@@ -163,10 +163,10 @@ module Middleman
   
   def self.rubygems_latest_specs
     # If newer Rubygems
-    if Gem::Specification.respond_to? :latest_specs
-      Gem::Specification.latest_specs
+    if ::Gem::Specification.respond_to? :latest_specs
+      ::Gem::Specification.latest_specs
     else
-      Gem.source_index.latest_specs
+      ::Gem.source_index.latest_specs
     end
   end
   
