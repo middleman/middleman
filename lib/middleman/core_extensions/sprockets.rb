@@ -33,10 +33,20 @@ module Middleman::CoreExtensions::Sprockets
         app.map "/#{app.js_dir}" do
           run js_env
         end
+      end
         
-        # app.map "/#{app.css_dir}" do
-        #   run Middleman::CoreExtensions::Sprockets::StylesheetEnvironment.new(app)
-        # end
+      app.after_compass_config do
+        css_env = Middleman::CoreExtensions::Sprockets::StylesheetEnvironment.new(app)
+        css_dir = File.join("vendor", "assets", "stylesheets")
+        gems_with_css = ::Middleman.rubygems_latest_specs.select do |spec|
+          ::Middleman.spec_has_file?(spec, css_dir)
+        end.each do |spec|
+          css_env.append_path File.join(spec.full_gem_path, css_dir)
+        end
+        
+        app.map "/#{app.css_dir}" do
+          run css_env
+        end
       end
     end
     alias :included :registered
@@ -82,21 +92,20 @@ module Middleman::CoreExtensions::Sprockets
     end
   end
   
-  # class StylesheetEnvironment < MiddlemanEnvironment
-  #   def initialize(app)
-  #     super
-  # 
-  #     # Disable js
-  #     unregister_processor "application/javascript", ::Sprockets::DirectiveProcessor
-  # 
-  #     # configure search paths
-  #     stylesheets_path = File.join(File.expand_path(app.views), app.css_dir)
-  #     append_path stylesheets_path
-  #   end
-  #
-  #   def css_exception_response(exception)
-  #     expire_index!
-  #     super(exception)
-  #   end
-  # end
+  class StylesheetEnvironment < MiddlemanEnvironment
+    def initialize(app)
+      super
+  
+      # Disable js
+      unregister_processor "application/javascript", ::Sprockets::DirectiveProcessor
+  
+      # configure search paths
+      append_path app.css_dir
+    end
+  
+    def css_exception_response(exception)
+      expire_index!
+      super(exception)
+    end
+  end
 end

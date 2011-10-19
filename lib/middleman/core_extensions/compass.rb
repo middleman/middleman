@@ -68,7 +68,7 @@ module Middleman::CoreExtensions::Compass
           config.asset_cache_buster :none
           config.output_style = :nested
 
-          config.add_import_path(config.sass_dir)
+          # config.add_import_path(config.sass_dir)
         end
         
         # Required for relative paths
@@ -84,8 +84,9 @@ module Middleman::CoreExtensions::Compass
         end
         
         app.execute_after_compass_init!
+        app.execute_after_compass_config!
         
-        app.set :sass, ::Compass.configuration.to_sass_engine_options
+        # app.set :sass, ::Compass.configuration.to_sass_engine_options
       end
     end
     alias :included :registered
@@ -101,6 +102,16 @@ module Middleman::CoreExtensions::Compass
     def execute_after_compass_init!
       @run_after_compass ||= []
       @run_after_compass.each { |block| block.call(::Compass.configuration) }
+    end
+    
+    def after_compass_config(&block)
+      @run_after_compass_config ||= []
+      @run_after_compass_config << block
+    end
+    
+    def execute_after_compass_config!
+      @run_after_compass_config ||= []
+      @run_after_compass_config.each { |block| block.call() }
     end
   end
 end

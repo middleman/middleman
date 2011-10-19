@@ -51,6 +51,7 @@ eos
   s.add_dependency("compass", ["~> 0.11.3"])
   s.add_dependency("coffee-script", ["~> 2.2.0"])
   s.add_dependency("sprockets", ["~> 2.0.3"])
+  s.add_dependency("sprockets-sass", ["~> 0.3.0"])
   s.add_dependency("padrino-core", ["~> 0.10.5"])
   s.add_dependency("padrino-helpers", ["~> 0.10.5"])
   
@@ -68,5 +69,6 @@ eos
   s.add_development_dependency("cucumber", ["~> 1.0.2"])
   s.add_development_dependency("rake", ["~> 0.9.2"])
   s.add_development_dependency("rspec", ["~> 2.6.0"])
+  s.add_development_dependency("jquery-rails")
 end
 

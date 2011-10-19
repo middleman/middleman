@@ -1,5 +1,6 @@
+require "sprockets"
+require "sprockets-sass"
 require "sass"
-require "sass/plugin"
 
 module Middleman::Renderers::Sass
   class << self
@@ -9,41 +10,50 @@ module Middleman::Renderers::Sass
     end
     alias :included :registered
   end
-  
-  class SassPlusCSSFilenameTemplate < ::Tilt::SassTemplate
-    def sass_options_with_scope(scope)
-      return sass_options if basename.nil?
-    
-      location_of_sass_file = if scope.build?
-        File.join(scope.root, scope.build_dir)
-      else
-        scope.views
-      end
-    
-      parts = basename.split('.')
-      parts.pop
-      css_filename = File.join(location_of_sass_file, scope.css_dir, parts.join("."))
-      sass_options.merge(scope.settings.sass).merge(:css_filename => css_filename)
-    end
 
-    def evaluate(scope, locals, &block)
-      @engine = ::Sass::Engine.new(data, sass_options_with_scope(scope.class))
-        
+  class SassPlusCSSFilenameTemplate < ::Sprockets::Sass::SassTemplate
+    self.default_mime_type = "text/css"
+    
+    # Add exception messaging
+    def evaluate(context, locals, &block)
       begin
         super
       rescue Sass::SyntaxError => e
         Sass::SyntaxError.exception_to_css(e, :full_exception => true)
       end
     end
-  end
-  ::Tilt.register 'sass', SassPlusCSSFilenameTemplate
-  ::Tilt.prefer(SassPlusCSSFilenameTemplate)
-
-  class ScssPlusCSSFilenameTemplate < SassPlusCSSFilenameTemplate
-    def sass_options_with_scope(scope)
-      super.merge(:syntax => :scss)
+  
+  protected
+    def sass_options
+      location_of_sass_file = if @context.build?
+        File.expand_path(@context.build_dir, @context.root)
+      else
+        File.expand_path(@context.views, @context.root)
+      end
+      
+      parts = basename.split('.')
+      parts.pop
+      css_filename = File.join(location_of_sass_file, @context.css_dir, parts.join("."))
+      
+      super.merge(
+        :css_filename => css_filename
+      )
     end
   end
+  ::Sprockets.register_engine ".sass", SassPlusCSSFilenameTemplate
+  ::Tilt.register 'sass', SassPlusCSSFilenameTemplate
+  ::Tilt.prefer(SassPlusCSSFilenameTemplate)
+  
+  class ScssPlusCSSFilenameTemplate < SassPlusCSSFilenameTemplate
+    self.default_mime_type = "text/css"
+    
+    # Define the expected syntax for the template
+    def syntax
+      :scss
+    end
+  end
+  
+  ::Sprockets.register_engine ".scss", ScssPlusCSSFilenameTemplate
   ::Tilt.register 'scss', ScssPlusCSSFilenameTemplate
   ::Tilt.prefer(ScssPlusCSSFilenameTemplate)
 end
