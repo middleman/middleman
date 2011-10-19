@@ -68,6 +68,7 @@ module Middleman
     def queue_current_paths_from(destination)
       @cleaning_queue = []
       Find.find(destination) do |path|
+        next if path.match(/\/\./)
         unless path == destination
           @cleaning_queue << path.sub(destination, destination[/([^\/]+?)$/])
         end

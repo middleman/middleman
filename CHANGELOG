@@ -1,6 +1,11 @@
+2.0.13.1
+====
+build --clean shouldn't remove dotfiles
+
 2.0.13
 ====
 middleman build --clean keeps the build directory clean of leftover files
+Padrino 0.10.5 and Rack 1.3.5
 
 2.0.12
 ====
