@@ -1,9 +1,8 @@
 module Middleman::Features::MinifyCss
   class << self
     def registered(app)
-      app.compass_config do |config|
-        config.output_style = :compressed
-      end
+      require "middleman/features/minify_css/cssmin"
+      app.set :css_compressor, ::CSSMin
     end
     alias :included :registered
   end

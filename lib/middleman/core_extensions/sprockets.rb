@@ -6,6 +6,7 @@ module Middleman::CoreExtensions::Sprockets
   class << self
     def registered(app)
       app.set :js_compressor, false
+      app.set :css_compressor, false
       
       # Cut off every extension after .js (which sprockets eats up)
       app.build_reroute do |destination, request_path|
@@ -78,7 +79,7 @@ module Middleman::CoreExtensions::Sprockets
       super
 
       # Disable css
-      unregister_processor "text/css", ::Sprockets::DirectiveProcessor
+      # unregister_processor "text/css", ::Sprockets::DirectiveProcessor
       
       self.js_compressor = app.settings.js_compressor
 
@@ -97,7 +98,9 @@ module Middleman::CoreExtensions::Sprockets
       super
   
       # Disable js
-      unregister_processor "application/javascript", ::Sprockets::DirectiveProcessor
+      # unregister_processor "application/javascript", ::Sprockets::DirectiveProcessor
+      
+      self.css_compressor = app.settings.css_compressor
   
       # configure search paths
       append_path app.css_dir
