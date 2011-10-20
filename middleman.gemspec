@@ -67,5 +67,6 @@ eos
   s.add_development_dependency("rake", ["~> 0.9.2"])
   s.add_development_dependency("rspec", ["~> 2.6.0"])
   s.add_development_dependency("jquery-rails")
+  s.add_development_dependency("bootstrap-rails")
 end
 
