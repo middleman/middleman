@@ -55,7 +55,7 @@ eos
   s.add_dependency("padrino-core", ["~> 0.10.5"])
   s.add_dependency("padrino-helpers", ["~> 0.10.5"])
   
-  s.add_dependency("eventmachine", ["1.0.0.beta.3"])
+  s.add_dependency("eventmachine", ["1.0.0.beta.4.1"])
   s.add_dependency("win32-process", ["~> 0.6.5"])
   s.add_dependency("rb-fchange")
   
