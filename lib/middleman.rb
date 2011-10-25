@@ -48,7 +48,7 @@
 #
 # [Visit the website]:     http://middlemanapp.com
 # [Read the wiki]:         https://github.com/tdreyno/middleman/wiki
-# [Email the users group]: http://groups.google.com/group/middleman-users
+# [Email the users group]: https://convore.com/middleman/
 # [Submit bug reports]:    https://github.com/tdreyno/middleman/issues
 
 # Setup our load paths
