@@ -101,6 +101,9 @@ module Middleman::CoreExtensions::FrontMatter
   class ERBTemplate < ::Tilt::ERBTemplate
     include Middleman::CoreExtensions::FrontMatter::YamlAware
   end
+  class ErubisTemplate < ::Tilt::ErubisTemplate
+    include Middleman::CoreExtensions::FrontMatter::YamlAware
+  end
 
   class LiquidTemplate < ::Tilt::LiquidTemplate
     include Middleman::CoreExtensions::FrontMatter::YamlAware

@@ -73,6 +73,7 @@ module Middleman
     autoload :Sass,         "middleman/renderers/sass"
     autoload :Slim,         "middleman/renderers/slim"
     autoload :Markdown,     "middleman/renderers/markdown"
+    autoload :ERb,          "middleman/renderers/erb"
     autoload :CoffeeScript, "middleman/renderers/coffee_script"
     autoload :Liquid,       "middleman/renderers/liquid"
   end
