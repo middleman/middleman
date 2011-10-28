@@ -57,7 +57,7 @@ eos
   s.add_dependency("padrino-core", ["~> 0.10.5"])
   s.add_dependency("padrino-helpers", ["~> 0.10.5"])
   
-  s.add_dependency("guard", ["~> 0.6.2"])
+  s.add_dependency("guard", ["~> 0.8.8"])
   s.add_dependency("middleman-livereload", ["~> 0.2.0"])
   
   # Development and test

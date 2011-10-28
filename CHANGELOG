@@ -2,6 +2,10 @@
 ====
 Finally support Compass in Sprockets! Thanks to @xdite and @petebrowne
 
+2.0.13.2
+====
+Update Windows eventmachine dep
+
 2.0.13.1
 ====
 build --clean shouldn't remove dotfiles

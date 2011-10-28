@@ -48,7 +48,7 @@
 #
 # [Visit the website]:     http://middlemanapp.com
 # [Read the wiki]:         https://github.com/tdreyno/middleman/wiki
-# [Email the users group]: http://groups.google.com/group/middleman-users
+# [Email the users group]: https://convore.com/middleman/
 # [Submit bug reports]:    https://github.com/tdreyno/middleman/issues
 
 # Setup our load paths
@@ -73,6 +73,7 @@ module Middleman
     autoload :Sass,         "middleman/renderers/sass"
     autoload :Slim,         "middleman/renderers/slim"
     autoload :Markdown,     "middleman/renderers/markdown"
+    autoload :ERb,          "middleman/renderers/erb"
     autoload :CoffeeScript, "middleman/renderers/coffee_script"
     autoload :Liquid,       "middleman/renderers/liquid"
   end

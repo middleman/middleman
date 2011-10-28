@@ -7,8 +7,13 @@ Feature: Sprockets
     
   Scenario: Sprockets JS require with custom :js_dir
     Given the Server is running at "sprockets-app"
-    When I go to "/library/javascripts/sprockets_base.js"
+    When I go to "/library/js/sprockets_base.js"
     Then I should see "sprockets_sub_function"
+    
+  Scenario: Plain JS require with custom :js_dir
+    Given the Server is running at "sprockets-app"
+    When I go to "/library/css/plain.css"
+    Then I should see "helloWorld"
     
   Scenario: Sprockets JS should have access to yaml data
     Given the Server is running at "test-app"
@@ -32,10 +37,15 @@ Feature: Sprockets
 
   Scenario: Sprockets CSS require with custom :css_dir //require
     Given the Server is running at "sprockets-app"
-    When I go to "/library/stylesheets/sprockets_base1.css"
+    When I go to "/library/css/sprockets_base1.css"
     Then I should see "hello"
+    
+  Scenario: Plain CSS require with custom :css_dir
+    Given the Server is running at "sprockets-app"
+    When I go to "/library/css/plain.css"
+    Then I should see "helloWorld"
     
   Scenario: Sprockets CSS require with custom :css_dir @import
     Given the Server is running at "sprockets-app"
-    When I go to "/library/stylesheets/sprockets_base2.css"
+    When I go to "/library/css/sprockets_base2.css"
     Then I should see "hello"
