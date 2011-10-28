@@ -23,11 +23,18 @@ module Middleman::CoreExtensions::Sprockets
       app.after_configuration do
         js_env = Middleman::CoreExtensions::Sprockets::JavascriptEnvironment.new(app)
         
-        js_dir = File.join("vendor", "assets", "javascripts")
+        vendor_dir = File.join("vendor", "assets", "javascripts")
         gems_with_js = ::Middleman.rubygems_latest_specs.select do |spec|
-          ::Middleman.spec_has_file?(spec, js_dir)
+          ::Middleman.spec_has_file?(spec, vendor_dir)
         end.each do |spec|
-          js_env.append_path File.join(spec.full_gem_path, js_dir)
+          js_env.append_path File.join(spec.full_gem_path, vendor_dir)
+        end
+        
+        app_dir = File.join("app", "assets", "javascripts")
+        gems_with_js = ::Middleman.rubygems_latest_specs.select do |spec|
+          ::Middleman.spec_has_file?(spec, app_dir)
+        end.each do |spec|
+          js_env.append_path File.join(spec.full_gem_path, app_dir)
         end
         
         # add paths to js_env (vendor/assets/javascripts)
@@ -38,11 +45,19 @@ module Middleman::CoreExtensions::Sprockets
         
       app.after_compass_config do
         css_env = Middleman::CoreExtensions::Sprockets::StylesheetEnvironment.new(app)
-        css_dir = File.join("vendor", "assets", "stylesheets")
+        
+        vendor_dir = File.join("vendor", "assets", "stylesheets")
         gems_with_css = ::Middleman.rubygems_latest_specs.select do |spec|
-          ::Middleman.spec_has_file?(spec, css_dir)
+          ::Middleman.spec_has_file?(spec, vendor_dir)
         end.each do |spec|
-          css_env.append_path File.join(spec.full_gem_path, css_dir)
+          css_env.append_path File.join(spec.full_gem_path, vendor_dir)
+        end
+
+        app_dir = File.join("app", "assets", "stylesheets")
+        gems_with_css = ::Middleman.rubygems_latest_specs.select do |spec|
+          ::Middleman.spec_has_file?(spec, app_dir)
+        end.each do |spec|
+          css_env.append_path File.join(spec.full_gem_path, app_dir)
         end
         
         app.map "/#{app.css_dir}" do
