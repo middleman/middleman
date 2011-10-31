@@ -12,7 +12,7 @@ module Middleman
       help_check if options[:help]
     end
 
-    desc "init NAME", "Create new Middleman project directory NAME"
+    desc "init NAME [options]", "Create new Middleman project directory NAME"
     available_templates = Middleman::Templates.registered_names.join(", ")
     method_option "template", :aliases => "-T", :default => "default", :desc => "Optionally use a pre-defined project template: #{available_templates}"
     method_option "css_dir", :default => "stylesheets", :desc => 'The path to the css files'
