@@ -1,6 +1,10 @@
-2.0.14
+2.1.pre
 ====
 Finally support Compass in Sprockets! Thanks to @xdite and @petebrowne
+
+2.0.14
+====
+Minor fix for i18n
 
 2.0.13.2
 ====
