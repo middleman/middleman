@@ -1,6 +1,6 @@
-2.0.13.1
+2.0.14
 ====
-build --clean shouldn't remove dotfiles
+Minor fix for i18n
 
 2.0.13
 ====

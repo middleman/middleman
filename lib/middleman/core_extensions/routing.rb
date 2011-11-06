@@ -39,6 +39,7 @@ module Middleman::CoreExtensions::Routing
     def paths_for_url(url)
       url = url.gsub(%r{\/#{settings.index_file}$}, "")
       url = url.gsub(%r{(\/)$}, "") if url.length > 1
+      url = "/" if url.length == 0
     
       paths = [url]
       paths << "#{url}/" if url.length > 1 && url.split("/").last.split('.').length <= 1
