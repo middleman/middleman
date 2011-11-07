@@ -60,7 +60,7 @@ eos
   s.add_dependency("rb-fchange")
   
   s.add_dependency("guard", ["~> 0.8.8"])
-  s.add_dependency("middleman-livereload", ["~> 0.2.0"])
+  # s.add_dependency("middleman-livereload", ["~> 0.2.0"])
   
   # Development and test
   # s.add_development_dependency("jquery-rails")
