@@ -150,6 +150,9 @@ module Middleman
     
     # Automatically convert filename.html files into filename/index.html
     autoload :DirectoryIndexes,    "middleman/features/directory_indexes"
+    
+    # Organize the sitemap as a tree
+    autoload :SitemapTree,         "middleman/features/sitemap_tree"
   end
   
   EXTENSION_FILE = File.join("lib", "middleman_init.rb")

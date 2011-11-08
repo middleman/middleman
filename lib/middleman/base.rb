@@ -78,7 +78,8 @@ module Middleman::Base
       app.register Middleman::CoreExtensions::FrontMatter
 
       app.set :default_features, [
-        :lorem
+        :lorem,
+        :sitemap_tree
       ]
 
       # Default layout name
