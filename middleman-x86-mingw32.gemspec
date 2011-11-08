@@ -20,23 +20,6 @@ Gem::Specification.new do |s|
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
 
-  # TODO remove for 2.1.x
-  s.post_install_message =<<eos
-********************************************************************************
-
-  Welcome to Middleman 2.0
-  
-  In addition to many new features, some backwards-incompatible
-  changes have been made to the structure of Middleman sites.
-  
-  Before running you old, v1.x project on Middleman 2.0,
-  review the Migration guide:
-  
-  http://middlemanapp.com/guides/migrating
-
-********************************************************************************
-eos
-
   s.add_dependency("rack", ["~> 1.3.5"])
   s.add_dependency("thin", ["~> 1.2.11"])
   s.add_dependency("thor", ["~> 0.14.0"])

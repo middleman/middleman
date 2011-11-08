@@ -20,7 +20,7 @@ module Middleman
       end
     
       guardfile_contents = %Q{
-        guard 'middleman'#{options_hash} do 
+        guard 'middlemanconfig'#{options_hash} do 
           watch("config.rb")
           watch(%r{^lib/^[^\.](.*)\.rb$})
         end
@@ -30,14 +30,14 @@ module Middleman
         result = block.call(options, livereload)
         guardfile_contents << result unless result.nil?
       end
-    
+
       ::Guard.start({ :guardfile_contents => guardfile_contents })
     end
   end
 end
 
 module Guard
-  class Middleman < Guard
+  class MiddlemanConfig < Guard
     def initialize(watchers = [], options = {})
       super
       @options = options
@@ -68,3 +68,5 @@ module Guard
     end
   end
 end
+
+require "middleman/sitemap"

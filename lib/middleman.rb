@@ -62,6 +62,7 @@ require "sinatra/base"
 module Middleman
   # Auto-load modules on-demand
   autoload :Base,      "middleman/base"
+  autoload :Sitemap,   "middleman/sitemap"
   autoload :Builder,   "middleman/builder"
   autoload :CLI,       "middleman/cli"
   autoload :Templates, "middleman/templates"
@@ -142,9 +143,6 @@ module Middleman
     # Lorem provides a handful of helpful prototyping methods to generate
     # words, paragraphs, fake images, names and email addresses.
     autoload :Lorem,               "middleman/features/lorem"
-    
-    # guard-livereload
-    autoload :LiveReload,          "middleman/features/live_reload"
     
     # Automatically convert filename.html files into filename/index.html
     autoload :DirectoryIndexes,    "middleman/features/directory_indexes"

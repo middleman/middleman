@@ -75,6 +75,8 @@ module Middleman::CoreExtensions::Features
     
     # Load features before starting server
     def new
+      set :sitemap, ::Middleman::Sitemap.new(self)
+      
       # Check for and evaluate local configuration
       local_config = File.join(self.root, "config.rb")
       if File.exists? local_config
