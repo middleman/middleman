@@ -11,7 +11,6 @@ Feature: Directory Index
     Then "needs_index.html" should not exist at "indexable-app"
     Then "a_folder/needs_index.html" should not exist at "indexable-app"
     Then "leave_me_alone/index.html" should not exist at "indexable-app"
-    And cleanup built app at "indexable-app"
     
   Scenario: Preview normal file
     Given the Server is running at "indexable-app"

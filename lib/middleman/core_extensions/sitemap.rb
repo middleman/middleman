@@ -1,88 +1,116 @@
 require 'find'
 
-module Middleman
-  class Sitemap
-    def self.singleton
-      @@singleton || nil
+module Middleman::CoreExtensions::Sitemap
+  class << self
+    def registered(app)
+      app.set :sitemap, SitemapStore.new(app)
     end
-      
+    alias :included :registered
+  end
+  
+  class SitemapStore
     def initialize(app)
       @app = app
       @map = {}
-      @ignored_paths = nil
-      @generic_paths = nil
-      @proxied_paths = nil
+      @ignored_paths = false
+      @generic_paths = false
+      @proxied_paths = false
       
       @source = File.expand_path(@app.views, @app.root)
-      
+    
       build_static_map
-
-      each do |request, destination|
-        $stderr.puts request
+    
+      @app.on_file_change do |file|
+        touch_file(file)
       end
-      
-      @@singleton = self
+    
+      @app.on_file_delete do |file|
+        remove_file(file)
+      end
     end
     
     # Check to see if we know about a specific path
     def path_exists?(path)
+      path = path.sub(/^\//, "")
       @map.has_key?(path)
     end
     
     def path_is_proxy?(path)
+      path = path.sub(/^\//, "")
       return false if !path_exists?(path)
       @map[path].is_a?(String)
     end
     
     def path_target(path)
+      path = path.sub(/^\//, "")
       @map[path]
     end
     
     def set_path(path, target=true)
+      path   = path.sub(/^\//, "")
+      target = target.sub(/^\//, "") if target.is_a?(String)
+      
       @map[path] = target
       
-      @ignored_paths = nil if target.nil?
-      @generic_paths = nil if target === true
-      @proxied_paths = nil if target.is_a?(String)
+      @ignored_paths = false if target === false
+      @generic_paths = false if target === true
+      @proxied_paths = false if target.is_a?(String)
     end
     
     def ignore_path(path)
-      set_path(path, nil)
+      set_path(path, false)
     end
     
     def each(&block)
       @map.each do |k, v|
-        next if v.nil?
-        
         yield(k, v)
       end
+    end
+    
+    def all_paths
+      @map.keys
+    end
+    
+    def ignored_path?(path)
+      path = path.sub(/^\//, "")
+      ignored_paths.include?(path)
     end
     
     def ignored_paths
       @ignored_paths ||= begin
         ignored = []
         each do |k, v|
-          ignored << k unless v.nil?
+          ignored << k if v === false
         end
         ignored
       end
+    end
+    
+    def generic_path?(path)
+      path = path.sub(/^\//, "")
+      generic_paths.include?(path)
     end
     
     def generic_paths
       @generic_paths ||= begin
         generic = []
         each do |k, v|
-          generic << k unless v === true
+          generic << k if v === true
         end
         generic
       end
+    end
+    
+    def proxied_path?(path)
+      path = path.sub(/^\//, "")
+      proxied_paths.include?(path)
     end
     
     def proxied_paths
       @proxied_paths ||= begin
         proxied = []
         each do |k, v|
-          proxied << k unless target.is_a?(String)
+          proxied << k if v.is_a?(String)
         end
         proxied
       end
@@ -101,16 +129,12 @@ module Middleman
     end
     
     def remove_path(path)
-      if @map.has_key?(path)
-        @map.delete(path)
-      end
+      path = path.sub(/^\//, "")
+      @map.delete(path) if path_exists?(path)
     end
     
   protected
-
     def build_static_map
-      # found_template = resolve_template(request_path, :raise_exceptions => false)
-      
       Find.find(@source) do |file|
         add_file(file)
       end
@@ -152,34 +176,4 @@ module Middleman
       true
     end
   end
-end
-
-module Guard
-  class MiddlemanSitemap < Guard
-    def initialize(watchers = [], options = {})
-      super
-      @options = options
-    end
-  
-    def run_on_change(files)
-      files.each do |file|
-        ::Middleman::Sitemap.singleton.touch_file(file)
-      end
-    end
-    
-    def run_on_deletion(files)
-      files.each do |file|
-        ::Middleman::Sitemap.singleton.remove_file(file)
-      end
-    end
-  end
-end
-
-# Add Sitemap guard
-Middleman::Guard.add_guard do
-  %Q{
-    guard 'middlemansitemap' do 
-      watch(%r{^source/(.*)})
-    end
-  }
 end

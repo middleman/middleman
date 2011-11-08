@@ -7,4 +7,3 @@ Feature: Build Clean
     Then "should_be_ignored.html" should not exist at "clean-app"
     And "should_be_ignored2.html" should not exist at "clean-app"
     And "should_be_ignored3.html" should not exist at "clean-app"
-    And cleanup built app at "clean-app"

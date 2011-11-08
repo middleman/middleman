@@ -11,6 +11,10 @@ end
 Given /^a built app at "([^"]*)"$/ do |path|
   root = File.dirname(File.dirname(File.dirname(__FILE__)))
   target = File.join(root, "fixtures", path)
+  
+  build_target = File.join(target, "build")
+  FileUtils.rm_rf(build_target)
+  
   build_cmd = File.expand_path(File.join(root, "bin", "middleman build"))
   `cd #{target} && #{build_cmd}`
 end

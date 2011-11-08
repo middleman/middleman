@@ -48,12 +48,7 @@ module Middleman::CoreExtensions::Routing
   
     # Keep a path from building
     def ignore(path)
-      # New sitemap based ignore
       settings.sitemap.ignore_path(path)
-      
-      settings.excluded_paths << paths_for_url(path)
-      settings.excluded_paths.flatten!
-      settings.excluded_paths.uniq!
     end
     
     # The page method allows the layout to be set on a specific path
@@ -64,10 +59,8 @@ module Middleman::CoreExtensions::Routing
       options[:layout] = settings.layout if options[:layout].nil?
       
       if options.has_key?(:proxy)
-        # New sitemap based proxy
         settings.sitemap.set_path(url, options[:proxy])
         
-        settings.proxied_paths[url] = options[:proxy]
         if options.has_key?(:ignore) && options[:ignore]
           settings.ignore(options[:proxy])
         end
@@ -79,15 +72,9 @@ module Middleman::CoreExtensions::Routing
 
       paths_for_url(url).each do |p|
         get(p) do
-          # New sitemap based rerouting
           if settings.sitemap.path_is_proxy?(url)
             request["is_proxy"] = true
             request.path_info = settings.sitemap.path_target(url)
-          end
-          
-          if settings.proxied_paths.has_key?(url)
-            request["is_proxy"] = true
-            request.path_info = settings.proxied_paths[url]
           end
           
           instance_eval(&block) if has_block

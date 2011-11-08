@@ -59,7 +59,7 @@ module Middleman::CoreExtensions::Features
         feature = Middleman::Features.const_get(feature)
       end
       
-      $stderr.puts "== Activating:  #{feature}" if logging?
+      puts "== Activating:  #{feature}" if logging?
       register feature
     end
     
@@ -75,12 +75,10 @@ module Middleman::CoreExtensions::Features
     
     # Load features before starting server
     def new
-      set :sitemap, ::Middleman::Sitemap.new(self)
-      
       # Check for and evaluate local configuration
       local_config = File.join(self.root, "config.rb")
       if File.exists? local_config
-        $stderr.puts "== Reading:  Local config" if logging?
+        puts "== Reading:  Local config" if logging?
         class_eval File.read(local_config)
         set :app_file, File.expand_path(local_config)
       end
@@ -94,7 +92,7 @@ module Middleman::CoreExtensions::Features
       
       if logging?
         extensions.each do |ext|
-          $stderr.puts "== Extension: #{ext}"
+          puts "== Extension: #{ext}"
         end
       end
       

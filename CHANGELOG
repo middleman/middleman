@@ -1,6 +1,8 @@
 2.1.pre
 ====
 Finally support Compass in Sprockets! Thanks to @xdite and @petebrowne
+Middleman::Sitemap object representing the known world
+Middleman::FileWatcher proxies file change events
 
 2.0.14
 ====

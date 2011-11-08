@@ -15,15 +15,12 @@ Feature: Builder
     Then "spaces in file.html" should exist at "test-app" and include "spaces"
     Then "images/Read me (example).txt" should exist at "test-app"
     Then "images/Child folder/regular_file(example).txt" should exist at "test-app"
-    And cleanup built app at "test-app"
     
   Scenario: Build glob
-    Given a built app at "glob-app" with flags "--glob '**/*.sass'"
+    Given a built app at "glob-app" with flags "--glob '*.css'"
     Then "stylesheets/site.css" should exist at "glob-app" and include "html"
     Then "index.html" should not exist at "glob-app"
-    And cleanup built app at "glob-app"
     
   # Scenario: Force relative assets
   #   Given a built app at "relative-app" with flags "--relative"
   #   Then "stylesheets/relative_assets.css" should exist at "relative-app" and include "../"
-  #   And cleanup built app at "relative-app"

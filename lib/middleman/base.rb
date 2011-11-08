@@ -39,6 +39,12 @@ module Middleman::Base
       app.set :views, "source"
       
       # Add Builder Callbacks
+      app.register Middleman::CoreExtensions::FileWatcher
+      
+      # Sitemap
+      app.register Middleman::CoreExtensions::Sitemap
+      
+      # Add Builder Callbacks
       app.register Middleman::CoreExtensions::Builder
       
       # Add Rack::Builder.map to Sinatra
@@ -92,7 +98,8 @@ module Middleman::Base
       # See if Tilt cannot handle this file
       app.before_processing(:base) do |result|
         request_path = request.path_info.gsub("%20", " ")
-        should_be_ignored = !(request["is_proxy"]) && settings.excluded_paths.include?("/#{request_path}")
+
+        should_be_ignored = !(request["is_proxy"]) && settings.sitemap.ignored_path?("/#{request_path}")
         
         if result && !should_be_ignored
           extensionless_path, template_engine = result

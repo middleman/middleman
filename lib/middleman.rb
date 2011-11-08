@@ -61,12 +61,11 @@ require "sinatra/base"
 # Top-level Middleman object
 module Middleman
   # Auto-load modules on-demand
-  autoload :Base,      "middleman/base"
-  autoload :Sitemap,   "middleman/sitemap"
-  autoload :Builder,   "middleman/builder"
-  autoload :CLI,       "middleman/cli"
-  autoload :Templates, "middleman/templates"
-  autoload :Guard,     "middleman/guard"
+  autoload :Base,        "middleman/base"
+  autoload :Builder,     "middleman/builder"
+  autoload :CLI,         "middleman/cli"
+  autoload :Templates,   "middleman/templates"
+  autoload :Guard,       "middleman/guard"
   
   # Custom Renderers
   module Renderers
@@ -80,6 +79,11 @@ module Middleman
   end
   
   module CoreExtensions
+    # Guard Proxy
+    autoload :FileWatcher,   "middleman/core_extensions/file_watcher"
+    
+    autoload :Sitemap,     "middleman/core_extensions/sitemap"
+    
     # Add Builder callbacks
     autoload :Builder,       "middleman/core_extensions/builder"
     
@@ -187,13 +191,14 @@ module Middleman
       :AccessLog => []
     }
     
-    app = ::Middleman.server
-    app.set :environment, options[:environment].to_sym
-    opts[:app] = app.new
+    app_class = options[:app] ||= ::Middleman.server
+    app_class.set :environment, options[:environment].to_sym
+    opts[:app] = app_class.new
     opts[:server] = 'thin'
 
-    $stderr.puts "== The Middleman is standing watch on port #{opts[:Port]}"
-    ::Rack::Server.new(opts).start
+    server = ::Rack::Server.new(opts)
+    server.start
+    server
   end
 end
 

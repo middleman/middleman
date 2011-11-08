@@ -10,7 +10,6 @@ Feature: Dynamic Pages
     Then "should_be_ignored.html" should not exist at "test-app"
     Then "should_be_ignored2.html" should not exist at "test-app"
     Then "should_be_ignored3.html" should not exist at "test-app"
-    And cleanup built app at "test-app"
     
   Scenario: Preview basic proxy
     Given the Server is running at "test-app"

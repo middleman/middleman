@@ -12,9 +12,6 @@ module Middleman
       config = args.last.is_a?(Hash) ? args.pop : {}
       destination = args.first || source
       
-      # source  = File.expand_path(find_in_source_paths(source.to_s))
-      # context = instance_eval('binding')
-      
       request_path = destination.sub(/^#{SHARED_SERVER.build_dir}/, "")
       
       begin
@@ -22,8 +19,6 @@ module Middleman
         
         request_path.gsub!(/\s/, "%20")
         response = Middleman::Builder.shared_rack.get(request_path)
-        
-        dequeue_file_from destination if cleaning?
 
         create_file destination, nil, config do
           response.body
@@ -31,54 +26,6 @@ module Middleman
       rescue
       end
     end
-    
-    
-    def clean!(destination)
-      return unless cleaning?
-      queue_current_paths_from destination
-      add_clean_up_callback
-    end
-    
-    def cleaning?
-      options.has_key?("clean") && options["clean"]
-    end
-    
-    def add_clean_up_callback
-      clean_up_callback = lambda do 
-        files       = @cleaning_queue.select { |q| File.file? q }
-        directories = @cleaning_queue.select { |q| File.directory? q }
-
-        files.each { |f| remove_file f, :force => true }
-
-        directories = directories.sort_by {|d| d.length }.reverse!
-
-        directories.each do |d|
-          remove_file d, :force => true if directory_empty? d 
-        end
-      end
-      self.class.after_run :clean_up_callback do
-        clean_up_callback.call
-      end
-    end
-
-    def directory_empty?(directory)
-      Dir["#{directory}/*"].empty?
-    end
-
-    def queue_current_paths_from(destination)
-      @cleaning_queue = []
-      Find.find(destination) do |path|
-        next if path.match(/\/\./)
-        unless path == destination
-          @cleaning_queue << path.sub(destination, destination[/([^\/]+?)$/])
-        end
-      end
-    end
-
-    def dequeue_file_from(destination)
-      @cleaning_queue.delete_if {|q| q == destination }
-    end
-    
   end
   
   class Builder < Thor::Group
@@ -114,15 +61,11 @@ module Middleman
     def build_all_files
       self.class.shared_rack
       
-      if options.has_key?("glob")
-        action GlobAction.new(self, SHARED_SERVER.views, SHARED_SERVER.build_dir, { :force => true, :glob => options["glob"] })
-      else      
-        action DirectoryAction.new(self, SHARED_SERVER.views, SHARED_SERVER.build_dir, { :force => true })
+      opts = { }
+      opts[:glob]  = options["glob"]  if options.has_key?("glob")
+      opts[:clean] = options["clean"] if options.has_key?("clean")
       
-        SHARED_SERVER.proxied_paths.each do |url, proxy|
-          tilt_template(url.gsub(/^\//, "#{SHARED_SERVER.build_dir}/"), { :force => true })
-        end
-      end
+      action GlobAction.new(self, SHARED_SERVER, opts)
     end
     
     @@hooks = {}
@@ -143,113 +86,99 @@ module Middleman
     end
   end
   
-  class BaseAction < ::Thor::Actions::EmptyDirectory
+  class GlobAction < ::Thor::Actions::EmptyDirectory
     attr_reader :source
 
-    def initialize(base, source, destination=nil, config={}, &block)
+    def initialize(base, app, config={}, &block)
+      @app         = app
+      source       = @app.views
+      @destination = @app.build_dir
+      
       @source = File.expand_path(base.find_in_source_paths(source.to_s))
-      @block  = block
-      super(base, destination, { :recursive => true }.merge(config))
+      
+      super(base, destination, config)
     end
 
     def invoke!
-      base.clean! destination
+      queue_current_paths if cleaning?
       execute!
+      clean! if cleaning?
     end
 
     def revoke!
       execute!
     end
-    
+
   protected
-    def handle_path(file_source)
-      # Skip partials prefixed with an underscore while still handling files prefixed with 2 consecutive underscores
-      return unless file_source.gsub(SHARED_SERVER.root, '').split('/').select { |p| p[/^_[^_]/] }.empty?
-      
-      file_extension = File.extname(file_source)
-      file_destination = File.join(given_destination, file_source.gsub(source, '.'))
-      file_destination.gsub!('/./', '/')
-      
-      handled_by_tilt = ::Tilt.mappings.has_key?(file_extension.gsub(/^\./, ""))
-      if handled_by_tilt
-        file_destination.gsub!(file_extension, "")
-      end
-      
-      destination = base.tilt_template(file_source, file_destination, config, &@block)
-    end
-  end
   
-  class GlobAction < BaseAction
+    def clean!
+      files       = @cleaning_queue.select { |q| File.file? q }
+      directories = @cleaning_queue.select { |q| File.directory? q }
 
-  protected
-    def execute!
-      Dir[File.join(source, @config[:glob])].each do |path|
-        file_name = path.gsub(SHARED_SERVER.views + "/", "")
-        if file_name == "layouts"
-          false
-        elsif file_name.include?("layout.") && file_name.split(".").length == 2
-          false
-        else
-          next if File.directory?(path)
+      files.each do |f| 
+        base.remove_file f, :force => true
+      end
 
-          handle_path(path)
+      directories = directories.sort_by {|d| d.length }.reverse!
 
-          true
+      directories.each do |d|
+        base.remove_file d, :force => true if directory_empty? d 
+      end
+    end
+  
+    def cleaning?
+      @config.has_key?(:clean) && @config[:clean]
+    end
+
+    def directory_empty?(directory)
+      Dir["#{directory}/*"].empty?
+    end
+
+    def queue_current_paths
+      @cleaning_queue = []
+      Find.find(@destination) do |path|
+        next if path.match(/\/\./)
+        unless path == destination
+          @cleaning_queue << path.sub(@destination, destination[/([^\/]+?)$/])
         end
       end
     end
-  end
-  
-  class DirectoryAction < BaseAction
-    def invoke!
-      base.empty_directory given_destination, config
-      super
-    end
     
-  protected
-    def handle_directory(lookup, &block)
-      lookup = File.join(lookup, '*')
+    def execute!
+      paths = @app.sitemap.all_paths.sort do |a, b|
+        a_dir = a.split("/").first
+        b_dir = b.split("/").first
       
-      results = Dir[lookup].sort do |a, b|
-        simple_a = a.gsub(SHARED_SERVER.root + "/", '').gsub(SHARED_SERVER.views + "/", '') 
-        simple_b = b.gsub(SHARED_SERVER.root + "/", '').gsub(SHARED_SERVER.views + "/", '')
-        
-        a_dir = simple_a.split("/").first
-        b_dir = simple_b.split("/").first
-        
-        if a_dir == SHARED_SERVER.images_dir
+        if a_dir == @app.images_dir
           -1
-        elsif b_dir == SHARED_SERVER.images_dir
+        elsif b_dir == @app.images_dir
           1
         else
           0
         end
       end
       
-      results = results.select(&block) if block_given?
-      
-      results.each do |file_source|
-        if File.directory?(file_source)
-          handle_directory(file_source)
+      paths.each do |path|
+        file_source = path
+        file_destination = File.join(given_destination, file_source.gsub(source, '.'))
+        file_destination.gsub!('/./', '/')
+        
+        if @app.sitemap.generic_path?(file_source)
+          # no-op
+        elsif @app.sitemap.proxied_path?(file_source)
+          file_source = @app.sitemap.path_target(file_source)
+        elsif @app.sitemap.ignored_path?(file_source)
           next
         end
         
-        handle_path(file_source)
-      end
-    end
-
-    def execute!
-      handle_directory(source) do |path|
-        file_name = path.gsub(SHARED_SERVER.views + "/", "")
-        if file_name == "layouts"
-          false
-        elsif file_name.include?("layout.") && file_name.split(".").length == 2
-          false
-        else
-          true
+        @cleaning_queue.delete(file_destination) if cleaning?
+        
+        if @config[:glob]
+          next unless File.fnmatch(@config[:glob], file_source)
         end
+        
+        base.tilt_template(file_source, file_destination, { :force => true })
       end
     end
-    
   end
 end
