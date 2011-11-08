@@ -95,9 +95,5 @@ module Middleman::CoreExtensions::Compass
     def compass_config(&block)
       after_compass_config(&block)
     end
-    
-    def after_compass_config(&block)
-      after_compass_config(&block)
-    end
   end
 end
