@@ -79,7 +79,7 @@ module Middleman::Base
 
       app.set :default_features, [
         :lorem,
-        :sitemap_tree
+        #:sitemap_tree
       ]
 
       # Default layout name

@@ -4,10 +4,6 @@ module Middleman::CoreExtensions::Sitemap
   class << self
     def registered(app)
       app.set :sitemap, SitemapStore.new(app)
-      
-      app.before_configuration do
-        app.sitemap.setup
-      end
     end
     alias :included :registered
   end
@@ -19,19 +15,24 @@ module Middleman::CoreExtensions::Sitemap
       @ignored_paths = false
       @generic_paths = false
       @proxied_paths = false
+      
+      @app.on_file_change do |file|
+        touch_file(file)
+      end
+
+      @app.on_file_delete do |file|
+        remove_file(file)
+      end
+      
+      setup
+      # @app.after_configuration do
+      #   sitemap.setup
+      # end
     end
     
     def setup
       @source = File.expand_path(@app.views, @app.root)
       build_static_map
-  
-      @app.on_file_change do |file|
-        touch_file(file)
-      end
-  
-      @app.on_file_delete do |file|
-        remove_file(file)
-      end
     end
     
     # Check to see if we know about a specific path
@@ -126,15 +127,12 @@ module Middleman::CoreExtensions::Sitemap
     end
     
     def touch_file(file)
-      touch_path(file_to_path(file))
-    end
-    
-    def touch_path(path)
-      set_path(path) unless path_exists?(path)
+      add_file(file)
     end
     
     def remove_file(file)
-      remove_path(file_to_path(file))
+      path = file_to_path(file)
+      remove_path(path) if path
     end
     
     def remove_path(path)
@@ -150,13 +148,18 @@ module Middleman::CoreExtensions::Sitemap
     end
     
     def file_to_path(file)
-      path = file.sub(@source + "/", "")
+      @source ||= File.expand_path(@app.views, @app.root)
+      file = File.expand_path(file, @app.root)
+      
+      prefix = @source + "/"
+      return false unless file.include?(prefix)
+      
+      path = file.sub(prefix, "")
       
       end_of_the_line = false
       while !end_of_the_line
         file_extension = File.extname(path)
       
-        # TODO: Loop and continue popping Tilt-aware extensions
         if ::Tilt.mappings.has_key?(file_extension.gsub(/^\./, ""))
           path = path.sub(file_extension, "")
         else
@@ -172,8 +175,10 @@ module Middleman::CoreExtensions::Sitemap
                       file.match(/\/\./) ||
                       (file.match(/\/_/) && !file.match(/\/__/)) ||
                       File.directory?(file)
-    
-      add_path(file_to_path(file))
+                      
+      path = file_to_path(file)
+      
+      add_path(path) if path && !path_exists?(path)
     end
     
     def add_path(path)

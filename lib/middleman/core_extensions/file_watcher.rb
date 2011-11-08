@@ -1,6 +1,9 @@
 module Middleman::CoreExtensions::FileWatcher
   class << self
     def registered(app)
+      app.set :run_after_file_change, []
+      app.set :run_after_file_delete, []
+      
       app.extend ClassMethods
     end
     alias :included :registered
@@ -8,23 +11,19 @@ module Middleman::CoreExtensions::FileWatcher
   
   module ClassMethods
     def file_did_change(path)
-      @run_after_file_change ||= []
-      @run_after_file_change.each { |block| block.call(path) }
+      settings.run_after_file_change.each { |block| block.call(path) }
     end
     
     def on_file_change(&block)
-      @run_after_file_change ||= []
-      @run_after_file_change << block
+      settings.run_after_file_change << block
     end
     
     def file_did_delete(path)
-      @run_after_file_delete ||= []
-      @run_after_file_delete.each { |block| block.call(path) }
+      settings.run_after_file_delete.each { |block| block.call(path) }
     end
     
     def on_file_delete(&block)
-      @run_after_file_delete ||= []
-      @run_after_file_delete << block
+      settings.run_after_file_delete << block
     end
   end
 end
