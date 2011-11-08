@@ -79,9 +79,10 @@ module Middleman
   end
   
   module CoreExtensions
-    # Guard Proxy
+    # File Change Notifier
     autoload :FileWatcher,   "middleman/core_extensions/file_watcher"
     
+    # In-memory Sitemap
     autoload :Sitemap,     "middleman/core_extensions/sitemap"
     
     # Add Builder callbacks

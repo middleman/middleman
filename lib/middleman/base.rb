@@ -1,8 +1,6 @@
-# require 'sinatra/synchrony'
-
 require "i18n"
 require "hooks"
-  
+
 require "active_support"
 require "active_support/json"
 require "active_support/core_ext/class/attribute_accessors"
@@ -12,6 +10,7 @@ module Middleman::Base
     def registered(app)
       app.send :include, ::Hooks
       app.define_hook :initialized
+      
       app.extend ClassMethods
       app.send :include, InstanceMethods
       

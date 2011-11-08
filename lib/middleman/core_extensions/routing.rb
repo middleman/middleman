@@ -2,22 +2,15 @@ module Middleman::CoreExtensions::Routing
   class << self
     def registered(app)
       app.extend ClassMethods
-      
-      app.set :proxied_paths, {}
-      app.set :excluded_paths, []
-      
-      app.build_reroute do |destination, request_path|
-        throw if app.settings.excluded_paths.include?(request_path)
-      end
     end
     alias :included :registered
   end
   
-  module ClassMethods    
+  module ClassMethods
     def path_to_index(path)
       parts = path ? path.split('/') : []
       if parts.last.nil? || parts.last.split('.').length == 1
-        path = File.join(path, settings.index_file) 
+        path = File.join(path, index_file) 
       end
       path.gsub(%r{^/}, '')
     end
@@ -28,7 +21,7 @@ module Middleman::CoreExtensions::Routing
     #   page "/admin/login.html"
     # end
     def with_layout(layout_name, &block)
-      old_layout = settings.layout
+      old_layout = layout
     
       set :layout, layout_name
       class_eval(&block) if block_given?
@@ -37,7 +30,7 @@ module Middleman::CoreExtensions::Routing
     end
   
     def paths_for_url(url)
-      url = url.gsub(%r{\/#{settings.index_file}$}, "")
+      url = url.gsub(%r{\/#{index_file}$}, "")
       url = url.gsub(%r{(\/)$}, "") if url.length > 1
     
       paths = [url]
@@ -45,28 +38,23 @@ module Middleman::CoreExtensions::Routing
       paths << "/#{path_to_index(url)}"
       paths
     end
-  
-    # Keep a path from building
-    def ignore(path)
-      settings.sitemap.ignore_path(path)
-    end
     
     # The page method allows the layout to be set on a specific path
     # page "/about.html", :layout => false
     # page "/", :layout => :homepage_layout
     def page(url, options={}, &block)
       has_block = block_given?
-      options[:layout] = settings.layout if options[:layout].nil?
+      options[:layout] = layout if options[:layout].nil?
       
       if options.has_key?(:proxy)
-        settings.sitemap.set_path(url, options[:proxy])
+        sitemap.set_path(url, options[:proxy])
         
         if options.has_key?(:ignore) && options[:ignore]
-          settings.ignore(options[:proxy])
+          ignore(options[:proxy])
         end
       else
         if options.has_key?(:ignore) && options[:ignore]
-          settings.ignore(url)
+          ignore(url)
         end
       end
 

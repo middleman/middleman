@@ -18,8 +18,17 @@ module Middleman::CoreExtensions::Sitemap
       app.file_deleted do |file|
         sm.remove_file(file)
       end
+      
+      app.extend ClassMethods
     end
     alias :included :registered
+  end
+  
+  module ClassMethods
+    # Keep a path from building
+    def ignore(path)
+      sitemap.ignore_path(path)
+    end
   end
   
   class SitemapStore
