@@ -64,6 +64,16 @@ module Middleman::CoreExtensions::Features
     end
     
     # Add a block/proc to be run after features have been setup
+    def before_configuration(&block)
+      @run_before_features ||= []
+      @run_before_features << block
+    end
+    
+    def run_before_features
+      @run_before_features || []
+    end
+    
+    # Add a block/proc to be run after features have been setup
     def after_configuration(&block)
       @run_after_features ||= []
       @run_after_features << block
@@ -75,6 +85,8 @@ module Middleman::CoreExtensions::Features
     
     # Load features before starting server
     def new
+      run_before_features.each { |block| class_eval(&block) }
+    
       # Check for and evaluate local configuration
       local_config = File.join(self.root, "config.rb")
       if File.exists? local_config

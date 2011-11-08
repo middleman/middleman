@@ -4,6 +4,10 @@ module Middleman::CoreExtensions::Sitemap
   class << self
     def registered(app)
       app.set :sitemap, SitemapStore.new(app)
+      
+      app.before_configuration do
+        app.sitemap.setup
+      end
     end
     alias :included :registered
   end
@@ -15,15 +19,16 @@ module Middleman::CoreExtensions::Sitemap
       @ignored_paths = false
       @generic_paths = false
       @proxied_paths = false
-      
+    end
+    
+    def setup
       @source = File.expand_path(@app.views, @app.root)
-    
       build_static_map
-    
+  
       @app.on_file_change do |file|
         touch_file(file)
       end
-    
+  
       @app.on_file_delete do |file|
         remove_file(file)
       end

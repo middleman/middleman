@@ -39,12 +39,6 @@ module Middleman::Base
       app.set :views, "source"
       
       # Add Builder Callbacks
-      app.register Middleman::CoreExtensions::FileWatcher
-      
-      # Sitemap
-      app.register Middleman::CoreExtensions::Sitemap
-      
-      # Add Builder Callbacks
       app.register Middleman::CoreExtensions::Builder
       
       # Add Rack::Builder.map to Sinatra
@@ -52,6 +46,12 @@ module Middleman::Base
       
       # Activate custom features
       app.register Middleman::CoreExtensions::Features
+      
+      # Add Builder Callbacks
+      app.register Middleman::CoreExtensions::FileWatcher
+      
+      # Sitemap
+      app.register Middleman::CoreExtensions::Sitemap
       
       # Activate Yaml Data package
       app.register Middleman::CoreExtensions::Data
