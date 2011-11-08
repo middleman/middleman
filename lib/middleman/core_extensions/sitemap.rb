@@ -3,35 +3,37 @@ require 'find'
 module Middleman::CoreExtensions::Sitemap
   class << self
     def registered(app)
-      app.set :sitemap, SitemapStore.new(app)
+      sm = SitemapStore.new
+      
+      app.set :sitemap, sm
+      
+      app.initialized do |scope|
+        sm.setup(scope)
+      end
+      
+      app.file_changed do |file|
+        sm.touch_file(file)
+      end
+      
+      app.file_deleted do |file|
+        sm.remove_file(file)
+      end
     end
     alias :included :registered
   end
   
   class SitemapStore
-    def initialize(app)
-      @app = app
+    def initialize
       @map = {}
       @ignored_paths = false
       @generic_paths = false
       @proxied_paths = false
-      
-      @app.on_file_change do |file|
-        touch_file(file)
-      end
-
-      @app.on_file_delete do |file|
-        remove_file(file)
-      end
-      
-      setup
-      # @app.after_configuration do
-      #   sitemap.setup
-      # end
     end
     
-    def setup
+    def setup(app)
+      @app = app
       @source = File.expand_path(@app.views, @app.root)
+      
       build_static_map
     end
     

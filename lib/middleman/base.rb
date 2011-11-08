@@ -1,6 +1,7 @@
 # require 'sinatra/synchrony'
 
 require "i18n"
+require "hooks"
   
 require "active_support"
 require "active_support/json"
@@ -9,8 +10,8 @@ require "active_support/core_ext/class/attribute_accessors"
 module Middleman::Base
   class << self
     def registered(app)
-      # app.register ::Sinatra::Synchrony
-      
+      app.send :include, ::Hooks
+      app.define_hook :initialized
       app.extend ClassMethods
       app.send :include, InstanceMethods
       
@@ -19,6 +20,7 @@ module Middleman::Base
       app.set :root,        Dir.pwd
       app.set :sessions,    false
       app.set :logging,     false
+      app.set :protection,  false
       app.set :environment, (ENV['MM_ENV'] && ENV['MM_ENV'].to_sym) || :development
 
       # Middleman-specific options
@@ -155,9 +157,24 @@ module Middleman::Base
     
     # Convenience method to check if we're in build mode
     def build?; environment == :build; end
+    
+    # Creates a Rack::Builder instance with all the middleware set up and
+    # an instance of this class as end point.
+    def build_new(inst=false)
+      builder = Rack::Builder.new
+      setup_default_middleware builder
+      setup_middleware builder
+      builder.run inst || new!
+      builder.to_app
+    end
   end
   
   module InstanceMethods
+    def initialize(*args)
+      super
+      run_hook :initialized, settings
+    end
+    
     def forward
       raise ::Sinatra::NotFound
     end

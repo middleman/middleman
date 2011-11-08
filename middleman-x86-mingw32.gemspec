@@ -37,13 +37,13 @@ Gem::Specification.new do |s|
   s.add_dependency("sprockets-sass", ["~> 0.3.0"])
   s.add_dependency("padrino-core", ["~> 0.10.5"])
   s.add_dependency("padrino-helpers", ["~> 0.10.5"])
+  s.add_dependency("hooks")
   
   s.add_dependency("eventmachine", ["1.0.0.beta.4.1"])
   s.add_dependency("win32-process", ["~> 0.6.5"])
   s.add_dependency("rb-fchange")
   
   s.add_dependency("guard", ["~> 0.8.8"])
-  # s.add_dependency("middleman-livereload", ["~> 0.2.0"])
   
   # Development and test
   # s.add_development_dependency("jquery-rails")

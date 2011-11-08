@@ -26,7 +26,6 @@ Gem::Specification.new do |s|
   s.add_dependency("tilt", ["~> 1.3.1"])
   s.add_dependency("maruku", ["~> 0.6.0"])
   s.add_dependency("sinatra", ["~> 1.3.1"])
-  # s.add_dependency("sinatra-synchrony", ["~> 0.2.1"])
   s.add_dependency("rack-test", ["~> 0.6.1"])
   s.add_dependency("uglifier", ["~> 1.0.0"])
   s.add_dependency("slim", ["~> 1.0.2"])
@@ -39,6 +38,7 @@ Gem::Specification.new do |s|
   s.add_dependency("sprockets-sass", ["~> 0.3.0"])
   s.add_dependency("padrino-core", ["~> 0.10.5"])
   s.add_dependency("padrino-helpers", ["~> 0.10.5"])
+  s.add_dependency("hooks")
   
   s.add_dependency("guard", ["~> 0.8.8"])
   s.add_dependency("eventmachine", ["1.0.0.beta.4"])

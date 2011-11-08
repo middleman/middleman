@@ -194,9 +194,8 @@ module Middleman
       :AccessLog => []
     }
     
-    app_class = options[:app] ||= ::Middleman.server
-    app_class.set :environment, options[:environment].to_sym
-    opts[:app] = app_class.new
+    app_class = options[:app] ||= ::Middleman.server.new
+    opts[:app] = app_class
     opts[:server] = 'thin'
 
     server = ::Rack::Server.new(opts)
