@@ -10,7 +10,7 @@ module Middleman::Features::SitemapTree
     def sitemap_tree(regex=nil)
       @sitemap_tree_cache = {}
       
-      key = regex.nil? "all" : regex
+      key = regex.nil? ? "all" : regex
       
       if !@sitemap_tree_cache.has_key?(key)
         auto_hash = Hash.new{ |h,k| h[k] = Hash.new &h.default_proc }
