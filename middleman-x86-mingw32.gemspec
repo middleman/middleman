@@ -37,7 +37,7 @@ Gem::Specification.new do |s|
   s.add_dependency("sprockets-sass", ["~> 0.3.0"])
   s.add_dependency("padrino-core", ["~> 0.10.5"])
   s.add_dependency("padrino-helpers", ["~> 0.10.5"])
-  s.add_dependency("hooks")
+  s.add_dependency("hooks", ["~> 0.2.0"])
   
   s.add_dependency("eventmachine", ["1.0.0.beta.4.1"])
   s.add_dependency("win32-process", ["~> 0.6.5"])

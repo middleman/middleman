@@ -34,6 +34,7 @@ module Middleman::CoreExtensions::Features
   class << self
     def registered(app)
       app.set :default_features, []
+      app.define_hook :after_configuration
       app.extend ClassMethods
     end
     alias :included :registered
@@ -63,16 +64,6 @@ module Middleman::CoreExtensions::Features
       register feature
     end
     
-    # Add a block/proc to be run after features have been setup
-    def after_configuration(&block)
-      @run_after_features ||= []
-      @run_after_features << block
-    end
-    
-    def run_after_features
-      @run_after_features || []
-    end
-    
     # Load features before starting server
     def new
       # Check for and evaluate local configuration
@@ -88,7 +79,7 @@ module Middleman::CoreExtensions::Features
         activate ext
       end
       
-      run_after_features.each { |block| class_eval(&block) }
+      run_hook :after_configuration
       
       if logging?
         extensions.each do |ext|
