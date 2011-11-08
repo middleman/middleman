@@ -3,6 +3,7 @@ module Middleman::CoreExtensions::Compass
     def registered(app)
       # Where to look for fonts
       app.set :fonts_dir, "fonts"
+      app.define_hook :after_compass_config
     
       app.extend ClassMethods
         
@@ -83,10 +84,7 @@ module Middleman::CoreExtensions::Compass
           end
         end
         
-        app.execute_after_compass_init!
-        app.execute_after_compass_config!
-        
-        # app.set :sass, ::Compass.configuration.to_sass_engine_options
+        run_hook :after_compass_config, ::Compass.configuration
       end
     end
     alias :included :registered
@@ -95,23 +93,11 @@ module Middleman::CoreExtensions::Compass
   module ClassMethods
     # Add a block/proc to be run after features have been setup
     def compass_config(&block)
-      @run_after_compass ||= []
-      @run_after_compass << block
-    end
-    
-    def execute_after_compass_init!
-      @run_after_compass ||= []
-      @run_after_compass.each { |block| block.call(::Compass.configuration) }
+      after_compass_config(&block)
     end
     
     def after_compass_config(&block)
-      @run_after_compass_config ||= []
-      @run_after_compass_config << block
-    end
-    
-    def execute_after_compass_config!
-      @run_after_compass_config ||= []
-      @run_after_compass_config.each { |block| block.call() }
+      after_compass_config(&block)
     end
   end
 end
