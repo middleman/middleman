@@ -76,6 +76,10 @@ module Middleman::CoreExtensions::Sitemap
       @map.keys
     end
     
+    def all_values
+      @map.values
+    end
+    
     def ignored_path?(path)
       path = path.sub(/^\//, "")
       ignored_paths.include?(path)
