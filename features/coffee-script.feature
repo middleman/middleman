@@ -14,4 +14,4 @@ Feature: Support coffee-script
   Scenario: Rendering broken coffee
     Given the Server is running at "test-app"
     When I go to "/javascripts/broken-coffee.js"
-    Then I should see "Reserved word"
+    Then I should see "ProgramError"
