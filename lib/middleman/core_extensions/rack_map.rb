@@ -18,17 +18,16 @@ module Middleman::CoreExtensions::RackMap
   
     # Creates a Rack::Builder instance with all the middleware set up and
     # an instance of this class as end point.
-    def build(*args, &bk)
-      builder = ::Rack::Builder.new
-      builder.use ::Sinatra::ShowExceptions       if show_exceptions?
-      builder.use ::Rack::CommonLogger   if logging?
-      builder.use ::Rack::Head
-      middleware.each { |c,a,b| builder.use(c, *a, &b) }
+    def build(builder, *args, &bk)
+      setup_default_middleware builder
+      setup_middleware builder
+      
       maps.each { |p,b| builder.map(p, &b) }
       app = self
       builder.map "/" do
         run app.new!(*args, &bk)
       end
+      
       builder
     end
   end
