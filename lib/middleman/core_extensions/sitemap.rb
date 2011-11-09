@@ -1,4 +1,5 @@
 require 'find'
+require 'hooks'
 
 module Middleman::CoreExtensions::Sitemap
   class << self
@@ -27,16 +28,36 @@ module Middleman::CoreExtensions::Sitemap
   module ClassMethods
     # Keep a path from building
     def ignore(path)
-      sitemap.ignore_path(path)
+      action = Proc.new { ignore_path(path) }
+      
+      if sitemap.setup?
+        action.call
+      else
+        sitemap.class.after_setup(&action)
+      end
+    end
+    
+    def reroute(url, target)
+      action = Proc.new { set_path(url, target) }
+      
+      if sitemap.setup?
+        action.call
+      else
+        sitemap.class.after_setup(&action)
+      end
     end
   end
   
   class SitemapStore
+    include ::Hooks
+    define_hook :after_setup
+  
     def initialize
       @map = {}
       @ignored_paths = false
       @generic_paths = false
       @proxied_paths = false
+      @is_setup      = false
     end
     
     def setup(app)
@@ -44,6 +65,13 @@ module Middleman::CoreExtensions::Sitemap
       @source = File.expand_path(@app.views, @app.root)
       
       build_static_map
+      
+      run_hook :after_setup
+      @is_setup = true
+    end
+    
+    def setup?
+      @is_setup
     end
     
     # Check to see if we know about a specific path

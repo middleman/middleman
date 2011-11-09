@@ -47,7 +47,7 @@ module Middleman::CoreExtensions::Routing
       options[:layout] = layout if options[:layout].nil?
       
       if options.has_key?(:proxy)
-        sitemap.set_path(url, options[:proxy])
+        reroute(url, options[:proxy])
         
         if options.has_key?(:ignore) && options[:ignore]
           ignore(options[:proxy])
