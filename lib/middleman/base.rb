@@ -110,7 +110,7 @@ module Middleman::Base
           if !::Tilt.mappings.has_key?(template_engine.to_s)
             matched_mime = mime_type(File.extname(request_path))
             matched_mime = "application/octet-stream" if matched_mime.nil?
-            content_type matched_mime, :charset => 'utf-8'
+            content_type matched_mime
             status 200
             send_file File.join(settings.views, request_path)
             false
@@ -216,12 +216,10 @@ module Middleman::Base
         result = render(engine, path, render_options, locals)
       
         if result
-          content_type mime_type(File.extname(request_path)), :charset => 'utf-8'
+          content_type mime_type(File.extname(request_path))
           status 200
           body result
         end
-      # rescue
-      #   status(404)
       ensure
         settings.set :layout, old_layout
       end

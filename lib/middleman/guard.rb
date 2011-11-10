@@ -12,7 +12,7 @@ module Middleman
       # Deprecation Warning
     end
   
-    def self.start(options={}, livereload={})
+    def self.start(options={})
       options_hash = ""
       options.each do |k,v|
         options_hash << ", :#{k} => '#{v}'"

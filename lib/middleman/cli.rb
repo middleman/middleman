@@ -6,20 +6,38 @@ module Middleman
     check_unknown_options!
     default_task :server
 
-    class_option "help", :type => :boolean, :default => false, :aliases => "-h"
+    class_option "help", 
+      :type    => :boolean, 
+      :default => false, 
+      :aliases => "-h"
     def initialize(*)
       super
       help_check if options[:help]
     end
 
-    desc "init NAME [options]", "Create new Middleman project directory NAME"
+    desc "init NAME [options]", "Create new project NAME"
     available_templates = Middleman::Templates.registered_names.join(", ")
-    method_option "template", :aliases => "-T", :default => "default", :desc => "Optionally use a pre-defined project template: #{available_templates}"
-    method_option "css_dir", :default => "stylesheets", :desc => 'The path to the css files'
-    method_option "js_dir", :default => "javascripts", :desc => 'The path to the javascript files'
-    method_option "images_dir", :default => "images", :desc => 'The path to the image files'
-    method_option "rack", :type => :boolean, :default => false, :desc => 'Include a config.ru file'
-    method_option "bundler", :type => :boolean, :default => false, :desc => 'Create a Gemfile and use Bundler to manage gems'
+    method_option "template", 
+      :aliases => "-T", 
+      :default => "default",
+      :desc    => "Use a project template: #{available_templates}"
+    method_option "css_dir", 
+      :default => "stylesheets", 
+      :desc    => 'The path to the css files'
+    method_option "js_dir", 
+      :default => "javascripts", 
+      :desc    => 'The path to the javascript files'
+    method_option "images_dir", 
+      :default => "images", 
+      :desc    => 'The path to the image files'
+    method_option "rack", 
+      :type    => :boolean, 
+      :default => false, 
+      :desc    => 'Include a config.ru file'
+    method_option "bundler", 
+      :type    => :boolean, 
+      :default => false, 
+      :desc    => 'Create a Gemfile and use Bundler to manage gems'
     def init(name)
       key = options[:template].to_sym
       unless Middleman::Templates.registered_templates.has_key?(key)
@@ -30,42 +48,48 @@ module Middleman
       thor_group.new([name], options).invoke_all
     end
 
-    desc "server [-p 4567] [-e development]", "Starts the Middleman preview server"
-    method_option "environment", :aliases => "-e", :default => ENV['MM_ENV'] || ENV['RACK_ENV'] || 'development', :desc => "The environment Middleman will run under"
-    method_option "port", :aliases => "-p", :default => "4567", :desc => "The port Middleman will listen on"
-    
-    method_option "disable-watcher", :default => false, :type => :boolean, :desc => "Don't use config.rb watcher (also disables livereload)"
-    method_option "livereload", :default => false, :type => :boolean, :desc => "Whether to enable Livereload or not"
-    method_option "livereload-port", :default => "35729", :desc => "The port Livereload will listen on"
+    desc "server [options]", "Start the preview server"
+    method_option "environment", 
+      :aliases => "-e", 
+      :default => ENV['MM_ENV'] || ENV['RACK_ENV'] || 'development', 
+      :desc    => "The environment Middleman will run under"
+    method_option "port",
+      :aliases => "-p", 
+      :default => "4567", 
+      :desc    => "The port Middleman will listen on"
     def server
       v1_check
-      
-      if options["livereload"]
-        livereload_options = {:port => options["livereload-port"]}
-      end
       
       params = {
         :port        => options[:port],
         :environment => options[:environment]
       }
       
-      if options["disable-watcher"]
-        Middleman.start_server(params)
-      else
-        Middleman::Guard.start(params, livereload_options)
-      end
+      Middleman::Guard.start(params)
     end
 
     desc "build", "Builds the static site for deployment"
-    method_option :relative, :type => :boolean, :aliases => "-r", :default => false, :desc => 'Override the config.rb file and force relative urls'
-    method_option :clean, :type => :boolean, :aliases => "-c", :default => false, :desc => 'Builds a clean project removing any orpahand files or directories'
-    method_option :glob, :type => :string, :aliases => "-g", :default => nil, :desc => 'Build a subset of the project'
+    method_option :relative, 
+      :type    => :boolean, 
+      :aliases => "-r", 
+      :default => false, 
+      :desc    => 'Force relative urls'
+    method_option :clean, 
+      :type    => :boolean, 
+      :aliases => "-c", 
+      :default => false, 
+      :desc    => 'Removes orpahand files or directories from build'
+    method_option :glob, 
+      :type    => :string, 
+      :aliases => "-g", 
+      :default => nil, 
+      :desc    => 'Build a subset of the project'
     def build
       v1_check
       thor_group = Middleman::Builder.new([], options).invoke_all
     end
 
-    desc "migrate", "Migrates an older Middleman project to the 2.0 structure"
+    desc "migrate", "Migrates an older project to the 2.0 structure"
     def migrate
       return if File.exists?("source")
       `mv public source`
@@ -73,7 +97,7 @@ module Middleman
       `rm -rf views`
     end
 
-    desc "version", "Show Middleman version"
+    desc "version", "Show version"
     def version
       require 'middleman/version'
       say "Middleman #{Middleman::VERSION}"
@@ -92,6 +116,5 @@ module Middleman
       help self.class.send(:retrieve_task_name, ARGV.dup)
       exit 0
     end
-
   end
 end

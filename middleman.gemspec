@@ -28,7 +28,6 @@ Gem::Specification.new do |s|
   s.add_dependency("sinatra", ["~> 1.3.1"])
   s.add_dependency("rack-test", ["~> 0.6.1"])
   s.add_dependency("uglifier", ["~> 1.0.0"])
-  s.add_dependency("slim", ["~> 1.0.2"])
   s.add_dependency("haml", ["~> 3.1.0"])
   s.add_dependency("sass", ["~> 3.1.7"])
   s.add_dependency("compass", ["~> 0.11.3"])
@@ -49,6 +48,7 @@ Gem::Specification.new do |s|
   # Development and test
   s.add_development_dependency("coffee-filter", ["~> 0.1.1"])
   s.add_development_dependency("liquid", ["~> 2.2.0"])
+  s.add_development_dependency("slim", ["~> 1.0.2"])
   s.add_development_dependency("cucumber", ["~> 1.0.2"])
   s.add_development_dependency("rake", ["~> 0.9.2"])
   s.add_development_dependency("rspec", ["~> 2.6.0"])
