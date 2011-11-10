@@ -57,12 +57,17 @@ module Middleman
       :aliases => "-p", 
       :default => "4567", 
       :desc    => "The port Middleman will listen on"
+    method_option "debug", 
+      :type    => :boolean, 
+      :default => false,
+      :desc    => 'Print debug messages'
     def server
       v1_check
       
       params = {
-        :port        => options[:port],
-        :environment => options[:environment]
+        :port        => options["port"],
+        :environment => options["environment"],
+        :debug       => options["debug"]
       }
       
       puts "== The Middleman is loading"

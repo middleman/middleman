@@ -22,7 +22,8 @@ module Middleman
       options.each do |k,v|
         options_hash << ", :#{k} => '#{v}'"
       end
-    
+      
+      $stderr.puts options_hash.inspect
       guardfile_contents = %Q{
         guard 'middleman'#{options_hash} do 
           watch(%r{(.*)})
@@ -81,6 +82,7 @@ module Guard
     def server_start
       app = ::Middleman.server
       app.set :environment, @options[:environment].to_sym
+      app.set :logging, @options[:debug] == "true"
 
       puts "== The Middleman is standing watch on port #{@options[:Port]||4567}"
       @app = app.new!
