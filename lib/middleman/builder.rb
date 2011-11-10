@@ -38,7 +38,9 @@ module Middleman
     
     def self.shared_rack
       @shared_rack ||= begin
-        mock = ::Rack::MockSession.new(SHARED_SERVER)
+        app = SHARED_SERVER.new!
+        app_rack = SHARED_SERVER.build_new(app)
+        mock = ::Rack::MockSession.new(app_rack)
         sess = ::Rack::Test::Session.new(mock)
         response = sess.get("__middleman__")
         sess

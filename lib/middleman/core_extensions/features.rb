@@ -65,7 +65,7 @@ module Middleman::CoreExtensions::Features
     end
     
     # Load features before starting server
-    def new
+    def new!
       # Check for and evaluate local configuration
       local_config = File.join(self.root, "config.rb")
       if File.exists? local_config

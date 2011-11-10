@@ -50,10 +50,6 @@ module Middleman::CoreExtensions::Sitemap
       build_static_map
     end
     
-    def setup?
-      @is_setup
-    end
-    
     # Check to see if we know about a specific path
     def path_exists?(path)
       path = path.sub(/^\//, "")

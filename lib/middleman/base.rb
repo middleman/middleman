@@ -186,7 +186,6 @@ module Middleman::Base
       
       # Normalize the path and add index if we're looking at a directory
       request.path_info = self.class.path_to_index(request.path)
-      
       request_path = request.path_info.gsub("%20", " ")
       found_template = resolve_template(request_path, :raise_exceptions => false)
       return status(404) unless found_template
@@ -206,7 +205,7 @@ module Middleman::Base
       else
         false
       end
-
+      
       render_options = { :layout => local_layout }
       render_options[:layout_engine] = options[:layout_engine] if options.has_key? :layout_engine
       

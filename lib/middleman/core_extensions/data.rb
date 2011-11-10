@@ -20,7 +20,6 @@ module Middleman::CoreExtensions::Data
           data.remove_file(file)
         end
       end
-      
     end
     alias :included :registered
   end
@@ -35,14 +34,11 @@ module Middleman::CoreExtensions::Data
     def initialize(app)
       @app = app
       @local_data = {}
-      setup
-    end
-    
-    def setup
+      
       data_path  = File.join(@app.root, @app.data_dir)
       local_path = File.join(data_path, "*.{yaml,yml,json}")
       Dir[local_path].each do |f|
-        touch_file(f)#.sub(data_path, ""))
+        touch_file(f)
       end
     end
     

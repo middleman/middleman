@@ -18,14 +18,15 @@ module Middleman::CoreExtensions::RackMap
   
     # Creates a Rack::Builder instance with all the middleware set up and
     # an instance of this class as end point.
-    def build(builder, *args, &bk)
+    def build_new(inst=false)
+      builder = Rack::Builder.new
       setup_default_middleware builder
       setup_middleware builder
       
       maps.each { |p,b| builder.map(p, &b) }
       app = self
       builder.map "/" do
-        run app.new!(*args, &bk)
+        run (inst || app.new!)
       end
       
       builder

@@ -3,10 +3,9 @@ module Middleman::CoreExtensions::Compass
     def registered(app)
       # Where to look for fonts
       app.set :fonts_dir, "fonts"
+      app.define_hook :compass_config
       app.define_hook :after_compass_config
-    
-      app.extend ClassMethods
-        
+
       require "compass"
       
       # Susy grids
@@ -84,16 +83,10 @@ module Middleman::CoreExtensions::Compass
           end
         end
         
-        run_hook :after_compass_config, ::Compass.configuration
+        run_hook :compass_config, ::Compass.configuration
+        run_hook :after_compass_config
       end
     end
     alias :included :registered
-  end
-  
-  module ClassMethods
-    # Add a block/proc to be run after features have been setup
-    def compass_config(&block)
-      after_compass_config(&block)
-    end
   end
 end

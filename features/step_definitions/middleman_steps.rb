@@ -29,7 +29,9 @@ Given /^the Server is running at "([^\"]*)"$/ do |app_path|
   @server.set :show_exceptions, false
   root = File.dirname(File.dirname(File.dirname(__FILE__)))
   @server.set :root, File.join(root, "fixtures", app_path)
-  @browser = Rack::Test::Session.new(Rack::MockSession.new(@server.new))
+  @app = @server.new!
+  app_rack = @server.build_new(@app)
+  @browser = Rack::Test::Session.new(Rack::MockSession.new(app_rack))
 end
 
 When /^I go to "([^\"]*)"$/ do |url|

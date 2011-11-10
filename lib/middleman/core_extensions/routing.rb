@@ -45,19 +45,21 @@ module Middleman::CoreExtensions::Routing
     def page(url, options={}, &block)
       has_block = block_given?
       options[:layout] = layout if options[:layout].nil?
-      
+
       if options.has_key?(:proxy)
         reroute(url, options[:proxy])
         
         if options.has_key?(:ignore) && options[:ignore]
           ignore(options[:proxy])
-        end
+        end  
+        
+        options.delete(:proxy)
       else
         if options.has_key?(:ignore) && options[:ignore]
           ignore(url)
         end
       end
-
+      
       paths_for_url(url).each do |p|
         get(p) do
           if settings.sitemap.path_is_proxy?(url)

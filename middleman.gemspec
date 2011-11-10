@@ -41,7 +41,9 @@ Gem::Specification.new do |s|
   s.add_dependency("hooks", ["~> 0.2.0"])
   
   s.add_dependency("guard", ["~> 0.8.8"])
-  s.add_dependency("eventmachine", ["1.0.0.beta.4"])
+  s.add_dependency("rb-fsevent")
+  s.add_dependency("rb-inotify")
+  # s.add_dependency("eventmachine", ["1.0.0.beta.4"])
   # s.add_dependency("middleman-livereload", ["~> 0.2.0"])
   
   # Development and test
