@@ -1,73 +1,53 @@
 require 'find'
-require 'hooks'
 
 module Middleman::CoreExtensions::Sitemap
   class << self
     def registered(app)
-      sm = SitemapStore.new
-      
-      app.set :sitemap, sm
-      
-      app.initialized do |scope|
-        sm.setup(scope)
-      end
+      app.extend ClassMethods
+      app.helpers Helpers
       
       app.file_changed do |file|
-        sm.touch_file(file)
+        sitemap.touch_file(file)
       end
       
       app.file_deleted do |file|
-        sm.remove_file(file)
+        sitemap.remove_file(file)
       end
-      
-      app.extend ClassMethods
     end
     alias :included :registered
   end
   
+  module Helpers
+    def sitemap
+      self.class.sitemap
+    end
+  end
+  
   module ClassMethods
+    def sitemap
+      @sitemap ||= SitemapStore.new(self)
+    end
+    
     # Keep a path from building
     def ignore(path)
-      action = Proc.new { ignore_path(path) }
-      
-      if sitemap.setup?
-        action.call
-      else
-        sitemap.class.after_setup(&action)
-      end
+      sitemap.ignore_path(path)
     end
     
     def reroute(url, target)
-      action = Proc.new { set_path(url, target) }
-      
-      if sitemap.setup?
-        action.call
-      else
-        sitemap.class.after_setup(&action)
-      end
+      sitemap.set_path(url, target)
     end
   end
   
   class SitemapStore
-    include ::Hooks
-    define_hook :after_setup
-  
-    def initialize
+    def initialize(app)
+      @app = app
+      @source = File.expand_path(@app.views, @app.root)
       @map = {}
       @ignored_paths = false
       @generic_paths = false
       @proxied_paths = false
-      @is_setup      = false
-    end
-    
-    def setup(app)
-      @app = app
-      @source = File.expand_path(@app.views, @app.root)
       
       build_static_map
-      
-      run_hook :after_setup
-      @is_setup = true
     end
     
     def setup?

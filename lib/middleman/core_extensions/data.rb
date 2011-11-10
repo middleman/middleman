@@ -8,6 +8,19 @@ module Middleman::CoreExtensions::Data
       app.set :data_dir, "data"
       app.extend ClassMethods
       app.helpers Helpers
+      
+      app.file_changed do |file|
+        if file.match(%r{^#{settings.data_dir}\/[\w-]+\.(yml|yaml|json)})
+          data.touch_file(file)
+        end
+      end
+      
+      app.file_deleted do |file|
+        if file.match(%r{^#{settings.data_dir}\/[\w-]+\.(yml|yaml|json)})
+          data.remove_file(file)
+        end
+      end
+      
     end
     alias :included :registered
   end
@@ -21,6 +34,37 @@ module Middleman::CoreExtensions::Data
   class DataObject
     def initialize(app)
       @app = app
+      @local_data = {}
+      setup
+    end
+    
+    def setup
+      data_path  = File.join(@app.root, @app.data_dir)
+      local_path = File.join(data_path, "*.{yaml,yml,json}")
+      Dir[local_path].each do |f|
+        touch_file(f)#.sub(data_path, ""))
+      end
+    end
+    
+    def touch_file(file)
+      extension = File.extname(file)
+      basename  = File.basename(file, extension)
+      
+      if %w(.yaml .yml).include?(extension)
+        data = YAML.load_file(file)
+      elsif extension == ".json"
+        data = ActiveSupport::JSON.decode(File.read(file))
+      else
+        return
+      end
+
+      @local_data[basename] = recursively_enhance(data)
+    end
+    
+    def remove_file(file)
+      extension = File.extname(file)
+      basename  = File.basename(file, extension)
+      @local_data.delete(basename) if @local_data.has_key?(basename)
     end
     
     def data_for_path(path)
@@ -33,32 +77,23 @@ module Middleman::CoreExtensions::Data
         response = @@local_sources[path.to_s]
       elsif @@callback_sources.has_key?(path.to_s)
         response = @@callback_sources[path.to_s].call()
-      else
-        file_path = File.join(@app.root, @app.data_dir, "#{path}.yml")
-        if File.exists? file_path
-          response = YAML.load_file(file_path) 
-        else
-          file_path = File.join(@app.root, @app.data_dir, "#{path}.yaml")
-          if File.exists? file_path
-            response = YAML.load_file(file_path)
-          else
-            file_path = File.join(@app.root, @app.data_dir, "#{path}.json")
-            response = ActiveSupport::JSON.decode(File.read(file_path)) if File.exists? file_path
-          end
-        end
       end
       
       response
     end
     
     def method_missing(path)
-      result = data_for_path(path)
-      
-      if result
-        recursively_enhance(result)
+      if @local_data.has_key?(path.to_s)
+        return @local_data[path.to_s]
       else
-        super
+        result = data_for_path(path)
+      
+        if result
+          return recursively_enhance(result)
+        end
       end
+      
+      super
     end
     
     def to_h
@@ -75,16 +110,8 @@ module Middleman::CoreExtensions::Data
         data[k] = data_for_path(k)
       end
       
-      yaml_path = File.join(@app.root, @app.data_dir, "*.{yaml,yml}")
-      Dir[yaml_path].each do |f|
-        p = f.split("/").last.gsub(".yml", "").gsub(".yaml", "")
-        data[p] = data_for_path(p)
-      end
-      
-      json_path = File.join(@app.root, @app.data_dir, "*.json")
-      Dir[json_path].each do |f|
-        p = f.split("/").last.gsub(".json", "")
-        data[p] = data_for_path(p)
+      (@local_data || {}).each do |k, v|
+        data[k] = v
       end
       
       data
