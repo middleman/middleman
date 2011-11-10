@@ -23,7 +23,6 @@ module Middleman
         options_hash << ", :#{k} => '#{v}'"
       end
       
-      $stderr.puts options_hash.inspect
       guardfile_contents = %Q{
         guard 'middleman'#{options_hash} do 
           watch(%r{(.*)})

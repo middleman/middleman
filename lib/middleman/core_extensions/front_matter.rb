@@ -66,7 +66,7 @@ module Middleman::CoreExtensions::FrontMatter
         next if file.match(/\/\./) ||
                 (file.match(/\/_/) && !file.match(/\/__/)) ||
                 File.directory?(file)
-        
+                  
         touch_file(file)
       end
     end
@@ -76,6 +76,9 @@ module Middleman::CoreExtensions::FrontMatter
     end
     
     def touch_file(file)
+      extension = File.extname(file).sub(/\./, "")
+      return unless ::Tilt.mappings.has_key?(extension)
+
       content = File.read(file)
       file = file.sub(@source, "")
       result = parse_front_matter(content)
