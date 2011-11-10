@@ -5,11 +5,16 @@ require "rbconfig"
 if Config::CONFIG['host_os'].downcase =~ %r{mingw}
   require "win32/process"
 end
-  
+
+# Quiet down Guard
+ENV['GUARD_ENV'] = 'test'
+
 module Middleman
   module Guard
     def self.add_guard(&block)
       # Deprecation Warning
+      $stderr.puts "== Middleman::Guard.add_guard has been removed. Update your extensions to versions which support this change."
+      exit
     end
   
     def self.start(options={})

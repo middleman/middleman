@@ -65,6 +65,7 @@ module Middleman
         :environment => options[:environment]
       }
       
+      puts "== The Middleman is loading"
       Middleman::Guard.start(params)
     end
 
