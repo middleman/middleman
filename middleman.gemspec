@@ -24,7 +24,6 @@ Gem::Specification.new do |s|
   s.add_dependency("thin", ["~> 1.2.11"])
   s.add_dependency("thor", ["~> 0.14.0"])
   s.add_dependency("tilt", ["~> 1.3.1"])
-  s.add_dependency("maruku", ["~> 0.6.0"])
   s.add_dependency("sinatra", ["~> 1.3.1"])
   s.add_dependency("rack-test", ["~> 0.6.1"])
   s.add_dependency("uglifier", ["~> 1.0.0"])
@@ -41,14 +40,13 @@ Gem::Specification.new do |s|
   
   s.add_dependency("guard", ["~> 0.8.8"])
   s.add_dependency("rb-fsevent")
-  s.add_dependency("rb-inotify")
-  # s.add_dependency("eventmachine", ["1.0.0.beta.4"])
-  # s.add_dependency("middleman-livereload", ["~> 0.2.0"])
+  # s.add_dependency("rb-inotify")
   
   # Development and test
   s.add_development_dependency("coffee-filter", ["~> 0.1.1"])
   s.add_development_dependency("liquid", ["~> 2.2.0"])
   s.add_development_dependency("slim", ["~> 1.0.2"])
+  s.add_development_dependency("maruku", ["~> 0.6.0"])
   s.add_development_dependency("cucumber", ["~> 1.0.2"])
   s.add_development_dependency("rake", ["~> 0.9.2"])
   s.add_development_dependency("rspec", ["~> 2.6.0"])

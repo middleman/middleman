@@ -16,7 +16,6 @@ module Middleman::Renderers::Liquid
             if result && result[1] == :liquid
               request['custom_locals'] ||= {}
               request['custom_locals'][:data] = data.to_h
-              # request['custom_locals'].merge(data.to_h)
             end
 
             true

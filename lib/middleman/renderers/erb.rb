@@ -15,7 +15,7 @@ module Middleman::Renderers::ERb
         engine = app.settings.erb_engine
         
         if engine.is_a? Symbol
-          engine = app.tilt_template_from_symbol(engine)
+          engine = app.erb_tilt_template_from_symbol(engine)
         end
         
         ::Tilt.prefer(engine)
@@ -25,7 +25,7 @@ module Middleman::Renderers::ERb
   end
   
   module ClassMethods
-    def tilt_template_from_symbol(engine)
+    def erb_tilt_template_from_symbol(engine)
       engine = engine.to_s
       engine = engine == "erb" ? "ERB" : engine.camelize
       settings.erb_engine_prefix.const_get("#{engine}Template")

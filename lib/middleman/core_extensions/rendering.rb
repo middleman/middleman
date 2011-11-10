@@ -7,8 +7,6 @@ module Middleman::CoreExtensions::Rendering
       app.register Padrino::Rendering
 
       # Activate custom renderers
-      app.register Middleman::Renderers::Slim
-      app.register Middleman::Renderers::Haml
       app.register Middleman::Renderers::Sass
       app.register Middleman::Renderers::Markdown
       app.register Middleman::Renderers::ERb

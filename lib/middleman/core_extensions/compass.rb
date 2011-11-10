@@ -1,3 +1,5 @@
+require "compass"
+
 module Middleman::CoreExtensions::Compass
   class << self
     def registered(app)
@@ -5,14 +7,6 @@ module Middleman::CoreExtensions::Compass
       app.set :fonts_dir, "fonts"
       app.define_hook :compass_config
       app.define_hook :after_compass_config
-
-      require "compass"
-      
-      # Susy grids
-      begin
-        require "susy"
-      rescue LoadError
-      end
 
       app.after_configuration do
         # Support a stand-alone compass config file

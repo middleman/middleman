@@ -1,3 +1,8 @@
+require "maruku"
+require "slim"
+require "liquid"
+require "coffee-filter"
+
 page "/fake.html", :proxy => "/real.html", :layout => false
 
 ignore "/should_be_ignored.html"

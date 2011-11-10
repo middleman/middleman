@@ -77,10 +77,10 @@ module Middleman::Base
       
       # Parse YAML from templates
       app.register Middleman::CoreExtensions::FrontMatter
-
+      
       app.set :default_features, [
-        :lorem,
-        :sitemap_tree
+        # :lorem,
+        # :sitemap_tree
       ]
 
       # Default layout name
