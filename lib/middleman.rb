@@ -55,10 +55,6 @@
 libdir = File.dirname(__FILE__)
 $LOAD_PATH.unshift(libdir) unless $LOAD_PATH.include?(libdir)
 
-# Quiet down Thin
-require "thin"
-::Thin::Logging.silent = true
-
 # We're riding on Sinatra, so let's include it.
 require "sinatra/base"
 
@@ -200,6 +196,9 @@ module Middleman
     app_class = options[:app] ||= ::Middleman.server.new
     opts[:app] = app_class
     opts[:server] = 'thin'
+    
+    require "thin"
+    ::Thin::Logging.silent = true if options[:debug] != "true"
 
     server = ::Rack::Server.new(opts)
     server.start
