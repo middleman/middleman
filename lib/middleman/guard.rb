@@ -82,14 +82,13 @@ module Guard
       app = ::Middleman.server
       app.set :environment, @options[:environment].to_sym
       app.set :logging, @options[:debug] == "true"
-
-      puts "== The Middleman is standing watch on port #{@options[:Port]||4567}"
       @app = app.new!
       app_rack = app.build_new(@app)
 
       @server_job = fork do
         opts = @options.dup
         opts[:app] = app_rack
+        puts "== The Middleman is standing watch on port #{opts[:Port]||4567}"
         ::Middleman.start_server(opts)
       end
     end
