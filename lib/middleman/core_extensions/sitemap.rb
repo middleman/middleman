@@ -43,6 +43,7 @@ module Middleman::CoreExtensions::Sitemap
       @app = app
       @source = File.expand_path(@app.views, @app.root)
       @map = {}
+      @source_map = {}
       @ignored_paths = false
       @generic_paths = false
       @proxied_paths = false
@@ -155,6 +156,10 @@ module Middleman::CoreExtensions::Sitemap
       @map.delete(path) if path_exists?(path)
     end
     
+    def source_map
+      @source_map
+    end
+    
   protected
     def build_static_map
       Find.find(@source) do |file|
@@ -182,6 +187,7 @@ module Middleman::CoreExtensions::Sitemap
         end
       end
       
+      @source_map[path] = file
       path
     end
     
