@@ -31,7 +31,7 @@ module Middleman::CoreExtensions::FrontMatter
                 end
               end
               
-              app.settings.templates[extensionless_path] = [result[1], extensionless_path, 1]
+              app.settings.templates[extensionless_path] = [result[1], extensionless_path.to_s, 1]
             else
               data = {}
             end
