@@ -96,36 +96,6 @@ module Middleman::Base
         content_type 'text/html'
         "<html><body><h1>File Not Found</h1><p>#{request.path_info}</p></body>"
       end
-
-      # See if Tilt cannot handle this file
-      app.before_processing(:base) do |result|
-        request_path = request.path_info.gsub("%20", " ")
-
-        should_be_ignored = !(request["is_proxy"]) && settings.sitemap.ignored_path?("/#{request_path}")
-        
-        if result && !should_be_ignored
-          extensionless_path, template_engine = result
-
-          # Return static files
-          if !::Tilt.mappings.has_key?(template_engine.to_s)
-            matched_mime = mime_type(File.extname(request_path))
-            matched_mime = "application/octet-stream" if matched_mime.nil?
-            content_type matched_mime
-            status 200
-            send_file File.join(settings.views, request_path)
-            false
-          else
-            true
-          end
-        else
-          if !%w(favicon.ico).include?(request_path)
-            $stderr.puts "File not found: #{request_path}"
-          end
-          
-          status 404
-          false
-        end
-      end
     end
     alias :included :registered
   end
@@ -139,6 +109,14 @@ module Middleman::Base
       end
     
       super(option, value, ignore_setter, &nil)
+    end
+    
+    def full_path(path)
+      parts = path ? path.split('/') : []
+      if parts.last.nil? || parts.last.split('.').length == 1
+        path = File.join(path, index_file) 
+      end
+      "/" + path.sub(%r{^/}, '')
     end
     
     def before_processing(name=:unnamed, idx=-1, &block)
@@ -177,27 +155,50 @@ module Middleman::Base
     def forward
       raise ::Sinatra::NotFound
     end
-  
+    
     # Internal method to look for templates and evaluate them if found
-    def process_request(options={})
+    def process_request
       if !settings.views.include?(settings.root)
         settings.set :views, File.join(settings.root, settings.views)
-      end  
+      end
       
       # Normalize the path and add index if we're looking at a directory
-      request.path_info = self.class.path_to_index(request.path)
-      request_path = request.path_info.gsub("%20", " ")
+      request_path = settings.full_path(request.path.gsub("%20", " "))
+      original_path = request_path.dup
+      
+      return status(404) if settings.sitemap.ignored_path?(request_path)
+      
+      if settings.sitemap.path_is_proxy?(request_path)
+        request["is_proxy"] = true
+        request_path = "/" + settings.sitemap.path_target(request_path)
+      end
+      
       found_template = resolve_template(request_path, :raise_exceptions => false)
       return status(404) unless found_template
+      
+      path, engine = found_template
+      
+      if !::Tilt.mappings.has_key?(engine.to_s)
+        matched_mime = mime_type(File.extname(request_path))
+        matched_mime = "application/octet-stream" if matched_mime.nil?
+        content_type matched_mime
+        status 200
+        send_file File.join(settings.views, request_path)
+        return
+      end
+        
       return unless settings.execute_before_processing!(self, found_template)
       
+      context = settings.sitemap.get_context(original_path) || {}
+      
+      options = context.has_key?(:options) ? context[:options] : {}
       options.merge!(request['custom_options'] || {})
 
       old_layout = settings.layout
       settings.set :layout, options[:layout] if !options[:layout].nil?
 
       local_layout = if settings.layout
-        if options[:layout] == false || request.path_info =~ /\.(css|js)$/
+        if options[:layout] == false || request_path =~ /\.(css|js)$/
           false
         else
           settings.fetch_layout_path(settings.layout).to_sym
@@ -207,10 +208,13 @@ module Middleman::Base
       end
       
       render_options = { :layout => local_layout }
-      render_options[:layout_engine] = options[:layout_engine] if options.has_key? :layout_engine
-      
-      path, engine = found_template
+      render_options[:layout_engine] = options[:layout_engine] if options.has_key?(:layout_engine)
+
       locals = request['custom_locals'] || {}
+      
+      if context.has_key?(:block) && context[:block]
+        instance_eval(&context[:block])
+      end
       
       begin
         result = render(engine, path, render_options, locals)

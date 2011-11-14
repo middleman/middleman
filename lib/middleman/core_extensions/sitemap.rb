@@ -43,6 +43,7 @@ module Middleman::CoreExtensions::Sitemap
       @app = app
       @source = File.expand_path(@app.views, @app.root)
       @map = {}
+      @context_map = {}
       @source_map = {}
       @ignored_paths = false
       @generic_paths = false
@@ -68,6 +69,11 @@ module Middleman::CoreExtensions::Sitemap
       @map[path]
     end
     
+    def path_context(path)
+      path = path.sub(/^\//, "")
+      @context_map[path]
+    end
+    
     def set_path(path, target=true)
       path   = path.sub(/^\//, "")
       target = target.sub(/^\//, "") if target.is_a?(String)
@@ -79,8 +85,22 @@ module Middleman::CoreExtensions::Sitemap
       @proxied_paths = false if target.is_a?(String)
     end
     
+    def set_context(path, options={}, block=nil)
+      path = path.sub(/^\//, "")
+      @context_map[path] = {
+        :options => options,
+        :block   => block
+      }
+    end
+    
+    def get_context(path)
+      path = path.sub(/^\//, "")
+      @context_map[path]
+    end
+    
     def ignore_path(path)
       set_path(path, false)
+      @ignored_paths = false
     end
     
     def each(&block)
@@ -154,6 +174,7 @@ module Middleman::CoreExtensions::Sitemap
     def remove_path(path)
       path = path.sub(/^\//, "")
       @map.delete(path) if path_exists?(path)
+      @context_map.delete(path) if @context_map.has_key?(path)
     end
     
     def source_map
