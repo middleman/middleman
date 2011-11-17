@@ -6,15 +6,11 @@ if Config::CONFIG['host_os'].downcase =~ %r{mingw}
   require "win32/process"
 end
 
-# Quiet down Guard
-ENV['GUARD_ENV'] = 'test'
-
 module Middleman
   module Guard
     def self.add_guard(&block)
       # Deprecation Warning
-      $stderr.puts "== Middleman::Guard.add_guard has been removed. Update your extensions to versions which support this change."
-      exit
+      puts "== Middleman::Guard.add_guard has been removed. Update your extensions to versions which support this change."
     end
   
     def self.start(options={})
@@ -59,6 +55,7 @@ module Guard
         server_restart
       elsif !@app.nil?
         paths.each do |path|
+          @app.logger.debug :file_change, Time.now, path if @app.settings.logging?
           @app.file_did_change(path)
         end
       end
@@ -67,6 +64,7 @@ module Guard
     def run_on_deletion(paths)
       if !@app.nil?
         paths.each do |path|
+          @app.logger.debug :file_remove, Time.now, path if @app.settings.logging?
           @app.file_did_delete(path)
         end
       end
@@ -80,8 +78,12 @@ module Guard
     
     def server_start
       app = ::Middleman.server
-      app.set :environment, @options[:environment].to_sym
-      app.set :logging, @options[:debug] == "true"
+      app.set :environment, (@options[:environment] || "development").to_sym
+      app.set :logging, @options.has_key?(:debug) && (@options[:debug] == "true")
+      
+      # Quiet down Guard
+      # ENV['GUARD_ENV'] = 'test' if @options[:debug] == "true"
+      
       @app = app.new!
       app_rack = app.build_new(@app)
 

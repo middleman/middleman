@@ -5,6 +5,18 @@ require "active_support"
 require "active_support/json"
 require "active_support/core_ext/class/attribute_accessors"
 
+module Padrino
+  class << self
+    attr_accessor :root_dir, :env
+    def root(*args)
+      File.expand_path(File.join(root_dir, *args))
+    end
+  end
+end
+    
+ENV['PADRINO_LOG_LEVEL'] = "debug"
+require "padrino-core/logger"
+
 module Middleman::Base
   class << self
     def registered(app)
@@ -144,12 +156,25 @@ module Middleman::Base
       builder.run inst || new!
       builder.to_app
     end
+    
+    def logger
+      Padrino.logger
+    end
   end
   
   module InstanceMethods
+    def logger
+      Padrino.logger
+    end
+  
     def initialize(*args)
       super
       run_hook :initialized, settings
+      
+      Padrino.root_dir = settings.root
+      Padrino.env      = settings.environment
+      Padrino::Logger::Config[:debug] = { :stream => :stderr }
+      # Padrino::Logger::Config[:development][:stream] = StringIO.new
     end
     
     def forward

@@ -34,14 +34,15 @@ Gem::Specification.new do |s|
   s.add_dependency("compass", ["~> 0.11.3"])
   s.add_dependency("coffee-script", ["~> 2.2.0"])
   s.add_dependency("execjs", ["~> 1.2.7"])
-  s.add_dependency("sprockets", ["~> 2.0.3"])
+  s.add_dependency("sprockets", ["~> 2.0"])
   s.add_dependency("sprockets-sass", ["~> 0.3.0"])
   s.add_dependency("padrino-core", ["~> 0.10.5"])
   s.add_dependency("padrino-helpers", ["~> 0.10.5"])
   s.add_dependency("hooks", ["~> 0.2.0"])
+  s.add_dependency("rb-fsevent")
   
   s.add_dependency("guard", ["~> 0.8.8"])
-  s.add_dependency("eventmachine", ["1.0.0.beta.4"])
+  # s.add_dependency("eventmachine", ["1.0.0.beta.4"])
   # s.add_dependency("middleman-livereload", ["~> 0.2.0"])
   
   # Development and test

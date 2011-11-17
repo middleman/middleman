@@ -5,13 +5,14 @@ module Middleman::CoreExtensions::FrontMatter
   class << self
     def registered(app)
       app.extend ClassMethods
+      app.send :include, InstanceMethods
       
       app.file_changed do |file|
-        data.touch_file(file)
+        frontmatter.touch_file(file)
       end
       
       app.file_deleted do |file|
-        data.remove_file(file)
+        frontmatter.remove_file(file)
       end
       
       app.after_configuration do
@@ -21,17 +22,14 @@ module Middleman::CoreExtensions::FrontMatter
             full_file_path = "#{extensionless_path}.#{template_engine}"
 
             if app.frontmatter.has_data?(full_file_path)
-              result = app.frontmatter.data(full_file_path)
-              data = result.first.dup
+              data = app.frontmatter.data(full_file_path).first
               
               request['custom_options'] = {}
               %w(layout layout_engine).each do |opt|
                 if data.has_key?(opt)
-                  request['custom_options'][opt.to_sym] = data.delete(opt)
+                  request['custom_options'][opt.to_sym] = data[opt]
                 end
               end
-              
-              app.settings.templates[extensionless_path] = [result[1], extensionless_path.to_s, 1]
             else
               data = {}
             end
@@ -53,6 +51,12 @@ module Middleman::CoreExtensions::FrontMatter
     end
   end
   
+  module InstanceMethods
+    def frontmatter
+      settings.frontmatter
+    end
+  end
+  
   class FrontmatterData
     def initialize(app)
       @app = app
@@ -66,7 +70,7 @@ module Middleman::CoreExtensions::FrontMatter
         next if file.match(/\/\./) ||
                 (file.match(/\/_/) && !file.match(/\/__/)) ||
                 File.directory?(file)
-                  
+        
         touch_file(file)
       end
     end
@@ -78,18 +82,24 @@ module Middleman::CoreExtensions::FrontMatter
     def touch_file(file)
       extension = File.extname(file).sub(/\./, "")
       return unless ::Tilt.mappings.has_key?(extension)
-
+      
       content = File.read(file)
       file = file.sub(@source, "")
+      
+      @app.logger.debug :frontmatter_update, Time.now, file if @app.settings.logging?
       result = parse_front_matter(content)
         
       if result
         @local_data[file] = result
+        path = @app.extensionless_path(file)
+        @app.settings.templates[path.to_sym] = [result[1], path.to_s, 1]
       end
     end
     
     def remove_file(file)
       file = file.sub(@source, "")
+      @app.logger.debug :frontmatter_remove, Time.now, file if @app.settings.logging?
+      
       if @local_data.has_key?(file)
         @local_data.delete(file) 
       end

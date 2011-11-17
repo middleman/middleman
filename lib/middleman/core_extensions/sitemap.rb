@@ -196,18 +196,7 @@ module Middleman::CoreExtensions::Sitemap
       return false unless file.include?(prefix)
       
       path = file.sub(prefix, "")
-      
-      end_of_the_line = false
-      while !end_of_the_line
-        file_extension = File.extname(path)
-      
-        if ::Tilt.mappings.has_key?(file_extension.gsub(/^\./, ""))
-          path = path.sub(file_extension, "")
-        else
-          end_of_the_line = true
-        end
-      end
-      
+      path = @app.extensionless_path(path)
       @source_map[path] = file
       path
     end
