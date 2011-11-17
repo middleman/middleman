@@ -7,7 +7,7 @@ module Middleman::CoreExtensions::FrontMatter
       app.extend ClassMethods
       app.send :include, InstanceMethods
       
-      app.file_changed do |file|
+      app.file_changed FrontMatter.matcher do |file|
         frontmatter.touch_file(file)
       end
       
@@ -47,7 +47,7 @@ module Middleman::CoreExtensions::FrontMatter
   
   module ClassMethods
     def frontmatter
-      @frontmatter ||= FrontmatterData.new(self)
+      @frontmatter ||= FrontMatter.new(self)
     end
   end
   
@@ -57,21 +57,22 @@ module Middleman::CoreExtensions::FrontMatter
     end
   end
   
-  class FrontmatterData
+  class FrontMatter
+    def self.matcher
+      %r{source/.*\.html}
+    end
+    
     def initialize(app)
       @app = app
       @source ||= File.expand_path(@app.views, @app.root)
       @local_data = {}
       
-      views_dir = @app.views
-      views_dir = File.join(@app.root, @app.views) unless views_dir.include?(@app.root)
-      
-      Dir[File.join(views_dir, "**/*")].each do |file|
+      Dir[File.join(@source, "**/*")].each do |file|
         next if file.match(/\/\./) ||
                 (file.match(/\/_/) && !file.match(/\/__/)) ||
-                File.directory?(file)
+                !file.match(self.class.matcher)
         
-        touch_file(file)
+        touch_file(file.sub(@app.root, "").sub(/^\//, ""))
       end
     end
     
@@ -83,6 +84,7 @@ module Middleman::CoreExtensions::FrontMatter
       extension = File.extname(file).sub(/\./, "")
       return unless ::Tilt.mappings.has_key?(extension)
       
+      file = File.expand_path(file, @app.root)
       content = File.read(file)
       file = file.sub(@source, "")
       
@@ -97,6 +99,7 @@ module Middleman::CoreExtensions::FrontMatter
     end
     
     def remove_file(file)
+      file = File.expand_path(file, @app.root)
       file = file.sub(@source, "")
       @app.logger.debug :frontmatter_remove, Time.now, file if @app.settings.logging?
       

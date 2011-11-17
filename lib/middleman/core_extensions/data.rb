@@ -9,16 +9,12 @@ module Middleman::CoreExtensions::Data
       app.extend ClassMethods
       app.helpers Helpers
       
-      app.file_changed do |file|
-        if file.match(%r{^#{settings.data_dir}\/[\w-]+\.(yml|yaml|json)})
-          data.touch_file(file)
-        end
+      app.file_changed DataStore.matcher do |file|
+        data.touch_file(file) if file.match(%r{^#{settings.data_dir}\/})
       end
       
-      app.file_deleted do |file|
-        if file.match(%r{^#{settings.data_dir}\/[\w-]+\.(yml|yaml|json)})
-          data.remove_file(file)
-        end
+      app.file_deleted DataStore.matcher do |file|
+        data.remove_file(file) if file.match(%r{^#{settings.data_dir}\/})
       end
     end
     alias :included :registered
@@ -26,11 +22,15 @@ module Middleman::CoreExtensions::Data
   
   module Helpers
     def data
-      self.class.data
+      settings.data
     end
   end
   
-  class DataObject
+  class DataStore
+    def self.matcher
+      %r{[\w-]+\.(yml|yaml|json)$}
+    end
+    
     def initialize(app)
       @app = app
       @local_data = {}
@@ -144,17 +144,17 @@ module Middleman::CoreExtensions::Data
   
   module ClassMethods
     def data
-      @data ||= DataObject.new(self)
+      @data ||= DataStore.new(self)
     end
     
     # Makes a hash available on the data var with a given name
     def data_content(name, content)
-      DataObject.data_content(name, content)
+      DataStore.data_content(name, content)
     end
     
     # Makes a hash available on the data var with a given name
     def data_callback(name, &block)
-      DataObject.data_callback(name, block)
+      DataStore.data_callback(name, block)
     end
   end
 end
