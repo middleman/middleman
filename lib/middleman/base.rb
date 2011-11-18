@@ -5,7 +5,6 @@ require "hooks"
 require "active_support"
 require "active_support/json"
 require "active_support/core_ext/string/inflections"
-# require "active_support/core_ext/class/attribute_accessors"
 
 class Middleman::Base
   include Hooks
@@ -199,22 +198,22 @@ class Middleman::Base
   
   # Internal method to look for templates and evaluate them if found
   def process_request
+    # Normalize the path and add index if we're looking at a directory
+    @original_path = env["PATH_INFO"].dup
+    @request_path  = full_path(env["PATH_INFO"].gsub("%20", " "))
+    
     run_hook :before
   
-    # Normalize the path and add index if we're looking at a directory
-    original_path = env["PATH_INFO"].dup
-    request_path  = full_path(env["PATH_INFO"].gsub("%20", " "))
-  
-    return not_found if sitemap.ignored_path?(request_path)
+    return not_found if sitemap.ignored_path?(@request_path)
     
-    if sitemap.path_is_proxy?(request_path)
-      request_path = "/" + sitemap.path_target(request_path)
+    if sitemap.path_is_proxy?(@request_path)
+      @request_path = "/" + sitemap.path_target(@request_path)
     end
     
-    found_template = resolve_template(request_path)
+    found_template = resolve_template(@request_path)
     return not_found unless found_template
     
-    @current_path = request_path
+    @current_path = @request_path.dup
     path, engine = found_template
     
     # Static File
@@ -222,7 +221,7 @@ class Middleman::Base
     
     return unless self.class.execute_before_processing!(self, found_template)
     
-    context = sitemap.get_context(original_path) || {}
+    context = sitemap.get_context(@original_path) || {}
 
     @options = context.has_key?(:options) ? context[:options] : {}
     @locals  = context.has_key?(:locals)  ? context[:locals] : {}
@@ -234,7 +233,7 @@ class Middleman::Base
     
     local_layout = if options.has_key?(:layout)
       options[:layout]
-    elsif %w(.js .css).include?(File.extname(request_path))
+    elsif %w(.js .css).include?(File.extname(@request_path))
       false
     else
       layout
@@ -244,7 +243,7 @@ class Middleman::Base
       instance_eval(&context[:block])
     end
     
-    # content_type mime_type(File.extname(request_path))
+    # content_type mime_type(File.extname(@request_path))
     res.status = 200
     
     output = if local_layout
@@ -337,7 +336,7 @@ public
   
   def not_found
     @res.status == 404
-    @res.write "<html><body><h1>File Not Found</h1><p>#{env["PATH_INFO"]}</p></body>"
+    @res.write "<html><body><h1>File Not Found</h1><p>#{@request_path}</p></body>"
     @res.finish
   end
   
@@ -391,7 +390,7 @@ public
     
     file      = ::Rack::File.new nil
     file.path = path
-    file.serving(env)
+    halt file.serving(env)
   end
   
   def render(path, locals = {}, options = {}, &block)

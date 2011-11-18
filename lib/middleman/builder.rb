@@ -18,7 +18,7 @@ module Middleman
       request_path = destination.sub(/^#{SHARED_SERVER_INST.build_dir}/, "")
       
       begin
-        # destination, request_path = SHARED_SERVER.reroute_builder(destination, request_path)
+        destination, request_path = SHARED_SERVER_INST.reroute_builder(destination, request_path)
         
         request_path.gsub!(/\s/, "%20")
         response = Middleman::Builder.shared_rack.get(request_path)
@@ -43,7 +43,7 @@ module Middleman
       @shared_rack ||= begin
         mock = ::Rack::MockSession.new(SHARED_SERVER.to_rack_app)
         sess = ::Rack::Test::Session.new(mock)
-        response = sess.get("__middleman__")
+        # response = sess.get("__middleman__")
         sess
       end
     end
