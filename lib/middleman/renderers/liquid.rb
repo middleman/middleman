@@ -7,10 +7,7 @@ module Middleman::Renderers::Liquid
         require "liquid"
         
         app.after_configuration do
-          full_path = app.views
-          full_path = File.join(app.root, app.views) unless app.views.include?(app.root)
-          
-          Liquid::Template.file_system = Liquid::LocalFileSystem.new(full_path)
+          Liquid::Template.file_system = Liquid::LocalFileSystem.new(self.source_dir)
             
           app.before_processing(:liquid) do |result|
             if result && result[1] == :liquid

@@ -55,13 +55,11 @@
 libdir = File.dirname(__FILE__)
 $LOAD_PATH.unshift(libdir) unless $LOAD_PATH.include?(libdir)
 
-# We're riding on Sinatra, so let's include it.
-require "sinatra/base"
-
 # Top-level Middleman object
 module Middleman
   # Auto-load modules on-demand
   autoload :Base,        "middleman/base"
+  autoload :Hooks,       "middleman/hooks"
   autoload :Builder,     "middleman/builder"
   autoload :CLI,         "middleman/cli"
   autoload :Templates,   "middleman/templates"
@@ -85,9 +83,6 @@ module Middleman
     
     # Add Builder callbacks
     autoload :Builder,       "middleman/core_extensions/builder"
-    
-    # Add Rack::Builder.map support
-    autoload :RackMap,       "middleman/core_extensions/rack_map"
     
     # Custom Feature API
     autoload :Features,      "middleman/core_extensions/features"
@@ -181,9 +176,8 @@ module Middleman
   end
   
   def self.server(&block)
-    sandbox = Class.new(Sinatra::Base)
-    sandbox.register Base
-    sandbox.class_eval(&block) if block_given?
+    sandbox = Class.new(Middleman::Base)
+    # sandbox.class_eval(&block) if block_given?
     sandbox
   end
   
@@ -197,8 +191,8 @@ module Middleman
     opts[:app] = app_class
     opts[:server] = 'thin'
     
-    require "thin"
-    ::Thin::Logging.silent = true if options[:debug] != "true"
+    # require "thin"
+    # ::Thin::Logging.silent = true if options[:debug] != "true"
 
     server = ::Rack::Server.new(opts)
     server.start

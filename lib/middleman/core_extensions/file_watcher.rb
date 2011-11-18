@@ -6,9 +6,9 @@ module Middleman::CoreExtensions::FileWatcher
       app.extend ClassMethods
       app.send :include, InstanceMethods
       app.before_configuration do
-        Find.find(settings.root) do |path|
+        Find.find(root) do |path|
           next if File.directory?(path)
-          file_did_change(path.sub("#{settings.root}/", ""))
+          file_did_change(path.sub("#{root}/", ""))
         end
       end
 
@@ -28,6 +28,12 @@ module Middleman::CoreExtensions::FileWatcher
       @_file_deleted << [block, matcher] if block_given?
       @_file_deleted
     end
+  end
+  
+  module InstanceMethods
+    def file_changed(*args)
+      self.class.file_changed(*args)
+    end
     
     def file_did_change(path)
       file_changed.each do |callback, matcher|
@@ -36,6 +42,10 @@ module Middleman::CoreExtensions::FileWatcher
         instance_exec(path, &callback)
       end
     end
+    
+    def file_deleted(*args)
+      self.class.file_deleted(*args)
+    end
 
     def file_did_delete(path)
       file_deleted.each do |callback, matcher|
@@ -43,16 +53,6 @@ module Middleman::CoreExtensions::FileWatcher
         next unless matcher.nil? || path.match(matcher)
         instance_exec(path, &callback)
       end
-    end
-  end
-  
-  module InstanceMethods
-    def file_did_change(path)
-      settings.file_did_change(path)
-    end
-    
-    def file_did_delete(path)
-      settings.file_did_delete(path)
     end
   end
 end

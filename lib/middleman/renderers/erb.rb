@@ -3,32 +3,27 @@ require "tilt"
 module Middleman::Renderers::ERb
   class << self
     def registered(app)
-      app.extend ClassMethods
+      app.send :include, InstanceMethods
       
       app.set :erb_engine, :erb
-      
-      if !app.respond_to? :erb_engine_prefix
-        app.set :erb_engine_prefix, ::Tilt
-      end
+      app.set :erb_engine_prefix, ::Tilt
       
       app.after_configuration do
-        engine = app.settings.erb_engine
-        
-        if engine.is_a? Symbol
-          engine = app.erb_tilt_template_from_symbol(engine)
+        if erb_engine.is_a? Symbol
+          erb_engine = erb_tilt_template_from_symbol(erb_engine)
         end
         
-        ::Tilt.prefer(engine)
+        ::Tilt.prefer(erb_engine)
       end
     end
     alias :included :registered
   end
   
-  module ClassMethods
+  module InstanceMethods
     def erb_tilt_template_from_symbol(engine)
       engine = engine.to_s
       engine = engine == "erb" ? "ERB" : engine.camelize
-      settings.erb_engine_prefix.const_get("#{engine}Template")
+      erb_engine_prefix.const_get("#{engine}Template")
     end
   end
 end

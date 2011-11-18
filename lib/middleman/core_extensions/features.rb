@@ -30,18 +30,32 @@
 
 module Middleman::CoreExtensions::Features
   
-  # The Feature API is itself a Feature. Mind blowing!
   class << self
-    def registered(app)
-      app.set :default_features, []
+    def included(app)
+      # app.set :default_features, []
       app.define_hook :after_configuration
       app.define_hook :before_configuration
       app.extend ClassMethods
+      app.send :include, InstanceMethods
     end
-    alias :included :registered
   end
 
   module ClassMethods
+    def extensions
+      @extensions ||= []
+    end
+    
+    def register(*new_extensions)
+      @extensions ||= []
+      @extensions += new_extensions
+      new_extensions.each do |extension|
+        extend extension
+        extension.registered(self) if extension.respond_to?(:registered)
+      end
+    end
+  end
+  
+  module InstanceMethods
     # This method is available in the project's `config.rb`.
     # It takes a underscore-separated symbol, finds the appropriate
     # feature module and includes it.
@@ -58,39 +72,39 @@ module Middleman::CoreExtensions::Features
 
       if feature.is_a? String
         feature = feature.camelize
-        feature = Middleman::Features.const_get(feature)
+        feature = ::Middleman::Features.const_get(feature)
       end
       
       puts "== Activating:  #{feature}" if logging?
-      register feature
+      self.class.register feature
     end
     
     # Load features before starting server
-    def new!
+    def initialize
+      super
+    
       run_hook :before_configuration
     
       # Check for and evaluate local configuration
       local_config = File.join(self.root, "config.rb")
       if File.exists? local_config
         puts "== Reading:  Local config" if logging?
-        class_eval File.read(local_config)
-        set :app_file, File.expand_path(local_config)
+        # instance_eval File.read(local_config)
+        # set :app_file, File.expand_path(local_config)
       end
+
+      run_hook :after_configuration
       
       # Add in defaults
       default_features.each do |ext|
-        activate ext
+        # activate ext
       end
-      
-      run_hook :after_configuration
       
       if logging?
         extensions.each do |ext|
           puts "== Extension: #{ext}"
         end
       end
-      
-      super
     end
   end
 end

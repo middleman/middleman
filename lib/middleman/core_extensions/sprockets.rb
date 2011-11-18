@@ -21,7 +21,7 @@ module Middleman::CoreExtensions::Sprockets
       end
       
       app.after_configuration do
-        js_env = Middleman::CoreExtensions::Sprockets::JavascriptEnvironment.new(app)
+        js_env = Middleman::CoreExtensions::Sprockets::JavascriptEnvironment.new(self)
         
         vendor_dir = File.join("vendor", "assets", "javascripts")
         gems_with_js = ::Middleman.rubygems_latest_specs.select do |spec|
@@ -38,13 +38,13 @@ module Middleman::CoreExtensions::Sprockets
         end
         
         # add paths to js_env (vendor/assets/javascripts)
-        app.map "/#{app.js_dir}" do
+        app.map "/#{self.js_dir}" do
           run js_env
         end
       end
         
       app.after_compass_config do
-        css_env = Middleman::CoreExtensions::Sprockets::StylesheetEnvironment.new(app)
+        css_env = Middleman::CoreExtensions::Sprockets::StylesheetEnvironment.new(self)
         
         vendor_dir = File.join("vendor", "assets", "stylesheets")
         gems_with_css = ::Middleman.rubygems_latest_specs.select do |spec|
@@ -60,7 +60,7 @@ module Middleman::CoreExtensions::Sprockets
           css_env.append_path File.join(spec.full_gem_path, app_dir)
         end
         
-        app.map "/#{app.css_dir}" do
+        app.map "/#{self.css_dir}" do
           run css_env
         end
       end
@@ -96,7 +96,7 @@ module Middleman::CoreExtensions::Sprockets
       # Disable css
       # unregister_processor "text/css", ::Sprockets::DirectiveProcessor
       
-      self.js_compressor = app.settings.js_compressor
+      self.js_compressor = app.js_compressor
 
       # configure search paths
       append_path app.js_dir
@@ -115,7 +115,7 @@ module Middleman::CoreExtensions::Sprockets
       # Disable js
       # unregister_processor "application/javascript", ::Sprockets::DirectiveProcessor
       
-      self.css_compressor = app.settings.css_compressor
+      self.css_compressor = app.css_compressor
   
       # configure search paths
       append_path app.css_dir

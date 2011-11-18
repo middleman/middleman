@@ -78,14 +78,15 @@ module Guard
     
     def server_start
       app = ::Middleman.server
-      app.set :environment, (@options[:environment] || "development").to_sym
-      app.set :logging, @options.has_key?(:debug) && (@options[:debug] == "true")
-      
       # Quiet down Guard
       # ENV['GUARD_ENV'] = 'test' if @options[:debug] == "true"
       
-      @app = app.new!
-      app_rack = app.build_new(@app)
+      @app = app.new
+      @app.set :environment, (@options[:environment] || "development").to_sym
+      @app.set :logging, @options.has_key?(:debug) && (@options[:debug] == "true")
+      
+      app_rack = ::Middleman::Base.app
+      app_rack.run @app
 
       @server_job = fork do
         opts = @options.dup
