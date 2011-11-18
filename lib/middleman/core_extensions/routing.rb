@@ -1,12 +1,12 @@
 module Middleman::CoreExtensions::Routing
   class << self
     def registered(app)
-      app.extend ClassMethods
+      app.send :include, InstanceMethods
     end
     alias :included :registered
   end
   
-  module ClassMethods
+  module InstanceMethods
     # Takes a block which allows many pages to have the same layout
     # with_layout :admin do
     #   page "/admin/"
@@ -16,7 +16,7 @@ module Middleman::CoreExtensions::Routing
       old_layout = layout
     
       set :layout, layout_name
-      class_eval(&block) if block_given?
+      instance_exec(&block) if block_given?
     ensure
       set :layout, old_layout
     end

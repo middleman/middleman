@@ -3,27 +3,24 @@ require 'find'
 module Middleman::CoreExtensions::Sitemap
   class << self
     def registered(app)
-      app.extend ClassMethods
-      app.helpers Helpers
-      
-      app.file_changed do |file|
-        sitemap.touch_file(file)
-      end
-      
-      app.file_deleted do |file|
-        sitemap.remove_file(file)
-      end
+      app.send :include, InstanceMethods
     end
     alias :included :registered
   end
   
-  module Helpers
-    def sitemap
-      self.class.sitemap
+  module InstanceMethods
+    def initialize
+      file_changed do |file|
+        sitemap.touch_file(file)
+      end
+    
+      file_deleted do |file|
+        sitemap.remove_file(file)
+      end
+      
+      super
     end
-  end
-  
-  module ClassMethods
+    
     def sitemap
       @sitemap ||= SitemapStore.new(self)
     end
@@ -35,6 +32,12 @@ module Middleman::CoreExtensions::Sitemap
     
     def reroute(url, target)
       sitemap.set_path(url, target)
+    end
+    
+    def provides_metadata(matcher=nil, &block)
+      @_provides_metadata ||= []
+      @_provides_metadata << [block, matcher] if block_given?
+      @_provides_metadata
     end
   end
   
@@ -216,7 +219,7 @@ module Middleman::CoreExtensions::Sitemap
       return false if path == "layout" ||
                       path.match(/^layouts/)
     
-      @app.logger.debug :sitemap_update, Time.now, path if @app.settings.logging?
+      # @app.logger.debug :sitemap_update, Time.now, path if @app.logging?
       set_path(path)
       
       true

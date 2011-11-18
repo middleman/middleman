@@ -6,23 +6,36 @@ module Middleman::CoreExtensions::Data
   class << self
     def registered(app)
       app.set :data_dir, "data"
-      app.extend ClassMethods
-      app.helpers Helpers
-      
-      app.file_changed DataStore.matcher do |file|
-        data.touch_file(file) if file.match(%r{^#{settings.data_dir}\/})
-      end
-      
-      app.file_deleted DataStore.matcher do |file|
-        data.remove_file(file) if file.match(%r{^#{settings.data_dir}\/})
-      end
+      app.send :include, InstanceMethods
     end
     alias :included :registered
   end
   
-  module Helpers
+  module InstanceMethods
+    def initialize
+      file_changed DataStore.matcher do |file|
+        data.touch_file(file) if file.match(%r{^#{data_dir}\/})
+      end
+    
+      file_deleted DataStore.matcher do |file|
+        data.remove_file(file) if file.match(%r{^#{data_dir}\/})
+      end
+      
+      super
+    end
+    
     def data
-      settings.data
+      @data ||= DataStore.new(self)
+    end
+
+    # Makes a hash available on the data var with a given name
+    def data_content(name, content)
+      DataStore.data_content(name, content)
+    end
+
+    # Makes a hash available on the data var with a given name
+    def data_callback(name, &block)
+      DataStore.data_callback(name, block)
     end
   end
   
@@ -49,7 +62,7 @@ module Middleman::CoreExtensions::Data
         return
       end
 
-      @app.logger.debug :data_update, Time.now, basename if @app.settings.logging?
+      # @app.logger.debug :data_update, Time.now, basename if @app.logging?
       @local_data[basename] = recursively_enhance(data)
     end
     
@@ -135,22 +148,6 @@ module Middleman::CoreExtensions::Data
       else
         data
       end
-    end
-  end
-  
-  module ClassMethods
-    def data
-      @data ||= DataStore.new(self)
-    end
-    
-    # Makes a hash available on the data var with a given name
-    def data_content(name, content)
-      DataStore.data_content(name, content)
-    end
-    
-    # Makes a hash available on the data var with a given name
-    def data_callback(name, &block)
-      DataStore.data_callback(name, block)
     end
   end
 end

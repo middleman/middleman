@@ -4,8 +4,10 @@ require 'rack/test'
 require 'find'
 require 'hooks'
 
-SHARED_SERVER = Middleman.server
-SHARED_SERVER.set :environment, :build
+SHARED_SERVER_INST = Middleman.server.inst do
+  set :environment, :build
+end
+SHARED_SERVER = SHARED_SERVER_INST.class
 
 module Middleman
   module ThorActions
@@ -13,10 +15,10 @@ module Middleman
       config = args.last.is_a?(Hash) ? args.pop : {}
       destination = args.first || source
       
-      request_path = destination.sub(/^#{SHARED_SERVER.build_dir}/, "")
+      request_path = destination.sub(/^#{SHARED_SERVER_INST.build_dir}/, "")
       
-      begin
-        destination, request_path = SHARED_SERVER.reroute_builder(destination, request_path)
+      # begin
+        # destination, request_path = SHARED_SERVER.reroute_builder(destination, request_path)
         
         request_path.gsub!(/\s/, "%20")
         response = Middleman::Builder.shared_rack.get(request_path)
@@ -24,8 +26,8 @@ module Middleman
         create_file destination, nil, config do
           response.body
         end if response.status == 200
-      rescue
-      end
+      # rescue
+      #     end
     end
   end
   
@@ -38,9 +40,7 @@ module Middleman
     
     def self.shared_rack
       @shared_rack ||= begin
-        app = SHARED_SERVER.new!
-        app_rack = SHARED_SERVER.build_new(app)
-        mock = ::Rack::MockSession.new(app_rack)
+        mock = ::Rack::MockSession.new(SHARED_SERVER.to_rack_app)
         sess = ::Rack::Test::Session.new(mock)
         response = sess.get("__middleman__")
         sess
@@ -54,13 +54,13 @@ module Middleman
       super
       
       if options.has_key?("relative") && options["relative"]
-        SHARED_SERVER.activate :relative_assets
+        SHARED_SERVER_INST.activate :relative_assets
       end
     end
     
     def source_paths
       @source_paths ||= [
-        SHARED_SERVER.root
+        SHARED_SERVER_INST.root
       ]
     end
     
@@ -71,7 +71,7 @@ module Middleman
       opts[:glob]  = options["glob"]  if options.has_key?("glob")
       opts[:clean] = options["clean"] if options.has_key?("clean")
       
-      action GlobAction.new(self, SHARED_SERVER, opts)
+      action GlobAction.new(self, SHARED_SERVER_INST, opts)
       
       run_hook :after_build
     end

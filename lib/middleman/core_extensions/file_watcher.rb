@@ -11,7 +11,6 @@ module Middleman::CoreExtensions::FileWatcher
           file_did_change(path.sub("#{root}/", ""))
         end
       end
-
     end
     alias :included :registered
   end
@@ -31,8 +30,8 @@ module Middleman::CoreExtensions::FileWatcher
   end
   
   module InstanceMethods
-    def file_changed(*args)
-      self.class.file_changed(*args)
+    def file_changed(*args, &block)
+      self.class.file_changed(*args, &block)
     end
     
     def file_did_change(path)

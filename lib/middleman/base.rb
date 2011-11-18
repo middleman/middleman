@@ -22,6 +22,15 @@ class Middleman::Base
       @app ||= Rack::Builder.new
     end
     
+    def inst(&block)
+      @inst ||= new(&block)
+    end
+    
+    def to_rack_app(&block)
+      app.run inst(&block)
+      app
+    end
+    
     def prototype
       @prototype ||= app.to_app
     end
@@ -154,6 +163,8 @@ class Middleman::Base
       
     super
     
+    instance_exec(&block) if block_given?
+    
     run_hook :initialized
   end
   
@@ -181,39 +192,45 @@ class Middleman::Base
     original_path = @env["PATH_INFO"].dup
     request_path  = full_path(@env["PATH_INFO"].gsub("%20", " "))
   
-    # return not_found if sitemap.ignored_path?(request_path)
+    return not_found if sitemap.ignored_path?(request_path)
     
-    # if sitemap.path_is_proxy?(request_path)
-    #   request["is_proxy"] = true
-    #   request_path = "/" + sitemap.path_target(request_path)
-    # end
+    if sitemap.path_is_proxy?(request_path)
+      # request["is_proxy"] = true
+      request_path = "/" + sitemap.path_target(request_path)
+    end
     
     found_template = resolve_template(request_path)
     return not_found unless found_template
     
+    @current_path = request_path
     path, engine = found_template
     
     # Static File
     return send_file(path) if engine.nil?
     
-    # return unless settings.execute_before_processing!(self, found_template)
+    return unless self.class.execute_before_processing!(self, found_template)
     
-    # context = settings.sitemap.get_context(original_path) || {}
-    # 
-    options = {}
-    # options = context.has_key?(:options) ? context[:options] : {}
-    # options.merge!(request['custom_options'] || {})
-    # 
+    context = sitemap.get_context(original_path) || {}
 
+    options = context.has_key?(:options) ? context[:options] : {}
+    # options.merge!(request['custom_options'] || {})
+    
+    provides_metadata.each do |callback, matcher|
+      next if !matcher.nil? && !path.match(matcher)
+      options.merge!(instance_exec(path, &callback) || {})
+    end
+    
     local_layout = if options.has_key?(:layout)
       options[:layout]
+    elsif %w(.js .css).include?(File.extname(request_path))
+      false
     else
       layout
     end
     
-    # if context.has_key?(:block) && context[:block]
-    #   instance_eval(&context[:block])
-    # end
+    if context.has_key?(:block) && context[:block]
+      instance_eval(&context[:block])
+    end
 
     # locals = request['custom_locals'] || {}
     locals = {}
@@ -221,14 +238,16 @@ class Middleman::Base
     # content_type mime_type(File.extname(request_path))
     @res.status = 200
     
-    output = if layout
+    output = if local_layout
       layout_engine = if options.has_key?(:layout_engine)
         options[:layout_engine]
       else
         engine
       end
       
-      layout_path, *etc = resolve_template(layout, :preferred_engine => layout_engine)
+      layout_path, *etc = resolve_template(local_layout, :preferred_engine => layout_engine)
+      
+      throw "Could not locate layout: #{local_layout}" unless layout_path
     
       render(layout_path, locals) do
         render(path, locals)
@@ -242,9 +261,64 @@ class Middleman::Base
   end
   
 public
+  def extensionless_path(file)
+    @_extensionless_path_cache ||= {}
+    
+    if @_extensionless_path_cache.has_key?(file)
+      @_extensionless_path_cache[file]
+    else
+      path = file.dup
+      end_of_the_line = false
+      while !end_of_the_line
+        file_extension = File.extname(path)
+  
+        if ::Tilt.mappings.has_key?(file_extension.gsub(/^\./, ""))
+          path = path.sub(file_extension, "")
+        else
+          end_of_the_line = true
+        end
+      end
+      
+      @_extensionless_path_cache[file] = path
+      path
+    end
+  end
+
+  def logging?
+    logging
+  end
+  
+  def current_path
+    @current_path || nil
+  end
+  
+  def raw_templates_cache
+    @_raw_templates_cache ||= {}
+  end
+  
+  def read_raw_template(path)
+    if !raw_templates_cache.has_key?(path)
+      raw_templates_cache[path] = File.read(path)
+    end
+    
+    raw_templates_cache[path]
+  end
+  
+  # def compiled_templates_cache
+  #   @_compiled_templates_cache ||= {}
+  # end
+  # 
+  # def read_compiled_template(path, locals, options, &block)
+  #   key = [path, locals, options]
+  #   
+  #   if !raw_templates_cache.has_key?(key)
+  #     raw_templates_cache[key] = yield
+  #   end
+  #   
+  #   raw_templates_cache[key]
+  # end
   
 protected
-
   def full_path(path)
     parts = path ? path.split('/') : []
     if parts.last.nil? || parts.last.split('.').length == 1
@@ -302,29 +376,6 @@ protected
     @_resolved_templates[request_path]
   end
   
-  def extensionless_path(file)
-    @_extensionless_path_cache ||= {}
-    
-    if @_extensionless_path_cache.has_key?(file)
-      @_extensionless_path_cache[file]
-    else
-      path = file.dup
-      end_of_the_line = false
-      while !end_of_the_line
-        file_extension = File.extname(path)
-  
-        if ::Tilt.mappings.has_key?(file_extension.gsub(/^\./, ""))
-          path = path.sub(file_extension, "")
-        else
-          end_of_the_line = true
-        end
-      end
-      
-      @_extensionless_path_cache[file] = path
-      path
-    end
-  end
-  
   def send_file(path)
     
     #       matched_mime = mime_type(File.extname(request_path))
@@ -333,16 +384,14 @@ protected
     
     file      = ::Rack::File.new nil
     file.path = path
-    file.serving# env
+    file.serving(@env)
   end
   
   def render(path, locals = {}, options = {}, &block)
     path = path.to_s
-    template = ::Tilt.new(path, 1, options)
+    
+    body = read_raw_template(path)
+    template = ::Tilt.new(path, 1, options) { body }
     template.render(self, locals, &block)
-  end
-  
-  def logging?
-    logging
   end
 end

@@ -89,8 +89,7 @@ module Middleman::CoreExtensions::Features
       local_config = File.join(self.root, "config.rb")
       if File.exists? local_config
         puts "== Reading:  Local config" if logging?
-        # instance_eval File.read(local_config)
-        # set :app_file, File.expand_path(local_config)
+        instance_eval File.read(local_config)
       end
 
       run_hook :after_configuration

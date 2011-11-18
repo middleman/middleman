@@ -57,17 +57,3 @@ module Middleman::Renderers::Sass
   ::Tilt.register 'scss', ScssPlusCSSFilenameTemplate
   ::Tilt.prefer(ScssPlusCSSFilenameTemplate)
 end
-
-# Use sass settings in Haml filters
-# Other, tilt-based filters (like those used in Slim) will
-# work automatically.
-# module Middleman::Renderers::Haml
-#   module Sass
-#     include ::Haml::Filters::Base
-# 
-#     def render(text)
-#       sass_options = scope.settings.sass
-#       ::Sass::Engine.new(text, sass_options).render
-#     end
-#   end
-# end

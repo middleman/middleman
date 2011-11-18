@@ -4,56 +4,47 @@ require "tilt"
 module Middleman::CoreExtensions::FrontMatter
   class << self
     def registered(app)
-      app.extend ClassMethods
       app.send :include, InstanceMethods
-      
-      app.file_changed FrontMatter.matcher do |file|
-        frontmatter.touch_file(file)
-      end
-      
-      app.file_deleted do |file|
-        frontmatter.remove_file(file)
-      end
-      
-      app.after_configuration do
-        app.before_processing(:front_matter) do |result|
-          if result && Tilt.mappings.has_key?(result[1].to_s)
-            extensionless_path, template_engine = result
-            full_file_path = "#{extensionless_path}.#{template_engine}"
-
-            if app.frontmatter.has_data?(full_file_path)
-              data = app.frontmatter.data(full_file_path).first
-              
-              request['custom_options'] = {}
-              %w(layout layout_engine).each do |opt|
-                if data.has_key?(opt)
-                  request['custom_options'][opt.to_sym] = data[opt]
-                end
-              end
-            else
-              data = {}
-            end
-            
-            # Forward remaining data to helpers
-            app.data_content("page", data)
-          end
-        
-          true
-        end
-      end
     end
     alias :included :registered
   end
   
-  module ClassMethods
+  module InstanceMethods
+    def initialize
+      file_changed FrontMatter.matcher do |file|
+        frontmatter.touch_file(file)
+      end
+      
+      file_deleted do |file|
+        frontmatter.remove_file(file)
+      end
+      
+      provides_metadata FrontMatter.matcher do |path|
+        relative_path = path.sub(source_dir, "")
+        
+        data = if frontmatter.has_data?(relative_path)
+          frontmatter.data(relative_path).first
+        else
+          {}
+        end
+        
+        # Forward remaining data to helpers
+        data_content("page", data)
+        
+        %w(layout layout_engine).each do |opt|
+          if data.has_key?(opt)
+            data[opt.to_sym] = data.delete(opt)
+          end
+        end
+        
+        data
+      end
+        
+      super
+    end
+    
     def frontmatter
       @frontmatter ||= FrontMatter.new(self)
-    end
-  end
-  
-  module InstanceMethods
-    def frontmatter
-      settings.frontmatter
     end
   end
   
@@ -64,7 +55,7 @@ module Middleman::CoreExtensions::FrontMatter
     
     def initialize(app)
       @app = app
-      @source ||= File.expand_path(@app.views, @app.root)
+      @source = File.expand_path(@app.views, @app.root)
       @local_data = {}
     end
     
@@ -78,22 +69,22 @@ module Middleman::CoreExtensions::FrontMatter
       
       file = File.expand_path(file, @app.root)
       content = File.read(file)
-      file = file.sub(@source, "")
+      file = file.sub(@app.source_dir, "")
       
-      @app.logger.debug :frontmatter_update, Time.now, file if @app.settings.logging?
+      # @app.logger.debug :frontmatter_update, Time.now, file if @app.logging?
       result = parse_front_matter(content)
         
       if result
         @local_data[file] = result
         path = @app.extensionless_path(file)
-        @app.settings.templates[path.to_sym] = [result[1], path.to_s, 1]
+        @app.raw_templates_cache[path] = result[1]
       end
     end
     
     def remove_file(file)
       file = File.expand_path(file, @app.root)
-      file = file.sub(@source, "")
-      @app.logger.debug :frontmatter_remove, Time.now, file if @app.settings.logging?
+      file = file.sub(@app.source_dir, "")
+      # @app.logger.debug :frontmatter_remove, Time.now, file if @app.logging?
       
       if @local_data.has_key?(file)
         @local_data.delete(file) 

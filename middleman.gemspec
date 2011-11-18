@@ -39,9 +39,10 @@ Gem::Specification.new do |s|
   
   s.add_dependency("guard", ["~> 0.8.8"])
   # s.add_dependency("eventmachine", ["1.0.0.beta.4"])
-  # s.add_dependency("middleman-livereload", ["~> 0.2.0"])
   
   # Development and test
+  s.add_development_dependency("slim")
+  s.add_development_dependency("maruku")
   s.add_development_dependency("coffee-filter", ["~> 0.1.1"])
   s.add_development_dependency("liquid", ["~> 2.2.0"])
   s.add_development_dependency("cucumber", ["~> 1.1.0"])
