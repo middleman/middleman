@@ -49,7 +49,7 @@ module Middleman::CoreExtensions::Sitemap
       @generic_paths = false
       @proxied_paths = false
       
-      build_static_map
+      # build_static_map
     end
     
     # Check to see if we know about a specific path
@@ -216,6 +216,7 @@ module Middleman::CoreExtensions::Sitemap
       return false if path == "layout" ||
                       path.match(/^layouts/)
     
+      @app.logger.debug :sitemap_update, Time.now, path if @app.settings.logging?
       set_path(path)
       
       true

@@ -35,6 +35,7 @@ module Middleman::CoreExtensions::Features
     def registered(app)
       app.set :default_features, []
       app.define_hook :after_configuration
+      app.define_hook :before_configuration
       app.extend ClassMethods
     end
     alias :included :registered
@@ -66,6 +67,8 @@ module Middleman::CoreExtensions::Features
     
     # Load features before starting server
     def new!
+      run_hook :before_configuration
+    
       # Check for and evaluate local configuration
       local_config = File.join(self.root, "config.rb")
       if File.exists? local_config

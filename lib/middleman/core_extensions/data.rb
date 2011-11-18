@@ -34,15 +34,10 @@ module Middleman::CoreExtensions::Data
     def initialize(app)
       @app = app
       @local_data = {}
-      
-      data_path  = File.join(@app.root, @app.data_dir)
-      local_path = File.join(data_path, "*.{yaml,yml,json}")
-      Dir[local_path].each do |f|
-        touch_file(f)
-      end
     end
     
     def touch_file(file)
+      file = File.expand_path(file, @app.root)
       extension = File.extname(file)
       basename  = File.basename(file, extension)
       
@@ -54,6 +49,7 @@ module Middleman::CoreExtensions::Data
         return
       end
 
+      @app.logger.debug :data_update, Time.now, basename if @app.settings.logging?
       @local_data[basename] = recursively_enhance(data)
     end
     

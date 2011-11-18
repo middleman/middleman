@@ -66,14 +66,6 @@ module Middleman::CoreExtensions::FrontMatter
       @app = app
       @source ||= File.expand_path(@app.views, @app.root)
       @local_data = {}
-      
-      Dir[File.join(@source, "**/*")].each do |file|
-        next if file.match(/\/\./) ||
-                (file.match(/\/_/) && !file.match(/\/__/)) ||
-                !file.match(self.class.matcher)
-        
-        touch_file(file.sub(@app.root, "").sub(/^\//, ""))
-      end
     end
     
     def has_data?(path)
