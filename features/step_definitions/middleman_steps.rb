@@ -1,23 +1,18 @@
 Given /^a clean server$/ do
-  @server = Middleman.server
-  @server.set :show_exceptions, false
+  @initialize_commands = []
 end
 
 Given /^"([^\"]*)" feature is "([^\"]*)"$/ do |feature, state|
-  @server = Middleman.server
-  @server.set :show_exceptions, false
+  @initialize_commands ||= []
   
   if state == "enabled"
-    @server.activate(feature.to_sym)
-  end  
-  
-  @server.set :environment, @current_env || :development
+    @initialize_commands << lambda { activate(feature.to_sym) }
+  end
 end
 
 Given /^"([^\"]*)" is set to "([^\"]*)"$/ do |variable, value|
-  @server ||= Middleman.server
-  @server.set :show_exceptions, false
-  @server.set variable.to_sym, value
+  @initialize_commands ||= []
+  @initialize_commands << lambda { set(variable.to_sym, value) }
 end
 
 Given /^current environment is "([^\"]*)"$/ do |env|
@@ -25,13 +20,22 @@ Given /^current environment is "([^\"]*)"$/ do |env|
 end
 
 Given /^the Server is running at "([^\"]*)"$/ do |app_path|
-  @server ||= Middleman.server
-  @server.set :show_exceptions, false
-  root = File.dirname(File.dirname(File.dirname(__FILE__)))
-  @server.set :root, File.join(root, "fixtures", app_path)
-  @app = @server.new!
-  app_rack = @server.build_new(@app)
-  @browser = Rack::Test::Session.new(Rack::MockSession.new(app_rack))
+  root_dir = File.dirname(File.dirname(File.dirname(__FILE__)))
+
+  initialize_commands = @initialize_commands || []
+  initialize_commands.unshift lambda { 
+    set :root, File.join(root_dir, "fixtures", app_path)
+    set :environment, @current_env || :development
+  }
+  
+  @server_inst = Middleman.server.inst do
+    initialize_commands.each do |p|
+      instance_exec(&p)
+    end
+  end
+  
+  app_rack = @server_inst.class.to_rack_app
+  @browser = ::Rack::Test::Session.new(::Rack::MockSession.new(app_rack))
 end
 
 When /^I go to "([^\"]*)"$/ do |url|

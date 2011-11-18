@@ -11,3 +11,4 @@ docs
 .rbenv-version
 fixtures/test-app/build
 .*.swp
+build

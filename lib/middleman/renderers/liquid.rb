@@ -9,13 +9,8 @@ module Middleman::Renderers::Liquid
         app.after_configuration do
           Liquid::Template.file_system = Liquid::LocalFileSystem.new(self.source_dir)
             
-          app.before_processing(:liquid) do |result|
-            if result && result[1] == :liquid
-              request['custom_locals'] ||= {}
-              request['custom_locals'][:data] = data.to_h
-            end
-
-            true
+          provides_metadata %r{\.liquid$} do |path|
+            @locals.merge!(:data => data.to_h)
           end
         end
       rescue LoadError

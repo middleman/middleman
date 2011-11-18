@@ -9,6 +9,7 @@ require "active_support/core_ext/string/inflections"
 
 class Middleman::Base
   include Hooks
+  define_hook :before
   define_hook :build_config
   define_hook :development_config
   
@@ -44,7 +45,7 @@ class Middleman::Base
     end
     
     def map(map, &block)
-      app.map(map, &block)
+      # app.map(map, &block)
     end
     
     def helpers(*extensions, &block)
@@ -79,9 +80,10 @@ class Middleman::Base
     end
   end
   
-  def set(key, value)
+  def set(key, value=nil, &block)
     setter = "#{key}=".to_sym
     self.class.send(:attr_accessor, key) if !respond_to?(setter)
+    value = block if block_given?
     send(setter, value)
   end
   
@@ -159,28 +161,37 @@ class Middleman::Base
       set(k, v)
     end
     
+    instance_exec(&block) if block_given?
+    
     set :source_dir, File.join(root, source)
       
     super
     
-    instance_exec(&block) if block_given?
-    
     run_hook :initialized
   end
+  
+  attr :env
+  attr :req
+  attr :res
+  attr :options
+  attr :locals
   
   def call(env)
     @env = env
     @req = Rack::Request.new(env)
     @res = Rack::Response.new
 
-    process_request
-  end
+    catch(:halt) do
+      process_request
 
-  # Custom 404 handler (to be styled)
-  # app.error Sinatra::NotFound do
-  #   content_type 'text/html'
-  #   "<html><body><h1>File Not Found</h1><p>#{request.path_info}</p></body>"
-  # end
+      res.status = 404
+      res.finish
+    end
+  end
+  
+  def halt(response)
+    throw :halt, response
+  end
   
   # Convenience methods to check if we're in a mode
   def development?; environment == :development; end
@@ -188,14 +199,15 @@ class Middleman::Base
   
   # Internal method to look for templates and evaluate them if found
   def process_request
+    run_hook :before
+  
     # Normalize the path and add index if we're looking at a directory
-    original_path = @env["PATH_INFO"].dup
-    request_path  = full_path(@env["PATH_INFO"].gsub("%20", " "))
+    original_path = env["PATH_INFO"].dup
+    request_path  = full_path(env["PATH_INFO"].gsub("%20", " "))
   
     return not_found if sitemap.ignored_path?(request_path)
     
     if sitemap.path_is_proxy?(request_path)
-      # request["is_proxy"] = true
       request_path = "/" + sitemap.path_target(request_path)
     end
     
@@ -212,12 +224,12 @@ class Middleman::Base
     
     context = sitemap.get_context(original_path) || {}
 
-    options = context.has_key?(:options) ? context[:options] : {}
-    # options.merge!(request['custom_options'] || {})
+    @options = context.has_key?(:options) ? context[:options] : {}
+    @locals  = context.has_key?(:locals)  ? context[:locals] : {}
     
     provides_metadata.each do |callback, matcher|
       next if !matcher.nil? && !path.match(matcher)
-      options.merge!(instance_exec(path, &callback) || {})
+      instance_exec(path, &callback)
     end
     
     local_layout = if options.has_key?(:layout)
@@ -231,12 +243,9 @@ class Middleman::Base
     if context.has_key?(:block) && context[:block]
       instance_eval(&context[:block])
     end
-
-    # locals = request['custom_locals'] || {}
-    locals = {}
     
     # content_type mime_type(File.extname(request_path))
-    @res.status = 200
+    res.status = 200
     
     output = if local_layout
       layout_engine = if options.has_key?(:layout_engine)
@@ -256,8 +265,8 @@ class Middleman::Base
       render(path, locals)
     end
     
-    @res.write output
-    @res.finish
+    res.write output
+    halt res.finish
   end
   
 public
@@ -318,7 +327,6 @@ public
   #   raw_templates_cache[key]
   # end
   
-protected
   def full_path(path)
     parts = path ? path.split('/') : []
     if parts.last.nil? || parts.last.split('.').length == 1
@@ -329,14 +337,13 @@ protected
   
   def not_found
     @res.status == 404
-    @res.write "<html><body><h1>File Not Found</h1><p>#{@env["PATH_INFO"]}</p></body>"
+    @res.write "<html><body><h1>File Not Found</h1><p>#{env["PATH_INFO"]}</p></body>"
     @res.finish
   end
   
   def resolve_template(request_path, options={})
     request_path = request_path.to_s
     @_resolved_templates ||= {}
-    
     if !@_resolved_templates.has_key?(request_path)
       relative_path = request_path.sub(%r{^/}, "")
       on_disk_path  = File.expand_path(relative_path, source_dir)
@@ -384,7 +391,7 @@ protected
     
     file      = ::Rack::File.new nil
     file.path = path
-    file.serving(@env)
+    file.serving(env)
   end
   
   def render(path, locals = {}, options = {}, &block)
