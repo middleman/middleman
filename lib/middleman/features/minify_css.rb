@@ -2,7 +2,7 @@ module Middleman::Features::MinifyCss
   class << self
     def registered(app)
       require "middleman/features/minify_css/cssmin"
-      app.before_configuration do
+      app.after_configuration do
         set :css_compressor, ::CSSMin
       end
     end

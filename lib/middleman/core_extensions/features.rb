@@ -35,12 +35,18 @@ module Middleman::CoreExtensions::Features
       # app.set :default_features, []
       app.define_hook :after_configuration
       app.define_hook :before_configuration
+      app.define_hook :build_config
+      app.define_hook :development_config
       app.extend ClassMethods
       app.send :include, InstanceMethods
     end
   end
 
   module ClassMethods
+    def configure(env, &block)
+      send("#{env}_config", &block)
+    end
+    
     def extensions
       @extensions ||= []
     end
@@ -66,6 +72,7 @@ module Middleman::CoreExtensions::Features
     #
     #     activate MyFeatureModule
     def activate(feature)
+      $stderr.puts "Activate: #{feature}"
       if feature.is_a? Symbol
         feature = feature.to_s 
       end
@@ -77,6 +84,10 @@ module Middleman::CoreExtensions::Features
       
       puts "== Activating:  #{feature}" if logging?
       self.class.register feature
+    end
+
+    def configure(env, &block)
+      self.class.configure(env, &block)
     end
     
     # Load features before starting server
@@ -91,7 +102,10 @@ module Middleman::CoreExtensions::Features
         puts "== Reading:  Local config" if logging?
         instance_eval File.read(local_config)
       end
-
+      
+      run_hook :build_config if build?
+      run_hook :development_config if development?
+      
       run_hook :after_configuration
       
       # Add in defaults
@@ -100,10 +114,12 @@ module Middleman::CoreExtensions::Features
       end
       
       if logging?
-        extensions.each do |ext|
+        self.class.extensions.each do |ext|
           puts "== Extension: #{ext}"
         end
       end
+      
+      run_hook :ready
     end
   end
 end

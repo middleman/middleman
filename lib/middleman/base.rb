@@ -1,7 +1,8 @@
 require "rack"
 require "tilt"
 require "i18n"
-require "hooks"
+require "middleman/vendor/hooks-0.2.0/lib/hooks"
+
 require "active_support"
 require "active_support/json"
 require "active_support/core_ext/string/inflections"
@@ -9,8 +10,7 @@ require "active_support/core_ext/string/inflections"
 class Middleman::Base
   include Hooks
   define_hook :before
-  define_hook :build_config
-  define_hook :development_config
+  define_hook :ready
   
   class << self
     def reset!
@@ -76,10 +76,6 @@ class Middleman::Base
         inst.instance_exec(resolved_template, &block)
       end
     end
-    
-    def configure(env, &block)
-      send("#{env}_config", &block)
-    end
   end
   
   def set(key, value=nil, &block)
@@ -87,10 +83,6 @@ class Middleman::Base
     self.class.send(:attr_accessor, key) if !respond_to?(setter)
     value = block if block_given?
     send(setter, value)
-  end
-  
-  def configure(env, &block)
-    self.class.configure(env, &block)
   end
   
   # Basic Sinatra config

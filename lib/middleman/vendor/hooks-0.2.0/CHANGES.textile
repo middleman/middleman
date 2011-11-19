@@ -1,0 +1,9 @@
+h2. 0.2.0
+
+h3. Changes
+  * Callback blocks are now executed on the instance using @instance_exec@. If you need to access the class (former context) use @self.class@.
+
+h2. 0.1.4
+
+h3. Bugfixes
+  * An uninitialized @inheritable_attr@ doesn't crash since it is not cloned anymore. Note that an uncloneable attribute value still causes an exception.

@@ -5,6 +5,7 @@ require "sprockets"
 module Middleman::CoreExtensions::Sprockets
   class << self
     def registered(app)
+      app.define_hook :before_sprockets
       app.set :js_compressor, false
       app.set :css_compressor, false
       
@@ -20,30 +21,28 @@ module Middleman::CoreExtensions::Sprockets
         end
       end
       
-      app.after_configuration do
+      app.ready do
         js_env = Middleman::CoreExtensions::Sprockets::JavascriptEnvironment.new(self)
-        
+
         vendor_dir = File.join("vendor", "assets", "javascripts")
         gems_with_js = ::Middleman.rubygems_latest_specs.select do |spec|
           ::Middleman.spec_has_file?(spec, vendor_dir)
         end.each do |spec|
           js_env.append_path File.join(spec.full_gem_path, vendor_dir)
         end
-        
+
         app_dir = File.join("app", "assets", "javascripts")
         gems_with_js = ::Middleman.rubygems_latest_specs.select do |spec|
           ::Middleman.spec_has_file?(spec, app_dir)
         end.each do |spec|
           js_env.append_path File.join(spec.full_gem_path, app_dir)
         end
-        
+
         # add paths to js_env (vendor/assets/javascripts)
         map "/#{self.js_dir}" do
           run js_env
         end
-      end
-        
-      app.after_compass_config do
+
         css_env = Middleman::CoreExtensions::Sprockets::StylesheetEnvironment.new(self)
          
         vendor_dir = File.join("vendor", "assets", "stylesheets")

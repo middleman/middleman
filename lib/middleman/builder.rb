@@ -2,7 +2,6 @@ require "thor"
 require "thor/group"
 require 'rack/test'
 require 'find'
-require 'hooks'
 
 SHARED_SERVER_INST = Middleman.server.inst do
   set :environment, :build
@@ -35,9 +34,6 @@ module Middleman
   class Builder < Thor::Group
     include Thor::Actions
     include Middleman::ThorActions
-    include ::Hooks
-    
-    define_hook :after_build
     
     def self.shared_rack
       @shared_rack ||= begin
@@ -74,12 +70,7 @@ module Middleman
       
       action GlobAction.new(self, SHARED_SERVER_INST, opts)
       
-      run_hook :after_build
-    end
-    
-    # Old API
-    def self.after_run(name, &block)
-      after_build(&block)
+      SHARED_SERVER_INST.run_hook :after_build, self
     end
   end
   
