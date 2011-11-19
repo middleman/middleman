@@ -1,3 +1,7 @@
+3.0.pre
+====
+Rewritten to work directly with Rack (Sinatra apps can still be mounted)
+
 2.1.pre
 ====
 Finally support Compass in Sprockets! Thanks to @xdite and @petebrowne
