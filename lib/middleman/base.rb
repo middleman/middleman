@@ -224,8 +224,8 @@ class Middleman::Base
     
     return unless self.class.execute_before_processing!(self, found_template)
     
-    context = sitemap.get_context(@original_path) || {}
-
+    context = sitemap.get_context(full_path(@original_path)) || {}
+    
     @options = context.has_key?(:options) ? context[:options] : {}
     @locals  = context.has_key?(:locals)  ? context[:locals] : {}
     
@@ -257,6 +257,11 @@ class Middleman::Base
       end
       
       layout_path, *etc = resolve_template(local_layout, :preferred_engine => layout_engine)
+      
+      if !layout_path
+        local_layout = File.join("layouts", local_layout.to_s)
+        layout_path, *etc = resolve_template(local_layout, :preferred_engine => layout_engine)
+      end
       
       throw "Could not locate layout: #{local_layout}" unless layout_path
     
