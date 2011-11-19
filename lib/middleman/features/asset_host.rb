@@ -7,12 +7,12 @@ module Middleman::Features::AssetHost
         end
       end
 
-      app.register_asset_handler :asset_host do |path, prefix, request|
-        original_output = app.before_asset_handler(:asset_host, path, prefix, request)
+      app.register_asset_handler :asset_host do |path, prefix|
+        original_output = self.before_asset_handler(:asset_host, path, prefix)
 
         valid_extensions = %w(.png .gif .jpg .jpeg .js .css)
 
-        asset_prefix = app.asset_host.call(original_output)
+        asset_prefix = self.asset_host.call(original_output)
 
         File.join(asset_prefix, original_output)
       end

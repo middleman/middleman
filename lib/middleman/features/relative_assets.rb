@@ -5,20 +5,20 @@ module Middleman::Features::RelativeAssets
         config.relative_assets = true
       end
 
-      app.register_asset_handler :relative_assets do |path, prefix, request|
+      app.register_asset_handler :relative_assets do |path, prefix|
         begin
-          prefix = app.images_dir if prefix == app.http_images_path
+          prefix = self.images_dir if prefix == self.http_images_path
         rescue
         end
 
         if path.include?("://")
-          app.before_asset_handler(:relative_assets, path, prefix, request)
+          self.before_asset_handler(:relative_assets, path, prefix)
         elsif path[0,1] == "/"
           path
         else
           path = File.join(prefix, path) if prefix.length > 0
-          request_path = request.path_info.dup
-          request_path << app.index_file if path.match(%r{/$})
+          request_path = @request_path.dup
+          request_path << self.index_file if path.match(%r{/$})
           request_path.gsub!(%r{^/}, '')
           parts = request_path.split('/')
 

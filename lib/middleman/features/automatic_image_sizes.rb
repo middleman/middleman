@@ -3,25 +3,28 @@ module Middleman::Features::AutomaticImageSizes
     def registered(app)
       require "middleman/features/automatic_image_sizes/fastimage"
 
-      app.helpers Helpers
+      app.send :include, InstanceMethods
     end
     alias :included :registered
   end
   
-  module Helpers
+  module InstanceMethods
     def image_tag(path, params={})
-      if (!params[:width] || !params[:height]) && !path.include?("://")
+      if !params.has_key?(:width) && !params.has_key?(:height) && !path.include?("://")
         params[:alt] ||= ""
-        http_prefix = settings.http_images_path rescue settings.images_dir
+        http_prefix = self.http_images_path rescue self.images_dir
 
         begin
-          real_path = File.join(settings.views, settings.images_dir, path)
-          if File.exists? real_path
-            dimensions = ::FastImage.size(real_path, :raise_on_failure => true)
-            params[:width]  ||= dimensions[0]
-            params[:height] ||= dimensions[1]
+          real_path = File.join(self.views, self.images_dir, path)
+          full_path = File.expand_path(real_path, self.root)
+          http_prefix = self.http_images_path rescue self.images_dir
+          if File.exists? full_path
+            dimensions = ::FastImage.size(full_path, :raise_on_failure => true)
+            params[:width]  = dimensions[0]
+            params[:height] = dimensions[1]
           end
         rescue
+          # $stderr.puts params.inspect
         end
       end
       

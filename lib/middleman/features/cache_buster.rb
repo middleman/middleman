@@ -1,8 +1,8 @@
 module Middleman::Features::CacheBuster
   class << self
     def registered(app)
-      app.register_asset_handler :cache_buster do |path, prefix, request|
-        http_path = app.before_asset_handler(:cache_buster, path, prefix, request)
+      app.register_asset_handler :cache_buster do |path, prefix|
+        http_path = app.before_asset_handler(:cache_buster, path, prefix)
 
         if http_path.include?("://") || !%w(.css .png .jpg .js .gif).include?(File.extname(http_path))
           http_path

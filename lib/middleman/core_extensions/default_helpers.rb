@@ -1,7 +1,26 @@
+require "middleman/vendor/padrino-core-0.10.5/lib/padrino-core/support_lite"
+require 'i18n'
+require 'enumerator'
+require 'active_support/core_ext/string/conversions'  # to_date
+require 'active_support/core_ext/float/rounding'      # round
+require 'active_support/option_merger'                # with_options
+require 'active_support/core_ext/object/with_options' # with_options
+require 'active_support/inflector'                    # humanize
+
+FileSet.glob_require('../vendor/padrino-helpers-0.10.5/lib/padrino-helpers/**/*.rb', __FILE__)
+
 module Middleman::CoreExtensions::DefaultHelpers
   class << self
     def registered(app)
-      # Middleman Helpers
+      app.helpers ::Padrino::Helpers::OutputHelpers
+      app.helpers ::Padrino::Helpers::TagHelpers
+      app.helpers ::Padrino::Helpers::AssetTagHelpers
+      app.helpers ::Padrino::Helpers::FormHelpers
+      app.helpers ::Padrino::Helpers::FormatHelpers
+      app.helpers ::Padrino::Helpers::RenderHelpers
+      app.helpers ::Padrino::Helpers::NumberHelpers
+      app.helpers ::Padrino::Helpers::TranslationHelpers
+      
       app.helpers Helpers
     end
     alias :included :registered
