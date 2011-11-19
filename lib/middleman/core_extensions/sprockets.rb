@@ -38,7 +38,7 @@ module Middleman::CoreExtensions::Sprockets
         end
         
         # add paths to js_env (vendor/assets/javascripts)
-        app.map "/#{self.js_dir}" do
+        map "/#{self.js_dir}" do
           run js_env
         end
       end
@@ -70,10 +70,7 @@ module Middleman::CoreExtensions::Sprockets
 
   class MiddlemanEnvironment < ::Sprockets::Environment
     def initialize(app)
-      full_path = app.views
-      full_path = File.join(app.root, app.views) unless app.views.include?(app.root)
-      
-      super File.expand_path(full_path)
+      super app.source_dir
       
       # Make the app context available to Sprockets
       context_class.send(:define_method, :app) { app }
@@ -92,12 +89,9 @@ module Middleman::CoreExtensions::Sprockets
   class JavascriptEnvironment < MiddlemanEnvironment
     def initialize(app)
       super
-
-      # Disable css
-      # unregister_processor "text/css", ::Sprockets::DirectiveProcessor
       
       self.js_compressor = app.js_compressor
-
+      
       # configure search paths
       append_path app.js_dir
     end
@@ -111,9 +105,6 @@ module Middleman::CoreExtensions::Sprockets
   class StylesheetEnvironment < MiddlemanEnvironment
     def initialize(app)
       super
-  
-      # Disable js
-      # unregister_processor "application/javascript", ::Sprockets::DirectiveProcessor
       
       self.css_compressor = app.css_compressor
   

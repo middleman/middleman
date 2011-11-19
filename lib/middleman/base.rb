@@ -218,7 +218,7 @@ class Middleman::Base
     
     @current_path = @request_path.dup
     path, engine = found_template
-    
+
     # Static File
     return send_file(path) if engine.nil?
     

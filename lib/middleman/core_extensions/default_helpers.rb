@@ -27,11 +27,6 @@ module Middleman::CoreExtensions::DefaultHelpers
   end
   
   module Helpers
-    
-    # TODO: Implement
-    def javascript_include_tag(path)
-    end
-    
     def auto_stylesheet_link_tag(separator="/")
       auto_tag(:css, separator) do |path|
         stylesheet_link_tag path
