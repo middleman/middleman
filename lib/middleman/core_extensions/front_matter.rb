@@ -69,14 +69,14 @@ module Middleman::CoreExtensions::FrontMatter
       
       file = File.expand_path(file, @app.root)
       content = File.read(file)
-      file = file.sub(@app.source_dir, "")
       
       # @app.logger.debug :frontmatter_update, Time.now, file if @app.logging?
       result = parse_front_matter(content)
         
       if result
+        file = file.sub(@app.source_dir, "")
         @local_data[file] = result
-        path = @app.extensionless_path(file)
+        path = File.join(@app.source_dir, file)
         @app.raw_templates_cache[path] = result[1]
       end
     end

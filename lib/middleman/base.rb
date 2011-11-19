@@ -316,11 +316,11 @@ public
   end
   
   def read_raw_template(path)
-    if !raw_templates_cache.has_key?(path)
-      raw_templates_cache[path] = File.read(path)
+    if raw_templates_cache.has_key?(path)
+      raw_templates_cache[path]
+    else
+      File.read(path)
     end
-    
-    raw_templates_cache[path]
   end
   
   def map(map, &block)
