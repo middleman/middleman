@@ -1,7 +1,13 @@
 module Middleman::CoreExtensions::Rendering
   class << self
     def registered(app)
+      # Autoload
       require "coffee_script"
+      
+      begin
+        require "slim"
+      rescue LoadError
+      end
       
       # Activate custom renderers
       app.register Middleman::Renderers::Sass

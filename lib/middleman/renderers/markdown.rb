@@ -3,7 +3,13 @@ module Middleman::Renderers::Markdown
     def registered(app)
       app.send :include, InstanceMethods
       
-      app.set :markdown_engine, nil
+      begin
+        require "maruku"
+        app.set :markdown_engine, :maruku
+      rescue LoadError
+        app.set :markdown_engine, nil
+      end
+
       app.set :markdown_engine_prefix, ::Tilt
       
       app.after_configuration do
