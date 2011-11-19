@@ -1,34 +1,12 @@
 module Middleman::Features::CacheBuster
   class << self
     def registered(app)
-      app.register_asset_handler :cache_buster do |path, prefix|
-        http_path = app.before_asset_handler(:cache_buster, path, prefix)
-
-        if http_path.include?("://") || !%w(.css .png .jpg .js .gif).include?(File.extname(http_path))
-          http_path
-        else
-          begin
-            prefix = app.images_dir if prefix == app.http_images_path
-          rescue
-          end
-
-          real_path_static  = File.join(app.views, prefix, path)
-
-          if File.readable?(real_path_static)
-            http_path << "?" + File.mtime(real_path_static).strftime("%s") 
-          elsif app.build?
-            real_path_dynamic = File.join(app.root, app.build_dir, prefix, path)
-            http_path << "?" + File.mtime(real_path_dynamic).strftime("%s") if File.readable?(real_path_dynamic)
-          end
-
-          http_path
-        end
-      end
-
+      app.send :include, InstanceMethods
+      
       app.compass_config do |config|
         config.asset_cache_buster do |path, real_path|
           real_path = real_path.path if real_path.is_a? File
-          real_path = real_path.gsub(File.join(app.root, app.build_dir), app.views)
+          real_path = real_path.gsub(File.join(self.root, self.build_dir), self.views)
           if File.readable?(real_path)
             File.mtime(real_path).strftime("%s") 
           else
@@ -38,5 +16,40 @@ module Middleman::Features::CacheBuster
       end
     end
     alias :included :registered
+  end
+  
+  module InstanceMethods
+    def asset_url(path, prefix="")
+      http_path = super
+
+      if http_path.include?("://") || !%w(.css .png .jpg .js .gif).include?(File.extname(http_path))
+        http_path
+      else
+        begin
+          prefix = self.images_dir if prefix == self.http_images_path
+        rescue
+        end
+
+        real_path_static = File.join(prefix, path)
+        result = resolve_template(real_path_static)
+        
+        if self.build?
+          real_path_dynamic = File.join(self.build_dir, prefix, path)
+          real_path_dynamic = File.expand_path(real_path_dynamic, self.root)
+          http_path << "?" + File.mtime(real_path_dynamic).strftime("%s") if File.readable?(real_path_dynamic)
+        elsif result
+          if result[1].nil?
+            http_path << "?" + File.mtime(result[0]).strftime("%s")
+          else
+            # It's a template, possible with partials. We can't really know when
+            # it's updated, so generate fresh cache buster every time durin
+            # developement
+            http_path << "?" + Time.now.strftime("%s")
+          end
+        end
+        
+        http_path
+      end
+    end
   end
 end

@@ -27,7 +27,8 @@ class Middleman::Base
     end
     
     def to_rack_app(&block)
-      app.run inst(&block)
+      inner_app = inst(&block)
+      app.map("/") { run inner_app }
       app
     end
     
@@ -44,7 +45,7 @@ class Middleman::Base
     end
     
     def map(map, &block)
-      # app.map(map, &block)
+      app.map(map, &block)
     end
     
     def helpers(*extensions, &block)
@@ -60,6 +61,8 @@ class Middleman::Base
       @defaults ||= {}
       @defaults[key] = value
     end
+    
+    def asset_stamp; false; end
     
     def before_processing(name=:unnamed, idx=-1, &block)
       @before_processes ||= []
@@ -310,6 +313,10 @@ public
     end
     
     raw_templates_cache[path]
+  end
+  
+  def map(map, &block)
+    self.class.map(map, &block)
   end
   
   # def compiled_templates_cache

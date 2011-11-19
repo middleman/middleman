@@ -23,4 +23,4 @@ Feature: Generate mtime-based query string for busting browser caches
     Given "cache_buster" feature is "enabled"
     And the Server is running at "test-app"
     When I go to "/cache-buster.html"
-    Then I should not see "?"
+    Then I should see "?"
