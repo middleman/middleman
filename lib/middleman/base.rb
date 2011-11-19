@@ -11,6 +11,7 @@ class Middleman::Base
   include Hooks
   define_hook :before
   define_hook :ready
+  define_hook :initialized
   
   class << self
     def reset!
@@ -149,7 +150,6 @@ class Middleman::Base
   # Parse YAML from templates
   register Middleman::CoreExtensions::FrontMatter
   
-  define_hook :initialized
   def initialize(&block)
     self.class.superclass.defaults.each do |k, v|
       set(k, v)
@@ -282,10 +282,8 @@ public
       path = file.dup
       end_of_the_line = false
       while !end_of_the_line
-        file_extension = File.extname(path)
-  
-        if ::Tilt.mappings.has_key?(file_extension.gsub(/^\./, ""))
-          path = path.sub(file_extension, "")
+        if !Tilt[path].nil?
+          path = path.sub(File.extname(path), "")
         else
           end_of_the_line = true
         end

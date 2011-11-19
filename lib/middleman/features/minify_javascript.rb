@@ -3,7 +3,7 @@ module Middleman::Features::MinifyJavascript
     def registered(app)
       require 'uglifier'
       app.after_configuration do
-        app.set :js_compressor, ::Uglifier.new
+        set :js_compressor, ::Uglifier.new
       end
       app.use InlineJavascriptRack
     end

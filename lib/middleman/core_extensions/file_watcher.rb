@@ -5,7 +5,16 @@ module Middleman::CoreExtensions::FileWatcher
     def registered(app)
       app.extend ClassMethods
       app.send :include, InstanceMethods
+      
       app.before_configuration do
+        data_path = File.join(root, data_dir)
+        Find.find(data_path) do |path|
+          next if File.directory?(path)
+          file_did_change(path.sub("#{root}/", ""))
+        end if File.exists?(data_path)
+      end
+      
+      app.ready do
         Find.find(root) do |path|
           next if File.directory?(path)
           file_did_change(path.sub("#{root}/", ""))

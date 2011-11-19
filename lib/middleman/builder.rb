@@ -39,7 +39,7 @@ module Middleman
       @shared_rack ||= begin
         mock = ::Rack::MockSession.new(SHARED_SERVER.to_rack_app)
         sess = ::Rack::Test::Session.new(mock)
-        # response = sess.get("__middleman__")
+        response = sess.get("__middleman__")
         sess
       end
     end
@@ -133,17 +133,16 @@ module Middleman
     end
     
     def execute!
-      paths = @app.sitemap.all_paths.sort do |a, b|
-        a_dir = a.split("/").first
-        b_dir = b.split("/").first
+      sort_order = %w(.png .jpeg .jpg .gif .bmp .ico .woff .otf .ttf .eot .js .css)
       
-        if a_dir == @app.images_dir
-          -1
-        elsif b_dir == @app.images_dir
-          1
-        else
-          0
-        end
+      paths = @app.sitemap.all_paths.sort do |a, b|
+        a_ext = File.extname(a)
+        b_ext = File.extname(b)
+        
+        a_idx = sort_order.index(a_ext) || 100
+        b_idx = sort_order.index(b_ext) || 100
+        
+        a_idx <=> b_idx
       end
       
       paths.each do |path|

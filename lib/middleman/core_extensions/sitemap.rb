@@ -192,7 +192,6 @@ module Middleman::CoreExtensions::Sitemap
     end
     
     def file_to_path(file)
-      @source ||= File.expand_path(@app.views, @app.root)
       file = File.expand_path(file, @app.root)
       
       prefix = @source + "/"
@@ -200,24 +199,26 @@ module Middleman::CoreExtensions::Sitemap
       
       path = file.sub(prefix, "")
       path = @app.extensionless_path(path)
+      
       @source_map[path] = file
       path
     end
     
     def add_file(file)
       return false if file == @source ||
+                      file.match(/^\./) ||
                       file.match(/\/\./) ||
                       (file.match(/\/_/) && !file.match(/\/__/)) ||
                       File.directory?(file)
-                      
+                     
       path = file_to_path(file)
       
       add_path(path) if path && !path_exists?(path)
     end
     
     def add_path(path)
-      return false if path == "layout" ||
-                      path.match(/^layouts/)
+      return false if path.match(%r{^layout}) ||
+                      path.match(%r{^layouts/})
     
       # @app.logger.debug :sitemap_update, Time.now, path if @app.logging?
       set_path(path)

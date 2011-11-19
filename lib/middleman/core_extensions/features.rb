@@ -72,7 +72,6 @@ module Middleman::CoreExtensions::Features
     #
     #     activate MyFeatureModule
     def activate(feature)
-      $stderr.puts "Activate: #{feature}"
       if feature.is_a? Symbol
         feature = feature.to_s 
       end

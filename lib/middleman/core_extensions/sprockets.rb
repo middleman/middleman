@@ -5,7 +5,6 @@ require "sprockets"
 module Middleman::CoreExtensions::Sprockets
   class << self
     def registered(app)
-      app.define_hook :before_sprockets
       app.set :js_compressor, false
       app.set :css_compressor, false
       

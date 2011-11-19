@@ -86,8 +86,7 @@ module Middleman::CoreExtensions::DefaultHelpers
        source << ".#{kind}" unless ignore_extension or source =~ /\.#{kind}/
        result_path   = source if source =~ %r{^/} # absolute path
        result_path ||= asset_url(source, asset_folder)
-       timestamp = asset_timestamp(result_path)
-       "#{result_path}#{timestamp}"
+       "#{result_path}"
      end
   end
 end
