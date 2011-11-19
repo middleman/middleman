@@ -46,16 +46,18 @@ module Middleman::CoreExtensions::DefaultHelpers
           when :css then self.css_dir
         end
       end
-      path = current_path.dup
+      
       # If the basename of the request as no extension, assume we are serving a
       # directory and join index_file to the path.
-      path = File.join(path, self.index_file) if File.extname(path).empty?
-      path = path.gsub(%r{^/}, '')
+      path = full_path(current_path.dup)
+        
+      path = path.sub(%r{^/}, '')
       path = path.gsub(File.extname(path), ".#{asset_ext}")
       path = path.gsub("/", separator)
 
-      view = File.join(self.views, asset_dir, path)
-      yield path if File.exists?(view) or Dir["#{view}.*"].any?
+      matching_file = resolve_template(File.join(asset_dir, path))
+        
+      yield path if matching_file
     end
 
     def page_classes

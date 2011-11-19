@@ -40,6 +40,11 @@ module Guard
     def start
       server_start
     end
+    
+    def reload
+      server_stop
+      server_start
+    end
   
     def run_on_change(paths)
       needs_to_restart = false
@@ -52,7 +57,7 @@ module Guard
       end
       
       if needs_to_restart
-        server_restart
+        reload
       elsif !@app.nil?
         paths.each do |path|
           @app.logger.debug :file_change, Time.now, path if @app.settings.logging?
@@ -71,11 +76,6 @@ module Guard
     end
     
   private
-    def server_restart
-      server_stop
-      server_start
-    end
-    
     def server_start
       # Quiet down Guard
       # ENV['GUARD_ENV'] = 'test' if @options[:debug] == "true"

@@ -35,8 +35,10 @@ Gem::Specification.new do |s|
   s.add_dependency("sprockets", ["~> 2.0"])
   s.add_dependency("sprockets-sass", ["~> 0.3.0"])
   s.add_dependency("hooks", ["~> 0.2.0"])
-  s.add_dependency("rb-fsevent")
   s.add_dependency("guard", ["~> 0.8.8"])
+  
+  # OSX
+  s.add_dependency("rb-fsevent")
   
   # Development and test
   s.add_development_dependency("slim")

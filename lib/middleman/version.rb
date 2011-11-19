@@ -1,3 +1,3 @@
 module Middleman
-  VERSION = "2.1.0.pre"
+  VERSION = "3.0.0.pre"
 end
