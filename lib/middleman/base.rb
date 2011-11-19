@@ -216,7 +216,7 @@ class Middleman::Base
     
     return unless self.class.execute_before_processing!(self, found_template)
     
-    context = sitemap.get_context(full_path(@original_path)) || {}
+    context = sitemap.get_context(full_path(@original_path.gsub("%20", " "))) || {}
     
     @options = context.has_key?(:options) ? context[:options] : {}
     @locals  = context.has_key?(:locals)  ? context[:locals] : {}
@@ -228,7 +228,7 @@ class Middleman::Base
     
     local_layout = if options.has_key?(:layout)
       options[:layout]
-    elsif %w(.js .css).include?(File.extname(@request_path))
+    elsif %w(.js .css .txt).include?(File.extname(@request_path))
       false
     else
       layout
@@ -237,9 +237,6 @@ class Middleman::Base
     if context.has_key?(:block) && context[:block]
       instance_eval(&context[:block])
     end
-    
-    content_type mime_type(File.extname(@request_path))
-    res.status = 200
      
     output = if local_layout
       engine_options = respond_to?(engine.to_sym) ? send(engine.to_sym) : {}
@@ -268,6 +265,8 @@ class Middleman::Base
       render(path, locals)
     end
     
+    content_type mime_type(File.extname(@request_path))
+    res.status = 200
     res.write output
     halt res.finish
   end
