@@ -2,7 +2,9 @@ module Middleman::Features::MinifyJavascript
   class << self
     def registered(app)
       require 'uglifier'
-      app.set :js_compressor, ::Uglifier.new
+      app.before_configuration do
+        app.set :js_compressor, ::Uglifier.new
+      end
       app.use InlineJavascriptRack
     end
     alias :included :registered
@@ -19,10 +21,15 @@ module Middleman::Features::MinifyJavascript
       if env["PATH_INFO"].match(/\.html$/)
         compressor = ::Uglifier.new
 
-        if response.is_a?(::Rack::File)# or response.is_a?(::Sinatra::Helpers::StaticFile)
-          uncompressed_source = File.read(response.path)
-        else
-          uncompressed_source = response.join
+        uncompressed_source = case(response)
+          when String
+            response
+          when Array
+            response.join
+          when Rack::Response
+            response.body.join
+          when Rack::File
+            File.read(response.path)
         end
 
         minified = uncompressed_source.gsub(/(<scri.*?\/\/<!\[CDATA\[\n)(.*?)(\/\/\]\].*?<\/script>)/m) do |m|
