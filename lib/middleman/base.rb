@@ -229,6 +229,9 @@ class Middleman::Base
     @options = context.has_key?(:options) ? context[:options] : {}
     @locals  = context.has_key?(:locals)  ? context[:locals] : {}
     
+    engine_options = respond_to?(engine.to_sym) ? send(engine.to_sym) : {}
+    @options.merge!(engine_options)
+    
     provides_metadata.each do |callback, matcher|
       next if !matcher.nil? && !path.match(matcher)
       instance_exec(path, &callback)
@@ -246,9 +249,9 @@ class Middleman::Base
       instance_eval(&context[:block])
     end
     
-    # content_type mime_type(File.extname(@request_path))
+    content_type mime_type(File.extname(@request_path))
     res.status = 200
-    
+     
     output = if local_layout
       layout_engine = if options.has_key?(:layout_engine)
         options[:layout_engine]
@@ -324,20 +327,6 @@ public
     self.class.map(map, &block)
   end
   
-  # def compiled_templates_cache
-  #   @_compiled_templates_cache ||= {}
-  # end
-  # 
-  # def read_compiled_template(path, locals, options, &block)
-  #   key = [path, locals, options]
-  #   
-  #   if !raw_templates_cache.has_key?(key)
-  #     raw_templates_cache[key] = yield
-  #   end
-  #   
-  #   raw_templates_cache[key]
-  # end
-  
   def full_path(path)
     parts = path ? path.split('/') : []
     if parts.last.nil? || parts.last.split('.').length == 1
@@ -395,10 +384,9 @@ public
   end
   
   def send_file(path)
-    
-    #       matched_mime = mime_type(File.extname(request_path))
-    #       matched_mime = "application/octet-stream" if matched_mime.nil?
-    #       content_type matched_mime
+    matched_mime = mime_type(File.extname(path))
+    matched_mime = "application/octet-stream" if matched_mime.nil?
+    content_type matched_mime
     
     file      = ::Rack::File.new nil
     file.path = path
@@ -411,5 +399,41 @@ public
     body = read_raw_template(path)
     template = ::Tilt.new(path, 1, options) { body }
     template.render(self, locals, &block)
+  end
+  
+  def mime_type(type, value=nil)
+    return type if type.nil? || type.to_s.include?('/')
+    type = ".#{type}" unless type.to_s[0] == ?.
+    return ::Rack::Mime.mime_type(type, nil) unless value
+    ::Rack::Mime::MIME_TYPES[type] = value
+  end
+  
+  def content_type(type = nil, params={})
+    return res['Content-Type'] unless type
+    default = params.delete :default
+    mime_type = mime_type(type) || default
+    throw "Unknown media type: %p" % type if mime_type.nil?
+    mime_type = mime_type.dup
+    unless params.include? :charset
+      params[:charset] = params.delete('charset') || "utf-8"
+    end
+    params.delete :charset if mime_type.include? 'charset'
+    unless params.empty?
+      mime_type << (mime_type.include?(';') ? ', ' : ';')
+      mime_type << params.map { |kv| kv.join('=') }.join(', ')
+    end
+    res['Content-Type'] = mime_type
+  end
+  
+  def helpers(*extensions, &block)
+    self.class.helpers(*extensions, &block)
+  end
+  
+  def use(middleware, *args, &block)
+    self.class.use(middleware, *args, &block)
+  end
+  
+  def map(map, &block)
+    self.class.map(map, &block)
   end
 end
