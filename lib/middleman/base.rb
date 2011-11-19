@@ -229,9 +229,6 @@ class Middleman::Base
     @options = context.has_key?(:options) ? context[:options] : {}
     @locals  = context.has_key?(:locals)  ? context[:locals] : {}
     
-    engine_options = respond_to?(engine.to_sym) ? send(engine.to_sym) : {}
-    @options.merge!(engine_options)
-    
     provides_metadata.each do |callback, matcher|
       next if !matcher.nil? && !path.match(matcher)
       instance_exec(path, &callback)
@@ -253,8 +250,12 @@ class Middleman::Base
     res.status = 200
      
     output = if local_layout
+      engine_options = respond_to?(engine.to_sym) ? send(engine.to_sym) : {}
+      
       layout_engine = if options.has_key?(:layout_engine)
         options[:layout_engine]
+      elsif engine_options.has_key?(:layout_engine)
+        engine_options[:layout_engine]
       else
         engine
       end
@@ -268,8 +269,8 @@ class Middleman::Base
       
       throw "Could not locate layout: #{local_layout}" unless layout_path
     
-      render(layout_path, locals) do
-        render(path, locals)
+      render(layout_path, locals, options) do
+        render(path, locals, options)
       end
     else
       render(path, locals)
@@ -365,7 +366,6 @@ public
       
       path_with_ext = on_disk_path + "." + preferred_engine
   
-      found_engine = nil
       found_path = Dir[path_with_ext].find do |path|
         ::Tilt[path]
       end
@@ -396,9 +396,30 @@ public
   def render(path, locals = {}, options = {}, &block)
     path = path.to_s
     
+    options.merge!(options_for_ext(File.extname(path)))
+    
     body = read_raw_template(path)
     template = ::Tilt.new(path, 1, options) { body }
     template.render(self, locals, &block)
+  end
+  
+  def options_for_ext(ext)
+    @_options_for_ext_cache ||= {}
+    
+    if !@_options_for_ext_cache.has_key?(ext)
+      options = {}
+      extension_class = Tilt[ext]
+      matched_exts = []
+      Tilt.mappings.each do |ext, engines|
+        next unless engines.include? extension_class
+        engine_options = respond_to?(ext.to_sym) ? send(ext.to_sym) : {}
+        options.merge!(engine_options)
+      end
+      
+      @_options_for_ext_cache[ext] = options
+    end
+    
+    @_options_for_ext_cache[ext]
   end
   
   def mime_type(type, value=nil)
