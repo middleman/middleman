@@ -1,6 +1,8 @@
 3.0.pre
 ====
 Rewritten to work directly with Rack (Sinatra apps can still be mounted)
+Sitemap maintains own state
+Remove old 1.x mm- binaries
 
 2.1.pre
 ====
