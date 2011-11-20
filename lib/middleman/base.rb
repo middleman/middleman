@@ -164,6 +164,10 @@ class Middleman::Base
     run_hook :initialized
   end
   
+  def cache
+    @_cache ||= ::Middleman::Cache.new
+  end
+  
   attr :env
   attr :req
   attr :res
@@ -258,11 +262,11 @@ class Middleman::Base
       
       throw "Could not locate layout: #{local_layout}" unless layout_path
     
-      render(layout_path, locals, options) do
-        render(path, locals, options)
+      internal_render(layout_path, locals, options) do
+        internal_render(path, locals, options)
       end
     else
-      render(path, locals)
+      internal_render(path, locals)
     end
     
     content_type mime_type(File.extname(@request_path))
@@ -273,12 +277,9 @@ class Middleman::Base
   
 public
   def extensionless_path(file)
-    @_extensionless_path_cache ||= {}
-    
-    if @_extensionless_path_cache.has_key?(file)
-      @_extensionless_path_cache[file]
-    else
+    cache.fetch(:extensionless_path, file) do 
       path = file.dup
+      
       end_of_the_line = false
       while !end_of_the_line
         if !Tilt[path].nil?
@@ -288,7 +289,6 @@ public
         end
       end
       
-      @_extensionless_path_cache[file] = path
       path
     end
   end
@@ -301,28 +301,14 @@ public
     @current_path || nil
   end
   
-  def raw_templates_cache
-    @_raw_templates_cache ||= {}
-  end
-  
-  def read_raw_template(path)
-    if raw_templates_cache.has_key?(path)
-      raw_templates_cache[path]
-    else
-      File.read(path)
-    end
-  end
-  
-  def map(map, &block)
-    self.class.map(map, &block)
-  end
-  
   def full_path(path)
-    parts = path ? path.split('/') : []
-    if parts.last.nil? || parts.last.split('.').length == 1
-      path = File.join(path, index_file) 
+    cache.fetch(:full_path, path) do
+      parts = path ? path.split('/') : []
+      if parts.last.nil? || parts.last.split('.').length == 1
+        path = File.join(path, index_file) 
+      end
+      "/" + path.sub(%r{^/}, '')
     end
-    "/" + path.sub(%r{^/}, '')
   end
   
   def not_found
@@ -333,8 +319,7 @@ public
   
   def resolve_template(request_path, options={})
     request_path = request_path.to_s
-    @_resolved_templates ||= {}
-    if !@_resolved_templates.has_key?(request_path)
+    cache.fetch(:resolve_template, request_path, options) do
       relative_path = request_path.sub(%r{^/}, "")
       on_disk_path  = File.expand_path(relative_path, source_dir)
       
@@ -366,10 +351,8 @@ public
         false
       end
       
-      @_resolved_templates[request_path] = result
+      result
     end
-    
-    @_resolved_templates[request_path]
   end
   
   def send_file(path)
@@ -382,33 +365,24 @@ public
     halt file.serving(env)
   end
   
-  def render(path, locals = {}, options = {}, &block)
-    path = path.to_s
-    
-    options.merge!(options_for_ext(File.extname(path)))
-    
-    body = read_raw_template(path)
-    template = ::Tilt.new(path, 1, options) { body }
-    template.render(self, locals, &block)
+  # Sinatra render method signature
+  def render(engine, data, options={}, locals={}, &block)
+    internal_render(data, locals, options, &block)
   end
   
   def options_for_ext(ext)
-    @_options_for_ext_cache ||= {}
-    
-    if !@_options_for_ext_cache.has_key?(ext)
+    cache.fetch(:options_for_ext, ext) do
       options = {}
+      
       extension_class = Tilt[ext]
-      matched_exts = []
       Tilt.mappings.each do |ext, engines|
         next unless engines.include? extension_class
         engine_options = respond_to?(ext.to_sym) ? send(ext.to_sym) : {}
         options.merge!(engine_options)
       end
       
-      @_options_for_ext_cache[ext] = options
+      options
     end
-    
-    @_options_for_ext_cache[ext]
   end
   
   def mime_type(type, value=nil)
@@ -435,6 +409,7 @@ public
     res['Content-Type'] = mime_type
   end
   
+  # Forward to class level
   def helpers(*extensions, &block)
     self.class.helpers(*extensions, &block)
   end
@@ -445,5 +420,22 @@ public
   
   def map(map, &block)
     self.class.map(map, &block)
+  end
+
+private
+  def internal_render(path, locals = {}, options = {}, &block)
+    path = path.to_s
+  
+    options.merge!(options_for_ext(File.extname(path)))
+  
+    body = cache.fetch(:raw_template, path) do
+      File.read(path)
+    end
+  
+    template = cache.fetch(:compiled_template, options, body) do
+      ::Tilt.new(path, 1, options) { body }
+    end
+
+    template.render(self, locals, &block)
   end
 end

@@ -77,7 +77,7 @@ module Middleman::CoreExtensions::FrontMatter
         file = file.sub(@app.source_dir, "")
         @local_data[file] = result
         path = File.join(@app.source_dir, file)
-        @app.raw_templates_cache[path] = result[1]
+        @app.cache.set([:raw_template, path], result[1])
       end
     end
     

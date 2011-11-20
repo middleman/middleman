@@ -59,7 +59,7 @@ $LOAD_PATH.unshift(libdir) unless $LOAD_PATH.include?(libdir)
 module Middleman
   # Auto-load modules on-demand
   autoload :Base,        "middleman/base"
-  autoload :Hooks,       "middleman/hooks"
+  autoload :Cache,       "middleman/cache"
   autoload :Builder,     "middleman/builder"
   autoload :CLI,         "middleman/cli"
   autoload :Templates,   "middleman/templates"
@@ -70,7 +70,6 @@ module Middleman
     autoload :Sass,         "middleman/renderers/sass"
     autoload :Markdown,     "middleman/renderers/markdown"
     autoload :ERb,          "middleman/renderers/erb"
-    autoload :CoffeeScript, "middleman/renderers/coffee_script"
     autoload :Liquid,       "middleman/renderers/liquid"
   end
   
