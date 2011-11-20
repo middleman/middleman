@@ -11,7 +11,9 @@ module Middleman::Renderers::Liquid
             
           provides_metadata %r{\.liquid$} do |path|
             @locals.merge!(:data => data.to_h)
+            { :locals => { :data => data.to_h } }
           end
+          
         end
       rescue LoadError
       end

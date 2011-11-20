@@ -17,7 +17,7 @@ module Middleman
     end
     
     def remove(*key)
-      @cache.delete(key)
+      @cache.delete(key) if @cache.has_key?(key)
     end
   end
 end

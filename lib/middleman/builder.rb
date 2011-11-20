@@ -146,11 +146,11 @@ module Middleman
         file_destination = File.join(given_destination, file_source.gsub(source, '.'))
         file_destination.gsub!('/./', '/')
         
-        if @app.sitemap.generic_path?(file_source)
+        if @app.sitemap.generic?(file_source)
           # no-op
-        elsif @app.sitemap.proxied_path?(file_source)
-          file_source = @app.sitemap.path_target(file_source)
-        elsif @app.sitemap.ignored_path?(file_source)
+        elsif @app.sitemap.proxied?(file_source)
+          file_source = @app.sitemap.page(file_source).proxied_to
+        elsif @app.sitemap.ignored?(file_source)
           next
         end
         

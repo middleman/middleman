@@ -64,19 +64,6 @@ class Middleman::Base
     end
     
     def asset_stamp; false; end
-    
-    def before_processing(name=:unnamed, idx=-1, &block)
-      @before_processes ||= []
-      @before_processes.insert(idx, [name, block])
-    end
-    
-    def execute_before_processing!(inst, resolved_template)
-      @before_processes ||= []
-      
-      @before_processes.all? do |name, block|
-        inst.instance_exec(resolved_template, &block)
-      end
-    end
   end
   
   def set(key, value=nil, &block)
@@ -202,11 +189,16 @@ class Middleman::Base
     @request_path  = full_path(env["PATH_INFO"].gsub("%20", " "))
     
     run_hook :before
-  
-    return not_found if sitemap.ignored_path?(@request_path)
     
-    if sitemap.path_is_proxy?(@request_path)
-      @request_path = "/" + sitemap.path_target(@request_path)
+    return not_found unless sitemap.exists?(@request_path)
+    
+    sitemap_page = sitemap.page(@request_path)
+  
+    return not_found if sitemap_page.ignored?
+    
+    if sitemap.proxied?(@request_path)
+      @request_path = "/" + sitemap_page.proxied_to
+      sitemap_page = sitemap.page(sitemap_page.proxied_to)
     end
     
     found_template = resolve_template(@request_path)
@@ -216,33 +208,32 @@ class Middleman::Base
     path, engine = found_template
 
     # Static File
-    return send_file(path) if engine.nil?
-    
-    return unless self.class.execute_before_processing!(self, found_template)
-    
-    context = sitemap.get_context(full_path(@original_path.gsub("%20", " "))) || {}
-    
-    @options = context.has_key?(:options) ? context[:options] : {}
-    @locals  = context.has_key?(:locals)  ? context[:locals] : {}
+    return send_file(sitemap_page.source_file) unless sitemap_page.template?
+      
+    context  = sitemap.page(full_path(@original_path.gsub("%20", " "))).template
+    @options = context.options.dup
+    @locals  = context.locals.dup
     
     provides_metadata.each do |callback, matcher|
       next if !matcher.nil? && !path.match(matcher)
       instance_exec(path, &callback)
     end
     
+    context.blocks.each do |block|
+      instance_eval(&block) if block
+    end
+    
     local_layout = if options.has_key?(:layout)
       options[:layout]
-    elsif %w(.js .css .txt).include?(File.extname(@request_path))
+    elsif %w(.js .css .txt).include?(sitemap_page.ext)
       false
     else
       layout
     end
-    
-    if context.has_key?(:block) && context[:block]
-      instance_eval(&context[:block])
-    end
      
-    output = if local_layout
+    output = internal_render(path, locals, options)
+    
+    if local_layout
       engine_options = respond_to?(engine.to_sym) ? send(engine.to_sym) : {}
       
       layout_engine = if options.has_key?(:layout_engine)
@@ -262,12 +253,8 @@ class Middleman::Base
       
       throw "Could not locate layout: #{local_layout}" unless layout_path
     
-      internal_render(layout_path, locals, options) do
-        internal_render(path, locals, options)
-      end
-    else
-      internal_render(path, locals)
-    end
+      output = internal_render(layout_path, locals, options) { output }
+    end 
     
     content_type mime_type(File.extname(@request_path))
     res.status = 200
@@ -422,7 +409,6 @@ public
     self.class.map(map, &block)
   end
 
-private
   def internal_render(path, locals = {}, options = {}, &block)
     path = path.to_s
   

@@ -24,30 +24,33 @@ module Middleman::CoreExtensions::Routing
     # The page method allows the layout to be set on a specific path
     # page "/about.html", :layout => false
     # page "/", :layout => :homepage_layout
-    def page(url, options={}, &block)
-      options[:layout] = layout if options[:layout].nil?
+    def page(url, opts={}, &block)
+      opts[:layout] = layout if opts[:layout].nil?
       
       url = full_path(url)
 
-      if options.has_key?(:proxy)
-        reroute(url, options[:proxy])
+      if opts.has_key?(:proxy)
+        reroute(url, opts[:proxy])
         
-        if options.has_key?(:ignore) && options[:ignore]
-          ignore(options[:proxy])
-          options.delete(:ignore)
+        if opts.has_key?(:ignore) && opts[:ignore]
+          ignore(opts[:proxy])
+          opts.delete(:ignore)
         end  
         
-        options.delete(:proxy)
+        opts.delete(:proxy)
       else
-        if options.has_key?(:ignore) && options[:ignore]
+        if opts.has_key?(:ignore) && opts[:ignore]
           ignore(url)
-          options.delete(:ignore)
+          opts.delete(:ignore)
         end
       end
 
       a_block = block_given? ? block : nil
-      if a_block || !options.empty?
-        sitemap.set_context(url, options, a_block)
+      if a_block || !opts.empty?
+        sitemap.page(url) do
+          template.options = opts
+          template.blocks  = [a_block]
+        end
       end
     end
   end
