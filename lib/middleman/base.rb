@@ -34,7 +34,7 @@ class Middleman::Base
     end
     
     def prototype
-      @prototype ||= app.to_app
+      @prototype ||= to_rack_app
     end
 
     def call(env)
