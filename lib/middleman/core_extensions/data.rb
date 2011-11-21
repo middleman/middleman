@@ -40,8 +40,20 @@ module Middleman::CoreExtensions::Data
   end
   
   class DataStore
-    def self.matcher
-      %r{[\w-]+\.(yml|yaml|json)$}
+    class << self
+      def matcher
+        %r{[\w-]+\.(yml|yaml|json)$}
+      end
+
+      def data_content(name, content)
+        @@local_sources ||= {}
+        @@local_sources[name.to_s] = content
+      end
+
+      def data_callback(name, proc)
+        @@callback_sources ||= {}
+        @@callback_sources[name.to_s] = proc
+      end
     end
     
     def initialize(app)
@@ -120,16 +132,6 @@ module Middleman::CoreExtensions::Data
       end
       
       data
-    end
-
-    def self.data_content(name, content)
-      @@local_sources ||= {}
-      @@local_sources[name.to_s] = content
-    end
-    
-    def self.data_callback(name, proc)
-      @@callback_sources ||= {}
-      @@callback_sources[name.to_s] = proc
     end
   
   private

@@ -31,12 +31,14 @@ module Middleman
     include Thor::Actions
     include Middleman::ThorActions
     
-    def self.shared_rack
-      @shared_rack ||= begin
-        mock = ::Rack::MockSession.new(SHARED_SERVER.to_rack_app)
-        sess = ::Rack::Test::Session.new(mock)
-        response = sess.get("__middleman__")
-        sess
+    class << self
+      def shared_rack
+        @shared_rack ||= begin
+          mock = ::Rack::MockSession.new(SHARED_SERVER.to_rack_app)
+          sess = ::Rack::Test::Session.new(mock)
+          response = sess.get("__middleman__")
+          sess
+        end
       end
     end
     

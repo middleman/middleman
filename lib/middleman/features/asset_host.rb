@@ -4,8 +4,8 @@ module Middleman::Features::AssetHost
       app.set :asset_host, nil
       
       app.compass_config do |config|
-        if self.asset_host.is_a?(Proc)
-          config.asset_host(&self.asset_host)
+        if asset_host.is_a?(Proc)
+          config.asset_host(&asset_host)
         end
       end
       
@@ -20,10 +20,10 @@ module Middleman::Features::AssetHost
 
       valid_extensions = %w(.png .gif .jpg .jpeg .js .css)
 
-      asset_prefix = if self.asset_host.is_a?(Proc)
-        self.asset_host.call(original_output)
-      elsif self.asset_host.is_a?(String)
-        self.asset_host
+      asset_prefix = if asset_host.is_a?(Proc)
+        asset_host.call(original_output)
+      elsif asset_host.is_a?(String)
+        asset_host
       end
 
       File.join(asset_prefix, original_output)

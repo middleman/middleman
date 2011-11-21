@@ -12,12 +12,12 @@ module Middleman::Features::AutomaticImageSizes
     def image_tag(path, params={})
       if !params.has_key?(:width) && !params.has_key?(:height) && !path.include?("://")
         params[:alt] ||= ""
-        http_prefix = self.http_images_path rescue self.images_dir
+        http_prefix = http_images_path rescue images_dir
 
         begin
-          real_path = File.join(self.views, self.images_dir, path)
-          full_path = File.expand_path(real_path, self.root)
-          http_prefix = self.http_images_path rescue self.images_dir
+          real_path = File.join(views, images_dir, path)
+          full_path = File.expand_path(real_path, root)
+          http_prefix = http_images_path rescue images_dir
           if File.exists? full_path
             dimensions = ::FastImage.size(full_path, :raise_on_failure => true)
             params[:width]  = dimensions[0]

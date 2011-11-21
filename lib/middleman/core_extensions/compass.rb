@@ -1,79 +1,59 @@
-require "compass"
-
 module Middleman::CoreExtensions::Compass
   class << self
     def registered(app)
+      require "compass"
+      
       # Where to look for fonts
       app.set :fonts_dir, "fonts"
       app.define_hook :compass_config
       app.define_hook :after_compass_config
 
       app.after_configuration do
-        # Support a stand-alone compass config file
-        # Many options are overwritten by Middleman, but the config is a good
-        # place to add:
-        # * output_style
-        # * disable_warnings
-        # * sass_options
-        # * line_comments
-        # * sprite_engine
-        # * chunky_png_options
-        compass_config_file = File.join(self.root, "compass.config")
-        if File.exists?(compass_config_file)
-          ::Compass.add_project_configuration(compass_config_file)
-        end
-        
         ::Compass.configuration do |config|
-          config.project_path          = self.root
-          config.environment           = :development
-          config.cache_path            = File.join(self.root, ".sass-cache")
+          config.project_path    = root
+          config.environment     = :development
+          config.cache_path      = File.join(root, ".sass-cache")
+          config.sass_dir        = File.join(views, css_dir)
+          config.css_dir         = File.join(views, css_dir)
+          config.javascripts_dir = File.join(views, js_dir)
+          config.fonts_dir       = File.join(views, fonts_dir)
+          config.images_dir      = File.join(views, images_dir)
           
-          views_root = File.basename(self.views)
-          config.sass_dir              = File.join(views_root, self.css_dir)
-          config.css_dir               = File.join(views_root, self.css_dir)
-          config.javascripts_dir       = File.join(views_root, self.js_dir)
-          config.fonts_dir             = File.join(views_root, self.fonts_dir)
-          config.images_dir            = File.join(views_root, self.images_dir)
-          
-          config.http_images_path = if self.respond_to? :http_images_path
-            self.http_images_path
+          config.http_images_path = if respond_to? :http_images_path
+            http_images_path
           else
-            File.join(self.http_prefix || "/", self.images_dir)
+            File.join(http_prefix, images_dir)
           end
           
-          config.http_stylesheets_path = if self.respond_to? :http_css_path
-            self.http_css_path
+          config.http_stylesheets_path = if respond_to? :http_css_path
+            http_css_path
           else
-            File.join(self.http_prefix || "/", self.css_dir)
+            File.join(http_prefix, css_dir)
           end
           
-          config.http_javascripts_path = if self.respond_to? :http_js_path
-            self.http_js_path
+          config.http_javascripts_path = if respond_to? :http_js_path
+            http_js_path
           else
-            File.join(self.http_prefix || "/", self.js_dir)
+            File.join(http_prefix, js_dir)
           end
 
-          config.http_fonts_path = if self.respond_to? :http_fonts_path
-            self.http_fonts_path
+          config.http_fonts_path = if respond_to? :http_fonts_path
+            http_fonts_path
           else
-            File.join(self.http_prefix || "/", self.fonts_dir)
+            File.join(http_prefix, fonts_dir)
           end
           
           config.asset_cache_buster :none
           config.output_style = :nested
-
-          # config.add_import_path(config.sass_dir)
         end
         
         # Required for relative paths
         configure :build do
           ::Compass.configuration do |config|
             config.environment = :production
-             
-            build_root = File.basename(self.build_dir)
-            config.css_dir     = File.join(build_root, self.css_dir)
-            config.images_dir  = File.join(build_root, self.images_dir)
-            config.fonts_dir   = File.join(build_root, self.fonts_dir)
+            config.css_dir    = File.join(build_dir, css_dir)
+            config.images_dir = File.join(build_dir, images_dir)
+            config.fonts_dir  = File.join(build_dir, fonts_dir)
           end
         end
         

@@ -38,10 +38,11 @@ module Middleman::CoreExtensions::Sprockets
         end
 
         # add paths to js_env (vendor/assets/javascripts)
-        map "/#{self.js_dir}" do
+        map "/#{js_dir}" do
           run js_env
         end
 
+        sass.each { |k, v| ::Sprockets::Sass.options[k] = v }
         css_env = Middleman::CoreExtensions::Sprockets::StylesheetEnvironment.new(self)
          
         vendor_dir = File.join("vendor", "assets", "stylesheets")
@@ -58,7 +59,7 @@ module Middleman::CoreExtensions::Sprockets
           css_env.append_path File.join(spec.full_gem_path, app_dir)
         end
         
-        map("/#{self.css_dir}") do
+        map("/#{css_dir}") do
           run css_env
         end
       end

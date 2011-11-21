@@ -4,10 +4,10 @@ module Middleman::Features::DirectoryIndexes
       app.send :include, InstanceMethods
       app.before do
         prefix         = @original_path.sub(/\/$/, "")
-        indexed_path   = prefix + "/" + self.index_file
+        indexed_path   = prefix + "/" + index_file
         
-        extensioned_path = prefix + File.extname(self.index_file)
-        is_ignored = self.ignored_directory_indexes.include?(extensioned_path)
+        extensioned_path = prefix + File.extname(index_file)
+        is_ignored = ignored_directory_indexes.include?(extensioned_path)
         
         if !sitemap.exists?(indexed_path) && !is_ignored
           parts         = @original_path.split("/")
@@ -22,12 +22,12 @@ module Middleman::Features::DirectoryIndexes
       end
       
       app.build_reroute do |destination, request_path|
-        index_ext      = File.extname(self.index_file)
-        new_index_path = "/#{self.index_file}"
+        index_ext      = File.extname(index_file)
+        new_index_path = "/#{index_file}"
       
         indexed_path = request_path.sub(/\/$/, "") + index_ext
         
-        if self.ignored_directory_indexes.include?(request_path)
+        if ignored_directory_indexes.include?(request_path)
           false
         elsif request_path =~ /#{new_index_path}$/
           false

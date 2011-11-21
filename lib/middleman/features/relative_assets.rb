@@ -13,7 +13,7 @@ module Middleman::Features::RelativeAssets
   module InstanceMethods
     def asset_url(path, prefix="")
       begin
-        prefix = self.images_dir if prefix == self.http_images_path
+        prefix = images_dir if prefix == http_images_path
       rescue
       end
 
@@ -24,7 +24,7 @@ module Middleman::Features::RelativeAssets
       else
         path = File.join(prefix, path) if prefix.length > 0
         request_path = @request_path.dup
-        request_path << self.index_file if path.match(%r{/$})
+        request_path << index_file if path.match(%r{/$})
         request_path.gsub!(%r{^/}, '')
         parts = request_path.split('/')
 

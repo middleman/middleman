@@ -1,6 +1,5 @@
 require "rack"
 require "tilt"
-require "i18n"
 require "middleman/vendor/hooks-0.2.0/lib/hooks"
 
 require "active_support"
@@ -62,8 +61,6 @@ class Middleman::Base
       @defaults ||= {}
       @defaults[key] = value
     end
-    
-    def asset_stamp; false; end
   end
   
   def set(key, value=nil, &block)
@@ -89,7 +86,7 @@ class Middleman::Base
   set :images_dir,  "images"      # Where to look for images
 
   set :build_dir,   "build"       # Which folder are builds output to
-  set :http_prefix, nil           # During build, add a prefix for absolute paths
+  set :http_prefix, "/"           # During build, add a prefix for absolute paths
 
   set :views, "source"
   
@@ -140,9 +137,7 @@ class Middleman::Base
   def initialize(&block)
     @current_path = nil
     
-    self.class.superclass.defaults.each do |k, v|
-      set(k, v)
-    end
+    self.class.superclass.defaults.each { |k,v| set k,v }
     
     instance_exec(&block) if block_given?
     

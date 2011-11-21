@@ -8,48 +8,50 @@ require 'rubygems'
 
 module Middleman
   module ProjectLocator
-    def self.locate_middleman_root!(args)
-      cwd = Dir.pwd
+    class << self
+      def locate_middleman_root!(args)
+        cwd = Dir.pwd
       
-      if !in_middleman_project? && !in_middleman_project_subdirectory?
-        $stderr.puts "== Error: Could not find a Middleman project config, perhaps you are in the wrong folder?"
-        return
-      end
+        if !in_middleman_project? && !in_middleman_project_subdirectory?
+          $stderr.puts "== Error: Could not find a Middleman project config, perhaps you are in the wrong folder?"
+          return
+        end
       
-      if in_middleman_project?
-        did_locate_middleman_project(cwd, args)
-        return
-      end
+        if in_middleman_project?
+          did_locate_middleman_project(cwd, args)
+          return
+        end
       
-      Dir.chdir("..") do
-        # Recurse in a chdir block: if the search fails we want to be sure
-        # the application is generated in the original working directory.
-        locate_middleman_root!(args) unless cwd == Dir.pwd
+        Dir.chdir("..") do
+          # Recurse in a chdir block: if the search fails we want to be sure
+          # the application is generated in the original working directory.
+          locate_middleman_root!(args) unless cwd == Dir.pwd
+        end
+      rescue SystemCallError
+        # could not chdir, no problem just return
       end
-    rescue SystemCallError
-      # could not chdir, no problem just return
-    end
 
-    def self.in_middleman_project?
-      File.exists?('config.rb')
-    end
+      def in_middleman_project?
+        File.exists?('config.rb')
+      end
 
-    def self.in_middleman_project_subdirectory?(path = Pathname.new(Dir.pwd))
-      File.exists?(File.join(path, 'config.rb')) || !path.root? && in_middleman_project_subdirectory?(path.parent)
-    end
+      def in_middleman_project_subdirectory?(path = Pathname.new(Dir.pwd))
+        File.exists?(File.join(path, 'config.rb')) || !path.root? && in_middleman_project_subdirectory?(path.parent)
+      end
     
-    def self.did_locate_middleman_project(path, args)
-      # Set up gems listed in the Gemfile.
-      ENV['BUNDLE_GEMFILE'] ||= File.expand_path('Gemfile', path)
+      def did_locate_middleman_project(path, args)
+        # Set up gems listed in the Gemfile.
+        ENV['BUNDLE_GEMFILE'] ||= File.expand_path('Gemfile', path)
 
-      require 'bundler/setup' if File.exists?(ENV['BUNDLE_GEMFILE'])
+        require 'bundler/setup' if File.exists?(ENV['BUNDLE_GEMFILE'])
 
-      start_cli!(args)
-    end
+        start_cli!(args)
+      end
     
-    def self.start_cli!(args)
-      require 'middleman'
-      Middleman::CLI.start(args)
+      def start_cli!(args)
+        require 'middleman'
+        Middleman::CLI.start(args)
+      end
     end
   end
 end
@@ -59,7 +61,8 @@ args = ARGV.dup
 ARG_ALIASES = {
   "s" => "server",
   "b" => "build",
-  "i" => "init"
+  "i" => "init",
+  "w" => "watch"
 }
 
 if ARG_ALIASES.has_key?(args[0])

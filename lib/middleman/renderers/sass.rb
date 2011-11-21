@@ -10,10 +10,8 @@ module Middleman::Renderers::Sass
     end
     alias :included :registered
   end
-
+  
   class SassPlusCSSFilenameTemplate < ::Sprockets::Sass::SassTemplate
-    self.default_mime_type = "text/css"
-    
     # Add exception messaging
     def evaluate(context, locals, &block)
       begin
@@ -35,9 +33,7 @@ module Middleman::Renderers::Sass
       parts.pop
       css_filename = File.join(location_of_sass_file, @context.css_dir, parts.join("."))
       
-      super.merge(
-        :css_filename => css_filename
-      )
+      super.merge(:css_filename => css_filename)
     end
   end
   ::Sprockets.register_engine ".sass", SassPlusCSSFilenameTemplate
@@ -45,8 +41,6 @@ module Middleman::Renderers::Sass
   ::Tilt.prefer(SassPlusCSSFilenameTemplate)
   
   class ScssPlusCSSFilenameTemplate < SassPlusCSSFilenameTemplate
-    self.default_mime_type = "text/css"
-    
     # Define the expected syntax for the template
     def syntax
       :scss

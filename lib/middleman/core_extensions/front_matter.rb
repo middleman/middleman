@@ -49,8 +49,10 @@ module Middleman::CoreExtensions::FrontMatter
   end
   
   class FrontMatter
-    def self.matcher
-      %r{source/.*\.html}
+    class << self
+      def matcher
+        %r{source/.*\.html}
+      end
     end
     
     def initialize(app)

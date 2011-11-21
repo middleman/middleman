@@ -8,24 +8,26 @@ end
 
 module Middleman
   module Guard
-    def self.add_guard(&block)
-      # Deprecation Warning
-      puts "== Middleman::Guard.add_guard has been removed. Update your extensions to versions which support this change."
-    end
-  
-    def self.start(options={})
-      options_hash = ""
-      options.each do |k,v|
-        options_hash << ", :#{k} => '#{v}'"
+    class << self
+      def add_guard(&block)
+        # Deprecation Warning
+        puts "== Middleman::Guard.add_guard has been removed. Update your extensions to versions which support this change."
       end
-      
-      guardfile_contents = %Q{
-        guard 'middleman'#{options_hash} do 
-          watch(%r{(.*)})
+  
+      def start(options={})
+        options_hash = ""
+        options.each do |k,v|
+          options_hash << ", :#{k} => '#{v}'"
         end
-      }
+      
+        guardfile_contents = %Q{
+          guard 'middleman'#{options_hash} do 
+            watch(%r{(.*)})
+          end
+        }
 
-      ::Guard.start({ :guardfile_contents => guardfile_contents })
+        ::Guard.start({ :guardfile_contents => guardfile_contents })
+      end
     end
   end
 end

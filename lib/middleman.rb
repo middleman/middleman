@@ -154,53 +154,53 @@ module Middleman
   end
   
   EXTENSION_FILE = File.join("lib", "middleman_init.rb")
-  def self.load_extensions_in_path
-    extensions = rubygems_latest_specs.select do |spec|
-      spec_has_file?(spec, EXTENSION_FILE)
-    end
+  class << self
+    def load_extensions_in_path
+      extensions = rubygems_latest_specs.select do |spec|
+        spec_has_file?(spec, EXTENSION_FILE)
+      end
     
-    extensions.each do |spec|
-      require spec.name
-      # $stderr.puts "require: #{spec.name}"
+      extensions.each do |spec|
+        require spec.name
+        # $stderr.puts "require: #{spec.name}"
+      end
     end
-  end
   
-  def self.rubygems_latest_specs
-    # If newer Rubygems
-    if ::Gem::Specification.respond_to? :latest_specs
-      ::Gem::Specification.latest_specs
-    else
-      ::Gem.source_index.latest_specs
+    def rubygems_latest_specs
+      # If newer Rubygems
+      if ::Gem::Specification.respond_to? :latest_specs
+        ::Gem::Specification.latest_specs
+      else
+        ::Gem.source_index.latest_specs
+      end
     end
-  end
   
-  def self.spec_has_file?(spec, path)
-    full_path = File.join(spec.full_gem_path, path)
-    File.exists?(full_path)
-  end
+    def spec_has_file?(spec, path)
+      full_path = File.join(spec.full_gem_path, path)
+      File.exists?(full_path)
+    end
   
-  def self.server(&block)
-    sandbox = Class.new(Middleman::Base)
-    # sandbox.class_eval(&block) if block_given?
-    sandbox
-  end
+    def server(&block)
+      Class.new(Middleman::Base)
+    end
   
-  def self.start_server(options={})
-    opts = {
-      :Port      => options[:port] || 4567,
-      :AccessLog => []
-    }
+    def start_server(options={})
+      opts = {
+        :Port      => options[:port] || 4567,
+        :AccessLog => []
+      }
     
-    app_class = options[:app] ||= ::Middleman.server.new
-    opts[:app] = app_class
-    opts[:server] = 'thin'
+      app_class = options[:app] ||= ::Middleman.server.new
+      opts[:app] = app_class
+      opts[:server] = 'thin'
     
-    # require "thin"
-    # ::Thin::Logging.silent = true if options[:debug] != "true"
+      # require "thin"
+      # ::Thin::Logging.silent = true if options[:debug] != "true"
 
-    server = ::Rack::Server.new(opts)
-    server.start
-    server
+      server = ::Rack::Server.new(opts)
+      server.start
+      server
+    end
   end
 end
 

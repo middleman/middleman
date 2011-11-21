@@ -6,7 +6,7 @@ module Middleman::Features::CacheBuster
       app.compass_config do |config|
         config.asset_cache_buster do |path, real_path|
           real_path = real_path.path if real_path.is_a? File
-          real_path = real_path.gsub(File.join(self.root, self.build_dir), self.views)
+          real_path = real_path.gsub(File.join(root, build_dir), views)
           if File.readable?(real_path)
             File.mtime(real_path).strftime("%s") 
           else
@@ -26,15 +26,15 @@ module Middleman::Features::CacheBuster
         http_path
       else
         begin
-          prefix = self.images_dir if prefix == self.http_images_path
+          prefix = images_dir if prefix == http_images_path
         rescue
         end
 
         real_path_static = File.join(prefix, path)
         
-        if self.build?
-          real_path_dynamic = File.join(self.build_dir, prefix, path)
-          real_path_dynamic = File.expand_path(real_path_dynamic, self.root)
+        if build?
+          real_path_dynamic = File.join(build_dir, prefix, path)
+          real_path_dynamic = File.expand_path(real_path_dynamic, root)
           http_path << "?" + File.mtime(real_path_dynamic).strftime("%s") if File.readable?(real_path_dynamic)
         elsif sitemap.exists?(real_path_static)
           page = sitemap.page(real_path_static)

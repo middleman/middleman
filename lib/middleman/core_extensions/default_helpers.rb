@@ -22,6 +22,10 @@ module Middleman::CoreExtensions::DefaultHelpers
       app.helpers ::Padrino::Helpers::TranslationHelpers
       
       app.helpers Helpers
+      
+      app.initialized do
+        ::I18n.load_path = Dir["#{File.join(root, 'locales', '*.yml')}"]
+      end
     end
     alias :included :registered
   end
@@ -42,15 +46,14 @@ module Middleman::CoreExtensions::DefaultHelpers
     def auto_tag(asset_ext, separator="/", asset_dir=nil)
       if asset_dir.nil?
         asset_dir = case asset_ext
-          when :js  then self.js_dir
-          when :css then self.css_dir
+          when :js  then js_dir
+          when :css then css_dir
         end
       end
       
       # If the basename of the request as no extension, assume we are serving a
       # directory and join index_file to the path.
       path = full_path(current_path.dup)
-        
       path = path.sub(%r{^/}, '')
       path = path.gsub(File.extname(path), ".#{asset_ext}")
       path = path.gsub("/", separator)
@@ -60,7 +63,7 @@ module Middleman::CoreExtensions::DefaultHelpers
 
     def page_classes
       path = current_path.dup
-      path << self.index_file if path.match(%r{/$})
+      path << index_file if path.match(%r{/$})
       path = path.gsub(%r{^/}, '')
   
       classes = []
@@ -74,9 +77,9 @@ module Middleman::CoreExtensions::DefaultHelpers
     def asset_path(kind, source)
        return source if source =~ /^http/
        asset_folder  = case kind
-         when :css    then self.css_dir
-         when :js     then self.js_dir
-         when :images then self.images_dir
+         when :css    then css_dir
+         when :js     then js_dir
+         when :images then images_dir
          else kind.to_s
        end
        source = source.to_s.gsub(/\s/, '')
