@@ -37,7 +37,6 @@ module Middleman::CoreExtensions::FrontMatter
           end
         end
         
-        @options.merge!(data)
         { :options => data }
       end
         

@@ -73,12 +73,17 @@ module Middleman
     autoload :Liquid,       "middleman/renderers/liquid"
   end
   
+  module Sitemap
+    autoload :Store,        "middleman/sitemap/store"
+    autoload :Page,         "middleman/sitemap/page"
+    autoload :Template,     "middleman/sitemap/template"
+  end
   module CoreExtensions
     # File Change Notifier
     autoload :FileWatcher,   "middleman/core_extensions/file_watcher"
     
     # In-memory Sitemap
-    autoload :Sitemap,     "middleman/core_extensions/sitemap"
+    autoload :Sitemap,       "middleman/core_extensions/sitemap"
     
     # Add Builder callbacks
     autoload :Builder,       "middleman/core_extensions/builder"

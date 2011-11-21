@@ -193,92 +193,21 @@ class Middleman::Base
     return not_found unless sitemap.exists?(@request_path)
     
     sitemap_page = sitemap.page(@request_path)
-  
     return not_found if sitemap_page.ignored?
-    
-    if sitemap.proxied?(@request_path)
-      @request_path = "/" + sitemap_page.proxied_to
-      sitemap_page = sitemap.page(sitemap_page.proxied_to)
-    end
-    
-    found_template = resolve_template(@request_path)
-    return not_found unless found_template
-    
-    @current_path = @request_path.dup
-    path, engine = found_template
 
     # Static File
     return send_file(sitemap_page.source_file) unless sitemap_page.template?
+    
+    @current_path = @request_path.dup
       
-    context  = sitemap.page(full_path(@original_path.gsub("%20", " "))).template
-    @options = context.options.dup
-    @locals  = context.locals.dup
-    
-    provides_metadata.each do |callback, matcher|
-      next if !matcher.nil? && !path.match(matcher)
-      instance_exec(path, &callback)
-    end
-    
-    context.blocks.each do |block|
-      instance_eval(&block) if block
-    end
-    
-    local_layout = if options.has_key?(:layout)
-      options[:layout]
-    elsif %w(.js .css .txt).include?(sitemap_page.ext)
-      false
-    else
-      layout
-    end
-     
-    output = internal_render(path, locals, options)
-    
-    if local_layout
-      engine_options = respond_to?(engine.to_sym) ? send(engine.to_sym) : {}
-      
-      layout_engine = if options.has_key?(:layout_engine)
-        options[:layout_engine]
-      elsif engine_options.has_key?(:layout_engine)
-        engine_options[:layout_engine]
-      else
-        engine
-      end
-      
-      layout_path, *etc = resolve_template(local_layout, :preferred_engine => layout_engine)
-      
-      if !layout_path
-        local_layout = File.join("layouts", local_layout.to_s)
-        layout_path, *etc = resolve_template(local_layout, :preferred_engine => layout_engine)
-      end
-      
-      throw "Could not locate layout: #{local_layout}" unless layout_path
-    
-      output = internal_render(layout_path, locals, options) { output }
-    end 
-    
-    content_type mime_type(File.extname(@request_path))
+    content_type sitemap_page.mime_type
     res.status = 200
-    res.write output
+    rqp = @request_path
+    res.write sitemap_page.render
     halt res.finish
   end
   
 public
-  def extensionless_path(file)
-    cache.fetch(:extensionless_path, file) do 
-      path = file.dup
-      
-      end_of_the_line = false
-      while !end_of_the_line
-        if !Tilt[path].nil?
-          path = path.sub(File.extname(path), "")
-        else
-          end_of_the_line = true
-        end
-      end
-      
-      path
-    end
-  end
 
   def logging?
     logging

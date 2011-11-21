@@ -10,7 +10,6 @@ module Middleman::Renderers::Liquid
           Liquid::Template.file_system = Liquid::LocalFileSystem.new(self.source_dir)
             
           provides_metadata %r{\.liquid$} do |path|
-            @locals.merge!(:data => data.to_h)
             { :locals => { :data => data.to_h } }
           end
           
