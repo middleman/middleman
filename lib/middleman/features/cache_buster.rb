@@ -31,14 +31,14 @@ module Middleman::Features::CacheBuster
         end
 
         real_path_static = File.join(prefix, path)
-        result = resolve_template(real_path_static)
         
         if self.build?
           real_path_dynamic = File.join(self.build_dir, prefix, path)
           real_path_dynamic = File.expand_path(real_path_dynamic, self.root)
           http_path << "?" + File.mtime(real_path_dynamic).strftime("%s") if File.readable?(real_path_dynamic)
-        elsif result
-          if result[1].nil?
+        elsif sitemap.exists?(real_path_static)
+          page = sitemap.page(real_path_static)
+          if !page.template?
             http_path << "?" + File.mtime(result[0]).strftime("%s")
           else
             # It's a template, possible with partials. We can't really know when

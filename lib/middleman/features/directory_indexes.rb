@@ -5,12 +5,11 @@ module Middleman::Features::DirectoryIndexes
       app.before do
         prefix         = @original_path.sub(/\/$/, "")
         indexed_path   = prefix + "/" + self.index_file
-        indexed_exists = resolve_template(indexed_path)
-              
+        
         extensioned_path = prefix + File.extname(self.index_file)
         is_ignored = self.ignored_directory_indexes.include?(extensioned_path)
         
-        if !indexed_exists && !is_ignored
+        if !sitemap.exists?(indexed_path) && !is_ignored
           parts         = @original_path.split("/")
           last_part     = parts.last
           last_part_ext = File.extname(last_part)

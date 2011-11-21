@@ -138,6 +138,8 @@ class Middleman::Base
   register Middleman::CoreExtensions::FrontMatter
   
   def initialize(&block)
+    @current_path = nil
+    
     self.class.superclass.defaults.each do |k, v|
       set(k, v)
     end
@@ -158,9 +160,8 @@ class Middleman::Base
   attr :env
   attr :req
   attr :res
-  attr :options
-  attr :locals
   
+  # Rack Interface
   def call(env)
     @env = env
     @req = Rack::Request.new(env)
@@ -212,10 +213,8 @@ public
   def logging?
     logging
   end
-  
-  def current_path
-    @current_path || nil
-  end
+
+  attr_accessor :current_path
   
   def full_path(path)
     cache.fetch(:full_path, path) do
@@ -233,44 +232,6 @@ public
     @res.finish
   end
   
-  def resolve_template(request_path, options={})
-    request_path = request_path.to_s
-    cache.fetch(:resolve_template, request_path, options) do
-      relative_path = request_path.sub(%r{^/}, "")
-      on_disk_path  = File.expand_path(relative_path, source_dir)
-      
-      preferred_engine = if options.has_key?(:preferred_engine)
-        extension_class = Tilt[options[:preferred_engine]]
-        matched_exts = []
-        
-        # TODO: Cache this
-        Tilt.mappings.each do |ext, engines|
-          next unless engines.include? extension_class
-          matched_exts << ext
-        end
-        
-        "{" + matched_exts.join(",") + "}"
-      else
-        "*"
-      end
-      
-      path_with_ext = on_disk_path + "." + preferred_engine
-  
-      found_path = Dir[path_with_ext].find do |path|
-        ::Tilt[path]
-      end
-  
-      result = if found_path || File.exists?(on_disk_path)
-        engine = found_path ? File.extname(found_path)[1..-1].to_sym : nil
-        [ found_path || on_disk_path, engine ]
-      else
-        false
-      end
-      
-      result
-    end
-  end
-  
   def send_file(path)
     matched_mime = mime_type(File.extname(path))
     matched_mime = "application/octet-stream" if matched_mime.nil?
@@ -281,23 +242,12 @@ public
     halt file.serving(env)
   end
   
-  # Sinatra render method signature
+  # Sinatra/Padrino render method signature
   def render(engine, data, options={}, locals={}, &block)
-    internal_render(data, locals, options, &block)
-  end
-  
-  def options_for_ext(ext)
-    cache.fetch(:options_for_ext, ext) do
-      options = {}
-      
-      extension_class = Tilt[ext]
-      Tilt.mappings.each do |ext, engines|
-        next unless engines.include? extension_class
-        engine_options = respond_to?(ext.to_sym) ? send(ext.to_sym) : {}
-        options.merge!(engine_options)
-      end
-      
-      options
+    if sitemap.exists?(data)
+      sitemap.page(data).render(options, locals, &block)
+    else
+      throw "Could not find file to render: #{data}"
     end
   end
   
@@ -336,21 +286,5 @@ public
   
   def map(map, &block)
     self.class.map(map, &block)
-  end
-
-  def internal_render(path, locals = {}, options = {}, &block)
-    path = path.to_s
-  
-    options.merge!(options_for_ext(File.extname(path)))
-  
-    body = cache.fetch(:raw_template, path) do
-      File.read(path)
-    end
-  
-    template = cache.fetch(:compiled_template, options, body) do
-      ::Tilt.new(path, 1, options) { body }
-    end
-
-    template.render(self, locals, &block)
   end
 end

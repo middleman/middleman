@@ -54,10 +54,8 @@ module Middleman::CoreExtensions::DefaultHelpers
       path = path.sub(%r{^/}, '')
       path = path.gsub(File.extname(path), ".#{asset_ext}")
       path = path.gsub("/", separator)
-
-      matching_file = resolve_template(File.join(asset_dir, path))
         
-      yield path if matching_file
+      yield path if sitemap.exists?(File.join(asset_dir, path))
     end
 
     def page_classes
