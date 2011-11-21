@@ -28,7 +28,7 @@
 # methods to use in your views. Some modify the output on-the-fly. And some
 # apply computationally-intensive changes to your final build files.
 
-module Middleman::CoreExtensions::Features
+module Middleman::CoreExtensions::Extensions
   
   class << self
     def included(app)
@@ -39,6 +39,36 @@ module Middleman::CoreExtensions::Features
       app.define_hook :development_config
       app.extend ClassMethods
       app.send :include, InstanceMethods
+      
+      # Setup extension API
+      ::Middleman::Extensions.extend API
+    end
+  end
+
+  module API
+    def registered
+      @_registered ||= {}
+    end
+    
+    def register(name, namespace=nil, &block)
+      registered[name.to_sym] = if block_given?
+        block
+      elsif namespace
+        namespace
+      end
+    end
+    
+    def load(name)
+      name = name.to_sym
+      return nil unless registered.has_key?(name)
+      
+      extension = registered[name]
+      if extension.is_a?(Proc)
+        extension = extension.call(Middleman::VERSION) || nil
+        registered[name] = extension
+      end
+      
+      extension
     end
   end
 
@@ -67,22 +97,15 @@ module Middleman::CoreExtensions::Features
     # feature module and includes it.
     #
     #     activate :lorem
-    #
-    # Alternatively, you can pass in a Middleman feature module directly.
-    #
-    #     activate MyFeatureModule
     def activate(feature)
-      if feature.is_a? Symbol
-        feature = feature.to_s 
-      end
-
-      if feature.is_a? String
-        feature = feature.camelize
-        feature = ::Middleman::Features.const_get(feature)
-      end
+      ext = ::Middleman::Extensions.load(feature.to_sym)
       
-      puts "== Activating:  #{feature}" if logging?
-      self.class.register feature
+      if ext.nil?
+        puts "== Unknown Extension: #{feature}"
+      else
+        puts "== Activating:  #{feature}" if logging?
+        self.class.register(ext)
+      end
     end
 
     def configure(env, &block)

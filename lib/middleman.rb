@@ -38,7 +38,7 @@
 # * CSS Minification
 #
 #### Robust Extensions:
-# Add your own runtime and build-time features!
+# Add your own runtime and build-time extensions!
 #
 #### Next Steps:
 # * [Visit the website]
@@ -89,7 +89,7 @@ module Middleman
     autoload :Builder,       "middleman/core_extensions/builder"
     
     # Custom Feature API
-    autoload :Features,      "middleman/core_extensions/features"
+    autoload :Extensions,    "middleman/core_extensions/extensions"
   
     # Asset Path Pipeline
     autoload :Assets,        "middleman/core_extensions/assets"
@@ -117,43 +117,43 @@ module Middleman
     autoload :Routing,        "middleman/core_extensions/routing"
   end
 
-  module Features
+  module Extensions
     # RelativeAssets allow any asset path in dynamic templates to be either
     # relative to the root of the project or use an absolute URL.
-    autoload :RelativeAssets,      "middleman/features/relative_assets"
+    autoload :RelativeAssets,      "middleman/extensions/relative_assets"
 
     # AssetHost allows you to setup multiple domains to host your static
     # assets. Calls to asset paths in dynamic templates will then rotate
     # through each of the asset servers to better spread the load.
-    autoload :AssetHost,           "middleman/features/asset_host"
+    autoload :AssetHost,           "middleman/extensions/asset_host"
 
     # CacheBuster adds a query string to assets in dynamic templates to avoid
     # browser caches failing to update to your new content.
-    autoload :CacheBuster,         "middleman/features/cache_buster"
+    autoload :CacheBuster,         "middleman/extensions/cache_buster"
 
     # AutomaticImageSizes inspects the images used in your dynamic templates
     # and automatically adds width and height attributes to their HTML
     # elements.
-    autoload :AutomaticImageSizes, "middleman/features/automatic_image_sizes"
+    autoload :AutomaticImageSizes, "middleman/extensions/automatic_image_sizes"
 
     # MinifyCss uses the YUI compressor to shrink CSS files
-    autoload :MinifyCss,           "middleman/features/minify_css"
+    autoload :MinifyCss,           "middleman/extensions/minify_css"
 
     # MinifyJavascript uses the YUI compressor to shrink JS files
-    autoload :MinifyJavascript,    "middleman/features/minify_javascript"
+    autoload :MinifyJavascript,    "middleman/extensions/minify_javascript"
 
     # Lorem provides a handful of helpful prototyping methods to generate
     # words, paragraphs, fake images, names and email addresses.
-    autoload :Lorem,               "middleman/features/lorem"
+    autoload :Lorem,               "middleman/extensions/lorem"
     
     # Automatically convert filename.html files into filename/index.html
-    autoload :DirectoryIndexes,    "middleman/features/directory_indexes"
+    autoload :DirectoryIndexes,    "middleman/extensions/directory_indexes"
     
     # Organize the sitemap as a tree
-    autoload :SitemapTree,         "middleman/features/sitemap_tree"
+    autoload :SitemapTree,         "middleman/extensions/sitemap_tree"
   end
   
-  EXTENSION_FILE = File.join("lib", "middleman_init.rb")
+  EXTENSION_FILE = File.join("lib", "middleman_extension.rb")
   class << self
     def load_extensions_in_path
       extensions = rubygems_latest_specs.select do |spec|

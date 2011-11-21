@@ -99,7 +99,7 @@ class Middleman::Base
   set :layout, :layout
   
   # Activate custom features and extensions
-  include Middleman::CoreExtensions::Features
+  include Middleman::CoreExtensions::Extensions
     
   # Add Builder Callbacks
   register Middleman::CoreExtensions::Builder
@@ -133,6 +133,17 @@ class Middleman::Base
   
   # Parse YAML from templates
   register Middleman::CoreExtensions::FrontMatter
+  
+  # Built-in Extensions
+  Middleman::Extensions.register(:asset_host) { Middleman::Extensions::AssetHost }
+  Middleman::Extensions.register(:automatic_image_sizes) { Middleman::Extensions::AutomaticImageSizes }
+  Middleman::Extensions.register(:cache_buster) { Middleman::Extensions::CacheBuster }
+  Middleman::Extensions.register(:directory_indexes) { Middleman::Extensions::DirectoryIndexes }
+  Middleman::Extensions.register(:lorem) { Middleman::Extensions::Lorem }
+  Middleman::Extensions.register(:minify_css) { Middleman::Extensions::MinifyCss }
+  Middleman::Extensions.register(:minify_javascript) { Middleman::Extensions::MinifyJavascript }
+  Middleman::Extensions.register(:relative_assets) { Middleman::Extensions::RelativeAssets }
+  Middleman::Extensions.register(:sitemap_tree) { Middleman::Extensions::SitemapTree }
   
   def initialize(&block)
     @current_path = nil
