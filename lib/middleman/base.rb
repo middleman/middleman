@@ -216,6 +216,11 @@ class Middleman::Base
   
 public
 
+  # Backwards compatibilty with old Sinatra template interface
+  def settings
+    self
+  end
+
   def logging?
     logging
   end
