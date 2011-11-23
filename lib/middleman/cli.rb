@@ -62,8 +62,6 @@ module Middleman
       :default => false,
       :desc    => 'Print debug messages'
     def server
-      v1_check
-      
       params = {
         :port        => options["port"],
         :environment => options["environment"],
@@ -91,7 +89,6 @@ module Middleman
       :default => nil, 
       :desc    => 'Build a subset of the project'
     def build
-      v1_check
       thor_group = Middleman::Builder.new([], options).invoke_all
     end
 
@@ -110,13 +107,6 @@ module Middleman
     end
     
   private
-    
-    def v1_check
-      if File.exists?("views") || File.exists?("public")
-        $stderr.puts "== Error: The views and public folders are have been combined. Use the 'middleman migrate' command to merge your folders automatically."
-        exit 1
-      end
-    end
 
     def help_check
       help self.class.send(:retrieve_task_name, ARGV.dup)
