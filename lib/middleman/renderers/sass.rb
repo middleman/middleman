@@ -26,7 +26,7 @@ module Middleman::Renderers::Sass
       location_of_sass_file = if @context.build?
         File.expand_path(@context.build_dir, @context.root)
       else
-        File.expand_path(@context.views, @context.root)
+        File.expand_path(@context.source, @context.root)
       end
       
       parts = basename.split('.')

@@ -77,7 +77,7 @@ module Middleman
 
     def initialize(base, app, config={}, &block)
       @app         = app
-      source       = @app.views
+      source       = @app.source
       @destination = @app.build_dir
       
       @source = File.expand_path(base.find_in_source_paths(source.to_s))

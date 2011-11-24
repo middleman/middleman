@@ -12,3 +12,5 @@ docs
 fixtures/test-app/build
 .*.swp
 build
+doc
+.yardoc

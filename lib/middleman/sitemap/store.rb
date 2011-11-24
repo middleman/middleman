@@ -5,7 +5,7 @@ module Middleman::Sitemap
     def initialize(app)
       @app = app
       @cache = ::Middleman::Cache.new
-      @source = File.expand_path(@app.views, @app.root)
+      @source = File.expand_path(@app.source, @app.root)
       @pages = {}
     end
     

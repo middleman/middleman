@@ -13,11 +13,11 @@ module Middleman::CoreExtensions::Compass
           config.project_path    = root
           config.environment     = :development
           config.cache_path      = File.join(root, ".sass-cache")
-          config.sass_dir        = File.join(views, css_dir)
-          config.css_dir         = File.join(views, css_dir)
-          config.javascripts_dir = File.join(views, js_dir)
-          config.fonts_dir       = File.join(views, fonts_dir)
-          config.images_dir      = File.join(views, images_dir)
+          config.sass_dir        = File.join(source, css_dir)
+          config.css_dir         = File.join(source, css_dir)
+          config.javascripts_dir = File.join(source, js_dir)
+          config.fonts_dir       = File.join(source, fonts_dir)
+          config.images_dir      = File.join(source, images_dir)
           
           config.http_images_path = if respond_to? :http_images_path
             http_images_path

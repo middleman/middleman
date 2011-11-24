@@ -1,0 +1,5 @@
+lib/**/*.rb 
+--exclude lib/middleman/vendor 
+--exclude lib/middleman/extensions/automatic_image_sizes/fastimage.rb 
+--exclude lib/middleman/extensions/minify_css/cssmin.rb
+--no-private

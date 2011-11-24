@@ -16,7 +16,7 @@ module Middleman::Extensions
           http_prefix = http_images_path rescue images_dir
 
           begin
-            real_path = File.join(views, images_dir, path)
+            real_path = File.join(source, images_dir, path)
             full_path = File.expand_path(real_path, root)
             http_prefix = http_images_path rescue images_dir
             if File.exists? full_path

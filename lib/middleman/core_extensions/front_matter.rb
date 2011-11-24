@@ -57,7 +57,7 @@ module Middleman::CoreExtensions::FrontMatter
     
     def initialize(app)
       @app = app
-      @source = File.expand_path(@app.views, @app.root)
+      @source = File.expand_path(@app.source, @app.root)
       @local_data = {}
     end
     

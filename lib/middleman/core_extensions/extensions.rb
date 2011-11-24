@@ -32,7 +32,7 @@ module Middleman::CoreExtensions::Extensions
   
   class << self
     def included(app)
-      # app.set :default_features, []
+      # app.set :default_extensions, []
       app.define_hook :after_configuration
       app.define_hook :before_configuration
       app.define_hook :build_config
@@ -131,7 +131,7 @@ module Middleman::CoreExtensions::Extensions
       run_hook :after_configuration
       
       # Add in defaults
-      default_features.each do |ext|
+      default_extensions.each do |ext|
         # activate ext
       end
       

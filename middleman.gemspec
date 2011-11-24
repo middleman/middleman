@@ -48,6 +48,8 @@ Gem::Specification.new do |s|
   s.add_development_dependency("cucumber", ["~> 1.1.0"])
   s.add_development_dependency("rake", ["~> 0.9.2"])
   s.add_development_dependency("rspec", ["~> 2.7.0"])
+  s.add_development_dependency("rdoc", ["~> 3.9.4"])
+  s.add_development_dependency("yard")
   s.add_development_dependency("jquery-rails")
   s.add_development_dependency("bootstrap-rails", ["0.0.5"])
 end
