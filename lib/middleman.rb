@@ -163,6 +163,7 @@ module Middleman
     def start_server(options={})
       opts = {
         :Port      => options[:port] || 4567,
+        :Host      => options[:host] || "0.0.0.0",
         :AccessLog => []
       }
     

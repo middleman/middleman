@@ -53,6 +53,12 @@ module Middleman
       :aliases => "-e", 
       :default => ENV['MM_ENV'] || ENV['RACK_ENV'] || 'development', 
       :desc    => "The environment Middleman will run under"
+      method_option :host,
+        :type => :string,
+        :aliases => "-h",
+        # :required => true,
+        :default => "0.0.0.0", 
+        :desc => "Bind to HOST address"
     method_option "port",
       :aliases => "-p", 
       :default => "4567", 
@@ -64,6 +70,7 @@ module Middleman
     def server
       params = {
         :port        => options["port"],
+        :host        => options["host"],
         :environment => options["environment"],
         :debug       => options["debug"]
       }
