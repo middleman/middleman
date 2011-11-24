@@ -14,6 +14,9 @@ http://middlemanapp.com
 
 If you have questions, answers can be found on community forum: https://convore.com/middleman/
 
+# Generated Source Documentation
+http://rubydoc.info/github/tdreyno/middleman/master/frames
+
 ## Copyright
 
 Copyright (c) 2010 Thomas Reynolds. See LICENSE for details.
