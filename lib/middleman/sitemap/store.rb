@@ -38,6 +38,12 @@ module Middleman::Sitemap
       @pages[path]
     end
     
+    def each(&block)
+      @pages.each do |k, v|
+        yield k, v
+      end
+    end
+    
     def all_paths
       @pages.keys
     end
