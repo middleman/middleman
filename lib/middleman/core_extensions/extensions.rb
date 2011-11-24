@@ -50,8 +50,27 @@ module Middleman::CoreExtensions::Extensions
       @_registered ||= {}
     end
     
-    def register(name, namespace=nil, &block)
-      registered[name.to_sym] = if block_given?
+    def register(name, namespace=nil, version=nil, &block)
+      # If we've already got a matching extension that passed the 
+      # version check, bail out.
+      return if registered.has_key?(name.to_sym) && 
+      !registered[name.to_sym].is_a?(String)
+      
+      if block_given?
+        version = namespace
+      end
+      
+      passed_version_check = true
+      if !version.nil?
+        requirement = ::Gem::Requirement.create(version)
+        if !requirement.satisfied_by?(Middleman::GEM_VERSION)
+          passed_version_check = false
+        end
+      end
+      
+      registered[name.to_sym] = if !passed_version_check
+        "== #{name} failed version check. Requested #{version}, got #{Middleman::VERSION}"
+      elsif block_given?
         block
       elsif namespace
         namespace
@@ -64,7 +83,7 @@ module Middleman::CoreExtensions::Extensions
       
       extension = registered[name]
       if extension.is_a?(Proc)
-        extension = extension.call(Middleman::VERSION) || nil
+        extension = extension.call() || nil
         registered[name] = extension
       end
       
@@ -102,8 +121,10 @@ module Middleman::CoreExtensions::Extensions
       
       if ext.nil?
         puts "== Unknown Extension: #{feature}"
+      elsif ext.is_a?(String)
+        puts ext
       else
-        puts "== Activating:  #{feature}" if logging?
+        puts "== Activating: #{feature}" if logging?
         self.class.register(ext)
       end
     end
