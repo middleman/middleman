@@ -71,20 +71,30 @@ module Middleman::Sitemap
     def touch
     end
     
-    def render(&block)
+    def custom_render(&block)
+      @_custom_renderer ||= nil
+      @_custom_renderer = block if block_given?
+      @_custom_renderer
+    end
+    
+    def render(*args, &block)
       return unless template?
       
       if proxy?
         # Forward blocks
         forward_blocks = template.blocks.compact
         forward_blocks << block if block_given?
-        store.page(proxied_to).template.render do
+        store.page(proxied_to).template.render(*args) do
           forward_blocks.each do |block|
             instance_exec(&block)
           end
         end
+      elsif !custom_render.nil?
+        params = args.dup
+        params << block if block_given?
+        instance_exec(*params, &custom_renderer)
       else
-        template.render(&block)
+        template.render(*args, &block)
       end
     end
     

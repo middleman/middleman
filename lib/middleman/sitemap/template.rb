@@ -69,7 +69,7 @@ module Middleman::Sitemap
       self.class.cache
     end
 
-    def options_for_ext(ext)
+    def self.options_for_ext(ext)
       cache.fetch(:options_for_ext, ext) do
         options = {}
 
@@ -151,12 +151,15 @@ module Middleman::Sitemap
     
     def internal_render(path, locs = {}, opts = {}, &block)
       path = path.to_s
-
-      opts.merge!(options_for_ext(File.extname(path)))
-
       body = app.cache.fetch(:raw_template, path) do
         File.read(path)
       end
+      
+      self.class.static_render(app, path, body, locs, opts, &block)
+    end
+    
+    def self.static_render(app, path, body, locs = {}, opts = {}, &block)
+      options = opts.merge(options_for_ext(File.extname(path)))
 
       template = cache.fetch(:compiled_template, options, body) do
         ::Tilt.new(path, 1, options) { body }

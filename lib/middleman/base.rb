@@ -375,8 +375,17 @@ class Middleman::Base
   # @param [Hash] Rendering locals
   # @return [String] Output
   def render(engine, data, options={}, locals={}, &block)
+    data = data.to_s
+    template_path = File.join(source_dir, data)
+    
     if sitemap.exists?(data)
       sitemap.page(data).render(options, locals, &block)
+    elsif File.exists?(template_path)
+      body = app.cache.fetch(:raw_template, template_path) do
+        File.read(template_path)
+      end
+      
+      Middleman::Sitemap::Template.static_render(self, template_path, body, locals, options, &block)
     else
       throw "Could not find file to render: #{data}"
     end

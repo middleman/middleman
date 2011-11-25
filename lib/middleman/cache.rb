@@ -7,6 +7,14 @@ module Middleman
     def fetch(*key)
       @cache[key] ||= yield
     end
+    
+    def has_key?(key)
+      @cache.has_key?(key)
+    end
+    
+    def get(key)
+      @cache[key]
+    end
 
     def clear
       @cache = {}
