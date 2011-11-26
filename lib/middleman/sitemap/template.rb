@@ -124,28 +124,28 @@ module Middleman::Sitemap
       
       if !preferred_engine.nil?
         # Check root
-        layout_path, *etc = resolve_template(name, :preferred_engine => preferred_engine)
+        layout_path, *etc = self.class.resolve_template(app, name, :preferred_engine => preferred_engine)
 
         # Check layouts folder
         if !layout_path
-          layout_path, *etc = resolve_template(File.join("layouts", name.to_s), :preferred_engine => preferred_engine)
+          layout_path, *etc = self.class.resolve_template(app, File.join("layouts", name.to_s), :preferred_engine => preferred_engine)
         end
       end
       
       # Check root, no preference
       if !layout_path
-        layout_path, *etc = resolve_template(name)
+        layout_path, *etc = self.class.resolve_template(app, name)
       end
       
       # Check layouts folder, no preference
       if !layout_path
-        layout_path, *etc = resolve_template(File.join("layouts", name.to_s))
+        layout_path, *etc = self.class.resolve_template(app, File.join("layouts", name.to_s))
       end
       
       layout_path
     end
     
-    def resolve_template(request_path, options={})
+    def self.resolve_template(app, request_path, options={})
       request_path = request_path.to_s
       cache.fetch(:resolve_template, request_path, options) do
         relative_path = request_path.sub(%r{^/}, "")
@@ -196,9 +196,9 @@ module Middleman::Sitemap
     def self.static_render(app, path, body, locs = {}, opts = {}, &block)
       options = opts.merge(options_for_ext(File.extname(path)))
 
-      # template = cache.fetch(:compiled_template, options, body) do
-        template = ::Tilt.new(path, 1, options) { body }
-      # end
+      template = cache.fetch(:compiled_template, options, body) do
+        ::Tilt.new(path, 1, options) { body }
+      end
 
       template.render(app, locs, &block)
     end

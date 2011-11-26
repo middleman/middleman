@@ -381,16 +381,40 @@ class Middleman::Base
   # @return [String] Output
   def render(engine, data, options={}, locals={}, &block)
     data = data.to_s
-    template_path = File.join(source_dir, data)
     
-    if sitemap.exists?(data)
-      sitemap.page(data).render(options, locals, &block)
-    elsif File.exists?(template_path)
-      body = app.cache.fetch(:raw_template, template_path) do
-        File.read(template_path)
-      end
+    found_partial = false
+    engine        = nil
+    
+    if sitemap.exists?(current_path)
+      page = sitemap.page(current_path)
+      current_dir = File.dirname(page.source_file)
+      engine = File.extname(page.source_file)[1..-1].to_sym
       
-      Middleman::Sitemap::Template.static_render(self, template_path, body, locals, options, &block)
+      if current_dir != self.source_dir
+        relative_dir = File.join(current_dir.sub("#{self.source_dir}/", ""), data)
+        
+        found_partial, found_engine = Middleman::Sitemap::Template.resolve_template(self, relative_dir, :preferred_engine => engine)
+        
+        if !found_partial
+          found_partial, found_engine = Middleman::Sitemap::Template.resolve_template(self, relative_dir)
+        end
+      end
+    end
+    
+    if !found_partial && !engine.nil?
+      found_partial, found_engine = Middleman::Sitemap::Template.resolve_template(self, data, :preferred_engine => engine)
+    end
+    
+    if !found_partial
+      found_partial, found_engine = Middleman::Sitemap::Template.resolve_template(self, data)
+    end
+    
+    if found_partial
+      body = cache.fetch(:raw_template, found_partial) do
+        File.read(found_partial)
+      end
+    
+      Middleman::Sitemap::Template.static_render(self, found_partial, body, locals, options, &block)
     else
       throw "Could not find file to render: #{data}"
     end
