@@ -94,7 +94,7 @@ module Guard
       @server_job = fork do
         opts = @options.dup
         opts[:app] = app_rack
-        puts "== The Middleman is standing watch on port #{opts[:Port]||4567}"
+        puts "== The Middleman is standing watch on port #{opts[:port]||4567}"
         ::Middleman.start_server(opts)
       end
     end
