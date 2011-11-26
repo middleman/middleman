@@ -120,17 +120,23 @@ module Middleman::Sitemap
     end
     
     def locate_layout(name, preferred_engine=nil)
-      # Check root
-      layout_path, *etc = resolve_template(name, :preferred_engine => preferred_engine)
+      layout_path = false
+      
+      if !preferred_engine.nil?
+        # Check root
+        layout_path, *etc = resolve_template(name, :preferred_engine => preferred_engine)
 
-      # Check layouts folder
-      if !layout_path
-        layout_path, *etc = resolve_template(File.join("layouts", name.to_s), :preferred_engine => preferred_engine)
+        # Check layouts folder
+        if !layout_path
+          layout_path, *etc = resolve_template(File.join("layouts", name.to_s), :preferred_engine => preferred_engine)
+        end
       end
       
       # Check root, no preference
-      layout_path, *etc = resolve_template(name)
-
+      if !layout_path
+        layout_path, *etc = resolve_template(name)
+      end
+      
       # Check layouts folder, no preference
       if !layout_path
         layout_path, *etc = resolve_template(File.join("layouts", name.to_s))
@@ -145,7 +151,9 @@ module Middleman::Sitemap
         relative_path = request_path.sub(%r{^/}, "")
         on_disk_path  = File.expand_path(relative_path, app.source_dir)
 
-        preferred_engine = if options.has_key?(:preferred_engine)
+        preferred_engine = "*"
+        
+        if options.has_key?(:preferred_engine)
           extension_class = ::Tilt[options[:preferred_engine]]
           matched_exts = []
 
@@ -155,25 +163,24 @@ module Middleman::Sitemap
             matched_exts << ext
           end
 
-          "{" + matched_exts.join(",") + "}"
-        else
-          "*"
+          if matched_exts.length > 0
+            preferred_engine = "{" + matched_exts.join(",") + "}"
+          else
+            return false
+          end
         end
 
         path_with_ext = on_disk_path + "." + preferred_engine
-
         found_path = Dir[path_with_ext].find do |path|
           ::Tilt[path]
         end
 
-        result = if found_path || File.exists?(on_disk_path)
+        if found_path || File.exists?(on_disk_path)
           engine = found_path ? File.extname(found_path)[1..-1].to_sym : nil
           [ found_path || on_disk_path, engine ]
         else
           false
         end
-
-        result
       end
     end
     
