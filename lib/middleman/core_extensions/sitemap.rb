@@ -11,6 +11,8 @@ module Middleman::CoreExtensions::Sitemap
   
   module InstanceMethods
     def initialize
+      ::Middleman::Sitemap::Template.cache.clear
+    
       file_changed do |file|
         sitemap.touch_file(file)
       end

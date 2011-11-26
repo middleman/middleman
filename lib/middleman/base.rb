@@ -165,7 +165,7 @@ class Middleman::Base
   ]
 
   # Default layout name
-  set :layout, :layout
+  set :layout, :_auto_layout
   
   # Activate custom features and extensions
   include Middleman::CoreExtensions::Extensions
@@ -328,11 +328,16 @@ class Middleman::Base
     # Set a HTTP content type based on the request's extensions
     content_type sitemap_page.mime_type
     
-    # Valid content is a 200 status
-    res.status = 200
-    
-    # Write out the contents of the page
-    res.write sitemap_page.render
+    begin
+      # Write out the contents of the page
+      res.write sitemap_page.render
+      
+      # Valid content is a 200 status
+      res.status = 200
+    rescue ::Middleman::Sitemap::TemplateNotFound => e
+      res.write "Error: #{e.message}"
+      res.status = 500
+    end
     
     # End the request
     halt res.finish

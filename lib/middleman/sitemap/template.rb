@@ -1,4 +1,7 @@
 module Middleman::Sitemap
+  class TemplateNotFound < RuntimeError
+  end
+  
   class Template
     attr_accessor :page, :options, :locals, :blocks#, :dependencies
   
@@ -100,14 +103,39 @@ module Middleman::Sitemap
         engine
       end
 
-      layout_path, *etc = resolve_template(local_layout, :preferred_engine => layout_engine)
-
-      if !layout_path
-        local_layout = File.join("layouts", local_layout.to_s)
-        layout_path, *etc = resolve_template(local_layout, :preferred_engine => layout_engine)
+      # Automatic
+      if local_layout == :_auto_layout
+        # Look for :layout of any extension
+        # If found, use it. If not, continue
+        locate_layout(:layout, layout_engine) || false
+      else
+        # Look for specific layout
+        # If found, use it. If not, error.
+        if layout_path = locate_layout(local_layout, layout_engine)
+          layout_path
+        else
+          raise Middleman::Sitemap::TemplateNotFound, "Could not locate layout: #{local_layout}"
+        end
       end
+    end
+    
+    def locate_layout(name, preferred_engine=nil)
+      # Check root
+      layout_path, *etc = resolve_template(name, :preferred_engine => preferred_engine)
 
-      throw "Could not locate layout: #{local_layout}" unless layout_path
+      # Check layouts folder
+      if !layout_path
+        layout_path, *etc = resolve_template(File.join("layouts", name.to_s), :preferred_engine => preferred_engine)
+      end
+      
+      # Check root, no preference
+      layout_path, *etc = resolve_template(name)
+
+      # Check layouts folder, no preference
+      if !layout_path
+        layout_path, *etc = resolve_template(File.join("layouts", name.to_s))
+      end
+      
       layout_path
     end
     
@@ -161,9 +189,9 @@ module Middleman::Sitemap
     def self.static_render(app, path, body, locs = {}, opts = {}, &block)
       options = opts.merge(options_for_ext(File.extname(path)))
 
-      template = cache.fetch(:compiled_template, options, body) do
-        ::Tilt.new(path, 1, options) { body }
-      end
+      # template = cache.fetch(:compiled_template, options, body) do
+        template = ::Tilt.new(path, 1, options) { body }
+      # end
 
       template.render(app, locs, &block)
     end
