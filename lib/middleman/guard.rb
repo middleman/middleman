@@ -3,7 +3,7 @@ require "guard/guard"
 require "rbconfig"
 require "net/http"
 
-if Config::CONFIG['host_os'].downcase =~ %r{mingw}
+if RbConfig::CONFIG['host_os'].downcase =~ %r{mingw}
   require "win32/process"
 end
 
