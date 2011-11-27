@@ -28,6 +28,9 @@
 # methods to use in your views. Some modify the output on-the-fly. And some
 # apply computationally-intensive changes to your final build files.
 
+# Using for version parsing
+require "rubygems"
+
 module Middleman::CoreExtensions::Extensions
   
   class << self
