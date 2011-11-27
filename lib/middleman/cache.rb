@@ -47,7 +47,7 @@ module Middleman
     # Remove a specific key
     # @param Anything Hash can use as a key
     def remove(*key)
-      @cache.delete(key) if @cache.has_key?(key)
+      @cache.delete(key)
     end
   end
 end

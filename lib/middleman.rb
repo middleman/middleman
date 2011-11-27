@@ -14,6 +14,7 @@ module Middleman
   
   # Custom Renderers
   module Renderers
+    autoload :Haml,         "middleman/renderers/haml"
     autoload :Sass,         "middleman/renderers/sass"
     autoload :Markdown,     "middleman/renderers/markdown"
     autoload :ERb,          "middleman/renderers/erb"

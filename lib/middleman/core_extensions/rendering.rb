@@ -12,6 +12,7 @@ module Middleman::CoreExtensions::Rendering
       app.send :include, InstanceMethods
       
       # Activate custom renderers
+      app.register Middleman::Renderers::Haml
       app.register Middleman::Renderers::Sass
       app.register Middleman::Renderers::Markdown
       app.register Middleman::Renderers::ERb
@@ -24,18 +25,35 @@ module Middleman::CoreExtensions::Rendering
   end
   
   module InstanceMethods
+    def initialize
+      file_changed %r{^source/} do |file|
+        path = File.expand_path(file, root)
+        # cache.remove(:raw_template, path.to_sym)
+      end
+
+      super
+    end
+    
     def render_template(path, locs={}, opts={})
+      extension = File.extname(path)
+      engine = extension[1..-1].to_sym
+
+      @current_engine, engine_was = engine, @current_engine
+      @_out_buf, _buf_was = "", @_out_buf
+    
       content = render_individual_file(path, locs, opts)
       
-      extension = File.extname(path)
       needs_layout = !%w(.js .css .txt).include?(extension)
-      engine = extension[1..-1].to_sym
       
       if needs_layout && layout_path = fetch_layout(engine, opts)
         content = render_individual_file(layout_path, locs, opts) { content }
       end
         
       content
+    ensure
+      @current_engine = engine_was
+      @_out_buf = _buf_was
+      @content_blocks = nil
     end
     
     # Sinatra/Padrino render method signature.
@@ -79,22 +97,25 @@ module Middleman::CoreExtensions::Rendering
     # @private
     def render_individual_file(path, locs = {}, opts = {}, &block)
       path = path.to_s
-      body = cache.fetch(:raw_template, path) do
+      body = #cache.fetch(:raw_template, path) do
+        # $stderr.puts "reading: #{path}"
         File.read(path)
-      end
+      # end
 
-      options = opts.merge(options_for_ext(File.extname(path)))
+      extension = File.extname(path)
+      options = opts.merge(options_for_ext(extension))
+      options[:outvar] ||= '@_out_buf'
 
-      template = cache.fetch(:compiled_template, options, body) do
+      template = #cache.fetch(:compiled_template, options, body) do
         ::Tilt.new(path, 1, options) { body }
-      end
+      # end
 
       template.render(self, locs, &block)
     end
     
     # @private
     def options_for_ext(ext)
-      cache.fetch(:options_for_ext, ext) do
+      # cache.fetch(:options_for_ext, ext) do
         options = {}
 
         extension_class = ::Tilt[ext]
@@ -105,7 +126,7 @@ module Middleman::CoreExtensions::Rendering
         end
 
         options
-      end
+      # end
     end
   
     # @private
@@ -166,10 +187,14 @@ module Middleman::CoreExtensions::Rendering
       layout_path
     end
   
+    def current_engine
+      @current_engine ||= nil
+    end
+    
     # @private
     def resolve_template(request_path, options={})
       request_path = request_path.to_s
-      cache.fetch(:resolve_template, request_path, options) do
+      # cache.fetch(:resolve_template, request_path, options) do
         relative_path = request_path.sub(%r{^/}, "")
         on_disk_path  = File.expand_path(relative_path, self.source_dir)
 
@@ -203,7 +228,7 @@ module Middleman::CoreExtensions::Rendering
         else
           false
         end
-      end
+      # end
     end
   end
 end

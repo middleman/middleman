@@ -31,7 +31,7 @@ module Middleman::Sitemap
     end
 
     def metadata
-      cache.fetch(:metadata, source_file) do
+      # store.cache.fetch(:metadata, source_file) do
         metadata = { :options => {}, :locals => {} }
         app.provides_metadata.each do |callback, matcher|
           next if !matcher.nil? && !source_file.match(matcher)
@@ -39,7 +39,7 @@ module Middleman::Sitemap
           metadata = metadata.deep_merge(result)
         end
         metadata
-      end
+      # end
     end
 
     def render(opts={}, locs={}, &block)
@@ -52,15 +52,6 @@ module Middleman::Sitemap
       
       app.instance_eval(&block) if block_given?
       app.render_template(source_file, locs, opts)
-    end
-
-  protected
-    def self.cache
-      @_cache ||= ::Middleman::Cache.new
-    end
-    
-    def cache
-      self.class.cache
     end
   end
 end

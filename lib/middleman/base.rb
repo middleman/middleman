@@ -373,13 +373,13 @@ class Middleman::Base
   # @param [String] Request path
   # @return [String] Path with index file if necessary
   def full_path(path)
-    cache.fetch(:full_path, path) do
+    # cache.fetch(:full_path, path) do
       parts = path ? path.split('/') : []
       if parts.last.nil? || parts.last.split('.').length == 1
         path = File.join(path, index_file) 
       end
       "/" + path.sub(%r{^/}, '')
-    end
+    # end
   end
   
   # Add a new mime-type for a specific extension

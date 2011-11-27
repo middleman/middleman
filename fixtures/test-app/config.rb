@@ -15,6 +15,12 @@ page "/target_ignore.html", :proxy => "/should_be_ignored3.html", :ignore => tru
   end
 end
 
+with_layout :content_for do
+  page "/content_for_erb.html"
+  page "/content_for_haml.html"
+  page "/content_for_slim.html"
+end
+
 with_layout false do
   page "/markdown.html"
   page "/relative_image.html"

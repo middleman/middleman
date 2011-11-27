@@ -123,8 +123,7 @@ module Middleman::Sitemap
     
   protected
     def extensionless_path(file)
-      @cache ||= ::Middleman::Cache.new
-      @cache.fetch(:extensionless_path, file) do 
+      @cache.fetch(:extensionless_path, file) do
         path = file.dup
 
         end_of_the_line = false
