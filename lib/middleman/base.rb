@@ -176,14 +176,14 @@ class Middleman::Base
   # Add Guard Callbacks
   register Middleman::CoreExtensions::FileWatcher
   
-  # Sitemap
-  register Middleman::CoreExtensions::Sitemap
-  
   # Activate Data package
   register Middleman::CoreExtensions::Data
   
   # Setup custom rendering
   register Middleman::CoreExtensions::Rendering
+  
+  # Sitemap
+  register Middleman::CoreExtensions::Sitemap
   
   # Compass framework
   register Middleman::CoreExtensions::Compass
@@ -231,6 +231,8 @@ class Middleman::Base
     # Current path defaults to nil, used in views.
     @current_path = nil
     
+    cache.clear
+    
     # Setup the default values from calls to set before initialization
     self.class.superclass.defaults.each { |k,v| set k,v }
     
@@ -250,8 +252,16 @@ class Middleman::Base
   #
   # @private
   # @return [Middleman::Cache] The cache
-  def cache
+  def self.cache
     @_cache ||= ::Middleman::Cache.new
+  end
+  
+  # Cache accessor for instance, simply forwards to class
+  #
+  # @private
+  # @return [Middleman::Cache] The cache
+  def cache
+    self.class.cache
   end
   
   # Rack env
@@ -334,7 +344,7 @@ class Middleman::Base
       
       # Valid content is a 200 status
       res.status = 200
-    rescue ::Middleman::Sitemap::TemplateNotFound => e
+    rescue Middleman::CoreExtensions::Rendering::TemplateNotFound => e
       res.write "Error: #{e.message}"
       res.status = 500
     end
@@ -369,54 +379,6 @@ class Middleman::Base
         path = File.join(path, index_file) 
       end
       "/" + path.sub(%r{^/}, '')
-    end
-  end
-  
-  # Sinatra/Padrino render method signature. Simply forwards to the sitemap
-  #
-  # @param [Symbol] Engine name
-  # @param [String] Path
-  # @param [Hash] Rendering options
-  # @param [Hash] Rendering locals
-  # @return [String] Output
-  def render(engine, data, options={}, locals={}, &block)
-    data = data.to_s
-    
-    found_partial = false
-    engine        = nil
-    
-    if sitemap.exists?(current_path)
-      page = sitemap.page(current_path)
-      current_dir = File.dirname(page.source_file)
-      engine = File.extname(page.source_file)[1..-1].to_sym
-      
-      if current_dir != self.source_dir
-        relative_dir = File.join(current_dir.sub("#{self.source_dir}/", ""), data)
-        
-        found_partial, found_engine = Middleman::Sitemap::Template.resolve_template(self, relative_dir, :preferred_engine => engine)
-        
-        if !found_partial
-          found_partial, found_engine = Middleman::Sitemap::Template.resolve_template(self, relative_dir)
-        end
-      end
-    end
-    
-    if !found_partial && !engine.nil?
-      found_partial, found_engine = Middleman::Sitemap::Template.resolve_template(self, data, :preferred_engine => engine)
-    end
-    
-    if !found_partial
-      found_partial, found_engine = Middleman::Sitemap::Template.resolve_template(self, data)
-    end
-    
-    if found_partial
-      body = cache.fetch(:raw_template, found_partial) do
-        File.read(found_partial)
-      end
-    
-      Middleman::Sitemap::Template.static_render(self, found_partial, body, locals, options, &block)
-    else
-      throw "Could not find file to render: #{data}"
     end
   end
   
