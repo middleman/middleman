@@ -432,13 +432,16 @@ protected
   #
   # @param [String] File to send
   def send_file(path)
-    matched_mime = mime_type(File.extname(path))
+    extension = File.extname(path)
+    matched_mime = mime_type(extension)
     matched_mime = "application/octet-stream" if matched_mime.nil?
     content_type matched_mime
     
     file      = ::Rack::File.new nil
     file.path = path
-    halt file.serving(env)
+    response = file.serving(env)
+    response[1]['Content-Encoding'] = 'gzip' if %w(.svgz).include?(extension)
+    halt response
   end
   
   # Set the content type for the current request
