@@ -31,6 +31,10 @@ module Middleman
       @cache[key]
     end
     
+    def keys
+      @cache.keys
+    end
+    
     # Clear the entire cache
     def clear
       @cache = {}

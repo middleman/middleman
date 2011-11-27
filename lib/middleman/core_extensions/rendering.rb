@@ -4,11 +4,6 @@ module Middleman::CoreExtensions::Rendering
       # Autoload
       require "coffee_script"
       
-      begin
-        require "slim"
-      rescue LoadError
-      end
-      
       app.send :include, InstanceMethods
       
       # Activate custom renderers
@@ -17,6 +12,11 @@ module Middleman::CoreExtensions::Rendering
       app.register Middleman::Renderers::Markdown
       app.register Middleman::Renderers::ERb
       app.register Middleman::Renderers::Liquid
+      
+      begin
+        require "slim"
+      rescue LoadError
+      end
     end
     alias :included :registered
   end
@@ -28,7 +28,7 @@ module Middleman::CoreExtensions::Rendering
     def initialize
       file_changed %r{^source/} do |file|
         path = File.expand_path(file, root)
-        # cache.remove(:raw_template, path.to_sym)
+        cache.remove(:raw_template, path)
       end
 
       super
@@ -97,25 +97,25 @@ module Middleman::CoreExtensions::Rendering
     # @private
     def render_individual_file(path, locs = {}, opts = {}, &block)
       path = path.to_s
-      body = #cache.fetch(:raw_template, path) do
-        # $stderr.puts "reading: #{path}"
+      
+      body = cache.fetch(:raw_template, path) do
         File.read(path)
-      # end
-
+      end
+      
       extension = File.extname(path)
       options = opts.merge(options_for_ext(extension))
       options[:outvar] ||= '@_out_buf'
 
-      template = #cache.fetch(:compiled_template, options, body) do
+      template = cache.fetch(:compiled_template, options, body) do
         ::Tilt.new(path, 1, options) { body }
-      # end
+      end
 
       template.render(self, locs, &block)
     end
     
     # @private
     def options_for_ext(ext)
-      # cache.fetch(:options_for_ext, ext) do
+      cache.fetch(:options_for_ext, ext) do
         options = {}
 
         extension_class = ::Tilt[ext]
@@ -126,7 +126,7 @@ module Middleman::CoreExtensions::Rendering
         end
 
         options
-      # end
+      end
     end
   
     # @private
@@ -194,7 +194,7 @@ module Middleman::CoreExtensions::Rendering
     # @private
     def resolve_template(request_path, options={})
       request_path = request_path.to_s
-      # cache.fetch(:resolve_template, request_path, options) do
+      cache.fetch(:resolve_template, request_path, options) do
         relative_path = request_path.sub(%r{^/}, "")
         on_disk_path  = File.expand_path(relative_path, self.source_dir)
 
@@ -228,7 +228,7 @@ module Middleman::CoreExtensions::Rendering
         else
           false
         end
-      # end
+      end
     end
   end
 end

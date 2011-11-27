@@ -283,6 +283,17 @@ class Middleman::Base
     @req = Rack::Request.new(env)
     @res = Rack::Response.new
 
+    if env["PATH_INFO"] == "/__middleman__" && env["REQUEST_METHOD"] == "POST"
+      if req.params.has_key?("change")
+        file_did_change(req.params["change"])
+      elsif req.params.has_key?("delete")
+        file_did_delete(req.params["delete"])
+      end
+      
+      res.status = 200
+      return res.finish
+    end
+    
     # Catch :halt exceptions and use that response if given
     catch(:halt) do
       process_request
@@ -373,13 +384,13 @@ class Middleman::Base
   # @param [String] Request path
   # @return [String] Path with index file if necessary
   def full_path(path)
-    # cache.fetch(:full_path, path) do
+    cache.fetch(:full_path, path) do
       parts = path ? path.split('/') : []
       if parts.last.nil? || parts.last.split('.').length == 1
         path = File.join(path, index_file) 
       end
       "/" + path.sub(%r{^/}, '')
-    # end
+    end
   end
   
   # Add a new mime-type for a specific extension

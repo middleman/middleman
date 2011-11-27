@@ -4,7 +4,6 @@ module Middleman::Sitemap
     
     def initialize(app)
       @app = app
-      @cache = ::Middleman::Cache.new
       @source = File.expand_path(@app.source, @app.root)
       @pages = {}
     end
@@ -23,12 +22,12 @@ module Middleman::Sitemap
     
     def ignore(path)
       page(path) { ignore }
-      @cache.remove(:ignored_paths)
+      app.cache.remove(:ignored_paths)
     end
     
     def proxy(path, target)
       page(path) { proxy_to(target.sub(%r{^/}, "")) }
-      @cache.remove(:proxied_paths)
+      app.cache.remove(:proxied_paths)
     end
     
     def page(path, &block)
@@ -53,7 +52,7 @@ module Middleman::Sitemap
     end
     
     def ignored_paths
-      @cache.fetch :ignored_paths do
+      app.cache.fetch :ignored_paths do
         @pages.values.select(&:ignored?).map(&:path)
       end
     end
@@ -63,7 +62,7 @@ module Middleman::Sitemap
     end
     
     def generic_paths
-      @cache.fetch :generic_paths do
+      app.cache.fetch :generic_paths do
         @pages.values.select(&:generic?).map(&:path)
       end
     end
@@ -73,7 +72,7 @@ module Middleman::Sitemap
     end
     
     def proxied_paths
-      @cache.fetch :proxied_paths do
+      app.cache.fetch :proxied_paths do
         @pages.values.select(&:proxy?).map(&:path)
       end
     end
@@ -123,7 +122,7 @@ module Middleman::Sitemap
     
   protected
     def extensionless_path(file)
-      @cache.fetch(:extensionless_path, file) do
+      app.cache.fetch(:extensionless_path, file) do
         path = file.dup
 
         end_of_the_line = false

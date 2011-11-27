@@ -1,6 +1,7 @@
 require "guard"
 require "guard/guard"
 require "rbconfig"
+require "net/http"
 
 if Config::CONFIG['host_os'].downcase =~ %r{mingw}
   require "win32/process"
@@ -60,20 +61,16 @@ module Guard
       
       if needs_to_restart
         reload
-      elsif !@app.nil?
+      else
         paths.each do |path|
-          @app.logger.debug :file_change, Time.now, path if @app.settings.logging?
-          @app.file_did_change(path)
+          file_did_change(path)
         end
       end
     end
 
     def run_on_deletion(paths)
-      if !@app.nil?
-        paths.each do |path|
-          @app.logger.debug :file_remove, Time.now, path if @app.settings.logging?
-          @app.file_did_delete(path)
-        end
+      paths.each do |path|
+        file_did_delete(path)
       end
     end
     
@@ -82,16 +79,16 @@ module Guard
       # Quiet down Guard
       # ENV['GUARD_ENV'] = 'test' if @options[:debug] == "true"
       
-      env = (@options[:environment] || "development").to_sym
-      is_logging = @options.has_key?(:debug) && (@options[:debug] == "true")
-      @app = ::Middleman.server.inst do
-        set :environment, env
-        set :logging, is_logging
-      end
-      
-      app_rack = @app.class.to_rack_app
-
       @server_job = fork do
+        env = (@options[:environment] || "development").to_sym
+        is_logging = @options.has_key?(:debug) && (@options[:debug] == "true")
+        app = ::Middleman.server.inst do
+          set :environment, env
+          set :logging, is_logging
+        end
+      
+        app_rack = app.class.to_rack_app
+      
         opts = @options.dup
         opts[:app] = app_rack
         puts "== The Middleman is standing watch on port #{opts[:port]||4567}"
@@ -104,7 +101,20 @@ module Guard
       Process.kill("KILL", @server_job)
       Process.wait @server_job
       @server_job = nil
-      @app = nil
+      # @app = nil
+    end
+    
+    def talk_to_server(params={})
+      uri = URI.parse("http://#{@options[:host]}:#{@options[:port]}/__middleman__")
+      Net::HTTP.post_form(uri, {}.merge(params))
+    end
+    
+    def file_did_change(path)
+      talk_to_server :change => path
+    end
+    
+    def file_did_delete(path)
+      talk_to_server :delete => path
     end
   end
 end
