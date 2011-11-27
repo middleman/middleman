@@ -19,7 +19,7 @@ module Middleman::Extensions
       def asset_url(path, prefix="")
         original_output = super
 
-        valid_extensions = %w(.png .gif .jpg .jpeg .js .css)
+        valid_extensions = %w(.png .gif .jpg .jpeg .svg .svgz .js .css)
 
         asset_prefix = if asset_host.is_a?(Proc)
           asset_host.call(original_output)

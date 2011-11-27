@@ -131,7 +131,7 @@ module Middleman
     end
     
     def execute!
-      sort_order = %w(.png .jpeg .jpg .gif .bmp .ico .woff .otf .ttf .eot .js .css)
+      sort_order = %w(.png .jpeg .jpg .gif .bmp .svg .svgz .ico .woff .otf .ttf .eot .js .css)
       
       paths = @app.sitemap.all_paths.sort do |a, b|
         a_ext = File.extname(a)
