@@ -101,7 +101,7 @@ module Middleman::Sitemap
     def touch_file(file)
       return false if file == @source ||
                       file.match(/^\./) ||
-                      file.match(/\/\./) ||
+                      (file.match(/\/\./) && !file.match(/\/\.htaccess/)) ||
                       (file.match(/\/_/) && !file.match(/\/__/)) ||
                       File.directory?(file)
                      
