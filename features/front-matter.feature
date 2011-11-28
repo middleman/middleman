@@ -5,3 +5,4 @@ Feature: YAML Front Matter
     Given the Server is running at "test-app"
     When I go to "/front-matter.html"
     Then I should see "<h1>This is the title</h1>"
+    Then I should not see "---"
