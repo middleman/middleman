@@ -1,46 +1,52 @@
 require "thor"
 require "thor/group"
-require 'rack/test'
-require 'find'
-
-SHARED_SERVER_INST = Middleman.server.inst do
-  set :environment, :build
-end
-SHARED_SERVER = SHARED_SERVER_INST.class
+require "rack/test"
+require "find"
 
 module Middleman
-  module ThorActions
-    def tilt_template(source, *args, &block)
-      config = args.last.is_a?(Hash) ? args.pop : {}
-      destination = args.first || source
-      
-      request_path = destination.sub(/^#{SHARED_SERVER_INST.build_dir}/, "")
-      
-      begin
-        destination, request_path = SHARED_SERVER_INST.reroute_builder(destination, request_path)
-        
-        response = Middleman::Builder.shared_rack.get(request_path.gsub(/\s/, "%20"))
-        create_file(destination, response.body, config) if response.status == 200
-      rescue
-        say_status :error, destination, :red
-      end
-    end
-  end
-  
   class Builder < Thor::Group
     include Thor::Actions
-    include Middleman::ThorActions
     
     class << self
+      def shared_instance
+        @_shared_instance ||= ::Middleman.server.inst do
+          set :environment, :build
+        end
+      end
+      
+      def shared_server
+        @_shared_server ||= shared_instance.class
+      end
+      
       def shared_rack
-        @shared_rack ||= begin
-          mock = ::Rack::MockSession.new(SHARED_SERVER.to_rack_app)
+        @_shared_rack ||= begin
+          mock = ::Rack::MockSession.new(shared_server.to_rack_app)
           sess = ::Rack::Test::Session.new(mock)
           response = sess.get("__middleman__")
           sess
         end
       end
     end
+    
+    # @private
+    module ThorActions
+      def tilt_template(source, *args, &block)
+        config = args.last.is_a?(Hash) ? args.pop : {}
+        destination = args.first || source
+
+        request_path = destination.sub(/^#{::Middleman::Builder.shared_instance.build_dir}/, "")
+
+        # begin
+          destination, request_path = ::Middleman::Builder.shared_instance.reroute_builder(destination, request_path)
+
+          response = ::Middleman::Builder.shared_rack.get(request_path.gsub(/\s/, "%20"))
+          create_file(destination, response.body, config) if response.status == 200
+        # rescue
+          # say_status :error, destination, :red
+        # end
+      end
+    end
+    include ThorActions
     
     class_option :relative, :type => :boolean, :aliases => "-r", :default => false, :desc => 'Override the config.rb file and force relative urls'
     class_option :glob, :type => :string, :aliases => "-g", :default => nil, :desc => 'Build a subset of the project'
@@ -49,13 +55,13 @@ module Middleman
       super
       
       if options.has_key?("relative") && options["relative"]
-        SHARED_SERVER_INST.activate :relative_assets
+        self.class.shared_instance.activate :relative_assets
       end
     end
     
     def source_paths
       @source_paths ||= [
-        SHARED_SERVER_INST.root
+        self.class.shared_instance.root
       ]
     end
     
@@ -66,12 +72,13 @@ module Middleman
       opts[:glob]  = options["glob"]  if options.has_key?("glob")
       opts[:clean] = options["clean"] if options.has_key?("clean")
       
-      action GlobAction.new(self, SHARED_SERVER_INST, opts)
+      action GlobAction.new(self, self.class.shared_instance, opts)
       
-      SHARED_SERVER_INST.run_hook :after_build, self
+      self.class.shared_instance.run_hook :after_build, self
     end
   end
   
+  # @private
   class GlobAction < ::Thor::Actions::EmptyDirectory
     attr_reader :source
 
@@ -117,7 +124,7 @@ module Middleman
     end
 
     def directory_empty?(directory)
-      Dir["#{directory}/*"].empty?
+      Dir[File.join(directory, "*")].empty?
     end
 
     def queue_current_paths

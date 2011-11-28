@@ -33,6 +33,7 @@ module Middleman
   end
 end
 
+# @private
 module Guard
   class Middleman < Guard
     def initialize(watchers = [], options = {})
