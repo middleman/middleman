@@ -4,6 +4,8 @@ module Middleman::Extensions
       def registered(app)
         app.send :include, InstanceMethods
         app.before do
+          next if sitemap.exists?(@original_path)
+
           prefix         = @original_path.sub(/\/$/, "")
           indexed_path   = prefix + "/" + index_file
         
@@ -25,9 +27,7 @@ module Middleman::Extensions
         app.build_reroute do |destination, request_path|
           index_ext      = File.extname(index_file)
           new_index_path = "/#{index_file}"
-      
-          indexed_path = request_path.sub(/\/$/, "") + index_ext
-        
+
           if ignored_directory_indexes.include?(request_path)
             false
           elsif request_path =~ /#{new_index_path}$/
