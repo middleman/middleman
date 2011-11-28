@@ -28,3 +28,8 @@ Feature: Provide Sane Defaults for Partial Behavior
     Given the Server is running at "partials-app"
     When I go to "/sub/index.html"
     Then I should see "Local Partial"
+
+  Scenario: Partials can be passed locals
+    Given the Server is running at "partials-app"
+    When I go to "/locals.html"
+    Then I should see "Local var is bar"
