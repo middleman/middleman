@@ -57,8 +57,10 @@ module Middleman::CoreExtensions::Rendering
     end
     
     # Sinatra/Padrino render method signature.
-    def render(engine, data, options={}, locals={}, &block)
+    def render(engine, data, options={}, &block)
       data = data.to_s
+
+      locals = options[:locals]
 
       found_partial = false
       engine        = nil
