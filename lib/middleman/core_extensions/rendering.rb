@@ -26,12 +26,12 @@ module Middleman::CoreExtensions::Rendering
   
   module InstanceMethods
     def initialize
+      super
+      
       file_changed %r{^source/} do |file|
         path = File.expand_path(file, root)
         cache.remove(:raw_template, path)
       end
-
-      super
     end
     
     def render_template(path, locs={}, opts={})

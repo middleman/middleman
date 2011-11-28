@@ -40,6 +40,7 @@ module Middleman::CoreExtensions::Extensions
       app.define_hook :before_configuration
       app.define_hook :build_config
       app.define_hook :development_config
+      
       app.extend ClassMethods
       app.send :include, InstanceMethods
       
@@ -164,8 +165,6 @@ module Middleman::CoreExtensions::Extensions
           puts "== Extension: #{ext}"
         end
       end
-      
-      run_hook :ready
     end
   end
 end

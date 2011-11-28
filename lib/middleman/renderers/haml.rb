@@ -3,15 +3,11 @@ module Middleman::Renderers::Haml
     def registered(app)
       require "haml"
       app.send :include, ::Haml::Helpers
-      app.send :include, InstanceMethods
+      
+      app.ready do
+        init_haml_helpers
+      end
     end
     alias :included :registered
-  end
-  
-  module InstanceMethods
-    def initialize
-      super
-      init_haml_helpers
-    end
   end
 end

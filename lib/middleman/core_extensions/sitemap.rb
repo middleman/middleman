@@ -11,6 +11,8 @@ module Middleman::CoreExtensions::Sitemap
   
   module InstanceMethods
     def initialize
+      super
+    
       file_changed do |file|
         sitemap.touch_file(file)
       end
@@ -18,8 +20,6 @@ module Middleman::CoreExtensions::Sitemap
       file_deleted do |file|
         sitemap.remove_file(file)
       end
-      
-      super
     end
     
     def sitemap

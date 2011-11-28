@@ -11,36 +11,37 @@ module Middleman::CoreExtensions::FrontMatter
   
   module InstanceMethods
     def initialize
+      super
+      
       file_changed FrontMatter.matcher do |file|
         frontmatter.touch_file(file)
       end
-      
+
       file_deleted do |file|
         frontmatter.remove_file(file)
       end
-      
+
       provides_metadata FrontMatter.matcher do |path|
         relative_path = path.sub(source_dir, "")
-        
+
         data = if frontmatter.has_data?(relative_path)
           frontmatter.data(relative_path).first
         else
           {}
         end
-        
+
         # Forward remaining data to helpers
         data_content("page", data)
-        
+
         %w(layout layout_engine).each do |opt|
           if data.has_key?(opt)
             data[opt.to_sym] = data.delete(opt)
           end
         end
-        
+
         { :options => data }
       end
-        
-      super
+
     end
     
     def frontmatter

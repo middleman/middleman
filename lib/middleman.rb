@@ -168,7 +168,7 @@ module Middleman
         :AccessLog => []
       }
     
-      app_class = options[:app] ||= ::Middleman.server.new
+      app_class = options[:app] ||= ::Middleman.server.inst
       opts[:app] = app_class
       opts[:server] = 'thin'
     

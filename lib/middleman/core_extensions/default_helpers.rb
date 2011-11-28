@@ -23,7 +23,7 @@ module Middleman::CoreExtensions::DefaultHelpers
       
       app.helpers Helpers
       
-      app.initialized do
+      app.ready do
         ::I18n.load_path = Dir["#{File.join(root, 'locales', '*.yml')}"]
       end
     end

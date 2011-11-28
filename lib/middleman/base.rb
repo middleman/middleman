@@ -23,9 +23,6 @@ class Middleman::Base
   # Ready (all loading and parsing of extensions complete) hook
   define_hook :ready
   
-  # Initialized (after initialized() runs)
-  define_hook :initialized
-  
   class << self
     
     # Reset Rack setup
@@ -49,7 +46,11 @@ class Middleman::Base
     # @private
     # @return [Middleman::Base]
     def inst(&block)
-      @inst ||= new(&block)
+      @inst ||= begin
+        mm = new(&block)
+        mm.run_hook :ready
+        mm
+      end
     end
     
     # Return built Rack app
@@ -243,9 +244,6 @@ class Middleman::Base
     set :source_dir, File.join(root, source)
     
     super
-    
-    # Run initialized callbacks
-    run_hook :initialized
   end
   
   # Shared cache instance
