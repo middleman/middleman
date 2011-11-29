@@ -1,3 +1,5 @@
+require "rack/test"
+
 Given /^a clean server$/ do
   @initialize_commands = []
 end
@@ -20,11 +22,9 @@ Given /^current environment is "([^\"]*)"$/ do |env|
 end
 
 Given /^the Server is running at "([^\"]*)"$/ do |app_path|
-  root_dir = File.dirname(File.dirname(File.dirname(__FILE__)))
-
   initialize_commands = @initialize_commands || []
   initialize_commands.unshift lambda { 
-    set :root, File.join(root_dir, "fixtures", app_path)
+    set :root, File.join(PROJECT_ROOT_PATH, "fixtures", app_path)
     set :environment, @current_env || :development
   }
   
