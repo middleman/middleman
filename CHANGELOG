@@ -5,6 +5,7 @@ Sitemap maintains own state
 New Extension Registration API
 Remove old 1.x mm- binaries and messaging
 New default layout functionality: https://github.com/tdreyno/middleman/issues/165
+Enable chained templates outside of sprockets (file.html.markdown.erb)
 
 2.1.pre
 ====
