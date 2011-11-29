@@ -40,8 +40,12 @@ module Middleman::CoreExtensions::Rendering
 
       @current_engine, engine_was = engine, @current_engine
       @_out_buf, _buf_was = "", @_out_buf
-    
-      content = render_individual_file(path, locs, opts)
+      
+      while ::Tilt[path]
+        content = render_individual_file(path, locs, opts)
+        path = File.basename(path, File.extname(path))
+        cache.set([:raw_template, path], content)
+      end
       
       needs_layout = !%w(.js .css .txt).include?(extension)
       

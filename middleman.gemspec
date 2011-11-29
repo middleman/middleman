@@ -34,7 +34,7 @@ Gem::Specification.new do |s|
   s.add_dependency("coffee-script", ["~> 2.2.0"])
   s.add_dependency("execjs", ["~> 1.2.7"])
   s.add_dependency("sprockets", ["~> 2.1.2"])
-  s.add_dependency("sprockets-sass", ["~> 0.3.0"])
+  s.add_dependency("sprockets-sass", ["~> 0.5.0"])
   s.add_dependency("guard", ["~> 0.8.8"])
   
   # OSX
