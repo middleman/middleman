@@ -251,7 +251,7 @@ class Middleman::Base
     self.class.superclass.defaults.each { |k,v| set(k,v) }
     
     # Evaluate a passed block if given
-    yield if block_given?
+    instance_exec(&block) if block_given?
     
     # Build expanded source path once paths have been parsed
     set :source_dir, File.join(root, source)

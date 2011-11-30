@@ -1,4 +1,3 @@
-require "maruku"
 require "slim"
 require "liquid"
 require "coffee-filter"
