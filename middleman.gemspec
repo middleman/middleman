@@ -43,6 +43,7 @@ Gem::Specification.new do |s|
   # Development and test
   s.add_development_dependency("slim")
   s.add_development_dependency("rdiscount")
+  s.add_development_dependency("sinatra")
   s.add_development_dependency("coffee-filter", ["~> 0.1.1"])
   s.add_development_dependency("liquid", ["~> 2.2.0"])
   s.add_development_dependency("cucumber", ["~> 1.1.0"])
