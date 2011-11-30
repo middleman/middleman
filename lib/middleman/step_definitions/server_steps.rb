@@ -22,6 +22,8 @@ Given /^current environment is "([^\"]*)"$/ do |env|
 end
 
 Given /^the Server is running at "([^\"]*)"$/ do |app_path|
+  step %Q{a project at "#{app_path}"}
+  
   initialize_commands = @initialize_commands || []
   initialize_commands.unshift lambda { 
     set :root, File.join(PROJECT_ROOT_PATH, "fixtures", app_path)
