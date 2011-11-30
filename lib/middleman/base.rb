@@ -117,7 +117,7 @@ class Middleman::Base
     end
   end
   
-  # Set attributes
+  # Set attributes (global variables)
   #
   # @param [Symbol] Name of the attribue
   # @param Attribute value
@@ -129,43 +129,54 @@ class Middleman::Base
   end
   
   # Root project directory (overwritten in middleman build/server)
+  # @return [String]
   set :root,        Dir.pwd
   
   # Name of the source directory
+  # @return [String]
   set :source,      "source"
   
-  # Set the environment from the environment. Defaults to :development, set
-  # to :build by the build process
+  # Middleman environment. Defaults to :development, set to :build by the build process
+  # @return [String]
   set :environment, (ENV['MM_ENV'] && ENV['MM_ENV'].to_sym) || :development
   
-  # Disable logging by default
+  # Whether logging is active, disabled by default
+  # @return [String]
   set :logging, false
 
   # Which file should be used for directory indexes
+  # @return [String]
   set :index_file,  "index.html"
 
   # Location of javascripts within source. Used by Sprockets.
+  # @return [String]
   set :js_dir,      "javascripts"
   
   # Location of stylesheets within source. Used by Compass.
+  # @return [String]
   set :css_dir,     "stylesheets"
   
   # Location of images within source. Used by HTML helpers and Compass.
+  # @return [String]
   set :images_dir,  "images"
 
   # Where to build output files
+  # @return [String]
   set :build_dir,   "build"
   
   # Default prefix for building paths. Used by HTML helpers and Compass.
+  # @return [String]
   set :http_prefix, "/"
 
   # Automatically loaded extensions
+  # @return [Array<Symbol>]
   set :default_extensions, [
     :lorem,
     # :sitemap_tree
   ]
 
   # Default layout name
+  # @return [String, Symbold]
   set :layout, :_auto_layout
   
   # Activate custom features and extensions
@@ -225,20 +236,22 @@ class Middleman::Base
     Middleman::Extensions::SitemapTree }
   
   # Accessor for current path
-  attr_accessor :current_path
+  # @return [String]
+  attr :current_path
     
   # Initialize the Middleman project
   def initialize(&block)
     # Current path defaults to nil, used in views.
     @current_path = nil
     
+    # Clear the static class cache
     cache.clear
     
     # Setup the default values from calls to set before initialization
-    self.class.superclass.defaults.each { |k,v| set k,v }
+    self.class.superclass.defaults.each { |k,v| set(k,v) }
     
     # Evaluate a passed block if given
-    instance_exec(&block) if block_given?
+    yield if block_given?
     
     # Build expanded source path once paths have been parsed
     set :source_dir, File.join(root, source)
@@ -266,9 +279,11 @@ class Middleman::Base
   attr :env
   
   # Rack request
+  # @return [Rack::Request]
   attr :req
   
   # Rack response
+  # @return [Rack::Response]
   attr :res
   
   # Rack Interface

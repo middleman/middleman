@@ -11,3 +11,7 @@ require 'rake/testtask'
 require 'rake/clean'
 
 task :test => ["cucumber"]
+
+task :doc do
+  `bundle exec yard`
+end

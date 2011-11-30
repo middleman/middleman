@@ -157,7 +157,7 @@ module Middleman::CoreExtensions::Extensions
       
       # Add in defaults
       default_extensions.each do |ext|
-        # activate ext
+        activate ext
       end
       
       if logging?
