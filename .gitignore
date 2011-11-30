@@ -7,9 +7,8 @@ pkg
 .tmp
 Gemfile.lock
 docs
-.rvmrc
 .rbenv-version
-fixtures/test-app/build
+fixtures/generator-test
 .*.swp
 build
 doc
