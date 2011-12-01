@@ -30,6 +30,8 @@ module Middleman
     
     # @private
     module ThorActions
+      # Render a template to a file.
+      # @return [String] the actual destination file path that was created
       def tilt_template(source, *args, &block)
         config = args.last.is_a?(Hash) ? args.pop : {}
         destination = args.first || source
@@ -41,6 +43,8 @@ module Middleman
 
           response = ::Middleman::Builder.shared_rack.get(request_path.gsub(/\s/, "%20"))
           create_file(destination, response.body, config) if response.status == 200
+
+          destination
         # rescue
           # say_status :error, destination, :red
         # end
@@ -130,7 +134,7 @@ module Middleman
     def queue_current_paths
       @cleaning_queue = []
       Find.find(@destination) do |path|
-        next if path.match(/\/\./)
+        next if path.match(/\/\./) && !path.match(/\.htaccess/)
         unless path == destination
           @cleaning_queue << path.sub(@destination, destination[/([^\/]+?)$/])
         end
@@ -154,7 +158,7 @@ module Middleman
         file_source = path
         file_destination = File.join(given_destination, file_source.gsub(source, '.'))
         file_destination.gsub!('/./', '/')
-        
+
         if @app.sitemap.generic?(file_source)
           # no-op
         elsif @app.sitemap.proxied?(file_source)
@@ -163,13 +167,13 @@ module Middleman
           next
         end
         
-        @cleaning_queue.delete(file_destination) if cleaning?
-        
         if @config[:glob]
           next unless File.fnmatch(@config[:glob], file_source)
         end
         
-        base.tilt_template(file_source, file_destination, { :force => true })
+        file_destination = base.tilt_template(file_source, file_destination, { :force => true })
+
+        @cleaning_queue.delete(file_destination) if cleaning?
       end
     end
   end
