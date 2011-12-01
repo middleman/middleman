@@ -17,7 +17,7 @@ module Middleman::CoreExtensions::FrontMatter
         frontmatter.touch_file(file)
       end
 
-      file_deleted do |file|
+      file_deleted FrontMatter.matcher do |file|
         frontmatter.remove_file(file)
       end
 
@@ -25,7 +25,7 @@ module Middleman::CoreExtensions::FrontMatter
         relative_path = path.sub(source_dir, "")
 
         data = if frontmatter.has_data?(relative_path)
-          frontmatter.data(relative_path).first
+          frontmatter.data(relative_path)
         else
           {}
         end
@@ -52,7 +52,7 @@ module Middleman::CoreExtensions::FrontMatter
   class FrontMatter
     class << self
       def matcher
-        %r{^source/.*\.html}
+        %r{source/.*\.html}
       end
     end
     
@@ -78,7 +78,7 @@ module Middleman::CoreExtensions::FrontMatter
         
       if result
         file = file.sub(@app.source_dir, "")
-        @local_data[file] = result
+        @local_data[file] = result[0]
         path = File.join(@app.source_dir, file)
         @app.cache.set([:raw_template, path], result[1])
       end
