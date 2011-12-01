@@ -17,7 +17,7 @@ module Middleman::CoreExtensions::FrontMatter
         frontmatter.touch_file(file)
       end
 
-      file_deleted do |file|
+      file_deleted FrontMatter.matcher do |file|
         frontmatter.remove_file(file)
       end
 
@@ -52,7 +52,7 @@ module Middleman::CoreExtensions::FrontMatter
   class FrontMatter
     class << self
       def matcher
-        %r{^source/.*\.html}
+        %r{source/.*\.html}
       end
     end
     
