@@ -20,11 +20,11 @@ module Middleman::CoreExtensions::Builder
       self.class.build_reroute(&block)
     end
     
-    def reroute_builder(desination, request_path)
-      result = [desination, request_path]
+    def reroute_builder(destination, request_path)
+      result = [destination, request_path]
       
       build_reroute.each do |block|
-        output = instance_exec(desination, request_path, &block)
+        output = instance_exec(destination, request_path, &block)
         if output
           result = output
           break
