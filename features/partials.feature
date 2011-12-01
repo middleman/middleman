@@ -34,7 +34,7 @@ Feature: Provide Sane Defaults for Partial Behavior
     When I go to "/locals.html"
     Then I should see "Local var is bar"
   
-  Scenario: Partial and Layout of different engine
+  Scenario: Partial and Layout use different engines
     Given the Server is running at "different-engine-partial"
     When I go to "/index.html"
     Then I should see "Slim Footer"
