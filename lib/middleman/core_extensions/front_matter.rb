@@ -52,7 +52,7 @@ module Middleman::CoreExtensions::FrontMatter
   class FrontMatter
     class << self
       def matcher
-        %r{source/.*\.html}
+        %r{^source/.*\.html}
       end
     end
     

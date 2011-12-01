@@ -12,12 +12,12 @@ module Middleman::CoreExtensions::Sitemap
   module InstanceMethods
     def initialize
       super
-    
-      file_changed do |file|
+
+      file_changed %r{^source/} do |file|
         sitemap.touch_file(file)
       end
-    
-      file_deleted do |file|
+
+      file_deleted %r{^source/} do |file|
         sitemap.remove_file(file)
       end
     end
