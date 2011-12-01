@@ -44,6 +44,10 @@ When /^I go to "([^\"]*)"$/ do |url|
   @browser.get(url)
 end
 
+Then /^going to "([^\"]*)" should not raise an exception$/ do |url|
+  lambda { @browser.get(url) }.should_not raise_exception
+end
+
 Then /^I should see "([^\"]*)"$/ do |expected|
   @browser.last_response.body.should include(expected)
 end
