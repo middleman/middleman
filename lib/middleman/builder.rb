@@ -38,16 +38,16 @@ module Middleman
 
         request_path = destination.sub(/^#{::Middleman::Builder.shared_instance.build_dir}/, "")
 
-        # begin
+        begin
           destination, request_path = ::Middleman::Builder.shared_instance.reroute_builder(destination, request_path)
 
           response = ::Middleman::Builder.shared_rack.get(request_path.gsub(/\s/, "%20"))
           create_file(destination, response.body, config) if response.status == 200
 
           destination
-        # rescue
-          # say_status :error, destination, :red
-        # end
+        rescue
+          say_status :error, destination, :red
+        end
       end
     end
     include ThorActions
