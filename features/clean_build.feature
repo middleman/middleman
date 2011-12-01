@@ -13,3 +13,8 @@ Feature: Build Clean
     Then "about/index.html" should exist at "clean-dir-app"
     Given a built app at "clean-dir-app" with flags "--clean"
     Then "about/index.html" should exist at "clean-dir-app"
+    Then cleanup built app at "clean-dir-app"
+
+  Scenario: Clean build an app that's never been built
+    Given a built app at "clean-dir-app" with flags "--clean"
+    Then "about/index.html" should exist at "clean-dir-app"

@@ -138,7 +138,7 @@ module Middleman
         unless path == destination
           @cleaning_queue << path.sub(@destination, destination[/([^\/]+?)$/])
         end
-      end
+      end if File.exist?(@destination)
     end
     
     def execute!
