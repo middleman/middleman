@@ -39,7 +39,6 @@ module Middleman::CoreExtensions::Rendering
       engine = extension[1..-1].to_sym
 
       @current_engine, engine_was = engine, @current_engine
-      @_out_buf, _buf_was = "", @_out_buf
       
       while ::Tilt[path]
         content = render_individual_file(path, locs, opts)
@@ -56,7 +55,6 @@ module Middleman::CoreExtensions::Rendering
       content
     ensure
       @current_engine = engine_was
-      @_out_buf = _buf_was
       @content_blocks = nil
     end
     
@@ -104,6 +102,8 @@ module Middleman::CoreExtensions::Rendering
     def render_individual_file(path, locs = {}, opts = {}, &block)
       path = path.to_s
       
+      @_out_buf, _buf_was = "", @_out_buf
+      
       body = cache.fetch(:raw_template, path) do
         File.read(path)
       end
@@ -117,6 +117,8 @@ module Middleman::CoreExtensions::Rendering
       end
 
       template.render(self, locs, &block)
+    ensure  
+      @_out_buf = _buf_was
     end
     
     # @private

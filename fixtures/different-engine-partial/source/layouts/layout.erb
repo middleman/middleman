@@ -1,4 +1,7 @@
-<%= partial 'shared/erb' %>
-<%= partial 'shared/footer' %>
+<%= partial 'shared/header' %>
 
-<% yield %>
+<div id="main">
+  <%= yield %>
+</div>
+
+<%= partial 'shared/footer' %>

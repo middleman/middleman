@@ -37,5 +37,5 @@ Feature: Provide Sane Defaults for Partial Behavior
   Scenario: Partial and Layout use different engines
     Given the Server is running at "different-engine-partial"
     When I go to "/index.html"
-    Then I should see "ERb Main"
+    Then I should see "ERb Header"
     And I should see "Slim Footer"
