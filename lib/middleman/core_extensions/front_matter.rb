@@ -4,9 +4,18 @@ require "tilt"
 module Middleman::CoreExtensions::FrontMatter
   class << self
     def registered(app)
+      app.extend ClassMethods
       app.send :include, InstanceMethods
     end
     alias :included :registered
+  end
+  
+  module ClassMethods
+    def frontmatter_changed(matcher=nil, &block)
+      @_frontmatter_changed ||= []
+      @_frontmatter_changed << [block, matcher] if block_given?
+      @_frontmatter_changed
+    end
   end
   
   module InstanceMethods
@@ -25,7 +34,7 @@ module Middleman::CoreExtensions::FrontMatter
         relative_path = path.sub(source_dir, "")
 
         data = if frontmatter.has_data?(relative_path)
-          frontmatter.data(relative_path)
+          frontmatter.data(relative_path)[0]
         else
           {}
         end
@@ -41,7 +50,18 @@ module Middleman::CoreExtensions::FrontMatter
 
         { :options => data }
       end
+    end
+    
+    def frontmatter_changed(*args, &block)
+      self.class.frontmatter_changed(*args, &block)
+    end
 
+    def frontmatter_did_change(path)
+      frontmatter_changed.each do |callback, matcher|
+        next if path.match(%r{^#{build_dir}/})
+        next if !matcher.nil? && !path.match(matcher)
+        instance_exec(path, &callback)
+      end
     end
     
     def frontmatter
@@ -78,9 +98,10 @@ module Middleman::CoreExtensions::FrontMatter
         
       if result
         file = file.sub(@app.source_dir, "")
-        @local_data[file] = result[0]
+        @local_data[file] = result
         path = File.join(@app.source_dir, file)
         @app.cache.set([:raw_template, path], result[1])
+        @app.frontmatter_did_change(path)
       end
     end
     

@@ -71,7 +71,7 @@ module Middleman::Sitemap
     def touch
     end
     
-    def custom_render(&block)
+    def custom_renderer(&block)
       @_custom_renderer ||= nil
       @_custom_renderer = block if block_given?
       @_custom_renderer
@@ -89,7 +89,7 @@ module Middleman::Sitemap
             instance_exec(&block)
           end
         end
-      elsif !custom_render.nil?
+      elsif !custom_renderer.nil?
         params = args.dup
         params << block if block_given?
         instance_exec(*params, &custom_renderer)

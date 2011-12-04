@@ -100,6 +100,52 @@ module Middleman
     
     # Organize the sitemap as a tree
     autoload :SitemapTree,         "middleman/extensions/sitemap_tree"
+    
+    class << self
+      def registered
+        @_registered ||= {}
+      end
+
+      def register(name, namespace=nil, version=nil, &block)
+        # If we've already got a matching extension that passed the 
+        # version check, bail out.
+        return if registered.has_key?(name.to_sym) && 
+        !registered[name.to_sym].is_a?(String)
+
+        if block_given?
+          version = namespace
+        end
+
+        passed_version_check = true
+        if !version.nil?
+          requirement = ::Gem::Requirement.create(version)
+          if !requirement.satisfied_by?(Middleman::GEM_VERSION)
+            passed_version_check = false
+          end
+        end
+
+        registered[name.to_sym] = if !passed_version_check
+          "== #{name} failed version check. Requested #{version}, got #{Middleman::VERSION}"
+        elsif block_given?
+          block
+        elsif namespace
+          namespace
+        end
+      end
+
+      def load(name)
+        name = name.to_sym
+        return nil unless registered.has_key?(name)
+
+        extension = registered[name]
+        if extension.is_a?(Proc)
+          extension = extension.call() || nil
+          registered[name] = extension
+        end
+
+        extension
+      end
+    end
   end
   
   # Where to look in gems for extensions to auto-register
