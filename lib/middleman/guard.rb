@@ -27,7 +27,10 @@ module Middleman
           end
         }
 
-        ::Guard.start({ :guardfile_contents => guardfile_contents })
+        ::Guard.start({ 
+          :guardfile_contents => guardfile_contents,
+          :watch_all_modifications => true
+        })
       end
     end
   end
