@@ -94,6 +94,9 @@ module Middleman::CoreExtensions::Extensions
       
       run_hook :before_configuration
     
+      # Search the root of the project for required files
+      $LOAD_PATH.unshift(root)
+      
       # Check for and evaluate local configuration
       local_config = File.join(root, "config.rb")
       if File.exists? local_config
