@@ -40,8 +40,12 @@ module Middleman::CoreExtensions::Rendering
 
       @current_engine, engine_was = engine, @current_engine
       
+      # Use a dup of self as a context so that instance variables set within 
+      # the template don't persist for other templates.
+      context = self.dup
+
       while ::Tilt[path]
-        content = render_individual_file(path, locs, opts)
+        content = render_individual_file(path, locs, opts, context)
         path = File.basename(path, File.extname(path))
         cache.set([:raw_template, path], content)
       end
@@ -49,7 +53,7 @@ module Middleman::CoreExtensions::Rendering
       needs_layout = !%w(.js .css .txt).include?(extension)
       
       if needs_layout && layout_path = fetch_layout(engine, opts)
-        content = render_individual_file(layout_path, locs, opts) { content }
+        content = render_individual_file(layout_path, locs, opts, context) { content }
       end
         
       content
@@ -92,14 +96,14 @@ module Middleman::CoreExtensions::Rendering
       end
 
       if found_partial
-        render_individual_file(found_partial, locals, options, &block)
+        render_individual_file(found_partial, locals, options, self, &block)
       else
         raise ::Middleman::CoreExtensions::Rendering::TemplateNotFound, "Could not locate partial: #{data}"
       end
     end
 
     # @private
-    def render_individual_file(path, locs = {}, opts = {}, &block)
+    def render_individual_file(path, locs = {}, opts = {}, context, &block)
       path = path.to_s
       
       @_out_buf, _buf_was = "", @_out_buf
@@ -116,7 +120,7 @@ module Middleman::CoreExtensions::Rendering
         ::Tilt.new(path, 1, options) { body }
       end
 
-      template.render(self, locs, &block)
+      template.render(context, locs, &block)
     ensure  
       @_out_buf = _buf_was
     end
