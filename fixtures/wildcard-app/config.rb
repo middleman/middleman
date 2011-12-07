@@ -1,0 +1,1 @@
+page "/admin/*", :layout => :admin
