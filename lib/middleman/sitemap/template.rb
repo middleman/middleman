@@ -31,15 +31,13 @@ module Middleman::Sitemap
     end
 
     def metadata
-      app.cache.fetch(:metadata, source_file) do
-        metadata = { :options => {}, :locals => {} }
-        app.provides_metadata.each do |callback, matcher|
-          next if !matcher.nil? && !source_file.match(matcher)
-          result = app.instance_exec(source_file, &callback)
-          metadata = metadata.deep_merge(result)
-        end
-        metadata
+      metadata = { :options => {}, :locals => {} }
+      app.provides_metadata.each do |callback, matcher|
+        next if !matcher.nil? && !source_file.match(matcher)
+        result = app.instance_exec(source_file, &callback)
+        metadata = metadata.deep_merge(result)
       end
+      metadata
     end
 
     def render(opts={}, locs={}, &block)
