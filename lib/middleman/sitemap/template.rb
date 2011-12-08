@@ -29,17 +29,31 @@ module Middleman::Sitemap
     def ext
       page.ext
     end
-
+    
+    def touch
+      app.cache.remove(:metadata, source_file)
+    end
+    
     def metadata
-      app.cache.fetch(:metadata, source_file) do
-        metadata = { :options => {}, :locals => {} }
+      metadata = app.cache.fetch(:metadata, source_file) do
+        data = { :options => {}, :locals => {} }
+        
         app.provides_metadata.each do |callback, matcher|
           next if !matcher.nil? && !source_file.match(matcher)
           result = app.instance_exec(source_file, &callback)
-          metadata = metadata.deep_merge(result)
+          data = data.deep_merge(result)
         end
-        metadata
+        
+        data
       end
+      
+      app.provides_metadata_for_path.each do |callback, matcher|
+        next if !matcher.nil? && !path.match(matcher)
+        result = app.instance_exec(path, &callback)
+        metadata = metadata.deep_merge(result)
+      end
+      
+      metadata
     end
 
     def render(opts={}, locs={}, &block)

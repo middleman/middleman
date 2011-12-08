@@ -69,6 +69,7 @@ module Middleman::Sitemap
     end
     
     def touch
+      template.touch if template?
     end
     
     def custom_renderer(&block)

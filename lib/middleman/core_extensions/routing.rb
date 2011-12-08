@@ -25,6 +25,18 @@ module Middleman::CoreExtensions::Routing
     # page "/about.html", :layout => false
     # page "/", :layout => :homepage_layout
     def page(url, opts={}, &block)
+      if url.include?("*")
+        url = Regexp.new(url.gsub("*", "(.*)").gsub(/^\//, "^"))
+      end
+      
+      if url.is_a?(Regexp) && !opts.empty?
+        provides_metadata_for_path url do |url|
+          { :options => opts }
+        end
+        
+        return
+      end
+      
       opts[:layout] = layout if opts[:layout].nil?
       
       url = full_path(url)

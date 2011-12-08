@@ -171,11 +171,11 @@ module Middleman::CoreExtensions::Rendering
     # @private
     def locate_layout(name, preferred_engine=nil)
       layout_path = false
-    
+      
       if !preferred_engine.nil?
         # Check root
         layout_path, layout_engine = resolve_template(name, :preferred_engine => preferred_engine)
-
+        
         # Check layouts folder
         if !layout_path
           layout_path, layout_engine = resolve_template(File.join("layouts", name.to_s), :preferred_engine => preferred_engine)
@@ -229,8 +229,8 @@ module Middleman::CoreExtensions::Rendering
         found_path = Dir[path_with_ext].find do |path|
           ::Tilt[path]
         end
-
-        if found_path || File.exists?(on_disk_path)
+        
+        if found_path || (File.exists?(on_disk_path) && !File.directory?(on_disk_path))
           engine = found_path ? File.extname(found_path)[1..-1].to_sym : nil
           [ found_path || on_disk_path, engine ]
         else

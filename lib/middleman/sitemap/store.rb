@@ -115,7 +115,9 @@ module Middleman::Sitemap
       # @app.logger.debug :sitemap_update, Time.now, path if @app.logging?
       
       # Add generic path
-      page(path).source_file = File.expand_path(file, @app.root)
+      p = page(path)
+      p.source_file = File.expand_path(file, @app.root)
+      p.touch
       
       true
     end

@@ -40,5 +40,11 @@ module Middleman::CoreExtensions::Sitemap
       @_provides_metadata << [block, matcher] if block_given?
       @_provides_metadata
     end
+    
+    def provides_metadata_for_path(matcher=nil, &block)
+      @_provides_metadata_for_path ||= []
+      @_provides_metadata_for_path << [block, matcher] if block_given?
+      @_provides_metadata_for_path
+    end
   end
 end
