@@ -13,6 +13,7 @@ Feature: Builder
     Then "stylesheets/static.css" should exist at "test-app" and include "body"
     Then "_partial.html" should not exist at "test-app"
     Then "spaces in file.html" should exist at "test-app" and include "spaces"
+    Then "images/blank.gif" should exist at "test-app"
     Then "images/Read me (example).txt" should exist at "test-app"
     Then "images/Child folder/regular_file(example).txt" should exist at "test-app"
     Then ".htaccess" should exist at "test-app"
