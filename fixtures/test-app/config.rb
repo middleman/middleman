@@ -21,6 +21,7 @@ with_layout :content_for do
 end
 
 with_layout false do
+  page "/request-path.html"
   page "/lorem.html"
   page "/markdown.html"
   page "/relative_image.html"

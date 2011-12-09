@@ -11,7 +11,7 @@ require "middleman/vendor/hooks-0.2.0/lib/hooks"
 require "active_support"
 require "active_support/json"
 require "active_support/core_ext/string/inflections"
-
+  
 # Core Middleman Class
 class Middleman::Base
   # Uses callbacks
@@ -235,14 +235,24 @@ class Middleman::Base
   Middleman::Extensions.register(:sitemap_tree) { 
     Middleman::Extensions::SitemapTree }
   
+  # Backwards-compatibility with old request.path signature
+  attr :request
+  
   # Accessor for current path
   # @return [String]
-  attr :current_path
-    
+  def current_path
+    @_current_path
+  end
+  
+  def current_path=(path)
+    @_current_path = path
+    @request = Thor::CoreExt::HashWithIndifferentAccess.new({ :path => path })
+  end
+  
   # Initialize the Middleman project
   def initialize(&block)
     # Current path defaults to nil, used in views.
-    @current_path = nil
+    self.current_path = nil
     
     # Clear the static class cache
     cache.clear
@@ -357,7 +367,7 @@ class Middleman::Base
     return send_file(sitemap_page.source_file) unless sitemap_page.template?
     
     # Set the current path for use in helpers
-    @current_path = @request_path.dup
+    self.current_path = @request_path.dup
       
     # Set a HTTP content type based on the request's extensions
     content_type sitemap_page.mime_type
