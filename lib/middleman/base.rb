@@ -59,7 +59,17 @@ class Middleman::Base
     # @return [Rack::Builder]
     def to_rack_app(&block)
       inner_app = inst(&block)
+      
+      (@middleware || []).each do |m|
+        app.use(m[0], *m[1], &m[2])
+      end
+      
       app.map("/") { run inner_app }
+      
+      (@mappings || []).each do |m|
+        app.map(m[0], &m[1])
+      end
+      
       app
     end
     
@@ -82,14 +92,16 @@ class Middleman::Base
     #
     # @param [Class] Middleware
     def use(middleware, *args, &block)
-      app.use(middleware, *args, &block)
+      @middleware ||= []
+      @middleware << [middleware, args, block]
     end
     
     # Add Rack App mapped to specific path
     #
     # @param [String] Path to map
     def map(map, &block)
-      app.map(map, &block)
+      @mappings ||= []
+      @mappings << [map, block]
     end
     
     # Mix-in helper methods. Accepts either a list of Modules
@@ -168,6 +180,10 @@ class Middleman::Base
   # @return [String]
   set :http_prefix, "/"
 
+  # Whether to catch and display exceptions
+  # @return [Boolean]
+  set :show_exceptions, true
+
   # Automatically loaded extensions
   # @return [Array<Symbol>]
   set :default_extensions, [
@@ -181,6 +197,9 @@ class Middleman::Base
   
   # Activate custom features and extensions
   include Middleman::CoreExtensions::Extensions
+  
+  # Handle exceptions
+  register Middleman::CoreExtensions::ShowExceptions
     
   # Add Builder Callbacks
   register Middleman::CoreExtensions::Builder

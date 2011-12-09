@@ -5,12 +5,12 @@ $LOAD_PATH.unshift(libdir) unless $LOAD_PATH.include?(libdir)
 # Top-level Middleman object
 module Middleman
   # Auto-load modules on-demand
-  autoload :Base,        "middleman/base"
-  autoload :Cache,       "middleman/cache"
-  autoload :Builder,     "middleman/builder"
-  autoload :CLI,         "middleman/cli"
-  autoload :Templates,   "middleman/templates"
-  autoload :Guard,       "middleman/guard"
+  autoload :Base,           "middleman/base"
+  autoload :Cache,          "middleman/cache"
+  autoload :Builder,        "middleman/builder"
+  autoload :CLI,            "middleman/cli"
+  autoload :Templates,      "middleman/templates"
+  autoload :Guard,          "middleman/guard"
   
   # Custom Renderers
   module Renderers
@@ -57,13 +57,16 @@ module Middleman
     autoload :Rendering,      "middleman/core_extensions/rendering"
     
     # Compass framework for Sass
-    autoload :Compass,         "middleman/core_extensions/compass"
+    autoload :Compass,        "middleman/core_extensions/compass"
     
     # Sprockets 2
-    autoload :Sprockets,       "middleman/core_extensions/sprockets"
+    autoload :Sprockets,      "middleman/core_extensions/sprockets"
   
     # Pass custom options to views
     autoload :Routing,        "middleman/core_extensions/routing"
+    
+    # Catch and show exceptions at the Rack level
+    autoload :ShowExceptions, "middleman/core_extensions/show_exceptions"
   end
 
   module Extensions
