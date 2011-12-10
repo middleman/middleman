@@ -2,6 +2,7 @@ require "guard"
 require "guard/guard"
 require "rbconfig"
 require "net/http"
+require "thin"
 
 if RbConfig::CONFIG['host_os'].downcase =~ %r{mingw}
   require "win32/process"
@@ -28,11 +29,18 @@ module Middleman
         }
 
         ::Guard.start({ 
-          :guardfile_contents => guardfile_contents,
+          :guardfile_contents      => guardfile_contents,
           :watch_all_modifications => true
         })
       end
     end
+  end
+end
+
+# Shut up Guard
+module Guard::UI
+  class << self
+    def info(message, options = { }); end
   end
 end
 
@@ -45,12 +53,35 @@ module Guard
     end
     
     def start
-      server_start
+      @server_job = fork do
+        env = (@options[:environment] || "development").to_sym
+        is_logging = @options.has_key?(:debug) && (@options[:debug] == "true")
+        app = ::Middleman.server.inst do
+          set :environment, env
+          set :logging, is_logging
+        end
+        
+        ::Thin::Logging.silent = !is_logging
+        
+        app_rack = app.class.to_rack_app
+        
+        opts = @options.dup
+        opts[:app] = app_rack
+        puts "== The Middleman is standing watch on port #{opts[:port]||4567}"
+        ::Middleman.start_server(opts)
+      end
+    end
+    
+    def stop
+      puts "== The Middleman is shutting down"
+      Process.kill("KILL", @server_job)
+      Process.wait @server_job
+      @server_job = nil
     end
     
     def reload
-      server_stop
-      server_start
+      stop
+      start
     end
   
     def run_on_change(paths)
@@ -79,35 +110,6 @@ module Guard
     end
     
   private
-    def server_start
-      # Quiet down Guard
-      # ENV['GUARD_ENV'] = 'test' if @options[:debug] == "true"
-      
-      @server_job = fork do
-        env = (@options[:environment] || "development").to_sym
-        is_logging = @options.has_key?(:debug) && (@options[:debug] == "true")
-        app = ::Middleman.server.inst do
-          set :environment, env
-          set :logging, is_logging
-        end
-      
-        app_rack = app.class.to_rack_app
-      
-        opts = @options.dup
-        opts[:app] = app_rack
-        puts "== The Middleman is standing watch on port #{opts[:port]||4567}"
-        ::Middleman.start_server(opts)
-      end
-    end
-  
-    def server_stop
-      puts "== The Middleman is shutting down"
-      Process.kill("KILL", @server_job)
-      Process.wait @server_job
-      @server_job = nil
-      # @app = nil
-    end
-    
     def talk_to_server(params={})
       uri = URI.parse("http://#{@options[:host]}:#{@options[:port]}/__middleman__")
       Net::HTTP.post_form(uri, {}.merge(params))
@@ -121,4 +123,9 @@ module Guard
       talk_to_server :delete => path
     end
   end
+end
+
+trap(:INT) do 
+  ::Guard.stop
+  exit
 end
