@@ -1,4 +1,4 @@
-Middleman [![Build Status](http://travis-ci.org/tdreyno/middleman.png)](http://travis-ci.org/tdreyno/middleman)
+Middleman [![Build Status](http://travis-ci.org/tdreyno/middleman.png)](http://travis-ci.org/tdreyno/middleman) [![Dependency Status](https://gemnasium.com/tdreyno/middleman.png?travis)](https://gemnasium.com/tdreyno/middleman)
 =========
 
 Middleman is ever-vigilant against tag-soup, unreadable CSS and repetition. He stands-watch over your Haml, Sass, and CoffeeScript producing only the cleanest and most efficient markup.
