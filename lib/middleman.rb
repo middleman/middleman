@@ -156,6 +156,12 @@ module Middleman
   
   class << self
     
+    # Where to look for custom templates
+    # @returns [String]
+    def templates_path
+      File.join(File.expand_path("~/"), ".middleman")
+    end
+    
     # Automatically load extensions from available RubyGems
     # which contain the EXTENSION_FILE
     #

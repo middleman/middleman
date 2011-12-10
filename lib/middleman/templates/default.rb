@@ -1,8 +1,12 @@
+# Default Middleman template
 class Middleman::Templates::Default < Middleman::Templates::Base
+  
+  # Template files are relative to this file
   def self.source_root
     File.dirname(__FILE__)
   end
   
+  # Actually output the files
   def build_scaffold
     template "shared/config.tt", File.join(location, "config.rb")
     copy_file "default/source/index.html.erb", File.join(location, "source/index.html.erb")
@@ -14,4 +18,5 @@ class Middleman::Templates::Default < Middleman::Templates::Base
   end  
 end
 
+# Register this template
 Middleman::Templates.register(:default, Middleman::Templates::Default)

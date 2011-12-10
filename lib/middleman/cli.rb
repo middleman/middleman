@@ -16,7 +16,7 @@ module Middleman
     end
 
     desc "init NAME [options]", "Create new project NAME"
-    available_templates = Middleman::Templates.registered_names.join(", ")
+    available_templates = Middleman::Templates.registered.keys.join(", ")
     method_option "template", 
       :aliases => "-T", 
       :default => "default",
@@ -40,11 +40,11 @@ module Middleman
       :desc    => 'Create a Gemfile and use Bundler to manage gems'
     def init(name)
       key = options[:template].to_sym
-      unless Middleman::Templates.registered_templates.has_key?(key)
+      unless Middleman::Templates.registered.has_key?(key)
         key = :default
       end
       
-      thor_group = Middleman::Templates.registered_templates[key]
+      thor_group = Middleman::Templates.registered[key]
       thor_group.new([name], options).invoke_all
     end
 
