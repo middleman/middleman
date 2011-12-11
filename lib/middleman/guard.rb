@@ -1,57 +1,49 @@
+# Guard watches the filesystem for changes
 require "guard"
 require "guard/guard"
-require "rbconfig"
+
+# File changes are forwarded to the currently running app via HTTP
 require "net/http"
-require "thin"
 
-if RbConfig::CONFIG['host_os'].downcase =~ %r{mingw}
-  require "win32/process"
-end
+# Support forking on Windows
+require "rbconfig"
+require "win32/process" if RbConfig::CONFIG['host_os'].downcase =~ %r{mingw}
 
-module Middleman
-  module Guard
-    class << self
-      def add_guard(&block)
-        # Deprecation Warning
-        puts "== Middleman::Guard.add_guard has been removed. Update your extensions to versions which support this change."
-      end
+module Middleman::Guard
+  def self.start(options={})
+    # Forward CLI options to Guard
+    options_hash = options.map { |k,v| ", :#{k} => '#{v}'" }.join
   
-      def start(options={})
-        options_hash = ""
-        options.each do |k,v|
-          options_hash << ", :#{k} => '#{v}'"
+    # Watch all files in project, even hidden ones.
+    ::Guard.start({
+      :guardfile_contents      => %Q{
+        guard 'middleman'#{options_hash} do 
+          watch(%r{(.*)})
         end
-      
-        guardfile_contents = %Q{
-          guard 'middleman'#{options_hash} do 
-            watch(%r{(.*)})
-          end
-        }
-
-        ::Guard.start({ 
-          :guardfile_contents      => guardfile_contents,
-          :watch_all_modifications => true
-        })
-      end
-    end
-  end
-end
-
-# Shut up Guard
-module Guard::UI
-  class << self
-    def info(message, options = { }); end
+      },
+      :watch_all_modifications => true
+    })
   end
 end
 
 # @private
 module Guard
+  # Monkeypatch Guard into being quiet
+  module UI
+    class << self
+      def info(message, options = { }); end
+    end
+  end
+  
+  # Guards must be in the Guard module to be picked up
   class Middleman < Guard
+    # Save the options for later
     def initialize(watchers = [], options = {})
       super
       @options = options
     end
     
+    # Start Middleman in a fork
     def start
       @server_job = fork do
         env = (@options[:environment] || "development").to_sym
@@ -61,6 +53,7 @@ module Guard
           set :logging, is_logging
         end
         
+        require "thin"
         ::Thin::Logging.silent = !is_logging
         
         app_rack = app.class.to_rack_app
@@ -72,6 +65,7 @@ module Guard
       end
     end
     
+    # Stop the forked Middleman
     def stop
       puts "== The Middleman is shutting down"
       Process.kill("KILL", @server_job)
@@ -79,52 +73,52 @@ module Guard
       @server_job = nil
     end
     
+    # Simply stop, then start
     def reload
       stop
       start
     end
   
+    # What to do on file change
+    # @param [Array<String>] paths Array of paths that changed
     def run_on_change(paths)
-      needs_to_restart = false
+      # See if the changed file is config.rb or lib/*.rb
+      return reload if needs_to_reload?(paths)
       
-      paths.each do |path|
-        if path.match(%{^config\.rb}) || path.match(%r{^lib/^[^\.](.*)\.rb$})
-          needs_to_restart = true
-          break
-        end
-      end
-      
-      if needs_to_restart
-        reload
-      else
-        paths.each do |path|
-          file_did_change(path)
-        end
-      end
+      # Otherwise forward to Middleman
+      paths.each { |path| tell_server(:change => path) }
     end
 
+    # What to do on file deletion
+    # @param [Array<String>] paths Array of paths that were removed
     def run_on_deletion(paths)
-      paths.each do |path|
-        file_did_delete(path)
-      end
+      # See if the changed file is config.rb or lib/*.rb
+      return reload if needs_to_reload?(paths)
+      
+      # Otherwise forward to Middleman
+      paths.each { |path| tell_server(:delete => path) }
     end
     
   private
-    def talk_to_server(params={})
+    # Whether the passed files are config.rb or lib/*.rb
+    # @param [Array<String>] paths Array of paths to check
+    # @return [Boolean] Whether the server needs to reload
+    def needs_to_reload?(paths)
+      paths.any? do |path|
+        path.match(%{^config\.rb}) || path.match(%r{^lib/^[^\.](.*)\.rb$})
+      end
+    end
+  
+    # Send a message to the running server
+    # @param [Hash] params Keys to be hashed and sent to server
+    def tell_server(params={})
       uri = URI.parse("http://#{@options[:host]}:#{@options[:port]}/__middleman__")
       Net::HTTP.post_form(uri, {}.merge(params))
-    end
-    
-    def file_did_change(path)
-      talk_to_server :change => path
-    end
-    
-    def file_did_delete(path)
-      talk_to_server :delete => path
     end
   end
 end
 
+# Trap the interupt signal and shut down Guard (and thus the server) smoothly
 trap(:INT) do 
   ::Guard.stop
   exit
