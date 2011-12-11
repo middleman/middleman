@@ -42,11 +42,13 @@ module Middleman
           destination, request_path = ::Middleman::Builder.shared_instance.reroute_builder(destination, request_path)
 
           response = ::Middleman::Builder.shared_rack.get(request_path.gsub(/\s/, "%20"))
-          create_file(destination, response.body, config) if response.status == 200
+
+          create_file(destination, response.body, config)
 
           destination
         rescue
           say_status :error, destination, :red
+          abort
         end
       end
     end

@@ -3,7 +3,7 @@ require 'rack/showexceptions'
 module Middleman::CoreExtensions::ShowExceptions
   class << self
     def registered(app)
-      app.after_configuration do
+      app.configure :development do
         if show_exceptions
           use ::Middleman::CoreExtensions::ShowExceptions::Middleware
         end

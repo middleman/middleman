@@ -17,11 +17,17 @@ Feature: Builder
     Then "images/Read me (example).txt" should exist at "test-app"
     Then "images/Child folder/regular_file(example).txt" should exist at "test-app"
     Then ".htaccess" should exist at "test-app"
+    Then the last exit code should be "0"
     
   Scenario: Build glob
     Given a built app at "glob-app" with flags "--glob '*.css'"
     Then "stylesheets/site.css" should exist at "glob-app" and include "html"
     Then "index.html" should not exist at "glob-app"
+    Then the last exit code should be "0"
+  
+  Scenario: Build with errors
+    Given a built app at "build-with-errors-app"
+    Then the last exit code should be "1"
     
   # Scenario: Force relative assets
   #   Given a built app at "relative-app" with flags "--relative"

@@ -43,3 +43,8 @@ Then /^"([^\"]*)" should not exist at "([^\"]*)"$/ do |target_file, path|
   target = File.join(PROJECT_ROOT_PATH, "fixtures", path, "build", target_file)
   File.exists?(target).should be_false
 end
+
+Then /^the last exit code should be "([^\"]*)"$/ do |exit_code|
+  exit_code = exit_code.to_i
+  $?.exitstatus.should == exit_code
+end
