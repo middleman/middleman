@@ -2,11 +2,14 @@ module Middleman::Extensions
   module MinifyJavascript
     class << self
       def registered(app)
-        require 'uglifier'
         app.after_configuration do
-          set :js_compressor, ::Uglifier.new
+          if !js_compressor
+            require 'uglifier'
+            set :js_compressor, ::Uglifier.new
+          end
+          
+          use InlineJavascriptRack, :compressor => js_compressor
         end
-        app.use InlineJavascriptRack
       end
       alias :included :registered
     end
@@ -14,14 +17,13 @@ module Middleman::Extensions
     class InlineJavascriptRack
       def initialize(app, options={})
         @app = app
+        @compressor = options[:compressor]
       end
 
       def call(env)
         status, headers, response = @app.call(env)
 
         if env["PATH_INFO"].match(/\.html$/)
-          compressor = ::Uglifier.new
-
           uncompressed_source = case(response)
             when String
               response
@@ -37,7 +39,7 @@ module Middleman::Extensions
             first = $1
             uncompressed_source = $2
             last = $3
-            minified_js = compressor.compile(uncompressed_source)
+            minified_js = @compressor.compile(uncompressed_source)
 
             first << minified_js << "\n" << last
           end
