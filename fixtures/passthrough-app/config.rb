@@ -1,11 +1,11 @@
-module PassThrough
-  def self.compile(data)
+module ::PassThrough
+  def self.compress(data)
     data
   end
 end
 
-set :js_compressor, PassThrough
-set :css_compressor, PassThrough
+set :js_compressor, ::PassThrough
+set :css_compressor, ::PassThrough
 
 activate :minify_javascript
 activate :minify_css

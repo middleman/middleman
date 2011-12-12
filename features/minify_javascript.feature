@@ -30,7 +30,7 @@ Feature: Minify Javascript
   Scenario: Rendering external js with a passthrough minifier
     And the Server is running at "passthrough-app"
     When I go to "/javascripts/js_test.js"
-    Then I should see "5" lines
+    Then I should see "8" lines
 
   Scenario: Rendering inline js (coffeescript) with the feature enabled
     Given "minify_javascript" feature is "enabled"
@@ -52,4 +52,4 @@ Feature: Minify Javascript
   Scenario: Rendering external js (coffeescript) with a passthrough minifier
     And the Server is running at "passthrough-app"
     When I go to "/javascripts/coffee_test.js"
-    Then I should see "5" lines
+    Then I should see "11" lines

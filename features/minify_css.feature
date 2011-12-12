@@ -26,4 +26,4 @@ Feature: Minify CSS
   Scenario: Rendering external css with passthrough compressor
     Given the Server is running at "passthrough-app"
     When I go to "/stylesheets/site.css"
-    Then I should see "41" lines
+    Then I should see "55" lines

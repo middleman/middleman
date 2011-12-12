@@ -39,7 +39,7 @@ module Middleman::Extensions
             first = $1
             uncompressed_source = $2
             last = $3
-            minified_js = @compressor.compile(uncompressed_source)
+            minified_js = @compressor.compress(uncompressed_source)
 
             first << minified_js << "\n" << last
           end
