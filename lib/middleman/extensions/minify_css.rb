@@ -2,9 +2,11 @@ module Middleman::Extensions
   module MinifyCss
     class << self
       def registered(app)
-        require "middleman/extensions/minify_css/cssmin"
         app.after_configuration do
-          set :css_compressor, ::CSSMin
+          if !css_compressor
+            require "middleman/extensions/minify_css/cssmin"
+            set :css_compressor, ::CSSMin
+          end
         end
       end
       alias :included :registered
