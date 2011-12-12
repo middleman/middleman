@@ -103,7 +103,7 @@ module Middleman::CoreExtensions::Rendering
     end
 
     # @private
-    def render_individual_file(path, locs = {}, opts = {}, context, &block)
+    def render_individual_file(path, locs = {}, opts = {}, context = self, &block)
       path = path.to_s
       
       @_out_buf, _buf_was = "", @_out_buf
