@@ -4,6 +4,7 @@ require "tilt"
 module Middleman::CoreExtensions::FrontMatter
   class << self
     def registered(app)
+      app.set :frontmatter_extensions, %w(.htm .html .php)
       app.extend ClassMethods
       app.send :include, InstanceMethods
     end
@@ -22,15 +23,18 @@ module Middleman::CoreExtensions::FrontMatter
     def initialize
       super
       
-      file_changed FrontMatter.matcher do |file|
+      exts = frontmatter_extensions.join("|").gsub(".", "\.")
+      matcher = %r{source/.*(#{exts})}
+      
+      file_changed matcher do |file|
         frontmatter.touch_file(file)
       end
 
-      file_deleted FrontMatter.matcher do |file|
+      file_deleted matcher do |file|
         frontmatter.remove_file(file)
       end
 
-      provides_metadata FrontMatter.matcher do |path|
+      provides_metadata matcher do |path|
         relative_path = path.sub(source_dir, "")
 
         data = if frontmatter.has_data?(relative_path)
@@ -70,12 +74,6 @@ module Middleman::CoreExtensions::FrontMatter
   end
   
   class FrontMatter
-    class << self
-      def matcher
-        %r{source/.*\.html}
-      end
-    end
-    
     def initialize(app)
       @app = app
       @source = File.expand_path(@app.source, @app.root)
