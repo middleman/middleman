@@ -1,15 +1,8 @@
 module Middleman::Renderers::Markdown
   class << self
     def registered(app)
-      app.set :markdown_engine, nil
-    
-      # TODO: Switch to Redcarpet once Haml 3.2.0 ships
-      begin
-        require "rdiscount"
-        app.set :markdown_engine, :rdiscount
-      rescue LoadError
-      end
-
+      require "redcarpet"
+      app.set :markdown_engine, :redcarpet
       app.set :markdown_engine_prefix, ::Tilt
       
       app.after_configuration do

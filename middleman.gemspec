@@ -36,13 +36,13 @@ Gem::Specification.new do |s|
   s.add_dependency("sprockets", ["~> 2.1.2"])
   s.add_dependency("sprockets-sass", ["~> 0.5.0"])
   s.add_dependency("guard", ["~> 0.8.8"])
+  s.add_dependency("redcarpet", ["~> 2.0.0"])
   
   # OSX
   s.add_dependency("rb-fsevent")
   
   # Development and test
   s.add_development_dependency("slim")
-  s.add_development_dependency("rdiscount")
   s.add_development_dependency("sinatra")
   s.add_development_dependency("coffee-filter", ["~> 0.1.1"])
   s.add_development_dependency("liquid", ["~> 2.2.0"])

@@ -12,6 +12,7 @@
 * Unified callback solution
 * Removed Slim and Maruku from base install. Will need to be installed and required by the user (in - config.rb)
 * Activate mobile html5boilerplate template
+* Update to Redcarpet for Markdown (breaks Haml :markdown filter)
 
 2.0.14
 ====
