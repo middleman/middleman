@@ -59,10 +59,11 @@ end
 args = ARGV.dup
 
 ARG_ALIASES = {
-  "s" => "server",
-  "b" => "build",
-  "i" => "init",
-  "w" => "watch"
+  "s"   => "server",
+  "b"   => "build",
+  "i"   => "init",
+  "new" => "init",
+  "n"   => "init"
 }
 
 if ARG_ALIASES.has_key?(args[0])
