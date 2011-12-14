@@ -23,7 +23,6 @@ end
 with_layout false do
   page "/request-path.html"
   page "/lorem.html"
-  page "/markdown.html"
   page "/relative_image.html"
   page "/inline-css.html"
   page "/inline-js.html"

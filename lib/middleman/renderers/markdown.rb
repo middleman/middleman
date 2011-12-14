@@ -2,6 +2,12 @@ module Middleman::Renderers::Markdown
   class << self
     def registered(app)
       require "redcarpet"
+      
+      # Forcably disable Redcarpet1 support.
+      # Tilt defaults to this if available, but the compat
+      # layer disables extensions.
+      Object.send(:remove_const, :RedcarpetCompat) if defined? ::RedcarpetCompat
+      
       app.set :markdown_engine, :redcarpet
       app.set :markdown_engine_prefix, ::Tilt
       
