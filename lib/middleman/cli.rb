@@ -41,7 +41,7 @@ module Middleman
     def init(name)
       key = options[:template].to_sym
       unless Middleman::Templates.registered.has_key?(key)
-        key = :default
+        raise Thor::Error.new "Unknown project template '#{key}'"
       end
       
       thor_group = Middleman::Templates.registered[key]
