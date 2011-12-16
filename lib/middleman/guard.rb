@@ -21,7 +21,8 @@ module Middleman::Guard
           watch(%r{(.*)})
         end
       },
-      :watch_all_modifications => true
+      :watch_all_modifications => true,
+      :no_interactions => true
     })
   end
 end
