@@ -2,10 +2,7 @@ Feature: Builder
   In order to output static html and css for delivery
 
   Scenario: Checking built folder for content
-    Given a built app at "test-app"
-    Then a directory named "build" should exist
-    And the exit status should be 0
-    
+    Given a successfully built app at "test-app"
     When I cd to "build"
     Then the following files should exist:
       | index.html                                    |
@@ -38,10 +35,7 @@ Feature: Builder
     And the file "spaces in file.html" should contain "spaces"
     
   Scenario: Build glob
-    Given a built app at "glob-app" with flags "--glob '*.css'"
-    Then a directory named "build" should exist
-    And the exit status should be 0
-    
+    Given a successfully built app at "glob-app" with flags "--glob '*.css'"
     When I cd to "build"
     Then the following files should not exist:
       | index.html                                    |

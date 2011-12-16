@@ -9,11 +9,7 @@ Feature: Templates should be chainable
     And I should see "Sup</h3>"
     
   Scenario: Build chained template
-    Given a built app at "chained-app"
-    
-    Then a directory named "build" should exist
-    And the exit status should be 0
-
+    Given a successfully built app at "chained-app"
     When I cd to "build"
     Then the following files should exist:
       | index.html                                    |
