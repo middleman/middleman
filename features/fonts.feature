@@ -1,8 +1,11 @@
 Feature: Web Fonts
 
   Scenario: Checking built folder for content
-    Given a built app at "fonts-app"
-    Then "stylesheets/fonts.css" should exist at "fonts-app" and include "/fonts/StMarie-Thin.otf"
+    Given a successfully built app at "fonts-app"
+    When I cd to "build"
+    Then the following files should exist:
+      | stylesheets/fonts.css                         |
+    And the file "stylesheets/fonts.css" should contain "/fonts/StMarie-Thin.otf"
     
   Scenario: Rendering scss
     Given the Server is running at "fonts-app"

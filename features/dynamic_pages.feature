@@ -2,9 +2,7 @@ Feature: Dynamic Pages
   In order to use a single view to generate multiple output files
 
   Scenario: Checking built folder for content
-    Given a built app at "test-app"
-    Then a directory named "build" should exist
-    
+    Given a successfully built app at "test-app"
     When I cd to "build"
     Then the following files should exist:
       | fake.html                                     |

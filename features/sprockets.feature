@@ -21,7 +21,7 @@ Feature: Sprockets
     Then I should see "Hello One"
     
   Scenario: Multiple engine files should build correctly
-    Given a built app at "test-app"
+    Given a successfully built app at "test-app"
     When I cd to "build"
     Then a file named "javascripts/multiple_engines.js" should exist
     And the file "javascripts/multiple_engines.js" should contain "Hello One"
