@@ -10,6 +10,14 @@ Feature: Templates should be chainable
     
   Scenario: Build chained template
     Given a built app at "chained-app"
-    Then "index.html" should exist at "chained-app" and include "Title</h1>"
-    Then "index.html" should exist at "chained-app" and include "Subtitle</h2>"
-    Then "index.html" should exist at "chained-app" and include "Sup</h3>"
+    
+    Then a directory named "build" should exist
+    And the exit status should be 0
+
+    When I cd to "build"
+    Then the following files should exist:
+      | index.html                                    |
+
+    And the file "index.html" should contain "Title</h1>"
+    And the file "index.html" should contain "Subtitle</h2>"
+    And the file "index.html" should contain "Sup</h3>"
