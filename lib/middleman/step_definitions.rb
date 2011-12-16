@@ -7,3 +7,7 @@ require "middleman/step_definitions/middleman_steps"
 require "middleman/step_definitions/builder_steps"
 require "middleman/step_definitions/generator_steps"
 require "middleman/step_definitions/server_steps"
+
+Before do
+  @aruba_timeout_seconds = 30
+end
