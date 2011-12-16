@@ -13,3 +13,4 @@ fixtures/generator-test
 build
 doc
 .yardoc
+tmp
