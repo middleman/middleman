@@ -7,25 +7,23 @@ Given /^app "([^\"]*)" is using config "([^\"]*)"$/ do |path, config_name|
   FileUtils.cp(config_path, config_dest)
 end
 
-Given /^a built app at "([^\"]*)"$/ do |path|
-  target = File.join(PROJECT_ROOT_PATH, "fixtures", path)
+Given /^a fixture app "([^\"]*)"$/ do |path|
+  step %Q{a directory named "#{path}"}
+
+  target_path = File.join(PROJECT_ROOT_PATH, "fixtures", path)
+  FileUtils.cp_r(target_path, current_dir)
   
-  build_target = File.join(target, "build")
-  FileUtils.rm_rf(build_target)
-  
-  build_cmd = File.join(MIDDLEMAN_BIN_PATH, "middleman build")
-  `cd #{target} && #{build_cmd}`
+  step %Q{I cd to "#{path}"}
 end
 
-Then /^cleanup built app at "([^\"]*)"$/ do |path|
-  target = File.join(PROJECT_ROOT_PATH, "fixtures", path, "build")
-  FileUtils.rm_rf(target)
+Given /^a built app at "([^\"]*)"$/ do |path|
+  step %Q{a fixture app "#{path}"}
+  step %Q{I run `middleman build`}
 end
 
 Given /^a built app at "([^\"]*)" with flags "([^\"]*)"$/ do |path, flags|
-  target = File.join(PROJECT_ROOT_PATH, "fixtures", path)
-  build_cmd = File.join(MIDDLEMAN_BIN_PATH, "middleman build")
-  `cd #{target} && #{build_cmd} #{flags}`
+  step %Q{a fixture app "#{path}"}
+  step %Q{I run `middleman build #{flags}`}
 end
 
 Then /^"([^\"]*)" should exist at "([^\"]*)"$/ do |target_file, path|

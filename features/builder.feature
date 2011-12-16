@@ -3,32 +3,51 @@ Feature: Builder
 
   Scenario: Checking built folder for content
     Given a built app at "test-app"
-    Then "index.html" should exist at "test-app" and include "Comment in layout"
-    Then "javascripts/coffee_test.js" should exist at "test-app" and include "Array.prototype.slice"
-    Then "index.html" should exist at "test-app" and include "<h1>Welcome</h1>"
-    Then "static.html" should exist at "test-app" and include "Static, no code!"
-    Then "services/index.html" should exist at "test-app" and include "Services"
-    Then "stylesheets/site.css" should exist at "test-app" and include "html, body, div, span"
-    Then "stylesheets/site_scss.css" should exist at "test-app" and include "html, body, div, span"
-    Then "stylesheets/static.css" should exist at "test-app" and include "body"
-    Then "_partial.html" should not exist at "test-app"
-    Then "spaces in file.html" should exist at "test-app" and include "spaces"
-    Then "images/blank.gif" should exist at "test-app"
-    Then "images/Read me (example).txt" should exist at "test-app"
-    Then "images/Child folder/regular_file(example).txt" should exist at "test-app"
-    Then ".htaccess" should exist at "test-app"
-    Then the last exit code should be "0"
+    Then a directory named "build" should exist
+    And the exit status should be 0
+    
+    When I cd to "build"
+    Then the following files should exist:
+      | index.html                                    |
+      | javascripts/coffee_test.js                    |
+      | static.html                                   |
+      | services/index.html                           |
+      | stylesheets/site.css                          |
+      | stylesheets/site_scss.css                     |
+      | stylesheets/static.css                        |
+      | spaces in file.html                           |
+      | images/blank.gif                              |
+      | images/Read me (example).txt                  |
+      | images/Child folder/regular_file(example).txt |
+      | .htaccess                                     |
+    Then the following files should not exist:
+      | _partial                                      |
+      | _liquid_partial                               |
+      | layout                                        |
+      | layouts/custom                                |
+      | layouts/content_for                           |
+      
+    And the file "index.html" should contain "Comment in layout"
+    And the file "index.html" should contain "<h1>Welcome</h1>"
+    And the file "javascripts/coffee_test.js" should contain "Array.prototype.slice"
+    And the file "static.html" should contain "Static, no code!"
+    And the file "services/index.html" should contain "Services"
+    And the file "stylesheets/site.css" should contain "html, body, div, span"
+    And the file "stylesheets/site_scss.css" should contain "html, body, div, span"
+    And the file "stylesheets/static.css" should contain "body"
+    And the file "spaces in file.html" should contain "spaces"
     
   Scenario: Build glob
     Given a built app at "glob-app" with flags "--glob '*.css'"
-    Then "stylesheets/site.css" should exist at "glob-app" and include "html"
-    Then "index.html" should not exist at "glob-app"
-    Then the last exit code should be "0"
+    Then a directory named "build" should exist
+    And the exit status should be 0
+    
+    When I cd to "build"
+    Then the following files should not exist:
+      | index.html                                    |
+    Then the following files should exist:
+      | stylesheets/site.css                          |
   
   Scenario: Build with errors
     Given a built app at "build-with-errors-app"
-    Then the last exit code should be "1"
-    
-  # Scenario: Force relative assets
-  #   Given a built app at "relative-app" with flags "--relative"
-  #   Then "stylesheets/relative_assets.css" should exist at "relative-app" and include "../"
+    Then the exit status should be 1
