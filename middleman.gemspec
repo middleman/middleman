@@ -26,7 +26,7 @@ Gem::Specification.new do |s|
   s.add_dependency("tilt", ["~> 1.3.1"])
   s.add_dependency("i18n", ["~> 0.6.0"])
   s.add_dependency("rack-test", ["~> 0.6.1"])
-  s.add_dependency("uglifier", ["~> 1.1.0"])
+  s.add_dependency("uglifier", ["~> 1.2.0"])
   s.add_dependency("haml", ["~> 3.1.0"])
   s.add_dependency("sass", ["~> 3.1.7"])
   s.add_dependency("activesupport", ["~> 3.1.0"])
