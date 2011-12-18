@@ -2,12 +2,14 @@
 class Middleman::Templates::Local < Middleman::Templates::Base
   
   # Look for templates in ~/.middleman
+  # @return [String]
   def self.source_root
     Middleman.templates_path
   end
 
   # Just copy from the template path
-  def build_scaffold
+  # @return [void]
+  def build_scaffold!
     directory options[:template].to_s, location
   end  
 end

@@ -157,7 +157,7 @@ module Middleman
   class << self
     
     # Where to look for custom templates
-    # @returns [String]
+    # @return [String]
     def templates_path
       File.join(File.expand_path("~/"), ".middleman")
     end
@@ -226,9 +226,6 @@ module Middleman
       app_class = options[:app] ||= ::Middleman.server.inst
       opts[:app] = app_class
       opts[:server] = 'thin'
-    
-      # require "thin"
-      # ::Thin::Logging.silent = true if options[:debug] != "true"
 
       server = ::Rack::Server.new(opts)
       server.start

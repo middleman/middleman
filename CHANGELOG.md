@@ -14,6 +14,7 @@
 * Activate mobile html5boilerplate template
 * Update to Redcarpet for Markdown (breaks Haml :markdown filter)
 * Return correct exit codes (0 for success, 1 for failure) from CLI
+* Yard code docs: http://rubydoc.info/github/tdreyno/middleman
 
 2.0.14
 ====

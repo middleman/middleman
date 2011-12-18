@@ -91,6 +91,7 @@ class Middleman::Base
     # Use Rack middleware
     #
     # @param [Class] Middleware
+    # @return [void]
     def use(middleware, *args, &block)
       @middleware ||= []
       @middleware << [middleware, args, block]
@@ -99,6 +100,7 @@ class Middleman::Base
     # Add Rack App mapped to specific path
     #
     # @param [String] Path to map
+    # @return [void]
     def map(map, &block)
       @mappings ||= []
       @mappings << [map, block]
@@ -106,6 +108,7 @@ class Middleman::Base
     
     # Mix-in helper methods. Accepts either a list of Modules
     # and/or a block to be evaluated
+    # @return [void]
     def helpers(*extensions, &block)
       class_eval(&block)   if block_given?
       include(*extensions) if extensions.any?
@@ -123,6 +126,7 @@ class Middleman::Base
     #
     # @param [Symbol] Unique key name
     # @param Default value
+    # @return [void]
     def set(key, value)
       @defaults ||= {}
       @defaults[key] = value
@@ -133,6 +137,7 @@ class Middleman::Base
   #
   # @param [Symbol] Name of the attribue
   # @param Attribute value
+  # @return [void]
   def set(key, value=nil, &block)
     setter = "#{key}=".to_sym
     self.class.send(:attr_accessor, key) if !respond_to?(setter)
@@ -263,6 +268,10 @@ class Middleman::Base
     @_current_path
   end
   
+  # Set the current path
+  #
+  # @param [String] path The new current path
+  # @return [void]
   def current_path=(path)
     @_current_path = path
     @request = Thor::CoreExt::HashWithIndifferentAccess.new({ :path => path })
@@ -423,7 +432,7 @@ class Middleman::Base
   # Expand a path to include the index file if it's a directory
   #
   # @private
-  # @param [String] Request path
+  # @param [String] path Request path
   # @return [String] Path with index file if necessary
   def full_path(path)
     cache.fetch(:full_path, path) do
@@ -437,8 +446,9 @@ class Middleman::Base
   
   # Add a new mime-type for a specific extension
   #
-  # @param [Symbol] File extension
-  # @param [String] Mime type
+  # @param [Symbol] type File extension
+  # @param [String] value Mime type
+  # @return [void]
   def mime_type(type, value=nil)
     return type if type.nil? || type.to_s.include?('/')
     type = ".#{type}" unless type.to_s[0] == ?.
@@ -461,18 +471,20 @@ protected
   end
   
   # Set middleware at the class level
+  # @return [void]
   def use(middleware, *args, &block)
     self.class.use(middleware, *args, &block)
   end
   
   # Set mapped rack app at the class level
+  # @return [void]
   def map(map, &block)
     self.class.map(map, &block)
   end
   
   # Immediately send static file
   #
-  # @param [String] File to send
+  # @param [String] path File to send
   def send_file(path)
     extension = File.extname(path)
     matched_mime = mime_type(extension)
@@ -488,7 +500,9 @@ protected
   
   # Set the content type for the current request
   #
-  # @param [String] Content type
+  # @param [String] type Content type
+  # @param [Hash] params
+  # @return [void]
   def content_type(type = nil, params={})
     return res['Content-Type'] unless type
     default = params.delete :default
