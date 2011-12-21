@@ -6,8 +6,7 @@ require "guard/guard"
 require "net/http"
 
 # Support forking on Windows
-require "rbconfig"
-require "win32/process" if RbConfig::CONFIG['host_os'].downcase =~ %r{mingw}
+require "win32/process" if Middleman::WINDOWS
 
 module Middleman::Guard
   def self.start(options={})
@@ -42,36 +41,50 @@ module Guard
     def initialize(watchers = [], options = {})
       super
       @options = options
+
+      # Trap the interupt signal and shut down Guard (and thus the server) smoothly
+      trap(kill_command) do 
+        ::Guard.stop
+        exit!(0)
+      end
     end
     
     # Start Middleman in a fork
     def start
-      @server_job = fork do
-        env = (@options[:environment] || "development").to_sym
-        is_logging = @options.has_key?(:debug) && (@options[:debug] == "true")
-        app = ::Middleman.server.inst do
-          set :environment, env
-          set :logging, is_logging
-        end
-        
-        require "thin"
-        ::Thin::Logging.silent = !is_logging
-        
-        app_rack = app.class.to_rack_app
-        
-        opts = @options.dup
-        opts[:app] = app_rack
-        puts "== The Middleman is standing watch on port #{opts[:port]||4567}"
-        ::Middleman.start_server(opts)
+      if ::Middleman::JRUBY
+        thread = Thread.new { bootup }
+        thread.join
+      else
+        @server_job = fork { bootup }
       end
+    end
+    
+    def bootup
+      env = (@options[:environment] || "development").to_sym
+      is_logging = @options.has_key?(:debug) && (@options[:debug] == "true")
+      app = ::Middleman.server.inst do
+        set :environment, env
+        set :logging, is_logging
+      end
+      
+      app_rack = app.class.to_rack_app
+      
+      opts = @options.dup
+      opts[:app] = app_rack
+      opts[:logging] = is_logging
+      puts "== The Middleman is standing watch on port #{opts[:port]||4567}"
+      ::Middleman.start_server(opts)
     end
     
     # Stop the forked Middleman
     def stop
       puts "== The Middleman is shutting down"
-      Process.kill("KILL", @server_job)
-      Process.wait @server_job
-      @server_job = nil
+      if ::Middleman::JRUBY
+      else
+        Process.kill(kill_command, @server_job)
+        Process.wait @server_job
+        @server_job = nil
+      end
     end
     
     # Simply stop, then start
@@ -116,11 +129,9 @@ module Guard
       uri = URI.parse("http://#{@options[:host]}:#{@options[:port]}/__middleman__")
       Net::HTTP.post_form(uri, {}.merge(params))
     end
+    
+    def kill_command
+      ::Middleman::WINDOWS ? 1 : :INT
+    end
   end
-end
-
-# Trap the interupt signal and shut down Guard (and thus the server) smoothly
-trap(:INT) do 
-  ::Guard.stop
-  exit
 end

@@ -1,5 +1,4 @@
 require 'pathname'
-require 'rbconfig'
 require "sprockets"
 
 module Middleman::CoreExtensions::Sprockets

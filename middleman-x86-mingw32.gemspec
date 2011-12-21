@@ -1,6 +1,4 @@
 # -*- encoding: utf-8 -*-
-require "rbconfig"
-
 $:.push File.expand_path("../lib", __FILE__)
 require "middleman/version"
 

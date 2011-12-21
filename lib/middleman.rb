@@ -1,9 +1,14 @@
+require "rbconfig"
+
 # Setup our load paths
 libdir = File.dirname(__FILE__)
 $LOAD_PATH.unshift(libdir) unless $LOAD_PATH.include?(libdir)
 
 # Top-level Middleman object
 module Middleman
+  WINDOWS = !!(RUBY_PLATFORM =~ /(mingw|bccwin|wince|mswin32)/i)
+  JRUBY   = !!(RbConfig::CONFIG["RUBY_INSTALL_NAME"] =~ /^jruby/i)
+  
   # Auto-load modules on-demand
   autoload :Base,           "middleman/base"
   autoload :Cache,          "middleman/cache"
@@ -225,7 +230,13 @@ module Middleman
     
       app_class = options[:app] ||= ::Middleman.server.inst
       opts[:app] = app_class
-      opts[:server] = 'thin'
+      opts[:server] = if ::Middleman::JRUBY
+        'webrick' # Maybe Kirk?
+      else
+        require "thin"
+        ::Thin::Logging.silent = !options[:is_logging]
+        'thin'
+      end
 
       server = ::Rack::Server.new(opts)
       server.start
