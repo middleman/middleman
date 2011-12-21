@@ -12,10 +12,15 @@ module Middleman
   # Auto-load modules on-demand
   autoload :Base,           "middleman/base"
   autoload :Cache,          "middleman/cache"
-  autoload :Builder,        "middleman/builder"
-  autoload :CLI,            "middleman/cli"
   autoload :Templates,      "middleman/templates"
   autoload :Guard,          "middleman/guard"
+  
+  module CLI
+    autoload :Base,         "middleman/cli"
+    autoload :Build,        "middleman/cli/build"
+    autoload :Templates,    "middleman/cli/templates"
+    autoload :Server,       "middleman/cli/server"
+  end
   
   # Custom Renderers
   module Renderers
@@ -160,12 +165,6 @@ module Middleman
   EXTENSION_FILE = File.join("lib", "middleman_extension.rb")
   
   class << self
-    
-    # Where to look for custom templates
-    # @return [String]
-    def templates_path
-      File.join(File.expand_path("~/"), ".middleman")
-    end
     
     # Automatically load extensions from available RubyGems
     # which contain the EXTENSION_FILE
