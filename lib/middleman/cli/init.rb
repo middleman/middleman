@@ -1,32 +1,34 @@
-module Middleman::CLI
-  class Templates < Thor::Group
+module Middleman::Cli
+  class Init < Thor
     check_unknown_options!
     
-    desc "init NAME [options]"
+    namespace :init
+    
+    desc "init NAME [options]", "Create new project NAME"
     available_templates = ::Middleman::Templates.registered.keys.join(", ")
-    argument :name
-    class_option "template", 
+    # argument :name
+    method_option "template", 
       :aliases => "-T", 
       :default => "default",
       :desc    => "Use a project template: #{available_templates}"
-    class_option "css_dir", 
+    method_option "css_dir", 
       :default => "stylesheets", 
       :desc    => 'The path to the css files'
-    class_option "js_dir", 
+    method_option "js_dir", 
       :default => "javascripts", 
       :desc    => 'The path to the javascript files'
-    class_option "images_dir", 
+    method_option "images_dir", 
       :default => "images", 
       :desc    => 'The path to the image files'
-    class_option "rack", 
+    method_option "rack", 
       :type    => :boolean, 
       :default => false, 
       :desc    => 'Include a config.ru file'
-    class_option "bundler", 
+    method_option "bundler", 
       :type    => :boolean, 
       :default => false, 
       :desc    => 'Create a Gemfile and use Bundler to manage gems'
-    def init
+    def init(name)
       key = options[:template].to_sym
       unless ::Middleman::Templates.registered.has_key?(key)
         raise Thor::Error.new "Unknown project template '#{key}'"
@@ -37,7 +39,6 @@ module Middleman::CLI
     end
   end
   
-  Base.register(Templates, :init, "init NAME [options]", "Create new project NAME")
   Base.map({
     "i"   => "init",
     "new" => "init",

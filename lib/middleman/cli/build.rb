@@ -1,23 +1,25 @@
 require "rack"
 require "rack/test"
 
-module Middleman::CLI
-  class Build < Thor::Group
+module Middleman::Cli
+  class Build < Thor
     include Thor::Actions
     check_unknown_options!
     
-    desc "build [options]"
-    class_option :relative, 
+    namespace :build
+    
+    desc "build [options]", "Builds the static site for deployment"
+    method_option :relative, 
       :type    => :boolean, 
       :aliases => "-r", 
       :default => false, 
       :desc    => 'Force relative urls'
-    class_option :clean, 
+    method_option :clean, 
       :type    => :boolean, 
       :aliases => "-c", 
       :default => false, 
       :desc    => 'Removes orpahand files or directories from build'
-    class_option :glob, 
+    method_option :glob, 
       :type    => :string, 
       :aliases => "-g", 
       :default => nil, 
@@ -185,6 +187,5 @@ module Middleman::CLI
     end
   end
   
-  Base.register(Build, :build, "build [options]", "Builds the static site for deployment")
   Base.map({ "b" => "build" })
 end

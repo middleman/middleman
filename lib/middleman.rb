@@ -15,10 +15,10 @@ module Middleman
   autoload :Templates,      "middleman/templates"
   autoload :Guard,          "middleman/guard"
   
-  module CLI
+  module Cli
     autoload :Base,         "middleman/cli"
     autoload :Build,        "middleman/cli/build"
-    autoload :Templates,    "middleman/cli/templates"
+    autoload :Init,         "middleman/cli/init"
     autoload :Server,       "middleman/cli/server"
   end
   

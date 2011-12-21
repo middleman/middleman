@@ -1,23 +1,25 @@
-module Middleman::CLI
-  class Server < Thor::Group
+module Middleman::Cli
+  class Server < Thor
     check_unknown_options!
-  
-    desc "server [options]"
-    class_option "environment", 
+    
+    namespace :server
+    
+    desc "server [options]", "Start the preview server"
+    method_option "environment", 
       :aliases => "-e", 
       :default => ENV['MM_ENV'] || ENV['RACK_ENV'] || 'development', 
       :desc    => "The environment Middleman will run under"
-    class_option :host,
+    method_option :host,
       :type => :string,
       :aliases => "-h",
       # :required => true,
       :default => "0.0.0.0", 
       :desc => "Bind to HOST address"
-    class_option "port",
+    method_option "port",
       :aliases => "-p", 
       :default => "4567", 
       :desc    => "The port Middleman will listen on"
-    class_option "debug", 
+    method_option "debug", 
       :type    => :boolean, 
       :default => false,
       :desc    => 'Print debug messages'
@@ -34,7 +36,6 @@ module Middleman::CLI
     end
   end
   
-  Base.register(Server, :server, "server [options]", "Start the preview server")
   Base.map({ "s" => "server" })
   Base.default_task :server
 end

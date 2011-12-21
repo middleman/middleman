@@ -15,6 +15,18 @@ Feature: Middleman CLI
       | index.html.erb                                |
       | layout.erb                                    |
       | stylesheets/site.css.scss                     |
+      
+  Scenario: Create a new project (alias i)
+    When I run `middleman i MY_PROJECT`
+    Then a directory named "MY_PROJECT" should exist
+    
+  Scenario: Create a new project (alias i)
+    When I run `middleman new MY_PROJECT`
+    Then a directory named "MY_PROJECT" should exist
+  
+  Scenario: Create a new project (alias i)
+    When I run `middleman n MY_PROJECT`
+    Then a directory named "MY_PROJECT" should exist
     
   Scenario: Create a new project with Rack
     When I run `middleman init MY_PROJECT --rack`

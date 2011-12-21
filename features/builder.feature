@@ -45,3 +45,8 @@ Feature: Builder
   Scenario: Build with errors
     Given a built app at "build-with-errors-app"
     Then the exit status should be 1
+
+  Scenario: Build alias (b)
+    Given a fixture app "test-app"
+    When I run `middleman b`
+    Then was successfully built

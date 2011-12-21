@@ -7,4 +7,4 @@ class HelloWorld < Thor
   end
 end
 
-Middleman::CLI::Base.register(HelloWorld, :hello, "hello", "Say hello")
+Middleman::Cli::Base.register(HelloWorld, :hello, "hello", "Say hello")

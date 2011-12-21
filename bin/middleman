@@ -50,7 +50,7 @@ module Middleman
     
       def start_cli!
         require 'middleman'
-        Middleman::CLI::Base.start
+        Middleman::Cli::Base.start
       end
     end
   end
