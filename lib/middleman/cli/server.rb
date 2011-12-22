@@ -37,5 +37,4 @@ module Middleman::Cli
   end
   
   Base.map({ "s" => "server" })
-  Base.default_task :server
 end

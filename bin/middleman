@@ -56,7 +56,9 @@ module Middleman
   end
 end
 
-if ARGV.length < 1 || %w(server build migrate).include?(ARGV.first)
+ARGV << "server" if ARGV.length < 1
+
+if %w(server build migrate).include?(ARGV)
   Middleman::ProjectLocator.locate_middleman_root!
 else
   Middleman::ProjectLocator.start_cli!

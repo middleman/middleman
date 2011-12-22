@@ -44,6 +44,8 @@ module Middleman::CoreExtensions::Rendering
       # the template don't persist for other templates.
       context = self.dup
 
+      @current_locs = locs, @current_opts = opts
+
       while ::Tilt[path]
         content = render_individual_file(path, locs, opts, context)
         path = File.basename(path, File.extname(path))
@@ -60,6 +62,8 @@ module Middleman::CoreExtensions::Rendering
     ensure
       @current_engine = engine_was
       @content_blocks = nil
+      @current_locs = nil
+      @current_opts = nil
     end
     
     # Sinatra/Padrino render method signature.
@@ -197,6 +201,12 @@ module Middleman::CoreExtensions::Rendering
       end
     
       layout_path
+    end
+    
+    def wrap_layout(layout_name, &block)
+      content = capture(&block) if block_given?
+      layout_path = locate_layout(layout_name, current_engine)
+      concat render_individual_file(layout_path, @current_locs || {}, @current_opts || {}, self) { content }
     end
   
     def current_engine

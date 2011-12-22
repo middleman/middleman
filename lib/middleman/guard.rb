@@ -41,12 +41,6 @@ module Guard
     def initialize(watchers = [], options = {})
       super
       @options = options
-
-      # Trap the interupt signal and shut down Guard (and thus the server) smoothly
-      trap(kill_command) do 
-        ::Guard.stop
-        exit!(0)
-      end
     end
     
     # Start Middleman in a fork
@@ -81,7 +75,7 @@ module Guard
       puts "== The Middleman is shutting down"
       if ::Middleman::JRUBY
       else
-        Process.kill(kill_command, @server_job)
+        Process.kill(self.class.kill_command, @server_job)
         Process.wait @server_job
         @server_job = nil
       end
@@ -113,6 +107,10 @@ module Guard
       paths.each { |path| tell_server(:delete => path) }
     end
     
+    def self.kill_command
+      ::Middleman::WINDOWS ? 1 : :INT
+    end
+    
   private
     # Whether the passed files are config.rb or lib/*.rb
     # @param [Array<String>] paths Array of paths to check
@@ -129,9 +127,11 @@ module Guard
       uri = URI.parse("http://#{@options[:host]}:#{@options[:port]}/__middleman__")
       Net::HTTP.post_form(uri, {}.merge(params))
     end
-    
-    def kill_command
-      ::Middleman::WINDOWS ? 1 : :INT
-    end
   end
+end
+
+# Trap the interupt signal and shut down Guard (and thus the server) smoothly
+trap(::Guard::Middleman.kill_command) do 
+  ::Guard.stop
+  # exit!(0)
 end
