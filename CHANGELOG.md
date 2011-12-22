@@ -4,7 +4,7 @@
 * Sitemap maintains own state
 * New Extension Registration API
 * Remove old 1.x mm- binaries and messaging
-* New default layout functionality: https://github.com/tdreyno/middleman/issues/165
+* New default layout functionality: https://github.com/middleman/middleman/issues/165
 * Enable chained templates outside of sprockets (file.html.markdown.erb)
 * Finally support Compass in Sprockets! Thanks to @xdite and @petebrowne
 * Sitemap object representing the known world
@@ -14,7 +14,7 @@
 * Activate mobile html5boilerplate template
 * Update to Redcarpet for Markdown (breaks Haml :markdown filter)
 * Return correct exit codes (0 for success, 1 for failure) from CLI
-* Yard code docs: http://rubydoc.info/github/tdreyno/middleman
+* Yard code docs: http://rubydoc.info/github/middleman/middleman
 * config.rb and extensions can add command-line commands
 * Nested layouts using `wrap_layout` helper
 

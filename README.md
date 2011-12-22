@@ -50,10 +50,10 @@ A full set of in-depth instructional guides are available on the official websit
 
 The community maintains it's own collection of tips and tricks in the GitHub wiki:
 
-  https://github.com/tdreyno/middleman/wiki
+  https://github.com/middleman/middleman/wiki
 
 Finally, up-to-date generated code documentation is available on RubyDoc: 
-http://rubydoc.info/github/tdreyno/middleman
+http://rubydoc.info/github/middleman/middleman
 
 # Community
 
@@ -65,18 +65,18 @@ The official community forum is available on Convore at:
 
 GitHub Issues are used for managing bug reports and feature requests. If you run into issues, please search the issues and submit new problems:
 
-https://github.com/tdreyno/middleman/issues
+https://github.com/middleman/middleman/issues
 
 The best way to get quick responses to your issues and swift fixes to your bugs is to submit detailed bug reports, include test cases and respond to developer questions in a timely manner. Even better, if you know Ruby, you can submit Pull Requests containing Cucumber Features which describe how your feature should work or exploit the bug you are submitting.
 
 # Build & Dependency Status
 
-[![Build Status](http://travis-ci.org/tdreyno/middleman.png)](http://travis-ci.org/tdreyno/middleman)
-[![Dependency Status](https://gemnasium.com/tdreyno/middleman.png?travis)](https://gemnasium.com/tdreyno/middleman)
+[![Build Status](http://travis-ci.org/middleman/middleman.png)](http://travis-ci.org/middleman/middleman)
+[![Dependency Status](https://gemnasium.com/middleman/middleman.png?travis)](https://gemnasium.com/middleman/middleman)
 
 # How to Run Cucumber Tests
 
-1. Checkout Repository: `git clone https://tdreyno@github.com/tdreyno/middleman.git`
+1. Checkout Repository: `git clone https://tdreyno@github.com/middleman/middleman.git`
 2. Install Bundler: `gem install bundler`
 3. Run `bundle` inside the project root to install the gem dependencies.
 4. Run test cases: `bundle exec rake test`
@@ -90,4 +90,4 @@ The best way to get quick responses to your issues and swift fixes to your bugs 
 Copyright (c) 2010 Thomas Reynolds. MIT Licensed, see [LICENSE] for details.
 
 [RubyInstaller]: http://rubyinstaller.org/
-[LICENSE]: https://github.com/tdreyno/middleman/blob/master/LICENSE
+[LICENSE]: https://github.com/middleman/middleman/blob/master/LICENSE
