@@ -8,6 +8,7 @@ module Middleman::CoreExtensions::Builder
       app.define_hook :after_build
       app.extend ClassMethods
       app.send :include, InstanceMethods
+      app.delegate :build_reroute, :to => :"self.class"
     end
     alias :included :registered
   end
@@ -26,13 +27,6 @@ module Middleman::CoreExtensions::Builder
   
   # Build Instance Methods
   module InstanceMethods
-    # Forward to class method
-    #
-    # @return [Array<Proc>]
-    def build_reroute(&block)
-      self.class.build_reroute(&block)
-    end
-    
     # Run through callbacks and get the new values
     #
     # @param [String] destination The current destination of the built file

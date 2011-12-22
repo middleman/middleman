@@ -304,14 +304,7 @@ class Middleman::Base
   def self.cache
     @_cache ||= ::Middleman::Cache.new
   end
-  
-  # Cache accessor for instance, simply forwards to class
-  #
-  # @private
-  # @return [Middleman::Cache] The cache
-  def cache
-    self.class.cache
-  end
+  delegate :cache, :to => :"self.class"
   
   # Rack env
   attr :env
@@ -465,22 +458,7 @@ protected
     @res.finish
   end
   
-  # Set helpers at the class level
-  def helpers(*extensions, &block)
-    self.class.helpers(*extensions, &block)
-  end
-  
-  # Set middleware at the class level
-  # @return [void]
-  def use(middleware, *args, &block)
-    self.class.use(middleware, *args, &block)
-  end
-  
-  # Set mapped rack app at the class level
-  # @return [void]
-  def map(map, &block)
-    self.class.map(map, &block)
-  end
+  delegate :helpers, :use, :map, :to => :"self.class"
   
   # Immediately send static file
   #
