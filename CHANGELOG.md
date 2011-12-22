@@ -10,9 +10,13 @@
 * Sitemap object representing the known world
 * FileWatcher proxies file change events
 * Unified callback solution
-* Removed Slim and Maruku from base install. Will need to be installed and required by the user (in - config.rb)
+* Removed Slim from base install. Will need to be installed and required by the user (in - config.rb)
 * Activate mobile html5boilerplate template
 * Update to Redcarpet for Markdown (breaks Haml :markdown filter)
+* Return correct exit codes (0 for success, 1 for failure) from CLI
+* Yard code docs: http://rubydoc.info/github/tdreyno/middleman
+* config.rb and extensions can add command-line commands
+* Nested layouts using `wrap_layout` helper
 
 2.0.14
 ====

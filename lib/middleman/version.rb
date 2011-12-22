@@ -2,8 +2,12 @@
 require "rubygems"
 
 module Middleman
-  VERSION = "3.0.0.alpha.4"
+  # Current Version
+  # @return [String]
+  VERSION = "3.0.0.alpha.5"
   
+  # Parsed version for RubyGems
   # @private
+  # @return [String]
   GEM_VERSION = ::Gem::Version.create(VERSION)
 end

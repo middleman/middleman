@@ -21,8 +21,10 @@ Feature: Sprockets
     Then I should see "Hello One"
     
   Scenario: Multiple engine files should build correctly
-    Given a built app at "test-app"
-    Then "javascripts/multiple_engines.js" should exist at "test-app" and include "Hello One"
+    Given a successfully built app at "test-app"
+    When I cd to "build"
+    Then a file named "javascripts/multiple_engines.js" should exist
+    And the file "javascripts/multiple_engines.js" should contain "Hello One"
   
   Scenario: Sprockets CSS require //require
     Given the Server is running at "test-app"

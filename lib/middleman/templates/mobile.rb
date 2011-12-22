@@ -7,12 +7,14 @@ class Middleman::Templates::Mobile < Middleman::Templates::Base
   class_option :images_dir, :default => "img"
 
   # Template files are relative to this file
+  # @return [String]
   def self.source_root
     File.dirname(__FILE__)
   end
   
   # Output the files
-  def build_scaffold
+  # @return [void]
+  def build_scaffold!
     template "shared/config.tt", File.join(location, "config.rb")
     directory "mobile/source", File.join(location, "source")
     empty_directory File.join(location, "source")

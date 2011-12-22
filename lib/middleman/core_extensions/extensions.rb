@@ -31,9 +31,12 @@
 # Using for version parsing
 require "rubygems"
 
+# Namespace extensions module
 module Middleman::CoreExtensions::Extensions
   
+  # Register extension
   class << self
+    # @private
     def included(app)
       # app.set :default_extensions, []
       app.define_hook :after_configuration
@@ -43,18 +46,31 @@ module Middleman::CoreExtensions::Extensions
       
       app.extend ClassMethods
       app.send :include, InstanceMethods
+      app.delegate :configure, :to => :"self.class"
     end
   end
 
+  # Class methods
   module ClassMethods
+    # Add a callback to run in a specific environment
+    #
+    # @param [String, Symbol] env The environment to run in
+    # @return [void]
     def configure(env, &block)
       send("#{env}_config", &block)
     end
     
+    # Alias `extensions` to access registered extensions
+    #
+    # @return [Array<Module]
     def extensions
       @extensions ||= []
     end
     
+    # Register a new extension
+    # 
+    # @param [Array<Module>] new_extensions Extension modules to register
+    # @return [Array<Module]
     def register(*new_extensions)
       @extensions ||= []
       @extensions += new_extensions
@@ -65,12 +81,16 @@ module Middleman::CoreExtensions::Extensions
     end
   end
   
+  # Instance methods
   module InstanceMethods
     # This method is available in the project's `config.rb`.
     # It takes a underscore-separated symbol, finds the appropriate
     # feature module and includes it.
     #
     #     activate :lorem
+    #
+    # @param [Symbol, Module] feature Which extension to activate
+    # @return [void]
     def activate(feature)
       ext = ::Middleman::Extensions.load(feature.to_sym)
       
@@ -82,10 +102,6 @@ module Middleman::CoreExtensions::Extensions
         puts "== Activating: #{feature}" if logging?
         self.class.register(ext)
       end
-    end
-
-    def configure(env, &block)
-      self.class.configure(env, &block)
     end
     
     # Load features before starting server

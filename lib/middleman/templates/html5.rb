@@ -7,12 +7,14 @@ class Middleman::Templates::Html5 < Middleman::Templates::Base
   class_option :images_dir, :default => "img"
 
   # Templates are relative to this file
+  # @return [String]
   def self.source_root
     File.dirname(__FILE__)
   end
   
   # Output the files
-  def build_scaffold
+  # @return [void]
+  def build_scaffold!
     template "shared/config.tt", File.join(location, "config.rb")
     directory "html5/source", File.join(location, "source")
     empty_directory File.join(location, "source")

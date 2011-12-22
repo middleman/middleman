@@ -1,16 +1,26 @@
+require "rbconfig"
+
 # Setup our load paths
 libdir = File.dirname(__FILE__)
 $LOAD_PATH.unshift(libdir) unless $LOAD_PATH.include?(libdir)
 
 # Top-level Middleman object
 module Middleman
+  WINDOWS = !!(RUBY_PLATFORM =~ /(mingw|bccwin|wince|mswin32)/i)
+  JRUBY   = !!(RbConfig::CONFIG["RUBY_INSTALL_NAME"] =~ /^jruby/i)
+  
   # Auto-load modules on-demand
   autoload :Base,           "middleman/base"
   autoload :Cache,          "middleman/cache"
-  autoload :Builder,        "middleman/builder"
-  autoload :CLI,            "middleman/cli"
   autoload :Templates,      "middleman/templates"
   autoload :Guard,          "middleman/guard"
+  
+  module Cli
+    autoload :Base,         "middleman/cli"
+    autoload :Build,        "middleman/cli/build"
+    autoload :Init,         "middleman/cli/init"
+    autoload :Server,       "middleman/cli/server"
+  end
   
   # Custom Renderers
   module Renderers
@@ -156,12 +166,6 @@ module Middleman
   
   class << self
     
-    # Where to look for custom templates
-    # @returns [String]
-    def templates_path
-      File.join(File.expand_path("~/"), ".middleman")
-    end
-    
     # Automatically load extensions from available RubyGems
     # which contain the EXTENSION_FILE
     #
@@ -225,10 +229,13 @@ module Middleman
     
       app_class = options[:app] ||= ::Middleman.server.inst
       opts[:app] = app_class
-      opts[:server] = 'thin'
-    
-      # require "thin"
-      # ::Thin::Logging.silent = true if options[:debug] != "true"
+      opts[:server] = if ::Middleman::JRUBY
+        'webrick' # Maybe Kirk?
+      else
+        require "thin"
+        ::Thin::Logging.silent = !options[:is_logging]
+        'thin'
+      end
 
       server = ::Rack::Server.new(opts)
       server.start

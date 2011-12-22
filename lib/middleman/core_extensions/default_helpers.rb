@@ -9,8 +9,12 @@ require 'active_support/inflector'                    # humanize
 
 FileSet.glob_require('../vendor/padrino-helpers-0.10.5/lib/padrino-helpers/**/*.rb', __FILE__)
 
+# Built-in helpers
 module Middleman::CoreExtensions::DefaultHelpers
+  
+  # Extension registered
   class << self
+    # @private
     def registered(app)
       app.helpers ::Padrino::Helpers::OutputHelpers
       app.helpers ::Padrino::Helpers::TagHelpers
@@ -30,19 +34,34 @@ module Middleman::CoreExtensions::DefaultHelpers
     alias :included :registered
   end
   
+  # The helpers
   module Helpers
+    # Output a stylesheet link tag based on the current path
+    #
+    # @param [String] separator How to break up path in parts
+    # @return [String]
     def auto_stylesheet_link_tag(separator="/")
       auto_tag(:css, separator) do |path|
         stylesheet_link_tag path
       end
     end
     
+    # Output a javascript tag based on the current path
+    #
+    # @param [String] separator How to break up path in parts
+    # @return [String]
     def auto_javascript_include_tag(separator="/")
       auto_tag(:js, separator) do |path|
         javascript_include_tag path
       end
     end
 
+    # Output a stylesheet link tag based on the current path
+    #
+    # @param [Symbol] asset_ext The type of asset
+    # @param [String] separator How to break up path in parts
+    # @param [String] asset_dir Where to look for assets
+    # @return [void]
     def auto_tag(asset_ext, separator="/", asset_dir=nil)
       if asset_dir.nil?
         asset_dir = case asset_ext
@@ -61,6 +80,9 @@ module Middleman::CoreExtensions::DefaultHelpers
       yield path if sitemap.exists?(File.join(asset_dir, path))
     end
 
+    # Generate body css classes based on the current path
+    #
+    # @return [String]
     def page_classes
       path = current_path.dup
       path << index_file if path.match(%r{/$})
@@ -73,7 +95,11 @@ module Middleman::CoreExtensions::DefaultHelpers
       classes.join(' ')
     end
     
-    # Padrino's asset handling needs to pass through ours
+    # Get the path of a file of a given type
+    # 
+    # @param [Symbol] kind The type of file
+    # @param [String] source The path to the file
+    # @return [String]
     def asset_path(kind, source)
        return source if source =~ /^http/
        asset_folder  = case kind

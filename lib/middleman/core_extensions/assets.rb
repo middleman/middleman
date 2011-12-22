@@ -21,6 +21,7 @@ module Middleman::CoreExtensions::Assets
     #
     # @param [String] path The path (such as "photo.jpg")
     # @param [String] prefix The type prefix (such as "images")
+    # @return [String] The fully qualified asset url
     def asset_url(path, prefix="")
       # Don't touch assets which already have a full path
       path.include?("://") ? path : File.join(http_prefix, prefix, path)

@@ -1,11 +1,44 @@
-require "thor"
-require "thor/group"
+require "rack"
 require "rack/test"
-require "find"
 
-module Middleman
-  class Builder < Thor::Group
+module Middleman::Cli
+  class Build < Thor
     include Thor::Actions
+    check_unknown_options!
+    
+    namespace :build
+    
+    desc "build [options]", "Builds the static site for deployment"
+    method_option :relative, 
+      :type    => :boolean, 
+      :aliases => "-r", 
+      :default => false, 
+      :desc    => 'Force relative urls'
+    method_option :clean, 
+      :type    => :boolean, 
+      :aliases => "-c", 
+      :default => false, 
+      :desc    => 'Removes orpahand files or directories from build'
+    method_option :glob, 
+      :type    => :string, 
+      :aliases => "-g", 
+      :default => nil, 
+      :desc    => 'Build a subset of the project'
+    def build
+      if options.has_key?("relative") && options["relative"]
+        self.class.shared_instance.activate :relative_assets
+      end
+    
+      self.class.shared_rack
+
+      opts = {}
+      opts[:glob]  = options["glob"]  if options.has_key?("glob")
+      opts[:clean] = options["clean"] if options.has_key?("clean")
+
+      action GlobAction.new(self, self.class.shared_instance, opts)
+
+      self.class.shared_instance.run_hook :after_build, self
+    end
     
     class << self
       def shared_instance
@@ -13,11 +46,11 @@ module Middleman
           set :environment, :build
         end
       end
-      
+
       def shared_server
         @_shared_server ||= shared_instance.class
       end
-      
+
       def shared_rack
         @_shared_rack ||= begin
           mock = ::Rack::MockSession.new(shared_server.to_rack_app)
@@ -28,6 +61,8 @@ module Middleman
       end
     end
     
+    source_root(shared_instance.root)
+    
     # @private
     module ThorActions
       # Render a template to a file.
@@ -36,12 +71,12 @@ module Middleman
         config = args.last.is_a?(Hash) ? args.pop : {}
         destination = args.first || source
 
-        request_path = destination.sub(/^#{::Middleman::Builder.shared_instance.build_dir}/, "")
+        request_path = destination.sub(/^#{self.class.shared_instance.build_dir}/, "")
 
         begin
-          destination, request_path = ::Middleman::Builder.shared_instance.reroute_builder(destination, request_path)
+          destination, request_path = self.class.shared_instance.reroute_builder(destination, request_path)
 
-          response = ::Middleman::Builder.shared_rack.get(request_path.gsub(/\s/, "%20"))
+          response = self.class.shared_rack.get(request_path.gsub(/\s/, "%20"))
 
           create_file(destination, response.body, config)
 
@@ -52,36 +87,8 @@ module Middleman
         end
       end
     end
+
     include ThorActions
-    
-    class_option :relative, :type => :boolean, :aliases => "-r", :default => false, :desc => 'Override the config.rb file and force relative urls'
-    class_option :glob, :type => :string, :aliases => "-g", :default => nil, :desc => 'Build a subset of the project'
-    
-    def initialize(*args)
-      super
-      
-      if options.has_key?("relative") && options["relative"]
-        self.class.shared_instance.activate :relative_assets
-      end
-    end
-    
-    def source_paths
-      @source_paths ||= [
-        self.class.shared_instance.root
-      ]
-    end
-    
-    def build_all_files
-      self.class.shared_rack
-      
-      opts = { }
-      opts[:glob]  = options["glob"]  if options.has_key?("glob")
-      opts[:clean] = options["clean"] if options.has_key?("clean")
-      
-      action GlobAction.new(self, self.class.shared_instance, opts)
-      
-      self.class.shared_instance.run_hook :after_build, self
-    end
   end
   
   # @private
@@ -92,9 +99,9 @@ module Middleman
       @app         = app
       source       = @app.source
       @destination = @app.build_dir
-      
+
       @source = File.expand_path(base.find_in_source_paths(source.to_s))
-      
+
       super(base, destination, config)
     end
 
@@ -109,7 +116,7 @@ module Middleman
     end
 
   protected
-  
+
     def clean!
       files       = @cleaning_queue.select { |q| File.file? q }
       directories = @cleaning_queue.select { |q| File.directory? q }
@@ -124,7 +131,7 @@ module Middleman
         base.remove_file d, :force => true if directory_empty? d 
       end
     end
-  
+
     def cleaning?
       @config.has_key?(:clean) && @config[:clean]
     end
@@ -142,20 +149,20 @@ module Middleman
         end
       end if File.exist?(@destination)
     end
-    
+
     def execute!
       sort_order = %w(.png .jpeg .jpg .gif .bmp .svg .svgz .ico .woff .otf .ttf .eot .js .css)
-      
+
       paths = @app.sitemap.all_paths.sort do |a, b|
         a_ext = File.extname(a)
         b_ext = File.extname(b)
-        
+
         a_idx = sort_order.index(a_ext) || 100
         b_idx = sort_order.index(b_ext) || 100
-        
+
         a_idx <=> b_idx
       end
-      
+
       paths.each do |path|
         file_source = path
         file_destination = File.join(given_destination, file_source.gsub(source, '.'))
@@ -168,15 +175,17 @@ module Middleman
         elsif @app.sitemap.ignored?(file_source)
           next
         end
-        
+
         if @config[:glob]
           next unless File.fnmatch(@config[:glob], file_source)
         end
-        
+
         file_destination = base.tilt_template(file_source, file_destination, { :force => true })
 
         @cleaning_queue.delete(file_destination) if cleaning?
       end
     end
   end
+  
+  Base.map({ "b" => "build" })
 end

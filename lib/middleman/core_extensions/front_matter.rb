@@ -7,6 +7,7 @@ module Middleman::CoreExtensions::FrontMatter
       app.set :frontmatter_extensions, %w(.htm .html .php)
       app.extend ClassMethods
       app.send :include, InstanceMethods
+      app.delegate :frontmatter_changed, :to => :"self.class"
     end
     alias :included :registered
   end
@@ -54,10 +55,6 @@ module Middleman::CoreExtensions::FrontMatter
 
         { :options => data }
       end
-    end
-    
-    def frontmatter_changed(*args, &block)
-      self.class.frontmatter_changed(*args, &block)
     end
 
     def frontmatter_did_change(path)

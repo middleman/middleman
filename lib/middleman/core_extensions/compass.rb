@@ -1,5 +1,10 @@
+# Forward the settings on config.rb and the result of registered extensions
+# to Compass
 module Middleman::CoreExtensions::Compass
+  
+  # Extension registered
   class << self
+    # @private
     def registered(app)
       require "compass"
       
@@ -47,7 +52,7 @@ module Middleman::CoreExtensions::Compass
           config.output_style = :nested
         end
         
-        # Required for relative paths
+        # Change paths when in build mode. Required for relative paths
         configure :build do
           ::Compass.configuration do |config|
             config.environment = :production
