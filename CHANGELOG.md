@@ -16,6 +16,7 @@
 * Return correct exit codes (0 for success, 1 for failure) from CLI
 * Yard code docs: http://rubydoc.info/github/tdreyno/middleman
 * config.rb and extensions can add command-line commands
+* Nested layouts using `wrap_layout` helper
 
 2.0.14
 ====
