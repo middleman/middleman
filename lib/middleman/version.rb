@@ -4,7 +4,7 @@ require "rubygems"
 module Middleman
   # Current Version
   # @return [String]
-  VERSION = "3.0.0.alpha.5"
+  VERSION = "3.0.0.alpha.6"
   
   # Parsed version for RubyGems
   # @private
