@@ -36,7 +36,7 @@ module Middleman::Sitemap
     
     def metadata
       metadata = app.cache.fetch(:metadata, source_file) do
-        data = { :options => {}, :locals => {} }
+        data = { :options => {}, :locals => {}, :page => {} }
         
         app.provides_metadata.each do |callback, matcher|
           next if !matcher.nil? && !source_file.match(matcher)
@@ -57,8 +57,14 @@ module Middleman::Sitemap
     end
 
     def render(opts={}, locs={}, &block)
-      opts = options.deep_merge(metadata[:options]).deep_merge(opts)
-      locs = locals.deep_merge(metadata[:locals]).deep_merge(locs)
+      md   = metadata.dup
+      opts = options.deep_merge(md[:options]).deep_merge(opts)
+      locs = locals.deep_merge(md[:locals]).deep_merge(locs)
+      
+      # Forward remaining data to helpers
+      if md.has_key?(:page)
+        app.data_content("page", md[:page])
+      end
       
       blocks.compact.each do |block|
         app.instance_eval(&block)

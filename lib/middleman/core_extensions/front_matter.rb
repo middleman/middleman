@@ -38,22 +38,18 @@ module Middleman::CoreExtensions::FrontMatter
       provides_metadata matcher do |path|
         relative_path = path.sub(source_dir, "")
 
-        data = if frontmatter.has_data?(relative_path)
+        fmdata = if frontmatter.has_data?(relative_path)
           frontmatter.data(relative_path)[0]
         else
           {}
         end
 
-        # Forward remaining data to helpers
-        data_content("page", data)
-
+        data = {}
         %w(layout layout_engine).each do |opt|
-          if data.has_key?(opt)
-            data[opt.to_sym] = data.delete(opt)
-          end
+          data[opt.to_sym] = fmdata[opt] if fmdata.has_key?(opt)
         end
 
-        { :options => data }
+        { :options => data, :page => fmdata }
       end
     end
 

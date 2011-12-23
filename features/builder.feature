@@ -45,6 +45,10 @@ Feature: Builder
   Scenario: Build with errors
     Given a built app at "build-with-errors-app"
     Then the exit status should be 1
+  
+  Scenario: Build empty errors
+    Given a built app at "empty-app"
+    Then the exit status should be 1
 
   Scenario: Build alias (b)
     Given a fixture app "test-app"

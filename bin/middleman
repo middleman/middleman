@@ -14,7 +14,7 @@ module Middleman
       
         if !in_middleman_project? && !in_middleman_project_subdirectory?
           $stderr.puts "== Error: Could not find a Middleman project config, perhaps you are in the wrong folder?"
-          return
+          exit(1)
         end
       
         if in_middleman_project?
@@ -57,8 +57,7 @@ module Middleman
 end
 
 ARGV << "server" if ARGV.length < 1
-
-if %w(server build migrate).include?(ARGV)
+if %w(server s build b).include?(ARGV[0])
   Middleman::ProjectLocator.locate_middleman_root!
 else
   Middleman::ProjectLocator.start_cli!
