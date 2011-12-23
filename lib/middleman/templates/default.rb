@@ -12,11 +12,16 @@ class Middleman::Templates::Default < Middleman::Templates::Base
   def build_scaffold!
     template "shared/config.tt", File.join(location, "config.rb")
     copy_file "default/source/index.html.erb", File.join(location, "source/index.html.erb")
-    copy_file "default/source/layout.erb", File.join(location, "source/layout.erb")
+    copy_file "default/source/layouts/layout.erb", File.join(location, "source/layouts/layout.erb")
     empty_directory File.join(location, "source", options[:css_dir])
-    copy_file "default/source/stylesheets/site.css.scss", File.join(location, "source", options[:css_dir], "site.css.scss")
+    copy_file "default/source/stylesheets/all.css.scss", File.join(location, "source", options[:css_dir], "all.css.scss")
+    copy_file "default/source/stylesheets/_animate.scss", File.join(location, "source", options[:css_dir], "_animate.scss")
+    copy_file "default/source/stylesheets/_normalize.scss", File.join(location, "source", options[:css_dir], "_normalize.scss")
     empty_directory File.join(location, "source", options[:js_dir])
+    copy_file "default/source/javascripts/all.js", File.join(location, "source", options[:js_dir], "all.js")
     empty_directory File.join(location, "source", options[:images_dir])
+    copy_file "default/source/images/background.png", File.join(location, "source", options[:images_dir], "background.png")
+    copy_file "default/source/images/middleman.png", File.join(location, "source", options[:images_dir], "middleman.png")
   end  
 end
 

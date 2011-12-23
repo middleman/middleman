@@ -5,7 +5,6 @@ ENV['PATH'] = "#{MIDDLEMAN_BIN_PATH}#{File::PATH_SEPARATOR}#{ENV['PATH']}"
 require "aruba/cucumber"
 require "middleman/step_definitions/middleman_steps"
 require "middleman/step_definitions/builder_steps"
-require "middleman/step_definitions/generator_steps"
 require "middleman/step_definitions/server_steps"
 
 Before do
