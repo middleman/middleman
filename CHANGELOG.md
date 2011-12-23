@@ -17,6 +17,7 @@
 * Yard code docs: http://rubydoc.info/github/middleman/middleman
 * config.rb and extensions can add command-line commands
 * Nested layouts using `wrap_layout` helper
+* Support for placekitten.com
 
 2.0.14
 ====
