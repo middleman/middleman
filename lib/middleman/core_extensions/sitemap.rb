@@ -26,6 +26,10 @@ module Middleman::CoreExtensions::Sitemap
       @sitemap ||= ::Middleman::Sitemap::Store.new(self)
     end
     
+    def current_page
+      sitemap.page(current_path)
+    end
+    
     # Keep a path from building
     def ignore(path)
       sitemap.ignore(path)

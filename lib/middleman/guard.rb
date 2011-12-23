@@ -75,7 +75,7 @@ module Guard
       puts "== The Middleman is shutting down"
       if ::Middleman::JRUBY
       else
-        Process.kill(self.class.kill_command, @server_job)
+        Process.kill(::Middleman::WINDOWS ? :KILL : :TERM, @server_job)
         Process.wait @server_job
         @server_job = nil
       end
@@ -133,5 +133,5 @@ end
 # Trap the interupt signal and shut down Guard (and thus the server) smoothly
 trap(::Guard::Middleman.kill_command) do 
   ::Guard.stop
-  # exit!(0)
+  exit!(0)
 end

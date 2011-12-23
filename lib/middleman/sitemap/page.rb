@@ -99,6 +99,61 @@ module Middleman::Sitemap
       end
     end
     
+    def directory_index?
+      path.include?(app.index_file) || path =~ /\/$/
+    end
+    
+    def parent
+      parts = path.split("/")
+      if path.include?(app.index_file)
+        parts.pop
+      else
+      end
+      
+      return nil if parts.length < 1
+      
+      parts.pop
+      parts.push(app.index_file)
+      
+      parent_path = "/" + parts.join("/")
+      
+      if store.exists?(parent_path)
+        store.page(parent_path)
+      else
+        nil
+      end
+    end
+    
+    def children
+      return [] unless directory_index?
+      
+      base_path = path.sub("#{app.index_file}", "")
+      prefix    = /^#{base_path.sub("/", "\\/")}/
+
+      store.all_paths.select do |sub_path|
+        sub_path =~ prefix
+      end.select do |sub_path|
+        path != sub_path
+      end.select do |sub_path|
+       relative_path = sub_path.sub(prefix, "")
+       parts = relative_path.split("/")
+       if parts.length == 1
+         true
+       elsif parts.length == 2
+         parts.last == app.index_file
+       else
+         false
+       end
+      end.map do |p| 
+        store.page(p)
+      end.reject { |p| p.ignored? }
+    end
+    
+    def siblings
+      return [] unless parent
+      parent.children.reject { |p| p == self }
+    end
+    
   protected
     def app
       @store.app

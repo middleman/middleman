@@ -111,9 +111,6 @@ module Middleman
     # Automatically convert filename.html files into filename/index.html
     autoload :DirectoryIndexes,    "middleman/extensions/directory_indexes"
     
-    # Organize the sitemap as a tree
-    autoload :SitemapTree,         "middleman/extensions/sitemap_tree"
-    
     class << self
       def registered
         @_registered ||= {}

@@ -1,0 +1,56 @@
+Feature: Step through sitemap as a tree
+
+  Scenario: Root
+    Given the Server is running at "traversal-app"
+    When I go to "/index.html"
+    Then I should not see "Parent: index.html"
+    Then I should see "Child: sub/index.html"
+    Then I should see "Child: root.html"
+    Then I should not see "Child: proxied.html"
+  
+  Scenario: Directories have children and a parent
+    Given the Server is running at "traversal-app"
+    When I go to "/sub/index.html"
+    Then I should see "Parent: index.html"
+    Then I should see "Child: sub/fake.html"
+    Then I should see "Child: sub/fake2.html"
+    Then I should see "Child: sub/sibling.html"
+    Then I should see "Child: sub/sibling2.html"
+    Then I should see "Child: sub/sub2/index.html"
+    Then I should see "Sibling: root.html"
+  
+  Scenario: Page has siblings
+    Given the Server is running at "traversal-app"
+    When I go to "/sub/sibling.html"
+    Then I should see "Sibling: sub/fake.html"
+    Then I should see "Sibling: sub/fake2.html"
+    Then I should see "Sibling: sub/sibling2.html"
+    Then I should see "Sibling: sub/sub2/index.html"
+  
+  Scenario: Proxied page has siblings
+    Given the Server is running at "traversal-app"
+    When I go to "/sub/fake.html"
+    Then I should see "Sibling: sub/fake2.html"
+    Then I should see "Sibling: sub/sibling.html"
+    Then I should see "Sibling: sub/sibling2.html"
+    Then I should see "Sibling: sub/sub2/index.html"
+  
+  Scenario: Page has parent
+    Given the Server is running at "traversal-app"
+    When I go to "/sub/sibling.html"
+    Then I should see "Parent: sub/index.html"
+  
+  Scenario: Proxied page has parent
+    Given the Server is running at "traversal-app"
+    When I go to "/sub/fake.html"
+    Then I should see "Parent: sub/index.html"
+  
+  Scenario: Page has source_file
+    Given the Server is running at "traversal-app"
+    When I go to "/sub/sibling.html"
+    Then I should see "Source: source/sub/sibling.html.erb"
+  
+  Scenario: Proxied page has source_file
+    Given the Server is running at "traversal-app"
+    When I go to "/sub/fake.html"
+    Then I should see "Source: source/proxied.html.erb"

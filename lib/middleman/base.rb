@@ -192,8 +192,7 @@ class Middleman::Base
   # Automatically loaded extensions
   # @return [Array<Symbol>]
   set :default_extensions, [
-    :lorem,
-    # :sitemap_tree
+    :lorem
   ]
 
   # Default layout name
@@ -256,8 +255,6 @@ class Middleman::Base
     Middleman::Extensions::MinifyJavascript }
   Middleman::Extensions.register(:relative_assets) {
     Middleman::Extensions::RelativeAssets }
-  Middleman::Extensions.register(:sitemap_tree) { 
-    Middleman::Extensions::SitemapTree }
   
   # Backwards-compatibility with old request.path signature
   attr :request
