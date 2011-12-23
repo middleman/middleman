@@ -16,7 +16,7 @@ module Middleman::Extensions
         if !@sitemap_tree_cache.has_key?(key)
           auto_hash = Hash.new{ |h,k| h[k] = Hash.new &h.default_proc }
 
-          app.sitemap.all_paths.each do |path|
+          sitemap.all_paths.each do |path|
             next if !regex.nil? && !path.match(regex)
             sub = auto_hash
             path.split( "/" ).each{ |dir| sub[dir]; sub = sub[dir] }
