@@ -1,20 +1,19 @@
 Feature: Middleman CLI
 
   Scenario: Create a new project
-    When I run `middleman init MY_PROJECT`
-    Then a directory named "MY_PROJECT" should exist
+    Given I run `middleman init MY_PROJECT`
+    Then the exit status should be 0
     When I cd to "MY_PROJECT"
     Then the following files should exist:
       | config.rb                                     |
-    Then the following files should not exist:
-      | config.ru                                     |
-      | Gemfile                                       |
-    Then a directory named "source" should exist
-    When I cd to "source"
-    Then the following files should exist:
-      | index.html.erb                                |
-      | layout.erb                                    |
-      | stylesheets/site.css.scss                     |
+      | source/index.html.erb                         |
+      | source/images/background.png                  |
+      | source/images/middleman.png                   |
+      | source/layouts/layout.erb                     |
+      | source/javascripts/all.js                     |
+      | source/stylesheets/all.css.scss               |
+      | source/stylesheets/_animate.scss              |
+      | source/stylesheets/_normalize.scss            |
       
   Scenario: Create a new project (alias i)
     When I run `middleman i MY_PROJECT`
