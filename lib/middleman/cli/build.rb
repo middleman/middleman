@@ -25,6 +25,11 @@ module Middleman::Cli
       :default => nil, 
       :desc    => 'Build a subset of the project'
     def build
+      if !ENV["MM_ROOT"]
+        $stderr.puts "== Error: Could not find a Middleman project config, perhaps you are in the wrong folder?"
+        exit(1)
+      end
+      
       if options.has_key?("relative") && options["relative"]
         self.class.shared_instance.activate :relative_assets
       end

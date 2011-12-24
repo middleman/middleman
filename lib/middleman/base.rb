@@ -147,7 +147,7 @@ class Middleman::Base
   
   # Root project directory (overwritten in middleman build/server)
   # @return [String]
-  set :root,        Dir.pwd
+  set :root,        ENV['MM_ROOT'] || Dir.pwd
   
   # Name of the source directory
   # @return [String]
@@ -324,6 +324,8 @@ class Middleman::Base
     @req = Rack::Request.new(env)
     @res = Rack::Response.new
 
+    puts "== Request: #{env["PATH_INFO"]}" if logging?
+
     if env["PATH_INFO"] == "/__middleman__" && env["REQUEST_METHOD"] == "POST"
       if req.params.has_key?("change")
         file_did_change(req.params["change"])
@@ -402,6 +404,7 @@ class Middleman::Base
     end
     
     # End the request
+    puts "== Finishing Request: #{self.current_path}" if logging?
     halt res.finish
   end
 

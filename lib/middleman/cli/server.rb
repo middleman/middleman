@@ -19,16 +19,21 @@ module Middleman::Cli
       :aliases => "-p", 
       :default => "4567", 
       :desc    => "The port Middleman will listen on"
-    method_option "debug", 
+    method_option "verbose", 
       :type    => :boolean, 
       :default => false,
       :desc    => 'Print debug messages'
     def server
+      if !ENV["MM_ROOT"]
+        $stderr.puts "== Error: Could not find a Middleman project config, perhaps you are in the wrong folder?"
+        exit(1)
+      end
+
       params = {
         :port        => options["port"],
         :host        => options["host"],
         :environment => options["environment"],
-        :debug       => options["debug"]
+        :debug       => options["verbose"]
       }
       
       puts "== The Middleman is loading"

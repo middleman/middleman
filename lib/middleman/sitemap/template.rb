@@ -57,6 +57,8 @@ module Middleman::Sitemap
     end
 
     def render(opts={}, locs={}, &block)
+      puts "== Render Start: #{source_file}" if app.logging?
+      
       md   = metadata.dup
       opts = options.deep_merge(md[:options]).deep_merge(opts)
       locs = locals.deep_merge(md[:locals]).deep_merge(locs)
@@ -71,7 +73,10 @@ module Middleman::Sitemap
       end
       
       app.instance_eval(&block) if block_given?
-      app.render_template(source_file, locs, opts)
+      result = app.render_template(source_file, locs, opts)
+      
+      puts "== Render End: #{source_file}" if app.logging?
+      result
     end
   end
 end

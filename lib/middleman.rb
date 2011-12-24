@@ -1,7 +1,7 @@
 require "rbconfig"
 
 # Setup our load paths
-libdir = File.dirname(__FILE__)
+libdir = File.expand_path(File.dirname(__FILE__))
 $LOAD_PATH.unshift(libdir) unless $LOAD_PATH.include?(libdir)
 
 # Top-level Middleman object
@@ -230,7 +230,7 @@ module Middleman
         'webrick' # Maybe Kirk?
       else
         require "thin"
-        ::Thin::Logging.silent = !options[:is_logging]
+        ::Thin::Logging.silent = !options[:logging]
         'thin'
       end
 

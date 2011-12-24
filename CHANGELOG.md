@@ -18,6 +18,7 @@
 * config.rb and extensions can add command-line commands
 * Nested layouts using `wrap_layout` helper
 * Support for placekitten.com
+* Added MM_ROOT environmental variable
 
 2.0.14
 ====
