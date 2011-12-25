@@ -71,12 +71,17 @@ module Middleman::CoreExtensions::Extensions
     # 
     # @param [Array<Module>] new_extensions Extension modules to register
     # @return [Array<Module]
-    def register(*new_extensions)
+    def register(extension, options={}, &block)
       @extensions ||= []
-      @extensions += new_extensions
-      new_extensions.each do |extension|
-        extend extension
-        extension.registered(self) if extension.respond_to?(:registered)
+      @extensions += [extension]
+      
+      extend extension
+      if extension.respond_to?(:registered)
+        if extension.method(:registered).arity === 1
+          extension.registered(self, &block)
+        else
+          extension.registered(self, options, &block)
+        end
       end
     end
   end
@@ -89,10 +94,12 @@ module Middleman::CoreExtensions::Extensions
     #
     #     activate :lorem
     #
-    # @param [Symbol, Module] feature Which extension to activate
+    # @param [Symbol, Module] ext Which extension to activate
     # @return [void]
-    def activate(feature)
-      ext = ::Middleman::Extensions.load(feature.to_sym)
+    def activate(ext, options={}, &block)
+      if !ext.is_a?(Module)
+        ext = ::Middleman::Extensions.load(ext.to_sym)
+      end
       
       if ext.nil?
         puts "== Unknown Extension: #{feature}"
@@ -100,7 +107,7 @@ module Middleman::CoreExtensions::Extensions
         puts ext
       else
         puts "== Activating: #{feature}" if logging?
-        self.class.register(ext)
+        self.class.register(ext, options, &block)
       end
     end
     
@@ -108,6 +115,7 @@ module Middleman::CoreExtensions::Extensions
     def initialize
       super
       
+      self.class.inst = self
       run_hook :before_configuration
     
       # Search the root of the project for required files

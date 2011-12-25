@@ -19,6 +19,7 @@
 * Nested layouts using `wrap_layout` helper
 * Support for placekitten.com
 * Added MM_ROOT environmental variable
+* activating extensions can now take an options hash
 
 2.0.14
 ====

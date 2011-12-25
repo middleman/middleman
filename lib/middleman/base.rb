@@ -54,6 +54,15 @@ class Middleman::Base
       end
     end
     
+    # Set the shared instance
+    #
+    # @private
+    # @param [Middleman::Base] inst
+    # @return [void]
+    def inst=(inst)
+      @inst = inst
+    end
+    
     # Return built Rack app
     #
     # @private
@@ -128,9 +137,11 @@ class Middleman::Base
     # @param [Symbol] Unique key name
     # @param Default value
     # @return [void]
-    def set(key, value)
+    def set(key, value=nil, &block)
       @defaults ||= {}
       @defaults[key] = value
+      
+      @inst.set(key, value, &block) if @inst
     end
   end
   
