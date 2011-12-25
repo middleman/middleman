@@ -45,12 +45,7 @@ module Guard
     
     # Start Middleman in a fork
     def start
-      if ::Middleman::JRUBY
-        thread = Thread.new { bootup }
-        thread.join
-      else
-        @server_job = fork { bootup }
-      end
+      @server_job = fork { bootup }
     end
     
     def bootup
@@ -73,12 +68,9 @@ module Guard
     # Stop the forked Middleman
     def stop
       puts "== The Middleman is shutting down"
-      if ::Middleman::JRUBY
-      else
-        Process.kill(::Middleman::WINDOWS ? :KILL : :TERM, @server_job)
-        Process.wait @server_job
-        @server_job = nil
-      end
+      Process.kill(::Middleman::WINDOWS ? :KILL : :TERM, @server_job)
+      Process.wait @server_job
+      @server_job = nil
     end
     
     # Simply stop, then start

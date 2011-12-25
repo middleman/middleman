@@ -226,14 +226,11 @@ module Middleman
     
       app_class = options[:app] ||= ::Middleman.server.inst
       opts[:app] = app_class
-      opts[:server] = if ::Middleman::JRUBY
-        'webrick' # Maybe Kirk?
-      else
-        require "thin"
-        ::Thin::Logging.silent = !options[:logging]
-        'thin'
-      end
-
+    
+      require "thin"
+      ::Thin::Logging.silent = !options[:logging]
+      opts[:server] = 'thin'
+      
       server = ::Rack::Server.new(opts)
       server.start
       server

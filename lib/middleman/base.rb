@@ -1,5 +1,6 @@
 # Built on Rack
 require "rack"
+require "rack/file"
 
 # Using Tilt for templating
 require "tilt"
