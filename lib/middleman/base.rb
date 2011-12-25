@@ -244,6 +244,8 @@ class Middleman::Base
     Middleman::Extensions::AssetHost }
   Middleman::Extensions.register(:automatic_image_sizes) {
     Middleman::Extensions::AutomaticImageSizes }
+  Middleman::Extensions.register(:asset_hash) { 
+    Middleman::Extensions::AssetHash }
   Middleman::Extensions.register(:cache_buster) { 
     Middleman::Extensions::CacheBuster }
   Middleman::Extensions.register(:directory_indexes) {

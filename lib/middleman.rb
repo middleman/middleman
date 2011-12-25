@@ -89,6 +89,10 @@ module Middleman
     # through each of the asset servers to better spread the load.
     autoload :AssetHost,           "middleman/extensions/asset_host"
 
+    # AssetHash appends a hash of the file contents to the assets filename
+    # to avoid browser caches failing to update to your new content.
+    autoload :AssetHash,           "middleman/extensions/asset_hash"
+
     # CacheBuster adds a query string to assets in dynamic templates to avoid
     # browser caches failing to update to your new content.
     autoload :CacheBuster,         "middleman/extensions/cache_buster"
