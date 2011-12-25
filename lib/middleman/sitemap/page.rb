@@ -99,9 +99,31 @@ module Middleman::Sitemap
       end
     end
     
+    
+    
     def directory_index?
-      path.include?(app.index_file) || path =~ /\/$/
+      path.include?(app.index_file) || path =~ /\/$/ || eponymous_directory?
     end
+
+    def eponymous_directory?
+      !!Dir.exists?(File.join(app.source_dir, eponymous_directory_path))
+    end
+    
+    def eponymous_directory_path
+      path.sub('.html', '/').sub(/\/$/, "") + "/"
+    end
+    
+    def relative_path
+      source_file.sub(app.source_dir, '')
+    end
+    
+    def data
+      data, content = app.frontmatter.data(relative_path)
+      data || nil
+    end
+    
+    
+    
     
     def parent
       parts = path.split("/")
@@ -126,17 +148,22 @@ module Middleman::Sitemap
     
     def children
       return [] unless directory_index?
-      
-      base_path = path.sub("#{app.index_file}", "")
-      prefix    = /^#{base_path.sub("/", "\\/")}/
 
+      if eponymous_directory?
+        base_path = eponymous_directory_path
+        prefix    = /^#{base_path.sub("/", "\\/")}/
+      else
+        base_path = path.sub("#{app.index_file}", "")
+        prefix    = /^#{base_path.sub("/", "\\/")}/
+      end
+            
       store.all_paths.select do |sub_path|
         sub_path =~ prefix
       end.select do |sub_path|
         path != sub_path
       end.select do |sub_path|
-       relative_path = sub_path.sub(prefix, "")
-       parts = relative_path.split("/")
+       inner_path = sub_path.sub(prefix, "")
+       parts = inner_path.split("/")
        if parts.length == 1
          true
        elsif parts.length == 2

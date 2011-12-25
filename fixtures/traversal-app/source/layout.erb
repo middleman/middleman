@@ -11,3 +11,9 @@ Source: <%= current_page.source_file.sub(root + "/", "") %>
 <% current_page.siblings.each do |p| %>
   Sibling: <%= p.path %>
 <% end %>
+
+<% current_page.children.each do |p| %>
+  <% if p.data %>
+    Data: <%= p.data %>
+  <% end %>
+<% end %>
