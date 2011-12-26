@@ -2,9 +2,6 @@
 require "yaml"
 require "active_support/json"
 
-# Using Thor's indifferent hash access
-require "thor"
-
 # The data extension parses YAML and JSON files in the data/ directory
 # and makes them available to config.rb, templates and extensions
 module Middleman::CoreExtensions::Data
@@ -119,7 +116,7 @@ module Middleman::CoreExtensions::Data
         return
       end
 
-      @local_data[basename] = recursively_enhance(data)
+      @local_data[basename] = ::Middleman.recursively_enhance(data)
     end
     
     # Remove a given file from the internal cache
@@ -162,7 +159,7 @@ module Middleman::CoreExtensions::Data
         result = data_for_path(path)
       
         if result
-          return recursively_enhance(result)
+          return ::Middleman.recursively_enhance(result)
         end
       end
       
@@ -191,29 +188,6 @@ module Middleman::CoreExtensions::Data
       end
       
       data
-    end
-  
-  private 
-    # Recursively convert a normal Hash into a HashWithIndifferentAccess
-    #
-    # @private
-    # @param [Hash] data Normal hash
-    # @return [Thor::CoreExt::HashWithIndifferentAccess]
-    def recursively_enhance(data)
-      if data.is_a? Hash
-        data = Thor::CoreExt::HashWithIndifferentAccess.new(data)
-        data.each do |key, val|
-          data[key] = recursively_enhance(val)
-        end
-        data
-      elsif data.is_a? Array
-        data.each_with_index do |val, i|
-          data[i] = recursively_enhance(val)
-        end
-        data
-      else
-        data
-      end
     end
   end
 end

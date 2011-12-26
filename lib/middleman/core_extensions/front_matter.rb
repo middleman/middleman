@@ -28,18 +28,18 @@ module Middleman::CoreExtensions::FrontMatter
       matcher = %r{source/.*(#{exts})}
       
       file_changed matcher do |file|
-        frontmatter.touch_file(file)
+        frontmatter_extension.touch_file(file)
       end
 
       file_deleted matcher do |file|
-        frontmatter.remove_file(file)
+        frontmatter_extension.remove_file(file)
       end
 
       provides_metadata matcher do |path|
         relative_path = path.sub(source_dir, "")
 
-        fmdata = if frontmatter.has_data?(relative_path)
-          frontmatter.data(relative_path)[0]
+        fmdata = if frontmatter_extension.has_data?(relative_path)
+          frontmatter(relative_path)[0]
         else
           {}
         end
@@ -61,8 +61,12 @@ module Middleman::CoreExtensions::FrontMatter
       end
     end
     
-    def frontmatter
-      @frontmatter ||= FrontMatter.new(self)
+    def frontmatter_extension
+      @_frontmatter_extension ||= FrontMatter.new(self)
+    end
+    
+    def frontmatter(*args)
+      frontmatter_extension.data(*args)
     end
   end
   
@@ -88,8 +92,10 @@ module Middleman::CoreExtensions::FrontMatter
       result = parse_front_matter(content)
         
       if result
+        data, content = result
+        data = ::Middleman.recursively_enhance(data)
         file = file.sub(@app.source_dir, "")
-        @local_data[file] = result
+        @local_data[file] = [data, content]
         path = File.join(@app.source_dir, file)
         @app.cache.set([:raw_template, path], result[1])
         @app.frontmatter_did_change(path)

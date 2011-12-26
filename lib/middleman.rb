@@ -1,5 +1,8 @@
 require "rbconfig"
 
+# Using Thor's indifferent hash access
+require "thor"
+
 # Setup our load paths
 libdir = File.expand_path(File.dirname(__FILE__))
 $LOAD_PATH.unshift(libdir) unless $LOAD_PATH.include?(libdir)
@@ -162,6 +165,28 @@ module Middleman
   EXTENSION_FILE = File.join("lib", "middleman_extension.rb")
   
   class << self
+    
+    # Recursively convert a normal Hash into a HashWithIndifferentAccess
+    #
+    # @private
+    # @param [Hash] data Normal hash
+    # @return [Thor::CoreExt::HashWithIndifferentAccess]
+    def recursively_enhance(data)
+      if data.is_a? Hash
+        data = ::Thor::CoreExt::HashWithIndifferentAccess.new(data)
+        data.each do |key, val|
+          data[key] = recursively_enhance(val)
+        end
+        data
+      elsif data.is_a? Array
+        data.each_with_index do |val, i|
+          data[i] = recursively_enhance(val)
+        end
+        data
+      else
+        data
+      end
+    end
     
     # Automatically load extensions from available RubyGems
     # which contain the EXTENSION_FILE

@@ -118,12 +118,9 @@ module Middleman::Sitemap
     end
     
     def data
-      data, content = app.frontmatter.data(relative_path)
+      data, content = app.frontmatter(relative_path)
       data || nil
     end
-    
-    
-    
     
     def parent
       parts = path.split("/")
