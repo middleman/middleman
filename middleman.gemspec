@@ -42,7 +42,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency("coffee-filter", ["~> 0.1.1"])
   s.add_development_dependency("liquid", ["~> 2.2"])
   s.add_development_dependency("cucumber", ["~> 1.1.0"])
-  s.add_development_dependency("aruba", ["0.4.9"])
+  s.add_development_dependency("aruba", ["~> 0.4.11"])
   s.add_development_dependency("rake", ["~> 0.9.2"])
   s.add_development_dependency("rspec", ["~> 2.7"])
   s.add_development_dependency("rdoc", ["~> 3.9"])
