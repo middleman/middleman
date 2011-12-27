@@ -83,7 +83,6 @@ module Middleman::Sitemap
       
       path = path.sub(/^\//, "")
       @pages.delete(path) if @pages.has_key?(path)
-      @context_map.delete(path) if @context_map.has_key?(path)
     end
     
     def file_to_path(file)
