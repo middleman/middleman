@@ -28,11 +28,14 @@ module Middleman::CoreExtensions::Sitemap
     def initialize
       super
 
-      file_changed %r{^source/} do |file|
+      static_path = source_dir.sub(self.root, "").sub(/^\//, "")
+      sitemap_regex = static_path.empty? ? // : (%r{^#{static_path + "/"}})
+      
+      file_changed sitemap_regex do |file|
         sitemap.touch_file(file)
       end
 
-      file_deleted %r{^source/} do |file|
+      file_deleted sitemap_regex do |file|
         sitemap.remove_file(file)
       end
     end

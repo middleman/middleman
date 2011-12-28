@@ -4,7 +4,6 @@ module Middleman::Sitemap
     
     def initialize(app)
       @app = app
-      @source = File.expand_path(@app.source, @app.root)
       @pages = {}
     end
     
@@ -88,7 +87,7 @@ module Middleman::Sitemap
     def file_to_path(file)
       file = File.expand_path(file, @app.root)
       
-      prefix = @source + "/"
+      prefix = @app.source_dir.sub(/\/$/, "") + "/"
       return false unless file.include?(prefix)
       
       path = file.sub(prefix, "")
@@ -98,7 +97,7 @@ module Middleman::Sitemap
     end
     
     def touch_file(file)
-      return false if file == @source || File.directory?(file)
+      return false if file == @app.source_dir || File.directory?(file)
       
       path = file_to_path(file)
       return false unless path

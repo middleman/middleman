@@ -12,7 +12,6 @@ module Middleman::Cli
     method_option :host,
       :type => :string,
       :aliases => "-h",
-      # :required => true,
       :default => "0.0.0.0", 
       :desc => "Bind to HOST address"
     method_option "port",
@@ -25,8 +24,10 @@ module Middleman::Cli
       :desc    => 'Print debug messages'
     def server
       if !ENV["MM_ROOT"]
-        $stderr.puts "== Error: Could not find a Middleman project config, perhaps you are in the wrong folder?"
-        exit(1)
+        puts "== Warning: Could not find a Middleman project config.rb"
+        puts "== Treating directory as a static site to be served"
+        ENV["MM_ROOT"] = Dir.pwd
+        ENV["MM_SOURCE"] = ""
       end
 
       params = {

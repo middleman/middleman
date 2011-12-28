@@ -159,7 +159,7 @@ class Middleman::Base
   
   # Root project directory (overwritten in middleman build/server)
   # @return [String]
-  set :root,        ENV['MM_ROOT'] || Dir.pwd
+  set :root,        ENV["MM_ROOT"] || Dir.pwd
   
   # Name of the source directory
   # @return [String]
@@ -301,7 +301,10 @@ class Middleman::Base
     instance_exec(&block) if block_given?
     
     # Build expanded source path once paths have been parsed
-    set :source_dir, File.join(root, source)
+    path = root.dup
+    source_path = ENV["MM_SOURCE"] || self.source
+    path = File.join(root, source_path) unless source_path.empty?
+    set :source_dir, path
     
     super
   end

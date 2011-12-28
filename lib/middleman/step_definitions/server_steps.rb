@@ -23,10 +23,17 @@ end
 
 Given /^the Server is running at "([^\"]*)"$/ do |app_path|
   step %Q{a project at "#{app_path}"}
+
+  root_dir = File.join(PROJECT_ROOT_PATH, "fixtures", app_path)
+  if File.exists?(File.join(root_dir, "source"))
+    ENV["MM_SOURCE"] = "source"
+  else
+    ENV["MM_SOURCE"] = ""
+  end
   
   initialize_commands = @initialize_commands || []
   initialize_commands.unshift lambda { 
-    set :root, File.join(PROJECT_ROOT_PATH, "fixtures", app_path)
+    set :root, root_dir
     set :environment, @current_env || :development
     set :show_exceptions, false
   }

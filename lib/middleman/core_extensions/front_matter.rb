@@ -25,7 +25,10 @@ module Middleman::CoreExtensions::FrontMatter
       super
       
       exts = frontmatter_extensions.join("|").gsub(".", "\.")
-      matcher = %r{source/.*(#{exts})}
+      
+      static_path = source_dir.sub(self.root, "").sub(/^\//, "").sub(/\/$/, "") + "/"
+
+      matcher = %r{#{static_path}.*(#{exts})}
       
       file_changed matcher do |file|
         frontmatter_extension.touch_file(file)

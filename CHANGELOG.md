@@ -20,6 +20,8 @@
 * Support for placekitten.com
 * Added MM_ROOT environmental variable
 * activating extensions can now take an options hash
+* Don't re-minify files with ".min" in their name
+* Serve purely static folders directly (without source/ and config.rb)
 
 2.0.14
 ====
