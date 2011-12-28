@@ -17,7 +17,7 @@ module Middleman::CoreExtensions::Sitemap
         :partials => proc { |file, path| (file.match(/\/_/) && !file.match(/\/__/)) },
         
         # Files without any output extension (layouts, partials)
-        :extentionless => proc { |file, path| !path.match(/\./) },
+        :extensionless => proc { |file, path| !path.match(/\./) },
       }
       app.send :include, InstanceMethods
     end
