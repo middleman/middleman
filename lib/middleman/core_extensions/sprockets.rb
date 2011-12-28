@@ -94,7 +94,16 @@ module Middleman::CoreExtensions::Sprockets
     def initialize(app)
       super
       
-      self.js_compressor = app.js_compressor
+      expire_index!
+
+      unregister_bundle_processor 'application/javascript', :js_compressor
+      register_bundle_processor 'application/javascript', :js_compressor do |context, data|
+        if context.pathname.to_s =~ /\.min\./
+          data
+        else
+          app.js_compressor.compress(data)
+        end
+      end if app.js_compressor
       
       # configure search paths
       append_path app.js_dir
@@ -110,7 +119,16 @@ module Middleman::CoreExtensions::Sprockets
     def initialize(app)
       super
       
-      self.css_compressor = app.css_compressor
+      expire_index!
+
+      unregister_bundle_processor 'text/css', :css_compressor
+      register_bundle_processor 'text/css', :css_compressor do |context, data|
+        if context.pathname.to_s =~ /\.min\./
+          data
+        else
+          app.css_compressor.compress(data)
+        end
+      end if app.css_compressor
   
       # configure search paths
       append_path app.css_dir
