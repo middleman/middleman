@@ -68,6 +68,7 @@ module Middleman::CoreExtensions::Sprockets
 
   class MiddlemanEnvironment < ::Sprockets::Environment
     def initialize(app)
+      @app = app
       super app.source_dir
       
       # Make the app context available to Sprockets
@@ -81,6 +82,11 @@ module Middleman::CoreExtensions::Sprockets
           end
         end
       end
+    end
+    
+    def find_asset(path, options = {})
+      expire_index! if @app.development?
+      super
     end
   end
     
