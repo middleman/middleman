@@ -4,6 +4,21 @@ require 'find'
 module Middleman::CoreExtensions::Sitemap
   class << self
     def registered(app)
+      app.set :ignored_sitemap_matchers, {
+        # dotfiles and folders in the root
+        :root_dotfiles => proc { |file, path| file.match(/^\./) },
+        
+        # Files starting with an dot, but not .htaccess
+        :source_dotfiles => proc { |file, path| 
+          (file.match(/\/\./) && !file.match(/\/\.htaccess/)) 
+        },
+        
+        # Files starting with an underscore, but not a double-underscore
+        :partials => proc { |file, path| (file.match(/\/_/) && !file.match(/\/__/)) },
+        
+        # Files without any output extension (layouts, partials)
+        :extentionless => proc { |file, path| !path.match(/\./) },
+      }
       app.send :include, InstanceMethods
     end
     alias :included :registered

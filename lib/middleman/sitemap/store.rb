@@ -98,27 +98,25 @@ module Middleman::Sitemap
     end
     
     def touch_file(file)
-      return false if file == @source ||
-                      file.match(/^\./) ||
-                      (file.match(/\/\./) && !file.match(/\/\.htaccess/)) ||
-                      (file.match(/\/_/) && !file.match(/\/__/)) ||
-                      File.directory?(file)
-                     
-      path = file_to_path(file)
+      return false if file == @source || File.directory?(file)
       
+      path = file_to_path(file)
       return false unless path
       
-      return false if path.match(%r{^layout}) ||
-                      path.match(%r{^layouts/})
-    
-      # @app.logger.debug :sitemap_update, Time.now, path if @app.logging?
-      
+      return false if @app.ignored_sitemap_matchers.any? do |name, callback|
+        callback.call(file, path)
+      end
+          
       # Add generic path
       p = page(path)
       p.source_file = File.expand_path(file, @app.root)
       p.touch
       
       true
+    end
+    
+    def sitemap_should_ignore?(file, path)
+      @app.sitemap_ignore.every(&:call)
     end
     
   protected
