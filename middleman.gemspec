@@ -31,7 +31,7 @@ Gem::Specification.new do |s|
   s.add_dependency("compass", ["~> 0.11.3"])
   s.add_dependency("coffee-script", ["~> 2.2.0"])
   s.add_dependency("execjs", ["~> 1.2.7"])
-  s.add_dependency("sprockets", ["~> 2.0"])
+  s.add_dependency("sprockets", ["~> 2.1"])
   s.add_dependency("sprockets-sass", ["~> 0.6.0"])
   s.add_dependency("guard", ["~> 0.9.4"])
   s.add_dependency("redcarpet", ["~> 2.0.0"])
