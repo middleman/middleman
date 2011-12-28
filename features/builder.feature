@@ -21,6 +21,7 @@ Feature: Builder
       | _partial                                      |
       | _liquid_partial                               |
       | layout                                        |
+      | other_layout                                  |
       | layouts/custom                                |
       | layouts/content_for                           |
       
