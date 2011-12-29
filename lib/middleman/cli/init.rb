@@ -1,4 +1,7 @@
+# CLI Module
 module Middleman::Cli
+  
+  # A thor task for creating new projects
   class Init < Thor
     check_unknown_options!
     
@@ -6,7 +9,6 @@ module Middleman::Cli
     
     desc "init NAME [options]", "Create new project NAME"
     available_templates = ::Middleman::Templates.registered.keys.join(", ")
-    # argument :name
     method_option "template", 
       :aliases => "-T", 
       :default => "default",
@@ -28,6 +30,8 @@ module Middleman::Cli
       :type    => :boolean, 
       :default => false, 
       :desc    => 'Create a Gemfile and use Bundler to manage gems'
+    # The init task
+    # @param [String] name
     def init(name)
       key = options[:template].to_sym
       unless ::Middleman::Templates.registered.has_key?(key)
@@ -39,6 +43,7 @@ module Middleman::Cli
     end
   end
   
+  # Map "i", "new" and "n" to "init"
   Base.map({
     "i"   => "init",
     "new" => "init",

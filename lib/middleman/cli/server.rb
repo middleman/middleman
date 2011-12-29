@@ -1,4 +1,7 @@
+# CLI Module
 module Middleman::Cli
+  
+  # Server thor task
   class Server < Thor
     check_unknown_options!
     
@@ -22,6 +25,8 @@ module Middleman::Cli
       :type    => :boolean, 
       :default => false,
       :desc    => 'Print debug messages'
+    
+    # Start the server
     def server
       if !ENV["MM_ROOT"]
         puts "== Warning: Could not find a Middleman project config.rb"
@@ -42,5 +47,6 @@ module Middleman::Cli
     end
   end
   
+  # Map "s" to "server"
   Base.map({ "s" => "server" })
 end

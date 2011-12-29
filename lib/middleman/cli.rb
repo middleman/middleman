@@ -1,16 +1,23 @@
+# Require thor since that's what the who CLI is built around
 require 'thor'
 require "thor/group"
 
 # CLI Module
 module Middleman::Cli
   
+  # The base task from which everything else etends
   class Base < Thor
+    
     desc "version", "Show version"
     def version
       require 'middleman/version'
       say "Middleman #{Middleman::VERSION}"
     end
     
+    # Override the Thor help method to find help for subtasks
+    # @param [Symbol, String, nil] meth
+    # @param [Boolean] subcommand
+    # @return [void]
     def help(meth = nil, subcommand = false)
       if meth && !self.respond_to?(meth)
         klass, task = Thor::Util.find_class_and_task_by_namespace("#{meth}:#{meth}")
@@ -28,6 +35,8 @@ module Middleman::Cli
       end
     end
     
+    # Intercept missing methods and search subtasks for them
+    # @param [Symbol] meth
     def method_missing(meth, *args)
       meth = meth.to_s
       
@@ -42,6 +51,7 @@ module Middleman::Cli
   end
 end
 
+# Include the core CLI items
 require "middleman/cli/init"
 require "middleman/cli/server"
 require "middleman/cli/build"
