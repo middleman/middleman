@@ -1,11 +1,11 @@
 # -*- encoding: utf-8 -*-
 $:.push File.expand_path("../lib", __FILE__)
-require "middleman-core/version"
+require "middleman-more/version"
 
 Gem::Specification.new do |s|
-  s.name        = "middleman"
-  s.version     = Middleman::Core::VERSION
-  s.platform    = "x86-mingw32"
+  s.name        = "middleman-more"
+  s.version     = Middleman::More::VERSION
+  s.platform    = Gem::Platform::RUBY
   s.license     = "MIT"
   s.authors     = ["Thomas Reynolds"]
   s.email       = ["me@tdreyno.com"]
@@ -18,26 +18,17 @@ Gem::Specification.new do |s|
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
 
-  s.add_dependency("rack", ["~> 1.3.5"])
+  s.add_dependency("middleman-core")
   s.add_dependency("thin", ["~> 1.3.1"])
-  s.add_dependency("thor", ["~> 0.14.0"])
-  s.add_dependency("tilt", ["~> 1.3.1"])
   s.add_dependency("i18n", ["~> 0.6.0"])
-  s.add_dependency("rack-test", ["~> 0.6.1"])
   s.add_dependency("uglifier", ["~> 1.2.0"])
   s.add_dependency("haml", ["~> 3.1.0"])
   s.add_dependency("sass", ["~> 3.1.7"])
-  s.add_dependency("activesupport", ["~> 3.1.0"])
   s.add_dependency("compass", ["~> 0.11.3"])
   s.add_dependency("coffee-script", ["~> 2.2.0"])
   s.add_dependency("execjs", ["~> 1.2.7"])
-  s.add_dependency("sprockets", ["~> 2.1"])
   s.add_dependency("sprockets-sass", ["~> 0.6.0"])
-  s.add_dependency("guard", ["~> 0.9.4"])
   s.add_dependency("redcarpet", ["~> 2.0.0"])
-  
-  s.add_dependency("eventmachine", ["1.0.0.beta.4.1"])
-  s.add_dependency("win32-process", ["~> 0.6.5"])
   
   # Development and test
   s.add_development_dependency("slim")
