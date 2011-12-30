@@ -10,11 +10,6 @@ Feature: Local Data API
     Given the Server is running at "basic-data-app"
     When I go to "/data3.html"
     Then I should see "One:Two"
-  
-  # Scenario: Rendering liquid
-  #   Given the Server is running at "basic-data-app"
-  #   When I go to "/data2.html"
-  #   Then I should see "OneTwo"
     
   Scenario: Using data in config.rb
     Given the Server is running at "data-app"

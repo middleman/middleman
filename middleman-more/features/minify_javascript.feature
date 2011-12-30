@@ -6,7 +6,7 @@ Feature: Minify Javascript
 
   Scenario: Rendering inline js with the feature disabled
     Given "minify_javascript" feature is "disabled"
-    And the Server is running at "test-app"
+    And the Server is running at "minify-js-app"
     When I go to "/inline-js.html"
     Then I should see "10" lines
     
@@ -17,13 +17,13 @@ Feature: Minify Javascript
 
   Scenario: Rendering inline js with the feature enabled
     Given "minify_javascript" feature is "enabled"
-    And the Server is running at "test-app"
+    And the Server is running at "minify-js-app"
     When I go to "/inline-js.html"
     Then I should see "5" lines
     
   Scenario: Rendering external js with the feature enabled
     Given "minify_javascript" feature is "enabled"
-    And the Server is running at "test-app"
+    And the Server is running at "minify-js-app"
     When I go to "/javascripts/js_test.js"
     Then I should see "1" lines
     
@@ -34,13 +34,13 @@ Feature: Minify Javascript
 
   Scenario: Rendering inline js (coffeescript) with the feature enabled
     Given "minify_javascript" feature is "enabled"
-    And the Server is running at "test-app"
+    And the Server is running at "minify-js-app"
     When I go to "/inline-coffeescript.html"
     Then I should see "5" lines
   
   Scenario: Rendering external js (coffeescript) with the feature enabled
     Given "minify_javascript" feature is "enabled"
-    And the Server is running at "test-app"
+    And the Server is running at "minify-js-app"
     When I go to "/javascripts/coffee_test.js"
     Then I should see "1" lines
     

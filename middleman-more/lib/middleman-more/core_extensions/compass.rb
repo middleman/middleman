@@ -50,6 +50,10 @@ module Middleman::CoreExtensions::Compass
           
           config.asset_cache_buster :none
           config.output_style = :nested
+
+          if respond_to?(:asset_host) && asset_host.is_a?(Proc)
+            config.asset_host(&asset_host)
+          end
         end
         
         # Change paths when in build mode. Required for relative paths

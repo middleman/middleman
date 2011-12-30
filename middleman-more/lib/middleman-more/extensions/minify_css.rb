@@ -4,7 +4,7 @@ module Middleman::Extensions
       def registered(app)
         app.after_configuration do
           if !css_compressor
-            require "middleman-core/extensions/minify_css/cssmin"
+            require "middleman-more/extensions/minify_css/cssmin"
             set :css_compressor, ::CSSMin
           end
         end

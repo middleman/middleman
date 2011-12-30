@@ -1,5 +1,6 @@
 3.0.pre
 ====
+* Split into 3 gems (middleman-core, middleman-more and middleman which simply includes both)
 * Rewritten to work directly with Rack (Sinatra apps can still be mounted)
 * Sitemap maintains own state
 * New Extension Registration API
