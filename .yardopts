@@ -1,11 +1,11 @@
-lib/**/*.rb 
---exclude lib/middleman/vendor/
---exclude lib/middleman/extensions/automatic_image_sizes/fastimage.rb 
---exclude lib/middleman/extensions/minify_css/cssmin.rb
---exclude lib/middleman/step_definitions
---exclude lib/middleman/templates/default/
---exclude lib/middleman/templates/html5/
---exclude lib/middleman/templates/mobile/
---exclude lib/middleman/templates/shared/
+middleman-*/lib/**/*.rb 
+--exclude middleman-core/lib/middleman/vendor/
+--exclude middleman-core/lib/middleman/extensions/automatic_image_sizes/fastimage.rb 
+--exclude middleman-more/lib/middleman/extensions/minify_css/cssmin.rb
+--exclude middleman-core/lib/middleman/step_definitions
+--exclude middleman-core/lib/middleman/templates/default/
+--exclude middleman-core/lib/middleman/templates/html5/
+--exclude middleman-core/lib/middleman/templates/mobile/
+--exclude middleman-core/lib/middleman/templates/shared/
 --no-private
 --hide-void-return
