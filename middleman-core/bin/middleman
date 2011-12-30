@@ -36,6 +36,14 @@ ARGV << "server" if ARGV.length < 1
 # Require Middleman
 require 'middleman-core'
 
+begin
+  # Rubygems
+  require "middleman-more"
+rescue LoadError
+  # Local
+  require File.expand_path(File.join(File.dirname(File.dirname(libdir)), "middleman-more", "lib", "middleman-more"))
+end
+
 # Change directory to the root
 Dir.chdir(ENV["MM_ROOT"] || Dir.pwd) do
   

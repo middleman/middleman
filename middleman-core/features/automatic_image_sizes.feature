@@ -3,14 +3,14 @@ Feature: Automatically detect and insert image dimensions into tags
 
   Scenario: Rendering an image with the feature disabled
     Given "automatic_image_sizes" feature is "disabled"
-    And the Server is running at "test-app"
+    And the Server is running at "automatic-image-size-app"
     When I go to "/auto-image-sizes.html"
     Then I should not see "width="
     And I should not see "height="
   
   Scenario: Rendering an image with the feature enabled
     Given "automatic_image_sizes" feature is "enabled"
-    And the Server is running at "test-app"
+    And the Server is running at "automatic-image-size-app"
     When I go to "/auto-image-sizes.html"
     Then I should see "width="
     And I should see "height="

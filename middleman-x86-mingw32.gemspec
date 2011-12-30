@@ -4,7 +4,7 @@ require "middleman-core/version"
 
 Gem::Specification.new do |s|
   s.name        = "middleman"
-  s.version     = Middleman::Core::VERSION
+  s.version     = Middleman::VERSION
   s.platform    = "x86-mingw32"
   s.license     = "MIT"
   s.authors     = ["Thomas Reynolds"]

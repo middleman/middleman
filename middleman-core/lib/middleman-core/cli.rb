@@ -11,7 +11,7 @@ module Middleman::Cli
     desc "version", "Show version"
     def version
       require 'middleman-core/version'
-      say "Middleman #{Middleman::Core::VERSION}"
+      say "Middleman #{Middleman::VERSION}"
     end
     
     # Override the Thor help method to find help for subtasks

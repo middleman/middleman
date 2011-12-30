@@ -198,7 +198,7 @@ class Middleman::Base
 
   # Automatically loaded extensions
   # @return [Array<Symbol>]
-  set :default_extensions, [:lorem]
+  set :default_extensions, [ :lorem ]
 
   # Default layout name
   # @return [String, Symbold]
@@ -242,6 +242,10 @@ class Middleman::Base
     Middleman::Extensions::DirectoryIndexes }
   Middleman::Extensions.register(:lorem) {
     Middleman::Extensions::Lorem }
+  Middleman::Extensions.register(:automatic_image_sizes) {
+    Middleman::Extensions::AutomaticImageSizes }
+  Middleman::Extensions.register(:asset_host) {
+    Middleman::Extensions::AssetHost }
   
   # Backwards-compatibility with old request.path signature
   attr :request
@@ -258,7 +262,7 @@ class Middleman::Base
   # @return [void]
   def current_path=(path)
     @_current_path = path
-    @request = Thor::CoreExt::HashWithIndifferentAccess.new({ :path => path })
+    @request = ::Thor::CoreExt::HashWithIndifferentAccess.new({ :path => path })
   end
   
   # Initialize the Middleman project

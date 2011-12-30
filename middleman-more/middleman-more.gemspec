@@ -1,10 +1,10 @@
 # -*- encoding: utf-8 -*-
 $:.push File.expand_path("../lib", __FILE__)
-require "middleman-more/version"
+require File.expand_path("../../middleman-core/lib/middleman-core/version.rb", __FILE__)
 
 Gem::Specification.new do |s|
   s.name        = "middleman-more"
-  s.version     = Middleman::More::VERSION
+  s.version     = Middleman::VERSION
   s.platform    = Gem::Platform::RUBY
   s.license     = "MIT"
   s.authors     = ["Thomas Reynolds"]
@@ -18,30 +18,15 @@ Gem::Specification.new do |s|
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
 
-  s.add_dependency("middleman-core")
-  s.add_dependency("thin", ["~> 1.3.1"])
-  s.add_dependency("i18n", ["~> 0.6.0"])
+  s.add_dependency("middleman-core", Middleman::VERSION)
   s.add_dependency("uglifier", ["~> 1.2.0"])
   s.add_dependency("haml", ["~> 3.1.0"])
   s.add_dependency("sass", ["~> 3.1.7"])
   s.add_dependency("compass", ["~> 0.11.3"])
   s.add_dependency("coffee-script", ["~> 2.2.0"])
   s.add_dependency("execjs", ["~> 1.2.7"])
+  s.add_dependency("sprockets", ["~> 2.1.0"])
   s.add_dependency("sprockets-sass", ["~> 0.6.0"])
   s.add_dependency("redcarpet", ["~> 2.0.0"])
-  
-  # Development and test
-  s.add_development_dependency("slim")
-  s.add_development_dependency("sinatra")
-  s.add_development_dependency("coffee-filter", ["~> 0.1.1"])
-  s.add_development_dependency("liquid", ["~> 2.2"])
-  s.add_development_dependency("cucumber", ["~> 1.1.0"])
-  s.add_development_dependency("aruba", ["~> 0.4.11"])
-  s.add_development_dependency("rake", ["~> 0.9.2"])
-  s.add_development_dependency("rspec", ["~> 2.7"])
-  s.add_development_dependency("rdoc", ["~> 3.9"])
-  s.add_development_dependency("yard")
-  s.add_development_dependency("jquery-rails")
-  s.add_development_dependency("bootstrap-rails", ["0.0.5"])
 end
 

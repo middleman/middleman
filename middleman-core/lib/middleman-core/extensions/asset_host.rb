@@ -4,11 +4,11 @@ module Middleman::Extensions
       def registered(app)
         app.set :asset_host, false
       
-        app.compass_config do |config|
-          if asset_host.is_a?(Proc)
-            config.asset_host(&asset_host)
-          end
-        end
+        # app.compass_config do |config|
+        #   if asset_host.is_a?(Proc)
+        #     config.asset_host(&asset_host)
+        #   end
+        # end
       
         app.send :include, InstanceMethods
       end

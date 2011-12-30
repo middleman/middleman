@@ -4,7 +4,7 @@ require "middleman-core/version"
 
 Gem::Specification.new do |s|
   s.name        = "middleman-core"
-  s.version     = Middleman::Core::VERSION
+  s.version     = Middleman::VERSION
   s.platform    = Gem::Platform::RUBY
   s.license     = "MIT"
   s.authors     = ["Thomas Reynolds"]
@@ -18,10 +18,15 @@ Gem::Specification.new do |s|
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
 
+  # Thin
+  # s.add_dependency("thin", ["~> 1.3.1"])
+  
   # Core
   s.add_dependency("rack", ["~> 1.3.5"])
-  s.add_dependency("rack-test", ["~> 0.6.1"])
   s.add_dependency("tilt", ["~> 1.3.1"])
+  
+  # Builder
+  s.add_dependency("rack-test", ["~> 0.6.1"])
   
   # CLI
   s.add_dependency("thor", ["~> 0.14.0"])

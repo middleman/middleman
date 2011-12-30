@@ -1,7 +1,13 @@
+# Using for version parsing
+require "rubygems"
+
 module Middleman
-  module Core
-    # Current Version
-    # @return [String]
-    VERSION = "3.0.0.alpha.6"
-  end
+  # Current Version
+  # @return [String]
+  VERSION = "3.0.0.alpha.7" unless const_defined?(:VERSION)
+  
+  # Parsed version for RubyGems
+  # @private
+  # @return [String]
+  GEM_VERSION = ::Gem::Version.create(VERSION) unless const_defined?(:GEM_VERSION)
 end
