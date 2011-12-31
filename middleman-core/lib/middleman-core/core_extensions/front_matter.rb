@@ -91,7 +91,6 @@ module Middleman::CoreExtensions::FrontMatter
       file = File.expand_path(file, @app.root)
       content = File.read(file)
       
-      # @app.logger.debug :frontmatter_update, Time.now, file if @app.logging?
       result = parse_front_matter(content)
         
       if result
