@@ -1,3 +1,10 @@
+# Shutup Tilt Warnings
+class Tilt::Template
+  def warn(*args)
+    # Kernel.warn(*args)
+  end
+end
+
 module Middleman::CoreExtensions::Rendering
   class << self
     def registered(app)

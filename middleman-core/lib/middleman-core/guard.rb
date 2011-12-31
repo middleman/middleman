@@ -55,7 +55,10 @@ module Guard
     # Start Middleman in a fork
     # @return [void]
     def start
-      @server_job = fork { bootup }
+      @server_job = fork {
+        Signal.trap(::Middleman::WINDOWS ? :KILL : :TERM) { exit! }
+        bootup
+      }
     end
     
     # Start an instance of Middleman::Base
@@ -142,7 +145,7 @@ module Guard
 end
 
 # Trap the interupt signal and shut down Guard (and thus the server) smoothly
-trap(::Guard::Middleman.kill_command) do 
+trap(::Guard::Middleman.kill_command) do
   ::Guard.stop
   exit!(0)
 end
