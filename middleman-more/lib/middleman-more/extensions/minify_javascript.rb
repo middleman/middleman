@@ -1,25 +1,45 @@
+# Extension namespace
 module Middleman::Extensions
+  
+  # Minify Javascript Extension
   module MinifyJavascript
+    
+    # Setup extension
     class << self
+      
+      # Once registered
       def registered(app)
+        
+        # Once config is parsed
         app.after_configuration do
+          
+          # Tell sprockets which compressor to use
           if !js_compressor
             require 'uglifier'
             set :js_compressor, ::Uglifier.new
           end
           
+          # Setup Rack to watch for inline JS
           use InlineJavascriptRack, :compressor => js_compressor
         end
       end
       alias :included :registered
     end
 
+    # Rack middleware to look for JS in HTML and compress it
     class InlineJavascriptRack
+      
+      # Init
+      # @param [Class] app
+      # @param [Hash] options
       def initialize(app, options={})
         @app = app
         @compressor = options[:compressor]
       end
 
+      # Rack interface
+      # @param [Rack::Environmemt] env
+      # @return [Array]
       def call(env)
         status, headers, response = @app.call(env)
 
@@ -52,5 +72,6 @@ module Middleman::Extensions
     end
   end
   
+  # Register extension
   register :minify_javascript, MinifyJavascript
 end

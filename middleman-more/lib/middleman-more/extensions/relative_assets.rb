@@ -1,17 +1,32 @@
+# Extension namespace
 module Middleman::Extensions
+  
+  # Relative Assets extension
   module RelativeAssets
+    
+    # Setup extension
     class << self
+      
+      # Once registered
       def registered(app)
+        # Tell compass to use relative assets
         app.compass_config do |config|
           config.relative_assets = true
         end
       
+        # Include instance methods
         app.send :include, InstanceMethods
       end
       alias :included :registered
     end
   
+    # Relative Assets instance method
     module InstanceMethods
+      
+      # asset_url override for relative assets
+      # @param [String] path
+      # @param [String] prefix
+      # @return [String]
       def asset_url(path, prefix="")
         begin
           prefix = images_dir if prefix == http_images_path
@@ -42,5 +57,6 @@ module Middleman::Extensions
     end
   end
   
+  # Register extension
   register :relative_assets, RelativeAssets
 end

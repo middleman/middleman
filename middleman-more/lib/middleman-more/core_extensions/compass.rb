@@ -4,7 +4,8 @@ module Middleman::CoreExtensions::Compass
   
   # Extension registered
   class << self
-    # @private
+    
+    # Once registered
     def registered(app)
       require "compass"
       

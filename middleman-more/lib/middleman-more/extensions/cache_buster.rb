@@ -1,9 +1,18 @@
+# Extension namespace
 module Middleman::Extensions
+  
+  # The Cache Buster extension
   module CacheBuster
+    
+    # Setup extension
     class << self
+      
+      # Once registered
       def registered(app)
+        # Add instance methods to context
         app.send :include, InstanceMethods
       
+        # After compass is setup, make it use the registered cache buster
         app.compass_config do |config|
           config.asset_cache_buster do |path, real_path|
             real_path = real_path.path if real_path.is_a? File
@@ -19,7 +28,12 @@ module Middleman::Extensions
       alias :included :registered
     end
   
+    # Cache buster instance methods
     module InstanceMethods
+      
+      # asset_url override if we're using cache busting
+      # @param [String] path
+      # @param [String] prefix
       def asset_url(path, prefix="")
         http_path = super
 
@@ -55,5 +69,6 @@ module Middleman::Extensions
     end
   end
   
+  # Register the extension
   register :cache_buster, CacheBuster
 end
