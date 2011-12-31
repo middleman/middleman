@@ -1,6 +1,5 @@
 require "sprockets"
 require "sprockets-sass"
-require "sass"
 
 module Middleman::Renderers::Sass
   class << self

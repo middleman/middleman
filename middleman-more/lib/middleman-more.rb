@@ -3,6 +3,8 @@ libdir = File.expand_path(File.dirname(__FILE__))
 $LOAD_PATH.unshift(libdir) unless $LOAD_PATH.include?(libdir)
 
 require "middleman-core"
+require "sass"
+require "coffee_script"
 
 # Top-level Middleman object
 module Middleman
@@ -40,7 +42,6 @@ module Middleman
     autoload :MinifyJavascript,    "middleman-more/extensions/minify_javascript"
   end
   
-  require "coffee_script"
   Base.register Middleman::Renderers::Haml
   Base.register Middleman::Renderers::Sass
   Base.register Middleman::Renderers::Markdown
