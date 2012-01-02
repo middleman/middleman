@@ -322,9 +322,9 @@ class Middleman::Base
 
     if env["PATH_INFO"] == "/__middleman__" && env["REQUEST_METHOD"] == "POST"
       if req.params.has_key?("change")
-        file_did_change(req.params["change"])
+        self.files.did_change(req.params["change"])
       elsif req.params.has_key?("delete")
-        file_did_delete(req.params["delete"])
+        self.files.did_delete(req.params["delete"])
       end
       
       res.status = 200

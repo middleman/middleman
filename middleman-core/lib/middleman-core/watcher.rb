@@ -14,7 +14,7 @@ module Middleman
       
       def start(options)
         self.singleton = new(options)
-        self.singleton.watch!
+        self.singleton.watch! unless options[:"disable-watcher"]
       end
       
       # What command is sent to kill instances
@@ -58,10 +58,14 @@ module Middleman
     # Start Middleman in a fork
     # @return [void]
     def start
-      @server_job = fork {
-        Signal.trap(::Middleman::WINDOWS ? :KILL : :TERM) { exit! }
+      if @options[:"disable-watcher"]
         bootup
-      }
+      else
+        @server_job = fork {
+          Signal.trap(::Middleman::WINDOWS ? :KILL : :TERM) { exit! }
+          bootup
+        }
+      end
     end
     
     # Start an instance of Middleman::Base
@@ -87,9 +91,11 @@ module Middleman
     # @return [void]
     def stop
       puts "== The Middleman is shutting down"
-      Process.kill(::Middleman::WINDOWS ? :KILL : :TERM, @server_job)
-      Process.wait @server_job
-      @server_job = nil
+      if !@options[:"disable-watcher"]
+        Process.kill(::Middleman::WINDOWS ? :KILL : :TERM, @server_job)
+        Process.wait @server_job
+        @server_job = nil
+      end
     end
     
     # Simply stop, then start

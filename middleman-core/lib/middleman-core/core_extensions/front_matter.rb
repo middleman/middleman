@@ -30,12 +30,12 @@ module Middleman::CoreExtensions::FrontMatter
 
       matcher = %r{#{static_path}.*(#{exts})}
       
-      file_changed matcher do |file|
-        frontmatter_extension.touch_file(file)
+      self.files.changed matcher do |file|
+        self.frontmatter_extension.touch_file(file)
       end
 
-      file_deleted matcher do |file|
-        frontmatter_extension.remove_file(file)
+      self.files.deleted matcher do |file|
+        self.frontmatter_extension.remove_file(file)
       end
 
       provides_metadata matcher do |path|

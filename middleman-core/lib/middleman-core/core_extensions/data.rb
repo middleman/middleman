@@ -21,12 +21,12 @@ module Middleman::CoreExtensions::Data
     # Setup data files before anything else so they are available when
     # parsing config.rb
     def initialize
-      file_changed DataStore.matcher do |file|
-        data.touch_file(file) if file.match(%r{^#{data_dir}\/})
+      self.files.changed DataStore.matcher do |file|
+        self.data.touch_file(file) if file.match(%r{^#{self.data_dir}\/})
       end
     
-      file_deleted DataStore.matcher do |file|
-        data.remove_file(file) if file.match(%r{^#{data_dir}\/})
+      self.files.deleted DataStore.matcher do |file|
+        self.data.remove_file(file) if file.match(%r{^#{self.data_dir}\/})
       end
       
       super

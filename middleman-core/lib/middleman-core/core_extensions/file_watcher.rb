@@ -2,30 +2,24 @@ require "find"
 
 # API for watching file change events
 module Middleman::CoreExtensions::FileWatcher
+  
   # Setup extension
   class << self
-    # @private
+    
+    # Once registered
     def registered(app)
       app.extend ClassMethods
       app.send :include, InstanceMethods
       
-      app.delegate :file_changed, :file_deleted, :to => :"self.class"
-      
       # Before parsing config, load the data/ directory
       app.before_configuration do
-        data_path = File.join(root, data_dir)
-        Find.find(data_path) do |path|
-          next if File.directory?(path)
-          file_did_change(path.sub("#{root}/", ""))
-        end if File.exists?(data_path)
+        data_path = File.join(self.root, self.data_dir)
+        self.files.reload_path(data_path) if File.exists?(data_path)
       end
       
       # After config, load everything else
       app.ready do
-        Find.find(root) do |path|
-          next if File.directory?(path)
-          file_did_change(path.sub("#{root}/", ""))
-        end
+        self.files.reload_path(self.root)
       end
     end
     alias :included :registered
@@ -33,52 +27,105 @@ module Middleman::CoreExtensions::FileWatcher
   
   # Class methods
   module ClassMethods
+    
+    # Access the file api
+    # @return [Middleman::CoreExtensions::FileWatcher::API]
+    def files
+      @_files_api ||= API.new
+    end
+  end
+  
+  # Instance methods
+  module InstanceMethods
+    
+    # Access the file api
+    # @return [Middleman::CoreExtensions::FileWatcher::API]
+    def files
+      api = self.class.files
+      api.instance ||= self
+      api
+    end
+  end
+  
+  # Core File Change API class
+  class API
+    attr_accessor :instance, :known_paths
+    
+    # Initialize api and internal path cache
+    def initialize
+      self.known_paths = []
+    end
+    
     # Add callback to be run on file change
     #
     # @param [nil,Regexp] matcher A Regexp to match the change path against
     # @return [Array<Proc>]
-    def file_changed(matcher=nil, &block)
-      @_file_changed ||= []
-      @_file_changed << [block, matcher] if block_given?
-      @_file_changed
+    def changed(matcher=nil, &block)
+      @_changed ||= []
+      @_changed << [block, matcher] if block_given?
+      @_changed
     end
     
     # Add callback to be run on file deletion
     #
     # @param [nil,Regexp] matcher A Regexp to match the deleted path against
     # @return [Array<Proc>]
-    def file_deleted(matcher=nil, &block)
-      @_file_deleted ||= []
-      @_file_deleted << [block, matcher] if block_given?
-      @_file_deleted
+    def deleted(matcher=nil, &block)
+      @_deleted ||= []
+      @_deleted << [block, matcher] if block_given?
+      @_deleted
     end
-  end
   
-  # Instance methods
-  module InstanceMethods
     # Notify callbacks that a file changed
     #
     # @param [String] path The file that changed
     # @return [void]
-    def file_did_change(path)
-      return if ::Middleman::Watcher.ignore_list.any? { |r| path.match(r) }
-      file_changed.each do |callback, matcher|
-        next if path.match(%r{^#{build_dir}/})
-        next if !matcher.nil? && !path.match(matcher)
-        instance_exec(path, &callback)
-      end
+    def did_change(path)
+      self.known_paths << path unless self.known_paths.include?(path)
+      self.run_callbacks(path, :changed)
     end
 
     # Notify callbacks that a file was deleted
     #
     # @param [String] path The file that was deleted
     # @return [void]
-    def file_did_delete(path)
+    def did_delete(path)
+      self.known_paths.delete(path) if self.known_paths.include?(path)
+      self.run_callbacks(path, :deleted)
+    end
+    
+    # Manually trigger update events
+    #
+    # @param [String] path The path to reload
+    # @return [void]
+    def reload_path(path)
+      subset = self.known_paths.select { |p| p.match(%r{^#{path}}) }
+      
+      Find.find(path) do |path|
+        next if File.directory?(path)
+        relative_path = path.sub("#{self.instance.root}/", "")
+        subset.delete(relative_path) if subset.include?(relative_path)
+        self.did_change(relative_path)
+      end
+      
+      subset.each do |removed_path|
+        self.did_delete(removed_path)
+      end
+    end
+    
+  protected
+    # Notify callbacks for a file given an array of callbacks
+    #
+    # @param [String] path The file that was changed
+    # @param [Symbol] callbacks_name The name of the callbacks method
+    # @return [void]
+    def run_callbacks(path, callbacks_name)
       return if ::Middleman::Watcher.ignore_list.any? { |r| path.match(r) }
-      file_deleted.each do |callback, matcher|
-        next if path.match(%r{^#{build_dir}/})
+
+      self.send(callbacks_name).each do |callback, matcher|
+        next if path.match(%r{^#{self.instance.build_dir}/})
         next unless matcher.nil? || path.match(matcher)
-        instance_exec(path, &callback)
+        self.instance.instance_exec(path, &callback)
       end
     end
   end

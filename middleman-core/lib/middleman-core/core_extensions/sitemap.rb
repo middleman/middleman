@@ -31,12 +31,12 @@ module Middleman::CoreExtensions::Sitemap
       static_path = source_dir.sub(self.root, "").sub(/^\//, "")
       sitemap_regex = static_path.empty? ? // : (%r{^#{static_path + "/"}})
       
-      file_changed sitemap_regex do |file|
-        sitemap.touch_file(file)
+      self.files.changed sitemap_regex do |file|
+        self.sitemap.touch_file(file)
       end
 
-      file_deleted sitemap_regex do |file|
-        sitemap.remove_file(file)
+      self.files.deleted sitemap_regex do |file|
+        self.sitemap.remove_file(file)
       end
     end
     

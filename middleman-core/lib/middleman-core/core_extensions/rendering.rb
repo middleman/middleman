@@ -26,9 +26,9 @@ module Middleman::CoreExtensions::Rendering
       static_path = source_dir.sub(self.root, "").sub(/^\//, "")
       render_regex = static_path.empty? ? // : (%r{^#{static_path + "/"}})
       
-      file_changed render_regex do |file|
-        path = File.expand_path(file, root)
-        cache.remove(:raw_template, path)
+      self.files.changed render_regex do |file|
+        path = File.expand_path(file, self.root)
+        self.cache.remove(:raw_template, path)
       end
     end
     
