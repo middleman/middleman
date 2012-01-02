@@ -11,9 +11,8 @@ Feature: Middleman CLI
       | source/images/middleman.png                   |
       | source/layouts/layout.erb                     |
       | source/javascripts/all.js                     |
-      | source/stylesheets/all.css.scss               |
-      | source/stylesheets/_animate.scss              |
-      | source/stylesheets/_normalize.scss            |
+      | source/stylesheets/all.css                    |
+      | source/stylesheets/normalize.css              |
       
   Scenario: Create a new project (alias i)
     When I run `middleman i MY_PROJECT`
