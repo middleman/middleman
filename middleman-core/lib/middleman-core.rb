@@ -27,7 +27,7 @@ module Middleman
   autoload :Base,           "middleman-core/base"
   autoload :Cache,          "middleman-core/cache"
   autoload :Templates,      "middleman-core/templates"
-  autoload :Guard,          "middleman-core/guard"
+  autoload :Watcher,        "middleman-core/watcher"
   
   module Cli
     autoload :Base,         "middleman-core/cli"

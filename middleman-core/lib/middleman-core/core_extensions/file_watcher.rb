@@ -61,6 +61,7 @@ module Middleman::CoreExtensions::FileWatcher
     # @param [String] path The file that changed
     # @return [void]
     def file_did_change(path)
+      return if ::Middleman::Watcher.ignore_list.any? { |r| path.match(r) }
       file_changed.each do |callback, matcher|
         next if path.match(%r{^#{build_dir}/})
         next if !matcher.nil? && !path.match(matcher)
@@ -73,6 +74,7 @@ module Middleman::CoreExtensions::FileWatcher
     # @param [String] path The file that was deleted
     # @return [void]
     def file_did_delete(path)
+      return if ::Middleman::Watcher.ignore_list.any? { |r| path.match(r) }
       file_deleted.each do |callback, matcher|
         next if path.match(%r{^#{build_dir}/})
         next unless matcher.nil? || path.match(matcher)

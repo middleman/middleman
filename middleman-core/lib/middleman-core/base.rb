@@ -213,7 +213,7 @@ class Middleman::Base
   # Add Builder Callbacks
   register Middleman::CoreExtensions::Builder
   
-  # Add Guard Callbacks
+  # Add Watcher Callbacks
   register Middleman::CoreExtensions::FileWatcher
   
   # Activate Data package

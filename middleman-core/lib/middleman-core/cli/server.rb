@@ -43,7 +43,7 @@ module Middleman::Cli
       }
       
       puts "== The Middleman is loading"
-      Middleman::Guard.start(params)
+      Middleman::Watcher.start(params)
     end
   end
   

@@ -1,55 +1,58 @@
-# Guard watches the filesystem for changes
-require "guard"
-require "guard/guard"
+# Inspect Ruby env
+require "rbconfig"
+
+# Watcher Library
+require "fssm"
 
 # File changes are forwarded to the currently running app via HTTP
 require "net/http"
 
-# Support forking on Windows
-require "win32/process" if Middleman::WINDOWS
-
-# The Guard namespace
-module Middleman::Guard
-  
-  # Start guard
-  # @param [Hash] options
-  # @return [void]
-  def self.start(options={})
-    # Forward CLI options to Guard
-    options_hash = options.map { |k,v| ", :#{k} => '#{v}'" }.join
-  
-    # Watch all files in project, even hidden ones.
-    ::Guard.start({
-      :guardfile_contents      => %Q{
-        guard 'middleman'#{options_hash} do 
-          watch(%r{(.*)})
-        end
-      },
-      :watch_all_modifications => true,
-      :no_interactions => true
-    })
-  end
-end
-
-# @private
-module Guard
-  
-  # Monkeypatch Guard into being quiet
-  module UI
+module Middleman
+  class Watcher
     class << self
-      def info(message, options = { }); end
-    end
-  end
-  
-  # Guards must be in the Guard module to be picked up
-  class Middleman < Guard
-    
-    # Save the options for later
-    def initialize(watchers = [], options = {})
-      super
+      attr_accessor :singleton
       
-      # Save options
+      def start(options)
+        self.singleton = new(options)
+        self.singleton.watch!
+      end
+      
+      # What command is sent to kill instances
+      # @return [Symbol, Fixnum]
+      def kill_command
+        ::Middleman::WINDOWS ? 1 : :INT
+      end
+      
+      def ignore_list
+        [
+          /\.sass-cache/,
+          /\.git/,
+          /\.DS_Store/
+        ]
+      end
+    end
+    
+    def initialize(options)
       @options = options
+
+      if RbConfig::CONFIG['target_os'] =~ /darwin/i
+        $LOAD_PATH << File.expand_path('../../middleman-core/vendor/rb-fsevent-0.4.3.1/lib', __FILE__)
+        require 'rb-fsevent'
+      elsif RbConfig::CONFIG['target_os'] =~ /linux/i
+        $LOAD_PATH << File.expand_path('../../middleman-core/vendor/rb-inotify-0.8.8/lib', __FILE__)
+        require 'rb-inotify'
+      end
+      
+      start
+    end
+    
+    def watch!
+      local = self
+      FSSM.monitor(Dir.pwd) do
+        create { |base, relative| local.run_on_change([relative]) }
+        update { |base, relative| local.run_on_change([relative]) }
+        delete { |base, relative| local.run_on_deletion([relative]) }
+      end
     end
     
     # Start Middleman in a fork
@@ -95,7 +98,7 @@ module Guard
       stop
       start
     end
-  
+    
     # What to do on file change
     # @param [Array<String>] paths Array of paths that changed
     # @return [void]
@@ -104,7 +107,9 @@ module Guard
       return reload if needs_to_reload?(paths)
       
       # Otherwise forward to Middleman
-      paths.each { |path| tell_server(:change => path) }
+      paths.each do |path|
+        tell_server(:change => path) unless self.class.ignore_list.any? { |r| path.match(r) }
+      end
     end
 
     # What to do on file deletion
@@ -115,13 +120,9 @@ module Guard
       return reload if needs_to_reload?(paths)
       
       # Otherwise forward to Middleman
-      paths.each { |path| tell_server(:delete => path) }
-    end
-    
-    # What command is sent to kill instances
-    # @return [Symbol, Fixnum]
-    def self.kill_command
-      ::Middleman::WINDOWS ? 1 : :INT
+      paths.each do |path|
+        tell_server(:delete => path) unless self.class.ignore_list.any? { |r| path.match(r) }
+      end
     end
     
   private
@@ -144,8 +145,8 @@ module Guard
   end
 end
 
-# Trap the interupt signal and shut down Guard (and thus the server) smoothly
-trap(::Guard::Middleman.kill_command) do
-  ::Guard.stop
-  exit!(0)
+# Trap the interupt signal and shut down FSSM (and thus the server) smoothly
+trap(::Middleman::Watcher.kill_command) do
+  ::Middleman::Watcher.singleton.stop
+  exit(0)
 end
