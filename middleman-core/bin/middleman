@@ -40,8 +40,11 @@ begin
   # Rubygems
   require "middleman-more"
 rescue LoadError
-  # Local
-  require File.expand_path(File.join(File.dirname(File.dirname(libdir)), "middleman-more", "lib", "middleman-more"))
+  begin
+    # Local
+    require File.expand_path(File.join(File.dirname(File.dirname(libdir)), "middleman-more", "lib", "middleman-more"))
+  rescue LoadError
+  end
 end
 
 # Change directory to the root
