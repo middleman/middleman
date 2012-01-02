@@ -50,7 +50,6 @@ task :bump, [:version] do |t, args|
   version_path = File.dirname(__FILE__) + '/middleman-core/lib/middleman-core/version.rb'
   version_text = File.read(version_path).sub(/VERSION = '[\d\.\w]+'/, "VERSION = '#{args.version}'")
   say "Updating Middleman to version #{args.version}"
-  $stderr.puts version_path, version_text
   File.open(version_path, 'w') { |f| f.write version_text }
   sh 'git commit -a -m "Bumped version to %s"' % args.version
 end
