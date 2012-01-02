@@ -36,24 +36,7 @@ module Middleman::CoreExtensions::Data
     #
     # @return [DataStore]
     def data
-      @data ||= DataStore.new(self)
-    end
-
-    # Makes a hash available on the data var with a given name
-    #
-    # @param [Symbol] name Name of the data, used for namespacing
-    # @param [Hash] content The content for this data
-    # @return [void]
-    def data_content(name, content)
-      DataStore.data_content(name, content)
-    end
-
-    # Makes a hash available on the data var with a given name
-    #
-    # @param [Symbol] name Name of the data, used for namespacing
-    # @return [void]
-    def data_callback(name, &block)
-      DataStore.data_callback(name, block)
+      @_data ||= DataStore.new(self)
     end
   end
   
@@ -69,26 +52,28 @@ module Middleman::CoreExtensions::Data
       def matcher
         %r{[\w-]+\.(yml|yaml|json)$}
       end
+    end
+    
+    # Store static data hash
+    #
+    # @param [Symbol] name Name of the data, used for namespacing
+    # @param [Hash] content The content for this data
+    # @return [void]
+    def store(name=nil, content=nil)
+      @_local_sources ||= {}
+      @_local_sources[name.to_s] = content unless name.nil? || content.nil?
+      @_local_sources
+    end
 
-      # Store static data hash
-      #
-      # @param [Symbol] name Name of the data, used for namespacing
-      # @param [Hash] content The content for this data
-      # @return [void]
-      def data_content(name, content)
-        @@local_sources ||= {}
-        @@local_sources[name.to_s] = content
-      end
-
-      # Store callback-based data
-      #
-      # @param [Symbol] name Name of the data, used for namespacing
-      # @param [Proc] proc The callback which will return data
-      # @return [void]
-      def data_callback(name, proc)
-        @@callback_sources ||= {}
-        @@callback_sources[name.to_s] = proc
-      end
+    # Store callback-based data
+    #
+    # @param [Symbol] name Name of the data, used for namespacing
+    # @param [Proc] proc The callback which will return data
+    # @return [void]
+    def callbacks(name=nil, proc=nil)
+      @_callback_sources ||= {}
+      @_callback_sources[name.to_s] = proc unless name.nil? || proc.nil?
+      @_callback_sources
     end
     
     # Setup data store
@@ -139,10 +124,10 @@ module Middleman::CoreExtensions::Data
       @@local_sources ||= {}
       @@callback_sources ||= {}
       
-      if @@local_sources.has_key?(path.to_s)
-        response = @@local_sources[path.to_s]
-      elsif @@callback_sources.has_key?(path.to_s)
-        response = @@callback_sources[path.to_s].call()
+      if self.store.has_key?(path.to_s)
+        response = self.store[path.to_s]
+      elsif self.callbacks.has_key?(path.to_s)
+        response = self.callbacks[path.to_s].call()
       end
       
       response
@@ -172,14 +157,11 @@ module Middleman::CoreExtensions::Data
     def to_h
       data = {}
       
-      @@local_sources ||= {}
-      @@callback_sources ||= {}
-      
-      (@@local_sources || {}).each do |k, v|
+      self.store.each do |k, v|
         data[k] = data_for_path(k)
       end
       
-      (@@callback_sources || {}).each do |k, v|
+      self.callbacks.each do |k, v|
         data[k] = data_for_path(k)
       end
       

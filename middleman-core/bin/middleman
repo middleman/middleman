@@ -31,7 +31,7 @@ if ENV["MM_ROOT"]
 end
 
 # Default command is server
-ARGV << "server" if ARGV.length < 1
+ARGV.unshift("server") if ARGV.length < 1 || ARGV.first.include?("-")
 
 # Require Middleman
 require 'middleman-core'

@@ -13,10 +13,10 @@ module Middleman::Cli
       :default => ENV['MM_ENV'] || ENV['RACK_ENV'] || 'development', 
       :desc    => "The environment Middleman will run under"
     method_option :host,
-      :type => :string,
+      :type    => :string,
       :aliases => "-h",
       :default => "0.0.0.0", 
-      :desc => "Bind to HOST address"
+      :desc    => "Bind to HOST address"
     method_option :port,
       :aliases => "-p", 
       :default => "4567", 

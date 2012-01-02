@@ -93,7 +93,7 @@ module Middleman::Cli
     # @param [String] destination
     # @param [Hash] config
     # @return [String] the actual destination file path that was created
-    desc "private method", :hide => true
+    desc "", "", :hide => true
     def tilt_template(source, destination, config={})
       build_dir = self.class.shared_instance.build_dir
       request_path = destination.sub(/^#{build_dir}/, "")

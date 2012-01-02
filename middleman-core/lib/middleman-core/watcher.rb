@@ -1,9 +1,6 @@
 # Inspect Ruby env
 require "rbconfig"
 
-# Watcher Library
-require "fssm"
-
 # File changes are forwarded to the currently running app via HTTP
 require "net/http"
 
@@ -36,11 +33,10 @@ module Middleman
       @options = options
 
       if RbConfig::CONFIG['target_os'] =~ /darwin/i
+        $stderr.puts "Adding vendored FSEVENT"
         $LOAD_PATH << File.expand_path('../../middleman-core/vendor/rb-fsevent-0.4.3.1/lib', __FILE__)
-        require 'rb-fsevent'
       elsif RbConfig::CONFIG['target_os'] =~ /linux/i
         $LOAD_PATH << File.expand_path('../../middleman-core/vendor/rb-inotify-0.8.8/lib', __FILE__)
-        require 'rb-inotify'
       end
       
       start
@@ -48,6 +44,10 @@ module Middleman
     
     def watch!
       local = self
+
+      # Watcher Library
+      require "fssm"
+      
       FSSM.monitor(Dir.pwd) do
         create { |base, relative| local.run_on_change([relative]) }
         update { |base, relative| local.run_on_change([relative]) }

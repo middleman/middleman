@@ -65,7 +65,7 @@ module Middleman::Sitemap
       
       # Forward remaining data to helpers
       if md.has_key?(:page)
-        app.data_content("page", md[:page])
+        app.data.store("page", md[:page])
       end
       
       blocks.compact.each do |block|
