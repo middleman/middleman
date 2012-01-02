@@ -1,0 +1,18 @@
+pkg/*
+*.gem
+.bundle
+Gemfile.lock
+
+## MAC OS
+.DS_Store
+.Trashes
+.com.apple.timemachine.supported
+.fseventsd
+Desktop DB
+Desktop DF
+/bin/fsevent_watch
+/ext/Makefile
+
+## editor/IDE
+.idea
+

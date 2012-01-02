@@ -13,10 +13,10 @@ Gem::Specification.new do |s|
   s.summary     = "Hand-crafted frontend development"
   s.description = "A static site generator based on Sinatra. Providing dozens of templating languages (Haml, Sass, Compass, Slim, CoffeeScript, and more). Makes minification, compression, cache busting, Yaml data (and more) an easy part of your development cycle."
 
-  s.files         = `git ls-files`.split("\n")
-  s.test_files    = `git ls-files -- {fixtures,features}/*`.split("\n")
-  s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
-  s.require_paths = ["lib"]
+  s.files        = `git ls-files`.split("\n") + %w(bin/fsevent_watch_guard)
+  s.test_files   = `git ls-files -- {fixtures,features}/*`.split("\n")
+  s.executable   = "middleman"
+  s.require_path = "lib"
 
   # Thin
   # s.add_dependency("thin", ["~> 1.3.1"])

@@ -33,10 +33,9 @@ module Middleman
       @options = options
 
       if RbConfig::CONFIG['target_os'] =~ /darwin/i
-        $stderr.puts "Adding vendored FSEVENT"
-        $LOAD_PATH << File.expand_path('../../middleman-core/vendor/rb-fsevent-0.4.3.1/lib', __FILE__)
+        $LOAD_PATH << File.expand_path('../../middleman-core/vendor/darwin/lib', __FILE__)
       elsif RbConfig::CONFIG['target_os'] =~ /linux/i
-        $LOAD_PATH << File.expand_path('../../middleman-core/vendor/rb-inotify-0.8.8/lib', __FILE__)
+        $LOAD_PATH << File.expand_path('../../middleman-core/vendor/linux/lib', __FILE__)
       end
       
       start

@@ -8,9 +8,10 @@ pkg
 Gemfile.lock
 docs
 .rbenv-version
-fixtures/generator-test
 .*.swp
 build
 doc
 .yardoc
 tmp
+middleman-core/bin/fsevent_watch_guard
+Makefile
