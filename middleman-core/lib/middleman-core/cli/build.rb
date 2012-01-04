@@ -144,14 +144,14 @@ module Middleman::Cli
     # Remove files which were not built in this cycle
     # @return [void]
     def clean!
-      files       = @cleaning_queue.select { |q| File.file? q }
-      directories = @cleaning_queue.select { |q| File.directory? q }
+      files       = @cleaning_queue.select { |q| q.file? }
+      directories = @cleaning_queue.select { |q| q.directory? }
 
       files.each do |f| 
         base.remove_file f, :force => true
       end
 
-      directories = directories.sort_by {|d| d.length }.reverse!
+      directories = directories.sort_by {|d| d.to_s.length }.reverse!
 
       directories.each do |d|
         base.remove_file d, :force => true if directory_empty? d 
@@ -168,7 +168,7 @@ module Middleman::Cli
     # @param [String] directory
     # @return [Boolean]
     def directory_empty?(directory)
-      Dir[File.join(directory, "*")].empty?
+      directory.children.empty?
     end
 
     # Get a list of all the paths in the destination folder and save them
@@ -179,7 +179,7 @@ module Middleman::Cli
       Find.find(@destination) do |path|
         next if path.match(/\/\./) && !path.match(/\.htaccess/)
         unless path == destination
-          @cleaning_queue << path.sub(@destination, destination[/([^\/]+?)$/])
+          @cleaning_queue << Pathname.new(path)
         end
       end if File.exist?(@destination)
     end
@@ -219,7 +219,7 @@ module Middleman::Cli
 
         file_destination = base.tilt_template(file_source, file_destination)
 
-        @cleaning_queue.delete(file_destination) if cleaning?
+        @cleaning_queue.delete(Pathname.new(file_destination).realpath) if cleaning?
       end
     end
   end
