@@ -36,6 +36,6 @@ Gem::Specification.new do |s|
   s.add_dependency("activesupport", ["~> 3.1.0"])
   
   # Watcher
-  s.add_dependency("fssm", ["~> 0.2.7"])
+  s.add_dependency("fssm", ["~> 0.2.8"])
 end
 
