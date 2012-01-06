@@ -16,5 +16,3 @@ Feature: Instance Vars
     When I go to "/instance-var-set.html"
     When I go to "/no-instance-var.html"
     Then I should see "No var..."
-  
-    

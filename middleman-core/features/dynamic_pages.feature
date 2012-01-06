@@ -46,23 +46,45 @@ Feature: Dynamic Pages
     Given the Server is running at "dynamic-pages-app"
     When I go to "/fake/one.html"
     Then I should see "I am real: one"
+    Then I should see "Global: I am one glob"
+    Then I should see "All: I am all glob"
+    
     When I go to "/fake2/one.html"
     Then I should see "I am real: one"
+    Then I should see "Global: I am two glob"
+    Then I should see "All: I am all glob"
+    
     When I go to "/fake3/one.html"
     Then I should see "I am real: one"
+    Then I should see "Global: I am three glob"
+    Then I should see "All: I am all glob"
+    
     When I go to "/fake4/one.html"
     Then I should see "I am real: one"
+    Then I should see "Global: I am four glob"
+    Then I should see "All: I am all glob"
     
   Scenario: Preview proxy with variable two
     Given the Server is running at "dynamic-pages-app"
     When I go to "/fake/two.html"
     Then I should see "I am real: two"
+    Then I should see "Global: I am one glob"
+    Then I should see "All: I am all glob"
+    
     When I go to "/fake2/two.html"
     Then I should see "I am real: two"
+    Then I should see "Global: I am two glob"
+    Then I should see "All: I am all glob"
+    
     When I go to "/fake3/two.html"
     Then I should see "I am real: two"
+    Then I should see "Global: I am three glob"
+    Then I should see "All: I am all glob"
+    
     When I go to "/fake4/two.html"
     Then I should see "I am real: two"
+    Then I should see "Global: I am four glob"
+    Then I should see "All: I am all glob"
     
   Scenario: Target ignore
     Given the Server is running at "dynamic-pages-app"

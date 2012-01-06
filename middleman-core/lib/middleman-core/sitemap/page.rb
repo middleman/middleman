@@ -23,6 +23,14 @@ module Middleman::Sitemap
       @source_file = src
     end
     
+    def request_path
+      if proxy?
+        store.page(proxied_to).path
+      else
+        path
+      end
+    end
+    
     def source_file
       if proxy?
         store.page(proxied_to).source_file
@@ -83,23 +91,25 @@ module Middleman::Sitemap
       
       if proxy?
         # Forward blocks
-        forward_blocks = template.blocks.compact
-        forward_blocks << block if block_given?
-        store.page(proxied_to).template.render(*args) do
-          forward_blocks.each do |block|
-            instance_exec(&block)
-          end
-        end
+        # forward_blocks = template.blocks.compact
+        # forward_blocks << block if block_given?
+        t = store.page(proxied_to).template
+        t.request_path = path
+        t.render(*args)
+         # do
+         #          forward_blocks.each do |block|
+         #            instance_exec(&block)
+         #          end
+         #        end
       elsif !custom_renderer.nil?
         params = args.dup
         params << block if block_given?
         instance_exec(*params, &custom_renderer)
       else
+        template.request_path = path
         template.render(*args, &block)
       end
     end
-    
-    
     
     def directory_index?
       path.include?(app.index_file) || path =~ /\/$/ || eponymous_directory?

@@ -27,3 +27,23 @@ page "/target_ignore4.html", :proxy => "should_be_ignored8.html", :ignore => tru
     @num = num
   end
 end
+
+page "f*/*" do
+  @all_glob = "I am all glob"
+end
+
+page "fake/*" do
+  @glob_var = "I am one glob"
+end
+
+page "fake2/*" do
+  @glob_var = "I am two glob"
+end
+
+page "fake3/*" do
+  @glob_var = "I am three glob"
+end
+
+page "fake4/*" do
+  @glob_var = "I am four glob"
+end

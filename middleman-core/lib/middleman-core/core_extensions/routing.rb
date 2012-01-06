@@ -25,13 +25,15 @@ module Middleman::CoreExtensions::Routing
     # page "/about.html", :layout => false
     # page "/", :layout => :homepage_layout
     def page(url, opts={}, &block)
+      a_block = block_given? ? block : nil
+    
       if url.include?("*")
-        url = Regexp.new(url.gsub("*", "(.*)").gsub(/^\//, "^"))
+        url = Regexp.new(url.gsub("*", "(.*?)").gsub(/^\//, "^"))
       end
       
-      if url.is_a?(Regexp) && !opts.empty?
+      if url.is_a?(Regexp)
         provides_metadata_for_path url do |url|
-          { :options => opts }
+          { :options => opts, :blocks => [a_block] }
         end
         
         return
@@ -57,11 +59,9 @@ module Middleman::CoreExtensions::Routing
         end
       end
 
-      a_block = block_given? ? block : nil
       if a_block || !opts.empty?
-        sitemap.page(url) do
-          template.options = opts
-          template.blocks  = [a_block]
+        provides_metadata_for_path url do |url|
+          { :options => opts, :blocks => [a_block] }
         end
       end
     end

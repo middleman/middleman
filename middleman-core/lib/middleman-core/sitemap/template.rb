@@ -1,7 +1,7 @@
 module Middleman::Sitemap
 
   class Template
-    attr_accessor :page, :options, :locals, :blocks#, :dependencies
+    attr_accessor :page, :options, :locals, :blocks, :request_path
   
     def initialize(page)
       @page    = page
@@ -36,7 +36,7 @@ module Middleman::Sitemap
     
     def metadata
       metadata = app.cache.fetch(:metadata, source_file) do
-        data = { :options => {}, :locals => {}, :page => {} }
+        data = { :options => {}, :locals => {}, :page => {}, :blocks => [] }
         
         app.provides_metadata.each do |callback, matcher|
           next if !matcher.nil? && !source_file.match(matcher)
@@ -48,8 +48,17 @@ module Middleman::Sitemap
       end
       
       app.provides_metadata_for_path.each do |callback, matcher|
-        next if !matcher.nil? && !path.match(matcher)
-        result = app.instance_exec(path, &callback)
+        if matcher.is_a? Regexp
+          next if !self.request_path.match(matcher)
+        elsif matcher.is_a? String
+          next if "/#{self.request_path}" != matcher
+        end
+      
+        result = app.instance_exec(self.request_path, &callback)
+        if result.has_key?(:blocks)
+          metadata[:blocks] << result[:blocks]
+          result.delete(:blocks)
+        end
         metadata = metadata.deep_merge(result)
       end
       
@@ -69,6 +78,10 @@ module Middleman::Sitemap
       end
       
       blocks.compact.each do |block|
+        app.instance_eval(&block)
+      end
+      
+      md[:blocks].flatten.compact.each do |block|
         app.instance_eval(&block)
       end
       
