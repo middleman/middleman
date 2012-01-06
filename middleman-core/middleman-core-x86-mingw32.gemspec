@@ -5,7 +5,7 @@ require "middleman-core/version"
 Gem::Specification.new do |s|
   s.name        = "middleman-core"
   s.version     = Middleman::VERSION
-  s.platform    = Gem::Platform::RUBY
+  s.platform    = "x86-mingw32"
   s.license     = "MIT"
   s.authors     = ["Thomas Reynolds"]
   s.email       = ["me@tdreyno.com"]
@@ -33,5 +33,7 @@ Gem::Specification.new do |s|
   
   # Watcher
   s.add_dependency("fssm", ["~> 0.2.8"])
+  
+  # Fork on Windows
+  s.add_dependency("win32-process", ["~> 0.6.5"])
 end
-

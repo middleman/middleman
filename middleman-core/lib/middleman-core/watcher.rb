@@ -1,8 +1,7 @@
-# Inspect Ruby env
-require "rbconfig"
-
 # File changes are forwarded to the currently running app via HTTP
 require "net/http"
+
+require "win32/process" if ::Middleman::WINDOWS
 
 module Middleman
   class Watcher
@@ -32,9 +31,9 @@ module Middleman
     def initialize(options)
       @options = options
 
-      if RbConfig::CONFIG['target_os'] =~ /darwin/i
+      if ::Middleman::DARWIN
         $LOAD_PATH << File.expand_path('../../middleman-core/vendor/darwin/lib', __FILE__)
-      elsif RbConfig::CONFIG['target_os'] =~ /linux/i
+      elsif ::Middleman::LINUX
         $LOAD_PATH << File.expand_path('../../middleman-core/vendor/linux/lib', __FILE__)
       end
       
