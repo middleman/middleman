@@ -102,6 +102,7 @@ module Middleman::Cli
       begin
         destination, request_path = self.class.shared_instance.reroute_builder(destination, request_path)
 
+        # $stderr.puts request_path
         response = self.class.shared_rack.get(request_path.gsub(/\s/, "%20"))
 
         create_file(destination, response.body, config)
@@ -189,6 +190,15 @@ module Middleman::Cli
     def execute!
       # Sort order, images, fonts, js/css and finally everything else.
       sort_order = %w(.png .jpeg .jpg .gif .bmp .svg .svgz .ico .woff .otf .ttf .eot .js .css)
+      
+      @app.sitemap.all_paths.select do |p|
+        File.extname(p) == ".css"
+      end.each do |p|
+        Middleman::Cli::Build.shared_rack.get("/" + p.gsub(/\s/, "%20"))
+      end
+      
+      # Double-check for compass sprites
+      @app.files.reload_path(File.join(@app.source_dir, @app.images_dir))
 
       # Sort paths to be built by the above order. This is primarily so Compass can
       # find files in the build folder when it needs to generate sprites for the

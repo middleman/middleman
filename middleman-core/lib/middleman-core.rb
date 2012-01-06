@@ -22,8 +22,8 @@ require "middleman-core/vendor/hooks-0.2.0/lib/hooks"
 module Middleman
   WINDOWS = !!(RUBY_PLATFORM =~ /(mingw|bccwin|wince|mswin32)/i) unless const_defined?(:WINDOWS)
   JRUBY   = !!(RbConfig::CONFIG["RUBY_INSTALL_NAME"] =~ /^jruby/i) unless const_defined?(:JRUBY)
-  DARWIN  = RbConfig::CONFIG['target_os'] =~ /darwin/i
-  LINUX   = RbConfig::CONFIG['target_os'] =~ /linux/i
+  DARWIN  = RbConfig::CONFIG['target_os'] =~ /darwin/i unless const_defined?(:DARWIN)
+  LINUX   = RbConfig::CONFIG['target_os'] =~ /linux/i unless const_defined?(:LINUX)
   
   # Auto-load modules on-demand
   autoload :Base,           "middleman-core/base"
