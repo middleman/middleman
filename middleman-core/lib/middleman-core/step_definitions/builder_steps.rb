@@ -2,12 +2,16 @@ require 'fileutils'
 
 Given /^app "([^\"]*)" is using config "([^\"]*)"$/ do |path, config_name|
   target = File.join(PROJECT_ROOT_PATH, "fixtures", path)
-  config_path = File.join(target, "config-#{config_name}.rb")
+  config_path = File.join(current_dir, "config-#{config_name}.rb")
   config_dest = File.join(current_dir, "config.rb")
   FileUtils.cp(config_path, config_dest)
 end
 
 Given /^a fixture app "([^\"]*)"$/ do |path|
+  # This step can be reentered from several places but we don't want
+  # to keep re-copying and re-cd-ing into ever-deeper directories
+  next if File.basename(current_dir) == path
+
   step %Q{a directory named "#{path}"}
 
   target_path = File.join(PROJECT_ROOT_PATH, "fixtures", path)
