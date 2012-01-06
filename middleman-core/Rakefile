@@ -1,6 +1,8 @@
 # coding:utf-8
 RAKE_ROOT = __FILE__
 
+GEM_NAME = "middleman-core" + (ENV["WINDOWS"] ? "-x86-mingw32" : "")
+
 require 'rubygems'
 require File.expand_path(File.dirname(__FILE__) + '/../gem_rake_helper')
 

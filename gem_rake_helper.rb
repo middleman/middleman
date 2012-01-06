@@ -2,7 +2,9 @@ require 'rubygems' unless defined?(Gem)
 require 'rake'
 require 'cucumber/rake/task'
 require 'yard'
-require 'bundler/gem_tasks'
+
+require 'bundler'
+Bundler::GemHelper.install_tasks :name => GEM_NAME
 
 # Skip the releasing tag
 class Bundler::GemHelper
