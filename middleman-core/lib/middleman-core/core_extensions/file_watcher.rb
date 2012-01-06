@@ -106,7 +106,7 @@ module Middleman::CoreExtensions::FileWatcher
         relative_path = path.sub("#{self.instance.root}/", "")
         subset.delete(relative_path) if subset.include?(relative_path)
         self.did_change(relative_path)
-      end
+      end if File.exists?(path)
       
       subset.each do |removed_path|
         self.did_delete(removed_path)
