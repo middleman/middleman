@@ -107,7 +107,6 @@ module Middleman::Cli
       begin
         destination, request_path = self.class.shared_instance.reroute_builder(destination, request_path)
 
-        # $stderr.puts request_path
         response = self.class.shared_rack.get(request_path.gsub(/\s/, "%20"))
 
         create_file(destination, response.body, config)
