@@ -2,6 +2,8 @@
 require "rack"
 require "rack/test"
 
+require 'find'
+
 # CLI Module
 module Middleman::Cli
   
@@ -87,13 +89,16 @@ module Middleman::Cli
     
     # Set the root path to the Middleman::Base's root
     source_root(shared_instance.root)
+    
+    # Ignore following method
+    desc "", "", :hide => true
+    
     # Render a template to a file.
     #
     # @param [String] source
     # @param [String] destination
     # @param [Hash] config
     # @return [String] the actual destination file path that was created
-    desc "", "", :hide => true
     def tilt_template(source, destination, config={})
       build_dir = self.class.shared_instance.build_dir
       request_path = destination.sub(/^#{build_dir}/, "")

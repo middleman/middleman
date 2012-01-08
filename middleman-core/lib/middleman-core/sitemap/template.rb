@@ -1,8 +1,26 @@
+# Used for merging results of metadata callbacks
+require "active_support/core_ext/hash/deep_merge"
+
+# Sitemap namespace
 module Middleman::Sitemap
 
+  # Template class
   class Template
-    attr_accessor :page, :options, :locals, :blocks, :request_path
+    
+    # @return [Middleman::Sitemap::Page]
+    attr_accessor :page
+    
+    # @return [Hash]
+    attr_accessor :options
+    
+    # @return [Hash]
+    attr_accessor :locals
+    
+    # @return [String]
+    attr_accessor :request_path
   
+    # Initialize template with parent page
+    # @param [Middleman::Sitemap:Page] page
     def initialize(page)
       @page    = page
       @options = {}
@@ -10,30 +28,23 @@ module Middleman::Sitemap
       @blocks  = []
     end
   
-    def path
-      page.path
-    end
+    # Simple aliases
+    delegate :path, :source_file, :store, :app, :ext, :to => :page
     
-    def source_file
-      page.source_file
-    end
-    
-    def store
-      page.store
-    end
-    
-    def app
-      store.app
-    end
-    
-    def ext
-      page.ext
-    end
-    
+    # Clear internal frontmatter cache for file if it changes
+    # @return [void]
     def touch
       app.cache.remove(:metadata, source_file)
     end
     
+    # Clear internal frontmatter cache for file if it is deleted
+    # @return [void]
+    def delete
+      app.cache.remove(:metadata, source_file)
+    end
+    
+    # Get the metadata for both the current source_file and the current path
+    # @return [Hash]
     def metadata
       metadata = app.cache.fetch(:metadata, source_file) do
         data = { :options => {}, :locals => {}, :page => {}, :blocks => [] }
@@ -59,12 +70,17 @@ module Middleman::Sitemap
           metadata[:blocks] << result[:blocks]
           result.delete(:blocks)
         end
+        
         metadata = metadata.deep_merge(result)
       end
       
       metadata
     end
 
+    # Render this template
+    # @param [Hash] opts
+    # @param [Hash] locs
+    # @return [String]
     def render(opts={}, locs={}, &block)
       puts "== Render Start: #{source_file}" if app.logging?
       
@@ -75,10 +91,6 @@ module Middleman::Sitemap
       # Forward remaining data to helpers
       if md.has_key?(:page)
         app.data.store("page", md[:page])
-      end
-      
-      blocks.compact.each do |block|
-        app.instance_eval(&block)
       end
       
       md[:blocks].flatten.compact.each do |block|
