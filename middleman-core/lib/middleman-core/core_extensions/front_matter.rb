@@ -112,9 +112,10 @@ module Middleman::CoreExtensions::FrontMatter
         p = @app.sitemap.page(path)
         file_path = p.source_file.sub(@app.source_dir, "")
         
-        if has_data?(file_path)
+        if !p.proxy? && has_data?(file_path)
           d = data(file_path)
           if d && d[0]
+            $stderr.puts "Should ignore #{path}", p.source_file
             d[0].has_key?("ignored") && d[0]["ignored"] == true
           else
             false
