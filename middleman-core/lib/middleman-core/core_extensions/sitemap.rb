@@ -64,8 +64,8 @@ module Middleman::CoreExtensions::Sitemap
     # Ignore a path, regex or callback
     # @param [String, Regexp]
     # @return [void]
-    def ignore(*args)
-      sitemap.ignore(*args)
+    def ignore(*args, &block)
+      sitemap.ignore(*args, &block)
     end
     
     # Proxy one path to another
