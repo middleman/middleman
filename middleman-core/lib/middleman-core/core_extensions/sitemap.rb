@@ -1,7 +1,9 @@
 # Core Sitemap Extensions
 module Middleman::CoreExtensions::Sitemap
+  
   # Setup Extension
   class << self
+    
     # Once registered
     def registered(app)
       # Setup callbacks which can exclude paths from the sitemap

@@ -1,15 +1,33 @@
+# Extensions namespace
 module Middleman::Extensions
+  
+  # Automatic Image Sizes extension
   module AutomaticImageSizes
+    
+    # Setup extension
     class << self
+      
+      # Once registered
       def registered(app)
+        # Include 3rd-party fastimage library
         require "middleman-core/extensions/automatic_image_sizes/fastimage"
 
+        # Include methods
         app.send :include, InstanceMethods
       end
+      
       alias :included :registered
     end
   
+    # Automatic Image Sizes Instance Methods
     module InstanceMethods
+      
+      # Override default image_tag helper to automatically calculate and include
+      # image dimensions.
+      #
+      # @param [String] path
+      # @param [Hash] params
+      # @return [String]
       def image_tag(path, params={})
         if !params.has_key?(:width) && !params.has_key?(:height) && !path.include?("://")
           params[:alt] ||= ""
@@ -34,5 +52,6 @@ module Middleman::Extensions
     end
   end
   
+  # Register the extension
   register :automatic_image_sizes, AutomaticImageSizes
 end
