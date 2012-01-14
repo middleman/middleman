@@ -17,6 +17,7 @@ module Middleman::Renderers::Slim
       rescue LoadError
       end
     end
+    
     alias :included :registered
   end
 end

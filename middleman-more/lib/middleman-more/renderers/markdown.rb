@@ -36,6 +36,7 @@ module Middleman::Renderers::Markdown
         end
       end
     end
+    
     alias :included :registered
   end
 end

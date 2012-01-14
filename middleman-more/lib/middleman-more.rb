@@ -16,6 +16,7 @@ module Middleman
     autoload :Slim,         "middleman-more/renderers/slim"
   end
   
+  # Core (automatic) extensions
   module CoreExtensions
     # Compass framework for Sass
     autoload :Compass,      "middleman-more/core_extensions/compass"
@@ -23,7 +24,8 @@ module Middleman
     # Sprockets 2
     autoload :Sprockets,    "middleman-more/core_extensions/sprockets"
   end
-    
+  
+  # User-activatable extendions
   module Extensions
     # RelativeAssets allow any asset path in dynamic templates to be either
     # relative to the root of the project or use an absolute URL.
@@ -40,6 +42,7 @@ module Middleman
     autoload :MinifyJavascript,    "middleman-more/extensions/minify_javascript"
   end
   
+  # Setup renderers
   require "coffee_script"
   Base.register Middleman::Renderers::Haml
   Base.register Middleman::Renderers::Sass

@@ -25,6 +25,7 @@ module Middleman::Renderers::Liquid
       rescue LoadError
       end
     end
+    
     alias :included :registered
   end
 end

@@ -26,7 +26,12 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #++
 
+# Minify CSS
 module CSSMin
+  
+  # Compress a CSS string
+  # @param [String] input
+  # @return [String]
   def self.compress(input)
     css = input.is_a?(IO) ? input.read : input.dup.to_s
     css.gsub!(/\/\*[\s\S]*?\*\//, '')

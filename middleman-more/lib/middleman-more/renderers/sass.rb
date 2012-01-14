@@ -14,6 +14,7 @@ module Middleman::Renderers::Sass
       # Default sass options
       app.set :sass, {}
     end
+    
     alias :included :registered
   end
   
@@ -59,6 +60,7 @@ module Middleman::Renderers::Sass
   
   # SCSS version of the above template
   class ScssPlusCSSFilenameTemplate < SassPlusCSSFilenameTemplate
+    
     # Define the expected syntax for the template
     # @return [Symbol]
     def syntax
