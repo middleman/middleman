@@ -33,7 +33,7 @@ Feature: Ignoring paths
       | build/images/pic.png |
       | build/images/icons/messages.png |
 
-  Scenario: Ignore with directory indexes
+  Scenario: Ignore with directory indexes (source file)
     Given a fixture app "ignore-app"
     And a file named "config.rb" with:
       """
@@ -47,4 +47,51 @@ Feature: Ignoring paths
     And the following files should not exist:
       | build/about/index.html |
       | build/plain/index.html |
+
+  Scenario: Ignore with directory indexes (output path direct)
+    Given a fixture app "ignore-app"
+    And a file named "config.rb" with:
+      """
+      activate :directory_indexes
+      ignore 'about/'
+      ignore 'plain/'
+      """
+    And a successfully built app at "ignore-app"
+    Then the following files should exist:
+      | build/index.html |
+    And the following files should not exist:
+      | build/about/index.html |
+      | build/plain/index.html |
+
+  Scenario: Ignore with directory indexes (output path splat)
+    Given a fixture app "ignore-app"
+    And a file named "config.rb" with:
+      """
+      activate :directory_indexes
+      ignore 'about*'
+      ignore 'plain*'
+      """
+    And a successfully built app at "ignore-app"
+    Then the following files should exist:
+      | build/index.html |
+    And the following files should not exist:
+      | build/about/index.html |
+      | build/plain/index.html |
+	  
+  Scenario: Ignore with directory indexes (output path index)
+    Given a fixture app "ignore-app"
+    And a file named "config.rb" with:
+      """
+      activate :directory_indexes
+      ignore 'about/index.html'
+      ignore 'plain/index.html'
+      """
+    And a successfully built app at "ignore-app"
+    Then the following files should exist:
+      | build/index.html |
+    And the following files should not exist:
+      | build/about/index.html |
+      | build/plain/index.html |
+	  
+	  
 
