@@ -44,15 +44,9 @@ module Middleman::CoreExtensions::Routing
     # @return [void]
     def page(url, opts={}, &block)
       a_block = block_given? ? block : nil
-    
-      # If the url is a string with an asterisk, it is a glob and should
-      # be converted to a Regexp
-      if url.include?("*")
-        url = Regexp.new(url.gsub("*", "(.*?)").gsub(/^\//, "^"))
-      end
       
       # If the url is a regexp
-      if url.is_a?(Regexp)
+      if url.is_a?(Regexp) || url.include?("*")
         
         # Use the metadata loop for matching against paths at runtime
         provides_metadata_for_path url do |url|

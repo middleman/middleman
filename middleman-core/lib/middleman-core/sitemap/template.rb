@@ -62,7 +62,7 @@ module Middleman::Sitemap
         if matcher.is_a? Regexp
           next if !self.request_path.match(matcher)
         elsif matcher.is_a? String
-          next if "/#{self.request_path}" != matcher
+          next if !File.fnmatch("/" + matcher.sub(%r{^/}, ''), "/#{self.request_path}")
         end
       
         result = app.instance_exec(self.request_path, &callback)

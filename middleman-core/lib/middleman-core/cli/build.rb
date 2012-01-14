@@ -225,7 +225,7 @@ module Middleman::Cli
 
         if @app.sitemap.proxied?(file_source)
           file_source = @app.sitemap.page(file_source).proxied_to
-        elsif @app.sitemap.ignored?(file_source)
+        elsif @app.sitemap.page(file_source).ignored?
           next
         end
         

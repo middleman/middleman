@@ -112,7 +112,18 @@ module Middleman::Sitemap
     # Whether this page is ignored
     # @return [Boolean]
     def ignored?
-      store.ignored?(self.path)
+      return true if store.ignored?(self.path)
+            
+      if !@source_file.nil?
+        relative_source = @source_file.sub(app.source_dir, '')
+        if self.path.sub(/^\//, "") != relative_source.sub(/^\//, "")
+          store.ignored?(relative_source)
+        else
+          false
+        end
+      else
+        false
+      end
     end
     
     # Set this page to be ignored
@@ -170,7 +181,7 @@ module Middleman::Sitemap
     # Get the relative path from the source
     # @return [String]
     def relative_path
-      source_file.sub(app.source_dir, '')
+      self.source_file ? self.source_file.sub(app.source_dir, '') : nil
     end
     
     # This page's frontmatter

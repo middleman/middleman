@@ -110,7 +110,7 @@ module Middleman::CoreExtensions::FrontMatter
       # Setup ignore callback
       @app.ignore do |path|
         p = @app.sitemap.page(path)
-        file_path = p.source_file.sub(@app.source_dir, "")
+        file_path = p.relative_path
         
         if !p.proxy? && has_data?(file_path)
           d = data(file_path)

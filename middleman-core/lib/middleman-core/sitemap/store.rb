@@ -13,6 +13,7 @@ module Middleman::Sitemap
       @app = app
       @pages = {}
       @ignored_paths     = []
+      @ignored_globs     = []
       @ignored_regexes   = []
       @ignored_callbacks = []
     end
@@ -28,7 +29,10 @@ module Middleman::Sitemap
     # @param [String, Regexp] path
     # @return [void]
     def ignore(path=nil, &block)
-      if path.is_a? String
+      if !path.nil? && path.include?("*")
+        path_clean = path.sub(/^\//, "")
+        @ignored_globs << path_clean unless @ignored_globs.include?(path_clean)
+      elsif path.is_a? String
         path_clean = path.sub(/^\//, "")
         @ignored_paths << path_clean unless @ignored_paths.include?(path_clean)
       elsif path.is_a? Regexp
@@ -77,7 +81,10 @@ module Middleman::Sitemap
     def ignored?(path)
       path_clean = path.sub(/^\//, "")
       
+      # $stderr.puts path_clean, @ignored_globs, @ignored_paths
+      
       return true if @ignored_paths.include?(path_clean)
+      return true if @ignored_globs.any? { |g| File.fnmatch(g, path_clean) }
       return true if @ignored_regexes.any? { |r| r.match(path_clean) }
       return true if @ignored_callbacks.any? { |b| b.call(path_clean) }
       
