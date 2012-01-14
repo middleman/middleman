@@ -102,11 +102,11 @@ module Middleman::CoreExtensions::Extensions
       end
       
       if ext.nil?
-        puts "== Unknown Extension: #{feature}"
+        puts "== Unknown Extension: #{ext}"
       elsif ext.is_a?(String)
         puts ext
       else
-        puts "== Activating: #{feature}" if logging?
+        puts "== Activating: #{ext}" if logging?
         self.class.register(ext, options, &block)
       end
     end
