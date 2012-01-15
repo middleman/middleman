@@ -225,6 +225,9 @@ class Middleman::Base
   # Sitemap
   register Middleman::CoreExtensions::Sitemap
   
+  # Setup external helpers
+  register Middleman::CoreExtensions::ExternalHelpers
+  
   # Setup default helpers
   register Middleman::CoreExtensions::DefaultHelpers
   

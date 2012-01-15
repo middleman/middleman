@@ -130,12 +130,12 @@ module Middleman
     end
     
   private
-    # Whether the passed files are config.rb or lib/*.rb
+    # Whether the passed files are config.rb, lib/*.rb or helpers
     # @param [Array<String>] paths Array of paths to check
     # @return [Boolean] Whether the server needs to reload
     def needs_to_reload?(paths)
       paths.any? do |path|
-        path.match(%{^config\.rb}) || path.match(%r{^lib/^[^\.](.*)\.rb$})
+        path.match(%{^config\.rb}) || path.match(%r{^lib/^[^\.](.*)\.rb$}) || path.match(%r{^helpers/^[^\.](.*)_helper\.rb$})
       end
     end
   

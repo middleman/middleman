@@ -72,6 +72,9 @@ module Middleman
     # Parse YAML from templates
     autoload :FrontMatter,    "middleman-core/core_extensions/front_matter"
     
+    # External helpers looks in the helpers/ folder for helper modules
+    autoload :ExternalHelpers, "middleman-core/core_extensions/external_helpers"
+    
     # DefaultHelpers are the built-in dynamic template helpers.
     autoload :DefaultHelpers, "middleman-core/core_extensions/default_helpers"
 
