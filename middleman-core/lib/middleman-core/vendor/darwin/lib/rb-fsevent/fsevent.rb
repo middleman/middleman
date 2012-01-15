@@ -7,7 +7,7 @@ class FSEvent
     END
     class_eval <<-END
       def watcher_path
-        "#{File.join(FSEvent.root_path, 'bin', 'fsevent_watch_guard')}"
+        "#{File.join(FSEvent.root_path, 'bin', 'fsevent_watch_mm')}"
       end
     END
   end

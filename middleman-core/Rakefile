@@ -31,13 +31,13 @@ task :build_vendor do
   extconf_path = File.expand_path("../ext/extconf.rb", __FILE__)
   extconf_contents = File.read(extconf_path)
   extconf_contents.sub!(/puts "Warning/, '#\0')
-  extconf_contents.gsub!(/bin\/fsevent_watch/, 'bin/fsevent_watch_guard')
+  extconf_contents.gsub!(/bin\/fsevent_watch/, 'bin/fsevent_watch_m')
   File.open(extconf_path, 'w') { |f| f << extconf_contents }
 
   # Alter lib/middleman-core/vendor/darwin/lib/rb-fsevent/fsevent.rb
   fsevent_path = File.expand_path("../lib/middleman-core/vendor/darwin/lib/rb-fsevent/fsevent.rb", __FILE__)
   fsevent_contents = File.read(fsevent_path)
-  fsevent_contents.sub!(/fsevent_watch/, 'fsevent_watch_guard')
+  fsevent_contents.sub!(/fsevent_watch/, 'fsevent_watch_mm')
   fsevent_contents.sub!(/'\.\.'/, "'..', '..', '..', '..', '..'")
 
   File.open(fsevent_path, 'w') { |f| f << fsevent_contents }
