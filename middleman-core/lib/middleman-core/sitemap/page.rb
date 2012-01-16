@@ -159,19 +159,21 @@ module Middleman::Sitemap
       end
     end
     
-    # Whether this page is a directory index
+    # Whether this page either a directory index, or has the same name as an existing directory in the source
     # @return [Boolean]
     def directory_index?
       path.include?(app.index_file) || path =~ /\/$/ || eponymous_directory?
     end
-
-    # Whether this page is a eponymous_directory
+    
+    # Whether the page has the same name as a directory in the source
+    # (e.g., if the page is named 'gallery.html' and a path exists named 'gallery/', this would return true)
     # @return [Boolean]
     def eponymous_directory?
       !!Dir.exists?(File.join(app.source_dir, eponymous_directory_path))
     end
     
-    # The path for the eponymous_directory of this page
+    # The path for this page if it were a directory, and not a file
+    # (e.g., for 'gallery.html' this would return 'gallery/')
     # @return [String]
     def eponymous_directory_path
       path.sub('.html', '/').sub(/\/$/, "") + "/"
