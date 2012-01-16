@@ -81,6 +81,7 @@ module Middleman::CoreExtensions::FileWatcher
     # @param [String] path The file that changed
     # @return [void]
     def did_change(path)
+      puts "== File Change: #{path}" if instance.logging? && !::Middleman::Watcher.ignore_list.any? { |r| path.match(r) }
       self.known_paths << path unless self.known_paths.include?(path)
       self.run_callbacks(path, :changed)
     end
@@ -90,6 +91,7 @@ module Middleman::CoreExtensions::FileWatcher
     # @param [String] path The file that was deleted
     # @return [void]
     def did_delete(path)
+      puts "== File Deletion: #{path}" if instance.logging? && !::Middleman::Watcher.ignore_list.any? { |r| path.match(r) }
       self.known_paths.delete(path) if self.known_paths.include?(path)
       self.run_callbacks(path, :deleted)
     end

@@ -23,7 +23,10 @@ module Middleman
         [
           /\.sass-cache/,
           /\.git/,
-          /\.DS_Store/
+          /\.DS_Store/,
+          /build/,
+          /\.rbenv-version/,
+          /Gemfile/
         ]
       end
     end
@@ -76,7 +79,7 @@ module Middleman
         set :environment, env
         set :logging, is_logging
       end
-      $stderr.puts "Is logging?: #{is_logging}"
+      
       app_rack = app.class.to_rack_app
       
       opts = @options.dup

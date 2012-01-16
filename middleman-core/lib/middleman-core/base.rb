@@ -321,8 +321,6 @@ class Middleman::Base
     @req = Rack::Request.new(env)
     @res = Rack::Response.new
 
-    puts "== Request: #{env["PATH_INFO"]}" if logging?
-
     if env["PATH_INFO"] == "/__middleman__" && env["REQUEST_METHOD"] == "POST"
       if req.params.has_key?("change")
         self.files.did_change(req.params["change"])
@@ -333,6 +331,8 @@ class Middleman::Base
       res.status = 200
       return res.finish
     end
+
+    puts "== Request: #{env["PATH_INFO"]}" if logging?
     
     # Catch :halt exceptions and use that response if given
     catch(:halt) do
