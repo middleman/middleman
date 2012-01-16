@@ -45,8 +45,22 @@ module Middleman::Cli
       end
       
       klass, task = Thor::Util.find_class_and_task_by_namespace("#{meth}:#{meth}")
-      args.unshift(task) if task
-      klass.start(args, :shell => self.shell)
+      
+      if klass.nil?
+        tasks_dir = File.join(Dir.pwd, "tasks")
+
+        if File.exists?(tasks_dir)
+          Dir[File.join(tasks_dir, "**/*_task.rb")].each { |f| require f }
+          klass, task = Thor::Util.find_class_and_task_by_namespace("#{meth}:#{meth}")
+        end
+      end
+      
+      if klass.nil?
+        super
+      else
+        args.unshift(task) if task
+        klass.start(args, :shell => self.shell)
+      end
     end
   end
 end

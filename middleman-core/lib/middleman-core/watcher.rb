@@ -70,12 +70,13 @@ module Middleman
     # @return [void]
     def bootup
       env = (@options[:environment] || "development").to_sym
-      is_logging = @options.has_key?(:debug) && (@options[:debug] == "true")
+      is_logging = @options.has_key?(:debug) && @options[:debug]
+      
       app = ::Middleman.server.inst do
         set :environment, env
         set :logging, is_logging
       end
-      
+      $stderr.puts "Is logging?: #{is_logging}"
       app_rack = app.class.to_rack_app
       
       opts = @options.dup

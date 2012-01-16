@@ -85,10 +85,12 @@ module Middleman::Cli
           sess
         end
       end
-    end
     
-    # Set the root path to the Middleman::Base's root
-    source_root(shared_instance.root)
+      # Set the root path to the Middleman::Base's root
+      def source_root
+        shared_instance.root
+      end
+    end
     
     # Ignore following method
     desc "", "", :hide => true
