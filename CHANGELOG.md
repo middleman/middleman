@@ -1,5 +1,6 @@
 3.0.pre
 ====
+* Split into 3 gems (middleman-core, middleman-more and middleman which simply includes both)
 * Rewritten to work directly with Rack (Sinatra apps can still be mounted)
 * Sitemap maintains own state
 * New Extension Registration API
@@ -19,6 +20,11 @@
 * Nested layouts using `wrap_layout` helper
 * Support for placekitten.com
 * Added MM_ROOT environmental variable
+* activating extensions can now take an options hash
+* Don't re-minify files with ".min" in their name
+* Serve purely static folders directly (without source/ and config.rb)
+* Set ignored files and disable directory_indexes from YAML frontmatter
+* Automatically load helper modules in helpers/ directory
 
 2.0.14
 ====

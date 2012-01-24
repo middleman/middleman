@@ -8,9 +8,9 @@ pkg
 Gemfile.lock
 docs
 .rbenv-version
-fixtures/generator-test
 .*.swp
 build
 doc
 .yardoc
 tmp
+Makefile
