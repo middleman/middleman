@@ -6,6 +6,8 @@ module Middleman::Sitemap
     # @return [Middleman::Sitemap::Store]
     attr_accessor :store
     
+    # The source path of this page (relative to the source directory,
+    # without template extensions)
     # @return [String]
     attr_accessor :path
     

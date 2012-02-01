@@ -2,6 +2,11 @@
 module Middleman::Sitemap
   
   # The Store class
+  #
+  # The Store manages a collection of Page objects, which represent
+  # individual items in the sitemap. Pages are indexed by "source path",
+  # which is the path relative to the source directory, minus any template
+  # extensions. All "path" parameters used in this class are source paths.
   class Store
     
     # @return [Middleman::Base]
@@ -26,7 +31,7 @@ module Middleman::Sitemap
     end
     
     # Ignore a path or add an ignore callback
-    # @param [String, Regexp] path
+    # @param [String, Regexp] path, path glob expression, or path regex
     # @return [void]
     def ignore(path=nil, &block)
       if !path.nil? && path.include?("*")
@@ -60,6 +65,7 @@ module Middleman::Sitemap
     end
     
     # Loop over known pages
+    # @yield [path, page]
     # @return [void]
     def each
       @pages.each do |k, v|
