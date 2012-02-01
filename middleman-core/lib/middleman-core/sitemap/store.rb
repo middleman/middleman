@@ -47,18 +47,16 @@ module Middleman::Sitemap
     # @param [String] target
     # @return [void]
     def proxy(path, target)
-      page(path) { proxy_to(target.sub(%r{^/}, "")) }
+      page(path).proxy_to(target.sub(%r{^/}, ""))
       app.cache.remove(:proxied_paths)
     end
     
     # Get a page instance for a given path
     # @param [String] path
     # @return [Middleman::Sitemap::Page]
-    def page(path, &block)
+    def page(path)
       path = path.sub(/^\//, "").gsub("%20", " ")
-      @pages[path] = ::Middleman::Sitemap::Page.new(self, path) unless @pages.has_key?(path)
-      @pages[path].instance_exec(&block) if block_given?
-      @pages[path]
+      @pages.fetch(path) { @pages[path] = ::Middleman::Sitemap::Page.new(self, path) }
     end
     
     # Loop over known pages
