@@ -22,7 +22,7 @@ module Middleman::Sitemap
     # @param [String] path
     # @return [Boolean]
     def exists?(path)
-      @pages.has_key?(path.sub(/^\//, ""))
+      @pages.has_key?(normalize_path(path))
     end
     
     # Ignore a path or add an ignore callback
@@ -30,10 +30,10 @@ module Middleman::Sitemap
     # @return [void]
     def ignore(path=nil, &block)
       if !path.nil? && path.include?("*")
-        path_clean = path.sub(/^\//, "")
+        path_clean = normalize_path(path)
         @ignored_globs << path_clean unless @ignored_globs.include?(path_clean)
       elsif path.is_a? String
-        path_clean = path.sub(/^\//, "")
+        path_clean = normalize_path(path)
         @ignored_paths << path_clean unless @ignored_paths.include?(path_clean)
       elsif path.is_a? Regexp
         @ignored_regexes << path unless @ignored_regexes.include?(path)
@@ -47,7 +47,7 @@ module Middleman::Sitemap
     # @param [String] target
     # @return [void]
     def proxy(path, target)
-      page(path).proxy_to(target.sub(%r{^/}, ""))
+      page(path).proxy_to(normalize_path(target))
       app.cache.remove(:proxied_paths)
     end
     
@@ -55,13 +55,13 @@ module Middleman::Sitemap
     # @param [String] path
     # @return [Middleman::Sitemap::Page]
     def page(path)
-      path = path.sub(/^\//, "").gsub("%20", " ")
+      path = normalize_path(path)
       @pages.fetch(path) { @pages[path] = ::Middleman::Sitemap::Page.new(self, path) }
     end
     
     # Loop over known pages
     # @return [void]
-    def each(&block)
+    def each
       @pages.each do |k, v|
         yield k, v
       end
@@ -77,9 +77,7 @@ module Middleman::Sitemap
     # @param [String] path
     # @return [Boolean]
     def ignored?(path)
-      path_clean = path.sub(/^\//, "")
-      
-      # $stderr.puts path_clean, @ignored_globs, @ignored_paths
+      path_clean = normalize_path(path)
       
       return true if @ignored_paths.include?(path_clean)
       return true if @ignored_globs.any? { |g| File.fnmatch(g, path_clean) }
@@ -99,7 +97,7 @@ module Middleman::Sitemap
     # @param [String] path
     # @return [Boolean]
     def generic?(path)
-      generic_paths.include?(path.sub(/^\//, ""))
+      generic_paths.include?(normalize_path(path))
     end
     
     # Get a list of generic paths
@@ -114,7 +112,7 @@ module Middleman::Sitemap
     # @param [String] path
     # @return [Boolean]
     def proxied?(path)
-      proxied_paths.include?(path.sub(/^\//, ""))
+      proxied_paths.include?(normalize_path(path))
     end
     
     # Get a list of proxied paths
@@ -132,7 +130,7 @@ module Middleman::Sitemap
       path = file_to_path(file)
       return false unless path
       
-      path = path.sub(/^\//, "")
+      path = normalize_path(path)
       if @pages.has_key?(path)
         page(path).delete()
         @pages.delete(path)
@@ -187,7 +185,7 @@ module Middleman::Sitemap
   
     # Get a path without templating extensions
     # @param [String] file
-    # @param [String]
+    # @return [String]
     def extensionless_path(file)
       app.cache.fetch(:extensionless_path, file) do
         path = file.dup
@@ -203,6 +201,13 @@ module Middleman::Sitemap
 
         path
       end
+    end
+
+    # Normalize a path to not include a leading slash
+    # @param [String] path
+    # @return [String]
+    def normalize_path(path)
+      path.sub(/^\//, "").gsub("%20", " ")
     end
   end
 end
