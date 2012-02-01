@@ -31,6 +31,10 @@ module Middleman::Cli
       :aliases => "-g", 
       :default => nil, 
       :desc    => 'Build a subset of the project'
+    method_option :verbose,
+      :type    => :boolean, 
+      :default => false,
+      :desc    => 'Print debug messages'
     
     # Core build Thor command
     # @return [void]

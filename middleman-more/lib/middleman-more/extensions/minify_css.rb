@@ -22,5 +22,5 @@ module Middleman::Extensions
   end
   
   # Register extension
-  register :minify_css, MinifyCss
+  # register :minify_css, MinifyCss
 end

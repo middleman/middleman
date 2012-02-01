@@ -58,14 +58,14 @@ module Middleman::CoreExtensions::Compass
         end
         
         # Change paths when in build mode. Required for relative paths
-        configure :build do
-          ::Compass.configuration do |config|
-            config.environment = :production
-            config.css_dir    = File.join(build_dir, css_dir)
-            config.images_dir = File.join(build_dir, images_dir)
-            config.fonts_dir  = File.join(build_dir, fonts_dir)
-          end
-        end
+        # configure :build do
+        #   ::Compass.configuration do |config|
+        #     config.environment = :production
+        #     config.css_dir    = File.join(build_dir, css_dir)
+        #     config.images_dir = File.join(build_dir, images_dir)
+        #     config.fonts_dir  = File.join(build_dir, fonts_dir)
+        #   end
+        # end
         
         run_hook :compass_config, ::Compass.configuration
         run_hook :after_compass_config

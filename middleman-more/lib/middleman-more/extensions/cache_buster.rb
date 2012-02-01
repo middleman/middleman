@@ -70,5 +70,5 @@ module Middleman::Extensions
   end
   
   # Register the extension
-  register :cache_buster, CacheBuster
+  # register :cache_buster, CacheBuster
 end

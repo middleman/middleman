@@ -58,5 +58,5 @@ module Middleman::Extensions
   end
   
   # Register extension
-  register :relative_assets, RelativeAssets
+  # register :relative_assets, RelativeAssets
 end
