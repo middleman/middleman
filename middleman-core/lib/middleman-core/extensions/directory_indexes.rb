@@ -74,10 +74,7 @@ module Middleman::Extensions
           elsif frontmatter_ignore
             false
           else
-            [
-              destination.sub(/#{index_ext.gsub(".", "\\.")}$/, new_index_path),
-              request_path
-            ]
+            destination.sub(/#{index_ext.gsub(".", "\\.")}$/, new_index_path),
           end
         end
       end

@@ -21,6 +21,7 @@ module Middleman::Sitemap
       @ignored_globs     = []
       @ignored_regexes   = []
       @ignored_callbacks = []
+      @reroute_callbacks   = []
     end
     
     # Check to see if we know about a specific path
@@ -47,6 +48,19 @@ module Middleman::Sitemap
       end
     end
     
+    # Add a callback that will be run with each page's destination path
+    # and can produce a new destination path or pass through the old one.
+    # @return [void]
+    def reroute(&block)
+      @reroute_callbacks << block if block_given?
+    end
+
+    # The list of reroute callbacks
+    # @return [Array<Proc>]
+    def reroute_callbacks
+      @reroute_callbacks
+    end
+
     # Setup a proxy from a path to a target
     # @param [String] path
     # @param [String] target

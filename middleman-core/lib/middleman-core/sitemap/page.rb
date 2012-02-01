@@ -187,6 +187,15 @@ module Middleman::Sitemap
     def relative_path
       self.source_file ? self.source_file.sub(app.source_dir, '') : nil
     end
+
+    # Get the destination path, relative to the build directory.
+    # This path can be affected by proxy callbacks.
+    # @return [String]
+    def destination_path
+      store.reroute_callbacks.inject(self.path) do |destination, callback|
+        callback.call(destination)
+      end
+    end
     
     # This page's frontmatter
     # @return [Hash, nil]

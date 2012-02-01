@@ -95,25 +95,17 @@ module Middleman::Cli
     # Ignore following method
     desc "", "", :hide => true
     
-    # Render a template to a file.
+    # Render a page to a file.
     #
-    # @param [String] source
-    # @param [String] destination
-    # @param [Hash] config
-    # @return [String] the actual destination file path that was created
-    def tilt_template(source, destination, config={})
+    # @param [Middleman::Sitemap::Page] page
+    # @return [void]
+    def tilt_template(page)
       build_dir = self.class.shared_instance.build_dir
-      request_path = destination.sub(/^#{build_dir}/, "")
-      config[:force] = true
 
       begin
-        destination, request_path = self.class.shared_instance.reroute_builder(destination, request_path)
-
-        response = self.class.shared_rack.get(request_path.gsub(/\s/, "%20"))
-
-        create_file(destination, response.body, config)
-
-        destination
+        response = self.class.shared_rack.get(page.request_path.gsub(/\s/, "%20"))
+        output_file = File.join(self.class.shared_instance.build_dir, page.destination_path)
+        create_file(output_file, response.body, { :force => true })
       rescue
         say_status :error, destination, :red
         abort
@@ -221,7 +213,10 @@ module Middleman::Cli
 
       # Loop over all the paths and build them.
       paths.each do |path|
+        puts "SOURCE: #{path}"
+
         file_source = path
+        # TODO: OMG use pathnames?
         file_destination = File.join(given_destination, file_source.gsub(source, '.'))
         file_destination.gsub!('/./', '/')
 
@@ -231,11 +226,13 @@ module Middleman::Cli
           next
         end
         
+        page = @app.sitemap.page(file_source)
+
         next if @config[:glob] && !File.fnmatch(@config[:glob], file_source)
 
-        file_destination = base.tilt_template(file_source, file_destination)
+        base.tilt_template(page)
 
-        @cleaning_queue.delete(Pathname.new(file_destination).realpath) if cleaning?
+        @cleaning_queue.delete(Pathname.new(page.destination_path).realpath) if cleaning?
       end
     end
   end
