@@ -103,7 +103,9 @@ module Middleman::Sitemap
       return true if @ignored_globs.any? { |g| File.fnmatch(g, path_clean) }
       return true if @ignored_regexes.any? { |r| r.match(path_clean) }
       return true if @ignored_callbacks.any? { |b| b.call(path_clean) }
-      
+
+      # TODO: We should also check ignored_sitemap_matchers here
+
       false
     end
     

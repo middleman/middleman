@@ -12,14 +12,15 @@ module Middleman::Extensions
         # Include methods
         app.send :include, InstanceMethods
         
-        # TODO: unify these
+        # TODO: unify these by replacing the "before" thing with a
+        # lookup by destination_path
 
         # Before requests
         app.before do
           prefix           = @original_path.sub(/\/$/, "")
           indexed_path     = prefix + "/" + index_file
           extensioned_path = prefix + File.extname(index_file)
-          
+
           is_ignored       = false
           fm_ignored       = false
           
@@ -36,13 +37,15 @@ module Middleman::Extensions
             end
           else
             # Otherwise check this extension for list of ignored indexes
-            is_ignored = ignored_directory_indexes.include?(extensioned_path)
+            if sitemap.exists?(extensioned_path)
+              is_ignored = ignored_directory_indexes.include?(sitemap.page(extensioned_path))
+            end
           end
 
           # If we're going to remap to a directory index
           if !sitemap.exists?(indexed_path) && !is_ignored && !fm_ignored
             parts         = @original_path.split("/")
-            last_part     = parts.last
+            last_part     = parts.last || ''
             last_part_ext = File.extname(last_part)
         
             # Change the request
@@ -65,16 +68,19 @@ module Middleman::Extensions
               frontmatter_ignore = d.has_key?("directory_index") && d["directory_index"] == false
             end
 
+            index_ext = File.extname(index_file)
+
             # Only reroute if not ignored
             request_path = page.request_path
             if ignored_directory_indexes.include? page
               destination
-            elsif request_path.end_with? new_index_path
+            elsif request_path == index_file || request_path.end_with?(new_index_path)
               destination
             elsif frontmatter_ignore
               destination
+            elsif index_ext != File.extname(request_path)
+              destination
             else
-              index_ext = File.extname(index_file)
               destination.chomp(File.extname(index_file)) + new_index_path
             end
           end

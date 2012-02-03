@@ -101,13 +101,14 @@ module Middleman::Cli
     # @return [void]
     def tilt_template(page)
       build_dir = self.class.shared_instance.build_dir
-      output_file = File.join(self.class.shared_instance.build_dir, page.output_file_path)
+      output_file = File.join(self.class.shared_instance.build_dir, page.destination_path)
 
       begin
         response = self.class.shared_rack.get(page.request_path.gsub(/\s/, "%20"))
         create_file(output_file, response.body, { :force => true })
       rescue
-        say_status :error, destination, :red
+        say_status :error, output_file, :red
+        puts $!
         abort
       end
     end
@@ -201,6 +202,8 @@ module Middleman::Cli
       # Sort paths to be built by the above order. This is primarily so Compass can
       # find files in the build folder when it needs to generate sprites for the
       # css files
+
+      # TODO: deal with pages, not paths
       paths = @app.sitemap.all_paths.sort do |a, b|
         a_ext = File.extname(a)
         b_ext = File.extname(b)
@@ -213,28 +216,15 @@ module Middleman::Cli
 
       # Loop over all the paths and build them.
       paths.each do |path|
-        puts "SOURCE: #{path}"
+        page = @app.sitemap.page(path)
 
-        file_source = path
-        # TODO: OMG use pathnames?
-        file_destination = File.join(given_destination, file_source.gsub(source, '.'))
-        file_destination.gsub!('/./', '/')
-
-        if @app.sitemap.proxied?(file_source)
-          file_source = @app.sitemap.page(file_source).proxied_to
-        elsif @app.sitemap.page(file_source).ignored?
-          next
-        end
-        
-        page = @app.sitemap.page(file_source)
-
-        puts "DEST: #{page.destination_path}"
-
-        next if @config[:glob] && !File.fnmatch(@config[:glob], file_source)
+        next if page.ignored?
+        next if @config[:glob] && !File.fnmatch(@config[:glob], path)
 
         base.tilt_template(page)
 
-        @cleaning_queue.delete(Pathname.new(page.destination_path).realpath) if cleaning?
+        output_path = File.join(@destination, page.destination_path)
+        @cleaning_queue.delete(Pathname.new(output_path).realpath) if cleaning?
       end
     end
   end
