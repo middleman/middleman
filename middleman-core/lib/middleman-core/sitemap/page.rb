@@ -193,7 +193,7 @@ module Middleman::Sitemap
     # @return [String]
     def destination_path
       store.reroute_callbacks.inject(self.path) do |destination, callback|
-        callback.call(destination)
+        callback.call(destination, self)
       end
     end
     

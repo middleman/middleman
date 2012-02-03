@@ -12,6 +12,8 @@ module Middleman::Extensions
         # Include methods
         app.send :include, InstanceMethods
         
+        # TODO: unify these
+
         # Before requests
         app.before do
           prefix           = @original_path.sub(/\/$/, "")
@@ -51,41 +53,40 @@ module Middleman::Extensions
           end
         end
       
-        # Basically does the same as above, but in build mode
-        app.build_reroute do |destination, request_path|
-          index_ext      = File.extname(index_file)
-          new_index_path = "/#{index_file}"
-          frontmatter_ignore = false
+        app.after_configuration do
+          # Basically does the same as above, but in build mode
+          sitemap.reroute do |destination, page|
+            new_index_path = "/#{index_file}"
+            frontmatter_ignore = false
 
-          # Check for file and frontmatter
-          if sitemap.exists?(request_path)
-            p = sitemap.page(request_path)
-            d = p.data
-            if !d.nil?
+            # Check for file and frontmatter
+            d = page.data
+            if !page.data.nil?
               frontmatter_ignore = d.has_key?("directory_index") && d["directory_index"] == false
             end
-          end
 
-          # Only reroute if not ignored
-          if ignored_directory_indexes.include?(request_path)
-            false
-          elsif request_path =~ /#{new_index_path}$/
-            false
-          elsif frontmatter_ignore
-            false
-          else
-            destination.sub(/#{index_ext.gsub(".", "\\.")}$/, new_index_path),
+            # Only reroute if not ignored
+            request_path = page.request_path
+            if ignored_directory_indexes.include? page
+              destination
+            elsif request_path.end_with? new_index_path
+              destination
+            elsif frontmatter_ignore
+              destination
+            else
+              index_ext = File.extname(index_file)
+              destination.chomp(File.extname(index_file)) + new_index_path
+            end
           end
         end
       end
-      
+
       alias :included :registered
     end
   
-    # Directory indexes instance methods
     module InstanceMethods
       # A list of pages which will not use directory indexes
-      # @return [Array<String>]
+      # @return [Array<Middleman::Sitemap::Page>]
       def ignored_directory_indexes
         @_ignored_directory_indexes ||= []
       end
@@ -97,7 +98,7 @@ module Middleman::Extensions
       # @return [void]
       def page(url, options={}, &block)
         if options.has_key?(:directory_index) && !options["directory_index"]
-          ignored_directory_indexes << url
+          ignored_directory_indexes << sitemap.page(url)
         else
           super
         end

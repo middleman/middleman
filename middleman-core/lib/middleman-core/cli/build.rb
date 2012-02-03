@@ -101,10 +101,10 @@ module Middleman::Cli
     # @return [void]
     def tilt_template(page)
       build_dir = self.class.shared_instance.build_dir
+      output_file = File.join(self.class.shared_instance.build_dir, page.output_file_path)
 
       begin
         response = self.class.shared_rack.get(page.request_path.gsub(/\s/, "%20"))
-        output_file = File.join(self.class.shared_instance.build_dir, page.destination_path)
         create_file(output_file, response.body, { :force => true })
       rescue
         say_status :error, destination, :red
@@ -227,6 +227,8 @@ module Middleman::Cli
         end
         
         page = @app.sitemap.page(file_source)
+
+        puts "DEST: #{page.destination_path}"
 
         next if @config[:glob] && !File.fnmatch(@config[:glob], file_source)
 

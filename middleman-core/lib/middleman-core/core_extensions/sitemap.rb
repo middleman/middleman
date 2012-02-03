@@ -74,10 +74,10 @@ module Middleman::CoreExtensions::Sitemap
     # @param [String] url
     # @param [String] target
     # @return [void]
-    def reroute(*args)
+    def proxy(*args)
       sitemap.proxy(*args)
     end
-    
+
     # Register a handler to provide metadata on a file path
     # @param [Regexp] matcher
     # @return [Array<Array<Proc, Regexp>>]
