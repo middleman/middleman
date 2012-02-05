@@ -6,7 +6,7 @@ Feature: Relative Assets
     And the Server is running at "relative-assets-app"
     When I go to "/stylesheets/relative_assets.css"
     Then I should not see "url('../"
-    And I should see "url('/images/blank.gif')"
+    And I should see "/images/blank.gif')"
     
   Scenario: Building css with the feature disabled
     Given a fixture app "relative-assets-app"
@@ -46,8 +46,8 @@ Feature: Relative Assets
     Then I should not see "/images/blank.gif"
     And I should see "images/blank.gif"
     
-  Scenario: Rendering html with a custom images_dir
-    Given "css" feature is "enabled"
+  Scenario: Rendering css with a custom images_dir
+    Given "relative_assets" feature is "enabled"
     And "images_dir" is set to "img"
     And the Server is running at "relative-assets-app"
     When I go to "/stylesheets/relative_assets.css"

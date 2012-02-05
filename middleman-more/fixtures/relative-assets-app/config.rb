@@ -1,1 +1,1 @@
-activate :relative_assets
+# activate :relative_assets

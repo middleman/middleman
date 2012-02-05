@@ -44,6 +44,8 @@ module Middleman::Cli
         exit(1)
       end
       
+      self.class.shared_instance(options["verbose"] || false)
+      
       if options.has_key?("relative") && options["relative"]
         self.class.shared_instance.activate :relative_assets
       end
@@ -65,9 +67,10 @@ module Middleman::Cli
       # Middleman::Base singleton
       #
       # @return [Middleman::Base]
-      def shared_instance
+      def shared_instance(verbose=false)
         @_shared_instance ||= ::Middleman.server.inst do
           set :environment, :build
+          set :logging,     verbose
         end
       end
       

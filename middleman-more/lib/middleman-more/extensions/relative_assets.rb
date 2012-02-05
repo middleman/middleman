@@ -17,6 +17,7 @@ module Middleman::Extensions
         # Include instance methods
         app.send :include, InstanceMethods
       end
+      
       alias :included :registered
     end
   
