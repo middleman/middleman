@@ -64,7 +64,7 @@ module Middleman::CoreExtensions::Routing
 
       # Setup proxy
       if opts.has_key?(:proxy)
-        reroute(url, opts[:proxy])
+        proxy(url, opts[:proxy])
         
         if opts.has_key?(:ignore) && opts[:ignore]
           ignore(opts[:proxy])
