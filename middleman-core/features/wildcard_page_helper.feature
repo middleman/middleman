@@ -15,5 +15,5 @@ Feature: Wildcards in Page helper
     Then I should see "Normal Layout"
     When I go to "/admin/"
     Then I should see "Admin Layout"
-    When I go to "/admin/page.html"
+    When I go to "/admin/page/"
     Then I should see "Admin Layout"

@@ -43,9 +43,9 @@ module Middleman::Sitemap
     # @return [String]
     def request_path
       if proxy?
-        store.page(proxied_to).path
+        store.page(proxied_to).destination_path
       else
-        path
+        destination_path
       end
     end
     
@@ -192,6 +192,7 @@ module Middleman::Sitemap
     # This path can be affected by proxy callbacks.
     # @return [String]
     def destination_path
+      # TODO: memoize this value
       store.reroute_callbacks.inject(self.path) do |destination, callback|
         callback.call(destination, self)
       end

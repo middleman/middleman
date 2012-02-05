@@ -77,6 +77,13 @@ module Middleman::Sitemap
       path = normalize_path(path)
       @pages.fetch(path) { @pages[path] = ::Middleman::Sitemap::Page.new(self, path) }
     end
+
+    # Find a page given its destination path
+    def page_by_destination(destination_path)
+      # TODO: memoize this
+      destination_path = normalize_path(destination_path)
+      @pages.values.find {|p| p.destination_path == destination_path }
+    end
     
     # Loop over known pages
     # @yield [path, page]
@@ -86,7 +93,7 @@ module Middleman::Sitemap
         yield k, v
       end
     end
-    
+
     # Get all known paths
     # @return [Array<String>]
     def all_paths
