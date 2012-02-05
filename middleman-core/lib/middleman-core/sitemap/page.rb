@@ -6,6 +6,8 @@ module Middleman::Sitemap
     # @return [Middleman::Sitemap::Store]
     attr_accessor :store
     
+    # The source path of this page (relative to the source directory,
+    # without template extensions)
     # @return [String]
     attr_accessor :path
     
@@ -41,9 +43,9 @@ module Middleman::Sitemap
     # @return [String]
     def request_path
       if proxy?
-        store.page(proxied_to).path
+        store.page(proxied_to).destination_path
       else
-        path
+        destination_path
       end
     end
     
@@ -184,6 +186,16 @@ module Middleman::Sitemap
     # @return [String]
     def relative_path
       self.source_file ? self.source_file.sub(app.source_dir, '') : nil
+    end
+
+    # Get the destination path, relative to the build directory.
+    # This path can be affected by proxy callbacks.
+    # @return [String]
+    def destination_path
+      # TODO: memoize this value
+      store.reroute_callbacks.inject(self.path) do |destination, callback|
+        callback.call(destination, self)
+      end
     end
     
     # This page's frontmatter
