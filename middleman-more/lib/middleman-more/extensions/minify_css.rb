@@ -12,8 +12,8 @@ module Middleman::Extensions
         # Tell Sprockets to use the built in CSSMin
         app.after_configuration do
           if !css_compressor
-            require "middleman-more/extensions/minify_css/cssmin"
-            set :css_compressor, ::CSSMin
+            require "middleman-more/extensions/minify_css/rainpress"
+            set :css_compressor, ::Rainpress
           end
         end
       end
