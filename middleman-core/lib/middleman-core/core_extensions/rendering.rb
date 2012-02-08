@@ -74,7 +74,7 @@ module Middleman::CoreExtensions::Rendering
       end
       
       # Certain output file types don't use layouts
-      needs_layout = !%w(.js .css .txt).include?(extension)
+      needs_layout = !%w(.js .json .css .txt).include?(extension)
       
       # If we need a layout and have a layout, use it
       if needs_layout && layout_path = fetch_layout(engine, opts)
