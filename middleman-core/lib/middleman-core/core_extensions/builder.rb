@@ -16,7 +16,8 @@ module Middleman::CoreExtensions::Builder
   # Build Class Methods
   module ClassMethods
     # Get a list of callbacks which can modify a files build path
-    #
+    # Each callback takes a destination path and a request path and
+    # returns a new destination path, or false if it doesn't want to reroute.
     # @return [Array<Proc>]
     def build_reroute(&block)
       @build_rerouters ||= []
@@ -29,14 +30,14 @@ module Middleman::CoreExtensions::Builder
   module InstanceMethods
     # Run through callbacks and get the new values
     #
-    # @param [String] destination The current destination of the built file
-    # @param [String] request_path The current request path of the file
-    # @return [Array<String>] The new values
+    # @param [String] destination The current destination path of the built file
+    # @param [String] request_path The request path of the file
+    # @return [String] The new destination path
     def reroute_builder(destination, request_path)
       result = [destination, request_path]
       
       build_reroute.each do |block|
-        output = instance_exec(destination, request_path, &block)
+        output = block.call(destination, request_path)
         if output
           result = output
           break

@@ -31,6 +31,10 @@ module Middleman::Cli
       :aliases => "-g", 
       :default => nil, 
       :desc    => 'Build a subset of the project'
+    method_option :verbose,
+      :type    => :boolean, 
+      :default => false,
+      :desc    => 'Print debug messages'
     
     # Core build Thor command
     # @return [void]
@@ -39,6 +43,8 @@ module Middleman::Cli
         $stderr.puts "== Error: Could not find a Middleman project config, perhaps you are in the wrong folder?"
         exit(1)
       end
+      
+      self.class.shared_instance(options["verbose"] || false)
       
       if options.has_key?("relative") && options["relative"]
         self.class.shared_instance.activate :relative_assets
@@ -61,9 +67,10 @@ module Middleman::Cli
       # Middleman::Base singleton
       #
       # @return [Middleman::Base]
-      def shared_instance
+      def shared_instance(verbose=false)
         @_shared_instance ||= ::Middleman.server.inst do
           set :environment, :build
+          set :logging,     verbose
         end
       end
       
@@ -95,27 +102,20 @@ module Middleman::Cli
     # Ignore following method
     desc "", "", :hide => true
     
-    # Render a template to a file.
+    # Render a page to a file.
     #
-    # @param [String] source
-    # @param [String] destination
-    # @param [Hash] config
-    # @return [String] the actual destination file path that was created
-    def tilt_template(source, destination, config={})
+    # @param [Middleman::Sitemap::Page] page
+    # @return [void]
+    def tilt_template(page)
       build_dir = self.class.shared_instance.build_dir
-      request_path = destination.sub(/^#{build_dir}/, "")
-      config[:force] = true
+      output_file = File.join(self.class.shared_instance.build_dir, page.destination_path)
 
       begin
-        destination, request_path = self.class.shared_instance.reroute_builder(destination, request_path)
-
-        response = self.class.shared_rack.get(request_path.gsub(/\s/, "%20"))
-
-        create_file(destination, response.body, config)
-
-        destination
+        response = self.class.shared_rack.get(page.request_path.gsub(/\s/, "%20"))
+        create_file(output_file, response.body, { :force => true })
       rescue
-        say_status :error, destination, :red
+        say_status :error, output_file, :red
+        puts $!
         abort
       end
     end
@@ -209,6 +209,8 @@ module Middleman::Cli
       # Sort paths to be built by the above order. This is primarily so Compass can
       # find files in the build folder when it needs to generate sprites for the
       # css files
+
+      # TODO: deal with pages, not paths
       paths = @app.sitemap.all_paths.sort do |a, b|
         a_ext = File.extname(a)
         b_ext = File.extname(b)
@@ -221,21 +223,15 @@ module Middleman::Cli
 
       # Loop over all the paths and build them.
       paths.each do |path|
-        file_source = path
-        file_destination = File.join(given_destination, file_source.gsub(source, '.'))
-        file_destination.gsub!('/./', '/')
+        page = @app.sitemap.page(path)
 
-        if @app.sitemap.proxied?(file_source)
-          file_source = @app.sitemap.page(file_source).proxied_to
-        elsif @app.sitemap.page(file_source).ignored?
-          next
-        end
-        
-        next if @config[:glob] && !File.fnmatch(@config[:glob], file_source)
+        next if page.ignored?
+        next if @config[:glob] && !File.fnmatch(@config[:glob], path)
 
-        file_destination = base.tilt_template(file_source, file_destination)
+        base.tilt_template(page)
 
-        @cleaning_queue.delete(Pathname.new(file_destination).realpath) if cleaning?
+        output_path = File.join(@destination, page.destination_path)
+        @cleaning_queue.delete(Pathname.new(output_path).realpath) if cleaning?
       end
     end
   end

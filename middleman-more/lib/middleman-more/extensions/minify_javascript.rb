@@ -73,5 +73,5 @@ module Middleman::Extensions
   end
   
   # Register extension
-  register :minify_javascript, MinifyJavascript
+  # register :minify_javascript, MinifyJavascript
 end

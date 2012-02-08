@@ -33,17 +33,16 @@ end
 # Default command is server
 ARGV.unshift("server") if ARGV.length < 1 || ARGV.first.include?("-")
 
-# Require Middleman
-require 'middleman-core'
-
 begin
-  # Rubygems
-  require "middleman-more"
+  # Local
+  require File.expand_path(File.join(File.dirname(File.dirname(libdir)), "middleman-more", "lib", "middleman-more"))
 rescue LoadError
   begin
-    # Local
-    require File.expand_path(File.join(File.dirname(File.dirname(libdir)), "middleman-more", "lib", "middleman-more"))
+    # Rubygems
+    require "middleman-more"
   rescue LoadError
+    # Require Middleman
+    require 'middleman-core'
   end
 end
 

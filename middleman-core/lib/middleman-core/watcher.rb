@@ -40,6 +40,7 @@ module Middleman
         $LOAD_PATH << File.expand_path('../../middleman-core/vendor/linux/lib', __FILE__)
       end
       
+      register_signal_handlers
       start
     end
     
@@ -63,7 +64,9 @@ module Middleman
         bootup
       else
         @server_job = fork {
-          Signal.trap(::Middleman::WINDOWS ? :KILL : :TERM) { exit! }
+          trap("INT")  { exit(0) }
+          trap("TERM") { exit(0) }
+          trap("QUIT") { exit(0) }
           bootup
         }
       end
@@ -95,8 +98,8 @@ module Middleman
       puts "== The Middleman is shutting down"
       if !@options[:"disable-watcher"]
         Process.kill(::Middleman::WINDOWS ? :KILL : :TERM, @server_job)
-        Process.wait @server_job
-        @server_job = nil
+        # Process.wait @server_job
+        # @server_job = nil
       end
     end
     
@@ -134,6 +137,13 @@ module Middleman
     end
     
   private
+    # Trap the interupt signal and shut down FSSM (and thus the server) smoothly
+    def register_signal_handlers
+      trap("INT")  { stop; exit(0) }
+      trap("TERM") { stop; exit(0) }
+      trap("QUIT") { stop; exit(0) }
+    end
+  
     # Whether the passed files are config.rb, lib/*.rb or helpers
     # @param [Array<String>] paths Array of paths to check
     # @return [Boolean] Whether the server needs to reload
@@ -151,10 +161,4 @@ module Middleman
       Net::HTTP.post_form(uri, {}.merge(params))
     end
   end
-end
-
-# Trap the interupt signal and shut down FSSM (and thus the server) smoothly
-trap(::Middleman::Watcher.kill_command) do
-  ::Middleman::Watcher.singleton.stop
-  exit(0)
 end

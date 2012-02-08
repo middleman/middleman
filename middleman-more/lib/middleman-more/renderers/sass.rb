@@ -1,7 +1,10 @@
 # Pull in gems
-require "sass"
 require "sprockets"
 require "sprockets-sass"
+require "sass"
+
+# Stick with Compass' asset functions
+Sprockets::Sass.add_sass_functions = false
 
 # Sass renderer
 module Middleman::Renderers::Sass

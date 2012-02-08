@@ -97,17 +97,17 @@ module Middleman::CoreExtensions::Extensions
     # @param [Symbol, Module] ext Which extension to activate
     # @return [void]
     def activate(ext, options={}, &block)
-      if !ext.is_a?(Module)
-        ext = ::Middleman::Extensions.load(ext.to_sym)
+      ext_module = if ext.is_a?(Module)
+        ext
+      else
+        ::Middleman::Extensions.load(ext.to_sym)
       end
       
-      if ext.nil?
+      if ext_module.nil?
         puts "== Unknown Extension: #{ext}"
-      elsif ext.is_a?(String)
-        puts ext
       else
         puts "== Activating: #{ext}" if logging?
-        self.class.register(ext, options, &block)
+        self.class.register(ext_module, options, &block)
       end
     end
     

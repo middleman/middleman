@@ -16,39 +16,16 @@ module Middleman::CoreExtensions::Compass
 
       app.after_configuration do
         ::Compass.configuration do |config|
-          config.project_path    = root
+          config.project_path    = source_dir
           config.environment     = :development
           config.cache_path      = File.join(root, ".sass-cache")
-          config.sass_dir        = File.join(source, css_dir)
-          config.css_dir         = File.join(source, css_dir)
-          config.javascripts_dir = File.join(source, js_dir)
-          config.fonts_dir       = File.join(source, fonts_dir)
-          config.images_dir      = File.join(source, images_dir)
-          
-          config.http_images_path = if respond_to? :http_images_path
-            http_images_path
-          else
-            File.join(http_prefix, images_dir)
-          end
-          
-          config.http_stylesheets_path = if respond_to? :http_css_path
-            http_css_path
-          else
-            File.join(http_prefix, css_dir)
-          end
-          
-          config.http_javascripts_path = if respond_to? :http_js_path
-            http_js_path
-          else
-            File.join(http_prefix, js_dir)
-          end
+          config.sass_dir        = css_dir
+          config.css_dir         = css_dir
+          config.javascripts_dir = js_dir
+          config.fonts_dir       = fonts_dir
+          config.images_dir      = images_dir
+          config.http_path       = http_prefix
 
-          config.http_fonts_path = if respond_to? :http_fonts_path
-            http_fonts_path
-          else
-            File.join(http_prefix, fonts_dir)
-          end
-          
           config.asset_cache_buster :none
           config.output_style = :nested
 
@@ -57,15 +34,11 @@ module Middleman::CoreExtensions::Compass
           end
         end
         
-        # Change paths when in build mode. Required for relative paths
-        configure :build do
-          ::Compass.configuration do |config|
-            config.environment = :production
-            config.css_dir    = File.join(build_dir, css_dir)
-            config.images_dir = File.join(build_dir, images_dir)
-            config.fonts_dir  = File.join(build_dir, fonts_dir)
-          end
-        end
+        # if build?
+        #   ::Compass.configuration do |config|
+        #     config.environment  = :production
+        #   end
+        # end
         
         run_hook :compass_config, ::Compass.configuration
         run_hook :after_compass_config
