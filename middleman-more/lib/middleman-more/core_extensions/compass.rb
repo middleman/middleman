@@ -34,11 +34,12 @@ module Middleman::CoreExtensions::Compass
           end
         end
         
-        # if build?
-        #   ::Compass.configuration do |config|
-        #     config.environment  = :production
-        #   end
-        # end
+        if build?
+          ::Compass.configuration do |config|
+            config.environment  = :production
+            config.project_path = File.join(root, build_dir)
+          end
+        end
         
         run_hook :compass_config, ::Compass.configuration
         run_hook :after_compass_config
