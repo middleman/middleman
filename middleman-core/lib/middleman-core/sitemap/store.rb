@@ -24,6 +24,12 @@ module Middleman::Sitemap
       @reroute_callbacks   = []
     end
     
+    # A list of all pages
+    # @return [Array<Middleman::Sitemap::Page>]
+    def pages
+      @pages.values
+    end
+
     # Check to see if we know about a specific path
     # @param [String] path
     # @return [Boolean]
@@ -82,22 +88,7 @@ module Middleman::Sitemap
     def page_by_destination(destination_path)
       # TODO: memoize this
       destination_path = normalize_path(destination_path)
-      @pages.values.find {|p| p.destination_path == destination_path }
-    end
-    
-    # Loop over known pages
-    # @yield [path, page]
-    # @return [void]
-    def each
-      @pages.each do |k, v|
-        yield k, v
-      end
-    end
-
-    # Get all known paths
-    # @return [Array<String>]
-    def all_paths
-      @pages.keys
+      pages.find {|p| p.destination_path == destination_path }
     end
     
     # Whether a path is ignored
@@ -119,7 +110,7 @@ module Middleman::Sitemap
     # Get a list of ignored paths
     # @return [Array<String>]
     def ignored_paths
-      @pages.values.select(&:ignored?).map(&:path)
+      pages.select(&:ignored?).map(&:path)
     end
     
     # Whether the given path is generic
@@ -133,7 +124,7 @@ module Middleman::Sitemap
     # @return [Array<String>]
     def generic_paths
       app.cache.fetch :generic_paths do
-        @pages.values.select(&:generic?).map(&:path)
+        pages.select(&:generic?).map(&:path)
       end
     end
     
@@ -148,7 +139,7 @@ module Middleman::Sitemap
     # @return [Array<String>]
     def proxied_paths
       app.cache.fetch :proxied_paths do
-        @pages.values.select(&:proxy?).map(&:path)
+        pages.select(&:proxy?).map(&:path)
       end
     end
     
