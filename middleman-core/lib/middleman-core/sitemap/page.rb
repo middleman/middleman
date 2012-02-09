@@ -192,8 +192,9 @@ module Middleman::Sitemap
     # This path can be affected by proxy callbacks.
     # @return [String]
     def destination_path
-      # TODO: memoize this value
-      store.reroute_callbacks.inject(self.path) do |destination, callback|
+      # memoizing this means that reroute callbacks should be in place before the sitemap
+      # gets built
+      @destination_path ||= store.reroute_callbacks.inject(self.path) do |destination, callback|
         callback.call(destination, self)
       end
     end
