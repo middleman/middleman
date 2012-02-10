@@ -197,10 +197,11 @@ module Middleman::Cli
       # Sort order, images, fonts, js/css and finally everything else.
       sort_order = %w(.png .jpeg .jpg .gif .bmp .svg .svgz .ico .woff .otf .ttf .eot .js .css)
       
-      @app.sitemap.all_paths.select do |p|
-        File.extname(p) == ".css"
+      # Pre-request CSS to give Compass a chance to build sprites
+      @app.sitemap.pages.select do |p|
+        p.ext == ".css"
       end.each do |p|
-        Middleman::Cli::Build.shared_rack.get("/" + p.gsub(/\s/, "%20"))
+        Middleman::Cli::Build.shared_rack.get(p.request_path.gsub(/\s/, "%20"))
       end
       
       # Double-check for compass sprites
@@ -210,23 +211,17 @@ module Middleman::Cli
       # find files in the build folder when it needs to generate sprites for the
       # css files
 
-      # TODO: deal with pages, not paths
-      paths = @app.sitemap.all_paths.sort do |a, b|
-        a_ext = File.extname(a)
-        b_ext = File.extname(b)
-
-        a_idx = sort_order.index(a_ext) || 100
-        b_idx = sort_order.index(b_ext) || 100
+      pages = @app.sitemap.pages.sort do |a, b|
+        a_idx = sort_order.index(a.ext) || 100
+        b_idx = sort_order.index(b.ext) || 100
 
         a_idx <=> b_idx
       end
 
       # Loop over all the paths and build them.
-      paths.each do |path|
-        page = @app.sitemap.page(path)
-
+      pages.each do |page|
         next if page.ignored?
-        next if @config[:glob] && !File.fnmatch(@config[:glob], path)
+        next if @config[:glob] && !File.fnmatch(@config[:glob], page.path)
 
         base.tilt_template(page)
 

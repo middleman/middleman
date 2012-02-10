@@ -13,18 +13,6 @@ module Middleman::CoreExtensions::Sprockets
       app.set :js_compressor, false
       app.set :css_compressor, false
       
-      # Cut off every extension after .js (which sprockets eats up)
-      app.build_reroute do |destination, request_path|
-        if !request_path.match(/\.js\./i)
-          false
-        else
-          [
-            destination.gsub(/\.js(\..*)$/, ".js"),
-            request_path.gsub(/\.js(\..*)$/, ".js")
-          ]
-        end
-      end
-      
       # Once Middleman is setup
       app.ready do
         # Create sprockets env for JS
