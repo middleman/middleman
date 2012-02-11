@@ -28,6 +28,7 @@ module Middleman::Extensions
       def initialize(app, options={})
         @rack_app      = app
         @exts           = options[:exts]
+        @exts_regex_text = @exts.map {|e| Regexp.escape(e) }.join('|')
         @middleman_app = options[:middleman_app]
       end
 
@@ -35,6 +36,7 @@ module Middleman::Extensions
         status, headers, response = @rack_app.call(env)
 
         path = env["PATH_INFO"]
+        dirpath = Pathname.new(File.dirname(path))
 
         if path =~ /(^\/$)|(\.(htm|html|php|css|js)$)/
           asset_pages = @middleman_app.sitemap.pages.select {|p| @exts.include? p.ext }
@@ -51,11 +53,21 @@ module Middleman::Extensions
           end
           
           if body
-            asset_pages.each do |asset_page| 
-              # TODO: This will have to be smarter to handle relative_assets
-              # TODO: This regex will change some paths in plan HTML (not in a tag) - is that OK?
-              # TODO: The part of the regex that handles relative paths sucks
-              body = body.gsub(/(=|'|"|\()\s?(\/|(?:\.\.\/)+)?#{Regexp.escape(asset_page.path)}\s?(\s|'|"|\))/, '\1\2'+ asset_page.destination_path + '\3')
+            # TODO: This regex will change some paths in plan HTML (not in a tag) - is that OK?
+            body.gsub! /([=\'\"\(]\s*)([^\s\'\"\)]+(#{@exts_regex_text}))/ do |match|
+              asset_path = $2
+              relative_path = Pathname.new(asset_path).relative?
+              asset_path = dirpath.join(asset_path).to_s if relative_path
+
+              if @middleman_app.sitemap.exists? asset_path
+                asset_page = @middleman_app.sitemap.page asset_path
+                replacement_path = "/#{asset_page.destination_path}"
+                replacement_path = Pathname.new(replacement_path).relative_path_from(dirpath).to_s if relative_path
+
+                "#{$1}#{replacement_path}"
+              else
+                match
+              end
             end
 
             status, headers, response = Rack::Response.new(body, status, headers).finish
