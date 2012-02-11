@@ -39,8 +39,6 @@ module Middleman::Extensions
         dirpath = Pathname.new(File.dirname(path))
 
         if path =~ /(^\/$)|(\.(htm|html|php|css|js)$)/
-          asset_pages = @middleman_app.sitemap.pages.select {|p| @exts.include? p.ext }
-
           body = case(response)
             when String
               response
