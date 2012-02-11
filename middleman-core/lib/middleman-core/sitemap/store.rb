@@ -107,42 +107,6 @@ module Middleman::Sitemap
       false
     end
     
-    # Get a list of ignored paths
-    # @return [Array<String>]
-    def ignored_paths
-      pages.select(&:ignored?).map(&:path)
-    end
-    
-    # Whether the given path is generic
-    # @param [String] path
-    # @return [Boolean]
-    def generic?(path)
-      generic_paths.include?(normalize_path(path))
-    end
-    
-    # Get a list of generic paths
-    # @return [Array<String>]
-    def generic_paths
-      app.cache.fetch :generic_paths do
-        pages.select(&:generic?).map(&:path)
-      end
-    end
-    
-    # Whether the given path is proxied
-    # @param [String] path
-    # @return [Boolean]
-    def proxied?(path)
-      proxied_paths.include?(normalize_path(path))
-    end
-    
-    # Get a list of proxied paths
-    # @return [Array<String>]
-    def proxied_paths
-      app.cache.fetch :proxied_paths do
-        pages.select(&:proxy?).map(&:path)
-      end
-    end
-    
     # Remove a file from the store
     # @param [String] file
     # @return [void]
