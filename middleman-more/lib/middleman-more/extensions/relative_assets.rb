@@ -17,6 +17,7 @@ module Middleman::Extensions
         # Include instance methods
         app.send :include, InstanceMethods
       end
+      
       alias :included :registered
     end
   
@@ -58,5 +59,5 @@ module Middleman::Extensions
   end
   
   # Register extension
-  register :relative_assets, RelativeAssets
+  # register :relative_assets, RelativeAssets
 end

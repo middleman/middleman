@@ -48,7 +48,7 @@ A full set of in-depth instructional guides are available on the official websit
 
   http://middlemanapp.com/
 
-The community maintains it's own collection of tips and tricks in the GitHub wiki:
+The community maintains its own collection of tips and tricks in the GitHub wiki:
 
   https://github.com/middleman/middleman/wiki
 

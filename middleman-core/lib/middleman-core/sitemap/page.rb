@@ -6,6 +6,8 @@ module Middleman::Sitemap
     # @return [Middleman::Sitemap::Store]
     attr_accessor :store
     
+    # The source path of this page (relative to the source directory,
+    # without template extensions)
     # @return [String]
     attr_accessor :path
     
@@ -41,9 +43,9 @@ module Middleman::Sitemap
     # @return [String]
     def request_path
       if proxy?
-        store.page(proxied_to).path
+        store.page(proxied_to).destination_path
       else
-        path
+        destination_path
       end
     end
     
@@ -70,7 +72,7 @@ module Middleman::Sitemap
       @_template ||= ::Middleman::Sitemap::Template.new(self)
     end
     
-    # Extension of the path
+    # Extension of the path (i.e. '.js')
     # @return [String]
     def ext
       File.extname(path)
@@ -185,6 +187,17 @@ module Middleman::Sitemap
     def relative_path
       self.source_file ? self.source_file.sub(app.source_dir, '') : nil
     end
+
+    # Get the destination path, relative to the build directory.
+    # This path can be affected by proxy callbacks.
+    # @return [String]
+    def destination_path
+      # memoizing this means that reroute callbacks should be in place before the sitemap
+      # gets built
+      @destination_path ||= store.reroute_callbacks.inject(self.path) do |destination, callback|
+        callback.call(destination, self)
+      end
+    end
     
     # This page's frontmatter
     # @return [Hash, nil]
@@ -223,29 +236,27 @@ module Middleman::Sitemap
 
       if eponymous_directory?
         base_path = eponymous_directory_path
-        prefix    = /^#{base_path.sub("/", "\\/")}/
+        prefix    = %r|^#{base_path.sub("/", "\\/")}|
       else
         base_path = path.sub("#{app.index_file}", "")
-        prefix    = /^#{base_path.sub("/", "\\/")}/
+        prefix    = %r|^#{base_path.sub("/", "\\/")}|
       end
             
-      store.all_paths.select do |sub_path|
-        sub_path =~ prefix
-      end.select do |sub_path|
-        path != sub_path
-      end.select do |sub_path|
-       inner_path = sub_path.sub(prefix, "")
-       parts = inner_path.split("/")
-       if parts.length == 1
-         true
-       elsif parts.length == 2
-         parts.last == app.index_file
-       else
-         false
-       end
-      end.map do |p| 
-        store.page(p)
-      end.reject { |p| p.ignored? }
+      store.pages.select do |sub_page|
+        if sub_page == self || sub_page.path !~ prefix || sub_page.ignored?
+          false
+        else
+          inner_path = sub_page.path.sub(prefix, "")
+          parts = inner_path.split("/")
+          if parts.length == 1
+            true
+          elsif parts.length == 2
+            parts.last == app.index_file
+          else
+            false
+          end
+        end
+      end
     end
     
     # This page's sibling pages
