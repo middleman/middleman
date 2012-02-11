@@ -18,6 +18,8 @@ end
 # Simple callback library
 require "middleman-core/vendor/hooks-0.2.0/lib/hooks"
 
+require "middleman-core/version"
+
 # Top-level Middleman object
 module Middleman
   WINDOWS = !!(RUBY_PLATFORM =~ /(mingw|bccwin|wince|mswin32)/i) unless const_defined?(:WINDOWS)
