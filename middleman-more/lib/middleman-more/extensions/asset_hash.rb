@@ -2,9 +2,23 @@ require 'digest/sha1'
 module Middleman::Extensions
   module AssetHash
     class << self
-      def registered(app)
+      def registered(app, options)
+        exts = options[:exts] || %w(.ico .manifest .jpg .jpeg .png .gif .js .css)
+
         app.after_configuration do
-          use Middleware, :ext => %w(ico manifest jpg png), :middleman_app => self
+          # Register a reroute transform that adds .gz to asset paths
+          sitemap.reroute do |destination, page|
+            if exts.include? page.ext
+              app.cache.fetch(:asset_hash, page.path) do
+                digest    = Digest::SHA1.file(page.source_file).hexdigest[0..7]
+                destination.sub(/\.(\w+)$/) { |ext| "-#{digest}#{ext}" }
+              end
+            else
+              destination
+            end
+          end
+
+          use Middleware, :exts => exts, :middleman_app => self
         end
       end
       alias :included :registered
@@ -13,59 +27,41 @@ module Middleman::Extensions
     class Middleware
       def initialize(app, options={})
         @rack_app      = app
-        @ext           = options[:ext]
-        @ext_pattern   = /\.(#{@ext.join('|')})$/
+        @exts           = options[:exts]
         @middleman_app = options[:middleman_app]
       end
 
       def call(env)
         status, headers, response = @rack_app.call(env)
 
-        if env["PATH_INFO"] =~ /(^\/$)|(\.(htm|html|php|css|js)$)/
-          puts '== AssetHash env["PATH_INFO"]: ' + env["PATH_INFO"]
-          asset_paths = @middleman_app.sitemap.generic_paths.select {|p| p =~ @ext_pattern}
+        path = env["PATH_INFO"]
 
-          if response.body.is_a?(Array)
-            body = response.body.join
-          else
-            body = response.body
+        if path =~ /(^\/$)|(\.(htm|html|php|css|js)$)/
+          asset_pages = @middleman_app.sitemap.pages.select {|p| @exts.include? p.ext }
+
+          body = case(response)
+            when String
+              response
+            when Array
+              response.join
+            when Rack::Response
+              response.body.join
+            when Rack::File
+              File.read(response.path)
           end
           
-          asset_paths.each do |asset_path| 
-            puts "== AssetHash asset_path: " + asset_path
-            hashed_asset_path = get_hashed_asset_path(asset_path)
-            puts "== AssetHash hashed_asset_path: " + hashed_asset_path
-          
-            body = body.gsub(/(=|'|"|\()\s?(\/|(?:\.\.\/)+)?#{asset_path}\s?(\s|'|"|\))/, '\1\2' + hashed_asset_path + '\3')
+          if body
+            asset_pages.each do |asset_page| 
+              # TODO: This will have to be smarter to handle relative_assets
+              # TODO: This regex will change some paths in plan HTML (not in a tag) - is that OK?
+              # TODO: The part of the regex that handles relative paths sucks
+              body = body.gsub(/(=|'|"|\()\s?(\/|(?:\.\.\/)+)?#{Regexp.escape(asset_page.path)}\s?(\s|'|"|\))/, '\1\2'+ asset_page.destination_path + '\3')
+            end
+
+            status, headers, response = Rack::Response.new(body, status, headers).finish
           end
-          status, headers, response = Rack::Response.new(body, status, headers).finish
         end
         [status, headers, response]
-      end
-            
-      def get_hashed_asset_path(asset_path)
-        @middleman_app.cache.fetch(:asset_hash, asset_path) do
-          puts "== AssetHash Cache Miss: " + asset_path
-
-          hashed_asset_path = digest_asset(asset_path)
-
-          @middleman_app.reroute(hashed_asset_path, asset_path)
-          @middleman_app.ignore(asset_path) # BUG => This file is still getting built even though it's sitemap status is ignored.
-
-          # TODO => Add file_changed and file_deleted callbacks to add-to/clean-up the cache.
-          hashed_asset_path
-        end
-      end
-      
-      def digest_asset(path, digest_length = 8)
-        full_path = File.join(@middleman_app.source_dir, path)
-        digest    = Digest::SHA1.file(full_path).hexdigest[0..(digest_length - 1)]
-        path.sub(/\.(\w+)$/) { |ext| "-#{digest}#{ext}" }
-      end
-
-      # TODO => Remove this developer convenience method
-      def mma
-        @middleman_app
       end
     end
   end

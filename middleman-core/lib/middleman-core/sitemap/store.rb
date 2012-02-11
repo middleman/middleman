@@ -122,7 +122,7 @@ module Middleman::Sitemap
     
     # Get a list of generic paths
     # @return [Array<String>]
-    def generic_paths
+    def generic_pages
       app.cache.fetch :generic_paths do
         pages.select(&:generic?).map(&:path)
       end
