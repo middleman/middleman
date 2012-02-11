@@ -40,6 +40,9 @@ module Middleman
 
     # MinifyJavascript uses the YUI compressor to shrink JS files
     autoload :MinifyJavascript,    "middleman-more/extensions/minify_javascript"
+
+    # GZIP assets during build
+    autoload :GzipAssets,    "middleman-more/extensions/gzip_assets"
   end
   
   # Setup renderers
@@ -65,4 +68,6 @@ module Middleman
     ::Middleman::Extensions::MinifyJavascript }
   Extensions.register(:relative_assets) {
     ::Middleman::Extensions::RelativeAssets }
+  Extensions.register(:gzip_assets) {
+    ::Middleman::Extensions::GzipAssets }
 end
