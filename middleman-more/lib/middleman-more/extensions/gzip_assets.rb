@@ -7,22 +7,31 @@ module Middleman::Extensions
   # Gzipped assets can be served directly by Apache or
   # Nginx with the proper configuration, and pre-zipping means that we
   # can use a more agressive compression level at no CPU cost per request.
+  #
+  # Use Nginx's gzip_static directive, or AddEncoding and mod_rewrite in Apache
+  # to serve your Gzipped files whenever the normal (non-.gz) filename is requested.
+  #
+  # Pass the :exts options to customize which file extensions get zipped (defaults
+  # to .js and .css.
+  #
   module GzipAssets
     class << self
-      def registered(app)
+      def registered(app, options={})
+        exts = options[:exts] || %w(.js .css)
+        
         return unless app.inst.build?
 
         app.after_configuration do
           # Register a reroute transform that adds .gz to asset paths
           sitemap.reroute do |destination, page|
-            if %w(.js .css).include? page.ext
+            if exts.include? page.ext
               destination + '.gz'
             else
               destination
             end
           end
 
-          use GzipRack
+          use GzipRack, :exts => exts
         end
       end
       alias :included :registered
@@ -36,6 +45,8 @@ module Middleman::Extensions
       # @param [Hash] options
       def initialize(app, options={})
         @app = app
+        @exts = options[:exts]
+        @exts_regex = @exts.map {|e| Regexp.escape(e) }.join('|')
       end
 
       # Rack interface
@@ -44,7 +55,7 @@ module Middleman::Extensions
       def call(env)
         status, headers, response = @app.call(env)
 
-        if env["PATH_INFO"].match(/\.(js|css).gz$/)
+        if env["PATH_INFO"].match(/(#{@exts_regex}).gz$/)
           contents = case(response)
             when String
               response
