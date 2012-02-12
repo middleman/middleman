@@ -88,7 +88,10 @@ module Middleman::Sitemap
     def page_by_destination(destination_path)
       # TODO: memoize this
       destination_path = normalize_path(destination_path)
-      pages.find {|p| p.destination_path == destination_path }
+      pages.find do |p|
+        p.destination_path == destination_path ||
+        p.destination_path == destination_path.sub("/#{@app.index_file}", "")
+      end
     end
     
     # Whether a path is ignored
