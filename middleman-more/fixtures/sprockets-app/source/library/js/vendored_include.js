@@ -1,0 +1,1 @@
+//= require "vendored_js"
