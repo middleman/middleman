@@ -6,7 +6,7 @@ group :development do
   gem "rake",     "~> 0.9.2"
   gem "rspec",    "~> 2.7"
   gem "rdoc",     "~> 3.9"
-  gem "yard"
+  # gem "yard"
 end
   
 group :test do
@@ -15,8 +15,9 @@ group :test do
   gem "slim"
   gem "coffee-filter", "~> 0.1.1"
   gem "liquid", "~> 2.2"
-  gem "jquery-rails"
-  gem "bootstrap-rails", "0.0.5"
+  gem "jquery-rails", "~> 2.0.0"
+  # gem "bootstrap-rails", "0.0.5"
+  # gem "zurb-foundation"
 end
 
 gem "middleman-core", :path => "middleman-core"

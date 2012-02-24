@@ -1,7 +1,7 @@
 require 'rubygems' unless defined?(Gem)
 require 'rake'
 require 'cucumber/rake/task'
-require 'yard'
+# require 'yard'
 
 require 'bundler'
 Bundler::GemHelper.install_tasks :name => GEM_NAME
@@ -20,6 +20,6 @@ Cucumber::Rake::Task.new(:test, 'Run features that should pass') do |t|
   t.cucumber_opts = "--color --tags ~@wip --strict --format #{ENV['CUCUMBER_FORMAT'] || 'pretty'}"
 end
 
-YARD::Rake::YardocTask.new
+# YARD::Rake::YardocTask.new
 
 task :default => :test
