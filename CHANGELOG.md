@@ -25,6 +25,7 @@
 * Serve purely static folders directly (without source/ and config.rb)
 * Set ignored files and disable directory_indexes from YAML frontmatter
 * Automatically load helper modules in helpers/ directory
+* Add pid for cleanup
 
 2.0.14
 ====

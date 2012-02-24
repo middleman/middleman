@@ -1,7 +1,7 @@
 require 'rubygems'  unless defined?(Gem)
 # require 'fileutils' unless defined?(FileUtils)
 require 'rake'
-require 'yard'
+# require 'yard'
 
 require File.expand_path("../middleman-core/lib/middleman-core/version.rb", __FILE__)
 
@@ -84,7 +84,7 @@ end
 desc "Run tests for all middleman gems"
 task :default => :test
 
-desc "Generate documentation"
-task :doc do
-  YARD::CLI::Yardoc.new.run
-end
+# desc "Generate documentation"
+# task :doc do
+#   YARD::CLI::Yardoc.new.run
+# end
