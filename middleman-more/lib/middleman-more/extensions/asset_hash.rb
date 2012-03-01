@@ -35,7 +35,7 @@ module Middleman::Extensions
       def call(env)
         status, headers, response = @rack_app.call(env)
 
-        path = env["PATH_INFO"]
+        path = @middleman_app.full_path(env["PATH_INFO"])
         dirpath = Pathname.new(File.dirname(path))
 
         if path =~ /(^\/$)|(\.(htm|html|php|css|js)$)/
@@ -48,13 +48,16 @@ module Middleman::Extensions
               response.body.join
             when Rack::File
               File.read(response.path)
+            else
+              response.to_s
           end
-          
+
           if body
             # TODO: This regex will change some paths in plan HTML (not in a tag) - is that OK?
             body.gsub! /([=\'\"\(]\s*)([^\s\'\"\)]+(#{@exts_regex_text}))/ do |match|
               asset_path = $2
               relative_path = Pathname.new(asset_path).relative?
+
               asset_path = dirpath.join(asset_path).to_s if relative_path
 
               if @middleman_app.sitemap.exists? asset_path

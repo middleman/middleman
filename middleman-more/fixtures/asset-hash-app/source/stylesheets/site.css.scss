@@ -16,8 +16,6 @@ $col-width: 4em;
 $gutter-width: 1em;
 $side-gutter-width: $gutter-width;
 
-@include global-reset;
-
 body {
   font-family: $font-family;
   color: $font-color; 
@@ -29,4 +27,5 @@ a {
 
 #main {
   padding: 50px;
+  background-image: image-url('100px.jpg');
 }

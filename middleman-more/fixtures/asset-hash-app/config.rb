@@ -1,5 +1,8 @@
 
+activate :asset_hash
 
-# TODO => Update the activate function to pass config data to extensions
-activate :asset_hash#, :ext => %w(ico manifest jpg png)
+activate :relative_assets
 
+activate :directory_indexes
+
+page 'index.html', :directory_index => false
