@@ -81,3 +81,7 @@ Feature: Sass Updates and Partials
     When I go to "/stylesheets/main2.css"
       Then I should see "color: blue;"
     Then I should see "font-size: 18px"
+
+  Scenario: Sass partials should work when building
+    Given a successfully built app at "preview-app"
+    Then the file "build/stylesheets/main.css" should contain "font-size: 18px"
