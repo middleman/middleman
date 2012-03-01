@@ -17,7 +17,6 @@ Feature: Builder
     Then the following files should not exist:
       | _partial                                      |
       | layout                                        |
-      | other_layout                                  |
       | layouts/custom                                |
       | layouts/content_for                           |
       

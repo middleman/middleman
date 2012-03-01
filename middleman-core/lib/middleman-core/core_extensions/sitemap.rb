@@ -19,8 +19,12 @@ module Middleman::CoreExtensions::Sitemap
         # Files starting with an underscore, but not a double-underscore
         :partials => proc { |file, path| (file.match(/\/_/) && !file.match(/\/__/)) },
         
+        :layout => proc { |file, path| 
+          file.match(/^source\/layout\./) || file.match(/^source\/layouts\//)
+        },
+        
         # Files without any output extension (layouts, partials)
-        :extensionless => proc { |file, path| !path.match(/\./) },
+        # :extensionless => proc { |file, path| !path.match(/\./) },
       }
       
       # Include instance methods

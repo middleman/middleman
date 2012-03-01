@@ -57,9 +57,9 @@ http://rubydoc.info/github/middleman/middleman
 
 # Community
 
-The official community forum is available on Convore at:
+The official community forum is available at:
 
-  https://convore.com/middleman/
+  http://forum.middlemanapp.com/
 
 # Bug Reports
 

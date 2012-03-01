@@ -24,6 +24,12 @@ module Middleman::Sitemap
       @reroute_callbacks   = []
     end
     
+    # A list of all pages
+    # @return [Array<Middleman::Sitemap::Page>]
+    def pages
+      @pages.values
+    end
+
     # Check to see if we know about a specific path
     # @param [String] path
     # @return [Boolean]
@@ -82,22 +88,10 @@ module Middleman::Sitemap
     def page_by_destination(destination_path)
       # TODO: memoize this
       destination_path = normalize_path(destination_path)
-      @pages.values.find {|p| p.destination_path == destination_path }
-    end
-    
-    # Loop over known pages
-    # @yield [path, page]
-    # @return [void]
-    def each
-      @pages.each do |k, v|
-        yield k, v
+      pages.find do |p|
+        p.destination_path == destination_path ||
+        p.destination_path == destination_path.sub("/#{@app.index_file}", "")
       end
-    end
-
-    # Get all known paths
-    # @return [Array<String>]
-    def all_paths
-      @pages.keys
     end
     
     # Whether a path is ignored
@@ -114,42 +108,6 @@ module Middleman::Sitemap
       # TODO: We should also check ignored_sitemap_matchers here
 
       false
-    end
-    
-    # Get a list of ignored paths
-    # @return [Array<String>]
-    def ignored_paths
-      @pages.values.select(&:ignored?).map(&:path)
-    end
-    
-    # Whether the given path is generic
-    # @param [String] path
-    # @return [Boolean]
-    def generic?(path)
-      generic_paths.include?(normalize_path(path))
-    end
-    
-    # Get a list of generic paths
-    # @return [Array<String>]
-    def generic_paths
-      app.cache.fetch :generic_paths do
-        @pages.values.select(&:generic?).map(&:path)
-      end
-    end
-    
-    # Whether the given path is proxied
-    # @param [String] path
-    # @return [Boolean]
-    def proxied?(path)
-      proxied_paths.include?(normalize_path(path))
-    end
-    
-    # Get a list of proxied paths
-    # @return [Array<String>]
-    def proxied_paths
-      app.cache.fetch :proxied_paths do
-        @pages.values.select(&:proxy?).map(&:path)
-      end
     end
     
     # Remove a file from the store

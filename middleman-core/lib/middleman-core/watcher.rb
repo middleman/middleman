@@ -3,6 +3,8 @@ require "net/http"
 
 require "win32/process" if ::Middleman::WINDOWS
 
+require "fileutils"
+
 module Middleman
   class Watcher
     class << self
@@ -63,12 +65,26 @@ module Middleman
       if @options[:"disable-watcher"]
         bootup
       else
+        pid_name = ".mm-pid-#{@options[:port]||4567}"
+        
+        if File.exists?(pid_name)
+          current_pid = File.open(pid_name, 'rb') { |f| f.read }
+          begin
+            Process.kill("INT", -current_pid.to_i)
+          rescue
+          ensure
+            FileUtils.rm(pid_name)
+          end
+        end
+        
         @server_job = fork {
           trap("INT")  { exit(0) }
           trap("TERM") { exit(0) }
           trap("QUIT") { exit(0) }
           bootup
         }
+        
+        File.open(pid_name, "w+") { |f| f.write(Process.getpgrp) }
       end
     end
     

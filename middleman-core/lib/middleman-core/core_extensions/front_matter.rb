@@ -187,6 +187,8 @@ module Middleman::CoreExtensions::FrontMatter
     def parse_front_matter(content)
       yaml_regex = /^(---\s*\n.*?\n?)^(---\s*$\n?)/m
       if content =~ yaml_regex
+        content = content[($1.size + $2.size)..-1]
+        
         begin
           data = YAML.load($1)
         rescue => e
@@ -194,7 +196,6 @@ module Middleman::CoreExtensions::FrontMatter
           return false
         end
 
-        content = content.split(yaml_regex).last
       else
         return false
       end
