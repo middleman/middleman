@@ -40,11 +40,7 @@ module Middleman::Renderers::Sass
     # Change Sass path, for url functions, to the build folder if we're building
     # @return [Hash]
     def sass_options
-      location_of_sass_file = if @context.build?
-        File.expand_path(@context.build_dir, @context.root)
-      else
-        File.expand_path(@context.source, @context.root)
-      end
+      location_of_sass_file = File.expand_path(@context.source, @context.root)
       
       parts = basename.split('.')
       parts.pop
