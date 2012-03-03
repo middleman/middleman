@@ -133,7 +133,7 @@ module Middleman
     # @return [void]
     def run_on_change(paths)
       # See if the changed file is config.rb or lib/*.rb
-      return reload if needs_to_reload?(paths)
+      #return reload if needs_to_reload?(paths)
       
       # Otherwise forward to Middleman
       paths.each do |path|
@@ -146,7 +146,7 @@ module Middleman
     # @return [void]
     def run_on_deletion(paths)
       # See if the changed file is config.rb or lib/*.rb
-      return reload if needs_to_reload?(paths)
+      #return reload if needs_to_reload?(paths)
       
       # Otherwise forward to Middleman
       paths.each do |path|
