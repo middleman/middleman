@@ -15,7 +15,7 @@ group :test do
   gem "slim"
   gem "coffee-filter", "~> 0.1.1"
   gem "liquid", "~> 2.2"
-  gem "jquery-rails", "~> 2.0.0"
+  gem "jquery-rails", "~> 2.0.1"
   # gem "bootstrap-rails", "0.0.5"
   # gem "zurb-foundation"
 end
