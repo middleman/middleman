@@ -36,13 +36,13 @@ module Middleman::Templates
     class_option :template, :default => "default"
     
     # What to call the directory which CSS will be searched for.
-    class_option :css_dir, :default => "stylesheets"
+    class_option :css_dir#, :default => "stylesheets"
     
     # What to call the directory which JS will be searched for.
-    class_option :js_dir, :default => "javascripts"
+    class_option :js_dir#, :default => "javascripts"
     
     # What to call the directory which images will be searched for.
-    class_option :images_dir, :default => "images"
+    class_option :images_dir#, :default => "images"
     
     # Output a config.ru file for Rack if --rack is passed
     class_option :rack, :type => :boolean, :default => false
