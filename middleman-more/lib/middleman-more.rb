@@ -35,6 +35,10 @@ module Middleman
     # browser caches failing to update to your new content.
     autoload :CacheBuster,         "middleman-more/extensions/cache_buster"
 
+    # AssetHash appends a hash of the file contents to the assets filename
+    # to avoid browser caches failing to update to your new content.
+    autoload :AssetHash,           "middleman-more/extensions/asset_hash"
+
     # MinifyCss uses the YUI compressor to shrink CSS files
     autoload :MinifyCss,           "middleman-more/extensions/minify_css"
 
@@ -65,4 +69,6 @@ module Middleman
     ::Middleman::Extensions::MinifyJavascript }
   Extensions.register(:relative_assets) {
     ::Middleman::Extensions::RelativeAssets }
+  Middleman::Extensions.register(:asset_hash) {
+    Middleman::Extensions::AssetHash }
 end

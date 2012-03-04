@@ -44,3 +44,8 @@ Given /^a successfully built app at "([^\"]*)" with flags "([^\"]*)"$/ do |path,
   step %Q{a built app at "#{path}" with flags "#{flags}"}
   step %Q{was successfully built}
 end
+
+# Provide this Aruba overload in case we're matching something with quotes in it
+Then /^the file "([^"]*)" should contain '([^']*)'$/ do |file, partial_content|
+  check_file_content(file, partial_content, true)
+end

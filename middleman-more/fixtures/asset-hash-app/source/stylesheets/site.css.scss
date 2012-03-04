@@ -1,0 +1,6 @@
+#main {
+  padding: 50px;
+  // Can't use image-url until compass problem is fixed: https://github.com/middleman/middleman/issues/283
+  // background-image: image-url('100px.jpg');
+  background-image: url('/images/100px.jpg');
+}
