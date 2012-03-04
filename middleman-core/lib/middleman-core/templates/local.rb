@@ -17,5 +17,12 @@ end
 # Iterate over the directories in the templates path and register each one.
 Dir[File.join(Middleman::Templates::Local.source_root, "*")].each do |dir|
   next unless File.directory?(dir)
-  Middleman::Templates.register(File.basename(dir).to_sym, Middleman::Templates::Local)
+  
+  template_file = File.join(dir, "template.rb")
+  
+  if File.exists?(template_file)
+    require template_file
+  else
+    Middleman::Templates.register(File.basename(dir).to_sym, Middleman::Templates::Local)
+  end
 end
