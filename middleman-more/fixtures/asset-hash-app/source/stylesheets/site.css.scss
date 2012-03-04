@@ -1,31 +1,6 @@
-@import "compass";
-
-$link-color:         #0388a6;
-$link-hover-color:   #009ce0;
-$link-focus-color:   false;
-$link-active-color:  false;
-$link-visited-color: false;
-
-$font-color:  #2a2a2a;
-$font-family: sans-serif;
-$base-font-size:   12px;
-$base-line-height: 18px;
-
-$total-cols: 12;
-$col-width: 4em;
-$gutter-width: 1em;
-$side-gutter-width: $gutter-width;
-
-body {
-  font-family: $font-family;
-  color: $font-color; 
-}
-
-a {
-  @include link-colors($link-color, $link-hover-color, $link-focus-color, $link-active-color, $link-visited-color);
-}
-
 #main {
   padding: 50px;
-  background-image: image-url('100px.jpg');
+  // Can't use image-url until compass problem is fixed: https://github.com/middleman/middleman/issues/283
+  // background-image: image-url('100px.jpg');
+  background-image: url('/images/100px.jpg');
 }
