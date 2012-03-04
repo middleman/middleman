@@ -15,12 +15,6 @@ module Middleman
         self.singleton.watch! unless options[:"disable-watcher"]
       end
       
-      # What command is sent to kill instances
-      # @return [Symbol, Fixnum]
-      def kill_command
-        ::Middleman::WINDOWS ? 1 : :INT
-      end
-      
       def ignore_list
         [
           /\.sass-cache/,
@@ -28,34 +22,51 @@ module Middleman
           /\.DS_Store/,
           /build/,
           /\.rbenv-version/,
-          /Gemfile/
+          /Gemfile/,
+          /\.mm-pid/
         ]
       end
     end
     
     def initialize(options)
       @options = options
-
-      if ::Middleman::DARWIN
-        $LOAD_PATH << File.expand_path('../../middleman-core/vendor/darwin/lib', __FILE__)
-      elsif ::Middleman::LINUX
-        $LOAD_PATH << File.expand_path('../../middleman-core/vendor/linux/lib', __FILE__)
-      end
       
       register_signal_handlers
       start
+    end
+    
+    # What command is sent to kill instances
+    # @return [Symbol, Fixnum]
+    def kill_command
+      ::Middleman::WINDOWS ? 1 : "TERM"
     end
     
     def watch!
       local = self
 
       # Watcher Library
-      require "fssm"
+      require "listen"
       
-      FSSM.monitor(Dir.pwd) do
-        create { |base, relative| local.run_on_change([relative]) }
-        update { |base, relative| local.run_on_change([relative]) }
-        delete { |base, relative| local.run_on_deletion([relative]) }
+      Listen.to(Dir.pwd) do |modified, added, removed|
+        local.run_on_change(modified)  if modified.length > 0
+        local.run_on_change(added)     if added.length > 0
+        local.run_on_deletion(removed) if removed.length > 0
+      end
+    end
+    
+    def pid_name
+      ".mm-pid-#{@options[:port]||4567}"
+    end
+    
+    def kill_pid!
+      if File.exists?(pid_name)
+        current_pid = File.open(pid_name, 'rb') { |f| f.read }
+        begin
+          Process.kill(kill_command, current_pid.to_i)
+        rescue
+        ensure
+          FileUtils.rm(pid_name) if File.exists?(pid_name)
+        end
       end
     end
     
@@ -65,26 +76,16 @@ module Middleman
       if @options[:"disable-watcher"]
         bootup
       else
-        pid_name = ".mm-pid-#{@options[:port]||4567}"
-        
-        if File.exists?(pid_name)
-          current_pid = File.open(pid_name, 'rb') { |f| f.read }
-          begin
-            Process.kill("INT", -current_pid.to_i)
-          rescue
-          ensure
-            FileUtils.rm(pid_name)
-          end
-        end
+        kill_pid!
         
         @server_job = fork {
-          trap("INT")  { exit(0) }
-          trap("TERM") { exit(0) }
-          trap("QUIT") { exit(0) }
+          # trap("INT")  { exit(0) }
+          # trap("TERM") { exit(0) }
+          # trap("QUIT") { exit(0) }
           bootup
         }
         
-        File.open(pid_name, "w+") { |f| f.write(Process.getpgrp) }
+        File.open(pid_name, "w+") { |f| f.write(@server_job) }
       end
     end
     
@@ -113,7 +114,8 @@ module Middleman
     def stop
       puts "== The Middleman is shutting down"
       if !@options[:"disable-watcher"]
-        Process.kill(::Middleman::WINDOWS ? :KILL : :TERM, @server_job)
+        kill_pid!
+        # Process.kill(::Middleman::WINDOWS ? :KILL : :TERM, @server_job)
         # Process.wait @server_job
         # @server_job = nil
       end
@@ -131,7 +133,7 @@ module Middleman
     # @return [void]
     def run_on_change(paths)
       # See if the changed file is config.rb or lib/*.rb
-      return reload if needs_to_reload?(paths)
+      #return reload if needs_to_reload?(paths)
       
       # Otherwise forward to Middleman
       paths.each do |path|
@@ -144,7 +146,7 @@ module Middleman
     # @return [void]
     def run_on_deletion(paths)
       # See if the changed file is config.rb or lib/*.rb
-      return reload if needs_to_reload?(paths)
+      #return reload if needs_to_reload?(paths)
       
       # Otherwise forward to Middleman
       paths.each do |path|
@@ -155,9 +157,9 @@ module Middleman
   private
     # Trap the interupt signal and shut down FSSM (and thus the server) smoothly
     def register_signal_handlers
-      trap("INT")  { stop; exit(0) }
-      trap("TERM") { stop; exit(0) }
-      trap("QUIT") { stop; exit(0) }
+      # trap("INT")  { stop; exit(0) }
+      trap("TERM") { stop }
+      # trap("QUIT") { stop; exit(0) }
     end
   
     # Whether the passed files are config.rb, lib/*.rb or helpers

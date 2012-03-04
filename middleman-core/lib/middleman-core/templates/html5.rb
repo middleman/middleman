@@ -1,11 +1,16 @@
 # HTML5 Boilerplate template
 class Middleman::Templates::Html5 < Middleman::Templates::Base
   
-  # Has different default paths
-  class_option :css_dir, :default => "css"
-  class_option :js_dir, :default => "js"
-  class_option :images_dir, :default => "img"
-
+  class_option "css_dir", 
+    :default => "css", 
+    :desc    => 'The path to the css files'
+  class_option "js_dir", 
+    :default => "js", 
+    :desc    => 'The path to the javascript files'
+  class_option "images_dir", 
+    :default => "img", 
+    :desc    => 'The path to the image files'
+    
   # Templates are relative to this file
   # @return [String]
   def self.source_root

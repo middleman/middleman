@@ -265,7 +265,10 @@ class Middleman::Base
   # @return [void]
   def current_path=(path)
     @_current_path = path
-    @request = ::Thor::CoreExt::HashWithIndifferentAccess.new({ :path => path })
+    @request = ::Thor::CoreExt::HashWithIndifferentAccess.new({ 
+      :path   => path, 
+      :params => req ? ::Thor::CoreExt::HashWithIndifferentAccess.new(req.params) : {} 
+    })
   end
   
   # Initialize the Middleman project

@@ -109,6 +109,10 @@ module Middleman
     autoload :AssetHost,           "middleman-core/extensions/asset_host"
   end
 
+  # Backwards compatibility namespace
+  module Features
+  end
+
   module Extensions
     class << self
       def registered
@@ -247,16 +251,16 @@ module Middleman
         :AccessLog => []
       }
 
-      opts[:Logger] = WEBrick::Log::new("/dev/null", 7) if !options[:logging]
+      # opts[:Logger] = WEBrick::Log::new("/dev/null", 7) if !options[:logging]
 
       app_class = options[:app] ||= ::Middleman.server.inst
       opts[:app] = app_class
 
       # Disable for Beta 1. See if people notice.
-      # require "thin"
-      # ::Thin::Logging.silent = !options[:logging]
-      # opts[:server] = 'thin'
-      opts[:server] = 'webrick'
+      require "thin"
+      ::Thin::Logging.silent = !options[:logging]
+      opts[:server] = 'thin'
+      # opts[:server] = 'webrick'
 
       server = ::Rack::Server.new(opts)
       server.start

@@ -55,6 +55,7 @@ Feature: Middleman CLI
     Then the following files should not exist:
       | config.ru                                     |
       | Gemfile                                       |
+    And the file "config.rb" should contain "set :js_dir, 'js'"
     Then a directory named "source" should exist
     When I cd to "source"
     Then the following files should exist:

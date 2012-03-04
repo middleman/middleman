@@ -1,6 +1,16 @@
 # Default Middleman template
 class Middleman::Templates::Default < Middleman::Templates::Base
   
+  class_option "css_dir", 
+    :default => "stylesheets", 
+    :desc    => 'The path to the css files'
+  class_option "js_dir", 
+    :default => "javascripts", 
+    :desc    => 'The path to the javascript files'
+  class_option "images_dir", 
+    :default => "images", 
+    :desc    => 'The path to the image files'
+    
   # Template files are relative to this file
   # @return [String]
   def self.source_root

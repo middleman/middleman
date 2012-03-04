@@ -47,22 +47,22 @@
 #   end
 # end
 
-<% if options[:css_dir] != "stylesheets" -%>
-set :css_dir, "<%= options[:css_dir] -%>"
+<% if options[:css_dir] -%>
+set :css_dir, '<%= options[:css_dir] -%>'
 <% else -%>
 # Change the CSS directory
 # set :css_dir, "alternative_css_directory"
 <% end -%>
 
-<% if options[:js_dir] != "javascripts" -%>
-set :js_dir, "<%= options[:js_dir] -%>"
+<% if options[:js_dir] -%>
+set :js_dir, '<%= options[:js_dir] -%>'
 <% else -%>
 # Change the JS directory
 # set :js_dir, "alternative_js_directory"
 <% end -%>
 
-<% if options[:images_dir] != "images" -%>
-set :images_dir, "<%= options[:images_dir] -%>"
+<% if options[:images_dir] -%>
+set :images_dir, '<%= options[:images_dir] -%>'
 <% else -%>
 # Change the images directory
 # set :images_dir, "alternative_image_directory"
