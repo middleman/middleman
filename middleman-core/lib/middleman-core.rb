@@ -109,6 +109,10 @@ module Middleman
     autoload :AssetHost,           "middleman-core/extensions/asset_host"
   end
 
+  # Backwards compatibility namespace
+  module Features
+  end
+
   module Extensions
     class << self
       def registered
