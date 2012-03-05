@@ -1,4 +1,4 @@
-require 'padrino-core/support_lite' unless defined?(SupportLite)
+require 'middleman-core/vendor/padrino-core-0.10.5/lib/padrino-core/support_lite' unless defined?(SupportLite)
 require 'cgi'
 # require 'i18n'
 require 'enumerator'
