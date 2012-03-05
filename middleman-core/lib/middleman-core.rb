@@ -235,7 +235,9 @@ module Middleman
     #
     # @return [Class]
     def server(&block)
-      Class.new(Middleman::Base)
+      @@servercounter ||= 1
+      @@servercounter += 1
+      const_set("MiddlemanBase#{@@servercounter}", Class.new(Middleman::Base))
     end
 
     # Creates a new Rack::Server
