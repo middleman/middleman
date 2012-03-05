@@ -1,0 +1,1 @@
+activate :gzip_assets
