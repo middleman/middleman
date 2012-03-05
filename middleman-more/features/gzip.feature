@@ -5,6 +5,9 @@ Feature: GZIP assets during build
     Then the following files should exist:
       | build/javascripts/test.js.gz |
       | build/stylesheets/test.css.gz |
+      | build/index.html.gz |
+      | build/javascripts/test.js |
+      | build/stylesheets/test.css |
       | build/index.html |
     When I run `file build/javascripts/test.js.gz`
     Then the output should contain "gzip"

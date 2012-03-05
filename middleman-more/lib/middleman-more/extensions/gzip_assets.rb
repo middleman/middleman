@@ -1,5 +1,6 @@
 require 'zlib'
 require 'stringio'
+require 'find'
 
 module Middleman::Extensions
   
@@ -12,73 +13,42 @@ module Middleman::Extensions
   # to serve your Gzipped files whenever the normal (non-.gz) filename is requested.
   #
   # Pass the :exts options to customize which file extensions get zipped (defaults
-  # to .js and .css.
+  # to .html, .htm, .js and .css.
   #
   module GzipAssets
     class << self
       def registered(app, options={})
-        exts = options[:exts] || %w(.js .css)
+        exts = options[:exts] || %w(.js .css .html .htm)
         
-        return unless app.inst.build?
+        app.send :include, InstanceMethods
 
-        app.after_configuration do
-          # Register a reroute transform that adds .gz to asset paths
-          sitemap.reroute do |destination, page|
-            if exts.include? page.ext
-              destination + '.gz'
-            else
-              destination
+        app.after_build do |builder|
+          Find.find(self.class.inst.build_dir) do |path|
+            next if File.directory? path
+            if exts.include? File.extname(path)
+              new_size = gzip_file(path, builder)
             end
           end
-
-          use GzipRack, :exts => exts
         end
       end
+        
       alias :included :registered
     end
 
-    # Rack middleware to GZip asset files
-    class GzipRack
-      
-      # Init
-      # @param [Class] app
-      # @param [Hash] options
-      def initialize(app, options={})
-        @app = app
-        @exts = options[:exts]
-        @exts_regex = @exts.map {|e| Regexp.escape(e) }.join('|')
-      end
-
-      # Rack interface
-      # @param [Rack::Environmemt] env
-      # @return [Array]
-      def call(env)
-        status, headers, response = @app.call(env)
-
-        if env["PATH_INFO"].match(/(#{@exts_regex}).gz$/)
-          contents = case(response)
-            when String
-              response
-            when Array
-              response.join
-            when Rack::Response
-              response.body.join
-            when Rack::File
-              File.read(response.path)
-          end
-
-          gzipped = ""
-          StringIO.open(gzipped) do |s|
-            gz = Zlib::GzipWriter.new(s, Zlib::BEST_COMPRESSION)
-            gz.write contents
-            gz.close
-          end
-
-          headers["Content-Length"] = ::Rack::Utils.bytesize(gzipped).to_s
-          response = [gzipped]
+    module InstanceMethods
+      def gzip_file(path, builder)
+        input_file = File.open(path, 'r').read
+        output_filename = path + '.gz'
+        File.open(output_filename, 'w') do |f|
+          gz = Zlib::GzipWriter.new(f, Zlib::BEST_COMPRESSION)
+          gz.write input_file
+          gz.close
         end
 
-        [status, headers, response]
+        old_size = File.size(path)
+        new_size = File.size(output_filename)
+
+        builder.say_status :gzip, "#{output_filename} (#{old_size - new_size} bytes smaller)"
       end
     end
   end
