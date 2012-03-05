@@ -22,34 +22,33 @@ Feature: Assets get a file hash appended to their and references to them are upd
     And the file "javascripts/application-1d8d5276.js" should contain "img.src = '/images/100px-5fd6fb90.jpg'"
     # TODO: This stylesheet should use the SASS "image-url" helper but can't because of https://github.com/middleman/middleman/issues/283
     And the file "stylesheets/site-92072d15.css" should contain 'background-image: url("/images/100px-5fd6fb90.jpg")'
-    And the file "index.html" should contain 'link href="stylesheets/site-92072d15.css"'
-    And the file "index.html" should contain 'script src="javascripts/application-1d8d5276.js"'
-    And the file "index.html" should contain 'img src="images/100px-5fd6fb90.jpg"'
-    And the file "subdir/index.html" should contain 'link href="../stylesheets/site-92072d15.css"'
-    And the file "subdir/index.html" should contain 'script src="../javascripts/application-1d8d5276.js"'
-    And the file "subdir/index.html" should contain 'img src="../images/100px-5fd6fb90.jpg"'
-    And the file "other/index.html" should contain 'link href="../stylesheets/site-92072d15.css"'
-    And the file "other/index.html" should contain 'script src="../javascripts/application-1d8d5276.js"'
-    And the file "other/index.html" should contain 'img src="../images/100px-5fd6fb90.jpg"'
+    And the file "index.html" should contain 'href="stylesheets/site-92072d15.css"'
+    And the file "index.html" should contain 'src="javascripts/application-1d8d5276.js"'
+    And the file "index.html" should contain 'src="images/100px-5fd6fb90.jpg"'
+    And the file "subdir/index.html" should contain 'href="../stylesheets/site-92072d15.css"'
+    And the file "subdir/index.html" should contain 'src="../javascripts/application-1d8d5276.js"'
+    And the file "subdir/index.html" should contain 'src="../images/100px-5fd6fb90.jpg"'
+    And the file "other/index.html" should contain 'href="../stylesheets/site-92072d15.css"'
+    And the file "other/index.html" should contain 'src="../javascripts/application-1d8d5276.js"'
+    And the file "other/index.html" should contain 'src="../images/100px-5fd6fb90.jpg"'
     
   Scenario: Hashed assets work in preview server
     Given the Server is running at "asset-hash-app"
     When I go to "/"
-    Then I should see 'link href="stylesheets/site-92072d15.css"'
-    And I should see 'script src="javascripts/application-1d8d5276.js"'
-    And I should see 'img src="images/100px-5fd6fb90.jpg"'
+    Then I should see 'href="stylesheets/site-92072d15.css"'
+    And I should see 'src="javascripts/application-1d8d5276.js"'
+    And I should see 'src="images/100px-5fd6fb90.jpg"'
     When I go to "/subdir/"
-    Then I should see 'link href="../stylesheets/site-92072d15.css"'
-    And I should see 'script src="../javascripts/application-1d8d5276.js"'
-    And I should see 'img src="../images/100px-5fd6fb90.jpg"'
+    Then I should see 'href="../stylesheets/site-92072d15.css"'
+    And I should see 'src="../javascripts/application-1d8d5276.js"'
+    And I should see 'src="../images/100px-5fd6fb90.jpg"'
     When I go to "/other/"
-    Then I should see 'link href="../stylesheets/site-92072d15.css"'
-    And I should see 'script src="../javascripts/application-1d8d5276.js"'
-    And I should see 'img src="../images/100px-5fd6fb90.jpg"'
+    Then I should see 'href="../stylesheets/site-92072d15.css"'
+    And I should see 'src="../javascripts/application-1d8d5276.js"'
+    And I should see 'src="../images/100px-5fd6fb90.jpg"'
     When I go to "/javascripts/application-1d8d5276.js"
     Then I should see "img.src = '/images/100px-5fd6fb90.jpg'"
     When I go to "/stylesheets/site-92072d15.css"
     Then I should see 'background-image: url("/images/100px-5fd6fb90.jpg")'
 
-  Scenario: Enabling an asset host still produces hashed files and references
-
+  # Scenario: Enabling an asset host still produces hashed files and references
