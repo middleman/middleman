@@ -106,7 +106,7 @@ module Middleman::Cli
     #
     # @param [Middleman::Sitemap::Page] page
     # @return [void]
-    def tilt_template(page)
+    def render_to_file(page)
       build_dir = self.class.shared_instance.build_dir
       output_file = File.join(self.class.shared_instance.build_dir, page.destination_path)
 
@@ -223,7 +223,7 @@ module Middleman::Cli
         next if page.ignored?
         next if @config[:glob] && !File.fnmatch(@config[:glob], page.path)
 
-        base.tilt_template(page)
+        base.render_to_file(page)
 
         output_path = File.join(@destination, page.destination_path)
         @cleaning_queue.delete(Pathname.new(output_path).realpath) if cleaning?
