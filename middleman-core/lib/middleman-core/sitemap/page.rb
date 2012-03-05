@@ -182,6 +182,13 @@ module Middleman::Sitemap
       # TODO: Seems like .html shouldn't be hardcoded here
     end
     
+    # A path without the directory index - so foo/index.html becomes
+    # just foo. Best for linking.
+    # @return [String]
+    def url
+      '/' + destination_path.sub(/#{Regexp.escape(app.index_file)}$/, '')
+    end
+
     # Get the relative path from the source
     # @return [String]
     def relative_path
