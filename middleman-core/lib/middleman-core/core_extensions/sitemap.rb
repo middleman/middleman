@@ -64,7 +64,7 @@ module Middleman::CoreExtensions::Sitemap
     # Get the page object for the current path
     # @return [Middleman::Sitemap::Page]
     def current_page
-      sitemap.page(current_path)
+      sitemap.page_by_destination(current_path)
     end
     
     # Ignore a path, regex or callback
