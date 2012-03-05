@@ -6,7 +6,6 @@ module Middleman::Extensions
         exts = options[:exts] || %w(.ico .manifest .jpg .jpeg .png .gif .js .css)
 
         app.after_configuration do
-          # Register a reroute transform that adds .gz to asset paths
           sitemap.reroute do |destination, page|
             if exts.include? page.ext
               app.cache.fetch(:asset_hash, page.path) do
