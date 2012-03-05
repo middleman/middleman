@@ -1,6 +1,3 @@
-# Require gem
-require "haml"
-  
 # Haml Renderer
 module Middleman::Renderers::Haml
   
@@ -8,13 +5,19 @@ module Middleman::Renderers::Haml
   class << self
     # Once registered
     def registered(app)
-      # Add haml helpers to context
-      app.send :include, ::Haml::Helpers
-      
-      # Setup haml helper paths
-      app.ready do
-        init_haml_helpers
-      end
+      begin
+				# Require gem
+				require "haml"
+				
+				# Add haml helpers to context
+				app.send :include, ::Haml::Helpers
+
+				# Setup haml helper paths
+				app.ready do
+					init_haml_helpers
+				end
+			rescue LoadError
+			end
     end
     alias :included :registered
   end
