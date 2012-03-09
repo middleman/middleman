@@ -36,5 +36,8 @@ Gem::Specification.new do |s|
   
   # Web Server
   s.add_dependency("thin", ["~> 1.3.1"])
+
+  # i18n, needed for Padrino helpers
+  s.add_dependency("i18n", ["~> 0.6.0"])
 end
 

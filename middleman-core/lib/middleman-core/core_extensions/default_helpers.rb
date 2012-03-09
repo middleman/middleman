@@ -1,13 +1,4 @@
-require "middleman-core/vendor/padrino-core-0.10.5/lib/padrino-core/support_lite"
-# require 'i18n'
-require 'enumerator'
-# require 'active_support/core_ext/string/conversions'  # to_date
-require 'active_support/core_ext/float/rounding'      # round
-require 'active_support/option_merger'                # with_options
-require 'active_support/core_ext/object/with_options' # with_options
-# require 'active_support/inflector'                    # humanize
-
-FileSet.glob_require('../vendor/padrino-helpers-0.10.5/lib/padrino-helpers/**/*.rb', __FILE__)
+require 'middleman-core/vendor/padrino-helpers-0.10.5/lib/padrino-helpers'
 
 # Built-in helpers
 module Middleman::CoreExtensions::DefaultHelpers
@@ -27,9 +18,10 @@ module Middleman::CoreExtensions::DefaultHelpers
       
       app.helpers Helpers
       
-      # app.ready do
-      #   ::I18n.load_path = Dir["#{File.join(root, 'locales', '*.yml')}"]
-      # end
+      app.ready do
+        ::I18n.load_path += Dir["#{File.join(root, 'locales','*.yml')}"]
+        ::I18n.load_path += Dir["#{File.dirname(__FILE__)}/../vendor/padrino-helpers-0.10.5/lib/padrino-helpers/locale/*.yml"]
+      end
     end
     alias :included :registered
   end
