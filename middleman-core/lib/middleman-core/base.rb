@@ -240,6 +240,9 @@ class Middleman::Base
   # Parse YAML from templates
   register Middleman::CoreExtensions::FrontMatter
   
+  # i18n
+  register Middleman::CoreExtensions::I18n
+  
   # Built-in Extensions
   Middleman::Extensions.register(:directory_indexes) {
     Middleman::Extensions::DirectoryIndexes }

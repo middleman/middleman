@@ -19,7 +19,6 @@ module Middleman::CoreExtensions::DefaultHelpers
       app.helpers Helpers
       
       app.ready do
-        ::I18n.load_path += Dir["#{File.join(root, 'locales','*.yml')}"]
         ::I18n.load_path += Dir["#{File.dirname(__FILE__)}/../vendor/padrino-helpers-0.10.5/lib/padrino-helpers/locale/*.yml"]
       end
     end

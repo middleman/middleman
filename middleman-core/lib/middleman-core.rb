@@ -88,6 +88,9 @@ module Middleman
 
     # Catch and show exceptions at the Rack level
     autoload :ShowExceptions, "middleman-core/core_extensions/show_exceptions"
+    
+    # i18n
+    autoload :I18n,           "middleman-core/core_extensions/i18n"
   end
 
   module Extensions
