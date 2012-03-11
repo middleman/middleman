@@ -1,0 +1,7 @@
+---
+es:
+  paths:
+    hello: "hola"
+  
+  greetings: "Como Esta?"
+  hi: "Hola"

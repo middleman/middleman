@@ -14,7 +14,7 @@ module Middleman::CoreExtensions::DefaultHelpers
       app.helpers ::Padrino::Helpers::FormatHelpers
       app.helpers ::Padrino::Helpers::RenderHelpers
       app.helpers ::Padrino::Helpers::NumberHelpers
-      app.helpers ::Padrino::Helpers::TranslationHelpers
+      # app.helpers ::Padrino::Helpers::TranslationHelpers
       
       app.helpers Helpers
       
