@@ -32,12 +32,12 @@ Gem::Specification.new do |s|
   s.add_dependency("activesupport", ["~> 3.2.0"])
   
   # Watcher
-  s.add_dependency("listen", ["~> 0.3.1"])
+  s.add_dependency("listen", ["~> 0.3.3"])
   
   # Web Server
   s.add_dependency("thin", ["~> 1.3.1"])
 
-  # i18n, needed for Padrino helpers
+  # i18n
   s.add_dependency("i18n", ["~> 0.6.0"])
 end
 
