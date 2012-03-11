@@ -27,6 +27,7 @@ module Middleman::CoreExtensions::Compass
           config.http_path       = http_prefix
 
           config.asset_cache_buster :none
+          config.relative_assets = false
           config.output_style = :nested
 
           if respond_to?(:asset_host) && asset_host.is_a?(Proc)
