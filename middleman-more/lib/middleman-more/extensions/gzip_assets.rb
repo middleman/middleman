@@ -48,7 +48,9 @@ module Middleman::Extensions
         old_size = File.size(path)
         new_size = File.size(output_filename)
 
-        builder.say_status :gzip, "#{output_filename} (#{old_size - new_size} bytes smaller)"
+        size_change_word = (old_size - new_size) > 0 ? 'smaller' : 'larger'
+
+        builder.say_status :gzip, "#{output_filename} (#{number_to_human_size((old_size - new_size).abs)} #{size_change_word})"
       end
     end
   end
