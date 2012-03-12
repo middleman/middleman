@@ -171,7 +171,8 @@ module Middleman::Sitemap
     # (e.g., if the page is named 'gallery.html' and a path exists named 'gallery/', this would return true)
     # @return [Boolean]
     def eponymous_directory?
-      !!Dir.exists?(File.join(app.source_dir, eponymous_directory_path))
+      full_path = File.join(app.source_dir, eponymous_directory_path)
+      !!(File.exists?(full_path) && File.directory?(full_path))
     end
     
     # The path for this page if it were a directory, and not a file
