@@ -42,11 +42,7 @@ module Middleman::Sitemap
     # Internal path to be requested when rendering this page
     # @return [String]
     def request_path
-      if proxy?
-        store.page(proxied_to).destination_path
-      else
-        destination_path
-      end
+      destination_path
     end
     
     # Set the on-disk source file for this page
