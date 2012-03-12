@@ -14,16 +14,16 @@ page "target_ignore3.html", :proxy => "should_be_ignored7.html", :ignore => true
 page "/target_ignore4.html", :proxy => "should_be_ignored8.html", :ignore => true
 
 %w(one two).each do |num|
-  page "/fake/#{num}.html", :proxy => "/real/index.html" do
+  page "/fake/#{num}.html", :proxy => "/real/index.html", :ignore => true do
     @num = num
   end
-  page "fake2/#{num}.html", :proxy => "/real/index.html" do
+  page "fake2/#{num}.html", :proxy => "/real/index.html", :ignore => true do
     @num = num
   end
-  page "fake3/#{num}.html", :proxy => "real/index.html" do
+  page "fake3/#{num}.html", :proxy => "real/index.html", :ignore => true do
     @num = num
   end
-  page "/fake4/#{num}.html", :proxy => "real/index.html" do
+  page "/fake4/#{num}.html", :proxy => "real/index.html", :ignore => true do
     @num = num
   end
 end
