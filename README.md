@@ -76,9 +76,9 @@ The best way to get quick responses to your issues and swift fixes to your bugs 
 
 # How to Run Cucumber Tests
 
-1. Checkout Repository: `git clone https://tdreyno@github.com/middleman/middleman.git`
+1. Checkout Repository: `git clone https://github.com/middleman/middleman.git`
 2. Install Bundler: `gem install bundler`
-3. Run `bundle` inside the project root to install the gem dependencies.
+3. Run `bundle install` inside the project root to install the gem dependencies.
 4. Run test cases: `bundle exec rake test`
 
 # Donate
