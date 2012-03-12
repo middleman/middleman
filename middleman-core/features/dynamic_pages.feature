@@ -85,6 +85,21 @@ Feature: Dynamic Pages
     Then I should see "I am real: two"
     Then I should see "Global: I am four glob"
     Then I should see "All: I am all glob"
+
+  Scenario: Build proxy with variable one
+    Given a successfully built app at "dynamic-pages-app"
+    When I cd to "build"
+    Then the file "fake/one.html" should contain "I am real: one"
+    Then the file "fake/one.html" should contain "Global: I am one glob"
+    Then the file "fake/one.html" should contain "All: I am all glob"
+
+    Then the file "fake2/one.html" should contain "I am real: one"
+    Then the file "fake2/one.html" should contain "Global: I am two glob"
+    Then the file "fake2/one.html" should contain "All: I am all glob"
+
+    Then the file "fake3/one.html" should contain "I am real: one"
+    Then the file "fake3/one.html" should contain "Global: I am three glob"
+    Then the file "fake3/one.html" should contain "All: I am all glob"
     
   Scenario: Target ignore
     Given the Server is running at "dynamic-pages-app"
