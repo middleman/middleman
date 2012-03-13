@@ -4,8 +4,8 @@ require 'find'
 
 module Middleman::Extensions
   
-  # This extension Gzips assets when building. 
-  # Gzipped assets can be served directly by Apache or
+  # This extension Gzips assets and pages when building. 
+  # Gzipped assets and pages can be served directly by Apache or
   # Nginx with the proper configuration, and pre-zipping means that we
   # can use a more agressive compression level at no CPU cost per request.
   #
@@ -15,7 +15,7 @@ module Middleman::Extensions
   # Pass the :exts options to customize which file extensions get zipped (defaults
   # to .html, .htm, .js and .css.
   #
-  module GzipAssets
+  module Gzip
     class << self
       def registered(app, options={})
         exts = options[:exts] || %w(.js .css .html .htm)
