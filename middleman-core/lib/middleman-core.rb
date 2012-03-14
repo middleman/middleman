@@ -196,12 +196,16 @@ module Middleman
     #
     # @private
     def load_extensions_in_path
-      extensions = rubygems_latest_specs.select do |spec|
-        spec_has_file?(spec, EXTENSION_FILE)
-      end
+      if defined?(Bundler)
+        Bundler.require
+      else
+        extensions = rubygems_latest_specs.select do |spec|
+          spec_has_file?(spec, EXTENSION_FILE)
+        end
 
-      extensions.each do |spec|
-        require spec.name
+        extensions.each do |spec|
+          require spec.name
+        end
       end
     end
 
