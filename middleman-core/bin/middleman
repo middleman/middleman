@@ -46,6 +46,9 @@ rescue LoadError
   end
 end
 
+# Automatically discover extensions in RubyGems
+Middleman.load_extensions_in_path
+
 # Change directory to the root
 Dir.chdir(ENV["MM_ROOT"] || Dir.pwd) do
   
