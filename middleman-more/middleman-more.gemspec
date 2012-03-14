@@ -22,7 +22,7 @@ Gem::Specification.new do |s|
   s.add_dependency("uglifier", ["~> 1.2.0"])
   s.add_dependency("haml", ["~> 3.1.0"])
   s.add_dependency("sass", [">= 3.1.7"])
-  s.add_dependency("compass", ["~> 0.12.0"])
+  s.add_dependency("compass", ["~> 0.12.1"])
   s.add_dependency("coffee-script", ["~> 2.2.0"])
   s.add_dependency("execjs", ["~> 1.2"])
   s.add_dependency("sprockets", ["~> 2.1"])
