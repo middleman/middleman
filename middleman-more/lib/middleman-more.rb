@@ -72,8 +72,8 @@ module Middleman
     ::Middleman::Extensions::MinifyJavascript }
   Extensions.register(:relative_assets) {
     ::Middleman::Extensions::RelativeAssets }
-  Extensions.register(:gzip_assets) {
-    ::Middleman::Extensions::GzipAssets }
+  Extensions.register(:gzip) {
+    ::Middleman::Extensions::Gzip }
   Extensions.register(:asset_hash) {
     ::Middleman::Extensions::AssetHash }
 end
