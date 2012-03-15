@@ -47,6 +47,15 @@ module Middleman::CoreExtensions::Compass
             File.join(app.http_prefix || "/", app.images_dir)
           end
           
+          # Correctly support HTTP paths with generated sprites
+          if config.respond_to? :http_generated_images_path
+            config.http_generated_images_path = if app.respond_to? :http_generated_images_path
+              app.http_generated_images_path
+            else
+              File.join(app.http_prefix || "/", app.images_dir)
+            end
+          end
+          
           config.http_stylesheets_path = if app.respond_to? :http_css_path
             app.http_css_path
           else
