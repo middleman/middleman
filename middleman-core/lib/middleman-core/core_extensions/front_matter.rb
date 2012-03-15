@@ -109,16 +109,9 @@ module Middleman::CoreExtensions::FrontMatter
       
       # Setup ignore callback
       @app.ignore do |path|
-        p = @app.sitemap.page(path)
-        file_path = p.relative_path
-        
-        if !p.proxy? && has_data?(file_path)
-          d = data(file_path)
-          if d && d[0]
-            d[0].has_key?("ignored") && d[0]["ignored"] == true
-          else
-            false
-          end
+        if @app.sitemap.exists?(path)
+          p = @app.sitemap.page(path)
+          !p.proxy? && p.data && p.data["ignored"] == true
         else
           false
         end

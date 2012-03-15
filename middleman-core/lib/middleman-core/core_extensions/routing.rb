@@ -45,6 +45,9 @@ module Middleman::CoreExtensions::Routing
     def page(url, opts={}, &block)
       a_block = block_given? ? block : nil
       
+      # Default layout
+      opts[:layout] = layout if opts[:layout].nil?
+
       # If the url is a regexp
       if url.is_a?(Regexp) || url.include?("*")
         
@@ -55,9 +58,6 @@ module Middleman::CoreExtensions::Routing
         
         return
       end
-      
-      # Default layout
-      opts[:layout] = layout if opts[:layout].nil?
       
       # Normalized path
       url = full_path(url)
@@ -79,13 +79,9 @@ module Middleman::CoreExtensions::Routing
         end
       end
       
-      # If we have a block or opts
-      if a_block || !opts.empty?
-        
-        # Setup a metadata matcher for rendering those options
-        provides_metadata_for_path url do |url|
-          { :options => opts, :blocks => [a_block] }
-        end
+      # Setup a metadata matcher for rendering those options
+      provides_metadata_for_path url do |url|
+        { :options => opts, :blocks => [a_block] }
       end
     end
   end
