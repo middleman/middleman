@@ -25,6 +25,15 @@ module Middleman::CoreExtensions::Compass
           config.fonts_dir       = fonts_dir
           config.images_dir      = images_dir
           config.http_path       = http_prefix
+          
+          # Correctly support HTTP paths with generated sprites
+          # if config.respond_to? :http_generated_images_path
+          #   config.http_generated_images_path = if app.respond_to? :http_generated_images_path
+          #     app.http_generated_images_path
+          #   else
+          #     File.join(app.http_prefix || "/", app.images_dir)
+          #   end
+          # end
 
           config.asset_cache_buster :none
           config.relative_assets = false

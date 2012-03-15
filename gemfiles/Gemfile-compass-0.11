@@ -23,4 +23,3 @@ end
 gem "middleman-core", :path => "middleman-core"
 gem "middleman-more", :path => "middleman-more"
 gem "middleman", :path => "middleman"
-gem "compass", "~> 0.11.0"
