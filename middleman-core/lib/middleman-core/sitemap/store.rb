@@ -72,16 +72,24 @@ module Middleman::Sitemap
     # @param [String] target
     # @return [void]
     def proxy(path, target)
-      page(path).proxy_to(normalize_path(target))
+      add(path).proxy_to(normalize_path(target))
       app.cache.remove(:proxied_paths)
     end
+
+    # Add a new page to the sitemap
+    # @param [String] path
+    # @return [Middleman::Sitemap::Page]
+    def add(path)
+      path = normalize_path(path)
+      @pages.fetch(path) { @pages[path] = ::Middleman::Sitemap::Page.new(self, path) }
+    end
     
-    # Get a page instance for a given path
+    # Get a page instance for a given path, or nil if that page doesn't exist in the sitemap
     # @param [String] path
     # @return [Middleman::Sitemap::Page]
     def page(path)
       path = normalize_path(path)
-      @pages.fetch(path) { @pages[path] = ::Middleman::Sitemap::Page.new(self, path) }
+      @pages[path]
     end
 
     # Find a page given its destination path
@@ -134,9 +142,7 @@ module Middleman::Sitemap
       return false unless file.include?(prefix)
       
       path = file.sub(prefix, "")
-      path = extensionless_path(path)
-      
-      path
+      extensionless_path(path)
     end
     
     # Update or add an on-disk file path
@@ -153,7 +159,7 @@ module Middleman::Sitemap
       end
           
       # Add generic path
-      p = page(path)
+      p = add(path)
       p.source_file = File.expand_path(file, @app.root)
       p.touch
       

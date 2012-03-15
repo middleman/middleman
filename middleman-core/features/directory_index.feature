@@ -8,6 +8,7 @@ Feature: Directory Index
       | needs_index/index.html                        |
       | a_folder/needs_index/index.html               |
       | leave_me_alone.html                           |
+      | wildcard_leave_me_alone.html                  |
       | regular/index.html                            |
       | .htaccess                                     |
     Then the following files should not exist:
@@ -15,6 +16,7 @@ Feature: Directory Index
       | needs_index.html                              |
       | a_folder/needs_index.html                     |
       | leave_me_alone/index.html                     |
+      | wildcard_leave_me_alone/index.html            |
     And the file "needs_index/index.html" should contain "Indexable"
     And the file "a_folder/needs_index/index.html" should contain "Indexable"
     And the file "leave_me_alone.html" should contain "Stay away"
