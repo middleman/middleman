@@ -53,7 +53,10 @@ module Middleman::Cli
     
     # Static methods
     class << self
-      
+      def exit_on_failure?
+        true
+      end
+
       # Middleman::Base singleton
       #
       # @return [Middleman::Base]

@@ -42,6 +42,10 @@ module Middleman::Cli
       thor_group.new([name], options).invoke_all
     end
   end
+
+  def self.exit_on_failure?
+    true
+  end
   
   # Map "i", "new" and "n" to "init"
   Base.map({

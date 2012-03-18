@@ -51,6 +51,10 @@ module Middleman::Cli
       Middleman::Watcher.start(params)
     end
   end
+
+  def self.exit_on_failure?
+    true
+  end  
   
   # Map "s" to "server"
   Base.map({ "s" => "server" })
