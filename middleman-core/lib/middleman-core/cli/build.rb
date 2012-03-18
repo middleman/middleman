@@ -35,8 +35,7 @@ module Middleman::Cli
     # @return [void]
     def build
       if !ENV["MM_ROOT"]
-        $stderr.puts "== Error: Could not find a Middleman project config, perhaps you are in the wrong folder?"
-        exit(1)
+        raise Thor::Error "Error: Could not find a Middleman project config, perhaps you are in the wrong folder?"
       end
       
       self.class.shared_instance(options["verbose"] || false)
@@ -103,11 +102,14 @@ module Middleman::Cli
 
       begin
         response = self.class.shared_rack.get(page.request_path.gsub(/\s/, "%20"))
-        create_file(output_file, response.body, { :force => true })
+        if response.status == 200
+          create_file(output_file, response.body, { :force => true })
+        else
+          raise Thor::Error.new response.body
+        end
       rescue
         say_status :error, output_file, :red
-        puts $!
-        abort
+        raise Thor::Error.new $!
       end
     end
   end
