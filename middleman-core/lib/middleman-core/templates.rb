@@ -29,20 +29,16 @@ module Middleman::Templates
   class Base < ::Thor::Group
     include Thor::Actions
     
+    def initialize(names, options)
+      super
+      source_paths << File.join(File.dirname(__FILE__), 'templates')
+    end
+
     # Required path for the new project to be generated
     argument :location, :type => :string
     
     # Name of the template being used to generate the project.
     class_option :template, :default => "default"
-    
-    # What to call the directory which CSS will be searched for.
-    class_option :css_dir#, :default => "stylesheets"
-    
-    # What to call the directory which JS will be searched for.
-    class_option :js_dir#, :default => "javascripts"
-    
-    # What to call the directory which images will be searched for.
-    class_option :images_dir#, :default => "images"
     
     # Output a config.ru file for Rack if --rack is passed
     class_option :rack, :type => :boolean, :default => false
