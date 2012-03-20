@@ -51,7 +51,7 @@ module Middleman::Templates
     end
     
     # Output a Gemfile file for Bundler if --bundler is passed
-    class_option :bundler, :type => :boolean, :default => false
+    class_option :bundler, :type => :boolean, :default => true
     
     # Write a Bundler Gemfile file for project
     # @return [void]
