@@ -13,6 +13,12 @@ Feature: Allow nesting of layouts
     And I should see "Inner"
     And I should see "Outer"
     And I should see "Master"
+    When I go to "/haml-test.html"
+    And I should see "New Article Title"
+    And I should see "The Article Content"
+    And I should see "Inner"
+    And I should see "Outer"
+    And I should see "Master"
     
 
   Scenario: YAML Front Matter isn't clobbered with nested layouts

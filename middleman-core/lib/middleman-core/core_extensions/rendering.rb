@@ -288,6 +288,11 @@ module Middleman::CoreExtensions::Rendering
         @_out_buf = _buf_was
       end
       layout_path = locate_layout(layout_name, current_engine)
+
+      if !@_out_buf
+        raise "wrap_layout is currently broken for this templating system"
+      end
+
       @_out_buf.concat render_individual_file(layout_path, @current_locs || {}, @current_opts || {}, self) { content }
     end
     
