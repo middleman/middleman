@@ -204,10 +204,9 @@ module Middleman::Sitemap
     end
     
     # This page's frontmatter
-    # @return [Hash, nil]
+    # @return [Hash]
     def data
-      data, content = app.frontmatter(relative_path)
-      data || nil
+      app.frontmatter(relative_path).first
     end
     
     # This page's parent page
@@ -216,7 +215,6 @@ module Middleman::Sitemap
       parts = path.split("/")
       if path.include?(app.index_file)
         parts.pop
-      else
       end
       
       return nil if parts.length < 1
