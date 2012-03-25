@@ -194,7 +194,7 @@ module Middleman
         def render_individual_file(path, locs = {}, opts = {}, context = self, &block)
           path = path.to_s
       
-          # Save current buffere for later
+          # Save current buffer for later
           @_out_buf, _buf_was = "", @_out_buf
       
           # Read from disk or cache the contents of the file
@@ -327,9 +327,16 @@ module Middleman
         # @param [String, Symbol] layout_name
         # @return [void]
         def wrap_layout(layout_name, &block)
-          content = capture(&block) if block_given?
+          # Save current buffer for later
+          @_out_buf, _buf_was = "", @_out_buf
+          begin
+            content = capture(&block) if block_given?
+          ensure
+            # Reset stored buffer
+            @_out_buf = _buf_was
+          end
           layout_path = locate_layout(layout_name, current_engine)
-          concat render_individual_file(layout_path, @current_locs || {}, @current_opts || {}, self) { content }
+          @_out_buf.concat render_individual_file(layout_path, @current_locs || {}, @current_opts || {}, self) { content }
         end
     
         # The currently rendering engine
