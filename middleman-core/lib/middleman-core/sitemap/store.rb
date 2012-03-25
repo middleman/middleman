@@ -17,9 +17,6 @@ module Middleman::Sitemap
     def initialize(app)
       @app = app
       @pages = {}
-      @ignored_paths     = []
-      @ignored_globs     = []
-      @ignored_regexes   = []
       @ignored_callbacks = []
       @reroute_callbacks   = []
     end
@@ -41,14 +38,15 @@ module Middleman::Sitemap
     # @param [String, Regexp] path, path glob expression, or path regex
     # @return [void]
     def ignore(path=nil, &block)
-      if !path.nil? && path.include?("*")
-        path_clean = normalize_path(path)
-        @ignored_globs << path_clean unless @ignored_globs.include?(path_clean)
+      if path.is_a? Regexp
+        @ignored_callbacks << Proc.new {|p| p =~ path }
       elsif path.is_a? String
         path_clean = normalize_path(path)
-        @ignored_paths << path_clean unless @ignored_paths.include?(path_clean)
-      elsif path.is_a? Regexp
-        @ignored_regexes << path unless @ignored_regexes.include?(path)
+        if path_clean.include?("*") # It's a glob
+          @ignored_callbacks << Proc.new {|p| File.fnmatch(path_clean, p) }
+        else
+          @ignored_callbacks << Proc.new {|p| p == path_clean }
+        end
       elsif block_given?
         @ignored_callbacks << block
       end
@@ -107,15 +105,7 @@ module Middleman::Sitemap
     # @return [Boolean]
     def ignored?(path)
       path_clean = normalize_path(path)
-      
-      return true if @ignored_paths.include?(path_clean)
-      return true if @ignored_globs.any? { |g| File.fnmatch(g, path_clean) }
-      return true if @ignored_regexes.any? { |r| r.match(path_clean) }
-      return true if @ignored_callbacks.any? { |b| b.call(path_clean) }
-
-      # TODO: We should also check ignored_sitemap_matchers here
-
-      false
+      @ignored_callbacks.any? { |b| b.call(path_clean) }
     end
     
     # Remove a file from the store
