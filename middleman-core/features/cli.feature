@@ -5,6 +5,7 @@ Feature: Middleman CLI
     Then the exit status should be 0
     When I cd to "MY_PROJECT"
     Then the following files should exist:
+      | Gemfile                                       |
       | config.rb                                     |
       | source/index.html.erb                         |
       | source/images/background.png                  |
@@ -18,11 +19,11 @@ Feature: Middleman CLI
     When I run `middleman i MY_PROJECT`
     Then a directory named "MY_PROJECT" should exist
     
-  Scenario: Create a new project (alias i)
+  Scenario: Create a new project (alias new)
     When I run `middleman new MY_PROJECT`
     Then a directory named "MY_PROJECT" should exist
   
-  Scenario: Create a new project (alias i)
+  Scenario: Create a new project (alias n)
     When I run `middleman n MY_PROJECT`
     Then a directory named "MY_PROJECT" should exist
     
@@ -33,17 +34,16 @@ Feature: Middleman CLI
     Then the following files should exist:
       | config.rb                                     |
       | config.ru                                     |
-    Then the following files should not exist:
       | Gemfile                                       |
     
-  Scenario: Create a new project with Bundler
-    When I run `middleman init MY_PROJECT --bundler`
+  Scenario: Create a new project without Bundler
+    When I run `middleman init MY_PROJECT --no-bundler`
     Then a directory named "MY_PROJECT" should exist
     When I cd to "MY_PROJECT"
     Then the following files should exist:
       | config.rb                                     |
-      | Gemfile                                       |
     Then the following files should not exist:  
+      | Gemfile                                       |
       | config.ru                                     |
       
   Scenario: Create a new HTML5 project
@@ -52,9 +52,9 @@ Feature: Middleman CLI
     When I cd to "MY_PROJECT"
     Then the following files should exist:
       | config.rb                                     |
+      | Gemfile                                       |
     Then the following files should not exist:
       | config.ru                                     |
-      | Gemfile                                       |
     And the file "config.rb" should contain "set :js_dir, 'js'"
     Then a directory named "source" should exist
     When I cd to "source"
@@ -70,28 +70,17 @@ Feature: Middleman CLI
     Then the following files should exist:
       | config.rb                                     |
       | config.ru                                     |
-    Then the following files should not exist:
       | Gemfile                                       |
     
-  Scenario: Create a new HTML5 project with Bundler
-    When I run `middleman init MY_PROJECT --bundler --template=html5`
-    Then a directory named "MY_PROJECT" should exist
-    When I cd to "MY_PROJECT"
-    Then the following files should exist:
-      | config.rb                                     |
-      | Gemfile                                       |
-    Then the following files should not exist:  
-      | config.ru                                     |
-      
   Scenario: Create a new Mobile HTML5 project
     When I run `middleman init MY_PROJECT --template=mobile`
     Then a directory named "MY_PROJECT" should exist
     When I cd to "MY_PROJECT"
     Then the following files should exist:
       | config.rb                                     |
+      | Gemfile                                       |
     Then the following files should not exist:
       | config.ru                                     |
-      | Gemfile                                       |
     Then a directory named "source" should exist
     When I cd to "source"
     Then the following files should exist:
@@ -106,15 +95,4 @@ Feature: Middleman CLI
     Then the following files should exist:
       | config.rb                                     |
       | config.ru                                     |
-    Then the following files should not exist:
       | Gemfile                                       |
-    
-  Scenario: Create a new Mobile HTML5 project with Bundler
-    When I run `middleman init MY_PROJECT --bundler --template=mobile`
-    Then a directory named "MY_PROJECT" should exist
-    When I cd to "MY_PROJECT"
-    Then the following files should exist:
-      | config.rb                                     |
-      | Gemfile                                       |
-    Then the following files should not exist:  
-      | config.ru                                     |
