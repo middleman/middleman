@@ -25,7 +25,7 @@ module Middleman
     autoload :Sprockets,    "middleman-more/core_extensions/sprockets"
   end
   
-  # User-activatable extendions
+  # User-activatable extensions
   module Extensions
     # RelativeAssets allow any asset path in dynamic templates to be either
     # relative to the root of the project or use an absolute URL.
