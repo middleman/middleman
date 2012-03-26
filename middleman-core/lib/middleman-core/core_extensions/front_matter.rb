@@ -139,7 +139,7 @@ module Middleman::CoreExtensions::FrontMatter
         
       if result
         data, content = result
-        data = ::Middleman.recursively_enhance(data)
+        data = ::Middleman.recursively_enhance(data).freeze
         file = file.sub(@app.source_dir, "")
         @local_data[file] = [data, content]
         path = File.join(@app.source_dir, file)
@@ -164,12 +164,12 @@ module Middleman::CoreExtensions::FrontMatter
     
     # Get the frontmatter for a given path
     # @param [String] path
-    # @return [Hash, nil]
+    # @return [Hash]
     def data(path)
       if @local_data.has_key?(path.to_s)
         @local_data[path.to_s]
       else
-        nil
+        {}.freeze
       end
     end
     
