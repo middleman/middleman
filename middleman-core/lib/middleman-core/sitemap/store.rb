@@ -91,6 +91,8 @@ module Middleman::Sitemap
     end
 
     # Find a page given its destination path
+    # @param [String] The destination (output) path of a page.
+    # @return [Middleman::Sitemap::Page]
     def page_by_destination(destination_path)
       # TODO: memoize this
       destination_path = normalize_path(destination_path)
@@ -154,14 +156,6 @@ module Middleman::Sitemap
       p.touch
       
       true
-    end
-    
-    # Whether the sitemap should completely ignore a given file/path
-    # @param [String] file
-    # @param [String] path
-    # @return [Boolean]
-    def sitemap_should_ignore?(file, path)
-      @app.sitemap_ignore.every(&:call)
     end
     
   protected

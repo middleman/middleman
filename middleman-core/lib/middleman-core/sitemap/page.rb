@@ -11,11 +11,9 @@ module Middleman::Sitemap
     # @return [String]
     attr_accessor :path
     
-    # @return [Middleman::Sitemap::Page]
+    # The path of the page this page is proxied to, or nil if it's not proxied.
+    # @return [String]
     attr_accessor :proxied_to
-    
-    # @return [Symbol]
-    attr_accessor :status
     
     # Initialize page with parent store and URL
     # @param [Middleman::Sitemap::Store] store
@@ -23,7 +21,6 @@ module Middleman::Sitemap
     def initialize(store, path)
       @store       = store
       @path        = path
-      @status      = :generic
       @source_file = nil
       @proxied_to  = nil
     end
@@ -83,28 +80,14 @@ module Middleman::Sitemap
     # Whether this page is a proxy
     # @return [Boolean]
     def proxy?
-      @status == :proxy
+      !!@proxied_to
     end
     
     # Set this page to proxy to a target path
     # @param [String] target
     # @return [void]
     def proxy_to(target)
-      @status = :proxy
       @proxied_to = target
-    end
-    
-    # Whether this page is a generic page
-    # @return [Boolean]
-    def generic?
-      @status == :generic
-    end
-    
-    # Set this page to be a generic page
-    # @return [void]
-    def make_generic
-      @status = :generic
-      # TODO: Remove from ignore array?
     end
     
     # Whether this page is ignored
