@@ -26,7 +26,7 @@ module Middleman::Renderers::Markdown
           
           # Map symbols to classes
           if markdown_engine.is_a? Symbol
-            engine = engine.to_s
+            engine = markdown_engine.to_s
             engine = engine == "rdiscount" ? "RDiscount" : engine.camelize
             markdown_engine = markdown_engine_prefix.const_get("#{engine}Template")
           end
