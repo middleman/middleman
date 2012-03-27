@@ -122,6 +122,23 @@ module Middleman
         @_registered ||= {}
       end
 
+      # Register a new extension. Choose a name which will be
+      # used to activate the extension in config.rb, like this:
+      #
+      #     activate :my_extension
+      #
+      # Provide your extension module either as the namespace
+      # parameter, or return it from the block:
+      #
+      # @param [Symbol] name The name of the extension
+      # @param [Module] namespace The extension module
+      # @param [String] version A RubyGems-style version string stating
+      #                         the versions of middleman this extension
+      #                         is compatible with.
+      # @yield Instead of passing a module in namespace, you can provide
+      #        a block which returns your extension module. This gives
+      #        you the ability to require other files only when the
+      #        extension is activated.
       def register(name, namespace=nil, version=nil, &block)
         # If we've already got a matching extension that passed the
         # version check, bail out.
