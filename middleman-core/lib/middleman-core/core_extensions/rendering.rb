@@ -33,6 +33,11 @@ module Middleman::CoreExtensions::Rendering
     
     # Override init to clear cache on file removal
     def initialize
+      # Default extension map
+      @_template_extensions = {
+        
+      }
+      
       super
       
       static_path = source_dir.sub(self.root, "").sub(/^\//, "")
@@ -42,6 +47,14 @@ module Middleman::CoreExtensions::Rendering
         path = File.expand_path(file, self.root)
         self.cache.remove(:raw_template, path)
       end
+    end
+    
+    # Add or overwrite a default template extension
+    #
+    # @param [Hash] extension_map
+    # @return [void]
+    def template_extensions(extension_map={})
+      @_template_extensions.merge!(extension_map)
     end
     
     # Render a template, with layout, given a path

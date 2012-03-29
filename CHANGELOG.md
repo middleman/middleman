@@ -28,6 +28,7 @@
 * Add pid for cleanup
 * Use guard/listen for file watching
 * Merge full i18n support
+* Implied file extensions (style.scss => sytle.css)
 
 2.0.14
 ====

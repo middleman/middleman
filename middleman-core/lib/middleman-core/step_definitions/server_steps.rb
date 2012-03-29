@@ -21,9 +21,7 @@ Given /^current environment is "([^\"]*)"$/ do |env|
   @current_env = env.to_sym
 end
 
-Given /^the Server is running at "([^\"]*)"$/ do |app_path|
-  step %Q{a fixture app "#{app_path}"}
-    
+Given /^the Server is running$/ do
   root_dir = File.expand_path(current_dir)
 
   if File.exists?(File.join(root_dir, "source"))
@@ -47,6 +45,11 @@ Given /^the Server is running at "([^\"]*)"$/ do |app_path|
   
   app_rack = @server_inst.class.to_rack_app
   @browser = ::Rack::Test::Session.new(::Rack::MockSession.new(app_rack))
+end
+
+Given /^the Server is running at "([^\"]*)"$/ do |app_path|
+  step %Q{a fixture app "#{app_path}"}
+  step %Q{the Server is running}
 end
 
 When /^I go to "([^\"]*)"$/ do |url|

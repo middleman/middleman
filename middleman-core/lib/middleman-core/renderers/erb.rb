@@ -10,6 +10,10 @@ module Middleman::Renderers::ERb
       app.set :erb_engine, :erb
       app.set :erb_engine_prefix, ::Tilt
       
+      app.before_configuration do
+        template_extensions :erb => :html
+      end
+      
       # After config
       app.after_configuration do
         # Find the user's prefered engine

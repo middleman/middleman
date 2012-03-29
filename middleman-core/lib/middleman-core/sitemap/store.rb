@@ -176,6 +176,15 @@ module Middleman::Sitemap
           end
         end
 
+        # If there is no extension, look for one
+        if File.extname(path).empty?
+          input_ext = File.extname(file).split(".").last.to_sym
+          
+          if app.template_extensions.has_key?(input_ext)
+            path << ".#{app.template_extensions[input_ext]}"
+          end
+        end
+        
         path
       end
     end

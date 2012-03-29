@@ -13,23 +13,23 @@ Feature: Text Files Without Extensions Should Build and Preview
       | LICENSE |
       | README  |
 
-    Scenario: Building Text Files with directory indexes
+  Scenario: Building Text Files with directory indexes
 
-      Given a fixture app "extensionless-text-files-app"
-      And a file named "config.rb" with:
-        """
-        activate :directory_indexes
-        """
-      And a successfully built app at "extensionless-text-files-app"
-      When I cd to "build"
-      Then the following files should exist:
-        | CNAME   |
-        | LICENSE |
-        | README  |
-      Then the following files should not exist:
-        | CNAME/index.html   |
-        | LICENSE/index.html |
-        | README/index.html  |
+    Given a fixture app "extensionless-text-files-app"
+    And a file named "config.rb" with:
+      """
+      activate :directory_indexes
+      """
+    And a successfully built app at "extensionless-text-files-app"
+    When I cd to "build"
+    Then the following files should exist:
+      | CNAME   |
+      | LICENSE |
+      | README  |
+    Then the following files should not exist:
+      | CNAME/index.html   |
+      | LICENSE/index.html |
+      | README/index.html  |
   
   Scenario: Previewing Text Files without directory indexes
     Given "directory_indexes" feature is "disabled"
