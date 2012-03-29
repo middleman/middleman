@@ -27,6 +27,7 @@
 * Automatically load helper modules in helpers/ directory
 * Add pid for cleanup
 * Use guard/listen for file watching
+* Merge full i18n support
 
 2.0.14
 ====
