@@ -16,6 +16,11 @@ module Middleman::Renderers::Sass
     def registered(app)
       # Default sass options
       app.set :sass, {}
+      
+      app.before_configuration do
+        template_extensions :scss => :css,
+                            :sass => :css
+      end
     end
     
     alias :included :registered

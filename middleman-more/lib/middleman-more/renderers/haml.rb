@@ -11,6 +11,10 @@ module Middleman::Renderers::Haml
       # Add haml helpers to context
       app.send :include, ::Haml::Helpers
       
+      app.before_configuration do
+        template_extensions :haml => :html
+      end
+      
       # Setup haml helper paths
       app.ready do
         init_haml_helpers

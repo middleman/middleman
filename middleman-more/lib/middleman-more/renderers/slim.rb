@@ -12,6 +12,10 @@ module Middleman::Renderers::Slim
         # Load gem
         require "slim"
         
+        app.before_configuration do
+          template_extensions :slim => :html
+        end
+        
         # Setup Slim options to work with partials
         Slim::Engine.set_default_options(:buffer => '@_out_buf', :generator => Temple::Generators::StringBuffer) if defined?(Slim)
       rescue LoadError

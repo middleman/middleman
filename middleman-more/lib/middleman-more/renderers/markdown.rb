@@ -18,6 +18,14 @@ module Middleman::Renderers::Markdown
       app.set :markdown_engine, :redcarpet
       app.set :markdown_engine_prefix, ::Tilt
       
+      app.before_configuration do
+        template_extensions :markdown => :html,
+                            :mdown    => :html,
+                            :md       => :html,
+                            :mkd      => :html,
+                            :mkdn     => :html
+      end
+      
       # Once configuration is parsed
       app.after_configuration do
         
