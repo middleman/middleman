@@ -54,7 +54,7 @@ module Middleman::Extensions
           elsif sitemap.exists?(real_path_static)
             page = sitemap.page(real_path_static)
             if !page.template?
-              http_path << "?" + File.mtime(result[0]).strftime("%s")
+              http_path << "?" + File.mtime(page.source_file).strftime("%s")
             else
               # It's a template, possible with partials. We can't really know when
               # it's updated, so generate fresh cache buster every time durin
