@@ -24,7 +24,14 @@ module Middleman::CoreExtensions::Assets
     # @return [String] The fully qualified asset url
     def asset_url(path, prefix="")
       # Don't touch assets which already have a full path
-      path.include?("://") ? path : File.join(http_prefix, prefix, path)
+      if path.include?("//")
+        path
+      else # rewrite paths to use their destination path
+        path = File.join(prefix, path)
+        path = sitemap.page(path).destination_path if sitemap.exists?(path)
+
+        File.join(http_prefix, path)
+      end
     end
   end
 end
