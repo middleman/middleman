@@ -13,6 +13,10 @@ require "middleman-core/vendor/hooks-0.2.0/lib/hooks"
 
 require "middleman-core/sitemap"
   
+# Let's serve all HTML as UTF-8
+::Rack::Mime::MIME_TYPES['.html'] = 'text/html;charset=utf8'
+::Rack::Mime::MIME_TYPES['.htm'] = 'text/html;charset=utf8'
+
 # Core Middleman Class
 module Middleman
   class Application
@@ -381,18 +385,20 @@ module Middleman
       start_time = Time.now
 
       # Normalize the path and add index if we're looking at a directory
-      @original_path = env["PATH_INFO"].dup
-      @escaped_path  = @original_path.gsub("%20", " ")
-      @request_path  = full_path(@escaped_path)
-    
+      @original_path = URI.decode(env["PATH_INFO"].dup)
+      if @original_path.respond_to? :force_encoding
+        @original_path.force_encoding('UTF-8')
+      end
+      @request_path  = full_path(@original_path)
+
       # Run before callbacks
       run_hook :before
 
-      if @escaped_path != @request_path
+      if @original_path != @request_path
         # Get the resource object for this path
-        resource = sitemap.find_resource_by_destination_path(@escaped_path)
+        resource = sitemap.find_resource_by_destination_path(@original_path)
       end
-    
+
       # Get the resource object for this full path
       resource ||= sitemap.find_resource_by_destination_path(@request_path)
     
@@ -407,7 +413,7 @@ module Middleman
       
       # Set a HTTP content type based on the request's extensions
       content_type resource.mime_type
-    
+      
       begin
         # Write out the contents of the page
         res.write resource.render

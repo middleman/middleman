@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 require "rack/test"
 
 Given /^a clean server$/ do
@@ -61,11 +63,11 @@ Given /^the Server is running at "([^\"]*)"$/ do |app_path|
 end
 
 When /^I go to "([^\"]*)"$/ do |url|
-  @browser.get(url)
+  @browser.get(URI.escape(url))
 end
 
 Then /^going to "([^\"]*)" should not raise an exception$/ do |url|
-  lambda { @browser.get(url) }.should_not raise_exception
+  lambda { @browser.get(URI.escape(url)) }.should_not raise_exception
 end
 
 Then /^I should see "([^\"]*)"$/ do |expected|
