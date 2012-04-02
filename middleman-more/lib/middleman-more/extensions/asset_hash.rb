@@ -8,7 +8,7 @@ module Middleman::Extensions
         app.after_configuration do
           sitemap.reroute do |destination, page|
             if exts.include? page.ext
-              app.cache.fetch(:asset_hash, page.path) do
+              page.cache.fetch(:asset_hash) do
                 digest    = Digest::SHA1.file(page.source_file).hexdigest[0..7]
                 destination.sub(/\.(\w+)$/) { |ext| "-#{digest}#{ext}" }
               end

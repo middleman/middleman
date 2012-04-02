@@ -113,18 +113,6 @@ module Middleman::Sitemap
       store.ignore(self.path)
     end
     
-    # If this is a template, refresh contents
-    # @return [void]
-    def touch
-      template.touch if template?
-    end
-    
-    # If this is a template, remove contents
-    # @return [void]
-    def delete
-      template.delete if template?
-    end
-    
     # Render this page
     # @return [String]
     def render(*args, &block)
@@ -249,6 +237,26 @@ module Middleman::Sitemap
     def siblings
       return [] unless parent
       parent.children.reject { |p| p == self }
+    end
+
+    # A cache for extensions and internals to use to store
+    # information about this page. The cache is cleared whenever
+    # the page changes.
+    # @return [Middleman::Cache]
+    def cache
+      @cache ||= Middleman::Cache.new
+    end
+
+    # Clear out the cache whenever this page changes
+    # @return [void]
+    def touch
+      cache.clear
+    end
+    
+    # Clear the cache if the file is deleted
+    # @return [void]
+    def delete
+      cache.clear
     end
     
   protected

@@ -31,22 +31,10 @@ module Middleman::Sitemap
     # Simple aliases
     delegate :path, :source_file, :store, :app, :ext, :to => :page
     
-    # Clear internal frontmatter cache for file if it changes
-    # @return [void]
-    def touch
-      app.cache.remove(:metadata, source_file)
-    end
-    
-    # Clear internal frontmatter cache for file if it is deleted
-    # @return [void]
-    def delete
-      app.cache.remove(:metadata, source_file)
-    end
-    
     # Get the metadata for both the current source_file and the current path
     # @return [Hash]
     def metadata
-      metadata = app.cache.fetch(:metadata, source_file) do
+      metadata = @page.cache.fetch(:metadata) do
         data = { :options => {}, :locals => {}, :page => {}, :blocks => [] }
         
         app.provides_metadata.each do |callback, matcher|
