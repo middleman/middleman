@@ -8,10 +8,25 @@ module Middleman::Extensions
         app.after_configuration do
           sitemap.reroute do |destination, page|
             if exts.include? page.ext
-              page.cache.fetch(:asset_hash) do
-                digest    = Digest::SHA1.file(page.source_file).hexdigest[0..7]
-                destination.sub(/\.(\w+)$/) { |ext| "-#{digest}#{ext}" }
+              # figure out the path Sprockets would use for this asset
+              if page.ext == '.js'
+                sprockets_path = page.path.sub(js_dir,'').sub(/^\//,'')
+              elsif page.ext == '.css'
+                sprockets_path = page.path.sub(css_dir,'').sub(/^\//,'')
               end
+
+              # See if Sprockets knows about the file
+              asset = sprockets.find_asset(sprockets_path) if sprockets_path
+
+              if asset # if it's a Sprockets asset, ask sprockets for its digest
+                digest = asset.digest[0..7]
+              elsif page.template? # if it's a template, render it out
+                digest = Digest::SHA1.hexdigest(page.render)[0..7]
+              else # if it's a static file, just hash it
+                digest = Digest::SHA1.file(page.source_file).hexdigest[0..7]
+              end
+
+              destination.sub(/\.(\w+)$/) { |ext| "-#{digest}#{ext}" }
             else
               destination
             end

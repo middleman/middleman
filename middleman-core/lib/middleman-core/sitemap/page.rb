@@ -116,15 +116,17 @@ module Middleman::Sitemap
     # Render this page
     # @return [String]
     def render(*args, &block)
-      return unless template?
-      
-      if proxy?
-        t = store.page(proxied_to).template
-        t.request_path = path
-        t.render(*args)
-      else
-        template.request_path = path
-        template.render(*args, &block)
+      if template?
+        if proxy?
+          t = store.page(proxied_to).template
+          t.request_path = path
+          t.render(*args)
+        else
+          template.request_path = path
+          template.render(*args, &block)
+        end
+      else # just a static file
+        File.open(source_file).read
       end
     end
     
@@ -167,9 +169,7 @@ module Middleman::Sitemap
     # This path can be affected by proxy callbacks.
     # @return [String]
     def destination_path
-      # memoizing this means that reroute callbacks should be in place before the sitemap
-      # gets built
-      @destination_path ||= store.reroute_callbacks.inject(self.path) do |destination, callback|
+      store.reroute_callbacks.inject(self.path) do |destination, callback|
         callback.call(destination, self)
       end
     end
@@ -256,7 +256,7 @@ module Middleman::Sitemap
     # Clear the cache if the file is deleted
     # @return [void]
     def delete
-      cache.clear
+      touch
     end
     
   protected
