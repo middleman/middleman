@@ -1,3 +1,9 @@
+require "middleware"
+
+# Final middleware returns itself
+# Works around a bug in the `Middleware` library where this returns nil
+::Middleware::Runner.const_set :EMPTY_MIDDLEWARE, lambda { |env| env }
+
 # Sitemap namespace
 module Middleman::Sitemap
   
@@ -11,27 +17,57 @@ module Middleman::Sitemap
     
     # @return [Middleman::Base]
     attr_accessor :app
+    attr_accessor :file_paths_on_disk
+    attr_accessor :ignored_callbacks
+    attr_accessor :proxy_paths
     
     # Initialize with parent app
     # @param [Middleman::Base] app
     def initialize(app)
       @app = app
       @pages = {}
-      @ignored_callbacks = []
-      @reroute_callbacks   = []
+      @file_paths_on_disk = []
+      @proxy_paths        = {}
+      @ignored_callbacks  = []
+      @reroute_callbacks  = []
+      
+      @_all_paths_stack = ::Middleware::Builder.new
+      @_all_paths_stack.use FilesOnDisk, self
+      @_all_paths_stack.use Proxies, self
+      @_all_paths_stack.use Ignores, self
+      
+      all_paths
     end
     
+    # def page_details_stack
+    #   @_page_details_stack ||= ::Middleware::Builder.new
+    # end
+
+    def all_paths
+      @_all_paths ||= begin
+        $stderr.puts "Entering stack!"
+        @_all_paths_stack.call()
+      end
+    end
+    
+    def clear_all_paths!
+      @_all_paths = nil
+      all_paths
+    end
+      
     # A list of all pages
     # @return [Array<Middleman::Sitemap::Page>]
     def pages
-      @pages.values
+      all_paths.map { |path| page(path) }
     end
+    
+    # def internal_pages; @pages; end
 
     # Check to see if we know about a specific path
     # @param [String] path
     # @return [Boolean]
     def exists?(path)
-      @pages.has_key?(normalize_path(path))
+      @_all_paths && @_all_paths.include?(normalize_path(path))
     end
     
     # Ignore a path or add an ignore callback
@@ -50,6 +86,8 @@ module Middleman::Sitemap
       elsif block_given?
         @ignored_callbacks << block
       end
+      
+      clear_all_paths!
     end
     
     # Add a callback that will be run with each page's destination path
@@ -71,7 +109,9 @@ module Middleman::Sitemap
     # @return [void]
     def proxy(path, target)
       add(path).proxy_to(normalize_path(target))
-      app.cache.remove(:proxied_paths)
+
+      self.proxy_paths[normalize_path(path)] = normalize_path(target)
+      clear_all_paths!
     end
 
     # Add a new page to the sitemap
@@ -113,6 +153,9 @@ module Middleman::Sitemap
     # @param [String] file
     # @return [void]
     def remove_file(file)
+      self.file_paths_on_disk.delete(file)
+      clear_all_paths!
+    
       path = file_to_path(file)
       return false unless path
       
@@ -149,6 +192,9 @@ module Middleman::Sitemap
         callback.call(file, path)
       end
           
+      self.file_paths_on_disk << file
+      clear_all_paths!
+      
       # Add generic path
       p = add(path)
       p.source_file = File.expand_path(file, @app.root)
@@ -196,6 +242,64 @@ module Middleman::Sitemap
     # @return [String]
     def normalize_path(path)
       path.sub(/^\//, "").gsub("%20", " ")
+    end
+  end
+
+  class Middleware
+    def initialize(app, sitemap)
+      @app     = app
+      @sitemap = sitemap
+    end
+  end
+  
+  class DumbEcho < Middleware
+    def call(env)
+      $stderr.puts "Dumb"
+      stack_paths = env
+      @app.call(env) # Throwaway
+      paths = @sitemap.internal_pages.values.map(&:path)
+      
+      $stderr.puts "Current Stack"
+      $stderr.puts stack_paths.sort.inspect
+      $stderr.puts "Old Sitemap"
+      $stderr.puts paths.sort.inspect
+      $stderr.puts stack_paths.sort <=> paths.sort
+      
+      paths
+    end
+  end
+  
+  class Proxies < Middleware
+    def call(env)
+      paths = env.concat(@sitemap.proxy_paths.keys)
+      
+      $stderr.puts "Proxy: #{paths.length}"
+      res = @app.call(paths)
+      $stderr.puts "Res:"
+      $stderr.puts res.inspect
+      res
+    end
+  end
+  
+  class Ignores < Middleware
+    def call(env)
+      paths = env.reject do |path|
+        @sitemap.ignored?(path)
+      end
+      
+      $stderr.puts "Ignore: #{paths.length}"
+      @app.call(paths)
+    end
+  end
+  
+  class FilesOnDisk < Middleware
+    def call(env)
+      paths = @sitemap.file_paths_on_disk.map do |file|
+        @sitemap.file_to_path(file)
+      end
+      
+      $stderr.puts "Files on: #{paths.length}"
+      @app.call(paths)
     end
   end
 end
