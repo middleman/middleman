@@ -70,6 +70,8 @@ module Middleman::CoreExtensions::FrontMatter
 
         { :options => data, :page => fmdata }
       end
+      
+      frontmatter_extension
     end
 
     # Notify callbacks that the frontmatter changed
@@ -109,7 +111,7 @@ module Middleman::CoreExtensions::FrontMatter
       
       # Setup ignore callback
       @app.ignore do |path|
-        if @app.sitemap.exists?(path)
+        if @app.sitemap.page(path)
           p = @app.sitemap.page(path)
           !p.proxy? && p.data && p.data["ignored"] == true
         else

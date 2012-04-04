@@ -252,23 +252,6 @@ module Middleman::Sitemap
     end
   end
   
-  class DumbEcho < Middleware
-    def call(env)
-      $stderr.puts "Dumb"
-      stack_paths = env
-      @app.call(env) # Throwaway
-      paths = @sitemap.internal_pages.values.map(&:path)
-      
-      $stderr.puts "Current Stack"
-      $stderr.puts stack_paths.sort.inspect
-      $stderr.puts "Old Sitemap"
-      $stderr.puts paths.sort.inspect
-      $stderr.puts stack_paths.sort <=> paths.sort
-      
-      paths
-    end
-  end
-  
   class Proxies < Middleware
     def call(env)
       paths = env.concat(@sitemap.proxy_paths.keys)
@@ -294,7 +277,11 @@ module Middleman::Sitemap
   
   class FilesOnDisk < Middleware
     def call(env)
-      paths = @sitemap.file_paths_on_disk.map do |file|
+      # Ignore template paths
+      paths = @sitemap.file_paths_on_disk.reject do |file_path|
+        relative_source = File.join(@sitemap.app.root, file_path).sub(@sitemap.app.source_dir, '')
+        @sitemap.ignored?(relative_source)
+      end.map do |file|
         @sitemap.file_to_path(file)
       end
       

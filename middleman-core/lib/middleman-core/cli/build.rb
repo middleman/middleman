@@ -218,7 +218,6 @@ module Middleman::Cli
 
       # Loop over all the paths and build them.
       pages.each do |page|
-        next if page.ignored?
         next if @config[:glob] && !File.fnmatch(@config[:glob], page.path)
 
         output_path = base.render_to_file(page)
