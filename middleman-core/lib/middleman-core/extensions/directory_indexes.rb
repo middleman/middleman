@@ -9,48 +9,46 @@ module Middleman::Extensions
       
       # Once registered
       def registered(app)
-        app.after_configuration do
-          # Register a reroute transform that turns regular paths into indexed paths
-          sitemap.reroute do |destination, page|
-            new_index_path = "/#{index_file}"
-
-            # Check if it would be pointless to reroute
-            path = page.path
-            page_already_index = path == index_file || path.end_with?(new_index_path)
-            if page_already_index || File.extname(index_file) != File.extname(path)
-              next destination
-            end
-
-            # Check if frontmatter turns directory_index off
-            d = page.data
-            next destination if d && d["directory_index"] == false
-
-            # Check if file metadata (options set by "page" in config.rb) turns directory_index off
-            # TODO: This is crazy - we need a generic way to get metadata for paths
-            metadata_ignore = false
-            provides_metadata_for_path.each do |callback, matcher|
-              if matcher.is_a? Regexp
-                next if !path.match(matcher)
-              elsif matcher.is_a? String
-                next if !File.fnmatch("/" + matcher.sub(%r{^/}, ''), "/#{path}")
-              end
-              
-              result = instance_exec(path, &callback)
-              if result[:options] && result[:options][:directory_index] == false
-                metadata_ignore = true
-                break
-              end
-            end
-
-            next destination if metadata_ignore
-
-            # Not ignored, so reroute
-            destination.chomp(File.extname(index_file)) + new_index_path
-          end
+        app.ready do
+          sitemap.register_resource_list_manipulator(
+            :directory_indexes, 
+            DirectoryIndexManager.new(self)
+          )
         end
       end
 
       alias :included :registered
+    end
+    
+    class DirectoryIndexManager
+      def initialize(app)
+        @app = app
+      end
+      
+      # Update the main sitemap resource list
+      # @return [void]
+      def manipulate_resource_list(resources)
+        index_file = @app.index_file
+        new_index_path = "/#{index_file}"
+        
+        resources.each do |resource|
+          # Check if it would be pointless to reroute
+          next if resource.path == index_file || 
+                  resource.path.end_with?(new_index_path) || 
+                  File.extname(index_file) != resource.ext
+          
+          # Check if frontmatter turns directory_index off
+          d = resource.data
+          next if d && d["directory_index"] == false
+        
+          # Check if file metadata (options set by "page" in config.rb) turns directory_index off
+          if resource.metadata[:options] && resource.metadata[:options][:directory_index] == false
+            next
+          end
+          
+          resource.destination_path = resource.path.chomp(File.extname(index_file)) + new_index_path
+        end
+      end
     end
   end
   
