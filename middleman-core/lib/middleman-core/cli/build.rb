@@ -98,10 +98,10 @@ module Middleman::Cli
     # Render a page to a file.
     #
     # @param [Middleman::Sitemap::Page] page
-    # @return [void]
+    # @return [String] The full path of the file that was written
     def render_to_file(page)
       build_dir = self.class.shared_instance.build_dir
-      output_file = File.join(self.class.shared_instance.build_dir, page.destination_path)
+      output_file = File.join(build_dir, page.destination_path)
 
       begin
         response = self.class.shared_rack.get(page.request_path.gsub(/\s/, "%20"))
@@ -114,6 +114,8 @@ module Middleman::Cli
         say_status :error, output_file, :red
         raise Thor::Error.new $!
       end
+
+      output_file
     end
   end
   
@@ -219,9 +221,8 @@ module Middleman::Cli
         next if page.ignored?
         next if @config[:glob] && !File.fnmatch(@config[:glob], page.path)
 
-        base.render_to_file(page)
+        output_path = base.render_to_file(page)
 
-        output_path = File.join(@destination, page.destination_path)
         @cleaning_queue.delete(Pathname.new(output_path).realpath) if cleaning?
       end
     end
