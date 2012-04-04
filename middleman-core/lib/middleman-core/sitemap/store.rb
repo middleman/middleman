@@ -94,7 +94,6 @@ module Middleman::Sitemap
     # @param [String] The destination (output) path of a page.
     # @return [Middleman::Sitemap::Page]
     def page_by_destination(destination_path)
-      # TODO: memoize this
       destination_path = normalize_path(destination_path)
       pages.find do |p|
         p.destination_path == destination_path ||

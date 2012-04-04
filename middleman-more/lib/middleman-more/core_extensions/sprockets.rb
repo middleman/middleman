@@ -13,43 +13,50 @@ module Middleman::CoreExtensions::Sprockets
       app.set :js_compressor, false
       app.set :css_compressor, false
 
+      # Add class methods to context
+      app.send :include, InstanceMethods
+
       # Once Middleman is setup
       app.ready do
-        # Create sprockets env for JS and CSS
-        js_env = Middleman::CoreExtensions::Sprockets::JavascriptEnvironment.new(self)
-        css_env = Middleman::CoreExtensions::Sprockets::StylesheetEnvironment.new(self)
-
         # Add any gems with (vendor|app|.)/assets/javascripts to paths
         # also add similar directories from project root (like in rails)
         root_paths = [%w{ app }, %w{ assets }, %w{ vendor }, %w{ app assets }, %w{ vendor assets }]
-        try_js_paths  = root_paths.map{|rp| File.join(rp, 'javascripts')}
-        try_css_paths = root_paths.map{|rp| File.join(rp, 'stylesheets')}
+        try_paths  = root_paths.map {|rp| File.join(rp, 'javascripts') } +
+                     root_paths.map {|rp| File.join(rp, 'stylesheets') }
 
-        { try_js_paths => js_env, try_css_paths => css_env }.each do |paths, env|
-          ([root] + ::Middleman.rubygems_latest_specs.map(&:full_gem_path)).each do |root_path|
-            paths.map{|p| File.join(root_path, p)}.
-              select{|p| File.directory?(p)}.
-              each{|path| env.append_path(path)}
-          end
+        ([root] + ::Middleman.rubygems_latest_specs.map(&:full_gem_path)).each do |root_path|
+          try_paths.map {|p| File.join(root_path, p) }.
+            select {|p| File.directory?(p) }.
+            each {|path| sprockets.append_path(path) }
         end
 
         # Setup Sprockets Sass options
         sass.each { |k, v| ::Sprockets::Sass.options[k] = v }
 
         # Intercept requests to /javascripts and /stylesheets and pass to sprockets
-        map("/#{js_dir}") { run js_env }
-        map("/#{css_dir}"){ run css_env }
+        our_sprockets = sprockets
+        map("/#{js_dir}")  { run our_sprockets }
+        map("/#{css_dir}") { run our_sprockets }
       end
     end
     alias :included :registered
   end
 
+  module InstanceMethods
+    # @return [Middleman::CoreExtensions::Sprockets::MiddlemanSprocketsEnvironment]
+    def sprockets
+      @sprockets ||= MiddlemanSprocketsEnvironment.new(self)
+    end
+  end
+
   # Generic Middleman Sprockets env
-  class MiddlemanEnvironment < ::Sprockets::Environment
+  class MiddlemanSprocketsEnvironment < ::Sprockets::Environment
     # Setup
     def initialize(app)
       @app = app
       super app.source_dir
+
+      digest = Digest::SHA1
 
       # Make the app context available to Sprockets
       context_class.send(:define_method, :app) { app }
@@ -62,26 +69,10 @@ module Middleman::CoreExtensions::Sprockets
           end
         end
       end
-    end
 
-    # During development, don't use the asset cache
-    def find_asset(path, options = {})
-      expire_index! if @app.development?
-      super
-    end
-  end
-
-  # Javascript specific environment
-  class JavascriptEnvironment < MiddlemanEnvironment
-
-    # Init
-    def initialize(app)
-      super
-
-      expire_index!
-
-      # Remove old compressor
+      # Remove old compressors
       unregister_bundle_processor 'application/javascript', :js_compressor
+      unregister_bundle_processor 'text/css', :css_compressor
 
       # Register compressor from config
       register_bundle_processor 'application/javascript', :js_compressor do |context, data|
@@ -91,29 +82,6 @@ module Middleman::CoreExtensions::Sprockets
           app.js_compressor.compress(data)
         end
       end if app.js_compressor
-
-      # configure search paths
-      append_path app.js_dir
-    end
-
-    # Clear cache on error
-    def javascript_exception_response(exception)
-      expire_index!
-      super(exception)
-    end
-  end
-
-  # CSS specific environment
-  class StylesheetEnvironment < MiddlemanEnvironment
-
-    # Init
-    def initialize(app)
-      super
-
-      expire_index!
-
-      # Remove old compressor
-      unregister_bundle_processor 'text/css', :css_compressor
 
       # Register compressor from config
       register_bundle_processor 'text/css', :css_compressor do |context, data|
@@ -125,13 +93,23 @@ module Middleman::CoreExtensions::Sprockets
       end if app.css_compressor
 
       # configure search paths
+      append_path app.js_dir
       append_path app.css_dir
     end
 
+    # During development, don't use the asset cache
+    def find_asset(path, options = {})
+      expire_index! if @app.development?
+      super
+    end
+
     # Clear cache on error
-    def css_exception_response(exception)
+    def javascript_exception_response(exception)
       expire_index!
       super(exception)
     end
+
+    # Clear cache on error
+    alias :css_exception_response :javascript_exception_response
   end
 end
