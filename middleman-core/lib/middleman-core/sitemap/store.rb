@@ -37,15 +37,22 @@ module Middleman::Sitemap
       @_all_paths_stack.use Ignores, self
       
       all_paths
+      
+      # @_page_details_stack = ::Middleware::Builder.new
+      # @_page_details_stack.use FilesOnDisk, self
+      # @_page_details_stack.use Proxies, self
+      # @_page_details_stack.use Ignores, self
     end
     
     # def page_details_stack
     #   @_page_details_stack ||= ::Middleware::Builder.new
     # end
-
+    
+    # A list of all paths
+    # @return [Array<String>]
     def all_paths
       @_all_paths ||= begin
-        $stderr.puts "Entering stack!"
+        $stderr.puts "Entering paths stack!"
         @_all_paths_stack.call()
       end
     end

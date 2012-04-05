@@ -90,31 +90,6 @@ module Middleman::Sitemap
       @proxied_to = target
     end
     
-    # Whether this page is ignored
-    # @return [Boolean]
-    # def ignored?
-    #   return true if store.ignored?(self.path)
-    #   
-    #   return false
-    #   
-    #   if !@source_file.nil?
-    #     relative_source = @source_file.sub(app.source_dir, '')
-    #     if self.path.sub(/^\//, "") != relative_source.sub(/^\//, "")
-    #       store.ignored?(relative_source)
-    #     else
-    #       false
-    #     end
-    #   else
-    #     false
-    #   end
-    # end
-    
-    # Set this page to be ignored
-    # @return [void]
-    # def ignore
-    #   store.ignore(self.path)
-    # end
-    
     # Render this page
     # @return [String]
     def render(*args, &block)
@@ -216,12 +191,12 @@ module Middleman::Sitemap
         base_path = path.sub("#{app.index_file}", "")
         prefix    = %r|^#{base_path.sub("/", "\\/")}|
       end
-            
-      store.pages.select do |sub_page|
-        if sub_page == self || sub_page.path !~ prefix# || sub_page.ignored?
+
+      store.all_paths.select do |sub_page|
+        if sub_page == self.path || sub_page !~ prefix
           false
         else
-          inner_path = sub_page.path.sub(prefix, "")
+          inner_path = sub_page.sub(prefix, "")
           parts = inner_path.split("/")
           if parts.length == 1
             true
@@ -231,7 +206,7 @@ module Middleman::Sitemap
             false
           end
         end
-      end
+      end.map { |path| store.page(path) }
     end
     
     # This page's sibling pages

@@ -383,9 +383,6 @@ class Middleman::Base
     # Return 404 if not in sitemap
     return not_found unless sitemap_page
 
-    # Return 404 if this path is specifically ignored
-    # return not_found if sitemap_page.ignored?
-
     # If this path is a static file, send it immediately
     return send_file(sitemap_page.source_file) unless sitemap_page.template?
     
