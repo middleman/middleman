@@ -18,10 +18,10 @@ module Middleman::Sitemap
     # Initialize page with parent store and URL
     # @param [Middleman::Sitemap::Store] store
     # @param [String] path
-    def initialize(store, path)
+    def initialize(store, path, source_file=nil)
       @store       = store
       @path        = path
-      @source_file = nil
+      @source_file = source_file
       @proxied_to  = nil
     end
     
@@ -125,8 +125,7 @@ module Middleman::Sitemap
     # (e.g., for 'gallery.html' this would return 'gallery/')
     # @return [String]
     def eponymous_directory_path
-      path.sub('.html', '/').sub(/\/$/, "") + "/"
-      # TODO: Seems like .html shouldn't be hardcoded here
+      path.sub(File.extname(path), '/').sub(/\/$/, "") + "/"
     end
     
     # A path without the directory index - so foo/index.html becomes

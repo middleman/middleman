@@ -47,6 +47,7 @@ module Middleman
 
   module Sitemap
     autoload :Store,        "middleman-core/sitemap/store"
+    autoload :Middleware,   "middleman-core/sitemap/store"
     autoload :Page,         "middleman-core/sitemap/page"
     autoload :Template,     "middleman-core/sitemap/template"
   end

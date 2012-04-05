@@ -35,13 +35,17 @@ module Middleman::Sitemap
       @_all_paths_stack.use FilesOnDisk, self
       @_all_paths_stack.use Proxies, self
       @_all_paths_stack.use Ignores, self
-      
-      all_paths
+      clear_all_paths!
       
       # @_page_details_stack = ::Middleware::Builder.new
       # @_page_details_stack.use FilesOnDisk, self
       # @_page_details_stack.use Proxies, self
       # @_page_details_stack.use Ignores, self
+    end
+    
+    def add_path_middleware(klass)
+      @_all_paths_stack.use klass, self
+      clear_all_paths!
     end
     
     # def page_details_stack
@@ -53,7 +57,7 @@ module Middleman::Sitemap
     def all_paths
       @_all_paths ||= begin
         $stderr.puts "Entering paths stack!"
-        @_all_paths_stack.call()
+        @_all_paths_stack.call().map(&:path)
       end
     end
     
@@ -259,41 +263,52 @@ module Middleman::Sitemap
     end
   end
   
-  class Proxies < Middleware
+  class Ignores < Middleware
     def call(env)
-      paths = env.concat(@sitemap.proxy_paths.keys)
+      pages = env.reject do |page|
+        @sitemap.ignored?(page.path)
+      end
       
-      $stderr.puts "Proxy: #{paths.length}"
-      res = @app.call(paths)
-      $stderr.puts "Res:"
-      $stderr.puts res.inspect
-      res
+      $stderr.puts "Ignore: #{pages.map(&:path).length}"
+      @app.call(pages)
     end
   end
   
-  class Ignores < Middleware
+  class Proxies < Middleware
     def call(env)
-      paths = env.reject do |path|
-        @sitemap.ignored?(path)
+      proxy_pages = @sitemap.proxy_paths.map do |key, value|
+        p = ::Middleman::Sitemap::Page.new(
+          self, 
+          key
+        )
+        p.proxy_to(value)
+        p
       end
       
-      $stderr.puts "Ignore: #{paths.length}"
-      @app.call(paths)
+      pages = env.concat(proxy_pages)
+      $stderr.puts "Proxy: #{pages.map(&:path).length}"
+      @app.call(pages)
     end
   end
   
   class FilesOnDisk < Middleware
     def call(env)
       # Ignore template paths
-      paths = @sitemap.file_paths_on_disk.reject do |file_path|
+      files = @sitemap.file_paths_on_disk.reject do |file_path|
         relative_source = File.join(@sitemap.app.root, file_path).sub(@sitemap.app.source_dir, '')
         @sitemap.ignored?(relative_source)
-      end.map do |file|
-        @sitemap.file_to_path(file)
       end
       
-      $stderr.puts "Files on: #{paths.length}"
-      @app.call(paths)
+      pages = files.map do |file|
+        ::Middleman::Sitemap::Page.new(
+          self, 
+          @sitemap.file_to_path(file),
+          file
+        )
+      end
+      
+      $stderr.puts "Files on: #{pages.map(&:path).length}"
+      @app.call(pages)
     end
   end
 end
