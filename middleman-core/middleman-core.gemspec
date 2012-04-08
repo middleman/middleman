@@ -40,5 +40,6 @@ Gem::Specification.new do |s|
 
   # i18n
   s.add_dependency("i18n", ["~> 0.6.0"])
+  s.add_dependency("middleware")
 end
 

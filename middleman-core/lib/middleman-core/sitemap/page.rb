@@ -3,7 +3,12 @@ module Middleman::Sitemap
   
   # Sitemap Page class
   class Page
-    # @return [Middleman::Sitemap::Store]
+    include Middleman::Sitemap::Extensions::Traversal
+        
+    # @return [Middleman::Base]
+    attr_accessor :app
+    
+    # @return [Middleman::Sitemap::Base]
     attr_accessor :store
     
     # The source path of this page (relative to the source directory,
@@ -15,13 +20,17 @@ module Middleman::Sitemap
     # @return [String]
     attr_accessor :proxied_to
     
+    delegate :metadata, :to => :template
+    
     # Initialize page with parent store and URL
-    # @param [Middleman::Sitemap::Store] store
+    # @param [Middleman::Sitemap::Base] store
     # @param [String] path
-    def initialize(store, path)
+    # @param [String] source_file
+    def initialize(store, path, source_file=nil)
       @store       = store
+      @app         = @store.app
       @path        = path
-      @source_file = nil
+      @source_file = source_file
       @proxied_to  = nil
     end
     
@@ -90,29 +99,6 @@ module Middleman::Sitemap
       @proxied_to = target
     end
     
-    # Whether this page is ignored
-    # @return [Boolean]
-    def ignored?
-      return true if store.ignored?(self.path)
-            
-      if !@source_file.nil?
-        relative_source = @source_file.sub(app.source_dir, '')
-        if self.path.sub(/^\//, "") != relative_source.sub(/^\//, "")
-          store.ignored?(relative_source)
-        else
-          false
-        end
-      else
-        false
-      end
-    end
-    
-    # Set this page to be ignored
-    # @return [void]
-    def ignore
-      store.ignore(self.path)
-    end
-    
     # Render this page
     # @return [String]
     def render(*args, &block)
@@ -148,8 +134,7 @@ module Middleman::Sitemap
     # (e.g., for 'gallery.html' this would return 'gallery/')
     # @return [String]
     def eponymous_directory_path
-      path.sub('.html', '/').sub(/\/$/, "") + "/"
-      # TODO: Seems like .html shouldn't be hardcoded here
+      path.sub(File.extname(path), '/').sub(/\/$/, "") + "/"
     end
     
     # A path without the directory index - so foo/index.html becomes
@@ -178,93 +163,6 @@ module Middleman::Sitemap
     # @return [Hash]
     def data
       app.frontmatter(relative_path).first
-    end
-    
-    # This page's parent page
-    # @return [Middleman::Sitemap::Page, nil]
-    def parent
-      parts = path.split("/")
-      if path.include?(app.index_file)
-        parts.pop
-      end
-      
-      return nil if parts.length < 1
-      
-      parts.pop
-      parts.push(app.index_file)
-      
-      parent_path = "/" + parts.join("/")
-      
-      if store.exists?(parent_path)
-        store.page(parent_path)
-      else
-        nil
-      end
-    end
-    
-    # This page's child pages
-    # @return [Array<Middleman::Sitemap::Page>]
-    def children
-      return [] unless directory_index?
-
-      if eponymous_directory?
-        base_path = eponymous_directory_path
-        prefix    = %r|^#{base_path.sub("/", "\\/")}|
-      else
-        base_path = path.sub("#{app.index_file}", "")
-        prefix    = %r|^#{base_path.sub("/", "\\/")}|
-      end
-            
-      store.pages.select do |sub_page|
-        if sub_page == self || sub_page.path !~ prefix || sub_page.ignored?
-          false
-        else
-          inner_path = sub_page.path.sub(prefix, "")
-          parts = inner_path.split("/")
-          if parts.length == 1
-            true
-          elsif parts.length == 2
-            parts.last == app.index_file
-          else
-            false
-          end
-        end
-      end
-    end
-    
-    # This page's sibling pages
-    # @return [Array<Middleman::Sitemap::Page>]
-    def siblings
-      return [] unless parent
-      parent.children.reject { |p| p == self }
-    end
-
-    # A cache for extensions and internals to use to store
-    # information about this page. The cache is cleared whenever
-    # the page changes.
-    # @return [Middleman::Cache]
-    def cache
-      @cache ||= Middleman::Cache.new
-    end
-
-    # Clear out the cache whenever this page changes
-    # @return [void]
-    def touch
-      cache.clear
-    end
-    
-    # Clear the cache if the file is deleted
-    # @return [void]
-    def delete
-      touch
-    end
-    
-  protected
-  
-    # This page's stored app
-    # @return [Middleman::Base]
-    def app
-      store.app
     end
   end
 end

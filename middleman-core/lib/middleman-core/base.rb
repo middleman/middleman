@@ -378,13 +378,10 @@ class Middleman::Base
     run_hook :before
 
     # Get the page object for this path
-    sitemap_page = sitemap.page_by_destination(@request_path)
+    sitemap_page = sitemap[@request_path]
 
     # Return 404 if not in sitemap
     return not_found unless sitemap_page
-
-    # Return 404 if this path is specifically ignored
-    return not_found if sitemap_page.ignored?
 
     # If this path is a static file, send it immediately
     return send_file(sitemap_page.source_file) unless sitemap_page.template?

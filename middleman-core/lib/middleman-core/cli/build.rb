@@ -97,7 +97,7 @@ module Middleman::Cli
     
     # Render a page to a file.
     #
-    # @param [Middleman::Sitemap::Page] page
+    # @param [String] path
     # @return [String] The full path of the file that was written
     def render_to_file(page)
       build_dir = self.class.shared_instance.build_dir
@@ -196,10 +196,10 @@ module Middleman::Cli
       sort_order = %w(.png .jpeg .jpg .gif .bmp .svg .svgz .ico .woff .otf .ttf .eot .js .css)
       
       # Pre-request CSS to give Compass a chance to build sprites
-      @app.sitemap.pages.select do |p|
-        p.ext == ".css"
-      end.each do |p|
-        Middleman::Cli::Build.shared_rack.get(p.request_path.gsub(/\s/, "%20"))
+      @app.sitemap.all_paths.select do |path|
+        File.extname(path) == ".css"
+      end.each do |path|
+        Middleman::Cli::Build.shared_rack.get(path.gsub(/\s/, "%20"))
       end
       
       # Double-check for compass sprites
@@ -218,7 +218,6 @@ module Middleman::Cli
 
       # Loop over all the paths and build them.
       pages.each do |page|
-        next if page.ignored?
         next if @config[:glob] && !File.fnmatch(@config[:glob], page.path)
 
         output_path = base.render_to_file(page)
