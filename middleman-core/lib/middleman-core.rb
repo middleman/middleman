@@ -46,10 +46,16 @@ module Middleman
   end
 
   module Sitemap
-    autoload :Store,        "middleman-core/sitemap/store"
-    autoload :Middleware,   "middleman-core/sitemap/store"
+    autoload :Base,         "middleman-core/sitemap/base"
     autoload :Page,         "middleman-core/sitemap/page"
     autoload :Template,     "middleman-core/sitemap/template"
+    
+    module Extensions
+      autoload :OnDisk,     "middleman-core/sitemap/extensions/on_disk"
+      autoload :Proxies,    "middleman-core/sitemap/extensions/proxies"
+      autoload :Ignores,    "middleman-core/sitemap/extensions/ignores"
+      autoload :Traversal,  "middleman-core/sitemap/extensions/traversal"
+    end
   end
 
   module CoreExtensions

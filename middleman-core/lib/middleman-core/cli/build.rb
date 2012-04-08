@@ -99,9 +99,7 @@ module Middleman::Cli
     #
     # @param [String] path
     # @return [String] The full path of the file that was written
-    def render_to_file(path)
-      page = self.class.shared_instance.sitemap.page(path)
-      
+    def render_to_file(page)
       build_dir = self.class.shared_instance.build_dir
       output_file = File.join(build_dir, page.destination_path)
 
@@ -211,18 +209,18 @@ module Middleman::Cli
       # find files in the build folder when it needs to generate sprites for the
       # css files
 
-      paths = @app.sitemap.all_paths.sort do |a, b|
-        a_idx = sort_order.index(File.extname(a)) || 100
-        b_idx = sort_order.index(File.extname(b)) || 100
+      pages = @app.sitemap.pages.sort do |a, b|
+        a_idx = sort_order.index(a.ext) || 100
+        b_idx = sort_order.index(b.ext) || 100
 
         a_idx <=> b_idx
       end
 
       # Loop over all the paths and build them.
-      paths.each do |path|
-        next if @config[:glob] && !File.fnmatch(@config[:glob], path)
+      pages.each do |page|
+        next if @config[:glob] && !File.fnmatch(@config[:glob], page.path)
 
-        output_path = base.render_to_file(path)
+        output_path = base.render_to_file(page)
 
         @cleaning_queue.delete(Pathname.new(output_path).realpath) if cleaning?
       end

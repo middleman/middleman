@@ -1,3 +1,6 @@
+# Used for merging results of metadata callbacks
+require "active_support/core_ext/hash/deep_merge"
+
 # Core Sitemap Extensions
 module Middleman::CoreExtensions::Sitemap
   
@@ -29,6 +32,11 @@ module Middleman::CoreExtensions::Sitemap
       
       # Include instance methods
       app.send :include, InstanceMethods
+      
+      # Initialize Sitemap
+      app.before_configuration do
+        sitemap
+      end
     end
     alias :included :registered
   end
@@ -36,50 +44,16 @@ module Middleman::CoreExtensions::Sitemap
   # Sitemap instance methods
   module InstanceMethods
     
-    # Extend initialize to listen for change events
-    def initialize
-      super
-
-      # Cleanup paths
-      static_path = source_dir.sub(root, "").sub(/^\//, "")
-      sitemap_regex = static_path.empty? ? // : (%r{^#{static_path + "/"}})
-      
-      # Register file change callback
-      files.changed sitemap_regex do |file|
-        sitemap.touch_file(file)
-      end
-      
-      # Register file delete callback
-      files.deleted sitemap_regex do |file|
-        sitemap.remove_file(file)
-      end
-    end
-    
     # Get the sitemap class instance
-    # @return [Middleman::Sitemap::Store]
+    # @return [Middleman::Sitemap::Base]
     def sitemap
-      @_sitemap ||= ::Middleman::Sitemap::Store.new(self)
+      @_sitemap ||= ::Middleman::Sitemap::Base.new(self)
     end
     
     # Get the page object for the current path
     # @return [Middleman::Sitemap::Page]
     def current_page
-      sitemap.page_by_destination(current_path)
-    end
-    
-    # Ignore a path, regex or callback
-    # @param [String, Regexp]
-    # @return [void]
-    def ignore(*args, &block)
-      sitemap.ignore(*args, &block)
-    end
-    
-    # Proxy one path to another
-    # @param [String] url
-    # @param [String] target
-    # @return [void]
-    def proxy(*args)
-      sitemap.proxy(*args)
+      sitemap[current_path]
     end
 
     # Register a handler to provide metadata on a file path
@@ -91,6 +65,18 @@ module Middleman::CoreExtensions::Sitemap
       @_provides_metadata
     end
     
+    def metadata_for_file(source_file)
+      metadata = { :options => {}, :locals => {}, :page => {}, :blocks => [] }
+
+      provides_metadata.each do |callback, matcher|
+        next if !matcher.nil? && !source_file.match(matcher)
+        result = instance_exec(source_file, &callback)
+        metadata = metadata.deep_merge(result)
+      end
+
+      metadata
+    end
+    
     # Register a handler to provide metadata on a url path
     # @param [Regexp] matcher
     # @return [Array<Array<Proc, Regexp>>]
@@ -98,6 +84,28 @@ module Middleman::CoreExtensions::Sitemap
       @_provides_metadata_for_path ||= []
       @_provides_metadata_for_path << [block, matcher] if block_given?
       @_provides_metadata_for_path
+    end
+    
+    def metadata_for_path(request_path)
+      metadata = { :options => {}, :locals => {}, :page => {}, :blocks => [] }
+      
+      provides_metadata_for_path.each do |callback, matcher|
+        if matcher.is_a? Regexp
+          next if !request_path.match(matcher)
+        elsif matcher.is_a? String
+          next if !File.fnmatch("/" + matcher.sub(%r{^/}, ''), "/#{request_path}")
+        end
+
+        result = instance_exec(request_path, &callback)
+        if result.has_key?(:blocks)
+          metadata[:blocks] << result[:blocks]
+          result.delete(:blocks)
+        end
+
+        metadata = metadata.deep_merge(result)
+      end
+
+      metadata
     end
   end
 end

@@ -1,6 +1,3 @@
-# Used for merging results of metadata callbacks
-require "active_support/core_ext/hash/deep_merge"
-
 # Sitemap namespace
 module Middleman::Sitemap
 
@@ -34,34 +31,8 @@ module Middleman::Sitemap
     # Get the metadata for both the current source_file and the current path
     # @return [Hash]
     def metadata
-      metadata = @page.cache.fetch(:metadata) do
-        data = { :options => {}, :locals => {}, :page => {}, :blocks => [] }
-        
-        app.provides_metadata.each do |callback, matcher|
-          next if !matcher.nil? && !source_file.match(matcher)
-          result = app.instance_exec(source_file, &callback)
-          data = data.deep_merge(result)
-        end
-        
-        data
-      end
-      
-      app.provides_metadata_for_path.each do |callback, matcher|
-        if matcher.is_a? Regexp
-          next if !self.request_path.match(matcher)
-        elsif matcher.is_a? String
-          next if !File.fnmatch("/" + matcher.sub(%r{^/}, ''), "/#{self.request_path}")
-        end
-      
-        result = app.instance_exec(self.request_path, &callback)
-        if result.has_key?(:blocks)
-          metadata[:blocks] << result[:blocks]
-          result.delete(:blocks)
-        end
-        
-        metadata = metadata.deep_merge(result)
-      end
-      
+      metadata = app.metadata_for_file(source_file)
+      metadata = metadata.deep_merge(app.metadata_for_path(request_path))
       metadata
     end
 

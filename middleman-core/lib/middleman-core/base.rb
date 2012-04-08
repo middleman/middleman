@@ -378,7 +378,7 @@ class Middleman::Base
     run_hook :before
 
     # Get the page object for this path
-    sitemap_page = sitemap.page_by_destination(@request_path)
+    sitemap_page = sitemap[@request_path]
 
     # Return 404 if not in sitemap
     return not_found unless sitemap_page
