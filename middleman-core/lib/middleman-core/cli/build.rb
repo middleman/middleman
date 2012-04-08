@@ -110,9 +110,9 @@ module Middleman::Cli
         else
           raise Thor::Error.new response.body
         end
-      rescue
+      rescue => e
         say_status :error, output_file, :red
-        raise Thor::Error.new $!
+        raise Thor::Error.new "#{e}\n#{e.backtrace.join("\n")}"
       end
 
       output_file
