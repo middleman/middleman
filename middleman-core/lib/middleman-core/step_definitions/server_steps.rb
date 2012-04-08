@@ -68,6 +68,10 @@ Then /^I should see '([^\']*)'$/ do |expected|
   @browser.last_response.body.should include(expected)
 end
 
+Then /^I should see:$/ do |expected|
+  @browser.last_response.body.should include(expected)
+end
+
 Then /^I should not see "([^\"]*)"$/ do |expected|
   @browser.last_response.body.should_not include(expected)
 end

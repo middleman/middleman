@@ -9,10 +9,6 @@ module Middleman::CoreExtensions::Sprockets
 
     # Once registered
     def registered(app)
-      # Default compression to off
-      app.set :js_compressor, false
-      app.set :css_compressor, false
-
       # Add class methods to context
       app.send :include, InstanceMethods
 
@@ -70,27 +66,9 @@ module Middleman::CoreExtensions::Sprockets
         end
       end
 
-      # Remove old compressors
+      # Remove compressors, we handle these with middleware
       unregister_bundle_processor 'application/javascript', :js_compressor
       unregister_bundle_processor 'text/css', :css_compressor
-
-      # Register compressor from config
-      register_bundle_processor 'application/javascript', :js_compressor do |context, data|
-        if context.pathname.to_s =~ /\.min\./
-          data
-        else
-          app.js_compressor.compress(data)
-        end
-      end if app.js_compressor
-
-      # Register compressor from config
-      register_bundle_processor 'text/css', :css_compressor do |context, data|
-        if context.pathname.to_s =~ /\.min\./
-          data
-        else
-          app.css_compressor.compress(data)
-        end
-      end if app.css_compressor
 
       # configure search paths
       append_path app.js_dir
