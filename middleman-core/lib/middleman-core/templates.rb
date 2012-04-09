@@ -59,8 +59,9 @@ module Middleman::Templates
       return unless options[:bundler]
       template "shared/Gemfile.tt", File.join(location, "Gemfile")
       
-      say_status :run, "bundle install"
-      print `cd #{location} && "#{Gem.ruby}" -rubygems "#{Gem.bin_path('bundler', 'bundle')}" install`
+      inside(location) do
+        run('bundle install', :capture => true)
+      end
     end
   end
 end
