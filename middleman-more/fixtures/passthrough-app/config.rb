@@ -4,11 +4,11 @@ module ::PassThrough
   end
 end
 
-set :js_compressor, ::PassThrough
-set :css_compressor, ::PassThrough
-
 activate :minify_javascript
 activate :minify_css
+
+set :js_compressor, ::PassThrough
+set :css_compressor, ::PassThrough
 
 with_layout false do
   page "/inline-css.html"

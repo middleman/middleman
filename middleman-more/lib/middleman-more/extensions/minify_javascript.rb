@@ -9,12 +9,11 @@ module Middleman::Extensions
       
       # Once registered
       def registered(app)
-        
+        app.set :js_compressor, false
+
         # Once config is parsed
         app.after_configuration do
-          
-          # Tell sprockets which compressor to use
-          if !js_compressor
+          unless respond_to?(:js_compressor) && js_compressor
             require 'uglifier'
             set :js_compressor, ::Uglifier.new
           end
@@ -43,31 +42,56 @@ module Middleman::Extensions
       def call(env)
         status, headers, response = @app.call(env)
 
-        if env["PATH_INFO"].match(/\.html$/)
-          uncompressed_source = case(response)
-            when String
-              response
-            when Array
-              response.join
-            when Rack::Response
-              response.body.join
-            when Rack::File
-              File.read(response.path)
-          end
+        path = env["PATH_INFO"]
 
-          minified = uncompressed_source.gsub(/(<scri.*?\/\/<!\[CDATA\[\n)(.*?)(\/\/\]\].*?<\/script>)/m) do |m|
+        if path.end_with?('.html') || path.end_with?('.php')
+          uncompressed_source = extract_response_text(response)
+
+          minified = uncompressed_source.gsub(/(<script[^>]*?>\s*(?:\/\/(?:(?:<!--)|(?:<!\[CDATA\[))\n)?)(.*?)((?:(?:\n\s*)?\/\/(?:(?:-->)|(?:\]\]>)))?\s*<\/script>)/m) do |match|
             first = $1
-            uncompressed_source = $2
+            javascript = $2
             last = $3
-            minified_js = @compressor.compress(uncompressed_source)
 
-            first << minified_js << "\n" << last
+            # Only compress script tags that contain JavaScript (as opposed
+            # to something like jQuery templates, identified with a "text/html"
+            # type.
+            if first =~ /<script>/ || first.include?('text/javascript')
+              minified_js = @compressor.compress(javascript)
+
+              first << minified_js << last
+            else
+              match
+            end
           end
+
           headers["Content-Length"] = ::Rack::Utils.bytesize(minified).to_s
           response = [minified]
+        elsif path.end_with?('.js') && path !~ /\.min\./
+          uncompressed_source = extract_response_text(response)
+          minified_js = @compressor.compress(uncompressed_source)
+
+          headers["Content-Length"] = ::Rack::Utils.bytesize(minified_js).to_s
+          response = [minified_js]
         end
 
         [status, headers, response]
+      end
+
+      private
+
+      def extract_response_text(response)
+        case(response)
+        when String
+          response
+        when Array
+          response.join
+        when Rack::Response
+          response.body.join
+        when Rack::File
+          File.read(response.path)
+        else
+          response.to_s
+        end
       end
     end
   end

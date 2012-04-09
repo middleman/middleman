@@ -53,18 +53,7 @@ module Middleman::Extensions
         dirpath = Pathname.new(File.dirname(path))
 
         if path =~ /(^\/$)|(\.(htm|html|php|css|js)$)/
-          body = case(response)
-            when String
-              response
-            when Array
-              response.join
-            when Rack::Response
-              response.body.join
-            when Rack::File
-              File.read(response.path)
-            else
-              response.to_s
-          end
+          body = extract_response_text(response)
 
           if body
             # TODO: This regex will change some paths in plan HTML (not in a tag) - is that OK?
@@ -89,6 +78,23 @@ module Middleman::Extensions
           end
         end
         [status, headers, response]
+      end
+
+      private
+
+      def extract_response_text(response)
+        case(response)
+        when String
+          response
+        when Array
+          response.join
+        when Rack::Response
+          response.body.join
+        when Rack::File
+          File.read(response.path)
+        else
+          response.to_s
+        end
       end
     end
   end
