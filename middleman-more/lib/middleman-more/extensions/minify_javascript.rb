@@ -47,7 +47,7 @@ module Middleman::Extensions
         if path.end_with?('.html') || path.end_with?('.php')
           uncompressed_source = extract_response_text(response)
 
-          minified = uncompressed_source.gsub(/(<script[^>]*?>\s*(?:\/\/(?:(?:<!--)|(?:<!\[CDATA\[))\n)?)(.*?)((?:(?:\n\s*)?\/\/(?:(?:-->)|(?:\]\]>)))?\s*<\/script>)/m) do |match|
+          minified = uncompressed_source.gsub(/(<script[^>]*>\s*(?:\/\/(?:(?:<!--)|(?:<!\[CDATA\[))\n)?)(.*?)((?:(?:\n\s*)?\/\/(?:(?:-->)|(?:\]\]>)))?\s*<\/script>)/m) do |match|
             first = $1
             javascript = $2
             last = $3

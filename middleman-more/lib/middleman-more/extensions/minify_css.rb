@@ -47,7 +47,7 @@ module Middleman::Extensions
       if path.end_with?('.html') || path.end_with?('.php')
         uncompressed_source = extract_response_text(response)
 
-        minified = uncompressed_source.gsub(/(<style[^>]*?>\s*(?:\/\*<!\[CDATA\[\*\/\n)?)(.*?)((?:(?:\n\s*)?\/\*\]\]>\*\/)?\s*<\/style>)/m) do |match|
+        minified = uncompressed_source.gsub(/(<style[^>]*>\s*(?:\/\*<!\[CDATA\[\*\/\n)?)(.*?)((?:(?:\n\s*)?\/\*\]\]>\*\/)?\s*<\/style>)/m) do |match|
           first = $1
           css = $2
           last = $3
