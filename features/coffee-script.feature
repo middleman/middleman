@@ -4,12 +4,12 @@ Feature: Support coffee-script
   Scenario: Rendering coffee script
     Given the Server is running at "test-app"
     When I go to "/javascripts/coffee_test.js"
-    Then I should see "Array.prototype.slice"
+    Then I should see ".slice"
 
   Scenario: Rendering coffee-script with :coffeescript haml-filter
     Given the Server is running at "test-app"
     When I go to "/inline-coffeescript.html"
-    Then I should see "Array.prototype.slice"
+    Then I should see ".slice"
   
   Scenario: Rendering broken coffee
     Given the Server is running at "test-app"

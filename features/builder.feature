@@ -4,7 +4,7 @@ Feature: Builder
   Scenario: Checking built folder for content
     Given a built app at "test-app"
     Then "index.html" should exist at "test-app" and include "Comment in layout"
-    Then "javascripts/coffee_test.js" should exist at "test-app" and include "Array.prototype.slice"
+    Then "javascripts/coffee_test.js" should exist at "test-app" and include ".slice"
     Then "index.html" should exist at "test-app" and include "<h1>Welcome</h1>"
     Then "static.html" should exist at "test-app" and include "Static, no code!"
     Then "services/index.html" should exist at "test-app" and include "Services"

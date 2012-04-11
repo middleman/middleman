@@ -16,7 +16,8 @@ module Middleman::Features::RelativeAssets
         elsif path[0,1] == "/"
           path
         else
-          path = File.join(prefix, path) if prefix.length > 0
+          path = app.before_asset_handler(:relative_assets, path, prefix, request).sub(%r{^/}, '')
+          # path = File.join(prefix, path) if prefix.length > 0
           request_path = request.path_info.dup
           request_path << app.index_file if path.match(%r{/$})
           request_path.gsub!(%r{^/}, '')
