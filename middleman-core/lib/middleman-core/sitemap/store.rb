@@ -94,11 +94,14 @@ module Middleman::Sitemap
     # @param [String] The destination (output) path of a page.
     # @return [Middleman::Sitemap::Page]
     def page_by_destination(destination_path)
-      destination_path = normalize_path(destination_path)
-      pages.find do |p|
-        p.destination_path == destination_path ||
-        p.destination_path == destination_path.sub("/#{@app.index_file}", "")
+      @_page_by_destination ||= pages.each_with_object({}) do |page, result|
+        page_destination_path = page.destination_path
+        result[page_destination_path] = page
+        result[File.join(page_destination_path, @app.index_file)] = page
       end
+
+      destination_path = normalize_path(destination_path)
+      @_page_by_destination[destination_path]
     end
     
     # Whether a path is ignored
@@ -154,6 +157,8 @@ module Middleman::Sitemap
       p.source_file = File.expand_path(file, @app.root)
       p.touch
       
+      @_page_by_destination = nil
+
       true
     end
     
