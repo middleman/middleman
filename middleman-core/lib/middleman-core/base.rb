@@ -352,7 +352,7 @@ class Middleman::Base
   # Halt the current request and return a response
   #
   # @private
-  # @param [String] Reponse value
+  # @param [String] Response value
   def halt(response)
     throw :halt, response
   end
@@ -365,7 +365,7 @@ class Middleman::Base
   # @return [Boolean] If we're in build mode
   def build?; environment == :build; end
   
-  # Core repsonse method. We process the request, check with the sitemap,
+  # Core response method. We process the request, check with the sitemap,
   # and return the correct file, response or status message.
   #
   # @private
