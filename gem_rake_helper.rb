@@ -17,7 +17,7 @@ class Bundler::GemHelper
 end
 
 Cucumber::Rake::Task.new(:test, 'Run features that should pass') do |t|
-  t.cucumber_opts = "--color --tags ~@wip --strict --format #{ENV['CUCUMBER_FORMAT'] || 'pretty'}"
+  t.cucumber_opts = "--color --tags ~@wip --strict --format #{ENV['CUCUMBER_FORMAT'] || 'Fivemat'}"
 end
 
 # YARD::Rake::YardocTask.new

@@ -2,6 +2,7 @@ source :rubygems
 
 group :development do
   gem "cucumber", "~> 1.1.0"
+  gem "fivemat"
   gem "aruba",    "~> 0.4.11"
   gem "rake",     "~> 0.9.2"
   gem "rspec",    "~> 2.7"
