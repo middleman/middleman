@@ -74,13 +74,11 @@ module Padrino
       #
       # @api public
       def form_tag(url, options={}, &block)
-        desired_method = options[:method]
-        data_method = options.delete(:method) if options[:method].to_s !~ /get|post/i
-        options.reverse_merge!(:method => "post", :action => url)
-        options[:enctype] = "multipart/form-data" if options.delete(:multipart)
-        options["data-remote"] = "true" if options.delete(:remote)
-        options["data-method"] = data_method if data_method
-        options["accept-charset"] ||= "UTF-8"
+        desired_method = options[:method].to_s
+        options.delete(:method) unless desired_method =~ /get|post/i
+        options.reverse_merge!(:method => 'post', :action => url)
+        options[:enctype] = 'multipart/form-data' if options.delete(:multipart)
+        options['accept-charset'] ||= 'UTF-8'
         inner_form_html  = hidden_form_method_field(desired_method)
         inner_form_html += capture_html(&block)
         concat_content content_tag(:form, inner_form_html, options)
@@ -140,9 +138,9 @@ module Padrino
       #   @param [Hash]           options  Error message display options.
       #   @option options [String] :header_tag ("h2")
       #     Used for the header of the error div
-      #   @option options [String] :id ("errorExplanation")
+      #   @option options [String] :id ("field-errors")
       #     The id of the error div.
-      #   @option options [String] :class ("errorExplanation")
+      #   @option options [String] :class ("field-errors")
       #     The class of the error div.
       #   @option options [Array<Object>]  :object
       #     The object (or array of objects) for which to display errors,
@@ -222,7 +220,7 @@ module Padrino
       #   The field on the +object+ to display the error for.
       # @param [Hash] options
       #   The options to control the error display.
-      # @option options [String] :tag ("div")
+      # @option options [String] :tag ("span")
       #   The tag that encloses the error.
       # @option options [String] :prepend ("")
       #   The text to prepend before the field error.
@@ -289,29 +287,216 @@ module Padrino
       end
 
       ##
-      # Constructs a text field input from the given options
+      # Creates a text field input with the given name and options
       #
-      # @macro [new] input_field_doc
-      #   @param [String] name
-      #     The name of the input field.
+      # @macro [new] text_field
+      #   @param [Symbol] name
+      #     The name of the input to create.
       #   @param [Hash] options
-      #     The html options for the input field.
+      #     The HTML options to include in this field.
       #
-      #   @return [String] The html input field based on the +options+ specified
+      #   @option options [String] :id
+      #     Specifies a unique identifier for the field.
+      #   @option options [String] :class
+      #     Specifies the stylesheet class of the field.
+      #   @option options [String] :name
+      #     Specifies the name of the field.
+      #   @option options [String] :accesskey
+      #     Specifies a shortcut key to access the field.
+      #   @option options [Integer] :tabindex
+      #     Specifies the tab order of the field.
+      #   @option options [Integer] :maxlength
+      #     Specifies the maximum length, in characters, of the field.
+      #   @option options [Integer] :size
+      #     Specifies the width, in characters, of the field.
+      #   @option options [String] :placeholder
+      #     Specifies a short hint that describes the expected value of the field.
+      #   @option options [Boolean] :hidden
+      #     Specifies whether or not the field is hidden from view.
+      #   @option options [Boolean] :spellcheck
+      #     Specifies whether or not the field should have it's spelling and grammar checked for errors.
+      #   @option options [Boolean] :draggable
+      #     Specifies whether or not the field is draggable. (true, false, :auto)
+      #   @option options [String] :pattern
+      #     Specifies the regular expression pattern that the field's value is checked against.
+      #   @option options [Symbol] :autocomplete
+      #     Specifies whether or not the field should have autocomplete enabled. (:on, :off)
+      #   @option options [Boolean] :autofocus
+      #     Specifies whether or not the field should automatically get focus when the page loads.
+      #   @option options [Boolean] :required
+      #     Specifies whether or not the field is required to be completeled before the form is submitted.
+      #   @option options [Boolean] :readonly
+      #     Specifies whether or not the field is read only.
+      #   @option options [Boolean] :disabled
+      #     Specifies whether or not the field is disabled.
+      #
+      #   @return [String]
+      #     Generated HTML with specified +options+
       #
       # @example
-      #   text_field_tag :username, :class => 'long'
+      #   text_field_tag :first_name, :maxlength => 40, :required => true
+      #   # => <input name="first_name" maxlength="40" required type="text">
+      #
+      #   text_field_tag :last_name, :class => 'string', :size => 40
+      #   # => <input name="last_name" class="string" size="40" type="text">
+      #
+      #   text_field_tag :username, :placeholder => 'Your Username'
+      #   # => <input name="username" placeholder="Your Username" type="text">
       #
       # @api public
       def text_field_tag(name, options={})
-        options.reverse_merge!(:name => name)
-        input_tag(:text, options)
+        input_tag(:text, options.reverse_merge!(:name => name))
+      end
+
+      ##
+      # Creates a number field input with the given name and options
+      #
+      # @macro [new] number_field
+      #   @param [Symbol] name
+      #     The name of the input to create.
+      #   @param [Hash] options
+      #     The HTML options to include in this field.
+      #
+      #   @option options [String] :id
+      #     Specifies a unique identifier for the field.
+      #   @option options [String] :class
+      #     Specifies the stylesheet class of the field.
+      #   @option options [String] :name
+      #     Specifies the name of the field.
+      #   @option options [String] :accesskey
+      #     Specifies a shortcut key to access the field.
+      #   @option options [Integer] :tabindex
+      #     Specifies the tab order of the field.
+      #   @option options [Integer] :min
+      #     Specifies the minimum value of the field.
+      #   @option options [Integer] :max
+      #     Specifies the maximum value of the field.
+      #   @option options [Integer] :step
+      #     Specifies the legal number intervals of the field.
+      #   @option options [Boolean] :hidden
+      #     Specifies whether or not the field is hidden from view.
+      #   @option options [Boolean] :spellcheck
+      #     Specifies whether or not the field should have it's spelling and grammar checked for errors.
+      #   @option options [Boolean] :draggable
+      #     Specifies whether or not the field is draggable. (true, false, :auto)
+      #   @option options [String] :pattern
+      #     Specifies the regular expression pattern that the field's value is checked against.
+      #   @option options [Symbol] :autocomplete
+      #     Specifies whether or not the field should have autocomplete enabled. (:on, :off)
+      #   @option options [Boolean] :autofocus
+      #     Specifies whether or not the field should automatically get focus when the page loads.
+      #   @option options [Boolean] :required
+      #     Specifies whether or not the field is required to be completeled before the form is submitted.
+      #   @option options [Boolean] :readonly
+      #     Specifies whether or not the field is read only.
+      #   @option options [Boolean] :disabled
+      #     Specifies whether or not the field is disabled.
+      #
+      #   @return [String]
+      #     Generated HTML with specified +options+
+      #
+      # @example
+      #   number_field_tag :quanity, :class => 'numeric'
+      #   # => <input name="quanity" class="numeric" type="number">
+      #
+      #   number_field_tag :zip_code, :pattern => /[0-9]{5}/
+      #   # => <input name="zip_code" pattern="[0-9]{5}" type="number">
+      #
+      #   number_field_tag :credit_card, :autocomplete => :off
+      #   # => <input name="credit_card" autocomplete="off" type="number">
+      #
+      #   number_field_tag :age, :min => 18, :max => 120, :step => 1
+      #   # => <input name="age" min="18" max="120" step="1" type="number">
+      #
+      # @api public
+      def number_field_tag(name, options={})        
+        input_tag(:number, options.reverse_merge(:name => name))
+      end
+      
+      ##
+      # Creates a telephone field input with the given name and options
+      #
+      # @macro text_field
+      #
+      # @example
+      #   telephone_field_tag :phone_number, :class => 'string'
+      #   # => <input name="phone_number" class="string" type="tel">
+      #
+      #  telephone_field_tag :cell_phone, :tabindex => 1
+      #  telephone_field_tag :work_phone, :tabindex => 2
+      #  telephone_field_tag :home_phone, :tabindex => 3
+      #
+      #  # => <input name="cell_phone" tabindex="1" type="tel">
+      #  # => <input name="work_phone" tabindex="2" type="tel">
+      #  # => <input name="home_phone" tabindex="3" type="tel">
+      #
+      # @api public
+      def telephone_field_tag(name, options={})
+        input_tag(:tel, options.reverse_merge(:name => name))
+      end
+      alias_method :phone_field_tag, :telephone_field_tag
+
+      ##
+      # Creates an email field input with the given name and options
+      #
+      # @macro text_field
+      #
+      # @example
+      #   email_field_tag :email, :placeholder => 'you@example.com'
+      #   # => <input name="email" placeholder="you@example.com" type="email">
+      #
+      #   email_field_tag :email, :value => 'padrinorb@gmail.com', :readonly => true
+      #   # => <input name="email" value="padrinorb@gmail.com" readonly type="email">
+      #
+      # @api public
+      def email_field_tag(name, options={})
+        input_tag(:email, options.reverse_merge(:name => name))
+      end
+      
+      ##
+      # Creates a search field input with the given name and options
+      #
+      # @macro text_field
+      #
+      # @example
+      #  search_field_tag :search, :placeholder => 'Search this website...'
+      #  # => <input name="search" placeholder="Search this website..." type="search">
+      #
+      #  search_field_tag :search, :maxlength => 15, :class => ['search', 'string']
+      #  # => <input name="search" maxlength="15" class="search string">
+      #
+      #  search_field_tag :search, :id => 'search'
+      #  # => <input name="search" id="search" type="search">
+      #
+      #  search_field_tag :search, :autofocus => true
+      #  # => <input name="search" autofocus type="search">
+      #
+      # @api public
+      def search_field_tag(name, options={})
+        input_tag(:search, options.reverse_merge(:name => name))
+      end
+
+      ##
+      # Creates a url field input with the given name and options
+      #
+      # @macro text_field
+      #
+      # @example
+      #  url_field_tag :favorite_website, :placeholder => 'http://padrinorb.com'
+      #  <input name="favorite_website" placeholder="http://padrinorb.com." type="url">
+      #
+      #  url_field_tag :home_page, :class => 'string url'
+      #  <input name="home_page" class="string url", type="url">
+      #
+      # @api public
+      def url_field_tag(name, options={})
+        input_tag(:url, options.reverse_merge(:name => name))
       end
 
       ##
       # Constructs a hidden field input from the given options
       #
-      # @macro input_field_doc
+      # @macro text_field
       #
       # @example
       #   hidden_field_tag :session_key, :value => "__secret__"
@@ -325,7 +510,7 @@ module Padrino
       ##
       # Constructs a text area input from the given options
       #
-      # @macro input_field_doc
+      # @macro text_field
       #
       # @example
       #   text_area_tag :username, :class => 'long', :value => "Demo?"
@@ -339,7 +524,7 @@ module Padrino
       ##
       # Constructs a password field input from the given options
       #
-      # @macro input_field_doc
+      # @macro text_field
       #
       # @example
       #   password_field_tag :password, :class => 'long'
@@ -353,7 +538,7 @@ module Padrino
       ##
       # Constructs a check_box from the given options
       #
-      # @macro input_field_doc
+      # @macro text_field
       #
       # @example
       #   check_box_tag :remember_me, :value => 'Yes'
@@ -367,7 +552,7 @@ module Padrino
       ##
       # Constructs a radio_button from the given options
       #
-      # @macro input_field_doc
+      # @macro text_field
       #
       # @example
       #   radio_button_tag :remember_me, :value => 'true'
@@ -381,7 +566,7 @@ module Padrino
       ##
       # Constructs a file field input from the given options
       #
-      # @macro input_field_doc
+      # @macro text_field
       #
       # @example
       #   file_field_tag :photo, :class => 'long'

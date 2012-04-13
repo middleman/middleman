@@ -44,6 +44,8 @@ class MiniTest::Spec
     else
       super(name, *args, &block)
     end
+  rescue Rack::Test::Error # no response yet
+    super(name, *args, &block)
   end
 
   alias :response :last_response

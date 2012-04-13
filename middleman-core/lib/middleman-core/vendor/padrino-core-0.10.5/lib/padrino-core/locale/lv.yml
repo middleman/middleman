@@ -4,7 +4,7 @@ lv:
       # Use the strftime parameters for formats.
       # When no format has been given, it uses default.
       # You can provide other formats here if you like!
-      default: "%d.%m.%Y."
+      default: "%d.%m.%Y"
       short: "%e. %B"
       long: "%Y. gada %e. %B"
       only_day: "%e"
@@ -21,7 +21,7 @@ lv:
   time:
     formats:
       default: "%Y. gada %e. %B, %H:%M"
-      short: "%d.%m.%Y., %H:%M"
+      short: "%d.%m.%Y, %H:%M"
       long: "%Y. gada %e. %B, %H:%M:%S"
     am: "priekšpusdiena"
     pm: "pēcpusdiena"

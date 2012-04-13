@@ -17,7 +17,7 @@ module Padrino
   #
   class Server < Rack::Server
     # Server Handlers
-    Handlers = [:thin, :mongrel, :webrick]
+    Handlers = [:thin, :mongrel, :trinidad, :webrick]
 
     # Starts the application on the available server with specified options.
     def self.start(app, opts={})
@@ -44,7 +44,7 @@ module Padrino
       [:INT, :TERM].each { |sig| trap(sig) { exit } }
       super
     ensure
-      puts "<= Padrino has ended his set (crowd applauds)" unless options[:daemonize]
+      puts "<= Padrino leaves the gun, takes the cannoli" unless options[:daemonize]
     end
 
     # The application the server will run.

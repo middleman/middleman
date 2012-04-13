@@ -1,6 +1,6 @@
-require 'middleman-core/vendor/padrino-core-0.10.5/lib/padrino-core/support_lite' unless defined?(SupportLite)
+require 'padrino-core/support_lite' unless defined?(SupportLite)
 require 'cgi'
-# require 'i18n'
+require 'i18n'
 require 'enumerator'
 require 'active_support/core_ext/string/conversions'  # to_date
 require 'active_support/core_ext/float/rounding'      # round
@@ -11,7 +11,7 @@ require 'active_support/inflector'                    # humanize
 FileSet.glob_require('padrino-helpers/**/*.rb', __FILE__)
 
 # Load our locales
-# I18n.load_path += Dir["#{File.dirname(__FILE__)}/padrino-helpers/locale/*.yml"]
+I18n.load_path += Dir["#{File.dirname(__FILE__)}/padrino-helpers/locale/*.yml"]
 
 module Padrino
   ##

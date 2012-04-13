@@ -519,24 +519,24 @@ module Padrino
         # Rewrite default routes.
         #
         # @example
-        #   get :index                                    # => "/"
-        #   get :index, "/"                               # => "/"
-        #   get :index, :map => "/"                       # => "/"
-        #   get :show, "/show-me"                         # => "/show-me"
-        #   get :show,  :map => "/show-me"                # => "/show-me"
-        #   get "/foo/bar"                                # => "/show"
-        #   get :index, :parent => :user                  # => "/user/:user_id/index"
-        #   get :show, :with => :id, :parent => :user     # => "/user/:user_id/show/:id"
-        #   get :show, :with => :id                       # => "/show/:id"
-        #   get [:show, :id]                              # => "/show/:id"
-        #   get :show, :with => [:id, :name]              # => "/show/:id/:name"
-        #   get [:show, :id, :name]                       # => "/show/:id/:name"
-        #   get :list, :provides => :js                   # => "/list.{:format,js)"
-        #   get :list, :provides => :any                  # => "/list(.:format)"
-        #   get :list, :provides => [:js, :json]          # => "/list.{!format,js|json}"
-        #   get :list, :provides => [:html, :js, :json]   # => "/list(.{!format,js|json})"
-        #   get :list, :priority => :low                  # Defers route to be last
-        #
+        #   get :index                                             # => "/"
+        #   get :index, "/"                                        # => "/"
+        #   get :index, :map => "/"                                # => "/"
+        #   get :show, "/show-me"                                  # => "/show-me"
+        #   get :show,  :map => "/show-me"                         # => "/show-me"
+        #   get "/foo/bar"                                         # => "/show"
+        #   get :index, :parent => :user                           # => "/user/:user_id/index"
+        #   get :show, :with => :id, :parent => :user              # => "/user/:user_id/show/:id"
+        #   get :show, :with => :id                                # => "/show/:id"
+        #   get [:show, :id]                                       # => "/show/:id"
+        #   get :show, :with => [:id, :name]                       # => "/show/:id/:name"
+        #   get [:show, :id, :name]                                # => "/show/:id/:name"
+        #   get :list, :provides => :js                            # => "/list.{:format,js)"
+        #   get :list, :provides => :any                           # => "/list(.:format)"
+        #   get :list, :provides => [:js, :json]                   # => "/list.{!format,js|json}"
+        #   get :list, :provides => [:html, :js, :json]            # => "/list(.{!format,js|json})"
+        #   get :list, :priority => :low                           # Defers route to be last
+        #   get /pattern/, :name => :foo, :generate_with => '/foo' # Generates :foo as /foo
         def route(verb, path, *args, &block)
           options = case args.size
             when 2
@@ -557,7 +557,7 @@ module Padrino
           route_options = options.dup
           route_options[:provides] = @_provides if @_provides
           path, *route_options[:with] = path if path.is_a?(Array)
-          path, name, options = *parse_route(path, route_options, verb)
+          path, name, options, route_options = *parse_route(path, route_options, verb)
           options.reverse_merge!(@_conditions) if @_conditions
 
           # Sinatra defaults
@@ -571,7 +571,7 @@ module Padrino
           invoke_hook(:route_added, verb, path, block)
 
           # HTTPRouter route construction
-          route = router.add(path)
+          route = router.add(path, route_options)
           route.name(name) if name
           priority_name = options.delete(:priority) || :normal
           priority = ROUTE_PRIORITY[priority_name] or raise("Priority #{priority_name} not recognized, try #{ROUTE_PRIORITY.keys.join(', ')}")
@@ -620,6 +620,9 @@ module Padrino
           # We need save our originals path/options so we can perform correctly cache.
           original = [path, options.dup]
 
+          # options for the route directly
+          route_options = {}
+
           # We need check if path is a symbol, if that it's a named route
           map = options.delete(:map)
 
@@ -628,7 +631,11 @@ module Padrino
             path = map ? map.dup : (path == :index ? '/' : path.to_s)  # The route path
           end
 
-          if path.kind_of?(String) # path i.e "/index" or "/show"
+          # Build our controller
+          controller = Array(@_controller).map { |c| c.to_s }
+
+          case path
+          when String # path i.e "/index" or "/show"
             # Now we need to parse our 'with' params
             if with_params = options.delete(:with)
               path = process_path_for_with_params(path, with_params)
@@ -643,9 +650,6 @@ module Padrino
               options[:matching][:format] = /[^\.]+/
             end
 
-            # Build our controller
-            controller = Array(@_controller).map { |c| c.to_s }
-
             absolute_map = map && map[0] == ?/
 
             unless controller.empty?
@@ -656,10 +660,6 @@ module Padrino
                 path = File.join(controller_path, path)
               end
               # Here we build the correct name route
-              if name
-                controller_name = controller.join("_")
-                name = "#{controller_name}_#{name}".to_sym unless controller_name.blank?
-              end
             end
 
             # Now we need to parse our 'parent' params and parent scope
@@ -678,12 +678,21 @@ module Padrino
             path.sub!(%r{/(\))?$}, '\\1') if path != "/" # Remove latest trailing delimiter
             path.gsub!(/\/(\(\.|$)/, '\\1')              # Remove trailing slashes
             path.squeeze!('/')
+          when Regexp
+            route_options[:path_for_generation] = options.delete(:generate_with) if options.key?(:generate_with)
+          end
+
+          name = options.delete(:route_name) if name.nil? && options.key?(:route_name)
+          name = options.delete(:name) if name.nil? && options.key?(:name)
+          if name
+            controller_name = controller.join("_")
+            name = "#{controller_name}_#{name}".to_sym unless controller_name.blank?
           end
 
           # Merge in option defaults
           options.reverse_merge!(:default_values => @_defaults)
 
-          [path, name, options]
+          [path, name, options, route_options]
         end
 
         ##

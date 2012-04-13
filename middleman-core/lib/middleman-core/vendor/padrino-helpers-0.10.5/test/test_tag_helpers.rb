@@ -21,17 +21,18 @@ describe "TagHelpers" do
       assert_has_tag('option', :selected => 'selected') { actual_html }
     end
 
-    should "support tags with content no attributes" do
-      assert_has_tag(:p, :content => "Demo String") { tag(:p, :content => "Demo String") }
+    should "support data attributes" do
+      actual_html = tag(:a, :data => { :remote => true, :method => 'post'})
+      assert_has_tag(:a, 'data-remote' => 'true', 'data-method' => 'post') { actual_html }
     end
 
-    should "support tags with content and attributes" do
-      actual_html = tag(:p, :content => "Demo", :class => 'large', :id => 'intro')
-      assert_has_tag('p#intro.large', :content => "Demo") { actual_html }
+    should "support nested attributes" do
+      actual_html = tag(:div, :data => {:dojo => {:type => 'dijit.form.TextBox', :props => 'readOnly: true'}})
+      assert_has_tag(:div, 'data-dojo-type' => 'dijit.form.TextBox', 'data-dojo-props' => 'readOnly: true') { actual_html }
     end
 
     should "support open tags" do
-      actual_html = tag(:p, :class => 'demo', :open => true)
+      actual_html = tag(:p, { :class => 'demo' }, true)
       assert_equal "<p class=\"demo\">", actual_html
     end
 

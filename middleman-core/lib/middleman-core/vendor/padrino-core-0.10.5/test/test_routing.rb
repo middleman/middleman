@@ -78,6 +78,13 @@ describe "Routing" do
     assert_equal "My lucky number: 99 99", body
   end
 
+  should 'accept regexp routes with generate with :generate_with' do
+    mock_app do
+      get(%r{/fob|/baz}, :name => :foo, :generate_with => '/fob') { "regexp" }
+    end
+    assert_equal "/fob", @app.url(:foo)
+  end
+
   should "parse routes with question marks" do
     mock_app do
       get("/foo/?"){ "okey" }

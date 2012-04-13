@@ -92,7 +92,7 @@ module Padrino
         changed = false
         rotation do |file, mtime|
           new_file = MTIMES[file].nil?
-          previous_mtime = MTIMES[file] ||= mtime
+          previous_mtime = MTIMES[file]
           changed = true if new_file || mtime > previous_mtime
         end
         changed
@@ -103,7 +103,7 @@ module Padrino
       # We lock dependencies sets to prevent reloading of protected constants
       #
       def lock!
-        klasses = ObjectSpace.classes.map { |klass| klass.name.to_s.split("::")[0] }.uniq
+        klasses = ObjectSpace.classes.map { |klass| klass.name.split('::')[0] }.uniq
         klasses = klasses | Padrino.mounted_apps.map { |app| app.app_class }
         Padrino::Reloader.exclude_constants.concat(klasses)
       end
@@ -183,50 +183,50 @@ module Padrino
       # Removes the specified class and constant.
       #
       def remove_constant(const)
-        return if exclude_constants.compact.uniq.any? { |c| (const.to_s =~ %r{^#{Regexp.escape(c)}}) } &&
-                 !include_constants.compact.uniq.any? { |c| (const.to_s =~ %r{^#{Regexp.escape(c)}}) }
+        return if exclude_constants.compact.uniq.any? { |c| const.name.index(c) == 0 } &&
+                 !include_constants.compact.uniq.any? { |c| const.name.index(c) == 0 }
         begin
-          parts  = const.to_s.split("::")
-          base   = parts.size == 1 ? Object : parts[0..-2].join("::").constantize
-          object = parts[-1].to_s
-          base.send(:remove_const, object)
-          logger.devel "Removed constant: #{const}"
+          parts  = const.to_s.sub(/^::(Object)?/, 'Object::').split('::')
+          object = parts.pop
+          base   = parts.empty? ? Object : Inflector.constantize(parts * '::')
+          base.send :remove_const, object
+          logger.devel "Removed constant: #{const} from #{base}"
         rescue NameError; end
       end
 
       private
-        ##
-        # Return the mounted_apps providing the app location
-        # Can be an array because in one app.rb we can define multiple Padrino::Appplications
-        #
-        def mounted_apps_of(file)
-          file = figure_path(file)
-          Padrino.mounted_apps.find_all { |app| File.identical?(file, app.app_file) }
-        end
+      ##
+      # Return the mounted_apps providing the app location
+      # Can be an array because in one app.rb we can define multiple Padrino::Appplications
+      #
+      def mounted_apps_of(file)
+        file = figure_path(file)
+        Padrino.mounted_apps.find_all { |app| File.identical?(file, app.app_file) }
+      end
 
-        ##
-        # Returns true if file is in our Padrino.root
-        #
-        def in_root?(file)
-          # This is better but slow:
-          #   Pathname.new(Padrino.root).find { |f| File.identical?(Padrino.root(f), figure_path(file)) }
-          figure_path(file) =~ %r{^#{Regexp.escape(Padrino.root)}}
-        end
+      ##
+      # Returns true if file is in our Padrino.root
+      #
+      def in_root?(file)
+        # This is better but slow:
+        #   Pathname.new(Padrino.root).find { |f| File.identical?(Padrino.root(f), figure_path(file)) }
+        figure_path(file).index(Padrino.root) == 0
+      end
 
-        ##
-        # Searches Ruby files in your +Padrino.load_paths+ , Padrino::Application.load_paths
-        # and monitors them for any changes.
-        #
-        def rotation
-          files  = Padrino.load_paths.map { |path| Dir["#{path}/**/*.rb"] }.flatten
-          files  = files | Padrino.mounted_apps.map { |app| app.app_file }
-          files  = files | Padrino.mounted_apps.map { |app| app.app_obj.dependencies }.flatten
-          files.uniq.map { |file|
-            file = File.expand_path(file)
-            next if Padrino::Reloader.exclude.any? { |base| file =~ %r{^#{Regexp.escape(base)}} } || !File.exist?(file)
-            yield(file, File.mtime(file))
-          }.compact
-        end
+      ##
+      # Searches Ruby files in your +Padrino.load_paths+ , Padrino::Application.load_paths
+      # and monitors them for any changes.
+      #
+      def rotation
+        files  = Padrino.load_paths.map { |path| Dir["#{path}/**/*.rb"] }.flatten
+        files  = files | Padrino.mounted_apps.map { |app| app.app_file }
+        files  = files | Padrino.mounted_apps.map { |app| app.app_obj.dependencies }.flatten
+        files.uniq.map do |file|
+          file = File.expand_path(file)
+          next if Padrino::Reloader.exclude.any? { |base| file.index(base) == 0 } || !File.exist?(file)
+          yield file, File.mtime(file)
+        end.compact
+      end
     end # self
 
     ##

@@ -41,7 +41,6 @@ module Padrino
       method_option :environment, :type => :string,  :aliases => "-e", :required => true, :default => :development
       method_option :list,        :type => :string,  :aliases => "-T", :desc => "Display the tasks (matching optional PATTERN) with descriptions, then exit."
       method_option :trace,       :type => :boolean, :aliases => "-t", :desc => "Turn on invoke/execute tracing, enable full backtrace."
-      method_option :verbose,     :type => :boolean, :aliases => "-v", :desc => "Log message to standard output."
       def rake(*args)
         prepare :rake
         args << "-T" if options[:list]
@@ -51,9 +50,8 @@ module Padrino
         ARGV.clear
         ARGV.concat(args)
         puts "=> Executing Rake #{ARGV.join(' ')} ..."
-        ENV['PADRINO_LOG_LEVEL'] ||= "test"
         load File.expand_path('../rake.rb', __FILE__)
-        silence(:stdout) { require File.expand_path('config/boot.rb') }
+        require File.expand_path('config/boot.rb')
         PadrinoTasks.init(true)
       end
 
@@ -62,10 +60,10 @@ module Padrino
         prepare :console
         require File.expand_path("../../version", __FILE__)
         ARGV.clear
-        puts "=> Loading #{options.environment} console (Padrino v.#{Padrino.version})"
         require 'irb'
         require "irb/completion"
         require File.expand_path('config/boot.rb')
+        puts "=> Loading #{Padrino.env} console (Padrino v.#{Padrino.version})"
         require File.expand_path('../console', __FILE__)
         IRB.start
       end
@@ -80,7 +78,8 @@ module Padrino
           require 'padrino-core/command'
           require 'padrino-gen/command'
           ARGV.shift
-          Padrino.bin_gen(ARGV)
+          ARGV << 'help' if ARGV.empty?
+          Padrino.bin_gen(*ARGV)
         rescue
           puts "<= You need padrino-gen! Run: gem install padrino-gen"
         end

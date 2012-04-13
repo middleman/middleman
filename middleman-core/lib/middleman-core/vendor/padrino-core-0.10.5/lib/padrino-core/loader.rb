@@ -94,6 +94,7 @@ module Padrino
     # Method for reloading required applications and their files.
     #
     def reload!
+      return unless Padrino::Reloader.changed?
       Padrino.before_load.each(&:call) # Run before hooks
       Padrino::Reloader.reload! # detects the modified files
       Padrino.after_load.each(&:call) # Run after hooks

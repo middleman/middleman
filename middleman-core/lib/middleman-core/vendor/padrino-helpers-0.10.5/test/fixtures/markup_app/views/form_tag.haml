@@ -6,6 +6,16 @@
     = text_field_tag :username
     = label_tag :password
     = password_field_tag :password
+    = label_tag :email
+    = email_field_tag :email
+    = label_tag :age
+    = number_field_tag :age
+    = label_tag :telephone
+    = telephone_field_tag :telephone
+    = label_tag :webpage
+    = url_field_tag :webpage
+    = label_tag :search
+    = search_field_tag :search
     = label_tag  :color
     = select_tag :color, :options => ['green', 'orange', 'purple']
     = label_tag  :gender
@@ -24,6 +34,21 @@
     %p
       = label_tag :password, :class => 'first'
       = password_field_tag :password, :value => params[:password]
+    %p
+      = label_tag :email, :caption => 'Email Address'
+      = email_field_tag :email, :class => 'string'
+    %p
+      = label_tag :age, :class => 'age'
+      = number_field_tag :age, :class => 'numeric'
+    %p
+      = label_tag :telephone, :class => 'telephone'
+      = telephone_field_tag :telephone, :class => 'numeric'
+    %p
+      = label_tag :webpage, :caption => 'Your Home Page'
+      = url_field_tag :webpage, :class => 'string'
+    %p
+      = label_tag :search
+      = search_field_tag :search, :class => 'string'
     %p
       = label_tag :about, :class => 'about', :caption => "About Me"
       = text_area_tag :about, :class => 'large'

@@ -1,3 +1,6 @@
+require File.expand_path(File.dirname(__FILE__) + '/helper')
+require File.expand_path(File.dirname(__FILE__) + '/fixtures/markup_app/app')
+
 describe "NumberHelpers" do
   include Padrino::Helpers::NumberHelpers
 

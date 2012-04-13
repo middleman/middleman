@@ -11,7 +11,7 @@ require 'active_support/inflector/methods'                  # constantize
 require 'active_support/inflector/inflections'              # pluralize
 require 'active_support/inflections'                        # load default inflections
 require 'yaml' unless defined?(YAML)                        # load yaml for i18n
-require 'Win32/Console/ANSI' if RUBY_PLATFORM =~ /win32/    # ruby color suppor for win
+require 'win32console' if RUBY_PLATFORM =~ /(win|m)32/      # ruby color support for win
 
 ##
 # This is an adapted version of active_support/core_ext/string/inflections.rb
@@ -113,8 +113,8 @@ module ObjectSpace
     # Returns all the classes in the object space.
     def classes
       ObjectSpace.each_object(Module).select do |klass|
-        # Why this? Ruby when you remove a constant don't clean it from
-        # rb_tables, this mean that here we can found classes that was
+        # Why? Ruby, when you remove a costant dosen't remove it from
+        # rb_tables, this mean that here we can find classes that was
         # removed.
         klass.name rescue false
       end
@@ -191,8 +191,7 @@ end
 ##
 # Loads our locale configuration files
 #
-
-# I18n.load_path += Dir["#{File.dirname(__FILE__)}/locale/*.yml"] if defined?(I18n)
+I18n.load_path += Dir["#{File.dirname(__FILE__)}/locale/*.yml"] if defined?(I18n)
 
 ##
 # Used to determine if this file has already been required

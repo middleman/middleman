@@ -113,21 +113,6 @@ module Padrino
     end
 
     ##
-    # Determines whether the dependencies are locked by Bundler.
-    # otherwise return nil
-    #
-    # @return [:locked, :unlocked, nil]
-    #   Returns +:locked+ if the +Gemfile.lock+ file exists, or +:unlocked+
-    #   if only the +Gemfile+ exists.
-    #
-    # @deprecated Will be removed in 1.0.0
-    #
-    def bundle
-      return :locked   if File.exist?(root('Gemfile.lock'))
-      return :unlocked if File.exist?(root("Gemfile"))
-    end
-
-    ##
     # A Rack::Builder object that allows to add middlewares in front of all
     # Padrino applications.
     #

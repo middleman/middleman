@@ -28,7 +28,7 @@ describe "FormHelpers" do
 
     should "display correct form with remote and method is put" do
       actual_html = form_tag('/update', :"accept-charset" => "UTF-8", :method => 'put', :remote => true) { "Demo" }
-      assert_has_tag(:form, "data-remote" => 'true', :"accept-charset" => "UTF-8", :"data-method" => 'put') { actual_html }
+      assert_has_tag(:form, "data-remote" => 'true', :"accept-charset" => "UTF-8") { actual_html }
       assert_has_tag('form input', :type => 'hidden', :name => "_method", :value => 'put') { actual_html }
     end
 
@@ -193,14 +193,14 @@ describe "FormHelpers" do
 
     should "display label tag in erb for simple form" do
       visit '/erb/form_tag'
-      assert_have_selector 'form.simple-form label', :count => 4
+      assert_have_selector 'form.simple-form label', :count => 9
       assert_have_selector 'form.simple-form label', :content => "Username", :for => 'username'
       assert_have_selector 'form.simple-form label', :content => "Password", :for => 'password'
       assert_have_selector 'form.simple-form label', :content => "Gender", :for => 'gender'
     end
     should "display label tag in erb for advanced form" do
       visit '/erb/form_tag'
-      assert_have_selector 'form.advanced-form label', :count => 6
+      assert_have_selector 'form.advanced-form label', :count => 11
       assert_have_selector 'form.advanced-form label.first', :content => "Nickname", :for => 'username'
       assert_have_selector 'form.advanced-form label.first', :content => "Password", :for => 'password'
       assert_have_selector 'form.advanced-form label.about', :content => "About Me", :for => 'about'
@@ -210,7 +210,7 @@ describe "FormHelpers" do
 
     should "display label tag in haml for simple form" do
       visit '/haml/form_tag'
-      assert_have_selector 'form.simple-form label', :count => 4
+      assert_have_selector 'form.simple-form label', :count => 9
       assert_have_selector 'form.simple-form label', :content => "Username", :for => 'username'
       assert_have_selector 'form.simple-form label', :content => "Password", :for => 'password'
       assert_have_selector 'form.simple-form label', :content => "Gender", :for => 'gender'
@@ -218,7 +218,7 @@ describe "FormHelpers" do
 
     should "display label tag in haml for advanced form" do
       visit '/haml/form_tag'
-      assert_have_selector 'form.advanced-form label', :count => 6
+      assert_have_selector 'form.advanced-form label', :count => 11
       assert_have_selector 'form.advanced-form label.first', :content => "Nickname", :for => 'username'
       assert_have_selector 'form.advanced-form label.first', :content => "Password", :for => 'password'
       assert_have_selector 'form.advanced-form label.about', :content => "About Me", :for => 'about'
@@ -228,7 +228,7 @@ describe "FormHelpers" do
 
     should "display label tag in slim for simple form" do
       visit '/slim/form_tag'
-      assert_have_selector 'form.simple-form label', :count => 4
+      assert_have_selector 'form.simple-form label', :count => 9
       assert_have_selector 'form.simple-form label', :content => "Username", :for => 'username'
       assert_have_selector 'form.simple-form label', :content => "Password", :for => 'password'
       assert_have_selector 'form.simple-form label', :content => "Gender", :for => 'gender'
@@ -236,7 +236,7 @@ describe "FormHelpers" do
 
     should "display label tag in slim for advanced form" do
       visit '/slim/form_tag'
-      assert_have_selector 'form.advanced-form label', :count => 6
+      assert_have_selector 'form.advanced-form label', :count => 11
       assert_have_selector 'form.advanced-form label.first', :content => "Nickname", :for => 'username'
       assert_have_selector 'form.advanced-form label.first', :content => "Password", :for => 'password'
       assert_have_selector 'form.advanced-form label.about', :content => "About Me", :for => 'about'
@@ -295,10 +295,135 @@ describe "FormHelpers" do
     end
   end
 
+  context 'for #number_field_tag method' do
+    should "display number field in ruby" do
+      actual_html = number_field_tag(:age, :class => 'numeric')
+      assert_has_tag(:input, :type => 'number', :class => 'numeric', :name => 'age') { actual_html }
+    end
+
+    should "display number field in erb" do
+      visit '/erb/form_tag'
+      assert_have_selector 'form.simple-form input[type=number]', :count => 1, :name => 'age'
+      assert_have_selector 'form.advanced-form fieldset input[type=number]', :count => 1, :name => 'age', :class => 'numeric'
+    end
+
+    should "display number field in haml" do
+      visit '/haml/form_tag'
+      assert_have_selector 'form.simple-form input[type=number]', :count => 1, :name => 'age'
+      assert_have_selector 'form.advanced-form fieldset input[type=number]', :count => 1, :name => 'age', :class => 'numeric'
+    end
+
+    should "display number field in slim" do
+      visit '/slim/form_tag'
+      assert_have_selector 'form.simple-form input[type=number]', :count => 1, :name => 'age'
+      assert_have_selector 'form.advanced-form fieldset input[type=number]', :count => 1, :name => 'age', :class => 'numeric'
+    end
+  end
+
+  context 'for #telephone_field_tag method' do
+    should "display number field in ruby" do
+      actual_html = telephone_field_tag(:telephone, :class => 'numeric')
+      assert_has_tag(:input, :type => 'tel', :class => 'numeric', :name => 'telephone') { actual_html }
+    end
+
+    should "display telephone field in erb" do
+      visit '/erb/form_tag'
+      assert_have_selector 'form.simple-form input[type=tel]', :count => 1, :name => 'telephone'
+      assert_have_selector 'form.advanced-form fieldset input[type=tel]', :count => 1, :name => 'telephone', :class => 'numeric'
+    end
+
+    should "display telephone field in haml" do
+      visit '/haml/form_tag'
+      assert_have_selector 'form.simple-form input[type=tel]', :count => 1, :name => 'telephone'
+      assert_have_selector 'form.advanced-form fieldset input[type=tel]', :count => 1, :name => 'telephone', :class => 'numeric'
+    end
+
+    should "display telephone field in slim" do
+      visit '/slim/form_tag'
+      assert_have_selector 'form.simple-form input[type=tel]', :count => 1, :name => 'telephone'
+      assert_have_selector 'form.advanced-form fieldset input[type=tel]', :count => 1, :name => 'telephone', :class => 'numeric'
+    end
+  end
+
+  context 'for #search_field_tag method' do
+    should "display search field in ruby" do
+      actual_html = search_field_tag(:search, :class => 'string')
+      assert_has_tag(:input, :type => 'search', :class => 'string', :name => 'search') { actual_html }
+    end
+
+    should "display search field in erb" do
+      visit '/erb/form_tag'
+      assert_have_selector 'form.simple-form input[type=search]', :count => 1, :name => 'search'
+      assert_have_selector 'form.advanced-form fieldset input[type=search]', :count => 1, :name => 'search', :class => 'string'
+    end
+
+    should "display search field in haml" do
+      visit '/haml/form_tag'
+      assert_have_selector 'form.simple-form input[type=search]', :count => 1, :name => 'search'
+      assert_have_selector 'form.advanced-form fieldset input[type=search]', :count => 1, :name => 'search', :class => 'string'
+    end
+
+    should "display search field in slim" do
+      visit '/slim/form_tag'
+      assert_have_selector 'form.simple-form input[type=search]', :count => 1, :name => 'search'
+      assert_have_selector 'form.advanced-form fieldset input[type=search]', :count => 1, :name => 'search', :class => 'string'
+    end
+  end
+
+  context 'for #email_field_tag method' do
+    should "display email field in ruby" do
+      actual_html = email_field_tag(:email, :class => 'string')
+      assert_has_tag(:input, :type => 'email', :class => 'string', :name => 'email') { actual_html }
+    end
+
+    should "display email field in erb" do
+      visit '/erb/form_tag'
+      assert_have_selector 'form.simple-form input[type=email]', :count => 1, :name => 'email'
+      assert_have_selector 'form.advanced-form fieldset input[type=email]', :count => 1, :name => 'email', :class => 'string'
+    end
+
+    should "display email field in haml" do
+      visit '/haml/form_tag'
+      assert_have_selector 'form.simple-form input[type=email]', :count => 1, :name => 'email'
+      assert_have_selector 'form.advanced-form fieldset input[type=email]', :count => 1, :name => 'email', :class => 'string'
+    end
+
+    should "display email field in slim" do
+      visit '/slim/form_tag'
+      assert_have_selector 'form.simple-form input[type=email]', :count => 1, :name => 'email'
+      assert_have_selector 'form.advanced-form fieldset input[type=email]', :count => 1, :name => 'email', :class => 'string'
+    end
+  end
+
+  context 'for #url_field_tag method' do
+    should "display url field in ruby" do
+      actual_html = url_field_tag(:webpage, :class => 'string')
+      assert_has_tag(:input, :type => 'url', :class => 'string', :name => 'webpage') { actual_html }
+    end
+
+    should "display url field in erb" do
+      visit '/erb/form_tag'
+      assert_have_selector 'form.simple-form input[type=url]', :count => 1, :name => 'webpage'
+      assert_have_selector 'form.advanced-form fieldset input[type=url]', :count => 1, :name => 'webpage', :class => 'string'
+    end
+
+    should "display url field in haml" do
+      visit '/haml/form_tag'
+      assert_have_selector 'form.simple-form input[type=url]', :count => 1, :name => 'webpage'
+      assert_have_selector 'form.advanced-form fieldset input[type=url]', :count => 1, :name => 'webpage', :class => 'string'
+    end
+
+    should "display url field in slim" do
+      visit '/slim/form_tag'
+      assert_have_selector 'form.simple-form input[type=url]', :count => 1, :name => 'webpage'
+      assert_have_selector 'form.advanced-form fieldset input[type=url]', :count => 1, :name => 'webpage', :class => 'string'
+    end
+  end
+
   context 'for #text_area_tag method' do
     should "display text area in ruby" do
       actual_html = text_area_tag(:about, :class => 'long')
-      assert_has_tag(:textarea, :class => "long", :name => 'about', :rows => '', :cols => '') { actual_html }
+      assert_has_tag(:textarea, :class => "long", :name => 'about') { actual_html }
     end
 
     should "display text area in ruby with specified content" do
@@ -624,7 +749,7 @@ describe "FormHelpers" do
 
     should "display image submit tag in ruby with absolute path" do
       actual_html = image_submit_tag('/system/ok.png', :class => 'success')
-      assert_has_tag(:input, :type => 'image', :class => "success", :src => "/system/ok.png?#{@stamp}") { actual_html }
+      assert_has_tag(:input, :type => 'image', :class => "success", :src => "/system/ok.png") { actual_html }
     end
 
     should "display image submit tag in erb" do

@@ -9,7 +9,7 @@ describe "AssetTagHelpers" do
   end
 
   def flash
-    { :notice => "Demo notice" }
+    @_flash ||= { :notice => "Demo notice" }
   end
 
   context 'for #flash_tag method' do
@@ -19,6 +19,14 @@ describe "AssetTagHelpers" do
     should "display flash with given attributes" do
       actual_html = flash_tag(:notice, :class => 'notice', :id => 'notice-area')
       assert_has_tag('div.notice#notice-area', :content => "Demo notice") { actual_html }
+    end
+    should "display multiple flash tags with given attributes" do
+      flash[:error] = 'wrong'
+      flash[:success] = 'okey'
+      actual_html = flash_tag(:success, :error, :id => 'area')
+      assert_has_tag('div.success#area', :content => flash[:success]) { actual_html }
+      assert_has_tag('div.error#area', :content => flash[:error]) { actual_html }
+      assert_has_no_tag('div.notice') { actual_html }
     end
   end
 
@@ -39,7 +47,7 @@ describe "AssetTagHelpers" do
 
     should "display link element with void url and options" do
       actual_link = link_to('Sign up', :class => "test")
-      assert_has_tag('a', :content => "Sign up", :href => 'javascript:void(0);', :class => 'test') { actual_link }
+      assert_has_tag('a', :content => "Sign up", :href => '#', :class => 'test') { actual_link }
     end
 
     should "display link element with remote option" do
@@ -146,10 +154,10 @@ describe "AssetTagHelpers" do
   context 'for #image_tag method' do
     should "display image tag absolute link with no options" do
       time = stop_time_for_test
-      assert_has_tag('img', :src => "/absolute/pic.gif?#{time.to_i}") { image_tag('/absolute/pic.gif') }
+      assert_has_tag('img', :src => "/absolute/pic.gif") { image_tag('/absolute/pic.gif') }
     end
 
-    should "display image tag absolute link with specified uri root" do
+    should "display image tag relative link with specified uri root" do
       time = stop_time_for_test
       self.class.stubs(:uri_root).returns("/blog")
       assert_has_tag('img', :src => "/blog/images/relative/pic.gif?#{time.to_i}") { image_tag('relative/pic.gif') }
@@ -201,7 +209,7 @@ describe "AssetTagHelpers" do
       time = stop_time_for_test
       expected_options = { :media => "screen", :rel => "stylesheet", :type => "text/css" }
       actual_html = stylesheet_link_tag('/css/style')
-      assert_has_tag('link', expected_options.merge(:href => "/css/style.css?#{time.to_i}")) { actual_html }
+      assert_has_tag('link', expected_options.merge(:href => "/css/style.css")) { actual_html }
     end
 
     should "display stylesheet link item with uri root" do
@@ -257,7 +265,7 @@ describe "AssetTagHelpers" do
     should "display javascript item with absolute path" do
       time = stop_time_for_test
       actual_html = javascript_include_tag('/js/application')
-      assert_has_tag('script', :src => "/js/application.js?#{time.to_i}", :type => "text/javascript") { actual_html }
+      assert_has_tag('script', :src => "/js/application.js", :type => "text/javascript") { actual_html }
     end
 
     should "display javascript item with uri root" do

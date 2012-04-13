@@ -17,13 +17,18 @@ module Padrino
       # @example
       #   flash_tag(:notice, :id => 'flash-notice')
       #   # Generates: <div class="notice">flash-notice</div>
+      #   flash_tag(:error, :success)
+      #   # Generates: <div class="error">flash-error</div>
+      #   # <div class="success">flash-success</div>
       #
       # @api public
-      def flash_tag(kind, options={})
-        flash_text = flash[kind]
-        return '' if flash_text.blank?
-        options.reverse_merge!(:class => kind)
-        content_tag(:div, flash_text, options)
+      def flash_tag(*args)
+        options = args.extract_options!
+        args.map do |kind|
+          flash_text = flash[kind]
+          next if flash_text.blank?
+          content_tag(:div, flash_text, options.reverse_merge(:class => kind))
+        end.compact * "\n"
       end
 
       ##
@@ -65,18 +70,17 @@ module Padrino
       # @api public
       def link_to(*args, &block)
         options = args.extract_options!
-        options = parse_js_attributes(options) # parses remote, method and confirm options
         anchor  = "##{CGI.escape options.delete(:anchor).to_s}" if options[:anchor]
 
         if block_given?
-          url = args[0] ? args[0] + anchor.to_s : anchor || 'javascript:void(0);'
+          url = args[0] ? args[0] + anchor.to_s : anchor || '#'
           options.reverse_merge!(:href => url)
           link_content = capture_html(&block)
           return '' unless parse_conditions(url, options)
           result_link = content_tag(:a, link_content, options)
           block_is_template?(block) ? concat_content(result_link) : result_link
         else
-          name, url = args[0], (args[1] ? args[1] + anchor.to_s : anchor || 'javascript:void(0);')
+          name, url = args[0], (args[1] ? args[1] + anchor.to_s : anchor || '#')
           return name unless parse_conditions(url, options)
           options.reverse_merge!(:href => url)
           content_tag(:a, name, options)
@@ -119,8 +123,8 @@ module Padrino
         desired_method = options[:method]
         options.delete(:method) if options[:method].to_s !~ /get|post/i
         options.reverse_merge!(:method => 'post', :action => url)
-        options[:enctype] = "multipart/form-data" if options.delete(:multipart)
-        options["data-remote"] = "true" if options.delete(:remote)
+        options[:enctype] = 'multipart/form-data' if options.delete(:multipart)
+        options['data-remote'] = 'true' if options.delete(:remote)
         inner_form_html  = hidden_form_method_field(desired_method)
         inner_form_html += block_given? ? capture_html(&block) : submit_tag(name)
         content_tag('form', inner_form_html, options)
@@ -153,7 +157,7 @@ module Padrino
       # @api public
       def feed_tag(mime, url, options={})
         full_mime = (mime == :atom) ? 'application/atom+xml' : 'application/rss+xml'
-        content_tag(:link, options.reverse_merge(:rel => 'alternate', :type => full_mime, :title => mime, :href => url))
+        tag(:link, options.reverse_merge(:rel => 'alternate', :type => full_mime, :title => mime, :href => url))
       end
 
       ##
@@ -291,9 +295,9 @@ module Padrino
       # @api public
       def javascript_include_tag(*sources)
         options = sources.extract_options!.symbolize_keys
-        options.reverse_merge!(:type => 'text/javascript', :content => "")
+        options.reverse_merge!(:type => 'text/javascript')
         sources.flatten.map { |source|
-          tag(:script, options.reverse_merge(:src => asset_path(:js, source)))
+          content_tag(:script, nil, options.reverse_merge(:src => asset_path(:js, source)))
         }.join("\n")
       end
 
@@ -338,83 +342,76 @@ module Padrino
       # @api semipublic
       def asset_path(kind, source)
         return source if source =~ /^http/
-        asset_folder  = case kind
-          when :css then 'stylesheets'
-          when :js  then 'javascripts'
-          else kind.to_s
-        end
+        is_absolute  = source =~ %r{^/}
+        asset_folder = asset_folder_name(kind)
         source = source.to_s.gsub(/\s/, '%20')
-        ignore_extension = (asset_folder.to_s == kind.to_s) # don't append extension
+        ignore_extension = (asset_folder.to_s == kind.to_s) # don't append an extension
         source << ".#{kind}" unless ignore_extension or source =~ /\.#{kind}/
-        result_path   = source if source =~ %r{^/} # absolute path
-        result_path ||= uri_root_path(asset_folder, source)
-        timestamp = asset_timestamp(result_path)
+        result_path = is_absolute ? source : uri_root_path(asset_folder, source)
+        timestamp = asset_timestamp(result_path, is_absolute)
         "#{result_path}#{timestamp}"
       end
 
       private
+      ##
+      # Returns the uri root of the application with optional paths appended.
+      #
+      # @example
+      #   uri_root_path("/some/path") => "/root/some/path"
+      #   uri_root_path("javascripts", "test.js") => "/uri/root/javascripts/test.js"
+      #
+      def uri_root_path(*paths)
+        root_uri = self.class.uri_root if self.class.respond_to?(:uri_root)
+        File.join(ENV['RACK_BASE_URI'].to_s, root_uri || '/', *paths)
+      end
 
-        ##
-        # Returns the uri root of the application.
-        #
-        # @example
-        #   uri_root_path("/some/path") => "/base/some/path"
-        #
-        def uri_root_path(*paths)
-          root_uri = self.class.uri_root if self.class.respond_to?(:uri_root)
-          File.join(ENV['RACK_BASE_URI'].to_s, root_uri || '/', *paths)
-        end
+      ##
+      # Returns the timestamp mtime for an asset
+      #
+      # @example
+      #   asset_timestamp("some/path/to/file.png") => "?154543678"
+      #   asset_timestamp("/some/absolute/path.png", true) => nil
+      #
+      def asset_timestamp(file_path, absolute=false)
+        return nil if file_path =~ /\?/ || (self.class.respond_to?(:asset_stamp) && !self.class.asset_stamp)
+        public_file_path = Padrino.root("public", file_path) if Padrino.respond_to?(:root)
+        stamp = File.mtime(public_file_path).to_i if public_file_path && File.exist?(public_file_path)
+        stamp ||= Time.now.to_i unless absolute
+        "?#{stamp}" if stamp
+      end
 
-        ##
-        # Returns the timestamp mtime for an asset
-        #
-        # @example
-        #   asset_timestamp("some/path/to/file.png") => "?154543678"
-        #
-        def asset_timestamp(file_path)
-          return nil if file_path =~ /\?/ || (self.class.respond_to?(:asset_stamp) && !self.class.asset_stamp)
-          public_path = Padrino.root("public", file_path) if Padrino.respond_to?(:root)
-          stamp = Time.now.to_i unless public_path && File.exist?(public_path)
-          stamp ||= File.mtime(public_path).to_i
-          "?#{stamp}"
+      ###
+      # Returns the asset folder given a kind.
+      #
+      # @example
+      #   asset_folder_name(:css) => 'stylesheets'
+      #   asset_folder_name(:js)  => 'javascripts'
+      #   asset_folder_name(:images) => 'images'
+      #
+      def asset_folder_name(kind)
+        case kind
+        when :css then 'stylesheets'
+        when :js  then 'javascripts'
+        else kind.to_s
         end
+      end
 
-        ##
-        # Parses link_to options for given correct conditions
-        #
-        # @example
-        #   parse_conditions("/some/url", :if => false) => true
-        #
-        def parse_conditions(url, options)
-          if options.has_key?(:if)
-            condition = options.delete(:if)
-            condition == :current ? url == request.path_info : condition
-          elsif condition = options.delete(:unless)
-            condition == :current ? url != request.path_info : !condition
-          else
-            true
-          end
+      ##
+      # Parses link_to options for given correct conditions
+      #
+      # @example
+      #   parse_conditions("/some/url", :if => false) => true
+      #
+      def parse_conditions(url, options)
+        if options.has_key?(:if)
+          condition = options.delete(:if)
+          condition == :current ? url == request.path_info : condition
+        elsif condition = options.delete(:unless)
+          condition == :current ? url != request.path_info : !condition
+        else
+          true
         end
-
-        ##
-        # Parses link_to options for given js declarations (remote, method, confirm)
-        # Not destructive on options; returns updated options
-        #
-        # parse_js_attributes(:remote => true, :confirm => "test", :method => :delete)
-        # => { "data-remote" => true, "data-method" => "delete", "data-confirm" => "test" }
-        #
-        def parse_js_attributes(options)
-          options = options.dup
-          options["data-remote"] = "true" if options.delete(:remote)
-          if link_confirm = options.delete(:confirm)
-            options["data-confirm"] = link_confirm
-          end
-          if link_method = options.delete(:method)
-            options["data-method"] = link_method
-            options["rel"] = "nofollow"
-          end
-          options
-        end
+      end
     end # AssetTagHelpers
   end # Helpers
 end # Padrino

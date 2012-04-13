@@ -63,7 +63,7 @@ describe "FormBuilder" do
 
     should "display correct form html with remote option and method put" do
       actual_html = form_for(@user, '/update', :"accept-charset" => "UTF-8", :remote => true, :method => 'put') { "Demo" }
-      assert_has_tag('form', :"accept-charset" => "UTF-8", :method => 'post', "data-method" => 'put', "data-remote" => 'true') { actual_html }
+      assert_has_tag('form', :"accept-charset" => "UTF-8", :method => 'post', "data-remote" => 'true') { actual_html }
       assert_has_tag('form input', :type => 'hidden', :name => "_method", :value => 'put') { actual_html }
     end
 
@@ -199,7 +199,7 @@ describe "FormBuilder" do
       assert_have_selector '#demo2 div.field-errors ul li', :content => "Fake must be valid"
       assert_have_selector '#demo2 div.field-errors ul li', :content => "Second must be present"
       assert_have_selector '#demo2 div.field-errors ul li', :content => "Third must be a number"
-      assert_have_selector '#demo input', :name => 'markup_user[email]', :class => 'invalid'
+      assert_have_selector '#demo input', :name => 'markup_user[email]', :class => 'string invalid'
     end
 
     should "display correct form in erb" do
@@ -212,7 +212,7 @@ describe "FormBuilder" do
       assert_have_selector '#demo2 div.field-errors ul li', :content => "Fake must be valid"
       assert_have_selector '#demo2 div.field-errors ul li', :content => "Second must be present"
       assert_have_selector '#demo2 div.field-errors ul li', :content => "Third must be a number"
-      assert_have_selector '#demo input', :name => 'markup_user[email]', :class => 'invalid'
+      assert_have_selector '#demo input', :name => 'markup_user[email]', :class => 'string invalid'
     end
 
     should "display correct form in slim" do
@@ -225,7 +225,7 @@ describe "FormBuilder" do
       assert_have_selector '#demo2 div.field-errors ul li', :content => "Fake must be valid"
       assert_have_selector '#demo2 div.field-errors ul li', :content => "Second must be present"
       assert_have_selector '#demo2 div.field-errors ul li', :content => "Third must be a number"
-      assert_have_selector '#demo input', :name => 'markup_user[email]', :class => 'invalid'
+      assert_have_selector '#demo input', :name => 'markup_user[email]', :class => 'string invalid'
     end
   end
 
@@ -322,6 +322,116 @@ describe "FormBuilder" do
       visit '/slim/form_for'
       assert_have_selector '#demo input.user-text[type=text]', :id => 'markup_user_username', :value => "John"
       assert_have_selector '#demo2 input', :type => 'text', :class => 'input', :name => 'markup_user[username]'
+    end
+  end
+
+  context 'for #number_field method' do
+    should "display correct number field html" do
+      actual_html = standard_builder.number_field(:age, :class => 'numeric')
+      assert_has_tag('input.numeric[type=number]', :id => 'user_age', :name => 'user[age]') { actual_html }
+    end
+
+    should "display correct number field in haml" do
+      visit '/haml/form_for'
+      assert_have_selector '#demo input.numeric[type=number]', :id => 'markup_user_age'
+    end
+
+    should "display correct number field in erb" do
+      visit '/erb/form_for'
+      assert_have_selector '#demo input.numeric[type=number]', :id => 'markup_user_age'
+    end
+
+    should "display correct number field in slim" do
+      visit '/slim/form_for'
+      assert_have_selector '#demo input.numeric[type=number]', :id => 'markup_user_age'
+    end
+  end
+
+  context 'for #telephone_field method' do
+    should "display correct telephone field html" do
+      actual_html = standard_builder.telephone_field(:telephone, :class => 'numeric')
+      assert_has_tag('input.numeric[type=tel]', :id => 'user_telephone', :name => 'user[telephone]') { actual_html }
+    end
+
+    should "display correct telephone field in haml" do
+      visit '/haml/form_for'
+      assert_have_selector '#demo input.numeric[type=tel]', :id => 'markup_user_telephone'
+    end
+
+    should "display correct telephone field in erb" do
+      visit '/erb/form_for'
+      assert_have_selector '#demo input.numeric[type=tel]', :id => 'markup_user_telephone'
+    end
+
+    should "display correct telephone field in slim" do
+      visit '/slim/form_for'
+      assert_have_selector '#demo input.numeric[type=tel]', :id => 'markup_user_telephone'
+    end
+  end
+
+  context 'for #search_field method' do
+    should "display correct search field html" do
+      actual_html = standard_builder.search_field(:search, :class => 'string')
+      assert_has_tag('input.string[type=search]', :id => 'user_search', :name => 'user[search]') { actual_html }
+    end
+
+    should "display correct search field in haml" do
+      visit '/haml/form_for'
+      assert_have_selector '#demo input.string[type=search]', :id => 'markup_user_search'
+    end
+
+    should "display correct search field in erb" do
+      visit '/erb/form_for'
+      assert_have_selector '#demo input.string[type=search]', :id => 'markup_user_search'
+    end
+
+    should "display correct search field in slim" do
+      visit '/slim/form_for'
+      assert_have_selector '#demo input.string[type=search]', :id => 'markup_user_search'
+    end
+  end
+
+  context 'for #email_field method' do
+    should "display correct email field html" do
+      actual_html = standard_builder.email_field(:email, :class => 'string')
+      assert_has_tag('input.string[type=email]', :id => 'user_email', :name => 'user[email]') { actual_html }
+    end
+
+    should "display correct email field in haml" do
+      visit '/haml/form_for'
+      assert_have_selector '#demo input.string[type=email]', :id => 'markup_user_email'
+    end
+
+    should "display correct email field in erb" do
+      visit '/erb/form_for'
+      assert_have_selector '#demo input.string[type=email]', :id => 'markup_user_email'
+    end
+
+    should "display correct email field in slim" do
+      visit '/slim/form_for'
+      assert_have_selector '#demo input.string[type=email]', :id => 'markup_user_email'
+    end
+  end
+
+  context 'for #url_field method' do
+    should "display correct url field html" do
+      actual_html = standard_builder.url_field(:webpage, :class => 'string')
+      assert_has_tag('input.string[type=url]', :id => 'user_webpage', :name => 'user[webpage]') { actual_html }
+    end
+
+    should "display correct url field in haml" do
+      visit '/haml/form_for'
+      assert_have_selector '#demo input.string[type=url]', :id => 'markup_user_webpage'
+    end
+
+    should "display correct url field in erb" do
+      visit '/erb/form_for'
+      assert_have_selector '#demo input.string[type=url]', :id => 'markup_user_webpage'
+    end
+
+    should "display correct url field in slim" do
+      visit '/slim/form_for'
+      assert_have_selector '#demo input.string[type=url]', :id => 'markup_user_webpage'
     end
   end
 
@@ -430,7 +540,7 @@ describe "FormBuilder" do
   context 'for #text_area method' do
     should "display correct text_area html" do
       actual_html = standard_builder.text_area(:about, :class => 'large')
-      assert_has_tag('textarea.large', :id => 'user_about', :name => 'user[about]', :rows => '', :cols => '') { actual_html }
+      assert_has_tag('textarea.large', :id => 'user_about', :name => 'user[about]') { actual_html }
     end
 
     should "display correct text_area html and content" do
@@ -628,7 +738,7 @@ describe "FormBuilder" do
 
     should "display correct image submit button html" do
       actual_html = standard_builder.image_submit('/system/ok.png', :class => 'large')
-      assert_has_tag('input.large[type=image]', :src => "/system/ok.png?#{@stamp}") { actual_html }
+      assert_has_tag('input.large[type=image]', :src => "/system/ok.png") { actual_html }
     end
 
     should "display correct image submit button in haml" do

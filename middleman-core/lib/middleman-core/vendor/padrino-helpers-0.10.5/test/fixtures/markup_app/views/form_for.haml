@@ -5,11 +5,23 @@
     = f.label :username, :caption => "Login: ", :class => 'user-label'
     = f.text_field :username, :class => 'user-text', :value => "John"
   %p
-    = f.label :email, :caption => "Email", :class => 'user-email'
-    = f.text_field :email
-  %p
     = f.label :password
     = f.password_field :password, :class => 'user-password', :value => "secret"
+  %p
+    = f.label :age
+    = f.number_field :age, :class => 'numeric'
+  %p
+    = f.label :telephone
+    = f.telephone_field :telephone, :class => 'numeric'
+  %p
+    = f.label :email, :caption => 'Email Address: '
+    = f.email_field :email, :class => 'string'
+  %p
+    = f.label :webpage, :caption => 'Your Web Page: '
+    = f.url_field :webpage, :class => 'string'
+  %p
+    = f.label :search
+    = f.search_field :search, :class => 'string'
   %p
     = f.label :photo
     = f.file_field :photo, :class => 'user-photo'

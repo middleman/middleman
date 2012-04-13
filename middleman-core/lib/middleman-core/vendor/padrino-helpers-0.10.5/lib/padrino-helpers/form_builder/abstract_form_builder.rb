@@ -42,6 +42,37 @@ module Padrino
           @template.text_field_tag field_name(field), options
         end
 
+       def number_field(field, options={})
+          options.reverse_merge!(:value => field_value(field), :id => field_id(field))
+          options.merge!(:class => field_error(field, options))
+          @template.number_field_tag field_name(field), options
+        end
+
+        def telephone_field(field, options={})
+          options.reverse_merge!(:value => field_value(field), :id => field_id(field))
+          options.merge!(:class => field_error(field, options))
+          @template.telephone_field_tag field_name(field), options
+        end
+        alias_method :phone_field, :telephone_field
+
+        def email_field(field, options={})
+          options.reverse_merge!(:value => field_value(field), :id => field_id(field))
+          options.merge!(:class => field_error(field, options))
+          @template.email_field_tag field_name(field), options
+        end
+
+        def search_field(field, options={})
+          options.reverse_merge!(:value => field_value(field), :id => field_id(field))
+          options.merge!(:class => field_error(field, options))
+          @template.search_field_tag field_name(field), options
+        end
+
+        def url_field(field, options={})
+          options.reverse_merge!(:value => field_value(field), :id => field_id(field))
+          options.merge!(:class => field_error(field, options))
+          @template.url_field_tag field_name(field), options
+        end
+
         # f.text_area :summary, :value => "(enter summary)", :id => 'summary'
         def text_area(field, options={})
           options.reverse_merge!(:value => field_value(field), :id => field_id(field))
