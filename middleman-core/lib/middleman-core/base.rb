@@ -223,7 +223,7 @@ class Middleman::Base
   register Middleman::CoreExtensions::Rendering
   
   # Sitemap
-  register Middleman::CoreExtensions::Sitemap
+  register Middleman::Sitemap
   
   # Setup external helpers
   register Middleman::CoreExtensions::ExternalHelpers
@@ -327,11 +327,13 @@ class Middleman::Base
     @req = Rack::Request.new(env)
     @res = Rack::Response.new
 
-    if env["PATH_INFO"] == "/__middleman__" && env["REQUEST_METHOD"] == "POST"
-      if req.params.has_key?("change")
-        self.files.did_change(req.params["change"])
-      elsif req.params.has_key?("delete")
-        self.files.did_delete(req.params["delete"])
+    if env["PATH_INFO"] == "/__middleman__"
+      if env["REQUEST_METHOD"] == "POST"
+        if req.params.has_key?("change")
+          self.files.did_change(req.params["change"])
+        elsif req.params.has_key?("delete")
+          self.files.did_delete(req.params["delete"])
+        end
       end
       
       res.status = 200
@@ -372,32 +374,35 @@ class Middleman::Base
   def process_request
     # Normalize the path and add index if we're looking at a directory
     @original_path = env["PATH_INFO"].dup
-    @request_path  = full_path(env["PATH_INFO"].gsub("%20", " "))
+    @escaped_path  = @original_path.gsub("%20", " ")
+    @request_path  = full_path(@escaped_path)
     
     # Run before callbacks
     run_hook :before
 
-    # Get the page object for this path
-    sitemap_page = sitemap.page_by_destination(@request_path)
-
+    if @escaped_path != @request_path
+      # Get the resource object for this path
+      resource = sitemap.find_resource_by_destination_path(@escaped_path)
+    end
+    
+    # Get the resource object for this full path
+    resource ||= sitemap.find_resource_by_destination_path(@request_path)
+    
     # Return 404 if not in sitemap
-    return not_found unless sitemap_page
-
-    # Return 404 if this path is specifically ignored
-    return not_found if sitemap_page.ignored?
+    return not_found unless resource && !resource.ignored?
 
     # If this path is a static file, send it immediately
-    return send_file(sitemap_page.source_file) unless sitemap_page.template?
+    return send_file(resource.source_file) unless resource.template?
     
     # Set the current path for use in helpers
     self.current_path = @request_path.dup
       
     # Set a HTTP content type based on the request's extensions
-    content_type sitemap_page.mime_type
+    content_type resource.mime_type
     
     begin
       # Write out the contents of the page
-      res.write sitemap_page.render
+      res.write resource.render
       
       # Valid content is a 200 status
       res.status = 200

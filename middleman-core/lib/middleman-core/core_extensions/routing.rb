@@ -52,7 +52,7 @@ module Middleman::CoreExtensions::Routing
       if url.is_a?(Regexp) || url.include?("*")
         
         # Use the metadata loop for matching against paths at runtime
-        provides_metadata_for_path url do |url|
+        sitemap.provides_metadata_for_path url do |url|
           { :options => opts, :blocks => [a_block] }
         end
         
@@ -80,7 +80,7 @@ module Middleman::CoreExtensions::Routing
       end
       
       # Setup a metadata matcher for rendering those options
-      provides_metadata_for_path url do |url|
+      sitemap.provides_metadata_for_path url do |url|
         { :options => opts, :blocks => [a_block] }
       end
     end

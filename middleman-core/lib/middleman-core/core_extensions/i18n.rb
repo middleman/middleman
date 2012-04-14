@@ -38,7 +38,7 @@ module Middleman::CoreExtensions::I18n
       # Don't output localizable files
       ignore File.join(@templates_dir, "**/*")
       
-      provides_metadata_for_path do |url|
+      sitemap.provides_metadata_for_path do |url|
         if d = get_localization_data(url)
           lang, page_id = d
           instance_vars = Proc.new {

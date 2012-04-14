@@ -45,11 +45,7 @@ module Middleman
     autoload :ERb,          "middleman-core/renderers/erb"
   end
 
-  module Sitemap
-    autoload :Store,        "middleman-core/sitemap/store"
-    autoload :Page,         "middleman-core/sitemap/page"
-    autoload :Template,     "middleman-core/sitemap/template"
-  end
+  autoload :Sitemap,        "middleman-core/sitemap"
 
   module CoreExtensions
     # File Change Notifier
@@ -207,7 +203,14 @@ module Middleman
         data
       end
     end
-
+    
+    # Normalize a path to not include a leading slash
+    # @param [String] path
+    # @return [String]
+    def normalize_path(path)
+      path.sub(/^\//, "").gsub("%20", " ")
+    end
+    
     # Automatically load extensions from available RubyGems
     # which contain the EXTENSION_FILE
     #

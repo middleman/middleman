@@ -121,10 +121,9 @@ module Middleman::CoreExtensions::Rendering
       engine        = nil
 
       # If the path is known to the sitemap
-      if sitemap.exists?(current_path)
-        page = sitemap.page(current_path)
-        current_dir = File.dirname(page.source_file)
-        engine = File.extname(page.source_file)[1..-1].to_sym
+      if resource = sitemap.find_resource_by_destination_path(current_path)
+        current_dir = File.dirname(resource.source_file)
+        engine = File.extname(resource.source_file)[1..-1].to_sym
 
         # Look for partials relative to the current path
         if current_dir != self.source_dir
