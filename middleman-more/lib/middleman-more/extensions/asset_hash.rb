@@ -63,8 +63,7 @@ module Middleman::Extensions
 
               asset_path = dirpath.join(asset_path).to_s if relative_path
 
-              if @middleman_app.sitemap.exists? asset_path
-                asset_page = @middleman_app.sitemap.page asset_path
+              if asset_page = @middleman_app.sitemap.find_page_by_path(asset_path)
                 replacement_path = "/#{asset_page.destination_path}"
                 replacement_path = Pathname.new(replacement_path).relative_path_from(dirpath).to_s if relative_path
 

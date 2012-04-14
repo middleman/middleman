@@ -68,7 +68,7 @@ module Middleman::CoreExtensions::DefaultHelpers
       path = path.gsub(File.extname(path), ".#{asset_ext}")
       path = path.gsub("/", separator)
         
-      yield path if sitemap.exists?(File.join(asset_dir, path))
+      yield path if sitemap.find_resource_by_path(File.join(asset_dir, path))
     end
 
     # Generate body css classes based on the current path

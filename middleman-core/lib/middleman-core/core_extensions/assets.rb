@@ -28,7 +28,9 @@ module Middleman::CoreExtensions::Assets
         path
       else # rewrite paths to use their destination path
         path = File.join(prefix, path)
-        path = sitemap.page(path).destination_path if sitemap.exists?(path)
+        if resource = sitemap.find_resource_by_path(path)
+          path = resource.path
+        end
 
         File.join(http_prefix, path)
       end

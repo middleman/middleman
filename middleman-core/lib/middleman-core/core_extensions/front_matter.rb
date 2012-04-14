@@ -16,6 +16,8 @@ module Middleman::CoreExtensions::FrontMatter
       app.extend ClassMethods
       app.send :include, InstanceMethods
       app.delegate :frontmatter_changed, :to => :"self.class"
+      
+      ::Middleman::Sitemap::Resource.send :include, ResourceInstanceMethods
     end
     alias :included :registered
   end
@@ -31,6 +33,16 @@ module Middleman::CoreExtensions::FrontMatter
       @_frontmatter_changed << [block, matcher] if block_given?
       @_frontmatter_changed
     end
+  end
+  
+  module ResourceInstanceMethods
+
+    # This page's frontmatter
+    # @return [Hash]
+    def data
+      app.frontmatter(relative_path).first
+    end
+    
   end
   
   # Frontmatter instance methods
@@ -54,11 +66,11 @@ module Middleman::CoreExtensions::FrontMatter
         frontmatter_extension.remove_file(file)
       end
 
-      provides_metadata matcher do |path|
-        relative_path = path.sub(source_dir, "")
+      sitemap.provides_metadata matcher do |path|
+        relative_path = path.sub(self.source_dir, "")
 
-        fmdata = if frontmatter_extension.has_data?(relative_path)
-          frontmatter(relative_path)[0]
+        fmdata = if self.frontmatter_extension.has_data?(relative_path)
+          self.frontmatter(relative_path)[0]
         else
           {}
         end
@@ -70,6 +82,9 @@ module Middleman::CoreExtensions::FrontMatter
 
         { :options => data, :page => fmdata }
       end
+      
+      # Initialize class
+      frontmatter_extension
     end
 
     # Notify callbacks that the frontmatter changed
@@ -109,8 +124,7 @@ module Middleman::CoreExtensions::FrontMatter
       
       # Setup ignore callback
       @app.ignore do |path|
-        if @app.sitemap.exists?(path)
-          p = @app.sitemap.page(path)
+        if p = @app.sitemap.find_resource_by_path(path)
           !p.proxy? && p.data && p.data["ignored"] == true
         else
           false

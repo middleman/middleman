@@ -51,10 +51,9 @@ module Middleman::Extensions
             real_path_dynamic = File.join(build_dir, prefix, path)
             real_path_dynamic = File.expand_path(real_path_dynamic, root)
             http_path << "?" + File.mtime(real_path_dynamic).strftime("%s") if File.readable?(real_path_dynamic)
-          elsif sitemap.exists?(real_path_static)
-            page = sitemap.page(real_path_static)
-            if !page.template?
-              http_path << "?" + File.mtime(page.source_file).strftime("%s")
+          elsif resource = sitemap.find_resource_by_path(real_path_static)
+            if !resource.template?
+              http_path << "?" + File.mtime(resource.source_file).strftime("%s")
             else
               # It's a template, possible with partials. We can't really know when
               # it's updated, so generate fresh cache buster every time durin
