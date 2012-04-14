@@ -28,7 +28,8 @@
 * Add pid for cleanup
 * Use guard/listen for file watching
 * Merge full i18n support
-* Implied file extensions (style.scss => sytle.css)
+* Implied file extensions (style.scss => style.css)
+* Padrino 0.10.6
 
 2.0.14
 ====

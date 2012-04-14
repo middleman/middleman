@@ -1,8 +1,8 @@
-require 'middleman-core/vendor/padrino-helpers-0.10.5/lib/padrino-helpers'
+require 'middleman-core/vendor/padrino-helpers-0.10.6/lib/padrino-helpers'
 
 # Built-in helpers
 module Middleman::CoreExtensions::DefaultHelpers
-  
+
   # Extension registered
   class << self
     # @private
@@ -15,16 +15,16 @@ module Middleman::CoreExtensions::DefaultHelpers
       app.helpers ::Padrino::Helpers::RenderHelpers
       app.helpers ::Padrino::Helpers::NumberHelpers
       # app.helpers ::Padrino::Helpers::TranslationHelpers
-      
+
       app.helpers Helpers
-      
+
       app.ready do
-        ::I18n.load_path += Dir["#{File.dirname(__FILE__)}/../vendor/padrino-helpers-0.10.5/lib/padrino-helpers/locale/*.yml"]
+        ::I18n.load_path += Dir["#{File.dirname(__FILE__)}/../vendor/padrino-helpers-0.10.6/lib/padrino-helpers/locale/*.yml"]
       end
     end
     alias :included :registered
   end
-  
+
   # The helpers
   module Helpers
     # Output a stylesheet link tag based on the current path
@@ -36,7 +36,7 @@ module Middleman::CoreExtensions::DefaultHelpers
         stylesheet_link_tag path
       end
     end
-    
+
     # Output a javascript tag based on the current path
     #
     # @param [String] separator How to break up path in parts
@@ -60,14 +60,14 @@ module Middleman::CoreExtensions::DefaultHelpers
           when :css then css_dir
         end
       end
-      
+
       # If the basename of the request as no extension, assume we are serving a
       # directory and join index_file to the path.
       path = full_path(current_path.dup)
       path = path.sub(%r{^/}, '')
       path = path.gsub(File.extname(path), ".#{asset_ext}")
       path = path.gsub("/", separator)
-        
+
       yield path if sitemap.find_resource_by_path(File.join(asset_dir, path))
     end
 
@@ -78,16 +78,16 @@ module Middleman::CoreExtensions::DefaultHelpers
       path = current_path.dup
       path << index_file if path.match(%r{/$})
       path = path.gsub(%r{^/}, '')
-  
+
       classes = []
       parts = path.split('.')[0].split('/')
       parts.each_with_index { |path, i| classes << parts.first(i+1).join('_') }
-      
+
       classes.join(' ')
     end
-    
+
     # Get the path of a file of a given type
-    # 
+    #
     # @param [Symbol] kind The type of file
     # @param [String] source The path to the file
     # @return [String]
