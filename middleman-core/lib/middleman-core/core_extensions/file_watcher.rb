@@ -1,4 +1,5 @@
 require "find"
+require "middleman-core/watcher"
 
 # API for watching file change events
 module Middleman::CoreExtensions::FileWatcher

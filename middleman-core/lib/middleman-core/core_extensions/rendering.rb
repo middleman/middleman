@@ -1,3 +1,5 @@
+require "middleman-core/renderers/erb"
+
 # Shutup Tilt Warnings
 # @private
 class Tilt::Template

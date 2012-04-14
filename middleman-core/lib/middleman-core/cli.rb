@@ -5,6 +5,12 @@ require "thor/group"
 # CLI Module
 module Middleman::Cli
   
+  module Cli
+    autoload :Build,        "middleman-core/cli/build"
+    autoload :Init,         "middleman-core/cli/init"
+    autoload :Server,       "middleman-core/cli/server"
+  end
+  
   # The base task from which everything else etends
   class Base < Thor
     

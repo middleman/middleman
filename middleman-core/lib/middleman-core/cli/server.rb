@@ -1,3 +1,5 @@
+require "middleman-core/watcher"
+
 # CLI Module
 module Middleman::Cli
   
