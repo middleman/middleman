@@ -5,7 +5,7 @@ module Middleman::Sitemap
   class Resource
     include Middleman::Sitemap::Extensions::Traversal
         
-    # @return [Middleman::Base]
+    # @return [Middleman::Application]
     attr_reader :app
     
     # @return [Middleman::Sitemap::Store]

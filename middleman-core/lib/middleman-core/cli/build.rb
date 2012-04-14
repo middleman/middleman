@@ -57,9 +57,9 @@ module Middleman::Cli
         true
       end
 
-      # Middleman::Base singleton
+      # Middleman::Application singleton
       #
-      # @return [Middleman::Base]
+      # @return [Middleman::Application]
       def shared_instance(verbose=false)
         @_shared_instance ||= ::Middleman.server.inst do
           set :environment, :build
@@ -67,9 +67,9 @@ module Middleman::Cli
         end
       end
       
-      # Middleman::Base class singleton
+      # Middleman::Application class singleton
       #
-      # @return [Middleman::Base]
+      # @return [Middleman::Application]
       def shared_server
         @_shared_server ||= shared_instance.class
       end
@@ -86,7 +86,7 @@ module Middleman::Cli
         end
       end
     
-      # Set the root path to the Middleman::Base's root
+      # Set the root path to the Middleman::Application's root
       def source_root
         shared_instance.root
       end

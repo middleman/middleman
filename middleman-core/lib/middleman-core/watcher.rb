@@ -94,7 +94,7 @@ module Middleman
       end
     end
     
-    # Start an instance of Middleman::Base
+    # Start an instance of Middleman::Application
     # @return [void]
     def bootup
       env = (@options[:environment] || "development").to_sym

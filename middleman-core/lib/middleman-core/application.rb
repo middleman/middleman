@@ -18,7 +18,7 @@ require "middleman-core/sitemap"
   
 # Core Middleman Class
 module Middleman
-  class Base
+  class Application
     # Uses callbacks
     include Hooks
   
@@ -49,7 +49,7 @@ module Middleman
       # Get the static instance
       #
       # @private
-      # @return [Middleman::Base]
+      # @return [Middleman::Application]
       def inst(&block)
         @inst ||= begin
           mm = new(&block)
@@ -61,7 +61,7 @@ module Middleman
       # Set the shared instance
       #
       # @private
-      # @param [Middleman::Base] inst
+      # @param [Middleman::Application] inst
       # @return [void]
       def inst=(inst)
         @inst = inst
@@ -427,7 +427,7 @@ module Middleman
 
     # Backwards compatibilty with old Sinatra template interface
     #
-    # @return [Middleman::Base]
+    # @return [Middleman::Application]
     def settings
       self
     end
@@ -517,7 +517,7 @@ module Middleman
   end
   
   class << self
-    # Create a new Class which is based on Middleman::Base
+    # Create a new Class which is based on Middleman::Application
     # Used to create a safe sandbox into which extensions and
     # configuration can be included later without impacting
     # other classes and instances.
@@ -526,7 +526,7 @@ module Middleman
     def server(&block)
       @@servercounter ||= 1
       @@servercounter += 1
-      const_set("MiddlemanBase#{@@servercounter}", Class.new(Middleman::Base))
+      const_set("MiddlemanApplication#{@@servercounter}", Class.new(Middleman::Application))
     end
 
     # Creates a new Rack::Server

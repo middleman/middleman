@@ -116,7 +116,7 @@ module Middleman::CoreExtensions::FrontMatter
   class FrontMatter
     
     # Initialize frontmatter with current app
-    # @param [Middleman::Base] app
+    # @param [Middleman::Application] app
     def initialize(app)
       @app = app
       @source = File.expand_path(@app.source, @app.root)

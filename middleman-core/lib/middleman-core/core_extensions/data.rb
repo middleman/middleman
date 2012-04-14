@@ -78,7 +78,7 @@ module Middleman::CoreExtensions::Data
     
     # Setup data store
     #
-    # @param [Middleman::Base] app The current instance of Middleman
+    # @param [Middleman::Application] app The current instance of Middleman
     def initialize(app)
       @app = app
       @local_data = {}

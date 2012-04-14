@@ -51,17 +51,17 @@ module Middleman
   
   # Setup renderers
   require "coffee_script"
-  Base.register Middleman::Renderers::Haml
-  Base.register Middleman::Renderers::Sass
-  Base.register Middleman::Renderers::Markdown
-  Base.register Middleman::Renderers::Liquid
-  Base.register Middleman::Renderers::Slim
+  Application.register Middleman::Renderers::Haml
+  Application.register Middleman::Renderers::Sass
+  Application.register Middleman::Renderers::Markdown
+  Application.register Middleman::Renderers::Liquid
+  Application.register Middleman::Renderers::Slim
 
   # Compass framework
-  Base.register Middleman::CoreExtensions::Compass
+  Application.register Middleman::CoreExtensions::Compass
 
   # Sprockets asset handling
-  Base.register Middleman::CoreExtensions::Sprockets
+  Application.register Middleman::CoreExtensions::Sprockets
   
   # Register the optional extensions
   Extensions.register(:cache_buster) { 

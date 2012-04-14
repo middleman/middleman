@@ -11,4 +11,4 @@ module Middleman; end
 require "middleman-core/version"
 require "middleman-core/util"
 require "middleman-core/extensions"
-require "middleman-core/base"
+require "middleman-core/application"

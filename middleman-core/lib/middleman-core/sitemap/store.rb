@@ -12,11 +12,11 @@ module Middleman::Sitemap
   # extensions. All "path" parameters used in this class are source paths.
   class Store
     
-    # @return [Middleman::Base]
+    # @return [Middleman::Application]
     attr_accessor :app
     
     # Initialize with parent app
-    # @param [Middleman::Base] app
+    # @param [Middleman::Application] app
     def initialize(app)
       @app   = app
       @resources = []
