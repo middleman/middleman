@@ -1,4 +1,3 @@
-@wip
 Feature: Builder Subset
   In order to preview localized html
   

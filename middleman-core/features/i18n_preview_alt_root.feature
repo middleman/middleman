@@ -1,4 +1,3 @@
-@wip
 Feature: Preview Alt Root
   In order to preview localized html
   

@@ -1,4 +1,3 @@
-@wip
 Feature: Builder Alt Path
   In order to preview localized html
   

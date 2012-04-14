@@ -1,4 +1,3 @@
-@wip
 Feature: Preview Default
   In order to preview localized html
   

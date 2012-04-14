@@ -1,4 +1,3 @@
-@wip
 Feature: Builder Default
   In order to preview localized html
   

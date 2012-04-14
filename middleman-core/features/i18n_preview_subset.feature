@@ -1,4 +1,3 @@
-@wip
 Feature: Preview Subset
   In order to preview localized html
   

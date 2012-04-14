@@ -1,4 +1,3 @@
-@wip
 Feature: Preview Alt Path
   In order to preview localized html
   

@@ -1,4 +1,3 @@
-@wip
 Feature: Builder No Mount
   In order to preview localized html
   

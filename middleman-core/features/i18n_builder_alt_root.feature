@@ -1,4 +1,3 @@
-@wip
 Feature: Builder Alt Root
   In order to preview localized html
   

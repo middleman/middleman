@@ -1,4 +1,3 @@
-@wip
 Feature: Builder Lang Map
   In order to preview localized html
   

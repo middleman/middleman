@@ -1,4 +1,3 @@
-@wip
 Feature: Preview No Mount
   In order to preview localized html
   
