@@ -49,7 +49,7 @@ module Middleman::Sitemap::Extensions
         if path.is_a? Regexp
           @ignored_callbacks << Proc.new {|p| p =~ path }
         elsif path.is_a? String
-          path_clean = ::Middleman.normalize_path(path)
+          path_clean = ::Middleman::Util.normalize_path(path)
           if path_clean.include?("*") # It's a glob
             @ignored_callbacks << Proc.new {|p| File.fnmatch(path_clean, p) }
           else
@@ -66,7 +66,7 @@ module Middleman::Sitemap::Extensions
       # @param [String] path
       # @return [Boolean]
       def ignored?(path)
-        path_clean = ::Middleman.normalize_path(path)
+        path_clean = ::Middleman::Util.normalize_path(path)
         @ignored_callbacks.any? { |b| b.call(path_clean) }
       end
 

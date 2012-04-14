@@ -75,7 +75,7 @@ module Middleman::Sitemap::Extensions
       # @param [String] target
       # @return [void]
       def proxy(path, target)
-        @proxy_paths[::Middleman.normalize_path(path)] = ::Middleman.normalize_path(target)
+        @proxy_paths[::Middleman::Util.normalize_path(path)] = ::Middleman::Util.normalize_path(target)
         @app.sitemap.rebuild_resource_list!(:added_proxy)
       end
 

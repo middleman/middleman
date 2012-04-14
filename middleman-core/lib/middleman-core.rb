@@ -1,32 +1,18 @@
-require "rbconfig"
-
-# Using Thor's indifferent hash access
-require "thor"
-
+# Using a bunch of convenience methods
 require "active_support"
 
 # Setup our load paths
 libdir = File.expand_path(File.dirname(__FILE__))
 $LOAD_PATH.unshift(libdir) unless $LOAD_PATH.include?(libdir)
 
-class String
-  def camelize
-    self.to_s.gsub(/\/(.?)/) { "::#{$1.upcase}" }.gsub(/(?:^|_)(.)/) { $1.upcase }
-  end
-end
-
 # Simple callback library
 require "middleman-core/vendor/hooks-0.2.0/lib/hooks"
 
 require "middleman-core/version"
+require "middleman-core/util"
 
 # Top-level Middleman object
 module Middleman
-  WINDOWS = !!(RUBY_PLATFORM =~ /(mingw|bccwin|wince|mswin32)/i) unless const_defined?(:WINDOWS)
-  JRUBY   = !!(RbConfig::CONFIG["RUBY_INSTALL_NAME"] =~ /^jruby/i) unless const_defined?(:JRUBY)
-  DARWIN  = RbConfig::CONFIG['target_os'] =~ /darwin/i unless const_defined?(:DARWIN)
-  LINUX   = RbConfig::CONFIG['target_os'] =~ /linux/i unless const_defined?(:LINUX)
-
   # Auto-load modules on-demand
   autoload :Base,           "middleman-core/base"
   autoload :Cache,          "middleman-core/cache"
@@ -181,36 +167,6 @@ module Middleman
   EXTENSION_FILE = File.join("lib", "middleman_extension.rb") unless const_defined?(:EXTENSION_FILE)
 
   class << self
-
-    # Recursively convert a normal Hash into a HashWithIndifferentAccess
-    #
-    # @private
-    # @param [Hash] data Normal hash
-    # @return [Thor::CoreExt::HashWithIndifferentAccess]
-    def recursively_enhance(data)
-      if data.is_a? Hash
-        data = ::Thor::CoreExt::HashWithIndifferentAccess.new(data)
-        data.each do |key, val|
-          data[key] = recursively_enhance(val)
-        end
-        data
-      elsif data.is_a? Array
-        data.each_with_index do |val, i|
-          data[i] = recursively_enhance(val)
-        end
-        data
-      else
-        data
-      end
-    end
-    
-    # Normalize a path to not include a leading slash
-    # @param [String] path
-    # @return [String]
-    def normalize_path(path)
-      path.sub(/^\//, "").gsub("%20", " ")
-    end
-    
     # Automatically load extensions from available RubyGems
     # which contain the EXTENSION_FILE
     #

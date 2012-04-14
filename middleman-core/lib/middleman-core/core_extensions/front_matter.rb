@@ -153,7 +153,7 @@ module Middleman::CoreExtensions::FrontMatter
         
       if result
         data, content = result
-        data = ::Middleman.recursively_enhance(data).freeze
+        data = ::Middleman::Util.recursively_enhance(data).freeze
         file = file.sub(@app.source_dir, "")
         @local_data[file] = [data, content]
         path = File.join(@app.source_dir, file)

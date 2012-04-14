@@ -1,6 +1,10 @@
 # File changes are forwarded to the currently running app via HTTP
 require "net/http"
 
+module Middleman
+  WINDOWS = !!(RUBY_PLATFORM =~ /(mingw|bccwin|wince|mswin32)/i) unless const_defined?(:WINDOWS)
+end
+
 require "win32/process" if ::Middleman::WINDOWS
 
 require "fileutils"

@@ -101,7 +101,7 @@ module Middleman::CoreExtensions::Data
         return
       end
 
-      @local_data[basename] = ::Middleman.recursively_enhance(data)
+      @local_data[basename] = ::Middleman::Util.recursively_enhance(data)
     end
     
     # Remove a given file from the internal cache
@@ -144,7 +144,7 @@ module Middleman::CoreExtensions::Data
         result = data_for_path(path)
       
         if result
-          return ::Middleman.recursively_enhance(result)
+          return ::Middleman::Util.recursively_enhance(result)
         end
       end
       

@@ -65,7 +65,7 @@ module Middleman::Sitemap
     # @param [String] request_path The original path of a resource.
     # @return [Middleman::Sitemap::Resource]
     def find_resource_by_path(request_path)
-      request_path = ::Middleman.normalize_path(request_path)
+      request_path = ::Middleman::Util.normalize_path(request_path)
       @_lookup_cache[:path][request_path]
     end
     
@@ -73,7 +73,7 @@ module Middleman::Sitemap
     # @param [String] request_path The destination (output) path of a resource.
     # @return [Middleman::Sitemap::Resource]
     def find_resource_by_destination_path(request_path)
-      request_path = ::Middleman.normalize_path(request_path)
+      request_path = ::Middleman::Util.normalize_path(request_path)
       @_lookup_cache[:destination_path][request_path]
     end
     
