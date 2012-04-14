@@ -11,9 +11,6 @@ require "active_support/json"
 # Simple callback library
 require "middleman-core/vendor/hooks-0.2.0/lib/hooks"
 
-# Using a cache
-require "middleman-core/cache"
-
 require "middleman-core/sitemap"
   
 # Core Middleman Class
@@ -309,9 +306,9 @@ module Middleman
     # Shared cache instance
     #
     # @private
-    # @return [Middleman::Cache] The cache
+    # @return [Middleman::Util::Cache] The cache
     def self.cache
-      @_cache ||= ::Middleman::Cache.new
+      @_cache ||= ::Middleman::Util::Cache.new
     end
     delegate :cache, :to => :"self.class"
   
