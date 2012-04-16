@@ -1,5 +1,15 @@
 Feature: Allow config.rb and extensions to add CLI commands
-  Scenario: Test 3rd Party Command
-    Given a fixture app "3rd-party-command"
+
+  Scenario: Command autoloaded from tasks/ directory
+    Given an empty app
+    And a file named "tasks/hello_task.rb" with:
+      """
+      class Hello < Thor
+        desc "hello", "Say hello"
+        def hello
+          puts "Hello World"
+        end
+      end
+      """
     When I run `middleman hello`
     Then the output should contain "Hello World"

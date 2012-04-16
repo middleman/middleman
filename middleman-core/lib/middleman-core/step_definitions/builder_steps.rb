@@ -7,6 +7,11 @@ Given /^app "([^\"]*)" is using config "([^\"]*)"$/ do |path, config_name|
   FileUtils.cp(config_path, config_dest)
 end
 
+Given /^an empty app$/ do
+  step %Q{a directory named "empty_app"}
+  step %Q{I cd to "empty_app"}
+end
+
 Given /^a fixture app "([^\"]*)"$/ do |path|
   # This step can be reentered from several places but we don't want
   # to keep re-copying and re-cd-ing into ever-deeper directories
