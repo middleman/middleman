@@ -10,8 +10,16 @@ module Middleman::CoreExtensions::I18n
 
       app.send :include, InstanceMethods
       
+      # Needed for helpers as well
       app.after_configuration do
         ::I18n.load_path += Dir[File.join(root, locales_dir, "*.yml")]
+      end
+      
+      app.ready do
+        sitemap.register_resource_list_manipulator(
+          :i18n,
+          i18n
+        )
       end
     end
     alias :included :registered
@@ -36,9 +44,9 @@ module Middleman::CoreExtensions::I18n
       end
       
       # Don't output localizable files
-      ignore File.join(@templates_dir, "**/*")
+      @app.ignore File.join(@templates_dir, "**")
       
-      sitemap.provides_metadata_for_path do |url|
+      @app.sitemap.provides_metadata_for_path do |url|
         if d = get_localization_data(url)
           lang, page_id = d
           instance_vars = Proc.new {
@@ -60,34 +68,56 @@ module Middleman::CoreExtensions::I18n
         end
       end
     end
-
-    def get_localization_data(url)
-      if @mount_at_root
-      else
-      end
+    
+    def get_localization_data(path)
+      @_localization_data ||= {}
+      @_localization_data[path]
     end
     
-    # def paths_for_file(file)
-    #   url = @app.sitemap.source_map.index(file)
-    #   page_id = File.basename(url, File.extname(url))
-    #   
-    #   langs.map do |lang|
-    #     ::I18n.locale = lang
-    #     
-    #     # Build lang path
-    #     if @mount_at_root == lang
-    #       prefix = "/"
-    #     else
-    #       replacement = @lang_map.has_key?(lang) ? @lang_map[lang] : lang
-    #       prefix = @path.sub(":locale", replacement.to_s)
-    #     end
-    #     
-    #     localized_page_id = ::I18n.t("paths.#{page_id}", :default => page_id)
-    #     
-    #     path = File.join(prefix, url.sub(page_id, localized_page_id))
-    #     [lang, path, localized_page_id]
-    #   end
-    # end
+    # Update the main sitemap resource list
+    # @return [void]
+    def manipulate_resource_list(resources)
+      @_localization_data = {}
+      
+      new_resources = []
+      
+      resources.each do |resource|
+        next unless File.fnmatch(File.join(@templates_dir, "**"), resource.path)
+        
+        page_id = File.basename(resource.path, File.extname(resource.path))
+      
+        langs.map do |lang|
+          ::I18n.locale = lang
+        
+          localized_page_id = ::I18n.t("paths.#{page_id}", :default => page_id)
+          path = resource.path.sub(@templates_dir, "")
+          
+          # Build lang path
+          if @mount_at_root == lang
+            prefix = "/"
+          else
+            replacement = @lang_map.has_key?(lang) ? @lang_map[lang] : lang
+            prefix = @path.sub(":locale", replacement.to_s)
+          end
+          
+          path = ::Middleman::Util.normalize_path(
+            File.join(prefix, path.sub(page_id, localized_page_id))
+          )
+          
+          @_localization_data[path] = [lang, path, localized_page_id]
+          
+          p = ::Middleman::Sitemap::Resource.new(
+            @app.sitemap,
+            path
+          )
+          p.proxy_to(resource.path)
+          
+          new_resources << p
+        end
+      end
+      
+      resources + new_resources
+    end
   end
   
   # Frontmatter class methods
@@ -95,7 +125,7 @@ module Middleman::CoreExtensions::I18n
     
     # Initialize the i18n
     def i18n
-      @i18n ||= Localizer.new(self)
+      @_i18n ||= Localizer.new(self)
     end
     
     # Main i18n API
