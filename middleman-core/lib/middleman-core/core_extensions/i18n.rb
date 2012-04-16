@@ -12,14 +12,8 @@ module Middleman::CoreExtensions::I18n
       
       # Needed for helpers as well
       app.after_configuration do
-        ::I18n.load_path += Dir[File.join(root, locales_dir, "*.yml")]
-      end
-      
-      app.ready do
-        sitemap.register_resource_list_manipulator(
-          :i18n,
-          i18n
-        )
+        ::I18n.load_path = [Dir[File.join(root, locales_dir, "*.yml")]]
+        ::I18n.reload!
       end
     end
     alias :included :registered
@@ -28,7 +22,6 @@ module Middleman::CoreExtensions::I18n
   class Localizer
     def initialize(app)
       @app = app
-      @activated = false
       @maps = {}
     end
     
@@ -61,7 +54,10 @@ module Middleman::CoreExtensions::I18n
         end
       end
       
-      @activated = true
+      @app.sitemap.register_resource_list_manipulator(
+        :i18n,
+        @app.i18n
+      )
     end
     
     def langs
@@ -80,8 +76,6 @@ module Middleman::CoreExtensions::I18n
     # Update the main sitemap resource list
     # @return [void]
     def manipulate_resource_list(resources)
-      return resources unless @activated
-      
       @_localization_data = {}
       
       new_resources = []
