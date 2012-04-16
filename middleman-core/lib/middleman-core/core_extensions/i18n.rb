@@ -28,6 +28,7 @@ module Middleman::CoreExtensions::I18n
   class Localizer
     def initialize(app)
       @app = app
+      @activated = false
       @maps = {}
     end
     
@@ -59,6 +60,8 @@ module Middleman::CoreExtensions::I18n
           {}
         end
       end
+      
+      @activated = true
     end
     
     def langs
@@ -77,6 +80,8 @@ module Middleman::CoreExtensions::I18n
     # Update the main sitemap resource list
     # @return [void]
     def manipulate_resource_list(resources)
+      return resources unless @activated
+      
       @_localization_data = {}
       
       new_resources = []
