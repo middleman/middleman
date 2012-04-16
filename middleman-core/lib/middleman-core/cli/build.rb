@@ -35,7 +35,7 @@ module Middleman::Cli
     # @return [void]
     def build
       if !ENV["MM_ROOT"]
-        raise Thor::Error "Error: Could not find a Middleman project config, perhaps you are in the wrong folder?"
+        raise Thor::Error, "Error: Could not find a Middleman project config, perhaps you are in the wrong folder?"
       end
       
       self.class.shared_instance(options["verbose"] || false)
