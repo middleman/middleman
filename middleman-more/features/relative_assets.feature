@@ -39,6 +39,17 @@ Feature: Relative Assets
     When I cd to "build"
     Then the file "stylesheets/relative_assets.css" should contain "url('../images/blank.gif')"
     
+  Scenario: Relative css reference with directory indexes
+    Given a fixture app "relative-assets-app"
+    And a file named "config.rb" with:
+      """
+      activate :directory_indexes
+      activate :relative_assets
+      """
+    Given a successfully built app at "relative-assets-app"
+    When I cd to "build"
+    Then the file "relative_image/index.html" should contain "../stylesheets/relative_assets.css"
+    
   Scenario: Rendering html with the feature enabled
     Given "relative_assets" feature is "enabled"
     And the Server is running at "relative-assets-app"
@@ -72,7 +83,6 @@ Feature: Relative Assets
     Then I should not see "/images/blank.gif"
     Then I should not see "/img/blank.gif"
     And I should see "img/blank.gif"
-    
     
   Scenario: Rendering scss with the feature enabled
     Given "relative_assets" feature is "enabled"
