@@ -5,32 +5,11 @@ module Middleman::Extensions
       def registered(app, options)
         exts = options[:exts] || %w(.ico .manifest .jpg .jpeg .png .gif .js .css)
 
-        app.after_configuration do
-          sitemap.reroute do |destination, page|
-            if exts.include? page.ext
-              # figure out the path Sprockets would use for this asset
-              if page.ext == '.js'
-                sprockets_path = page.path.sub(js_dir,'').sub(/^\//,'')
-              elsif page.ext == '.css'
-                sprockets_path = page.path.sub(css_dir,'').sub(/^\//,'')
-              end
-
-              # See if Sprockets knows about the file
-              asset = sprockets.find_asset(sprockets_path) if sprockets_path
-
-              if asset # if it's a Sprockets asset, ask sprockets for its digest
-                digest = asset.digest[0..7]
-              elsif page.template? # if it's a template, render it out
-                digest = Digest::SHA1.hexdigest(page.render)[0..7]
-              else # if it's a static file, just hash it
-                digest = Digest::SHA1.file(page.source_file).hexdigest[0..7]
-              end
-
-              destination.sub(/\.(\w+)$/) { |ext| "-#{digest}#{ext}" }
-            else
-              destination
-            end
-          end
+        app.ready do
+          sitemap.register_resource_list_manipulator(
+            :asset_hash, 
+            AssetHashManager.new(self, exts)
+          )
 
           use Middleware, :exts => exts, :middleman_app => self
         end
@@ -38,6 +17,43 @@ module Middleman::Extensions
       alias :included :registered
     end
 
+    class AssetHashManager
+      def initialize(app, exts)
+        @app = app
+        @exts = exts
+      end
+      
+      # Update the main sitemap resource list
+      # @return [void]
+      def manipulate_resource_list(resources)
+        resources.each do |resource|
+          if @exts.include? resource.ext
+            # figure out the path Sprockets would use for this asset
+            if resource.ext == '.js'
+              sprockets_path = resource.path.sub(@app.js_dir,'').sub(/^\//,'')
+            elsif resource.ext == '.css'
+              sprockets_path = resource.path.sub(@app.css_dir,'').sub(/^\//,'')
+            end
+
+            # See if Sprockets knows about the file
+            asset = @app.sprockets.find_asset(sprockets_path) if sprockets_path
+
+            if asset # if it's a Sprockets asset, ask sprockets for its digest
+              digest = asset.digest[0..7]
+            elsif resource.template? # if it's a template, render it out
+              digest = Digest::SHA1.hexdigest(resource.render)[0..7]
+            else # if it's a static file, just hash it
+              digest = Digest::SHA1.file(resource.source_file).hexdigest[0..7]
+            end
+
+            resource.destination_path = resource.destination_path.sub(/\.(\w+)$/) { |ext| "-#{digest}#{ext}" }
+          end
+        end
+      end
+    end
+
+    # The asset hash middleware is responsible for rewriting references to
+    # assets to include their new, hashed name.
     class Middleware
       def initialize(app, options={})
         @rack_app      = app
@@ -63,7 +79,7 @@ module Middleman::Extensions
 
               asset_path = dirpath.join(asset_path).to_s if relative_path
 
-              if asset_page = @middleman_app.sitemap.find_page_by_path(asset_path)
+              if asset_page = @middleman_app.sitemap.find_resource_by_path(asset_path)
                 replacement_path = "/#{asset_page.destination_path}"
                 replacement_path = Pathname.new(replacement_path).relative_path_from(dirpath).to_s if relative_path
 
