@@ -1,1 +1,0 @@
-* Fix asset_hash ext with new sitemap
