@@ -1,5 +1,6 @@
 require "find"
 require "middleman-core/watcher"
+require "set"
 
 # API for watching file change events
 module Middleman::CoreExtensions::FileWatcher
@@ -54,7 +55,7 @@ module Middleman::CoreExtensions::FileWatcher
     
     # Initialize api and internal path cache
     def initialize
-      self.known_paths = []
+      self.known_paths = Set.new
     end
     
     # Add callback to be run on file change
@@ -83,7 +84,7 @@ module Middleman::CoreExtensions::FileWatcher
     # @return [void]
     def did_change(path)
       puts "== File Change: #{path}" if instance.logging? && !::Middleman::Watcher.ignore_list.any? { |r| path.match(r) }
-      self.known_paths << path unless self.known_paths.include?(path)
+      self.known_paths << path
       self.run_callbacks(path, :changed)
     end
 
@@ -93,7 +94,7 @@ module Middleman::CoreExtensions::FileWatcher
     # @return [void]
     def did_delete(path)
       puts "== File Deletion: #{path}" if instance.logging? && !::Middleman::Watcher.ignore_list.any? { |r| path.match(r) }
-      self.known_paths.delete(path) if self.known_paths.include?(path)
+      self.known_paths.delete(path)
       self.run_callbacks(path, :deleted)
     end
     
