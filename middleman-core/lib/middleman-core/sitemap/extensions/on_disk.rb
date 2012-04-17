@@ -1,3 +1,5 @@
+require 'set'
+
 module Middleman::Sitemap::Extensions
   class OnDisk
 
@@ -8,12 +10,8 @@ module Middleman::Sitemap::Extensions
       @sitemap = sitemap
       @app     = @sitemap.app
       
-      @file_paths_on_disk = []
+      @file_paths_on_disk = Set.new
 
-      # Cleanup paths
-      # static_path   = @app.source_dir.sub(@app.root, "").sub(/^\//, "")
-      # sitemap_regex = static_path.empty? ? // : (%r{^#{static_path + "/"}})
-      
       scoped_self = self
       @waiting_for_ready = true
       
@@ -38,26 +36,28 @@ module Middleman::Sitemap::Extensions
     # @return [Boolean]
     def touch_file(file, rebuild=true)
       return false if file == @app.source_dir || File.directory?(file)
-  
+
       path = file_to_path(file)
       return false unless path
-  
-      return false if @app.ignored_sitemap_matchers.any? do |name, callback|
+
+      ignored = @app.ignored_sitemap_matchers.any? do |name, callback|
         callback.call(file, path)
       end
-      
-      if !@file_paths_on_disk.include?(file)
-        @file_paths_on_disk << file 
-        @sitemap.rebuild_resource_list!(:added_file) if rebuild
-      end
+
+      @file_paths_on_disk << file unless ignored
+
+      # Rebuild the sitemap any time a file is touched
+      # in case one of the other manipulators
+      # (like asset_hash) cares about the contents of this file,
+      # whether or not it belongs in the sitemap (like a partial)
+      @sitemap.rebuild_resource_list!(:touched_file) if rebuild
     end
     
     # Remove a file from the store
     # @param [String] file
     # @return [void]
     def remove_file(file, rebuild=true)
-      if @file_paths_on_disk.include?(file)
-        @file_paths_on_disk.delete(file)
+      if @file_paths_on_disk.delete?(file)
         @sitemap.rebuild_resource_list!(:removed_file) if rebuild
       end
     end
