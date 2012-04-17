@@ -53,9 +53,17 @@ module Middleman
       require "listen"
       
       Listen.to(Dir.pwd) do |modified, added, removed|
-        local.run_on_change(modified)  if modified.length > 0
-        local.run_on_change(added)     if added.length > 0
-        local.run_on_deletion(removed) if removed.length > 0
+        added_and_modified = modified + added
+        
+        if added_and_modified.length > 0
+          added_and_modified.map! { |p| p.sub(Dir.pwd, "").sub(/^\//, "") }
+          local.run_on_change(added_and_modified)
+        end
+        
+        if removed.length > 0
+          removed_relative = removed.map! { |p| p.sub(Dir.pwd, "").sub(/^\//, "") }
+          local.run_on_deletion(removed_relative) 
+        end
       end
     end
     
@@ -138,7 +146,7 @@ module Middleman
     # @return [void]
     def run_on_change(paths)
       # See if the changed file is config.rb or lib/*.rb
-      #return reload if needs_to_reload?(paths)
+      return reload if needs_to_reload?(paths)
       
       # Otherwise forward to Middleman
       paths.each do |path|
@@ -151,7 +159,7 @@ module Middleman
     # @return [void]
     def run_on_deletion(paths)
       # See if the changed file is config.rb or lib/*.rb
-      #return reload if needs_to_reload?(paths)
+      return reload if needs_to_reload?(paths)
       
       # Otherwise forward to Middleman
       paths.each do |path|
@@ -162,15 +170,16 @@ module Middleman
   private
     # Trap the interupt signal and shut down FSSM (and thus the server) smoothly
     def register_signal_handlers
-      # trap("INT")  { stop; exit(0) }
+      trap("INT")  { stop; exit(0) }
       trap("TERM") { stop }
-      # trap("QUIT") { stop; exit(0) }
+      trap("QUIT") { stop; exit(0) }
     end
   
     # Whether the passed files are config.rb, lib/*.rb or helpers
     # @param [Array<String>] paths Array of paths to check
     # @return [Boolean] Whether the server needs to reload
     def needs_to_reload?(paths)
+      return false # disable reloading for now
       paths.any? do |path|
         path.match(%{^config\.rb}) || path.match(%r{^lib/^[^\.](.*)\.rb$}) || path.match(%r{^helpers/^[^\.](.*)_helper\.rb$})
       end
