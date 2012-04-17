@@ -62,9 +62,9 @@ module Middleman::CoreExtensions::I18n
     
     def langs
       @options[:langs] || begin
-        Dir[File.join(@app.root, @app.locales_dir, "*.yml")].map do |file|
-          File.basename(file).gsub(".yml", "").to_sym
-        end
+        Dir[File.join(@app.root, @app.locales_dir, "*.yml")].map { |file| 
+          File.basename(file).gsub(".yml", "") 
+        }.sort.map(&:to_sym)
       end
     end
     
