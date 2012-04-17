@@ -30,6 +30,21 @@
 * Merge full i18n support
 * Implied file extensions (style.scss => style.css)
 * Padrino 0.10.6
+* `middleman init` generates a `Gemfile` by default.
+* Errors stop the build and print a stacktrace rather than silently getting printed into files.
+* `with_layout` works with globs or regexes.
+* Setting `directory_index` from `page` with a glob or regex now works.
+* `:gzip` extension for pre-gzipping files for better compression with no server CPU cost.
+* `:asset_hash` extension that generates unique-by-content filenames for assets and rewrites references to use those filenames, so you can set far-future expires on your assets.
+* Removed the `--relative` CLI option.
+* Properly output Compass-generated sprited images.
+* Include vendored assets in sprockets path.
+* Switch built-in CSS compressor to Rainpress.
+* Automatically load helper modules from `helpers/`, like Rails.
+* `ignore` and `page` both work with file globs or regexes.
+* `layout`, `ignore`, and `directory_index` can be set from front matter.
+* JavaScript and CSS are minified no matter where they are in the site, including in inline code blocks.
+* Files with just a template extension get output with the correct exension (foo.erb => foo.html)
 
 2.0.14
 ====
