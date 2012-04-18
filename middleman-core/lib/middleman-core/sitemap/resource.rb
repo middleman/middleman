@@ -114,7 +114,7 @@ module Middleman::Sitemap
     # just foo. Best for linking.
     # @return [String]
     def url
-      '/' + path.sub(/#{Regexp.escape(app.index_file)}$/, '')
+      '/' + destination_path.sub(/#{Regexp.escape(app.index_file)}$/, '')
     end
 
     # Get the relative path from the source

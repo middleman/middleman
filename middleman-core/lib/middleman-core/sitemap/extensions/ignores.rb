@@ -46,6 +46,8 @@ module Middleman::Sitemap::Extensions
       # @param [String, Regexp] path, path glob expression, or path regex
       # @return [void]
       def ignore(path=nil, &block)
+        original_callback_size = @ignored_callbacks.size
+
         if path.is_a? Regexp
           @ignored_callbacks << Proc.new {|p| p =~ path }
         elsif path.is_a? String
@@ -53,13 +55,16 @@ module Middleman::Sitemap::Extensions
           if path_clean.include?("*") # It's a glob
             @ignored_callbacks << Proc.new {|p| File.fnmatch(path_clean, p) }
           else
-            @ignored_callbacks << Proc.new {|p| p == path_clean }
+            # Add a specific-path ignore unless that path is already covered
+            @ignored_callbacks << Proc.new {|p| p == path_clean } unless ignored?(path_clean)
           end
         elsif block_given?
           @ignored_callbacks << block
         end
 
-        @app.sitemap.rebuild_resource_list!(:added_ignore_rule)
+        if @ignored_callbacks.size > original_callback_size
+          @app.sitemap.rebuild_resource_list!(:added_ignore_rule)
+        end
       end
 
       # Whether a path is ignored
