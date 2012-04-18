@@ -16,7 +16,7 @@ module Middleman::CoreExtensions::Sprockets
       app.ready do
         # Add any gems with (vendor|app|.)/assets/javascripts to paths
         # also add similar directories from project root (like in rails)
-        root_paths = [%w{ app }, %w{ assets }, %w{ vendor }, %w{ app assets }, %w{ vendor assets }]
+        root_paths = [%w{ app }, %w{ assets }, %w{ vendor }, %w{ app assets }, %w{ vendor assets }, %w{ lib }, %w{ lib assets }]
         try_paths  = root_paths.map {|rp| File.join(rp, 'javascripts') } +
                      root_paths.map {|rp| File.join(rp, 'stylesheets') }
 
