@@ -53,11 +53,10 @@ module Middleman::Sitemap
       end
       
       # Reset lookup cache
-      cache_structure = { :path => {}, :destination_path => {} }
-      @_lookup_cache = @resources.inject(cache_structure) do |cache, resource|
-        cache[:path][resource.path] = resource
-        cache[:destination_path][resource.destination_path] = resource
-        cache
+      @_lookup_cache = { :path => {}, :destination_path => {} }
+      @resources.each do |resource|
+        @_lookup_cache[:path][resource.path] = resource
+        @_lookup_cache[:destination_path][resource.destination_path] = resource
       end
     end
     
