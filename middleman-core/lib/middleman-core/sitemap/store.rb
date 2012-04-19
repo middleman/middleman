@@ -144,5 +144,48 @@ module Middleman::Sitemap
         result.deep_merge(metadata)
       end
     end
+    
+    # Get the URL path for an on-disk file
+    # @param [String] file
+    # @return [String]
+    def file_to_path(file)
+      file = File.expand_path(file, @app.root)
+  
+      prefix = @app.source_dir.sub(/\/$/, "") + "/"
+      return false unless file.include?(prefix)
+  
+      path = file.sub(prefix, "")
+      extensionless_path(path)
+    end
+    
+    # Get a path without templating extensions
+    # @param [String] file
+    # @return [String]
+    def extensionless_path(file)
+      path = file.dup
+
+      end_of_the_line = false
+      while !end_of_the_line
+        if !::Tilt[path].nil?
+          path = path.sub(File.extname(path), "")
+        else
+          end_of_the_line = true
+        end
+      end
+
+      # If there is no extension, look for one
+      if File.extname(path).empty?
+        input_ext = File.extname(file)
+
+        if !input_ext.empty?
+          input_ext = input_ext.split(".").last.to_sym
+          if @app.template_extensions.has_key?(input_ext)
+            path << ".#{@app.template_extensions[input_ext]}"
+          end
+        end
+      end
+
+      path
+    end
   end
 end
