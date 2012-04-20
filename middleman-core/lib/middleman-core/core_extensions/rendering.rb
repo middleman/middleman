@@ -123,7 +123,7 @@ module Middleman::CoreExtensions::Rendering
       engine        = nil
 
       # If the path is known to the sitemap
-      if resource = sitemap.find_resource_by_destination_path(current_path)
+      if resource = sitemap.find_resource_by_path(current_path)
         current_dir = File.dirname(resource.source_file)
         engine = File.extname(resource.source_file)[1..-1].to_sym
 
@@ -132,23 +132,23 @@ module Middleman::CoreExtensions::Rendering
           relative_dir = File.join(current_dir.sub("#{self.source_dir}/", ""), data)
 
           # Try to use the current engine first
-          found_partial, found_engine = resolve_template(relative_dir, :preferred_engine => engine)
+          found_partial, found_engine = resolve_template(relative_dir, :preferred_engine => engine, :try_without_underscore => true)
 
           # Fall back to any engine available
           if !found_partial
-            found_partial, found_engine = resolve_template(relative_dir)
+            found_partial, found_engine = resolve_template(relative_dir, :try_without_underscore => true)
           end
         end
       end
       
       # Look in the root for the partial with the current engine
       if !found_partial && !engine.nil?
-        found_partial, found_engine = resolve_template(data, :preferred_engine => engine)
+        found_partial, found_engine = resolve_template(data, :preferred_engine => engine, :try_without_underscore => true)
       end
 
       # Look in the root with any engine
       if !found_partial
-        found_partial, found_engine = resolve_template(data)
+        found_partial, found_engine = resolve_template(data, :try_without_underscore => true)
       end
 
       # Render the partial if found, otherwide throw exception
@@ -340,8 +340,18 @@ module Middleman::CoreExtensions::Rendering
 
         # Look for files that match
         path_with_ext = on_disk_path + "." + preferred_engine
+        
         found_path = Dir[path_with_ext].find do |path|
           ::Tilt[path]
+        end
+        
+        if !found_path && options[:try_without_underscore] && 
+          path_no_underscore = path_with_ext.
+            sub(relative_path, relative_path.sub(/^_/, "").
+            sub(/\/_/, "/"))
+          found_path = Dir[path_no_underscore].find do |path|
+            ::Tilt[path]
+          end
         end
         
         # If we found one, return it and the found engine
