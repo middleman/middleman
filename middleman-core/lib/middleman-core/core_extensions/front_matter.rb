@@ -50,8 +50,6 @@ module Middleman::CoreExtensions::FrontMatter
     
     # Override init
     def initialize
-      super
-      
       exts = frontmatter_extensions.join("|").gsub(".", "\.")
       
       static_path = source_dir.sub(root, "").sub(/^\//, "").sub(/\/$/, "") + "/"
@@ -82,9 +80,11 @@ module Middleman::CoreExtensions::FrontMatter
 
         { :options => data, :page => fmdata }
       end
-      
+
       # Initialize class
       frontmatter_extension
+
+      super
     end
 
     # Notify callbacks that the frontmatter changed
@@ -153,6 +153,7 @@ module Middleman::CoreExtensions::FrontMatter
         
       if result
         data, content = result
+
         data = ::Middleman::Util.recursively_enhance(data).freeze
         file = file.sub(@app.source_dir, "")
         @local_data[file] = [data, content]
