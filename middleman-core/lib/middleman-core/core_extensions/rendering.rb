@@ -40,8 +40,6 @@ module Middleman::CoreExtensions::Rendering
         
       }
       
-      super
-      
       static_path = source_dir.sub(self.root, "").sub(/^\//, "")
       render_regex = static_path.empty? ? // : (%r{^#{static_path + "/"}})
       
@@ -49,6 +47,8 @@ module Middleman::CoreExtensions::Rendering
         path = File.expand_path(file, self.root)
         self.cache.remove(:raw_template, path)
       end
+
+      super
     end
     
     # Add or overwrite a default template extension

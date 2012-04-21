@@ -225,6 +225,9 @@ module Middleman
     # Activate Data package
     register Middleman::CoreExtensions::Data
   
+    # Parse YAML from templates
+    register Middleman::CoreExtensions::FrontMatter
+
     # Setup custom rendering
     register Middleman::CoreExtensions::Rendering
   
@@ -242,9 +245,6 @@ module Middleman
   
     # with_layout and page routing
     register Middleman::CoreExtensions::Routing
-  
-    # Parse YAML from templates
-    register Middleman::CoreExtensions::FrontMatter
   
     # i18n
     register Middleman::CoreExtensions::I18n
