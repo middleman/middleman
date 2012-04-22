@@ -26,7 +26,7 @@ Gem::Specification.new do |s|
   s.add_dependency("coffee-script", ["~> 2.2.0"])
   s.add_dependency("execjs", ["~> 1.2"])
   s.add_dependency("sprockets", ["~> 2.1"])
-  s.add_dependency("sprockets-sass", ["~> 0.7.0"])
+  s.add_dependency("sprockets-sass", ["~> 0.8.0"])
   s.add_dependency("redcarpet", ["~> 2.1.0"])
 end
 
