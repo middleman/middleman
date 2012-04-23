@@ -103,18 +103,36 @@ module Middleman::CoreExtensions::FileWatcher
     # @param [String] path The path to reload
     # @return [void]
     def reload_path(path)
-      subset = self.known_paths.select { |p| p.match(%r{^#{path}}) }
+      relative_path = path.sub("#{self.instance.root}/", "")
+      subset = self.known_paths.select { |p| p.match(%r{^#{relative_path}}) }
       
       Find.find(path) do |path|
         next if File.directory?(path)
+        next if Middleman::Watcher.ignore_list.any? { |r| path.match(r) }
         relative_path = path.sub("#{self.instance.root}/", "")
-        subset.delete(relative_path) if subset.include?(relative_path)
+        subset.delete(relative_path)
         self.did_change(relative_path)
       end if File.exists?(path)
       
       subset.each do |removed_path|
         self.did_delete(removed_path)
       end
+    end
+
+    # Like reload_path, but only triggers events on new files
+    #
+    # @param [String] path The path to reload
+    # @return [void]
+    def find_new_files(path)
+      relative_path = path.sub("#{self.instance.root}/", "")
+      subset = self.known_paths.select { |p| p.match(%r{^#{relative_path}}) }
+      
+      Find.find(path) do |file|
+        next if File.directory?(file)
+        next if Middleman::Watcher.ignore_list.any? { |r| path.match(r) }
+        relative_path = file.sub("#{self.instance.root}/", "")
+        self.did_change(relative_path) unless subset.include?(relative_path)
+      end if File.exists?(path)
     end
     
   protected

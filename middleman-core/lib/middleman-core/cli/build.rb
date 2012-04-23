@@ -196,18 +196,24 @@ module Middleman::Cli
       sort_order = %w(.png .jpeg .jpg .gif .bmp .svg .svgz .ico .woff .otf .ttf .eot .js .css)
       
       # Pre-request CSS to give Compass a chance to build sprites
+      puts "== Prerendering CSS" if @app.logging?
+
       @app.sitemap.resources.select do |resource|
         resource.ext == ".css"
       end.each do |resource|
         Middleman::Cli::Build.shared_rack.get(resource.destination_path.gsub(/\s/, "%20"))
       end
       
+      puts "== Checking for Compass sprites" if @app.logging?
+
       # Double-check for compass sprites
-      @app.files.reload_path(File.join(@app.source_dir, @app.images_dir))
+      @app.files.find_new_files(File.join(@app.source_dir, @app.images_dir))
 
       # Sort paths to be built by the above order. This is primarily so Compass can
       # find files in the build folder when it needs to generate sprites for the
       # css files
+
+      puts "== Building files" if @app.logging?
 
       resources = @app.sitemap.resources.sort do |a, b|
         a_idx = sort_order.index(a.ext) || 100

@@ -112,10 +112,22 @@ module Middleman::Sitemap
     
     # Register a handler to provide metadata on a url path
     # @param [Regexp] matcher
+    # @param [Symbol] origin an indicator of where this metadata came from - only one 
+    #                        block per [matcher, origin] pair may exist.
     # @return [Array<Array<Proc, Regexp>>]
-    def provides_metadata_for_path(matcher=nil, &block)
+    def provides_metadata_for_path(matcher=nil, origin=nil, &block)
       @_provides_metadata_for_path ||= []
-      @_provides_metadata_for_path << [block, matcher] if block_given?
+      if block_given?
+        if origin
+          existing_provider = @_provides_metadata_for_path.find {|b,m,o| o == origin && m == matcher}
+        end
+
+        if existing_provider
+          existing_provider[0] = block
+        else
+          @_provides_metadata_for_path << [block, matcher, origin]
+        end
+      end
       @_provides_metadata_for_path
     end
     
