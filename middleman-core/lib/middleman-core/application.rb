@@ -378,6 +378,8 @@ module Middleman
     #
     # @private
     def process_request
+      start_time = Time.now
+
       # Normalize the path and add index if we're looking at a directory
       @original_path = env["PATH_INFO"].dup
       @escaped_path  = @original_path.gsub("%20", " ")
@@ -418,7 +420,7 @@ module Middleman
       end
     
       # End the request
-      puts "== Finishing Request: #{self.current_path}" if logging?
+      puts "== Finishing Request: #{self.current_path} (#{(Time.now - start_time).round(2)}s)" if logging?
       halt res.finish
     end
 
@@ -531,24 +533,21 @@ module Middleman
     # @param [Hash] options to pass to Rack::Server.new
     # @return [Rack::Server]
     def start_server(options={})
-      require "webrick"
-
       opts = {
         :Port      => options[:port] || 4567,
         :Host      => options[:host] || "0.0.0.0",
         :AccessLog => []
       }
 
-      # opts[:Logger] = WEBrick::Log::new("/dev/null", 7) if !options[:logging]
-
       app_class = options[:app] ||= ::Middleman.server.inst
       opts[:app] = app_class
 
-      # Disable for Beta 1. See if people notice.
+      # Use Thin because Webrick gets confused and mixes
+      # up responses.
+      # TODO: Figure that out and drop Thin dependency
       require "thin"
       ::Thin::Logging.silent = !options[:logging]
       opts[:server] = 'thin'
-      # opts[:server] = 'webrick'
 
       server = ::Rack::Server.new(opts)
       server.start
