@@ -88,6 +88,7 @@ module Middleman::Sitemap
     def render(opts={}, locs={}, &block)
       return File.open(source_file).read unless template?
       
+      start_time = Time.now
       puts "== Render Start: #{source_file}" if app.logging?
 
       md   = metadata.dup
@@ -106,7 +107,7 @@ module Middleman::Sitemap
       app.instance_eval(&block) if block_given?
       result = app.render_template(source_file, locs, opts)
 
-      puts "== Render End: #{source_file}" if app.logging?
+      puts "== Render End: #{source_file} (#{(Time.now - start_time).round(2)}s)" if app.logging?
       result
     end
     
