@@ -52,17 +52,15 @@ module Middleman
       # Watcher Library
       require "listen"
       
-      Listen.to(Dir.pwd) do |modified, added, removed|
+      Listen.to(Dir.pwd, :relative_paths => true) do |modified, added, removed|
         added_and_modified = modified + added
-        
+
         if added_and_modified.length > 0
-          added_and_modified.map! { |p| p.sub(Dir.pwd, "").sub(/^\//, "") }
           local.run_on_change(added_and_modified)
         end
         
         if removed.length > 0
-          removed_relative = removed.map! { |p| p.sub(Dir.pwd, "").sub(/^\//, "") }
-          local.run_on_deletion(removed_relative) 
+          local.run_on_deletion(removed)
         end
       end
     end
