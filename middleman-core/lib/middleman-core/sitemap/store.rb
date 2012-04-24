@@ -20,7 +20,7 @@ module Middleman::Sitemap
     def initialize(app)
       @app   = app
       @resources = []
-
+      @_cached_metadata = {}
       @_lookup_cache = { :path => {}, :destination_path => {} }
       @resource_list_manipulators = []
       
@@ -123,6 +123,8 @@ module Middleman::Sitemap
         else
           @_provides_metadata_for_path << [block, matcher, origin]
         end
+
+        @_cached_metadata = {}
       end
       @_provides_metadata_for_path
     end
@@ -131,9 +133,11 @@ module Middleman::Sitemap
     # @param [String] request_path
     # @return [Hash]
     def metadata_for_path(request_path)
+      return @_cached_metadata[request_path] if @_cached_metadata[request_path]
+
       blank_metadata = { :options => {}, :locals => {}, :page => {}, :blocks => [] }
       
-      provides_metadata_for_path.inject(blank_metadata) do |result, (callback, matcher)|
+      @_cached_metadata[request_path] = provides_metadata_for_path.inject(blank_metadata) do |result, (callback, matcher)|
         case matcher
         when Regexp
           next result unless request_path.match(matcher)
