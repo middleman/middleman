@@ -8,8 +8,10 @@ module Middleman::Extensions
     class << self
       
       # Once registered
-      def registered(app)
+      def registered(app, options={})
         app.set :css_compressor, false
+
+        ignore = Array(options[:ignore]) << /\.min\./
 
         app.after_configuration do
           unless respond_to?(:css_compressor) && css_compressor
@@ -18,7 +20,7 @@ module Middleman::Extensions
           end
 
           # Setup Rack to watch for inline JS
-          use InlineCSSRack, :compressor => css_compressor
+          use InlineCSSRack, :compressor => css_compressor, :ignore => ignore
         end
       end
       alias :included :registered
@@ -34,6 +36,7 @@ module Middleman::Extensions
     def initialize(app, options={})
       @app = app
       @compressor = options[:compressor]
+      @ignore = options[:ignore]
     end
 
     # Rack interface
@@ -59,7 +62,7 @@ module Middleman::Extensions
 
         headers["Content-Length"] = ::Rack::Utils.bytesize(minified).to_s
         response = [minified]
-      elsif path.end_with?('.css') && path !~ /\.min\./
+      elsif path.end_with?('.css') && @ignore.none? {|ignore| path =~ ignore }
         uncompressed_source = extract_response_text(response)
         minified_css = @compressor.compress(uncompressed_source)
 
