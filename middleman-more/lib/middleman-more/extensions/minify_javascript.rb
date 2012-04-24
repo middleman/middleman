@@ -8,8 +8,10 @@ module Middleman::Extensions
     class << self
       
       # Once registered
-      def registered(app)
+      def registered(app, options={})
         app.set :js_compressor, false
+
+        ignore = Array(options[:ignore]) << /\.min\./
 
         # Once config is parsed
         app.after_configuration do
@@ -19,7 +21,7 @@ module Middleman::Extensions
           end
           
           # Setup Rack to watch for inline JS
-          use InlineJavascriptRack, :compressor => js_compressor
+          use InlineJavascriptRack, :compressor => js_compressor, :ignore => ignore
         end
       end
       alias :included :registered
@@ -34,6 +36,7 @@ module Middleman::Extensions
       def initialize(app, options={})
         @app = app
         @compressor = options[:compressor]
+        @ignore = options[:ignore]
       end
 
       # Rack interface
@@ -44,35 +47,39 @@ module Middleman::Extensions
 
         path = env["PATH_INFO"]
 
-        if path.end_with?('.html') || path.end_with?('.php')
-          uncompressed_source = extract_response_text(response)
+        begin
+          if path.end_with?('.html') || path.end_with?('.php')
+            uncompressed_source = extract_response_text(response)
 
-          minified = uncompressed_source.gsub(/(<script[^>]*>\s*(?:\/\/(?:(?:<!--)|(?:<!\[CDATA\[))\n)?)(.*?)((?:(?:\n\s*)?\/\/(?:(?:-->)|(?:\]\]>)))?\s*<\/script>)/m) do |match|
-            first = $1
-            javascript = $2
-            last = $3
+            minified = uncompressed_source.gsub(/(<script[^>]*>\s*(?:\/\/(?:(?:<!--)|(?:<!\[CDATA\[))\n)?)(.*?)((?:(?:\n\s*)?\/\/(?:(?:-->)|(?:\]\]>)))?\s*<\/script>)/m) do |match|
+              first = $1
+              javascript = $2
+              last = $3
 
-            # Only compress script tags that contain JavaScript (as opposed
-            # to something like jQuery templates, identified with a "text/html"
-            # type.
-            if first =~ /<script>/ || first.include?('text/javascript')
-              minified_js = @compressor.compress(javascript)
+              # Only compress script tags that contain JavaScript (as opposed
+              # to something like jQuery templates, identified with a "text/html"
+              # type.
+              if first =~ /<script>/ || first.include?('text/javascript')
+                minified_js = @compressor.compress(javascript)
 
-              first << minified_js << last
-            else
-              match
+                first << minified_js << last
+              else
+                match
+              end
             end
+
+            headers["Content-Length"] = ::Rack::Utils.bytesize(minified).to_s
+            response = [minified]
+          elsif path.end_with?('.js') && @ignore.none? {|ignore| path =~ ignore }
+            uncompressed_source = extract_response_text(response)
+            minified_js = @compressor.compress(uncompressed_source)
+
+            headers["Content-Length"] = ::Rack::Utils.bytesize(minified_js).to_s
+            response = [minified_js]
           end
-
-          headers["Content-Length"] = ::Rack::Utils.bytesize(minified).to_s
-          response = [minified]
-        elsif path.end_with?('.js') && path !~ /\.min\./
-          uncompressed_source = extract_response_text(response)
-          minified_js = @compressor.compress(uncompressed_source)
-
-          headers["Content-Length"] = ::Rack::Utils.bytesize(minified_js).to_s
-          response = [minified_js]
-        end
+        rescue ExecJS::ProgramError => e
+          warn "WARNING: Couldn't compress JavaScript in #{path}: #{e.message}"
+        end 
 
         [status, headers, response]
       end
