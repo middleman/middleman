@@ -61,10 +61,6 @@ module Middleman::Sitemap::Extensions
         elsif block_given?
           @ignored_callbacks << block
         end
-
-        if @ignored_callbacks.size > original_callback_size
-          @app.sitemap.rebuild_resource_list!(:added_ignore_rule)
-        end
       end
 
       # Whether a path is ignored
@@ -73,13 +69,6 @@ module Middleman::Sitemap::Extensions
       def ignored?(path)
         path_clean = ::Middleman::Util.normalize_path(path)
         @ignored_callbacks.any? { |b| b.call(path_clean) }
-      end
-
-      # Update the main sitemap resource list
-      # @return [void]
-      def manipulate_resource_list(resources)
-        # No op
-        resources
       end
     end
   end
