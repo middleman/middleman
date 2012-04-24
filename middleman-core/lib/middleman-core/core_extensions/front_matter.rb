@@ -184,7 +184,7 @@ module Middleman::CoreExtensions::FrontMatter
       if @local_data.has_key?(path.to_s)
         @local_data[path.to_s]
       else
-        {}.freeze
+        [ ::Middleman::Util.recursively_enhance({}).freeze, nil ]
       end
     end
     
