@@ -12,7 +12,7 @@ module Middleman::CoreExtensions::I18n
       
       # Needed for helpers as well
       app.after_configuration do
-        ::I18n.load_path = [Dir[File.join(root, locales_dir, "*.yml")]]
+        ::I18n.load_path += [Dir[File.join(root, locales_dir, "*.yml")]]
         ::I18n.reload!
       end
     end
