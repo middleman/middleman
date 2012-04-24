@@ -20,7 +20,7 @@ module Middleman::Sitemap
     def initialize(app)
       @app   = app
       @resources = []
-      
+
       @_lookup_cache = { :path => {}, :destination_path => {} }
       @resource_list_manipulators = []
       
@@ -29,11 +29,6 @@ module Middleman::Sitemap
       
       # Proxies
       register_resource_list_manipulator(:proxies, @app.proxy_manager, false)
-      
-      # Ignores
-      register_resource_list_manipulator(:ignores, @app.ignore_manager, false)
-      
-      rebuild_resource_list!(:after_base_init)
     end
 
     # Register a klass which can manipulate the main site map list

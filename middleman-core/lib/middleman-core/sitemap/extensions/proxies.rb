@@ -48,7 +48,9 @@ module Middleman::Sitemap::Extensions
       
       def get_source_file
         if proxy?
-          store.find_resource_by_path(proxied_to).source_file
+          proxy_resource = store.find_resource_by_path(proxied_to)
+          raise "Path #{path} proxies to unknown file #{proxied_to}" unless proxy_resource
+          proxy_resource.source_file
         end
       end
     end
