@@ -138,6 +138,16 @@ module Middleman::Extensions
         names[rand(names.size)]
       end
 
+      # Get a placeholder 140 character tweet about Philip the Purple Otter
+      # Via http://www.kevadamson.com/talking-of-design/article/140-alternative-characters-to-lorem-ipsum
+      # @return [String]
+      def tweet
+        tweets = [ 'Far away, in a forest next to a river beneath the mountains, there lived a small purple otter called Philip. Philip likes sausages. The End.',
+                   'He liked the quality sausages from Marks & Spencer but due to the recession he had been forced to shop in a less desirable supermarket. End.',
+                   'He awoke one day to find his pile of sausages missing. Roger the greedy boar with human eyes, had skateboarded into the forest & eaten them!']
+        tweets[rand(tweets.size)]
+      end
+
       # Get a placeholder email address
       # @return [String]
       def email
