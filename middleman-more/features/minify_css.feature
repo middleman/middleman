@@ -5,14 +5,21 @@ Feature: Minify CSS
     Given current environment is "build"
 
   Scenario: Rendering external css with the feature disabled
-    Given "minify_css" feature is "disabled"
+    Given a fixture app "minify-css-app"
+    And a file named "config.rb" with:
+      """
+      """
     And the Server is running at "minify-css-app"
     When I go to "/stylesheets/site.css"
     Then I should see "60" lines
     And I should see "only screen and (device-width"
     
   Scenario: Rendering external css with the feature enabled
-    Given "minify_css" feature is "enabled"
+    Given a fixture app "minify-css-app"
+    And a file named "config.rb" with:
+      """
+      activate :minify_css
+      """
     And the Server is running at "minify-css-app"
     When I go to "/stylesheets/site.css"
     Then I should see "1" lines
@@ -26,7 +33,10 @@ Feature: Minify CSS
     Then I should see "55" lines
 
   Scenario: Rendering inline css with the feature disabled
-    Given "minify_css" feature is "disabled"
+    Given a fixture app "minify-css-app"
+    And a file named "config.rb" with:
+      """
+      """
     And the Server is running at "minify-css-app"
     When I go to "/inline-css.html"
     Then I should see:
@@ -54,7 +64,11 @@ Feature: Minify CSS
     """
 
   Scenario: Rendering inline css with the feature enabled
-    Given "minify_css" feature is "enabled"
+    Given a fixture app "minify-css-app"
+    And a file named "config.rb" with:
+      """
+      activate :minify_css, :inline => true
+      """
     And the Server is running at "minify-css-app"
     When I go to "/inline-css.html"
     Then I should see:
