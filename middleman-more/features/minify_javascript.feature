@@ -1,11 +1,11 @@
 Feature: Minify Javascript
   In order reduce bytes sent to client and appease YSlow
 
-  Background:
-    Given current environment is "build"
-
   Scenario: Rendering inline js with the feature disabled
-    Given "minify_javascript" feature is "disabled"
+    Given a fixture app "minify-js-app"
+    And a file named "config.rb" with:
+      """
+      """
     And the Server is running at "minify-js-app"
     When I go to "/inline-js.html"
     Then I should see:
@@ -42,7 +42,22 @@ Feature: Minify Javascript
     """
     
   Scenario: Rendering inline js with a passthrough minifier
-    Given the Server is running at "passthrough-app"
+    Given a fixture app "passthrough-app"
+    And a file named "config.rb" with:
+      """
+      module ::PassThrough
+        def self.compress(data)
+          data
+        end
+      end
+
+      activate :minify_javascript, :inline => true
+
+      set :js_compressor, ::PassThrough
+
+      page "/inline-js.html", :layout => false
+      """
+    And the Server is running at "passthrough-app"
     When I go to "/inline-js.html"
     Then I should see:
     """
@@ -78,7 +93,11 @@ Feature: Minify Javascript
     """
 
   Scenario: Rendering inline js with the feature enabled
-    Given "minify_javascript" feature is "enabled" with ":inline => true"
+    Given a fixture app "minify-js-app"
+    And a file named "config.rb" with:
+      """
+      activate :minify_javascript, :inline => true
+      """
     And the Server is running at "minify-js-app"
     When I go to "/inline-js.html"
     Then I should see:
@@ -102,7 +121,11 @@ Feature: Minify Javascript
     """
     
   Scenario: Rendering external js with the feature enabled
-    Given "minify_javascript" feature is "enabled"
+    Given a fixture app "minify-js-app"
+    And a file named "config.rb" with:
+      """
+      activate :minify_javascript
+      """
     And the Server is running at "minify-js-app"
     When I go to "/javascripts/js_test.js"
     Then I should see "1" lines
@@ -115,23 +138,62 @@ Feature: Minify Javascript
     Then I should see "8" lines
 
   Scenario: Rendering inline js (coffeescript) with the feature enabled
-    Given "minify_javascript" feature is "enabled" with ":inline => true"
+    Given a fixture app "minify-js-app"
+    And a file named "config.rb" with:
+      """
+      require "coffee-filter"
+      activate :minify_javascript, :inline => true
+      """
     And the Server is running at "minify-js-app"
     When I go to "/inline-coffeescript.html"
     Then I should see "6" lines
   
   Scenario: Rendering external js (coffeescript) with the feature enabled
-    Given "minify_javascript" feature is "enabled"
+    Given a fixture app "minify-js-app"
+    And a file named "config.rb" with:
+      """
+      activate :minify_javascript
+      """
     And the Server is running at "minify-js-app"
     When I go to "/javascripts/coffee_test.js"
     Then I should see "1" lines
     
   Scenario: Rendering inline js (coffeescript) with a passthrough minifier
-    Given the Server is running at "passthrough-app"
+    Given a fixture app "passthrough-app"
+    And a file named "config.rb" with:
+      """
+      require "coffee-filter"
+      
+      module ::PassThrough
+        def self.compress(data)
+          data
+        end
+      end
+
+      activate :minify_javascript, :inline => true
+
+      set :js_compressor, ::PassThrough
+
+      page "/inline-coffeescript.html", :layout => false
+      """
+    And the Server is running at "passthrough-app"
     When I go to "/inline-coffeescript.html"
     Then I should see "16" lines
     
   Scenario: Rendering external js (coffeescript) with a passthrough minifier
+    Given a fixture app "passthrough-app"
+    And a file named "config.rb" with:
+      """
+      module ::PassThrough
+        def self.compress(data)
+          data
+        end
+      end
+
+      activate :minify_javascript
+
+      set :js_compressor, ::PassThrough
+      """
     And the Server is running at "passthrough-app"
     When I go to "/javascripts/coffee_test.js"
     Then I should see "11" lines

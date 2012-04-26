@@ -1,7 +1,6 @@
 Feature: Text Files Without Extensions Should Build and Preview
 
   Scenario: Building Text Files without directory indexes
-  
     Given a fixture app "extensionless-text-files-app"
     And a file named "config.rb" with:
       """
@@ -14,7 +13,6 @@ Feature: Text Files Without Extensions Should Build and Preview
       | README  |
 
   Scenario: Building Text Files with directory indexes
-
     Given a fixture app "extensionless-text-files-app"
     And a file named "config.rb" with:
       """

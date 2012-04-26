@@ -1,8 +1,5 @@
 Feature: Minify CSS
   In order reduce bytes sent to client and appease YSlow
-    
-  Background:
-    Given current environment is "build"
 
   Scenario: Rendering external css with the feature disabled
     Given a fixture app "minify-css-app"
@@ -28,7 +25,20 @@ Feature: Minify CSS
     Then I should see "1" lines    
     
   Scenario: Rendering external css with passthrough compressor
-    Given the Server is running at "passthrough-app"
+    Given a fixture app "passthrough-app"
+    And a file named "config.rb" with:
+      """
+      module ::PassThrough
+        def self.compress(data)
+          data
+        end
+      end
+
+      activate :minify_css
+
+      set :css_compressor, ::PassThrough
+      """
+    And the Server is running at "passthrough-app"
     When I go to "/stylesheets/site.css"
     Then I should see "55" lines
 
@@ -52,7 +62,22 @@ Feature: Minify CSS
     """
    
   Scenario: Rendering inline css with a passthrough minifier
-    Given the Server is running at "passthrough-app"
+    Given a fixture app "passthrough-app"
+    And a file named "config.rb" with:
+      """
+      module ::PassThrough
+        def self.compress(data)
+          data
+        end
+      end
+
+      activate :minify_css, :inline => true
+
+      set :css_compressor, ::PassThrough
+
+      page "/inline-css.html", :layout => false
+      """
+    And the Server is running at "passthrough-app"
     When I go to "/inline-css.html"
     Then I should see:
     """
