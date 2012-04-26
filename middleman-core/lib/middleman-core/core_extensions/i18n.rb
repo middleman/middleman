@@ -12,7 +12,12 @@ module Middleman::CoreExtensions::I18n
       
       # Needed for helpers as well
       app.after_configuration do
-        ::I18n.load_path += [Dir[File.join(root, locales_dir, "*.yml")]]
+        # This is for making the tests work - since the tests
+        # don't completely reload middleman, I18n.load_path can get
+        # polluted with paths from other test app directories that don't 
+        # exist anymore.
+        ::I18n.load_path.delete_if {|path| path =~ %r{tmp/aruba}}
+        ::I18n.load_path += Dir[File.join(root, locales_dir, "*.yml")]
         ::I18n.reload!
       end
     end
