@@ -3,7 +3,8 @@
 ###
 
 # CoffeeScript Support
-require "coffee_script"
+require "middleman-more/renderers/coffee_script"
+Middleman::Application.register Middleman::Renderers::CoffeeScript
 
 # Haml Support
 require "middleman-more/renderers/haml"
