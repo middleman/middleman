@@ -12,6 +12,14 @@ Given /^"([^\"]*)" feature is "([^\"]*)"$/ do |feature, state|
   end
 end
 
+Given /^"([^\"]*)" feature is "enabled" with "([^\"]*)"$/ do |feature, options_str|
+  @initialize_commands ||= []
+  
+  options = eval("{#{options_str}}")
+
+  @initialize_commands << lambda { activate(feature.to_sym, options) }
+end
+
 Given /^"([^\"]*)" is set to "([^\"]*)"$/ do |variable, value|
   @initialize_commands ||= []
   @initialize_commands << lambda { set(variable.to_sym, value) }
