@@ -1,2 +1,0 @@
-class F < E
-end
