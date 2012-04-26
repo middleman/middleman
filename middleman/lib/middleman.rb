@@ -1,3 +1,4 @@
+# Depends on both libraries
 require "middleman-core"
 require "middleman-more"
 
