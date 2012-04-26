@@ -1,4 +1,4 @@
-require 'middleman-core/vendor/padrino-helpers-0.10.6/lib/padrino-helpers'
+require 'padrino-helpers'
 
 # Built-in helpers
 module Middleman::CoreExtensions::DefaultHelpers
