@@ -1,6 +1,3 @@
-# Using a bunch of convenience methods
-require "active_support"
-
 # Setup our load paths
 libdir = File.expand_path(File.dirname(__FILE__))
 $LOAD_PATH.unshift(libdir) unless $LOAD_PATH.include?(libdir)
