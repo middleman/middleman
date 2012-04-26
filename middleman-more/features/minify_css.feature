@@ -22,7 +22,7 @@ Feature: Minify CSS
     Then I should see "1" lines
     And I should see "only screen and (device-width"
     When I go to "/more-css/site.css"
-    Then I should see "1" lines    
+    Then I should see "1" lines
     
   Scenario: Rendering external css with passthrough compressor
     Given a fixture app "passthrough-app"
@@ -88,6 +88,29 @@ Feature: Minify CSS
     </style>
     """
 
+  Scenario: Rendering inline css with a passthrough minifier using activate-style compressor
+    Given a fixture app "passthrough-app"
+    And a file named "config.rb" with:
+      """
+      module ::HelloCompressor
+        def self.compress(data)
+          "Hello"
+        end
+      end
+
+      activate :minify_css, :inline => true, :compressor => ::HelloCompressor
+
+      page "/inline-css.html", :layout => false
+      """
+    And the Server is running at "passthrough-app"
+    When I go to "/inline-css.html"
+    Then I should see:
+    """
+    <style type='text/css'>
+      Hello
+    </style>
+    """
+    
   Scenario: Rendering inline css with the feature enabled
     Given a fixture app "minify-css-app"
     And a file named "config.rb" with:

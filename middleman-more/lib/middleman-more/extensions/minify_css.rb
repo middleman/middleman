@@ -15,13 +15,13 @@ module Middleman::Extensions
         inline = options[:inline] || false
 
         app.after_configuration do
-          unless respond_to?(:css_compressor) && css_compressor
+          chosen_compressor = css_compressor || options[:compressor] || begin
             require "middleman-more/extensions/minify_css/rainpress"
-            set :css_compressor, ::Rainpress
+            ::Rainpress
           end
 
           # Setup Rack middleware to minify CSS
-          use MinifyCSSRack, :compressor => css_compressor, 
+          use MinifyCSSRack, :compressor => chosen_compressor,
                              :ignore => ignore,
                              :inline => inline
         end

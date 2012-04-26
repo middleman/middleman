@@ -92,6 +92,42 @@ Feature: Minify Javascript
     </script>
     """
 
+  Scenario: Rendering inline css with a passthrough minifier using activate-style compressor
+    Given a fixture app "passthrough-app"
+    And a file named "config.rb" with:
+      """
+      module ::HelloCompressor
+        def self.compress(data)
+          "Hello"
+        end
+      end
+
+      activate :minify_javascript, :inline => true, :compressor => ::HelloCompressor
+
+      page "/inline-js.html", :layout => false
+      """
+    And the Server is running at "passthrough-app"
+    When I go to "/inline-js.html"
+    Then I should see:
+    """
+    <script type='text/javascript'>
+      //<![CDATA[
+    Hello
+      //]]>
+    </script>
+    <script>
+      Hello
+    </script>
+    <script type='text/javascript'>
+      //<!--
+    Hello
+      //-->
+    </script>
+    <script type='text/html'>
+      I'm a jQuery {{template}}.
+    </script>
+    """
+    
   Scenario: Rendering inline js with the feature enabled
     Given a fixture app "minify-js-app"
     And a file named "config.rb" with:

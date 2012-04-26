@@ -16,13 +16,13 @@ module Middleman::Extensions
 
         # Once config is parsed
         app.after_configuration do
-          unless respond_to?(:js_compressor) && js_compressor
+          chosen_compressor = js_compressor || options[:compressor] || begin
             require 'uglifier'
-            set :js_compressor, ::Uglifier.new
+            ::Uglifier.new
           end
           
           # Setup Rack middlware to minify JS
-          use MinifyJavascriptRack, :compressor => js_compressor, 
+          use MinifyJavascriptRack, :compressor => chosen_compressor, 
                                     :ignore => ignore,
                                     :inline => inline
         end
