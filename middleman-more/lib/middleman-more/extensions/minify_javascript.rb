@@ -12,6 +12,7 @@ module Middleman::Extensions
         app.set :js_compressor, false
 
         ignore = Array(options[:ignore]) << /\.min\./
+        inline = options[:inline] || false
 
         # Once config is parsed
         app.after_configuration do
@@ -20,15 +21,17 @@ module Middleman::Extensions
             set :js_compressor, ::Uglifier.new
           end
           
-          # Setup Rack to watch for inline JS
-          use InlineJavascriptRack, :compressor => js_compressor, :ignore => ignore
+          # Setup Rack middlware to minify JS
+          use MinifyJavascriptRack, :compressor => js_compressor, 
+                                    :ignore => ignore,
+                                    :inline => inline
         end
       end
       alias :included :registered
     end
 
-    # Rack middleware to look for JS in HTML and compress it
-    class InlineJavascriptRack
+    # Rack middleware to look for JS and compress it
+    class MinifyJavascriptRack
       
       # Init
       # @param [Class] app
@@ -37,6 +40,7 @@ module Middleman::Extensions
         @app = app
         @compressor = options[:compressor]
         @ignore = options[:ignore]
+        @inline = options[:inline]
       end
 
       # Rack interface
@@ -48,7 +52,7 @@ module Middleman::Extensions
         path = env["PATH_INFO"]
 
         begin
-          if path.end_with?('.html') || path.end_with?('.php')
+          if (path.end_with?('.html') || path.end_with?('.php')) && @inline
             uncompressed_source = extract_response_text(response)
 
             minified = uncompressed_source.gsub(/(<script[^>]*>\s*(?:\/\/(?:(?:<!--)|(?:<!\[CDATA\[))\n)?)(.*?)((?:(?:\n\s*)?\/\/(?:(?:-->)|(?:\]\]>)))?\s*<\/script>)/m) do |match|

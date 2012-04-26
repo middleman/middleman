@@ -12,6 +12,7 @@ module Middleman::Extensions
         app.set :css_compressor, false
 
         ignore = Array(options[:ignore]) << /\.min\./
+        inline = options[:inline] || false
 
         app.after_configuration do
           unless respond_to?(:css_compressor) && css_compressor
@@ -19,16 +20,18 @@ module Middleman::Extensions
             set :css_compressor, ::Rainpress
           end
 
-          # Setup Rack to watch for inline JS
-          use InlineCSSRack, :compressor => css_compressor, :ignore => ignore
+          # Setup Rack middleware to minify CSS
+          use MinifyCSSRack, :compressor => css_compressor, 
+                             :ignore => ignore,
+                             :inline => inline
         end
       end
       alias :included :registered
     end
   end
 
-  # Rack middleware to look for JS in HTML and compress it
-  class InlineCSSRack
+  # Rack middleware to look for CSS and compress it
+  class MinifyCSSRack
       
     # Init
     # @param [Class] app
@@ -37,6 +40,7 @@ module Middleman::Extensions
       @app = app
       @compressor = options[:compressor]
       @ignore = options[:ignore]
+      @inline = options[:inline]
     end
 
     # Rack interface
@@ -47,7 +51,7 @@ module Middleman::Extensions
 
       path = env["PATH_INFO"]
 
-      if path.end_with?('.html') || path.end_with?('.php')
+      if (path.end_with?('.html') || path.end_with?('.php')) && @inline
         uncompressed_source = extract_response_text(response)
 
         minified = uncompressed_source.gsub(/(<style[^>]*>\s*(?:\/\*<!\[CDATA\[\*\/\n)?)(.*?)((?:(?:\n\s*)?\/\*\]\]>\*\/)?\s*<\/style>)/m) do |match|

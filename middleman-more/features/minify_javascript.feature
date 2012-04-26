@@ -78,7 +78,7 @@ Feature: Minify Javascript
     """
 
   Scenario: Rendering inline js with the feature enabled
-    Given "minify_javascript" feature is "enabled"
+    Given "minify_javascript" feature is "enabled" with ":inline => true"
     And the Server is running at "minify-js-app"
     When I go to "/inline-js.html"
     Then I should see:
@@ -115,7 +115,7 @@ Feature: Minify Javascript
     Then I should see "8" lines
 
   Scenario: Rendering inline js (coffeescript) with the feature enabled
-    Given "minify_javascript" feature is "enabled"
+    Given "minify_javascript" feature is "enabled" with ":inline => true"
     And the Server is running at "minify-js-app"
     When I go to "/inline-coffeescript.html"
     Then I should see "6" lines
