@@ -1,60 +1,61 @@
-# Forward the settings on config.rb and the result of registered extensions
-# to Compass
-module Middleman::CoreExtensions::Compass
-  
-  # Extension registered
-  class << self
+module Middleman
+  module CoreExtensions
     
-    # Once registered
-    def registered(app)
-      require "compass"
+    # Forward the settings on config.rb and the result of registered 
+    # extensions to Compass
+    module Compass
+  
+      # Extension registered
+      class << self
+    
+        # Once registered
+        def registered(app)
+          # Require the library
+          require "compass"
       
-      # Where to look for fonts
-      app.set :fonts_dir, "fonts"
-      app.define_hook :compass_config
-      app.define_hook :after_compass_config
+          # Where to look for fonts
+          app.set :fonts_dir, "fonts"
+      
+          # Hooks to manually update the compass config after we're 
+          # done with it
+          app.define_hook :compass_config
 
-      app.after_configuration do
-        ::Compass.configuration do |config|
-          config.project_path    = source_dir
-          config.environment     = :development
-          config.cache_path      = File.join(root, ".sass-cache")
-          config.sass_dir        = css_dir
-          config.css_dir         = css_dir
-          config.javascripts_dir = js_dir
-          config.fonts_dir       = fonts_dir
-          config.images_dir      = images_dir
-          config.http_path       = http_prefix
-          
-          # Correctly support HTTP paths with generated sprites
-          # if config.respond_to? :http_generated_images_path
-          #   config.http_generated_images_path = if app.respond_to? :http_generated_images_path
-          #     app.http_generated_images_path
-          #   else
-          #     File.join(app.http_prefix || "/", app.images_dir)
-          #   end
-          # end
+          app.after_configuration do
+            ::Compass.configuration do |config|
+              config.project_path    = source_dir
+              config.environment     = :development
+              config.cache_path      = File.join(root, ".sass-cache")
+              config.sass_dir        = css_dir
+              config.css_dir         = css_dir
+              config.javascripts_dir = js_dir
+              config.fonts_dir       = fonts_dir
+              config.images_dir      = images_dir
+              config.http_path       = http_prefix
 
-          config.asset_cache_buster :none
-          config.relative_assets = false
-          config.output_style = :nested
+              # Disable this initially, the cache_buster extension will
+              # re-enable it if requested.
+              config.asset_cache_buster :none
+              
+              # Disable this initially, the relative_assets extension will
+              # re-enable it if requested.
+              config.relative_assets = false
+              
+              # Default output style
+              config.output_style = :nested
 
-          if respond_to?(:asset_host) && asset_host.is_a?(Proc)
-            config.asset_host(&asset_host)
+              if respond_to?(:asset_host) && asset_host.is_a?(Proc)
+                config.asset_host(&asset_host)
+              end
+            end
+              
+            # Call hook
+            run_hook :compass_config, ::Compass.configuration
           end
         end
-        
-        # if build?
-        #   ::Compass.configuration do |config|
-        #     config.environment  = :production
-        #     config.project_path = File.join(root, build_dir)
-        #   end
-        # end
-        
-        run_hook :compass_config, ::Compass.configuration
-        run_hook :after_compass_config
+        alias :included :registered
       end
+
     end
-    alias :included :registered
+    
   end
 end
