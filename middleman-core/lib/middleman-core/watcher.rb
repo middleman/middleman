@@ -1,12 +1,6 @@
 # File changes are forwarded to the currently running app via HTTP
 require "net/http"
 
-module Middleman
-  WINDOWS = !!(RUBY_PLATFORM =~ /(mingw|bccwin|wince|mswin32)/i) unless const_defined?(:WINDOWS)
-end
-
-require "win32/process" if ::Middleman::WINDOWS
-
 require "fileutils"
 
 module Middleman
@@ -17,6 +11,7 @@ module Middleman
       def start(options)
         self.singleton = new(options)
         self.singleton.watch! unless options[:"disable-watcher"]
+        self.singleton.start
       end
       
       def ignore_list
@@ -35,15 +30,7 @@ module Middleman
     
     def initialize(options)
       @options = options
-      
       register_signal_handlers
-      start
-    end
-    
-    # What command is sent to kill instances
-    # @return [Symbol, Fixnum]
-    def kill_command
-      ::Middleman::WINDOWS ? 1 : "TERM"
     end
     
     def watch!
@@ -52,59 +39,25 @@ module Middleman
       # Watcher Library
       require "listen"
       
-      Listen.to(Dir.pwd) do |modified, added, removed|
+      listener = Listen.to(Dir.pwd, :relative_paths => true)
+      listener.change do |modified, added, removed|
         added_and_modified = modified + added
-        
+
         if added_and_modified.length > 0
-          added_and_modified.map! { |p| p.sub(Dir.pwd, "").sub(/^\//, "") }
           local.run_on_change(added_and_modified)
         end
         
         if removed.length > 0
-          removed_relative = removed.map! { |p| p.sub(Dir.pwd, "").sub(/^\//, "") }
-          local.run_on_deletion(removed_relative) 
+          local.run_on_deletion(removed)
         end
       end
-    end
-    
-    def pid_name
-      ".mm-pid-#{@options[:port]||4567}"
-    end
-    
-    def kill_pid!
-      if File.exists?(pid_name)
-        current_pid = File.open(pid_name, 'rb') { |f| f.read }
-        begin
-          Process.kill(kill_command, current_pid.to_i)
-        rescue
-        ensure
-          FileUtils.rm(pid_name) if File.exists?(pid_name)
-        end
-      end
-    end
-    
-    # Start Middleman in a fork
-    # @return [void]
-    def start
-      if @options[:"disable-watcher"]
-        bootup
-      else
-        kill_pid!
-        
-        @server_job = fork {
-          # trap("INT")  { exit(0) }
-          # trap("TERM") { exit(0) }
-          # trap("QUIT") { exit(0) }
-          bootup
-        }
-        
-        File.open(pid_name, "w+") { |f| f.write(@server_job) }
-      end
+      # Don't block this thread
+      listener.start(false)
     end
     
     # Start an instance of Middleman::Application
     # @return [void]
-    def bootup
+    def start
       env = (@options[:environment] || "development").to_sym
       is_logging = @options.has_key?(:debug) && @options[:debug]
       
@@ -126,12 +79,8 @@ module Middleman
     # @return [void]
     def stop
       puts "== The Middleman is shutting down"
-      if !@options[:"disable-watcher"]
-        kill_pid!
-        # Process.kill(::Middleman::WINDOWS ? :KILL : :TERM, @server_job)
-        # Process.wait @server_job
-        # @server_job = nil
-      end
+      # TODO: Figure out some way to actually unload the whole thing
+      #       or maybe just re-exec this same thing
     end
     
     # Simply stop, then start
@@ -174,7 +123,7 @@ module Middleman
       trap("TERM") { stop }
       trap("QUIT") { stop; exit(0) }
     end
-  
+
     # Whether the passed files are config.rb, lib/*.rb or helpers
     # @param [Array<String>] paths Array of paths to check
     # @return [Boolean] Whether the server needs to reload
