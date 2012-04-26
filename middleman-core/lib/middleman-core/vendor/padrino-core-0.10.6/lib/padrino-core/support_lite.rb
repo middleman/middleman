@@ -191,7 +191,7 @@ end
 ##
 # Loads our locale configuration files
 #
-### I18n.load_path += Dir["#{File.dirname(__FILE__)}/locale/*.yml"] if defined?(I18n) ### !!! FIXME middleman ###
+I18n.load_path += Dir["#{File.dirname(__FILE__)}/locale/*.yml"] if defined?(I18n)
 
 ##
 # Used to determine if this file has already been required
