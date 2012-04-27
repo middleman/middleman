@@ -31,6 +31,26 @@ module Middleman
     def self.normalize_path(path)
       path.sub(/^\//, "").gsub("%20", " ")
     end
+
+    # Extract the text of a Rack response as a string.
+    # Useful for extensions implemented as Rack middleware.
+    # @param response The response from #call
+    # @return [String] The whole response as a string.
+    def self.extract_response_text(response)
+      case(response)
+      when String
+        response
+      when Array
+        response.join
+      when Rack::Response
+        response.body.join
+      when Rack::File
+        File.read(response.path)
+      else
+        response.to_s
+      end
+    end
+  end
     
     # Simple shared cache implementation
     class Cache
