@@ -50,7 +50,6 @@ module Middleman
         response.to_s
       end
     end
-  end
     
     # Simple shared cache implementation
     class Cache
