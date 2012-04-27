@@ -54,7 +54,7 @@ module Middleman
 
           begin
             if (path.end_with?('.html') || path.end_with?('.php')) && @inline
-              uncompressed_source = extract_response_text(response)
+              uncompressed_source = ::Middleman.Util.extract_response_text(response)
 
               minified = uncompressed_source.gsub(/(<script[^>]*>\s*(?:\/\/(?:(?:<!--)|(?:<!\[CDATA\[))\n)?)(.*?)((?:(?:\n\s*)?\/\/(?:(?:-->)|(?:\]\]>)))?\s*<\/script>)/m) do |match|
                 first = $1
@@ -87,23 +87,6 @@ module Middleman
           end 
 
           [status, headers, response]
-        end
-
-        private
-
-        def extract_response_text(response)
-          case(response)
-          when String
-            response
-          when Array
-            response.join
-          when ::Rack::Response
-            response.body.join
-          when ::Rack::File
-            File.read(response.path)
-          else
-            response.to_s
-          end
         end
       end
     end
