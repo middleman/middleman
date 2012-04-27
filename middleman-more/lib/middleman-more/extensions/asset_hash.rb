@@ -69,7 +69,7 @@ module Middleman::Extensions
         dirpath = Pathname.new(File.dirname(path))
 
         if path =~ /(^\/$)|(\.(htm|html|php|css|js)$)/
-          body = ::Middleman.Util.extract_response_text(response)
+          body = ::Middleman::Util.extract_response_text(response)
 
           if body
             # TODO: This regex will change some paths in plan HTML (not in a tag) - is that OK?

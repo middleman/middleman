@@ -54,7 +54,7 @@ module Middleman
 
           begin
             if (path.end_with?('.html') || path.end_with?('.php')) && @inline
-              uncompressed_source = ::Middleman.Util.extract_response_text(response)
+              uncompressed_source = ::Middleman::Util.extract_response_text(response)
 
               minified = uncompressed_source.gsub(/(<script[^>]*>\s*(?:\/\/(?:(?:<!--)|(?:<!\[CDATA\[))\n)?)(.*?)((?:(?:\n\s*)?\/\/(?:(?:-->)|(?:\]\]>)))?\s*<\/script>)/m) do |match|
                 first = $1
@@ -76,7 +76,7 @@ module Middleman
               headers["Content-Length"] = ::Rack::Utils.bytesize(minified).to_s
               response = [minified]
             elsif path.end_with?('.js') && @ignore.none? {|ignore| path =~ ignore }
-              uncompressed_source = extract_response_text(response)
+              uncompressed_source = ::Middleman::Util.extract_response_text(response)
               minified_js = @compressor.compress(uncompressed_source)
 
               headers["Content-Length"] = ::Rack::Utils.bytesize(minified_js).to_s

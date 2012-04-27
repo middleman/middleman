@@ -52,7 +52,7 @@ module Middleman
           path = env["PATH_INFO"]
 
           if (path.end_with?('.html') || path.end_with?('.php')) && @inline
-            uncompressed_source = ::Middleman.Util.extract_response_text(response)
+            uncompressed_source = ::Middleman::Util.extract_response_text(response)
 
             minified = uncompressed_source.gsub(/(<style[^>]*>\s*(?:\/\*<!\[CDATA\[\*\/\n)?)(.*?)((?:(?:\n\s*)?\/\*\]\]>\*\/)?\s*<\/style>)/m) do |match|
               first = $1
@@ -67,7 +67,7 @@ module Middleman
             headers["Content-Length"] = ::Rack::Utils.bytesize(minified).to_s
             response = [minified]
           elsif path.end_with?('.css') && @ignore.none? {|ignore| path =~ ignore }
-            uncompressed_source = extract_response_text(response)
+            uncompressed_source = ::Middleman::Util.extract_response_text(response)
             minified_css = @compressor.compress(uncompressed_source)
 
             headers["Content-Length"] = ::Rack::Utils.bytesize(minified_css).to_s
