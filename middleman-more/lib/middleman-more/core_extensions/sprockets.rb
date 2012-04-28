@@ -52,8 +52,6 @@ module Middleman::CoreExtensions::Sprockets
       @app = app
       super app.source_dir
 
-      digest = Digest::SHA1
-
       # Make the app context available to Sprockets
       context_class.send(:define_method, :app) { app }
       context_class.class_eval do
@@ -73,6 +71,16 @@ module Middleman::CoreExtensions::Sprockets
       # configure search paths
       append_path app.js_dir
       append_path app.css_dir
+    end
+
+    # Override Sprockets' default digest function to *not*
+    # change depending on the exact Sprockets version. It still takes
+    # into account "version" which is a user-suppliable version
+    # number that can be used to force assets to have a new
+    # hash.
+    def digest
+      @digest ||= Digest::SHA1.new.update(version.to_s)
+      @digest.dup
     end
 
     # During development, don't use the asset cache
