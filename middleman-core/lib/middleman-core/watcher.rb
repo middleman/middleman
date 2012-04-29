@@ -16,14 +16,15 @@ module Middleman
       
       def ignore_list
         [
-          /\.sass-cache\//,
-          /\.git/,
-          /\.DS_Store$/,
-          /build\//,
-          /\.rbenv-version$/,
-          /Gemfile$/,
-          /Gemfile\.lock$/,
-          /\.mm-pid/
+          /^\.sass-cache\//,
+          /^\.git\//,
+          /^\.gitignore$/,
+          /^\.DS_Store$/,
+          /^build\//,
+          /^\.rbenv-version$/,
+          /^Gemfile$/,
+          /^Gemfile\.lock$/,
+          /^\.mm-pid/
         ]
       end
     end
