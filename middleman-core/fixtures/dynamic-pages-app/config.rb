@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 page "/fake.html", :proxy => "/real.html", :layout => false
 page "fake2.html", :proxy => "/real.html", :layout => false
 page "fake3.html", :proxy => "real.html", :layout => false
@@ -27,6 +28,8 @@ page "/target_ignore4.html", :proxy => "should_be_ignored8.html", :ignore => tru
     @num = num
   end
 end
+
+page "明日がある.html", :proxy => "/real.html", :layout => false
 
 page "f*/*" do
   @all_glob = "I am all glob"

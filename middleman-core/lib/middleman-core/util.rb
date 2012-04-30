@@ -29,7 +29,8 @@ module Middleman
     # @param [String] path
     # @return [String]
     def self.normalize_path(path)
-      path.sub(/^\//, "").gsub("%20", " ")
+      # The tr call works around a bug in Ruby's Unicode handling
+      path.sub(/^\//, "").tr('','') 
     end
 
     # Extract the text of a Rack response as a string.

@@ -104,7 +104,8 @@ module Middleman::Cli
       output_file = File.join(build_dir, resource.destination_path)
 
       begin
-        response = self.class.shared_rack.get(resource.destination_path.gsub(/\s/, "%20"))
+        response = self.class.shared_rack.get(URI.escape(resource.destination_path))
+
         if response.status == 200
           create_file(output_file, response.body, { :force => true })
         else
@@ -201,7 +202,7 @@ module Middleman::Cli
       @app.sitemap.resources.select do |resource|
         resource.ext == ".css"
       end.each do |resource|
-        Middleman::Cli::Build.shared_rack.get(resource.destination_path.gsub(/\s/, "%20"))
+        Middleman::Cli::Build.shared_rack.get(URI.escape(resource.destination_path))
       end
       
       puts "== Checking for Compass sprites" if @app.logging?
