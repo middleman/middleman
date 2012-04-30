@@ -101,6 +101,12 @@ module Middleman::Sitemap
         next result if !matcher.nil? && !source_file.match(matcher)
         
         metadata = callback.call(source_file)
+
+        if metadata.has_key?(:blocks)
+          result[:blocks] << metadata[:blocks]
+          metadata.delete(:blocks)
+        end
+
         result.deep_merge(metadata)
       end
     end
