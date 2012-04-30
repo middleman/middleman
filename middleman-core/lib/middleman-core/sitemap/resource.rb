@@ -117,11 +117,5 @@ module Middleman::Sitemap
     def url
       '/' + destination_path.sub(/#{Regexp.escape(app.index_file)}$/, '')
     end
-
-    # Get the relative path from the source
-    # @return [String]
-    def relative_path
-      source_file ? source_file.sub(app.source_dir, '') : nil
-    end
   end
 end
