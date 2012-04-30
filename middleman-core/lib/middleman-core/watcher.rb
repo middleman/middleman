@@ -1,7 +1,10 @@
 # File changes are forwarded to the currently running app via HTTP
 require "net/http"
-
 require "fileutils"
+
+module Middleman
+  WINDOWS = !!(RUBY_PLATFORM =~ /(mingw|bccwin|wince|mswin32)/i) unless const_defined?(:WINDOWS)
+end
 
 module Middleman
   class Watcher
@@ -31,7 +34,7 @@ module Middleman
     
     def initialize(options)
       @options = options
-      register_signal_handlers
+      register_signal_handlers unless ::Middleman::WINDOWS
     end
     
     def watch!
