@@ -21,6 +21,7 @@ Feature: Dynamic Pages
       | target_ignore2.html                           |
       | target_ignore3.html                           |
       | target_ignore4.html                           |
+      | 明日がある.html                               |
     Then the following files should not exist:
       | should_be_ignored.html                        |
       | should_be_ignored2.html                       |
