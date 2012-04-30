@@ -40,7 +40,7 @@ module Middleman::CoreExtensions::FrontMatter
     # This page's frontmatter
     # @return [Hash]
     def data
-      app.frontmatter(relative_path).first
+      app.frontmatter(source_file).first
     end
     
   end
@@ -65,10 +65,8 @@ module Middleman::CoreExtensions::FrontMatter
       end
 
       sitemap.provides_metadata matcher do |path|
-        relative_path = path.sub(self.source_dir, "")
-
-        fmdata = if self.frontmatter_extension.has_data?(relative_path)
-          self.frontmatter(relative_path)[0]
+        fmdata = if self.frontmatter_extension.has_data?(path)
+          self.frontmatter(path)[0]
         else
           {}
         end
@@ -155,11 +153,9 @@ module Middleman::CoreExtensions::FrontMatter
         data, content = result
 
         data = ::Middleman::Util.recursively_enhance(data).freeze
-        file = file.sub(@app.source_dir, "")
         @local_data[file] = [data, content]
-        path = File.join(@app.source_dir, file)
-        @app.cache.set([:raw_template, path], result[1])
-        @app.frontmatter_did_change(path)
+        @app.cache.set([:raw_template, file], result[1])
+        @app.frontmatter_did_change(file)
       end
     end
     
@@ -168,11 +164,9 @@ module Middleman::CoreExtensions::FrontMatter
     # @return [void]
     def remove_file(file)
       file = File.expand_path(file, @app.root)
-      file = file.sub(@app.source_dir, "")
       
       if @local_data.has_key?(file)
-        path = File.join(@app.source_dir, file)
-        @app.cache.remove(:raw_template, path)
+        @app.cache.remove(:raw_template, file)
         @local_data.delete(file) 
       end
     end
