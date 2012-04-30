@@ -35,6 +35,8 @@ module Middleman::Sitemap
       @source_file = source_file
       
       @destination_paths = [@path]
+
+      @local_metadata = { :options => {}, :locals => {}, :page => {}, :blocks => [] }
     end
     
     # Whether this resource has a template file
@@ -47,9 +49,34 @@ module Middleman::Sitemap
     # Get the metadata for both the current source_file and the current path
     # @return [Hash]
     def metadata
-      store.metadata_for_file(source_file).deep_merge(
-        store.metadata_for_path(path)
-      )
+      result = store.metadata_for_file(source_file).dup
+
+      path_meta = store.metadata_for_path(path).dup
+      if path_meta.has_key?(:blocks)
+        result[:blocks] << path_meta[:blocks]
+        path_meta.delete(:blocks)
+      end
+      result.deep_merge!(path_meta)
+
+      local_meta = @local_metadata.dup
+      if local_meta.has_key?(:blocks)
+        result[:blocks] << local_meta[:blocks]
+        local_meta.delete(:blocks)
+      end
+      result.deep_merge!(local_meta)
+
+      result
+    end
+
+    # Merge in new metadata specific to this resource.
+    # @param [Hash] metadata A metadata block like provides_metadata_for_path takes
+    def add_metadata(metadata={}, &block)
+      if metadata.has_key?(:blocks)
+        @local_metadata[:blocks] << metadata[:blocks]
+        metadata.delete(:blocks)
+      end
+      @local_metadata.deep_merge(metadata)
+      @local_metadata[:blocks] << block if block_given?
     end
     
     # Get the output/preview URL for this resource
