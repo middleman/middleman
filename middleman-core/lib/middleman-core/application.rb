@@ -427,7 +427,7 @@ module Middleman
       self.current_path = request_path.dup
       
       # Set a HTTP content type based on the request's extensions
-      content_type(resource.mime_type, env)
+      content_type(res, resource.mime_type)
       
       begin
         # Write out the contents of the page
@@ -504,7 +504,7 @@ module Middleman
       extension = File.extname(path)
       matched_mime = mime_type(extension)
       matched_mime = "application/octet-stream" if matched_mime.nil?
-      content_type matched_mime, res
+      content_type res, matched_mime
     
       file      = ::Rack::File.new nil
       file.path = path
@@ -518,7 +518,7 @@ module Middleman
     # @param [String] type Content type
     # @param [Hash] params
     # @return [void]
-    def content_type(type = nil, params={}, res)
+    def content_type(res, type = nil, params={})
       return res['Content-Type'] unless type
       default = params.delete :default
       mime_type = mime_type(type) || default
