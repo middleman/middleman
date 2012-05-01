@@ -519,6 +519,7 @@ module Middleman
     # @param [Hash] params
     # @return [void]
     def content_type(res, type, params={})
+      return res['Content-Type'] unless type
       default = params.delete :default
       mime_type = mime_type(type) || default
       throw "Unknown media type: %p" % type if mime_type.nil?
