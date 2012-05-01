@@ -36,9 +36,6 @@ Gem::Specification.new do |s|
   # Watcher
   s.add_dependency("listen", ["~> 0.4.1"])
   
-  # Web Server
-  s.add_dependency("thin", ["~> 1.3.1"])
-
   # i18n
   s.add_dependency("i18n", ["~> 0.6.0"])
 end

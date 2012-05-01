@@ -42,7 +42,7 @@ module Middleman
           else
             path = File.join(prefix, path) if prefix.length > 0
             
-            request_path = @request_path.dup
+            request_path = current_path.dup
             request_path << index_file if path.match(%r{/$})
 
             parts = request_path.gsub(%r{^/}, '').split('/')
