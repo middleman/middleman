@@ -269,7 +269,7 @@ module Middleman
     # Accessor for current path
     # @return [String]
     def current_path
-      @_current_path
+      Thread.current[:current_path]
     end
   
     # Set the current path
@@ -277,7 +277,7 @@ module Middleman
     # @param [String] path The new current path
     # @return [void]
     def current_path=(path)
-      @_current_path = path
+      Thread.current[:current_path] = path
       @request = ::Thor::CoreExt::HashWithIndifferentAccess.new({ 
         :path   => path, 
         :params => req ? ::Thor::CoreExt::HashWithIndifferentAccess.new(req.params) : {} 
@@ -317,25 +317,40 @@ module Middleman
     delegate :cache, :to => :"self.class"
   
     # Rack env
-    attr :env
+    def env
+      Thread.current[:env]
+    end
+    def env=(value)
+      Thread.current[:env] = value
+    end
   
     # Rack request
     # @return [Rack::Request]
-    attr :req
+    def req
+      Thread.current[:req]
+    end
+    def req=(value)
+      Thread.current[:req] = value
+    end
   
     # Rack response
     # @return [Rack::Response]
-    attr :res
-  
+    def res
+      Thread.current[:res]
+    end
+    def res=(value)
+      Thread.current[:res] = value
+    end
+
     # Rack Interface
     #
     # @private
     # @param Rack environment
     def call(env)
+      self.env = env
       # Store environment, request and response for later
-      @env = env
-      @req = Rack::Request.new(env)
-      @res = Rack::Response.new
+      self.req = req = Rack::Request.new(env)
+      self.res = res = Rack::Response.new
 
       if env["PATH_INFO"] == "/__middleman__"
         if env["REQUEST_METHOD"] == "POST"
@@ -354,7 +369,7 @@ module Middleman
     
       # Catch :halt exceptions and use that response if given
       catch(:halt) do
-        process_request
+        process_request(env, req, res)
 
         res.status = 404
         res.finish
@@ -381,38 +396,38 @@ module Middleman
     # and return the correct file, response or status message.
     #
     # @private
-    def process_request
+    def process_request(env, req, res)
       start_time = Time.now
 
       # Normalize the path and add index if we're looking at a directory
-      @original_path = URI.decode(env["PATH_INFO"].dup)
-      if @original_path.respond_to? :force_encoding
-        @original_path.force_encoding('UTF-8')
+      original_path = URI.decode(env["PATH_INFO"].dup)
+      if original_path.respond_to? :force_encoding
+        original_path.force_encoding('UTF-8')
       end
-      @request_path  = full_path(@original_path)
+      request_path  = full_path(original_path)
 
       # Run before callbacks
       run_hook :before
 
-      if @original_path != @request_path
+      if original_path != request_path
         # Get the resource object for this path
-        resource = sitemap.find_resource_by_destination_path(@original_path)
+        resource = sitemap.find_resource_by_destination_path(original_path)
       end
 
       # Get the resource object for this full path
-      resource ||= sitemap.find_resource_by_destination_path(@request_path)
+      resource ||= sitemap.find_resource_by_destination_path(request_path)
     
       # Return 404 if not in sitemap
-      return not_found unless resource && !resource.ignored?
+      return not_found(res) unless resource && !resource.ignored?
 
       # If this path is a static file, send it immediately
-      return send_file(resource.source_file) unless resource.template?
+      return send_file(resource.source_file, env, res) unless resource.template?
     
       # Set the current path for use in helpers
-      self.current_path = @request_path.dup
+      self.current_path = request_path.dup
       
       # Set a HTTP content type based on the request's extensions
-      content_type resource.mime_type
+      content_type(resource.mime_type, env)
       
       begin
         # Write out the contents of the page
@@ -474,10 +489,10 @@ module Middleman
   protected
 
     # Halt request and return 404
-    def not_found
-      @res.status == 404
-      @res.write "<html><body><h1>File Not Found</h1><p>#{@request_path}</p></body>"
-      @res.finish
+    def not_found(res)
+      res.status == 404
+      res.write "<html><body><h1>File Not Found</h1><p>#{@request_path}</p></body>"
+      res.finish
     end
   
     delegate :helpers, :use, :map, :to => :"self.class"
@@ -485,11 +500,11 @@ module Middleman
     # Immediately send static file
     #
     # @param [String] path File to send
-    def send_file(path)
+    def send_file(path, env, res)
       extension = File.extname(path)
       matched_mime = mime_type(extension)
       matched_mime = "application/octet-stream" if matched_mime.nil?
-      content_type matched_mime
+      content_type matched_mime, res
     
       file      = ::Rack::File.new nil
       file.path = path
@@ -503,7 +518,7 @@ module Middleman
     # @param [String] type Content type
     # @param [Hash] params
     # @return [void]
-    def content_type(type = nil, params={})
+    def content_type(type = nil, params={}, res)
       return res['Content-Type'] unless type
       default = params.delete :default
       mime_type = mime_type(type) || default
@@ -548,12 +563,9 @@ module Middleman
       app_class = options[:app] ||= ::Middleman.server.inst
       opts[:app] = app_class
 
-      # Use Thin because Webrick gets confused and mixes
-      # up responses.
-      # TODO: Figure that out and drop Thin dependency
-      require "thin"
-      ::Thin::Logging.silent = !options[:logging]
-      opts[:server] = 'thin'
+      require "webrick"
+      opts[:Logger] = WEBrick::Log::new("/dev/null", 7) if !options[:logging]
+      opts[:server] = 'webrick'
 
       server = ::Rack::Server.new(opts)
       server.start
