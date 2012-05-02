@@ -20,7 +20,10 @@ group :test do
   gem "jquery-rails", "~> 2.0.1"
   # gem "bootstrap-rails", "0.0.5"
   # gem "zurb-foundation"
-  gem "redcarpet", "~> 2.1.1"
+
+  platforms :ruby do
+    gem "redcarpet", "~> 2.1.1"
+  end
 end
 
 gem "middleman-core", :path => "middleman-core"
