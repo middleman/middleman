@@ -9,19 +9,23 @@ Feature: Markdown support
   Scenario: Redcarpet 2 extensions
     Given the Server is running at "markdown-app"
     When I go to "/smarty_pants.html"
-    Then I should see "&ldquo;"
+    Then I should see "&#8220;"
     When I go to "/no_intra_emphasis.html"
     Then I should not see "<em>"
     When I go to "/tables.html"
     Then I should see "<table>"
-    When I go to "/fenced_code_blocks.html"
-    Then I should see "<code>"
-    When I go to "/autolink.html"
-    Then I should see "<a href"
-    When I go to "/strikethrough.html"
-    Then I should see "<del>"
+    # Maruku doesn't support fenced code blocks :-(
+    #When I go to "/fenced_code_blocks.html"
+    #Then I should see "<code>"
+    # or autolink
+    #When I go to "/autolink.html"
+    #Then I should see "<a href"
+    # or del
+    #When I go to "/strikethrough.html"
+    #Then I should see "<del>"
     When I go to "/space_after_headers.html"
     Then I should not see "<h1>"
-    When I go to "/superscript.html"
-    Then I should see "<sup>"
+    # or superscript
+    #When I go to "/superscript.html"
+    #Then I should see "<sup>"
     
