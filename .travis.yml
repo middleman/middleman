@@ -8,7 +8,7 @@ rvm:
   - rbx-19mode
   
 script: "bundle exec rake test"
-  
+
 branches:
   only:
     - master
