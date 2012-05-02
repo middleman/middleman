@@ -171,8 +171,8 @@ module Middleman
     # to discover extensions and Sprockets-supporting gems.
     #
     # @private
-    # @param [Gem::Specification]
-    # @param [String] Path to look for
+    # @param [Gem::Specification] spec
+    # @param [String] path Path to look for
     # @return [Boolean] Whether the file exists
     def spec_has_file?(spec, path)
       full_path = File.join(spec.full_gem_path, path)

@@ -16,7 +16,11 @@ module Middleman::Sitemap::Extensions
       alias :included :registered
     end
     
+    # Helpers methods for Resources
     module ResourceInstanceMethods
+      
+      # Whether the Resource is ignored
+      # @return [Boolean]
       def ignored?
         @app.ignore_manager.ignored?(path) || 
         (!proxy? &&
@@ -25,25 +29,31 @@ module Middleman::Sitemap::Extensions
       end
     end
     
+    # Ignore-related instance methods
     module InstanceMethods
       def ignore_manager
         @_ignore_manager ||= IgnoreManager.new(self)
       end
       
-      def ignore(*args, &block)
-        ignore_manager.ignore(*args, &block)
+      # Ignore a path or add an ignore callback
+      # @param [String, Regexp] path Path glob expression, or path regex
+      # @return [void]
+      def ignore(path=nil, &block)
+        ignore_manager.ignore(path, &block)
       end
     end
     
+    # Class to handle managing ignores
     class IgnoreManager
       def initialize(app)
         @app = app
 
+        # Array of callbacks which can ass ignored
         @ignored_callbacks = []
       end
       
       # Ignore a path or add an ignore callback
-      # @param [String, Regexp] path, path glob expression, or path regex
+      # @param [String, Regexp] path Path glob expression, or path regex
       # @return [void]
       def ignore(path=nil, &block)
         original_callback_size = @ignored_callbacks.size

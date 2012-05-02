@@ -62,15 +62,16 @@ module Middleman::CoreExtensions::Extensions
     
     # Alias `extensions` to access registered extensions
     #
-    # @return [Array<Module]
+    # @return [Array<Module>]
     def extensions
       @extensions ||= []
     end
     
     # Register a new extension
     # 
-    # @param [Array<Module>] new_extensions Extension modules to register
-    # @return [Array<Module]
+    # @param [Module] extension Extension modules to register
+    # @param [Hash] options Per-extension options hash
+    # @return [void]
     def register(extension, options={}, &block)
       @extensions ||= []
       @extensions += [extension]

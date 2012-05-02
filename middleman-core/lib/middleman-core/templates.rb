@@ -15,9 +15,9 @@ module Middleman::Templates
     # @param [Symbol] name The name of the template
     # @param [Class] klass The class to be executed for this template
     # @return [Hash] List of registered templates
-    def register(*args)
+    def register(name=nil, klass=nil)
       @_template_mappings ||= {}
-      @_template_mappings[args[0]] = args[1] if args.length == 2
+      @_template_mappings[name] = klass if name && klass
       @_template_mappings
     end
     

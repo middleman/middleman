@@ -102,11 +102,11 @@ module Middleman::CoreExtensions::FrontMatter
       @_frontmatter_extension ||= FrontMatter.new(self)
     end
     
-    # Get the frontmatter for the given params
+    # Get the frontmatter for a given path
     # @param [String] path
-    # @return [Hash, nil]
-    def frontmatter(*args)
-      frontmatter_extension.data(*args)
+    # @return [Hash]
+    def frontmatter(path)
+      frontmatter_extension.data(path)
     end
   end
   

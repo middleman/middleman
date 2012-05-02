@@ -32,8 +32,9 @@ module Middleman::Sitemap
     end
 
     # Register a klass which can manipulate the main site map list
-    # @param [Class] klass
-    # @param [Boolean] immediately_rebuild
+    # @param [Symbol] name Name of the manipulator for debugging
+    # @param [Class, Module] inst Abstract namespace which can update the resource list
+    # @param [Boolean] immediately_rebuild Whether the resource list should be immediately recalculated
     # @return [void]
     def register_resource_list_manipulator(name, inst, immediately_rebuild=true)
       @resource_list_manipulators << [name, inst]
