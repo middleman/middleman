@@ -11,7 +11,7 @@ module Middleman
         def registered(app)
           # Set our preference for a markdown engine
           # TODO: Find a JRuby-compatible version
-          app.set :markdown_engine, :redcarpet
+          app.set :markdown_engine, :maruku
           app.set :markdown_engine_prefix, ::Tilt
       
           app.before_configuration do
