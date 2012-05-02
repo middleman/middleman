@@ -36,16 +36,17 @@ module Middleman
               else 
                 markdown_engine_prefix
               end
-
-              # Tell tilt to use that engine
-              ::Tilt.prefer(markdown_engine_klass)
-
+              
               if markdown_engine == :redcarpet
                 # Forcably disable Redcarpet1 support.
                 # Tilt defaults to this if available, but the compat
                 # layer disables extensions.
+                require "redcarpet"
                 Object.send(:remove_const, :RedcarpetCompat) if defined? ::RedcarpetCompat
               end
+         
+              # Tell tilt to use that engine
+              ::Tilt.prefer(markdown_engine_klass)
             end
           end
         end

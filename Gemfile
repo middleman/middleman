@@ -1,16 +1,17 @@
 source :rubygems
 
 group :development do
-  gem "cucumber", "~> 1.1.0"
-  gem "fivemat"
-  gem "aruba",    "~> 0.4.11"
   gem "rake",     "~> 0.9.2"
-  gem "rspec",    "~> 2.7"
   gem "rdoc",     "~> 3.9"
   gem "yard",     "~> 0.8.0"
 end
   
 group :test do
+  gem "cucumber", "~> 1.1.0"
+  gem "fivemat"
+  gem "aruba",    "~> 0.4.11"
+  gem "rspec",    "~> 2.7"
+
   # For actual tests
   gem "sinatra"
   gem "slim"
@@ -19,6 +20,7 @@ group :test do
   gem "jquery-rails", "~> 2.0.1"
   # gem "bootstrap-rails", "0.0.5"
   # gem "zurb-foundation"
+  gem "redcarpet", "~> 2.1.1"
 end
 
 gem "middleman-core", :path => "middleman-core"
