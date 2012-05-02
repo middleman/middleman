@@ -100,7 +100,7 @@ module Middleman
   
         # Use Rack middleware
         #
-        # @param [Class] Middleware
+        # @param [Class] middleware Middleware module
         # @return [void]
         def use(middleware, *args, &block)
           @middleware ||= []
@@ -109,7 +109,7 @@ module Middleman
   
         # Add Rack App mapped to specific path
         #
-        # @param [String] Path to map
+        # @param [String] map Path to map
         # @return [void]
         def map(map, &block)
           @mappings ||= []
@@ -229,8 +229,7 @@ module Middleman
         
         # Rack Interface
         #
-        # @private
-        # @param Rack environment
+        # @param env Rack environment
         def call!(env)
           self.env = env
           # Store environment, request and response for later
@@ -250,16 +249,18 @@ module Middleman
 
         # Halt the current request and return a response
         #
-        # @private
-        # @param [String] Response value
+        # @param [String] response Response value
         def halt(response)
           throw :halt, response
         end
         
-        # Core response method. We process the request, check with the sitemap,
-        # and return the correct file, response or status message.
+        # Core response method. We process the request, check with 
+        # the sitemap, and return the correct file, response or status
+        # message.
         #
-        # @private
+        # @param env
+        # @param [Rack::Request] req
+        # @param [Rack::Response] res
         def process_request(env, req, res)
           start_time = Time.now
 

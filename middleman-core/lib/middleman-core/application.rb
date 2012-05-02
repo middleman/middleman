@@ -40,8 +40,8 @@ module Middleman
     
       # Set class-wide defaults
       #
-      # @param [Symbol] Unique key name
-      # @param Default value
+      # @param [Symbol] key Unique key name
+      # @param value Default value
       # @return [void]
       def set(key, value=nil, &block)
         @defaults ||= {}
@@ -55,8 +55,8 @@ module Middleman
     
     # Set attributes (global variables)
     #
-    # @param [Symbol] Name of the attribue
-    # @param Attribute value
+    # @param [Symbol] key Name of the attribue
+    # @param value Attribute value
     # @return [void]
     def set(key, value=nil, &block)
       setter = "#{key}=".to_sym
