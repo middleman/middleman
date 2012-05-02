@@ -5,6 +5,9 @@ module Middleman
   end
 
   module CoreExtensions
+    # Rack Request
+    autoload :Request,        "middleman-core/core_extensions/request"
+    
     # File Change Notifier
     autoload :FileWatcher,    "middleman-core/core_extensions/file_watcher"
 
