@@ -8,6 +8,7 @@ module Middleman::Cli
   module Cli
     autoload :Build,        "middleman-core/cli/build"
     autoload :Init,         "middleman-core/cli/init"
+    autoload :Extension,    "middleman-core/cli/extension"
     autoload :Server,       "middleman-core/cli/server"
   end
   
@@ -73,5 +74,6 @@ end
 
 # Include the core CLI items
 require "middleman-core/cli/init"
+require "middleman-core/cli/extension"
 require "middleman-core/cli/server"
 require "middleman-core/cli/build"
