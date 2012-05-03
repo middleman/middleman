@@ -9,13 +9,8 @@ rvm:
   
 script: "bundle exec rake test"
 
-branches:
-  only:
-    - master
-
 matrix:
   allow_failures:
-    - rvm: jruby-18mode
     - rvm: jruby-19mode
     - rvm: rbx-18mode
     - rvm: rbx-19mode
