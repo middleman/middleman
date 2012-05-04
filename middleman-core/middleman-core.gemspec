@@ -34,7 +34,7 @@ Gem::Specification.new do |s|
   s.add_dependency("padrino-helpers", ["~> 0.10.6"])
   
   # Watcher
-  s.add_dependency("listen", ["~> 0.4.1"])
+  s.add_dependency("listen", ["~> 0.4.2"])
   
   # i18n
   s.add_dependency("i18n", ["~> 0.6.0"])
