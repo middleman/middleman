@@ -6,6 +6,7 @@ Feature: Middleman CLI
     When I cd to "MY_PROJECT"
     Then the following files should exist:
       | Gemfile                                       |
+      | .gitignore                                    |
       | config.rb                                     |
       | source/index.html.erb                         |
       | source/images/background.png                  |

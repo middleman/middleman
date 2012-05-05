@@ -63,6 +63,16 @@ module Middleman::Templates
         run('bundle install', :capture => true)
       end
     end
+
+    # Output a .gitignore file
+    class_option :git, :type => :boolean, :default => true
+    
+    # Write a .gitignore file for project
+    # @return [void]
+    def generate_gitignore!
+      return unless options[:git]
+      copy_file "shared/gitignore", File.join(location, ".gitignore")
+    end
   end
 end
 
