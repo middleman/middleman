@@ -1,3 +1,4 @@
+require "active_support/core_ext/integer/inflections"
 require 'padrino-helpers'
 
 # Built-in helpers
