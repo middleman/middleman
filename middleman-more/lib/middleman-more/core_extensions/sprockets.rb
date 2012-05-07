@@ -20,7 +20,16 @@ module Middleman::CoreExtensions::Sprockets
         try_paths  = root_paths.map {|rp| File.join(rp, 'javascripts') } +
                      root_paths.map {|rp| File.join(rp, 'stylesheets') }
 
-        ([root] + ::Middleman.rubygems_latest_specs.map(&:full_gem_path)).each do |root_path|
+        rubygems_latest_specs = begin
+          # If newer Rubygems
+          if ::Gem::Specification.respond_to? :latest_specs
+            ::Gem::Specification.latest_specs
+          else
+            ::Gem.source_index.latest_specs
+          end
+        end
+       
+        ([root] + rubygems_latest_specs.map(&:full_gem_path)).each do |root_path|
           try_paths.map {|p| File.join(root_path, p) }.
             select {|p| File.directory?(p) }.
             each {|path| sprockets.append_path(path) }
