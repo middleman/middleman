@@ -9,6 +9,8 @@ require "middleman-core/vendor/hooks-0.2.0/lib/hooks"
 
 require "middleman-core/sitemap"
 
+require "middleman-core/core_extensions"
+  
 # Core Middleman Class
 module Middleman
   class Application
@@ -160,14 +162,35 @@ module Middleman
     register Middleman::CoreExtensions::I18n
   
     # Built-in Extensions
-    Middleman::Extensions.register(:directory_indexes) {
-      Middleman::Extensions::DirectoryIndexes }
-    Middleman::Extensions.register(:lorem) {
-      Middleman::Extensions::Lorem }
-    Middleman::Extensions.register(:automatic_image_sizes) {
-      Middleman::Extensions::AutomaticImageSizes }
-    Middleman::Extensions.register(:asset_host) {
-      Middleman::Extensions::AssetHost }
+    
+    # Provide Apache-style index.html files for directories
+    Middleman::Extensions.register(:directory_indexes) do
+      require "middleman-core/extensions/directory_indexes"
+      Middleman::Extensions::DirectoryIndexes 
+    end
+    
+    # Lorem provides a handful of helpful prototyping methods to generate
+    # words, paragraphs, fake images, names and email addresses.
+    Middleman::Extensions.register(:lorem) do
+      require "middleman-core/extensions/lorem"
+      Middleman::Extensions::Lorem 
+    end
+    
+    # AutomaticImageSizes inspects the images used in your dynamic templates
+    # and automatically adds width and height attributes to their HTML
+    # elements.
+    Middleman::Extensions.register(:automatic_image_sizes) do
+      require "middleman-core/extensions/automatic_image_sizes"
+      Middleman::Extensions::AutomaticImageSizes
+    end
+    
+    # AssetHost allows you to setup multiple domains to host your static
+    # assets. Calls to asset paths in dynamic templates will then rotate
+    # through each of the asset servers to better spread the load.
+    Middleman::Extensions.register(:asset_host) do
+      require "middleman-core/extensions/asset_host"
+      Middleman::Extensions::AssetHost 
+    end
   
     # Initialize the Middleman project
     def initialize(&block)
