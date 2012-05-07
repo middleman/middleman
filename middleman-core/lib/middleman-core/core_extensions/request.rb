@@ -1,6 +1,7 @@
-# Base helper to manipulate asset paths
 module Middleman
   module CoreExtensions
+    
+    # Base helper to manipulate asset paths
     module Request
   
       # Extension registered

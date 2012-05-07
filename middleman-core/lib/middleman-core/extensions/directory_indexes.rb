@@ -51,7 +51,4 @@ module Middleman::Extensions
       end
     end
   end
-  
-  # Register the extension
-  register :directory_indexes, DirectoryIndexes
 end

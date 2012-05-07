@@ -192,7 +192,4 @@ module Middleman::Extensions
       end
     end
   end
-  
-  # Register the extension
-  register :lorem, Lorem
 end
