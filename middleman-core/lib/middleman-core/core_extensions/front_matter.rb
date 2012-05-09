@@ -11,6 +11,9 @@ module Middleman::CoreExtensions
       def registered(app)
         # Parsing YAML frontmatter
         require "yaml"
+        
+        # Parsing JSON frontmatter
+        require "active_support/json"
       
         app.after_configuration do
           ::Middleman::Sitemap::Resource.send :include, ResourceInstanceMethods
@@ -56,18 +59,41 @@ module Middleman::CoreExtensions
         @cache.delete(p)
       end
       
-      # Parse frontmatter out of a string
+      # Parse YAML frontmatter out of a string
       # @param [String] content
       # @return [Array<Hash, String>]
-      def parse_front_matter(content)
+      def parse_yaml_front_matter(content)
         yaml_regex = /^(---\s*\n.*?\n?)^(---\s*$\n?)/m
         if content =~ yaml_regex
-          content = content[($1.size + $2.size)..-1]
+          content = content.sub(yaml_regex, "")
 
           begin
             data = YAML.load($1)
           rescue => e
             puts "YAML Exception: #{e.message}"
+            return false
+          end
+
+        else
+          return false
+        end
+
+        [data, content]
+      rescue
+        [{}, content]
+      end
+      
+      def parse_json_front_matter(content)
+        json_regex = /^(\{\{\{\s*\n.*?\n?)^(\}\}\}\s*$\n?)/m
+        
+        if content =~ json_regex
+          content = content.sub(json_regex, "")
+
+          begin
+            json = ($1+$2).sub("{{{", "{").sub("}}}", "}")
+            data = ActiveSupport::JSON.decode(json)
+          rescue => e
+            puts "JSON Exception: #{e.message}"
             return false
           end
 
@@ -87,9 +113,10 @@ module Middleman::CoreExtensions
         full_path = File.expand_path(path, @app.source_dir)
         content = File.read(full_path)
 
-        result = parse_front_matter(content)
-
-        if result
+        if result = parse_yaml_front_matter(content)
+          data, content = result
+          data = ::Middleman::Util.recursively_enhance(data).freeze
+        elsif result = parse_json_front_matter(content)
           data, content = result
           data = ::Middleman::Util.recursively_enhance(data).freeze
         else

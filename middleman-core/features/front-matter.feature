@@ -1,8 +1,11 @@
 Feature: YAML Front Matter
   In order to specific options and data inline
 
-  Scenario: Rendering html
+  Scenario: Rendering html (yaml)
     Given the Server is running at "frontmatter-app"
+    When I go to "/front-matter-auto.html"
+    Then I should see "<h1>This is the title</h1>"
+    Then I should not see "---"
     When I go to "/front-matter.html"
     Then I should see "<h1>This is the title</h1>"
     Then I should not see "---"
@@ -10,6 +13,19 @@ Feature: YAML Front Matter
     Then I should see "<h1>This is the title</h1>"
     Then I should see "<?php"
     Then I should not see "---"
+    
+  Scenario: Rendering html (json)
+    Given the Server is running at "frontmatter-app"
+    When I go to "/json-front-matter-auto.html"
+    Then I should see "<h1>This is the title</h1>"
+    Then I should not see "{"
+    When I go to "/json-front-matter.html"
+    Then I should see "<h1>This is the title</h1>"
+    Then I should not see "{"
+    When I go to "/json-front-matter-2.php"
+    Then I should see "<h1>This is the title</h1>"
+    Then I should see "<?php"
+    Then I should not see "{"
 
   Scenario: A template changes frontmatter during preview
     Given the Server is running at "frontmatter-app"
