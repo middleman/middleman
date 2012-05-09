@@ -1,212 +1,161 @@
-# Parsing YAML frontmatter
-require "yaml"
-
-# Looking up Tilt extensions
-require "tilt"
-
-# Frontmatter namespace
-module Middleman
-  module CoreExtensions
-    module FrontMatter
+# Extensions namespace
+module Middleman::CoreExtensions
   
-      # Setup extension
-      class << self
+  # Frontmatter namespace
+  module FrontMatter
+  
+    # Setup extension
+    class << self
     
-        # Once registered
-        def registered(app)
-          app.set :frontmatter_extensions, %w(.htm .html .php)
-          app.extend ClassMethods
-          app.send :include, InstanceMethods
-          app.delegate :frontmatter_changed, :to => :"self.class"
+      # Once registered
+      def registered(app)
+        # Parsing YAML frontmatter
+        require "yaml"
       
+        app.after_configuration do
           ::Middleman::Sitemap::Resource.send :include, ResourceInstanceMethods
-        end
-        alias :included :registered
-      end
-  
-      # Frontmatter class methods
-      module ClassMethods
-    
-        # Register callback on frontmatter updates
-        # @param [Regexp] matcher
-        # @return [Array<Array<Proc, Regexp>>]
-        def frontmatter_changed(matcher=nil, &block)
-          @_frontmatter_changed ||= []
-          @_frontmatter_changed << [block, matcher] if block_given?
-          @_frontmatter_changed
-        end
-      end
-  
-      module ResourceInstanceMethods
-
-        # This page's frontmatter
-        # @return [Hash]
-        def data
-          app.frontmatter(source_file).first
-        end
-    
-      end
-  
-      # Frontmatter instance methods
-      module InstanceMethods
-    
-        # Override init
-        def initialize
-          exts = frontmatter_extensions.join("|").gsub(".", "\.")
       
-          static_path = source_dir.sub(root, "").sub(/^\//, "").sub(/\/$/, "") + "/"
-
-          matcher = %r{#{static_path}.*(#{exts})}
-      
-          files.changed matcher do |file|
-            frontmatter_extension.touch_file(file)
-          end
-
-          files.deleted matcher do |file|
-            frontmatter_extension.remove_file(file)
-          end
-
-          sitemap.provides_metadata matcher do |path|
-            fmdata = if self.frontmatter_extension.has_data?(path)
-              self.frontmatter(path)[0]
-            else
-              {}
-            end
-
+          app.send :include, InstanceMethods
+        
+          files.changed { |file| frontmatter_manager.clear_data(file) }
+          files.deleted { |file| frontmatter_manager.clear_data(file) }
+        
+          sitemap.register_resource_list_manipulator(
+            :frontmatter,
+            frontmatter_manager
+          )
+          
+          sitemap.provides_metadata do |path|
+            fmdata = frontmatter_manager.data(path).first
+        
             data = {}
             %w(layout layout_engine).each do |opt|
-              data[opt.to_sym] = fmdata[opt] if fmdata.has_key?(opt)
+              data[opt.to_sym] = fmdata[opt] if fmdata[opt]
             end
-
+          
             { :options => data, :page => fmdata }
           end
-
-          # Initialize class
-          frontmatter_extension
-
-          super
-        end
-
-        # Notify callbacks that the frontmatter changed
-        # @param [String] path
-        # @return [void]
-        def frontmatter_did_change(path)
-          frontmatter_changed.each do |callback, matcher|
-            next if path.match(%r{^#{build_dir}/})
-            next if !matcher.nil? && !path.match(matcher)
-            instance_exec(path, &callback)
-          end
-        end
-    
-        # Get the frontmatter object
-        # @return [Middleman::CoreExtensions::FrontMatter::FrontMatter]
-        def frontmatter_extension
-          @_frontmatter_extension ||= FrontMatter.new(self)
-        end
-    
-        # Get the frontmatter for a given path
-        # @param [String] path
-        # @return [Hash]
-        def frontmatter(path)
-          frontmatter_extension.data(path)
         end
       end
+      alias :included :registered
+    end
   
-      # Core Frontmatter class
-      class FrontMatter
-    
-        # Initialize frontmatter with current app
-        # @param [Middleman::Application] app
-        def initialize(app)
-          @app = app
-          @source = File.expand_path(@app.source, @app.root)
-          @local_data = {}
+    class FrontmatterManager
+      def initialize(app)
+        @app = app
+        @cache = {}
+      end
       
-          # Setup ignore callback
-          @app.ignore do |path|
-            if p = @app.sitemap.find_resource_by_path(path)
-              !p.proxy? && p.data && p.data["ignored"] == true
-            else
-              false
-            end
-          end
-        end
-    
-        # Whether the frontmatter knows about a path
-        # @param [String] path
-        # @return [Boolean]
-        def has_data?(path)
-          @local_data.has_key?(path.to_s)
-        end
-    
-        # Update frontmatter if a file changes
-        # @param [String] file
-        # @return [void]
-        def touch_file(file)
-          extension = File.extname(file).sub(/\./, "")
-          return unless ::Tilt.mappings.has_key?(extension)
+      def data(path)
+        p = normalize_path(path)
+        @cache[p] ||= frontmatter_and_content(p)
+      end
       
-          file = File.expand_path(file, @app.root)
-          content = File.read(file)
+      def clear_data(path)
+        p = normalize_path(File.expand_path(path, @app.root))
+        @cache.delete(p)
+      end
       
-          result = parse_front_matter(content)
-        
-          if result
-            data, content = result
+      # Parse frontmatter out of a string
+      # @param [String] content
+      # @return [Array<Hash, String>]
+      def parse_front_matter(content)
+        yaml_regex = /^(---\s*\n.*?\n?)^(---\s*$\n?)/m
+        if content =~ yaml_regex
+          content = content[($1.size + $2.size)..-1]
 
-            data = ::Middleman::Util.recursively_enhance(data).freeze
-            @local_data[file] = [data, content]
-            @app.cache.set([:raw_template, file], result[1])
-            @app.frontmatter_did_change(file)
-          end
-        end
-    
-        # Update frontmatter if a file is delted
-        # @param [String] file
-        # @return [void]
-        def remove_file(file)
-          file = File.expand_path(file, @app.root)
-      
-          if @local_data.has_key?(file)
-            @app.cache.remove(:raw_template, file)
-            @local_data.delete(file) 
-          end
-        end
-    
-        # Get the frontmatter for a given path
-        # @param [String] path
-        # @return [Hash]
-        def data(path)
-          if @local_data.has_key?(path.to_s)
-            @local_data[path.to_s]
-          else
-            [ ::Middleman::Util.recursively_enhance({}).freeze, nil ]
-          end
-        end
-    
-      private
-        # Parse frontmatter out of a string
-        # @param [String] content
-        # @return [Array<Hash, String>]
-        def parse_front_matter(content)
-          yaml_regex = /^(---\s*\n.*?\n?)^(---\s*$\n?)/m
-          if content =~ yaml_regex
-            content = content[($1.size + $2.size)..-1]
-        
-            begin
-              data = YAML.load($1)
-            rescue => e
-              puts "YAML Exception: #{e.message}"
-              return false
-            end
-
-          else
+          begin
+            data = YAML.load($1)
+          rescue => e
+            puts "YAML Exception: #{e.message}"
             return false
           end
 
-          [data, content]
+        else
+          return false
+        end
+
+        [data, content]
+      rescue
+        [{}, content]
+      end
+      
+      # Get the frontmatter and plain content from a file
+      # @param [String] path
+      # @return [Array<Thor::CoreExt::HashWithIndifferentAccess, String>]
+      def frontmatter_and_content(path)
+        full_path = File.expand_path(path, @app.source_dir)
+        content = File.read(full_path)
+
+        result = parse_front_matter(content)
+
+        if result
+          data, content = result
+          data = ::Middleman::Util.recursively_enhance(data).freeze
+        else
+          data = {}
+        end
+
+        [data, content]
+      end
+      
+      def normalize_path(path)
+        path.sub(@app.source_dir, "").sub(/^\//, "")
+      end
+      
+      # Update the main sitemap resource list
+      # @return [void]
+      def manipulate_resource_list(resources)
+        resources.each do |r|
+          if !r.proxy? && r.data["ignored"] == true
+            r.frontmatter_ignored = true
+          end
+        end
+        
+        resources
+      end
+    end
+  
+    module ResourceInstanceMethods
+      
+      def frontmatter_ignored?
+        @_frontmatter_ignored || false
+      end
+      
+      def frontmatter_ignored=(v)
+        @_frontmatter_ignored = v
+      end
+      
+      def ignored?
+        if frontmatter_ignored?
+          true
+        else
+          super
         end
       end
+
+      # This page's frontmatter
+      # @return [Hash]
+      def data
+        app.frontmatter_manager.data(source_file).first
+      end
+
+    end
+    
+    module InstanceMethods
+    
+      # Access the Frontmatter API
+      def frontmatter_manager
+        @_frontmatter_manager ||= FrontmatterManager.new(self)
+      end
+    
+      # Get the template data from a path
+      # @param [String] path
+      # @return [String]
+      def template_data_for_file(path)
+        frontmatter_manager.data(path).last
+      end
+    
     end
   end
 end

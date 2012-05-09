@@ -79,7 +79,7 @@ module Middleman
           @local_metadata[:blocks] << metadata[:blocks]
           metadata.delete(:blocks)
         end
-        @local_metadata.deep_merge(metadata)
+        @local_metadata.deep_merge!(metadata)
         @local_metadata[:blocks] << block if block_given?
       end
     
@@ -94,12 +94,6 @@ module Middleman
       # @return [void]
       def destination_path=(path)
         @destination_paths << path
-      end
-    
-      # The template instance
-      # @return [Middleman::Sitemap::Template]
-      def template
-        @_template ||= ::Middleman::Sitemap::Template.new(self)
       end
     
       # Extension of the path (i.e. '.js')
@@ -134,7 +128,7 @@ module Middleman
         md[:blocks].flatten.compact.each do |block|
           app.instance_eval(&block)
         end
-
+      
         app.instance_eval(&block) if block_given?
         result = app.render_template(source_file, locs, opts)
 
