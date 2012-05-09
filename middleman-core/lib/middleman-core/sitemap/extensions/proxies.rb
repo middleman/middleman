@@ -53,7 +53,11 @@ module Middleman
           def get_source_file
             if proxy?
               proxy_resource = store.find_resource_by_path(proxied_to)
-              raise "Path #{path} proxies to unknown file #{proxied_to}" unless proxy_resource
+          
+              unless proxy_resource
+                raise "Path #{path} proxies to unknown file #{proxied_to}"
+              end
+          
               proxy_resource.source_file
             end
           end

@@ -35,30 +35,14 @@ module Middleman
       # Rendering instance methods
       module InstanceMethods
     
-        # Override init to clear cache on file removal
-        def initialize
-          # Default extension map
-          @_template_extensions = {
-        
-          }
-      
-          static_path = source_dir.sub(self.root, "").sub(/^\//, "")
-          render_regex = static_path.empty? ? // : (%r{^#{static_path + "/"}})
-      
-          self.files.changed render_regex do |file|
-            path = File.expand_path(file, self.root)
-            self.cache.remove(:raw_template, path)
-          end
-
-          super
-        end
-    
         # Add or overwrite a default template extension
         #
         # @param [Hash] extension_map
-        # @return [void]
-        def template_extensions(extension_map={})
-          @_template_extensions.merge!(extension_map)
+        # @return [Hash]
+        def template_extensions(extension_map=nil)
+          @_template_extensions ||= {}
+          @_template_extensions.merge!(extension_map) if extension_map
+          @_template_extensions
         end
     
         # Render a template, with layout, given a path
@@ -82,12 +66,13 @@ module Middleman
           # Store current locs/opts for later
           @current_locs = locs, @current_opts = opts
 
-          # Keep rendering template until we've used up all extensions. This handles
-          # cases like `style.css.sass.erb`
+          # Keep rendering template until we've used up all extensions. This
+          # handles cases like `style.css.sass.erb`
+          content = nil
           while ::Tilt[path]
+            opts[:template_body] = content if content
             content = render_individual_file(path, locs, opts, context)
             path = File.basename(path, File.extname(path))
-            cache.set([:raw_template, path], content)
           end
       
           # Certain output file types don't use layouts
@@ -175,8 +160,10 @@ module Middleman
           @_out_buf, _buf_was = "", @_out_buf
       
           # Read from disk or cache the contents of the file
-          body = cache.fetch(:raw_template, path) do
-            File.read(path)
+          body = if opts[:template_body]
+            opts.delete(:template_body)
+          else
+            template_data_for_file(path)
           end
       
           # Merge per-extension options from config
@@ -194,6 +181,13 @@ module Middleman
         ensure
           # Reset stored buffer
           @_out_buf = _buf_was
+        end
+    
+        # Get the template data from a path
+        # @param [String] path
+        # @return [String]
+        def template_data_for_file(path)
+          File.read(File.expand_path(path, source_dir))
         end
     
         # Get a hash of configuration options for a given file extension, from 
