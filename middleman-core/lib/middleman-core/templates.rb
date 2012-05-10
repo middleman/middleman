@@ -50,17 +50,13 @@ module Middleman::Templates
       template "shared/config.ru", File.join(location, "config.ru")
     end
     
-    # Output a Gemfile file for Bundler if --bundler is passed
-    class_option :bundler, :type => :boolean, :default => true
-    
     # Write a Bundler Gemfile file for project
     # @return [void]
     def generate_bundler!
-      return unless options[:bundler]
       template "shared/Gemfile.tt", File.join(location, "Gemfile")
       
       inside(location) do
-        run('bundle install', :capture => true)
+        ::Middleman::Cli::Bundle.new.invoke(:bundle)
       end
     end
 

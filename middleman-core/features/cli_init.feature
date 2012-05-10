@@ -36,16 +36,6 @@ Feature: Middleman CLI
       | config.rb                                     |
       | config.ru                                     |
       | Gemfile                                       |
-    
-  Scenario: Create a new project without Bundler
-    When I run `middleman init MY_PROJECT --no-bundler`
-    Then a directory named "MY_PROJECT" should exist
-    When I cd to "MY_PROJECT"
-    Then the following files should exist:
-      | config.rb                                     |
-    Then the following files should not exist:  
-      | Gemfile                                       |
-      | config.ru                                     |
       
   Scenario: Create a new HTML5 project
     When I run `middleman init MY_PROJECT --template=html5`
