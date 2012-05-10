@@ -4,9 +4,6 @@
 libdir = File.expand_path(File.join(File.dirname(File.dirname(__FILE__)), "lib"))
 $LOAD_PATH.unshift(libdir) unless $LOAD_PATH.include?(libdir)
 
-# Setup RubyGems
-require "rubygems"
-
 # Core Pathname library used for traversal
 require "pathname"
 
@@ -46,8 +43,8 @@ rescue LoadError
   end
 end
 
-# Automatically discover extensions in RubyGems
-Middleman.load_extensions_in_path
+# Automatically discover load dependencies
+Bundler.require if defined?(Bundler)
 
 require "middleman-core/cli"
 
