@@ -17,6 +17,8 @@ class Bundler::GemHelper
 end
 
 Cucumber::Rake::Task.new(:test, 'Run features that should pass') do |t|
+  ENV["TEST"] = "true"
+  
   exempt_tags = ""
   exempt_tags << "--tags ~@nojava" if RUBY_PLATFORM == "java"
   
