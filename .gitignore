@@ -7,7 +7,7 @@ pkg
 .tmp
 Gemfile.lock
 docs
-.rbenv-version
+.rbenv-*
 .*.swp
 build
 doc
