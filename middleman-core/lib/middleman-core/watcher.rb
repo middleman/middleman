@@ -24,10 +24,10 @@ module Middleman
           /^\.gitignore$/,
           /^\.DS_Store$/,
           /^build\//,
-          /^\.rbenv-version$/,
+          /^\.rbenv-.*$/,
           /^Gemfile$/,
           /^Gemfile\.lock$/,
-          /^\.mm-pid/
+          /~$/
         ]
       end
     end
