@@ -57,7 +57,7 @@ module Middleman::Templates
       
       inside(location) do
         ::Middleman::Cli::Bundle.new.invoke(:bundle)
-      end
+      end unless ENV["TRAVIS"]
     end
 
     # Output a .gitignore file

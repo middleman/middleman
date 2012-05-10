@@ -7,6 +7,8 @@ rvm:
   
 script: "bundle exec rake test"
 
+env: TRAVIS=true
+
 matrix:
   allow_failures:
     - rvm: jruby-19mode

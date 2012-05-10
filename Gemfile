@@ -5,7 +5,7 @@ group :development do
   gem "rdoc",     "~> 3.9"
   gem "yard",     "~> 0.8.0"
 end
-  
+
 group :test do
   gem "cucumber", "~> 1.1.0"
   gem "fivemat"
