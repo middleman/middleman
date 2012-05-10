@@ -12,7 +12,7 @@ module Middleman::Cli
     
     # The setup task
     def bundle
-      run('bundle install --without development test', :capture => true)
+      run('bundle install --without development test')#, :capture => true)
     end
   end
   
@@ -28,7 +28,7 @@ module Middleman::Cli
     # The upgrade task
     def upgrade
       inside(ENV["MM_ROOT"]) do
-        run('bundle update', :capture => true)
+        run('bundle update')#, :capture => true)
       end
     end
   end
