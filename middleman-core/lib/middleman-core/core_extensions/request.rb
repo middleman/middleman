@@ -146,7 +146,7 @@ module Middleman
           opts[:app] = app_class
 
           require "webrick"
-          opts[:Logger] = WEBrick::Log::new("/dev/null", 7) if !options[:logging]
+          opts[:Logger] = WEBrick::Log::new(RUBY_PLATFORM =~ /(mingw|bccwin|wince|mswin32)/i ? 'NUL:' : '/dev/null', 7) if !options[:logging]
           opts[:server] = 'webrick'
 
           server = ::Rack::Server.new(opts)
