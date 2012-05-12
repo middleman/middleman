@@ -11,6 +11,9 @@ module Middleman
           # Built on Rack
           require "rack"
           require "rack/file"
+          
+          # CSSPIE HTC File
+          ::Rack::Mime::MIME_TYPES['.html'] = 'text/x-component'
 
           # Let's serve all HTML as UTF-8
           ::Rack::Mime::MIME_TYPES['.html'] = 'text/html;charset=utf8'
