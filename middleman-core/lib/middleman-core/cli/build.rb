@@ -61,7 +61,7 @@ module Middleman::Cli
       #
       # @return [Middleman::Application]
       def shared_instance(verbose=false)
-        @_shared_instance ||= ::Middleman.server.inst do
+        @_shared_instance ||= ::Middleman::Application.server.inst do
           set :environment, :build
           set :logging,     verbose
         end
