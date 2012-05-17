@@ -65,7 +65,7 @@ module Middleman
       env = (@options[:environment] || "development").to_sym
       is_logging = @options.has_key?(:debug) && @options[:debug]
       
-      app = ::Middleman.server.inst do
+      app = ::Middleman::Application.server.inst do
         set :environment, env
         set :logging, is_logging
       end
@@ -76,7 +76,7 @@ module Middleman
       opts[:app] = app_rack
       opts[:logging] = is_logging
       puts "== The Middleman is standing watch on port #{opts[:port]||4567}"
-      ::Middleman.start_server(opts)
+      ::Middleman::Application.start_server(opts)
     end
     
     # Stop the forked Middleman

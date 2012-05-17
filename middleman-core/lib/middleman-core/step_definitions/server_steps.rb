@@ -47,7 +47,7 @@ Given /^the Server is running$/ do
     set :show_exceptions, false
   }
   
-  @server_inst = Middleman.server.inst do
+  @server_inst = Middleman::Application.server.inst do
     initialize_commands.each do |p|
       instance_exec(&p)
     end

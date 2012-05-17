@@ -262,41 +262,4 @@ module Middleman
     end
   
   end
-  
-  class << self
-    # Create a new Class which is based on Middleman::Application
-    # Used to create a safe sandbox into which extensions and
-    # configuration can be included later without impacting
-    # other classes and instances.
-    #
-    # @return [Class]
-    def server(&block)
-      @@servercounter ||= 0
-      @@servercounter += 1
-      const_set("MiddlemanApplication#{@@servercounter}", Class.new(Middleman::Application))
-    end
-
-    # Creates a new Rack::Server
-    #
-    # @param [Hash] options to pass to Rack::Server.new
-    # @return [Rack::Server]
-    def start_server(options={})
-      opts = {
-        :Port      => options[:port] || 4567,
-        :Host      => options[:host] || "0.0.0.0",
-        :AccessLog => []
-      }
-
-      app_class = options[:app] ||= ::Middleman.server.inst
-      opts[:app] = app_class
-
-      require "webrick"
-      opts[:Logger] = WEBrick::Log::new("/dev/null", 7) if !options[:logging]
-      opts[:server] = 'webrick'
-
-      server = ::Rack::Server.new(opts)
-      server.start
-      server
-    end
-  end
 end
