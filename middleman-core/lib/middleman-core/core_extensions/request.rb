@@ -1,3 +1,7 @@
+# Built on Rack
+require "rack"
+require "rack/file"
+
 module Middleman
   module CoreExtensions
     
@@ -8,9 +12,6 @@ module Middleman
       class << self
         # @private
         def registered(app)
-          # Built on Rack
-          require "rack"
-          require "rack/file"
           
           # CSSPIE HTC File
           ::Rack::Mime::MIME_TYPES['.html'] = 'text/x-component'
@@ -18,7 +19,6 @@ module Middleman
           # Let's serve all HTML as UTF-8
           ::Rack::Mime::MIME_TYPES['.html'] = 'text/html;charset=utf8'
           ::Rack::Mime::MIME_TYPES['.htm'] = 'text/html;charset=utf8'
-        
           
           app.extend ClassMethods
           app.extend ServerMethods
@@ -133,30 +133,8 @@ module Middleman
           @@servercounter += 1
           const_set("MiddlemanApplication#{@@servercounter}", Class.new(Middleman::Application))
         end
-
-        # Creates a new Rack::Server
-        #
-        # @param [Hash] options to pass to Rack::Server.new
-        # @return [Rack::Server]
-        def start_server(options={})
-          opts = {
-            :Port      => options[:port] || 4567,
-            :Host      => options[:host] || "0.0.0.0",
-            :AccessLog => []
-          }
-
-          app_class = options[:app] ||= ::Middleman.server.inst
-          opts[:app] = app_class
-
-          require "webrick"
-          opts[:Logger] = WEBrick::Log::new(nil, 0) if !options[:logging]
-          opts[:server] = 'webrick'
-
-          server = ::Rack::Server.new(opts)
-          server.start
-          server
-        end
       end
+
       # Methods to be mixed-in to Middleman::Application
       module InstanceMethods
         # Backwards-compatibility with old request.path signature
@@ -212,22 +190,6 @@ module Middleman
         end
 
         def call(env)
-          # Keep `__middleman__` messaging to this thread
-          if env["PATH_INFO"] == "/__middleman__"
-            if env["REQUEST_METHOD"] == "POST"
-              req = ::Rack::Request.new(env)
-              if req.params.has_key?("change")
-                self.files.did_change(req.params["change"])
-              elsif req.params.has_key?("delete")
-                self.files.did_delete(req.params["delete"])
-              end
-            end
-            
-            res = ::Rack::Response.new
-            res.status = 200
-            return res.finish
-          end
-          
           dup.call!(env)
         end
         
