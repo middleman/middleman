@@ -115,15 +115,13 @@ module Middleman::CoreExtensions
 
         if result = parse_yaml_front_matter(content)
           data, content = result
-          data = ::Middleman::Util.recursively_enhance(data).freeze
         elsif result = parse_json_front_matter(content)
           data, content = result
-          data = ::Middleman::Util.recursively_enhance(data).freeze
         else
           data = {}
         end
 
-        [data, content]
+        [::Middleman::Util.recursively_enhance(data).freeze, content]
       end
       
       def normalize_path(path)
