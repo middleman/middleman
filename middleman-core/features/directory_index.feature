@@ -46,10 +46,21 @@ Feature: Directory Index
     unknown_link_to: <%= link_to "Unknown", "/unknown.html" %>
     relative_link_to: <%= link_to "Relative", "needs_index.html" %>
     """
+    And a file named "source/link_to/sub.html.erb" with:
+    """
+    link_to: <%= link_to "Needs Index", "/needs_index.html" %>
+    explicit_link_to: <%= link_to "Explicit", "/needs_index/index.html" %>
+    unknown_link_to: <%= link_to "Unknown", "/unknown.html" %>
+    relative_link_to: <%= link_to "Relative", "../needs_index.html" %>
+    """
     And the Server is running at "indexable-app"
     When I go to "/link_to/"
     Then I should see 'link_to: <a href="/needs_index/">Needs Index</a>'
     Then I should see 'explicit_link_to: <a href="/needs_index/index.html">Explicit</a>'
     Then I should see 'unknown_link_to: <a href="/unknown.html">Unknown</a>'
-    # Relative links aren't touched
-    Then I should see 'relative_link_to: <a href="needs_index.html">Relative</a>'
+    Then I should see 'relative_link_to: <a href="/needs_index/">Relative</a>'
+    When I go to "/link_to/sub/"
+    Then I should see 'link_to: <a href="/needs_index/">Needs Index</a>'
+    Then I should see 'explicit_link_to: <a href="/needs_index/index.html">Explicit</a>'
+    Then I should see 'unknown_link_to: <a href="/unknown.html">Unknown</a>'
+    Then I should see 'relative_link_to: <a href="/needs_index/">Relative</a>'

@@ -140,7 +140,7 @@ module Middleman
       # just foo. Best for linking.
       # @return [String]
       def url
-        '/' + destination_path.sub(/#{Regexp.escape(app.index_file)}$/, '')
+        ('/' + destination_path).sub(/\/#{Regexp.escape(app.index_file)}$/, '/')
       end
     end
   end

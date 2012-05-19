@@ -20,6 +20,8 @@ module Middleman
           # app.helpers ::Padrino::Helpers::TranslationHelpers
 
           app.helpers Helpers
+
+          app.set :relative_links, false
         end
         alias :included :registered
       end
@@ -106,15 +108,62 @@ module Middleman
           "#{result_path}"
         end
 
+        # Overload the regular link_to to be sitemap-aware - if you
+        # reference a source path, either absolutely or relatively,
+        # you'll get that resource's nice URL. Also, there is a
+        # :relative option which, if set to true, will produce
+        # relative URLs instead of absolute URLs. You can also add
+        #
+        # set :relative_links, true
+        #
+        # to config.rb to have all links default to relative.
         def link_to(*args, &block)
           url_arg_index = block_given? ? 0 : 1
+          options_index = block_given? ? 1 : 2
+
           if url = args[url_arg_index]
-            # Only try to work with absolute URLs
-            if url.start_with? '/'
+            options = args[options_index] || {}
+            relative = options.delete(:relative)
+            
+
+            if url.include? '://'
+              raise "Can't use the relative option with an external URL" if relative
+            else
+              # Handle relative urls
+              current_dir = Pathname('/' + current_resource.path).dirname
+              path = Pathname(url)
+
+              url = current_dir.join(path).to_s if path.relative?
+
               resource = sitemap.find_resource_by_path(url)
-              args[url_arg_index] = resource.url if resource
+              
+              # Allow people to turn on relative paths for all links with set :relative_links, true
+              # but still override on a case by case basis with the :relative parameter.
+              effective_relative = relative || false
+              if relative.nil? && relative_links
+                effective_relative = true
+              end
+
+              if resource
+                if effective_relative
+                  resource_url = resource.url
+                  new_url = Pathname(resource_url).relative_path_from(current_dir).to_s
+
+                  # Put back the trailing slash to avoid unnecessary Apache redirects
+                  if resource_url.end_with?('/') && !new_url.end_with?('/')
+                    new_url << '/'
+                  end
+                else
+                  new_url = resource.url
+                end
+
+                args[url_arg_index] = new_url
+              else
+                raise "No resource exists at #{url}" if relative
+              end
             end
           end
+
           super(*args, &block)
         end
       end
