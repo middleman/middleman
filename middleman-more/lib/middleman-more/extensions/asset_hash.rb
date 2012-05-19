@@ -5,12 +5,13 @@ module Middleman::Extensions
       def registered(app, options)
         exts = options[:exts] || %w(.ico .manifest .jpg .jpeg .png .gif .js .css)
 
+        ignore = Array(options[:ignore])
+
         app.ready do
           sitemap.register_resource_list_manipulator(
             :asset_hash, 
-            AssetHashManager.new(self, exts)
+            AssetHashManager.new(self, exts, ignore)
           )
-
           use Middleware, :exts => exts, :middleman_app => self
         end
       end
@@ -18,16 +19,17 @@ module Middleman::Extensions
     end
 
     class AssetHashManager
-      def initialize(app, exts)
+      def initialize(app, exts, ignore)
         @app = app
         @exts = exts
+        @ignore = ignore
       end
       
       # Update the main sitemap resource list
       # @return [void]
       def manipulate_resource_list(resources)
         resources.each do |resource|
-          if @exts.include? resource.ext
+          if @exts.include?(resource.ext) && @ignore.none? {|ignore| resource.path =~ ignore }
             # figure out the path Sprockets would use for this asset
             if resource.ext == '.js'
               sprockets_path = resource.path.sub(@app.js_dir,'').sub(/^\//,'')
