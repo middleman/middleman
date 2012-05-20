@@ -46,7 +46,7 @@ module Middleman::Extensions
             next
           end
           
-          resource.destination_path = resource.path.chomp(File.extname(index_file)) + new_index_path
+          resource.destination_path = resource.destination_path.chomp(File.extname(index_file)) + new_index_path
         end
       end
     end
