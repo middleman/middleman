@@ -3,7 +3,7 @@ module Middleman::Extensions
   module AssetHash
     class << self
       def registered(app, options)
-        exts = options[:exts] || %w(.ico .manifest .jpg .jpeg .png .gif .js .css)
+        exts = options[:exts] || %w(.jpg .jpeg .png .gif .js .css)
 
         ignore = Array(options[:ignore])
 
