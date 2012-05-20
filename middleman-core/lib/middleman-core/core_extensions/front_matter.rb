@@ -15,14 +15,16 @@ module Middleman::CoreExtensions
         # Parsing JSON frontmatter
         require "active_support/json"
       
-        app.after_configuration do
-          ::Middleman::Sitemap::Resource.send :include, ResourceInstanceMethods
-      
-          app.send :include, InstanceMethods
+        app.send :include, InstanceMethods
         
+        app.before_configuration do
           files.changed { |file| frontmatter_manager.clear_data(file) }
           files.deleted { |file| frontmatter_manager.clear_data(file) }
-        
+        end
+
+        app.after_configuration do
+          ::Middleman::Sitemap::Resource.send :include, ResourceInstanceMethods
+
           sitemap.register_resource_list_manipulator(
             :frontmatter,
             frontmatter_manager
@@ -54,9 +56,15 @@ module Middleman::CoreExtensions
         @cache[p] ||= frontmatter_and_content(p)
       end
       
-      def clear_data(path)
-        p = normalize_path(File.expand_path(path, @app.root))
-        @cache.delete(p)
+      def clear_data(file)
+        # Copied from Sitemap::Store#file_to_path, but without
+        # removing the file extension
+        file = File.expand_path(file, @app.root)
+        prefix = @app.source_dir.sub(/\/$/, "") + "/"
+        return unless file.include?(prefix)
+        path = file.sub(prefix, "")
+
+        @cache.delete(path)
       end
       
       # Parse YAML frontmatter out of a string
@@ -115,15 +123,13 @@ module Middleman::CoreExtensions
 
         if result = parse_yaml_front_matter(content)
           data, content = result
-          data = ::Middleman::Util.recursively_enhance(data).freeze
         elsif result = parse_json_front_matter(content)
           data, content = result
-          data = ::Middleman::Util.recursively_enhance(data).freeze
         else
           data = {}
         end
 
-        [data, content]
+        [::Middleman::Util.recursively_enhance(data).freeze, content]
       end
       
       def normalize_path(path)
