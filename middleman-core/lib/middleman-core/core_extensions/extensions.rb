@@ -36,7 +36,7 @@ module Middleman
       # Register extension
       class << self
         # @private
-        def included(app)
+        def registered(app)
           # Using for version parsing
           require "rubygems"
 
@@ -50,6 +50,7 @@ module Middleman
           app.send :include, InstanceMethods
           app.delegate :configure, :to => :"self.class"
         end
+        alias :included :registered
       end
 
       # Class methods

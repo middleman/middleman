@@ -1,4 +1,4 @@
-require "middleman-core/watcher"
+require "middleman-core/preview_server"
 
 # CLI Module
 module Middleman::Cli
@@ -50,7 +50,7 @@ module Middleman::Cli
       }
       
       puts "== The Middleman is loading"
-      Middleman::Watcher.start(params)
+      Middleman::PreviewServer.start(params)
     end
   end
 
