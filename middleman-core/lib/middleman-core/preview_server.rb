@@ -86,7 +86,7 @@ module Middleman
             return reload if needs_to_reload?(added_and_modified)
 
             # Otherwise forward to Middleman
-            paths.each do |path|
+            added_and_modified.each do |path|
               @app.files.did_change(path)
             end
           end
