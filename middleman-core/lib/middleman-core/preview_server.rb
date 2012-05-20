@@ -13,8 +13,6 @@ module Middleman
       def start(options={})
         require "webrick"
         
-        @first_run ||= true
-        
         app = ::Middleman::Application.server.inst do
           if options[:environment]
             set :environment, options[:environment]
@@ -26,8 +24,7 @@ module Middleman
         end
     
         puts "== The Middleman is standing watch on port #{options[:port]||4567}"
-          
-        @webrick_is_running ||= false
+
         @webrick ||= setup_webrick(
           options[:host]  || "0.0.0.0",
           options[:port]  || DEFAULT_PORT,
@@ -36,8 +33,9 @@ module Middleman
         
         mount_instance(app)
         
-        if @first_run
-          @first_run = false
+        @initialized ||= false
+        unless @initialized
+          @initialized = true
           
           register_signal_handlers unless ::Middleman::WINDOWS
           
@@ -71,8 +69,6 @@ module Middleman
     private
       
       def start_file_watcher
-        preview_server = self
-
         # Watcher Library
         require "listen"
     
