@@ -123,7 +123,7 @@ module Middleman
     include Middleman::CoreExtensions::Extensions
     
     # Basic Rack Request Handling
-    register Middleman::CoreExtensions::Request
+    include Middleman::CoreExtensions::Request
   
     # Handle exceptions
     register Middleman::CoreExtensions::ShowExceptions
