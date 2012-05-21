@@ -5,7 +5,8 @@ module Middleman::Extensions
       def registered(app, options)
         exts = options[:exts] || %w(.jpg .jpeg .png .gif .js .css)
 
-        ignore = Array(options[:ignore])
+        # Allow specifying regexes to ignore, plus always ignore apple touch icons
+        ignore = Array(options[:ignore]) << /^apple-touch-icon/
 
         app.ready do
           sitemap.register_resource_list_manipulator(
