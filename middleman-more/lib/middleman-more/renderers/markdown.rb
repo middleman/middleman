@@ -26,7 +26,10 @@ module Middleman
           app.after_configuration do
 
             # Look for the user's preferred engine
-            unless markdown_engine.nil?
+            if markdown_engine == :redcarpet
+              require "middleman-more/renderers/redcarpet"
+              ::Tilt.prefer(::Middleman::Renderers::RedcarpetTemplate)
+            elsif markdown_engine.nil?
               
               # Map symbols to classes
               markdown_engine_klass = if markdown_engine.is_a? Symbol
@@ -37,14 +40,6 @@ module Middleman
                 markdown_engine_prefix
               end
               
-              if markdown_engine == :redcarpet
-                # Forcably disable Redcarpet1 support.
-                # Tilt defaults to this if available, but the compat
-                # layer disables extensions.
-                require "redcarpet"
-                Object.send(:remove_const, :RedcarpetCompat) if defined? ::RedcarpetCompat
-              end
-         
               # Tell tilt to use that engine
               ::Tilt.prefer(markdown_engine_klass)
             end
@@ -54,5 +49,6 @@ module Middleman
         alias :included :registered
       end
     end
+    
   end
 end

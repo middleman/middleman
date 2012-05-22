@@ -9,7 +9,7 @@ Feature: Markdown support
   Scenario: Markdown extensions (Maruku)
     Given the Server is running at "markdown-app"
     When I go to "/smarty_pants.html"
-    Then I should see "&#8220;"
+    Then I should see "&quot;"
     When I go to "/no_intra_emphasis.html"
     Then I should not see "<em>"
     When I go to "/tables.html"

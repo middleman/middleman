@@ -14,12 +14,15 @@ Feature: Markdown support
                      :strikethrough => true,
                      :lax_html_blocks => true,
                      :space_after_headers => true,
-                     :superscript => true#, :smartypants => true
+                     :with_toc_data => true,
+                     :superscript => true,
+                     :smartypants => true,
+                     :hard_wrap => true
                      
       """
     Given the Server is running at "markdown-app"
-    # When I go to "/smarty_pants.html"
-    # Then I should see "&#8220;"
+    When I go to "/smarty_pants.html"
+    Then I should see "&ldquo;"
     When I go to "/no_intra_emphasis.html"
     Then I should not see "<em>"
     When I go to "/tables.html"
@@ -34,4 +37,7 @@ Feature: Markdown support
     Then I should not see "<h1>"
     When I go to "/superscript.html"
     Then I should see "<sup>"
-    
+    When I go to "/with_toc_data.html"
+    Then I should see "toc_0"
+    When I go to "/hard_wrap.html"
+    Then I should see "br"
