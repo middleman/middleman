@@ -69,6 +69,8 @@ module Middleman
         end
         result.deep_merge!(local_meta)
 
+        result[:blocks] = result[:blocks].flatten.compact
+        
         result
       end
 
@@ -125,7 +127,7 @@ module Middleman
           app.data.store("page", md[:page])
         end
 
-        md[:blocks].flatten.compact.each do |block|
+        md[:blocks].each do |block|
           app.instance_eval(&block)
         end
       

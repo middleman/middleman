@@ -35,7 +35,7 @@ module Middleman::CoreExtensions
         
             data = {}
             %w(layout layout_engine).each do |opt|
-              data[opt.to_sym] = fmdata[opt] if fmdata[opt]
+              data[opt.to_sym] = fmdata[opt] unless fmdata[opt].nil?
             end
           
             { :options => data, :page => fmdata }
