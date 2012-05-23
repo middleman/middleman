@@ -54,8 +54,8 @@ module Middleman
         def evaluate(context, locals, &block)
           begin
             super
-          rescue Sass::SyntaxError => e
-            Sass::SyntaxError.exception_to_css(e, :full_exception => true)
+          rescue ::Sass::SyntaxError => e
+            ::Sass::SyntaxError.exception_to_css(e, :full_exception => true)
           end
         end
   
