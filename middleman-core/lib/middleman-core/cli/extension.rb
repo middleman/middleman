@@ -12,7 +12,7 @@ module Middleman::Cli
     # Required path for the new project to be generated
     argument :name, :type => :string
 
-    desc "extension NAME [options]", "Create Middleman extension scaffold NAME"
+    desc "extension [options]", "Create Middleman extension scaffold NAME"
     
     # The extension task
     # @param [String] name
