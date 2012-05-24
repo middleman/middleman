@@ -67,6 +67,12 @@ module Middleman::CoreExtensions
         @cache.delete(path)
       end
       
+      YAML_ERRORS = [ Exception, ArgumentError ]
+      
+      if defined?(Psych) && defined?(Psych::SyntaxError)
+        YAML_ERRORS << Psych::SyntaxError
+      end
+      
       # Parse YAML frontmatter out of a string
       # @param [String] content
       # @return [Array<Hash, String>]
@@ -77,7 +83,7 @@ module Middleman::CoreExtensions
 
           begin
             data = YAML.load($1)
-          rescue => e
+          rescue *YAML_ERRORS => e
             puts "YAML Exception: #{e.message}"
             return false
           end
