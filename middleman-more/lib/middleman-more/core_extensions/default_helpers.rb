@@ -7,7 +7,6 @@ module Middleman
       class << self
         # @private
         def registered(app)
-          require "active_support/core_ext/integer/inflections"
           require 'padrino-helpers'
       
           app.helpers ::Padrino::Helpers::OutputHelpers

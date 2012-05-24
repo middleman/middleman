@@ -27,4 +27,8 @@ Gem::Specification.new do |s|
   s.add_dependency("sprockets", ["~> 2.1"])
   s.add_dependency("sprockets-sass", ["~> 0.8.0"])
   s.add_dependency("maruku", ["~> 0.6.0"])
+  
+  # i18n
+  s.add_dependency("i18n", ["~> 0.6.0"])
+  s.add_dependency("padrino-helpers", ["~> 0.10.6"])
 end

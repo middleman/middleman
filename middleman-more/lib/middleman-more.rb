@@ -43,6 +43,18 @@ module Middleman::More
       # Setup Core Extensions
       ###
 
+      # Setup default helpers
+      require "middleman-more/core_extensions/default_helpers"
+      Middleman::Application.register Middleman::CoreExtensions::DefaultHelpers
+
+      # Setup asset path pipeline
+      require "middleman-more/core_extensions/assets"
+      Middleman::Application.register Middleman::CoreExtensions::Assets
+
+      # i18n
+      require "middleman-more/core_extensions/i18n"
+      Middleman::Application.register Middleman::CoreExtensions::I18n
+      
       # Compass framework
       require "middleman-more/core_extensions/compass"
       Middleman::Application.register Middleman::CoreExtensions::Compass

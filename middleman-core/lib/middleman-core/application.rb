@@ -3,6 +3,7 @@ require "tilt"
 
 # Use ActiveSupport JSON
 require "active_support/json"
+require "active_support/core_ext/integer/inflections"
 
 # Simple callback library
 require "middleman-core/vendor/hooks-0.2.0/lib/hooks"
@@ -146,17 +147,8 @@ module Middleman
     # Setup external helpers
     register Middleman::CoreExtensions::ExternalHelpers
   
-    # Setup default helpers
-    register Middleman::CoreExtensions::DefaultHelpers
-  
-    # Setup asset path pipeline
-    register Middleman::CoreExtensions::Assets
-  
     # with_layout and page routing
     register Middleman::CoreExtensions::Routing
-  
-    # i18n
-    register Middleman::CoreExtensions::I18n
   
     # Initialize the Middleman project
     def initialize(&block)
