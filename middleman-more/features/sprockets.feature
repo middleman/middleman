@@ -35,6 +35,28 @@ Feature: Sprockets
     Given the Server is running at "sprockets-app2"
     When I go to "/stylesheets/sprockets_base2.css"
     Then I should see "hello"
+    
+  Scenario: Sprockets CSS require //require (updates)
+    Given the Server is running at "sprockets-app2"
+    When I go to "/stylesheets/sprockets_base1.css"
+    Then I should see "hello"
+    And the file "source/stylesheets/sprockets_sub.css.scss" has the contents
+      """
+      hola { mundo: "hola"; }
+      """
+    When I go to "/stylesheets/sprockets_base1.css"
+    Then I should see "hola"
+    
+  Scenario: Sprockets CSS require @import (updates)
+    Given the Server is running at "sprockets-app2"
+    When I go to "/stylesheets/sprockets_base2.css"
+    Then I should see "hello"
+    And the file "source/stylesheets/sprockets_sub.css.scss" has the contents
+      """
+      hola { mundo: "hola"; }
+      """
+    When I go to "/stylesheets/sprockets_base2.css"
+    Then I should see "hola"
 
   Scenario: Sprockets CSS require with custom :css_dir //require
     Given the Server is running at "sprockets-app"

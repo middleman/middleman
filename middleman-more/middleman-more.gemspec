@@ -28,4 +28,3 @@ Gem::Specification.new do |s|
   s.add_dependency("sprockets-sass", ["~> 0.8.0"])
   s.add_dependency("maruku", ["~> 0.6.0"])
 end
-
