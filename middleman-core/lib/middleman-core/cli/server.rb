@@ -1,5 +1,3 @@
-require "middleman-core/preview_server"
-
 # CLI Module
 module Middleman::Cli
   
@@ -34,6 +32,9 @@ module Middleman::Cli
     
     # Start the server
     def server
+      require "middleman-core"
+      require "middleman-core/preview_server"
+      
       if !ENV["MM_ROOT"]
         puts "== Could not find a Middleman project config.rb"
         puts "== Treating directory as a static site to be served"
@@ -50,7 +51,7 @@ module Middleman::Cli
       }
       
       puts "== The Middleman is loading"
-      Middleman::PreviewServer.start(params)
+      ::Middleman::PreviewServer.start(params)
     end
   end
 

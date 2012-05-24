@@ -4,21 +4,13 @@
 libdir = File.expand_path(File.join(File.dirname(File.dirname(__FILE__)), "lib"))
 $LOAD_PATH.unshift(libdir) unless $LOAD_PATH.include?(libdir)
 
-# Setup RubyGems
-require "rubygems"
+moredir = File.expand_path(File.join(File.dirname(File.dirname(libdir)), "middleman-more", "lib", "middleman-more"))
+$LOAD_PATH.unshift(moredir) unless $LOAD_PATH.include?(moredir)
 
-# Core Pathname library used for traversal
-require "pathname"
-
-# Recursive method to find config.rb
-def locate_middleman_root!(cwd = Pathname.new(Dir.pwd))
-  return cwd.to_s if File.exists?(File.join(cwd, 'config.rb'))
-  return false if cwd.root?
-  locate_middleman_root!(cwd.parent)
-end
+require "middleman-core/cli"
 
 # Only look for config.rb if MM_ROOT isn't set
-if !ENV["MM_ROOT"] && found_path = locate_middleman_root!
+if !ENV["MM_ROOT"] && found_path = ::Middleman.locate_root
   ENV["MM_ROOT"] = found_path
 end
 
@@ -30,30 +22,19 @@ if ENV["MM_ROOT"]
   require 'bundler/setup' if File.exists?(ENV['BUNDLE_GEMFILE'])
 end
 
+# Automatically discover extensions in RubyGems
+require "middleman-core/extensions"
+::Middleman.load_extensions_in_path
+
 # Default command is server
 ARGV.unshift("server") if ARGV.length < 1 || ARGV.first.include?("-")
 
-begin
-  # Local
-  require File.expand_path(File.join(File.dirname(File.dirname(libdir)), "middleman-more", "lib", "middleman-more"))
-rescue LoadError
-  begin
-    # Rubygems
-    require "middleman-more"
-  rescue LoadError
-    # Require Middleman
-    require 'middleman-core'
+# Start the CLI
+if ENV["MM_ROOT"]
+  # Change directory to the root
+  Dir.chdir(ENV["MM_ROOT"]) do
+    Middleman::Cli::Base.start
   end
-end
-
-# Automatically discover extensions in RubyGems
-Middleman.load_extensions_in_path
-
-require "middleman-core/cli"
-
-# Change directory to the root
-Dir.chdir(ENV["MM_ROOT"] || Dir.pwd) do
-  
-  # Start the CLI
+else
   Middleman::Cli::Base.start
 end

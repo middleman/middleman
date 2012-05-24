@@ -1,9 +1,3 @@
-# Use Rack::Test for inspecting a running server for output
-require "rack"
-require "rack/test"
-
-require 'find'
-
 # CLI Module
 module Middleman::Cli
   
@@ -37,6 +31,12 @@ module Middleman::Cli
       if !ENV["MM_ROOT"]
         raise Thor::Error, "Error: Could not find a Middleman project config, perhaps you are in the wrong folder?"
       end
+      
+      # Use Rack::Test for inspecting a running server for output
+      require "rack"
+      require "rack/test"
+
+      require 'find'
       
       self.class.shared_instance(options["verbose"] || false)
       
