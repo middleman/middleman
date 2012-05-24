@@ -7,7 +7,6 @@
 * Remove old 1.x mm- binaries and messaging
 * New default layout functionality: https://github.com/middleman/middleman/issues/165
 * Enable chained templates outside of sprockets (file.html.markdown.erb)
-* Finally support Compass in Sprockets! Thanks to @xdite and @petebrowne
 * Sitemap object representing the known world
 * FileWatcher proxies file change events
 * Unified callback solution
@@ -38,13 +37,15 @@
 * `:asset_hash` extension that generates unique-by-content filenames for assets and rewrites references to use those filenames, so you can set far-future expires on your assets.
 * Removed the `--relative` CLI option.
 * Properly output Compass-generated sprited images.
-* Include vendored assets in sprockets path.
 * Switch built-in CSS compressor to Rainpress.
 * Automatically load helper modules from `helpers/`, like Rails.
 * `ignore` and `page` both work with file globs or regexes.
 * `layout`, `ignore`, and `directory_index` can be set from front matter.
 * JavaScript and CSS are minified no matter where they are in the site, including in inline code blocks.
 * Files with just a template extension get output with the correct exension (foo.erb => foo.html)
+* Include vendored assets in sprockets path.
+* Finally support Compass in Sprockets! Thanks to @xdite and @petebrowne
+* Moved Sprockets into an extension
 
 2.0.14
 ====

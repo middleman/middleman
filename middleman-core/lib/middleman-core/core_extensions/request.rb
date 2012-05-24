@@ -14,7 +14,7 @@ module Middleman
         def registered(app)
           
           # CSSPIE HTC File
-          ::Rack::Mime::MIME_TYPES['.html'] = 'text/x-component'
+          ::Rack::Mime::MIME_TYPES['.htc'] = 'text/x-component'
 
           # Let's serve all HTML as UTF-8
           ::Rack::Mime::MIME_TYPES['.html'] = 'text/html;charset=utf8'
@@ -152,23 +152,19 @@ module Middleman
       # Methods to be mixed-in to Middleman::Application
       module InstanceMethods
         # Backwards-compatibility with old request.path signature
-        def request
-          Thread.current[:request]
-        end
+        attr_reader :request
 
         # Accessor for current path
         # @return [String]
-        def current_path
-          Thread.current[:current_path]
-        end
+        attr_reader :current_path
 
         # Set the current path
         #
         # @param [String] path The new current path
         # @return [void]
         def current_path=(path)
-          Thread.current[:current_path] = path
-          Thread.current[:request] = ::Thor::CoreExt::HashWithIndifferentAccess.new({ 
+          @current_path = path
+          @request = ::Thor::CoreExt::HashWithIndifferentAccess.new({ 
             :path   => path, 
             :params => req ? ::Thor::CoreExt::HashWithIndifferentAccess.new(req.params) : {} 
           })
@@ -178,30 +174,15 @@ module Middleman
         def map(*args, &block); self.class.map(*args, &block); end
         
         # Rack env
-        def env
-          Thread.current[:env]
-        end
-        def env=(value)
-          Thread.current[:env] = value
-        end
+        attr_accessor :env
 
         # Rack request
         # @return [Rack::Request]
-        def req
-          Thread.current[:req]
-        end
-        def req=(value)
-          Thread.current[:req] = value
-        end
+        attr_accessor :req
 
         # Rack response
         # @return [Rack::Response]
-        def res
-          Thread.current[:res]
-        end
-        def res=(value)
-          Thread.current[:res] = value
-        end
+        attr_accessor :res
 
         def call(env)
           dup.call!(env)
@@ -243,13 +224,14 @@ module Middleman
         # @param [Rack::Response] res
         def process_request(env, req, res)
           start_time = Time.now
+          @current_path = nil
 
           # Normalize the path and add index if we're looking at a directory
           original_path = URI.decode(env["PATH_INFO"].dup)
           if original_path.respond_to? :force_encoding
             original_path.force_encoding('UTF-8')
           end
-          request_path  = full_path(original_path)
+          request_path = full_path(original_path)
 
           # Run before callbacks
           run_hook :before
@@ -268,16 +250,19 @@ module Middleman
           # If this path is a static file, send it immediately
           return send_file(resource.source_file, env, res) unless resource.template?
 
-          # Set the current path for use in helpers
-          self.current_path = request_path.dup
-
+          current_path = request_path.dup
+          
           # Set a HTTP content type based on the request's extensions
           content_type(res, resource.mime_type)
 
           begin
             # Write out the contents of the page
-            res.write resource.render
+            output = resource.render do
+              self.req = req
+              self.current_path = current_path
+            end
 
+            res.write output
             # Valid content is a 200 status
             res.status = 200
           rescue Middleman::CoreExtensions::Rendering::TemplateNotFound => e
@@ -286,7 +271,7 @@ module Middleman
           end
 
           # End the request
-          puts "== Finishing Request: #{self.current_path} (#{(Time.now - start_time).round(2)}s)" if logging?
+          puts "== Finishing Request: #{request_path} (#{(Time.now - start_time).round(2)}s)" if logging?
           halt res.finish
         end
       

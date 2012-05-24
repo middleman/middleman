@@ -110,7 +110,7 @@ module Middleman
     end
 
     # Where a given Gem::Specification has a specific file. Used
-    # to discover extensions and Sprockets-supporting gems.
+    # to discover extensions.
     #
     # @private
     # @param [Gem::Specification] spec
