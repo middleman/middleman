@@ -15,7 +15,7 @@ module Middleman
         
         app = ::Middleman::Application.server.inst do
           if options[:environment]
-            set :environment, options[:environment]
+            set :environment, options[:environment].to_sym
           end
           
           if options[:debug]
