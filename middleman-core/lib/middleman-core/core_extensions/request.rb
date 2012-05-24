@@ -22,6 +22,8 @@ module Middleman
           
           app.extend ClassMethods
           app.extend ServerMethods
+          
+          Middleman.extend CompatibleClassMethods
       
           # Include instance methods
           app.send :include, InstanceMethods
@@ -132,6 +134,18 @@ module Middleman
           @@servercounter ||= 0
           @@servercounter += 1
           const_set("MiddlemanApplication#{@@servercounter}", Class.new(Middleman::Application))
+        end
+      end
+      
+      module CompatibleClassMethods
+        # Create a new Class which is based on Middleman::Application
+        # Used to create a safe sandbox into which extensions and
+        # configuration can be included later without impacting
+        # other classes and instances.
+        #
+        # @return [Class]
+        def server(&block)
+          ::Middleman::Application.server(&block)
         end
       end
 
