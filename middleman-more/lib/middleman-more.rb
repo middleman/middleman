@@ -52,8 +52,20 @@ module Middleman::More
       Middleman::Application.register Middleman::CoreExtensions::Assets
 
       # i18n
-      require "middleman-more/core_extensions/i18n"
-      Middleman::Application.register Middleman::CoreExtensions::I18n
+      require "i18n"
+      app.after_configuration do
+        # This is for making the tests work - since the tests
+        # don't completely reload middleman, I18n.load_path can get
+        # polluted with paths from other test app directories that don't 
+        # exist anymore.
+        ::I18n.load_path.delete_if {|path| path =~ %r{tmp/aruba}}
+        ::I18n.reload!
+      end
+      
+      Middleman::Extensions.register(:i18n) do
+        require "middleman-more/core_extensions/i18n"
+        Middleman::CoreExtensions::I18n
+      end
       
       # Compass framework
       require "middleman-more/core_extensions/compass"

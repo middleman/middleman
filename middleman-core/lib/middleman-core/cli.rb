@@ -2,18 +2,8 @@
 require 'thor'
 require "thor/group"
 
-# Core Pathname library used for traversal
-require "pathname"
-
 # CLI Module
 module Middleman
-  
-  # Recursive method to find config.rb
-  def self.locate_root(cwd = Pathname.new(Dir.pwd))
-    return cwd.to_s if File.exists?(File.join(cwd, 'config.rb'))
-    return false if cwd.root?
-    locate_root(cwd.parent)
-  end
 
   module Cli
     

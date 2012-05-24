@@ -100,9 +100,6 @@ module Middleman
         # @param [Symbol, Module] ext Which extension to activate
         # @return [void]
         def activate(ext, options={}, &block)
-          # Make :i18n a no-op
-          return if ext == :i18n
-      
           ext_module = if ext.is_a?(Module)
             ext
           else

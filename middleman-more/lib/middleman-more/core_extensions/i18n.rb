@@ -1,38 +1,31 @@
-# i18n Namespace
 module Middleman
   module CoreExtensions
+    
+    # i18n Namespace
     module I18n
 
       # Setup extension
       class << self
     
         # Once registerd
-        def registered(app)
+        def registered(app, options={})
           app.set :locales_dir, "locales"
-
-          app.send :include, InstanceMethods
       
           # Needed for helpers as well
           app.after_configuration do
-            # This is for making the tests work - since the tests
-            # don't completely reload middleman, I18n.load_path can get
-            # polluted with paths from other test app directories that don't 
-            # exist anymore.
-            ::I18n.load_path.delete_if {|path| path =~ %r{tmp/aruba}}
             ::I18n.load_path += Dir[File.join(root, locales_dir, "*.yml")]
             ::I18n.reload!
+            
+            Localizer.new(self, options)
           end
         end
         alias :included :registered
       end
   
       class Localizer
-        def initialize(app)
+        def initialize(app, options={})
           @app = app
           @maps = {}
-        end
-    
-        def setup(options)
           @options = options
       
           @lang_map      = @options[:lang_map]      || {}
@@ -63,7 +56,7 @@ module Middleman
       
           @app.sitemap.register_resource_list_manipulator(
             :i18n,
-            @app.i18n
+            self
           )
         end
     
@@ -123,22 +116,6 @@ module Middleman
           end
       
           resources + new_resources
-        end
-      end
-  
-      # Frontmatter class methods
-      module InstanceMethods
-    
-        # Initialize the i18n
-        def i18n
-          @_i18n ||= Localizer.new(self)
-        end
-    
-        # Main i18n API
-        def localize(options={})
-          settings.after_configuration do
-            i18n.setup(options)
-          end
         end
       end
     end

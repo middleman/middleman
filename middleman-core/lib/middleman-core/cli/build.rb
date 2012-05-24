@@ -1,3 +1,5 @@
+require "middleman-core"
+
 # CLI Module
 module Middleman::Cli
   

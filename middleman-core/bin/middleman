@@ -7,10 +7,18 @@ $LOAD_PATH.unshift(libdir) unless $LOAD_PATH.include?(libdir)
 moredir = File.expand_path(File.join(File.dirname(File.dirname(libdir)), "middleman-more", "lib", "middleman-more"))
 $LOAD_PATH.unshift(moredir) unless $LOAD_PATH.include?(moredir)
 
-require "middleman-core/cli"
+# Core Pathname library used for traversal
+require "pathname"
+
+# Recursive method to find config.rb
+def locate_root(cwd = Pathname.new(Dir.pwd))
+  return cwd.to_s if File.exists?(File.join(cwd, 'config.rb'))
+  return false if cwd.root?
+  locate_root(cwd.parent)
+end
 
 # Only look for config.rb if MM_ROOT isn't set
-if !ENV["MM_ROOT"] && found_path = ::Middleman.locate_root
+if !ENV["MM_ROOT"] && found_path = locate_root
   ENV["MM_ROOT"] = found_path
 end
 
@@ -28,6 +36,8 @@ require "middleman-core/extensions"
 
 # Default command is server
 ARGV.unshift("server") if ARGV.length < 1 || ARGV.first.include?("-")
+
+require "middleman-core/cli"
 
 # Start the CLI
 if ENV["MM_ROOT"]

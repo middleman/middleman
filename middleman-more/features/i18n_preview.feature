@@ -5,7 +5,7 @@ Feature: i18n Preview
     Given a fixture app "i18n-test-app"
     And a file named "config.rb" with:
       """
-      localize
+      activate :i18n
       """
     Given the Server is running at "i18n-test-app"
     When I go to "/"
@@ -23,7 +23,7 @@ Feature: i18n Preview
     Given a fixture app "i18n-test-app"
     And a file named "config.rb" with:
       """
-      localize :path => "/lang_:locale/"
+      activate :i18n, :path => "/lang_:locale/"
       """
     Given the Server is running at "i18n-test-app"
     When I go to "/"
@@ -42,7 +42,7 @@ Feature: i18n Preview
     Given a fixture app "i18n-alt-root-app"
     And a file named "config.rb" with:
       """
-      localize :templates_dir => "lang_data"
+      activate :i18n, :templates_dir => "lang_data"
       """
     Given the Server is running at "i18n-alt-root-app"
     When I go to "/"
@@ -60,7 +60,7 @@ Feature: i18n Preview
     Given a fixture app "i18n-test-app"
     And a file named "config.rb" with:
       """
-      localize :lang_map => { :en => :english, :es => :spanish }
+      activate :i18n, :lang_map => { :en => :english, :es => :spanish }
       """
     Given the Server is running at "i18n-test-app"
     When I go to "/"
@@ -78,7 +78,7 @@ Feature: i18n Preview
     Given a fixture app "i18n-test-app"
     And a file named "config.rb" with:
       """
-      localize :mount_at_root => false
+      activate :i18n, :mount_at_root => false
       """
     Given the Server is running at "i18n-test-app"
     When I go to "/en/index.html"
@@ -98,7 +98,7 @@ Feature: i18n Preview
     Given a fixture app "i18n-test-app"
     And a file named "config.rb" with:
       """
-      localize :langs => [:en]
+      activate :i18n, :langs => [:en]
       """
     Given the Server is running at "i18n-test-app"
     When I go to "/"
