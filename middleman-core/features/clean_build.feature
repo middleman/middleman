@@ -16,19 +16,6 @@ Feature: Build Clean
       | build/should_be_ignored3.html |
     And the file "build/index.html" should contain "Comment in layout"
 
-  Scenario: Clean an app with directory indexes
-    Given a successfully built app at "clean-dir-app"
-    Then the following files should exist:
-      | build/about/index.html        |
-    Given a successfully built app at "clean-dir-app" with flags "--clean"
-    Then the following files should exist:
-      | build/about/index.html        |
-    
-  Scenario: Clean build an app that's never been built
-    Given a successfully built app at "clean-dir-app" with flags "--clean"
-    Then the following files should exist:
-      | build/about/index.html        |
-
   Scenario: Clean build an app with newly ignored files and a nested output directory
     Given a built app at "clean-nested-app"
     Then a directory named "sub/dir" should exist

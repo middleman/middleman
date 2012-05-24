@@ -1,10 +1,10 @@
 Feature: Wildcards in Page helper
 
   Scenario: Setting the layout for a folder
-    Given the Server is running at "wildcard-app"
-    When I go to "/index.html"
+    Given the Server is running at "wildcard-directory-index-app"
+    When I go to "/"
     Then I should see "Normal Layout"
-    When I go to "/admin/index.html"
+    When I go to "/admin/"
     Then I should see "Admin Layout"
-    When I go to "/admin/page.html"
+    When I go to "/admin/page/"
     Then I should see "Admin Layout"

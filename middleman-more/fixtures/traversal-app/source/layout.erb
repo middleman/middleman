@@ -1,0 +1,21 @@
+Path: <%= current_page.path %>
+
+Source: <%= current_page.source_file.sub(root + "/", "") %>
+
+<% if current_page.parent %>
+  Parent: <%= current_page.parent.path %>
+<% end %>
+
+<% current_page.children.each do |p| %>
+  Child: <%= p.path %>
+<% end %>
+
+<% current_page.siblings.each do |p| %>
+  Sibling: <%= p.path %>
+<% end %>
+
+<% current_page.children.each do |p| %>
+  <% if p.data %>
+    Data: <%= p.data %>
+  <% end %>
+<% end %>

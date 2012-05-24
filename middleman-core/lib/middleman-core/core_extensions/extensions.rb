@@ -40,7 +40,6 @@ module Middleman
           # Using for version parsing
           require "rubygems"
 
-          # app.set :default_extensions, []
           app.define_hook :after_configuration
           app.define_hook :before_configuration
           app.define_hook :build_config
@@ -139,11 +138,6 @@ module Middleman
           run_hook :development_config if development?
       
           run_hook :after_configuration
-      
-          # Add in defaults
-          default_extensions.each do |ext|
-            activate ext
-          end
       
           if logging?
             self.class.extensions.each do |ext|

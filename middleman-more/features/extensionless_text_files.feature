@@ -1,12 +1,16 @@
 Feature: Text Files Without Extensions Should Build and Preview
 
-  Scenario: Building Text Files without directory indexes
+  Scenario: Building Text Files with directory indexes
     Given a successfully built app at "extensionless-text-files-app"
     When I cd to "build"
     Then the following files should exist:
       | CNAME   |
       | LICENSE |
       | README  |
+    Then the following files should not exist:
+      | CNAME/index.html   |
+      | LICENSE/index.html |
+      | README/index.html  |
   
   Scenario: Previewing Text Files
     Given the Server is running at "extensionless-text-files-app"

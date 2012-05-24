@@ -111,10 +111,6 @@ module Middleman
     # @return [Boolean]
     set :show_exceptions, true
 
-    # Automatically loaded extensions
-    # @return [Array<Symbol>]
-    set :default_extensions, [ :lorem ]
-
     # Default layout name
     # @return [String, Symbold]
     set :layout, :_auto_layout
@@ -161,37 +157,6 @@ module Middleman
   
     # i18n
     register Middleman::CoreExtensions::I18n
-  
-    # Built-in Extensions
-    
-    # Provide Apache-style index.html files for directories
-    Middleman::Extensions.register(:directory_indexes) do
-      require "middleman-core/extensions/directory_indexes"
-      Middleman::Extensions::DirectoryIndexes 
-    end
-    
-    # Lorem provides a handful of helpful prototyping methods to generate
-    # words, paragraphs, fake images, names and email addresses.
-    Middleman::Extensions.register(:lorem) do
-      require "middleman-core/extensions/lorem"
-      Middleman::Extensions::Lorem 
-    end
-    
-    # AutomaticImageSizes inspects the images used in your dynamic templates
-    # and automatically adds width and height attributes to their HTML
-    # elements.
-    Middleman::Extensions.register(:automatic_image_sizes) do
-      require "middleman-core/extensions/automatic_image_sizes"
-      Middleman::Extensions::AutomaticImageSizes
-    end
-    
-    # AssetHost allows you to setup multiple domains to host your static
-    # assets. Calls to asset paths in dynamic templates will then rotate
-    # through each of the asset servers to better spread the load.
-    Middleman::Extensions.register(:asset_host) do
-      require "middleman-core/extensions/asset_host"
-      Middleman::Extensions::AssetHost 
-    end
   
     # Initialize the Middleman project
     def initialize(&block)
