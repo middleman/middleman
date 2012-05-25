@@ -104,7 +104,7 @@ module Middleman::CoreExtensions
           content = content.sub(json_regex, "")
 
           begin
-            json = ($1+$2).sub("{{{", "{").sub("}}}", "}")
+            json = ($1+$2).sub(";;;", "{").sub(";;;", "}")
             data = ActiveSupport::JSON.decode(json)
           rescue => e
             puts "JSON Exception: #{e.message}"
