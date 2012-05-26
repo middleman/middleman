@@ -17,15 +17,13 @@ group :test do
   gem "slim"
   gem "coffee-filter", "~> 0.1.1"
   gem "liquid", "~> 2.2"
-  gem "jquery-rails", "~> 2.0.1"
-  # gem "bootstrap-rails", "0.0.5"
-  # gem "zurb-foundation"
 
   platforms :ruby do
     gem "redcarpet", "~> 2.1.1"
   end
 end
 
+gem "middleman-sprockets", :github => "middleman/middleman-sprockets"
 gem "middleman-core", :path => "middleman-core"
 gem "middleman-more", :path => "middleman-more"
 gem "middleman", :path => "middleman"

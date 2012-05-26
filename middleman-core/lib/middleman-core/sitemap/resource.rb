@@ -132,6 +132,8 @@ module Middleman
         end
       
         app.instance_eval(&block) if block_given?
+        
+        app.current_path ||= self.destination_path
         result = app.render_template(source_file, locs, opts)
 
         puts "== Render End: #{source_file} (#{(Time.now - start_time).round(2)}s)" if app.logging?

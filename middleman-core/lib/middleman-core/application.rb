@@ -88,7 +88,7 @@ module Middleman
     # @return [String]
     set :index_file,  "index.html"
 
-    # Location of javascripts within source. Used by Sprockets.
+    # Location of javascripts within source.
     # @return [String]
     set :js_dir,      "javascripts"
   
@@ -152,9 +152,6 @@ module Middleman
   
     # Initialize the Middleman project
     def initialize(&block)
-      # Current path defaults to nil, used in views.
-      self.current_path = nil
-    
       # Clear the static class cache
       cache.clear
     
