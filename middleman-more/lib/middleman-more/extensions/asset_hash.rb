@@ -14,7 +14,7 @@ module Middleman
               :asset_hash, 
               AssetHashManager.new(self, exts, ignore)
             )
-            use Middleware, :exts => exts, :middleman_app => self
+            use Middleware, :exts => exts, :middleman_app => self, :ignore => ignore
           end
         end
         alias :included :registered
@@ -31,15 +31,16 @@ module Middleman
         # @return [void]
         def manipulate_resource_list(resources)
           resources.each do |resource|
-            if @exts.include? resource.ext
-              if resource.template? # if it's a template, render it out
-                digest = Digest::SHA1.hexdigest(resource.render)[0..7]
-              else # if it's a static file, just hash it
-                digest = Digest::SHA1.file(resource.source_file).hexdigest[0..7]
-              end
-
-              resource.destination_path = resource.destination_path.sub(/\.(\w+)$/) { |ext| "-#{digest}#{ext}" }
+            next unless @exts.include? resource.ext
+            next if @ignore.any? { |r| resource.destination_path.match(r) }
+              
+            if resource.template? # if it's a template, render it out
+              digest = Digest::SHA1.hexdigest(resource.render)[0..7]
+            else # if it's a static file, just hash it
+              digest = Digest::SHA1.file(resource.source_file).hexdigest[0..7]
             end
+
+            resource.destination_path = resource.destination_path.sub(/\.(\w+)$/) { |ext| "-#{digest}#{ext}" }
           end
         end
       end
@@ -48,10 +49,11 @@ module Middleman
       # assets to include their new, hashed name.
       class Middleware
         def initialize(app, options={})
-          @rack_app      = app
-          @exts           = options[:exts]
+          @rack_app        = app
+          @exts            = options[:exts]
+          @ignore          = options[:ignore]
           @exts_regex_text = @exts.map {|e| Regexp.escape(e) }.join('|')
-          @middleman_app = options[:middleman_app]
+          @middleman_app   = options[:middleman_app]
         end
 
         def call(env)
@@ -66,16 +68,20 @@ module Middleman
             if body
               # TODO: This regex will change some paths in plan HTML (not in a tag) - is that OK?
               body.gsub! /([=\'\"\(]\s*)([^\s\'\"\)]+(#{@exts_regex_text}))/ do |match|
+                opening_character = $1
                 asset_path = $2
+                
                 relative_path = Pathname.new(asset_path).relative?
 
                 asset_path = dirpath.join(asset_path).to_s if relative_path
-
-                if asset_page = @middleman_app.sitemap.find_resource_by_path(asset_path)
+                
+                if @ignore.any? { |r| asset_path.match(r) }
+                  match
+                elsif asset_page = @middleman_app.sitemap.find_resource_by_path(asset_path)
                   replacement_path = "/#{asset_page.destination_path}"
                   replacement_path = Pathname.new(replacement_path).relative_path_from(dirpath).to_s if relative_path
-
-                  "#{$1}#{replacement_path}"
+                  
+                  "#{opening_character}#{replacement_path}"
                 else
                   match
                 end

@@ -42,6 +42,9 @@ module Middleman
               
               # Default output style
               config.output_style = :nested
+              
+              # No line-comments in test mode (changing paths mess with sha1)
+              config.line_comments = false if ENV["TEST"]
 
               if respond_to?(:asset_host) && asset_host.is_a?(Proc)
                 config.asset_host(&asset_host)
