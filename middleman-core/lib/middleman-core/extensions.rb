@@ -88,7 +88,7 @@ module Middleman
         extensions = rubygems_latest_specs.select do |spec|
           spec_has_file?(spec, EXTENSION_FILE)
         end
-
+        
         extensions.each do |spec|
           require spec.name
         end

@@ -25,8 +25,14 @@ end
 # If we've found the root, try to setup Bundler
 if ENV["MM_ROOT"]
   
-  # Set up gems listed in the Gemfile.
-  ENV['BUNDLE_GEMFILE'] ||= File.expand_path('Gemfile', ENV["MM_ROOT"])
+  root_gemfile = File.expand_path('Gemfile', ENV["MM_ROOT"])
+  ENV['BUNDLE_GEMFILE'] ||= root_gemfile
+  
+  if !File.exists?(ENV['BUNDLE_GEMFILE'])
+    git_gemfile = Pathname.new(__FILE__).expand_path.parent.parent.parent + "Gemfile"
+    ENV['BUNDLE_GEMFILE'] = git_gemfile.to_s
+  end
+  
   require 'bundler/setup' if File.exists?(ENV['BUNDLE_GEMFILE'])
 end
 
@@ -34,10 +40,10 @@ end
 require "middleman-core/extensions"
 ::Middleman.load_extensions_in_path
 
+require "middleman-core/cli"
+
 # Default command is server
 ARGV.unshift("server") if ARGV.length < 1 || ARGV.first.include?("-")
-
-require "middleman-core/cli"
 
 # Start the CLI
 if ENV["MM_ROOT"]
