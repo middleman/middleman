@@ -71,10 +71,6 @@ module Middleman::More
       require "middleman-more/core_extensions/compass"
       Middleman::Application.register Middleman::CoreExtensions::Compass
 
-      # Sprockets asset handling
-      require "middleman-more/core_extensions/sprockets"
-      Middleman::Application.register Middleman::CoreExtensions::Sprockets
-
       ### 
       # Setup Optional Extensions
       ###

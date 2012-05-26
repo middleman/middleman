@@ -50,6 +50,14 @@ module Middleman
               
             # Call hook
             run_hook :compass_config, ::Compass.configuration
+            
+            # Tell Tilt to use it as well (for inline sass blocks)
+            ::Tilt.register 'sass', CompassSassTemplate
+            ::Tilt.prefer(CompassSassTemplate)
+
+            # Tell Tilt to use it as well (for inline scss blocks)
+            ::Tilt.register 'scss', CompassScssTemplate
+            ::Tilt.prefer(CompassScssTemplate)
           end
         end
         alias :included :registered
@@ -57,5 +65,20 @@ module Middleman
 
     end
     
+    # A Compass template for Tilt
+    class CompassSassTemplate < ::Middleman::Renderers::Sass::SassPlusCSSFilenameTemplate
+    private
+      def sass_options
+        super.merge(::Compass.configuration.to_sass_engine_options)
+      end
+    end
+    
+    class CompassScssTemplate <  ::Middleman::Renderers::Sass::ScssPlusCSSFilenameTemplate
+    private
+      def sass_options
+        super.merge(::Compass.configuration.to_sass_engine_options)
+      end
+    end
+      
   end
 end

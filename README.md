@@ -4,7 +4,7 @@ Middleman makes developing stand-alone websites simple. The last few years has s
 
 * Sass for DRY stylesheets
 * CoffeeScript for safer and less verbose javascript
-* Sprockets for combining and minifying assets
+* Multiple Asset Management Solutions
 * ERb & Haml for dynamic pages and simplified HTML syntax
 
 Middleman gives the stand-alone developer access to all these tool and many, many more. Why would you use a stand-alone framework instead of Ruby on Rails?

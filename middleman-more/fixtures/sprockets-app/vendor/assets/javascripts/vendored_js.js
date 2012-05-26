@@ -1,1 +1,0 @@
-var vendored_js_included = true;

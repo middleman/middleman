@@ -44,6 +44,12 @@ module Middleman
           app.define_hook :before_configuration
           app.define_hook :build_config
           app.define_hook :development_config
+          
+          if ENV["AUTOLOAD_SPROCKETS"]
+            app.set :autoload_sprockets, (ENV["AUTOLOAD_SPROCKETS"] == "true")
+          else
+            app.set :autoload_sprockets, true
+          end
       
           app.extend ClassMethods
           app.send :include, InstanceMethods
@@ -130,6 +136,8 @@ module Middleman
             puts "== Reading:  Local config" if logging?
             instance_eval File.read(local_config), local_config, 1
           end
+          
+          activate(:sprockets) if autoload_sprockets
       
           run_hook :build_config if build?
           run_hook :development_config if development?
