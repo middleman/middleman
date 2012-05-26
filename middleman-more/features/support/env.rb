@@ -1,3 +1,5 @@
+ENV["TEST"] = "true"
+
 PROJECT_ROOT_PATH = File.dirname(File.dirname(File.dirname(__FILE__)))
 
 core_root = File.expand_path("../../../../middleman-core/lib/middleman-core", __FILE__)
