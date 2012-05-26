@@ -72,6 +72,11 @@ module Middleman
     # @return [String]
     set :root,        ENV["MM_ROOT"] || Dir.pwd
   
+    # Pathname-addressed root
+    def root_path
+      @_root_path ||= Pathname.new(root)
+    end
+  
     # Name of the source directory
     # @return [String]
     set :source,      "source"

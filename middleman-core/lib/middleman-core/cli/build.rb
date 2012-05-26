@@ -210,7 +210,7 @@ module Middleman::Cli
       puts "== Checking for Compass sprites" if @app.logging?
 
       # Double-check for compass sprites
-      @app.files.find_new_files(File.join(@app.source_dir, @app.images_dir))
+      @app.files.find_new_files(Pathname.new(@app.source_dir) + @app.images_dir)
 
       # Sort paths to be built by the above order. This is primarily so Compass can
       # find files in the build folder when it needs to generate sprites for the
