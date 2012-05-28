@@ -127,8 +127,8 @@ module Middleman
           app.data.store("page", md[:page])
         end
 
-        md[:blocks].each do |block|
-          app.instance_eval(&block)
+        md[:blocks].each do |aBlock|
+          app.instance_eval(&aBlock)
         end
       
         app.instance_eval(&block) if block_given?
