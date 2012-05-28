@@ -30,8 +30,6 @@ module Middleman
         end
         
         renderer.new(render_options)
-        
-        
       end
     end
    

@@ -13,34 +13,6 @@ module Middleman
       # Once registered
       def registered(app, options={})
         ### 
-        # Setup renderers
-        ###
-
-        # CoffeeScript Support
-        require "middleman-more/renderers/coffee_script"
-        Middleman::Application.register Middleman::Renderers::CoffeeScript
-
-        # Haml Support
-        require "middleman-more/renderers/haml"
-        Middleman::Application.register Middleman::Renderers::Haml
-
-        # Sass Support
-        require "middleman-more/renderers/sass"
-        Middleman::Application.register Middleman::Renderers::Sass
-
-        # Markdown Support
-        require "middleman-more/renderers/markdown"
-        Middleman::Application.register Middleman::Renderers::Markdown
-
-        # Liquid Support
-        require "middleman-more/renderers/liquid"
-        Middleman::Application.register Middleman::Renderers::Liquid
-
-        # Slim Support
-        require "middleman-more/renderers/slim"
-        Middleman::Application.register Middleman::Renderers::Slim
-
-        ### 
         # Setup Core Extensions
         ###
 

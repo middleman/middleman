@@ -1,5 +1,3 @@
-require "middleman-core/renderers/erb"
-
 # Shutup Tilt Warnings
 # @private
 class Tilt::Template
@@ -22,7 +20,47 @@ module Middleman
           app.send :include, InstanceMethods
       
           # Activate custom renderers
+          require "middleman-core/renderers/erb"
           app.register Middleman::Renderers::ERb
+
+          # CoffeeScript Support
+          begin
+            require "middleman-core/renderers//coffee_script"
+            app.register Middleman::Renderers::CoffeeScript
+          rescue LoadError
+          end
+
+          # Haml Support
+          begin
+            require "middleman-core/renderers//haml"
+            app.register Middleman::Renderers::Haml
+          rescue LoadError
+          end
+
+          # Sass Support
+          begin
+            require "middleman-core/renderers//sass"
+            app.register Middleman::Renderers::Sass
+          rescue LoadError
+          end
+
+          # Markdown Support
+          require "middleman-core/renderers//markdown"
+          app.register Middleman::Renderers::Markdown
+
+          # Liquid Support
+          begin
+            require "middleman-core/renderers//liquid"
+            app.register Middleman::Renderers::Liquid
+          rescue LoadError
+          end
+
+          # Slim Support
+          begin
+            require "middleman-core/renderers//slim"
+            app.register Middleman::Renderers::Slim
+          rescue LoadError
+          end
         end
     
         alias :included :registered

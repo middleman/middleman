@@ -1,3 +1,6 @@
+# Require gem
+require "coffee_script"
+  
 module Middleman
   module Renderers
     
@@ -8,17 +11,13 @@ module Middleman
       class << self
         # Once registered
         def registered(app)
-          # Require gem
-          require "coffee_script"
-          
           app.before_configuration do
             template_extensions :coffee => :js
           end
-          
+        
           # Tell Tilt to use it as well (for inline scss blocks)
           ::Tilt.register 'coffee', DebuggingCoffeeScriptTemplate
           ::Tilt.prefer(DebuggingCoffeeScriptTemplate)
-          
         end
         alias :included :registered
       end

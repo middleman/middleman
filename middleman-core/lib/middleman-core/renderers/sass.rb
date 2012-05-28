@@ -1,3 +1,5 @@
+require "sass"
+
 module Middleman
   module Renderers
     
@@ -9,8 +11,6 @@ module Middleman
     
         # Once registered
         def registered(app)
-          require "sass"
-
           # Default sass options
           app.set :sass, {}
       
@@ -80,7 +80,6 @@ module Middleman
           :scss
         end
       end
-  
     end
   end
 end
