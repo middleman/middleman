@@ -138,8 +138,11 @@ module Middleman
           end
           
           if autoload_sprockets
-            require "middleman-sprockets"
-            activate(:sprockets)
+            begin
+              require "middleman-sprockets"
+              activate(:sprockets)
+            rescue LoadError
+            end
           end
       
           run_hook :build_config if build?
