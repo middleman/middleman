@@ -25,39 +25,39 @@ module Middleman
 
           # CoffeeScript Support
           begin
-            require "middleman-core/renderers//coffee_script"
+            require "middleman-core/renderers/coffee_script"
             app.register Middleman::Renderers::CoffeeScript
           rescue LoadError
           end
 
           # Haml Support
           begin
-            require "middleman-core/renderers//haml"
+            require "middleman-core/renderers/haml"
             app.register Middleman::Renderers::Haml
           rescue LoadError
           end
 
           # Sass Support
           begin
-            require "middleman-core/renderers//sass"
+            require "middleman-core/renderers/sass"
             app.register Middleman::Renderers::Sass
           rescue LoadError
           end
 
           # Markdown Support
-          require "middleman-core/renderers//markdown"
+          require "middleman-core/renderers/markdown"
           app.register Middleman::Renderers::Markdown
 
           # Liquid Support
           begin
-            require "middleman-core/renderers//liquid"
+            require "middleman-core/renderers/liquid"
             app.register Middleman::Renderers::Liquid
           rescue LoadError
           end
 
           # Slim Support
           begin
-            require "middleman-core/renderers//slim"
+            require "middleman-core/renderers/slim"
             app.register Middleman::Renderers::Slim
           rescue LoadError
           end
