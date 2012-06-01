@@ -1,4 +1,4 @@
 require 'rubygems'
 require 'middleman'
 
-run Middleman.server
+run Middleman::Application.server
