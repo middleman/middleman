@@ -3,34 +3,45 @@ Feature: Allow nesting of layouts
   Scenario: A page uses an inner layout when uses an outer layout
     Given the Server is running at "nested-layout-app"
     When I go to "/index.html"
-    Then I should see "Template"
-    And I should see "Inner"
-    And I should see "Outer"
-    And I should see "Master"
+    Then I should see:
+    """
+    Master
+      Outer
+        Inner
+      Template
+    
+    """
     When I go to "/another.html"
-    And I should see "New Article Title"
-    And I should see "The Article Content"
-    And I should see "Inner"
-    And I should see "Outer"
-    And I should see "Master"
+    Then I should see:
+    """
+    Master
+    New Article Title
+      Outer
+        Inner
+      <p>The Article Content</p>
+    """
     
   Scenario: A page uses an inner layout when uses an outer layout (slim)
     Given the Server is running at "nested-layout-app"
     When I go to "/slim-test.html"
-    And I should see "New Article Title"
-    And I should see "The Article Content"
-    And I should see "Inner"
-    And I should see "Outer"
-    And I should see "Master"
+    Then I should see:
+    """
+    <h1>Master</h1><p>New Article Title</p><div><h2>Outer</h2><h3>Inner</h3><p>The Article Content</p>
+    </div>
+    """
     
   Scenario: A page uses an inner layout when uses an outer layout (haml)
     Given the Server is running at "nested-layout-app"
     When I go to "/haml-test.html"
-    And I should see "New Article Title"
-    And I should see "The Article Content"
-    And I should see "Inner"
-    And I should see "Outer"
-    And I should see "Master"
+    Then I should see:
+    """
+    Master
+    New Article Title
+    Outer
+    Inner
+
+    <p>The Article Content</p>
+    """
 
   Scenario: YAML Front Matter isn't clobbered with nested layouts
     Given the Server is running at "nested-layout-app"
