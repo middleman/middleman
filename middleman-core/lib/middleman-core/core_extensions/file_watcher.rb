@@ -107,7 +107,7 @@ module Middleman
         # @param [Boolean] only_new Whether we only look for new files
         # @return [void]
         def reload_path(path, only_new=false)
-          return unless path.exists?
+          return unless path.exist?
           
           glob = "#{path}**/*"
           subset = @known_paths.select { |p| p.fnmatch(glob) }

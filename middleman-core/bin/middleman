@@ -12,7 +12,7 @@ require "pathname"
 
 # Recursive method to find config.rb
 def locate_root(cwd = Pathname.new(Dir.pwd))
-  return cwd.to_s if (cwd + 'config.rb').exists?
+  return cwd.to_s if (cwd + 'config.rb').exist?
   return false if cwd.root?
   locate_root(cwd.parent)
 end
