@@ -1,4 +1,4 @@
-require "find"
+require "pathname"
 require "set"
 
 # API for watching file change events
@@ -7,6 +7,7 @@ module Middleman
     module FileWatcher
   
       IGNORE_LIST = [
+        /^\.bundle\//,
         /^\.sass-cache\//,
         /^\.git\//,
         /^\.gitignore$/,
@@ -23,31 +24,19 @@ module Middleman
     
         # Once registered
         def registered(app)
-          app.extend ClassMethods
           app.send :include, InstanceMethods
       
           # Before parsing config, load the data/ directory
           app.before_configuration do
-            data_path = File.join(root, data_dir)
-            files.reload_path(data_path) if File.exists?(data_path)
+            files.reload_path(root_path + data_dir)
           end
       
           # After config, load everything else
           app.ready do
-            files.reload_path(root)
+            files.reload_path(root_path)
           end
         end
         alias :included :registered
-      end
-  
-      # Class methods
-      module ClassMethods
-    
-        # Access the file api
-        # @return [Middleman::CoreExtensions::FileWatcher::API]
-        def files
-          @_files_api ||= API.new
-        end
       end
   
       # Instance methods
@@ -92,68 +81,77 @@ module Middleman
   
         # Notify callbacks that a file changed
         #
-        # @param [String] path The file that changed
+        # @param [Pathname] path The file that changed
         # @return [void]
         def did_change(path)
-          return if IGNORE_LIST.any? { |r| path.match(r) }
-          puts "== File Change: #{path}" if @app.logging?
+          return if ignored?(path)
+          puts "== File Change: #{path.relative_path_from(@app.root_path)}" if @app.logging?
           @known_paths << path
           self.run_callbacks(path, :changed)
         end
 
         # Notify callbacks that a file was deleted
         #
-        # @param [String] path The file that was deleted
+        # @param [Pathname] path The file that was deleted
         # @return [void]
         def did_delete(path)
-          return if IGNORE_LIST.any? { |r| path.match(r) }
-          puts "== File Deletion: #{path}" if @app.logging?
+          return if ignored?(path)
+          puts "== File Deletion: #{path.relative_path_from(@app.root_path)}" if @app.logging?
           @known_paths.delete(path)
           self.run_callbacks(path, :deleted)
         end
     
         # Manually trigger update events
         #
-        # @param [String] path The path to reload
+        # @param [Pathname] path The path to reload
+        # @param [Boolean] only_new Whether we only look for new files
         # @return [void]
-        def reload_path(path)
-          relative_path = path.sub("#{@app.root}/", "")
-          subset = @known_paths.select { |p| p.match(%r{^#{relative_path}}) }
-      
-          Find.find(path) do |path|
-            next if File.directory?(path)
-            relative_path = path.sub("#{@app.root}/", "")
-            subset.delete(relative_path)
-            self.did_change(relative_path)
-          end if File.exists?(path)
-      
-          subset.each do |removed_path|
-            self.did_delete(removed_path)
+        def reload_path(path, only_new=false)
+          return unless path.exists?
+          
+          glob = "#{path}**/*"
+          subset = @known_paths.select { |p| p.fnmatch(glob) }
+          
+          path.find do |filepath|
+            full_path = path + filepath
+            next if full_path.directory?
+            
+            if only_new
+              next if subset.include?(full_path)
+            else
+              subset.delete(full_path)
+            end
+            
+            self.did_change(full_path)
           end
+          
+          subset.each(&method(:did_delete)) unless only_new
         end
 
         # Like reload_path, but only triggers events on new files
         #
-        # @param [String] path The path to reload
+        # @param [Pathname] path The path to reload
         # @return [void]
         def find_new_files(path)
-          relative_path = path.sub("#{@app.root}/", "")
-          subset = @known_paths.select { |p| p.match(%r{^#{relative_path}}) }
-      
-          Find.find(path) do |file|
-            next if File.directory?(file)
-            relative_path = file.sub("#{@app.root}/", "")
-            self.did_change(relative_path) unless subset.include?(relative_path)
-          end if File.exists?(path)
+          reload_path(path, true)
         end
     
       protected
+        # Whether this path is ignored
+        # @param [Pathname] path
+        # @return [Boolean]
+        def ignored?(path)
+          path = path.relative_path_from(@app.root_path).to_s if path.is_a? Pathname
+          IGNORE_LIST.any? { |r| path.to_s.match(r) }
+        end
+      
         # Notify callbacks for a file given an array of callbacks
         #
-        # @param [String] path The file that was changed
+        # @param [Pathname] path The file that was changed
         # @param [Symbol] callbacks_name The name of the callbacks method
         # @return [void]
         def run_callbacks(path, callbacks_name)
+          path = path.relative_path_from(@app.root_path).to_s if path.is_a? Pathname
           self.send(callbacks_name).each do |callback, matcher|
             next if path.match(%r{^#{@app.build_dir}/})
             next unless matcher.nil? || path.match(matcher)

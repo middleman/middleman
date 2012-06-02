@@ -83,7 +83,7 @@ module Middleman
 
             # Otherwise forward to Middleman
             added_and_modified.each do |path|
-              @app.files.did_change(path)
+              @app.files.did_change(@app.root_path + path)
             end
           end
       
@@ -93,7 +93,7 @@ module Middleman
 
             # Otherwise forward to Middleman
             removed.each do |path|
-              @app.files.did_delete(path)
+              @app.files.did_delete(@app.root_path + path)
             end
           end
         end
