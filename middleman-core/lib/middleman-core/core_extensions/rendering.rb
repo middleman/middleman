@@ -329,6 +329,14 @@ module Middleman
         def wrap_layout(layout_name, &block)
           # Save current buffer for later
           @_out_buf, _buf_was = "", @_out_buf
+          
+          layout_path = locate_layout(layout_name, current_engine)
+          
+          extension = File.extname(layout_path)
+          engine = extension[1..-1].to_sym
+          
+          # Store last engine for later (could be inside nested renders)
+          @current_engine, engine_was = engine, @current_engine
             
           begin
             content = if block_given?
@@ -340,14 +348,6 @@ module Middleman
             # Reset stored buffer
             @_out_buf = _buf_was
           end
-          
-          layout_path = locate_layout(layout_name, current_engine)
-          
-          extension = File.extname(layout_path)
-          engine = extension[1..-1].to_sym
-          
-          # Store last engine for later (could be inside nested renders)
-          @current_engine, engine_was = engine, @current_engine
           
           concat_content render_individual_file(layout_path, @current_locs || {}, @current_opts || {}, self) { content }
         ensure

@@ -6,6 +6,7 @@ Feature: Allow nesting of layouts
     Then I should see:
     """
     Master
+    <h1>Index Title</h1>
       Outer
         Inner
       Template
@@ -15,7 +16,7 @@ Feature: Allow nesting of layouts
     Then I should see:
     """
     Master
-    New Article Title
+    <h1>New Article Title</h1>
       Outer
         Inner
       <p>The Article Content</p>
@@ -36,10 +37,9 @@ Feature: Allow nesting of layouts
     Then I should see:
     """
     Master
-    New Article Title
+    <h1>New Article Title</h1>
     Outer
     Inner
-
     <p>The Article Content</p>
     """
 
