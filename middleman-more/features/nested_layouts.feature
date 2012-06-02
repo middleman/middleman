@@ -25,11 +25,7 @@ Feature: Allow nesting of layouts
   Scenario: A page uses an inner layout when uses an outer layout (slim)
     Given the Server is running at "nested-layout-app"
     When I go to "/slim-test.html"
-    Then I should see:
-    """
-    <h1>Master</h1><p>New Article Title</p><div><h2>Outer</h2><h3>Inner</h3><p>The Article Content</p>
-    </div>
-    """
+    Then I should see "<h1>Master</h1><p>New Article Title</p><div><h2>Outer</h2><h3>Inner</h3><p>The Article Content</p>"
     
   Scenario: A page uses an inner layout when uses an outer layout (haml)
     Given the Server is running at "nested-layout-app"
