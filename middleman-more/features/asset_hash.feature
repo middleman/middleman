@@ -5,6 +5,7 @@ Feature: Assets get a file hash appended to their and references to them are upd
     Then the following files should exist:
       | index.html |
       | apple-touch-icon.png |
+      | favicon.ico |
       | images/100px-1242c368.png |
       | images/100px-5fd6fb90.jpg |
       | images/100px-5fd6fb90.gif |

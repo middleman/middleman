@@ -4,7 +4,7 @@ module Middleman
       class << self
         def registered(app, options={})
           require 'digest/sha1'
-          exts = options[:exts] || %w(.ico .manifest .jpg .jpeg .png .gif .js .css)
+          exts = options[:exts] || %w(.jpg .jpeg .png .gif .js .css)
         
           # Allow specifying regexes to ignore, plus always ignore apple touch icons
           ignore = Array(options[:ignore]) << /^apple-touch-icon/
