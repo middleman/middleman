@@ -1,8 +1,12 @@
 # Using Thor's indifferent hash access
 require "thor"
 
+# Core Pathname library used for traversal
+require "pathname"
+
 module Middleman
   module Util
+    
     # Recursively convert a normal Hash into a HashWithIndifferentAccess
     #
     # @private
