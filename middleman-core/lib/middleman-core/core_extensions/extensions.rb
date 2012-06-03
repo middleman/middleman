@@ -106,17 +106,21 @@ module Middleman
         # @param [Symbol, Module] ext Which extension to activate
         # @return [void]
         def activate(ext, options={}, &block)
-          ext_module = if ext.is_a?(Module)
+          extension_container = if ext.is_a?(Module)
             ext
           else
             ::Middleman::Extensions.load(ext.to_sym)
           end
-
-          if ext_module.nil?
-            logger.error "== Unknown Extension: #{ext}"
-          else
+      
+          $stderr.puts extension_container.to_s
+          if extension_container.nil?
+            logger.warning "== Unknown Extension: #{ext}"
+          elsif extension_container.is_a? Class
             logger.debug "== Activating: #{ext}"
-            self.class.register(ext_module, options, &block)
+            extension_container.new(self, options, &block)
+          elsif extension_container.is_a? Module
+            logger.debug "== Activating: #{ext}"
+            self.class.register(extension_container, options, &block)
           end
         end
 

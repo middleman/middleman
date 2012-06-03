@@ -99,10 +99,7 @@ module Middleman
         end
 
         # Provide Apache-style index.html files for directories
-        Middleman::Extensions.register(:directory_indexes) do
-          require "middleman-more/extensions/directory_indexes"
-          Middleman::Extensions::DirectoryIndexes
-        end
+        require "middleman-more/extensions/directory_indexes"
 
         # Lorem provides a handful of helpful prototyping methods to generate
         # words, paragraphs, fake images, names and email addresses.

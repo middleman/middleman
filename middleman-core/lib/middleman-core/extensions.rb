@@ -100,4 +100,56 @@ module Middleman
       File.exists?(full_path)
     end
   end
+  
+  # Auto-registration class, in the style of Rails::Engine
+  class Extension
+    
+    class << self
+      
+      def subclasses
+        @subclasses ||= []
+      end
+    
+      def extension_name(name = nil)
+        @extension_name = name.to_sym if name
+        @extension_name ||= generate_extension_name(self.name.split("::").last)
+      end
+      
+      def inherited(base)
+        subclasses << base
+        ::Middleman::Extensions.register(base.extension_name) { base }
+      end
+      
+      protected
+        def generate_extension_name(class_or_module)
+          ActiveSupport::Inflector.underscore(class_or_module).tr("/", "_").to_sym
+        end
+    end
+    
+    attr_reader :app
+    attr_reader :options
+    
+    def initialize(app, options={}, &block)
+      @app     = app
+      @options = options
+      
+      activated(&block)
+    end
+    
+    def activated(&block)
+      autoregister_resource_list_manipulator
+    end
+    
+    def autoregister_resource_list_manipulator
+      return unless respond_to?(:manipulate_resource_list)
+      
+      extension = self
+      app.ready do
+        sitemap.register_resource_list_manipulator(
+          extension.class.extension_name,
+          extension
+        )
+      end
+    end
+  end
 end
