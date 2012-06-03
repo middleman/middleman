@@ -41,7 +41,7 @@ end
 
 # Register extensions which can be activated
 # Make sure we have the version of Middleman we expect
-# ::Middleman::Extensions.register(:extension_name, ">= 3.0.0.beta.2") do
+# ::Middleman::Extensions.register(:extension_name) do
 #   
 #   # Return the extension module
 #   ::MyExtension
