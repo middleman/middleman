@@ -1,3 +1,4 @@
+@nojava
 Feature: Compile a complicated Twitter bootstrap app 
 
   Scenario: User drops Twitter Bootstrap source into an app
