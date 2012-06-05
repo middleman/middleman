@@ -61,6 +61,13 @@ module Middleman
             app.register Middleman::Renderers::Slim
           rescue LoadError
           end
+          
+          # Less Support
+          begin
+            require "middleman-core/renderers/less"
+            app.register Middleman::Renderers::Less
+          rescue LoadError
+          end
         end
     
         alias :included :registered

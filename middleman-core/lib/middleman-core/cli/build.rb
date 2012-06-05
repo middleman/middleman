@@ -7,6 +7,8 @@ module Middleman::Cli
   class Build < Thor
     include Thor::Actions
     
+    attr_reader :debugging
+    
     check_unknown_options!
     
     namespace :build
@@ -40,7 +42,10 @@ module Middleman::Cli
 
       require 'find'
       
-      self.class.shared_instance(options["verbose"] || false)
+      @debugging = Middleman::Cli::Base.debugging
+      @had_errors = false
+      
+      self.class.shared_instance(options["verbose"])
       
       self.class.shared_rack
 
@@ -49,6 +54,12 @@ module Middleman::Cli
       opts[:clean] = options["clean"] if options.has_key?("clean")
 
       action GlobAction.new(self, opts)
+
+      if @had_errors && !@debugging
+        self.shell.say "There were errors during this build, re-run with --debug to see the full exception."
+      end
+      
+      exit(1) if @had_errors
 
       self.class.shared_instance.run_hook :after_build, self
     end
@@ -94,32 +105,42 @@ module Middleman::Cli
       end
     end
     
-    # Ignore following method
-    desc "", "", :hide => true
-    
-    # Render a resource to a file.
-    #
-    # @param [Middleman::Sitemap::Resource] resource
-    # @return [String] The full path of the file that was written
-    def render_to_file(resource)
-      build_dir = self.class.shared_instance.build_dir
-      output_file = File.join(build_dir, resource.destination_path)
+    no_tasks {
+      # Render a resource to a file.
+      #
+      # @param [Middleman::Sitemap::Resource] resource
+      # @return [String] The full path of the file that was written
+      def render_to_file(resource)
+        build_dir = self.class.shared_instance.build_dir
+        output_file = File.join(build_dir, resource.destination_path)
 
-      begin
-        response = self.class.shared_rack.get(URI.escape(resource.destination_path))
+        begin
+          response = self.class.shared_rack.get(URI.escape(resource.destination_path))
 
-        if response.status == 200
-          create_file(output_file, response.body, { :force => true })
-        else
-          raise Thor::Error.new response.body
+          if response.status == 200
+            create_file(output_file, response.body)
+          else
+            handle_error(output_file, response.body)
+          end
+        rescue => e
+          handle_error(output_file, "#{e}\n#{e.backtrace.join("\n")}", e)
         end
-      rescue => e
-        say_status :error, output_file, :red
-        raise Thor::Error.new "#{e}\n#{e.backtrace.join("\n")}"
-      end
 
-      output_file
-    end
+        output_file
+      end
+    
+      def handle_error(file_name, response, e=Thor::Error.new(response))
+        @had_errors = true
+        
+        say_status :error, file_name, :red
+        if self.debugging
+          raise e
+          exit(1)
+        elsif options["verbose"]
+          self.shell.error(response)
+        end
+      end
+    }
   end
   
   # A Thor Action, modular code, which does the majority of the work.
@@ -149,6 +170,7 @@ module Middleman::Cli
     end
 
   protected
+    
     # Remove files which were not built in this cycle
     # @return [void]
     def clean!
@@ -238,4 +260,12 @@ module Middleman::Cli
   
   # Alias "b" to "build"
   Base.map({ "b" => "build" })
+end
+
+# Quiet down create file
+class ::Thor::Actions::CreateFile
+  def on_conflict_behavior(&block)
+    say_status :create, :green
+    block.call unless pretend?
+  end
 end

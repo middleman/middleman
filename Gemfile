@@ -18,6 +18,10 @@ group :test do
   gem "coffee-filter", "~> 0.1.1"
   gem "liquid", "~> 2.2"
 
+  # For less tests
+  gem "therubyracer"
+  gem "less", "~> 2.2"
+
   platforms :ruby do
     gem "redcarpet", "~> 2.1.1"
   end

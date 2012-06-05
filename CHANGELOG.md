@@ -1,4 +1,4 @@
-3.0.pre
+3.0.rc1
 ====
 * Split into 3 gems (middleman-core, middleman-more and middleman which simply includes both)
 * Rewritten to work directly with Rack (Sinatra apps can still be mounted)
@@ -46,6 +46,7 @@
 * Include vendored assets in sprockets path.
 * Finally support Compass in Sprockets! Thanks to @xdite and @petebrowne
 * Moved Sprockets into an extension
+* Support loading Less @imports
 
 2.0.14
 ====
