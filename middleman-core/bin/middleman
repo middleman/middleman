@@ -42,8 +42,13 @@ require "middleman-core/extensions"
 
 require "middleman-core/cli"
 
+# Change flag to a module
+ARGV.unshift("help") if ARGV.delete("--help")
+
 # Default command is server
-ARGV.unshift("server") if ARGV.length < 1 || ARGV.first.include?("-")
+if ARGV[0] != "help" && (ARGV.length < 1 || ARGV.first.include?("-"))
+  ARGV.unshift("server")
+end
 
 # Start the CLI
 if ENV["MM_ROOT"]
