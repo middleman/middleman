@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
   s.require_path = "lib"
   
   # Core
-  s.add_dependency("bundler", ["~> 1.0"])
+  s.add_dependency("bundler", ["~> 1.1"])
   s.add_dependency("rack", ["~> 1.4.0"])
   s.add_dependency("tilt", ["~> 1.3.1"])
   
