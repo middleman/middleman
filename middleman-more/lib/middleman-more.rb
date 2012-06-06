@@ -37,7 +37,7 @@ module Middleman
       
         Middleman::Extensions.register(:i18n) do
           require "middleman-more/core_extensions/i18n"
-          Middleman::CoreExtensions::I18n
+          Middleman::CoreExtensions::Internationalization
         end
       
         # Compass framework

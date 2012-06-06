@@ -2,7 +2,7 @@ module Middleman
   module CoreExtensions
     
     # i18n Namespace
-    module I18n
+    module Internationalization
 
       # Setup extension
       class << self
