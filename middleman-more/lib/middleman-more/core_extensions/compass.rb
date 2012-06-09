@@ -73,7 +73,7 @@ module Middleman
       end
     end
 
-    class CompassScssTemplate <  ::Middleman::Renderers::Sass::ScssPlusCSSFilenameTemplate
+    class CompassScssTemplate < ::Middleman::Renderers::Sass::ScssPlusCSSFilenameTemplate
     private
       def sass_options
         super.merge(::Compass.configuration.to_sass_engine_options)
