@@ -1,22 +1,19 @@
 module Middleman
   module CoreExtensions
-    
-    # Forward the settings on config.rb and the result of registered 
+
+    # Forward the settings on config.rb and the result of registered
     # extensions to Compass
     module Compass
-  
+
       # Extension registered
       class << self
-    
+
         # Once registered
         def registered(app)
           # Require the library
           require "compass"
-      
-          # Where to look for fonts
-          app.set :fonts_dir, "fonts"
-      
-          # Hooks to manually update the compass config after we're 
+
+          # Hooks to manually update the compass config after we're
           # done with it
           app.define_hook :compass_config
 
@@ -35,14 +32,14 @@ module Middleman
               # Disable this initially, the cache_buster extension will
               # re-enable it if requested.
               config.asset_cache_buster :none
-              
+
               # Disable this initially, the relative_assets extension will
               # re-enable it if requested.
               config.relative_assets = false
-              
+
               # Default output style
               config.output_style = :nested
-              
+
               # No line-comments in test mode (changing paths mess with sha1)
               config.line_comments = false if ENV["TEST"]
 
@@ -50,10 +47,10 @@ module Middleman
                 config.asset_host(&asset_host)
               end
             end
-              
+
             # Call hook
             run_hook :compass_config, ::Compass.configuration
-            
+
             # Tell Tilt to use it as well (for inline sass blocks)
             ::Tilt.register 'sass', CompassSassTemplate
             ::Tilt.prefer(CompassSassTemplate)
@@ -67,7 +64,7 @@ module Middleman
       end
 
     end
-    
+
     # A Compass template for Tilt
     class CompassSassTemplate < ::Middleman::Renderers::Sass::SassPlusCSSFilenameTemplate
     private
@@ -75,13 +72,13 @@ module Middleman
         super.merge(::Compass.configuration.to_sass_engine_options)
       end
     end
-    
+
     class CompassScssTemplate <  ::Middleman::Renderers::Sass::ScssPlusCSSFilenameTemplate
     private
       def sass_options
         super.merge(::Compass.configuration.to_sass_engine_options)
       end
     end
-      
+
   end
 end
