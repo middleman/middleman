@@ -170,7 +170,7 @@ module Middleman
           })
         end
         
-        def use(*args, &block); self.class.use(*args); end
+        def use(*args, &block); self.class.use(*args, &block); end
         def map(*args, &block); self.class.map(*args, &block); end
         
         # Rack env
