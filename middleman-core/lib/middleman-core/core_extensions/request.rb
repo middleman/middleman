@@ -17,8 +17,8 @@ module Middleman
           ::Rack::Mime::MIME_TYPES['.htc'] = 'text/x-component'
 
           # Let's serve all HTML as UTF-8
-          ::Rack::Mime::MIME_TYPES['.html'] = 'text/html;charset=utf8'
-          ::Rack::Mime::MIME_TYPES['.htm'] = 'text/html;charset=utf8'
+          ::Rack::Mime::MIME_TYPES['.html'] = 'text/html; charset=utf-8'
+          ::Rack::Mime::MIME_TYPES['.htm'] = 'text/html; charset=utf-8'
           
           app.extend ClassMethods
           app.extend ServerMethods
