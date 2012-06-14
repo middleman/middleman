@@ -22,6 +22,8 @@ if !ENV["MM_ROOT"] && found_path = locate_root
   ENV["MM_ROOT"] = found_path
 end
 
+is_bundler_setup = false
+
 # If we've found the root, try to setup Bundler
 if ENV["MM_ROOT"]
   
@@ -33,12 +35,20 @@ if ENV["MM_ROOT"]
     ENV['BUNDLE_GEMFILE'] = git_gemfile.to_s
   end
   
-  require 'bundler/setup' if File.exists?(ENV['BUNDLE_GEMFILE'])
+  if File.exists?(ENV['BUNDLE_GEMFILE'])
+    is_bundler_setup = true
+    require 'bundler/setup'
+  end
 end
 
 # Automatically discover extensions in RubyGems
 require "middleman-core/extensions"
-::Middleman.load_extensions_in_path
+
+if is_bundler_setup
+  Bundler.require
+else
+  ::Middleman.load_extensions_in_path
+end
 
 require "middleman-core/cli"
 
