@@ -30,9 +30,9 @@ Gem::Specification.new do |s|
   s.add_dependency("thor", ["~> 0.14.3"])
   
   # Helpers
-  s.add_dependency("activesupport", ["~> 3.2.4"])
+  s.add_dependency("activesupport", ["~> 3.2.6"])
   
   # Watcher
-  s.add_dependency("listen", ["~> 0.4.4"])
+  s.add_dependency("listen", ["~> 0.4.5"])
 end
 
