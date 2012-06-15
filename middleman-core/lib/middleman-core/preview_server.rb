@@ -32,6 +32,8 @@ module Middleman
         )
         
         mount_instance(app)
+
+        start_file_watcher unless options[:"disable-watcher"]
         
         @initialized ||= false
         unless @initialized
@@ -39,8 +41,6 @@ module Middleman
           
           register_signal_handlers unless ::Middleman::WINDOWS
           
-          start_file_watcher unless options[:"disable-watcher"]
-
           # Save the last-used options so it may be re-used when
           # reloading later on.
           @last_options = options
@@ -83,7 +83,10 @@ module Middleman
 
           if added_and_modified.length > 0
             # See if the changed file is config.rb or lib/*.rb
-            return reload if needs_to_reload?(added_and_modified)
+            if needs_to_reload?(added_and_modified)
+              reload
+              return listener.stop
+            end
 
             # Otherwise forward to Middleman
             added_and_modified.each do |path|
@@ -93,7 +96,10 @@ module Middleman
       
           if removed.length > 0
             # See if the changed file is config.rb or lib/*.rb
-            return reload if needs_to_reload?(removed)
+            if needs_to_reload?(removed)
+              reload
+              return listener.stop
+            end
 
             # Otherwise forward to Middleman
             removed.each do |path|
