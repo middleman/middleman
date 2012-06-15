@@ -40,6 +40,10 @@ module Middleman
           register_signal_handlers unless ::Middleman::WINDOWS
           
           start_file_watcher unless options[:"disable-watcher"]
+
+          # Save the last-used options so it may be re-used when
+          # reloading later on.
+          @last_options = options
           
           @webrick.start
         end
@@ -56,7 +60,7 @@ module Middleman
       # @return [void]
       def reload
         stop
-        start
+        start @last_options
       end
 
       # Stop the current instance, exit Webrick
