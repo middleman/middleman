@@ -28,3 +28,6 @@ require "middleman-core/core_extensions/routing"
 
 # Catch and show exceptions at the Rack level
 require "middleman-core/core_extensions/show_exceptions"
+
+# Manage Ruby string encodings
+require "middleman-core/core_extensions/ruby_encoding"

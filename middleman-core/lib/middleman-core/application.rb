@@ -117,6 +117,10 @@ module Middleman
     # @return [String]
     set :http_prefix, "/"
 
+    # Default string encoding for templates and output.
+    # @return [String]
+    set :encoding,    "utf-8"
+
     # Whether to catch and display exceptions
     # @return [Boolean]
     set :show_exceptions, true
@@ -127,6 +131,9 @@ module Middleman
 
     # Activate custom features and extensions
     include Middleman::CoreExtensions::Extensions
+
+    # Manage Ruby string encodings
+    include Middleman::CoreExtensions::RubyEncoding
 
     # Basic Rack Request Handling
     include Middleman::CoreExtensions::Request
