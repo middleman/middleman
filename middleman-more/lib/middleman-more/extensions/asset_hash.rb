@@ -32,7 +32,7 @@ module Middleman
         def manipulate_resource_list(resources)
           resources.each do |resource|
             next unless @exts.include? resource.ext
-            next if @ignore.any? { |r| resource.destination_path.match(r) }
+            next if @ignore.any? { |ignore| Middleman::Util.path_match(ignore, resource.destination_path) }
               
             if resource.template? # if it's a template, render it out
               digest = Digest::SHA1.hexdigest(resource.render)[0..7]
