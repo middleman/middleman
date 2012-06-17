@@ -124,8 +124,10 @@ module Middleman
             options = args[options_index] || {}
             relative = options.delete(:relative)
             
-
-            if url.include? '://'
+            # Handle Resources, which define their own url method
+            if url.respond_to? :url
+              args[url_arg_index] = url.url
+            elsif url.include? '://'
               raise "Can't use the relative option with an external URL" if relative
             else
               # Handle relative urls
