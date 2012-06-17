@@ -56,6 +56,25 @@ module Middleman
       end
     end
     
+    # Takes a matcher, which can be a literal string
+    # or a string containing glob expressions, or a
+    # regexp, or a proc, or anything else that responds
+    # to #match or #call, and returns whether or not the
+    # given path matches that matcher.
+    #
+    # @param matcher A matcher string/regexp/proc/etc
+    # @param path A path as a string
+    # @return [Boolean] Whether the path matches the matcher
+    def self.path_match(matcher, path)
+      if matcher.respond_to? :match
+        matcher.match path
+      elsif matcher.respond_to? :call
+        matcher.call path
+      else
+        File.fnmatch(matcher.to_s, path)
+      end
+    end
+
     # Simple shared cache implementation
     class Cache
       # Initialize
