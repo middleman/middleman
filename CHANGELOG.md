@@ -1,4 +1,19 @@
-3.0.rc1
+3.0.0.rc.2
+====
+* Doing a build now shows identical files (#475)
+* asset_hash, minify_javascript, and minify_css can now accept regexes, globs, 
+  and procs (#489, #480)
+* The `link_to` helper can now accept a sitemap Resource as a URL (#474)
+* The preview server now correctly listens for changes (#487, #464)
+* HTMLs are now served with a 'utf-8' charset instead of 'utf8' (#478)
+* UTF-8 is now the new default encoding for data and templates (#486, #483)
+* New :encoding setting that allows users to change default encoding
+* You may now use the `use` method with a block when adding Rack middleware
+* Middleman now depends on Listen 0.4.5+ and ActiveSupport 3.2.6+
+* Attempt to avoid issues with RVM's default Bundler (#466)
+* Fix issue where Middleman won't start with Compass 0.12.2.rc.1 (#469)
+
+3.0.0.rc.1
 ====
 * Split into 3 gems (middleman-core, middleman-more and middleman which simply includes both)
 * Rewritten to work directly with Rack (Sinatra apps can still be mounted)
