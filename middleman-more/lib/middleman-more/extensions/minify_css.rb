@@ -66,7 +66,7 @@ module Middleman
 
             headers["Content-Length"] = ::Rack::Utils.bytesize(minified).to_s
             response = [minified]
-          elsif path.end_with?('.css') && @ignore.none? {|ignore| path =~ ignore }
+          elsif path.end_with?('.css') && @ignore.none? {|ignore| Middleman::Util.path_match(ignore, path) }
             uncompressed_source = ::Middleman::Util.extract_response_text(response)
             minified_css = @compressor.compress(uncompressed_source)
 
