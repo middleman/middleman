@@ -265,7 +265,11 @@ end
 # Quiet down create file
 class ::Thor::Actions::CreateFile
   def on_conflict_behavior(&block)
-    say_status :create, :green
-    block.call unless pretend?
+    if identical?
+      say_status :identical, :blue
+    else
+      say_status :create, :green
+      block.call unless pretend?
+    end
   end
 end
