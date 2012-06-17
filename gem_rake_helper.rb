@@ -17,11 +17,11 @@ class Bundler::GemHelper
 end
 
 Cucumber::Rake::Task.new(:test, 'Run features that should pass') do |t|
-  exempt_tags = ""
+  exempt_tags = ["--tags ~@wip"]
   exempt_tags << "--tags ~@nojava" if RUBY_PLATFORM == "java"
   exempt_tags << "--tags ~@encoding" unless Object.const_defined?(:Encoding)
   
-  t.cucumber_opts = "--color --tags ~@wip #{exempt_tags} --strict --format #{ENV['CUCUMBER_FORMAT'] || 'Fivemat'}"
+  t.cucumber_opts = "--color #{exempt_tags.join(" ")} --strict --format #{ENV['CUCUMBER_FORMAT'] || 'Fivemat'}"
 end
 
 YARD::Rake::YardocTask.new
