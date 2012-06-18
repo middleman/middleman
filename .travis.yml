@@ -7,7 +7,7 @@ rvm:
   
 script: "bundle exec rake test"
 
-env: TEST=true
+env: TEST=true TRAVIS=true
 
 matrix:
   allow_failures:

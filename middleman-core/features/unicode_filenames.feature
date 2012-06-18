@@ -1,4 +1,4 @@
-@encoding
+@encoding @travishatesme
 
 Feature: Unicode filenames
   In order to support non-ASCII characters in filenames
