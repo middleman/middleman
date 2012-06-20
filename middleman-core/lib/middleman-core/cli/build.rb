@@ -268,7 +268,7 @@ class ::Thor::Actions::CreateFile
     if identical?
       say_status :identical, :blue
     else
-      say_status :create, :green
+      say_status :update, :yellow
       block.call unless pretend?
     end
   end
