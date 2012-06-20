@@ -1,3 +1,7 @@
+Master
+===
+* automatic_directory_matcher (#491)
+
 3.0.0.rc.2
 ====
 * Doing a build now shows identical files (#475)

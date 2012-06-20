@@ -19,6 +19,9 @@ module Middleman
         app.register Middleman::Sitemap::Extensions::Proxies
         app.register Middleman::Sitemap::Extensions::Ignores
       
+        # Set to automatically convert some characters into a directory
+        app.set :automatic_directory_matcher, nil
+      
         # Setup callbacks which can exclude paths from the sitemap
         app.set :ignored_sitemap_matchers, {
           # dotfiles and folders in the root

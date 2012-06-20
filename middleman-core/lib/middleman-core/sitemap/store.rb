@@ -174,6 +174,12 @@ module Middleman
         return false unless file.include?(prefix)
   
         path = file.sub(prefix, "")
+        
+        # Replace a file name containing automatic_directory_matcher with a folder
+        unless @app.automatic_directory_matcher.nil?
+          path = path.gsub(@app.automatic_directory_matcher, "/")
+        end
+              
         extensionless_path(path)
       end
     
