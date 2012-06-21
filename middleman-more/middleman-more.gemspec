@@ -27,5 +27,5 @@ Gem::Specification.new do |s|
   s.add_dependency("execjs", ["~> 1.3.2"])
   s.add_dependency("maruku", ["~> 0.6.0"])
   s.add_dependency("i18n", ["~> 0.6.0"])
-  s.add_dependency("padrino-helpers", ["~> 0.10.6"])
+  s.add_dependency("padrino-helpers", ["~> 0.10.7"])
 end

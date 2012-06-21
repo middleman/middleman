@@ -42,7 +42,7 @@ module Middleman::Cli
 
       require 'find'
       
-      @debugging = Middleman::Cli::Base.debugging
+      @debugging = Middleman::Cli::Base.respond_to?(:debugging) && Middleman::Cli::Base.debugging
       @had_errors = false
       
       self.class.shared_instance(options["verbose"])
