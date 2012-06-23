@@ -58,8 +58,8 @@ eos
   s.add_dependency("win32-process", ["~> 0.6.5"])
   s.add_dependency("rb-fchange")
   
-  s.add_dependency("guard", ["~> 0.6.2"])
-  s.add_dependency("middleman-livereload", ["~> 0.2.0"])
+  s.add_dependency("guard", ["~> 1.1.0"])
+  s.add_dependency("middleman-livereload", ["~> 0.2.2"])
   
   # Development and test
   # s.add_development_dependency("jquery-rails")

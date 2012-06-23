@@ -2,7 +2,7 @@ require "guard"
 require "guard/guard"
 require "rbconfig"
 
-if Config::CONFIG['host_os'].downcase =~ %r{mingw}
+if RbConfig::CONFIG['host_os'].downcase =~ %r{mingw}
   require "win32/process"
 end
   
@@ -31,7 +31,11 @@ module Middleman
         guardfile_contents << result unless result.nil?
       end
     
-      ::Guard.start({ :guardfile_contents => guardfile_contents })
+      begin
+        ::Guard.start({ :guardfile_contents => guardfile_contents })
+      rescue Interrupt
+        ::Guard.stop
+      end
     end
   end
 end
@@ -47,7 +51,7 @@ module Guard
       server_start
     end
   
-    def run_on_change(paths)
+    def run_on_changes(paths)
       server_stop
       server_start
     end

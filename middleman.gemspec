@@ -56,8 +56,8 @@ eos
   s.add_dependency("padrino-core", ["0.10.6"])
   s.add_dependency("padrino-helpers", ["0.10.6"])
   
-  s.add_dependency("guard", ["~> 0.6.2"])
-  s.add_dependency("middleman-livereload", ["~> 0.2.0"])
+  s.add_dependency("guard", ["~> 1.1.0"])
+  s.add_dependency("middleman-livereload", ["~> 0.2.2"])
   
   # Development and test
   s.add_development_dependency("coffee-filter", ["~> 0.1.1"])
