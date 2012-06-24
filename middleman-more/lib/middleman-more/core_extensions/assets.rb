@@ -31,10 +31,10 @@ module Middleman
           else # rewrite paths to use their destination path
             path = File.join(prefix, path)
             if resource = sitemap.find_resource_by_path(path)
-              path = resource.destination_path
+              resource.url
+            else
+              File.join(http_prefix, path)
             end
-
-            File.join(http_prefix, path)
           end
         end
       end

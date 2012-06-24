@@ -144,7 +144,8 @@ module Middleman
       # just foo. Best for linking.
       # @return [String]
       def url
-        ('/' + destination_path).sub(/\/#{Regexp.escape(app.index_file)}$/, '/')
+        File.join(app.respond_to?(:http_prefix) ? app.http_prefix : '/',
+          destination_path.sub(/\/#{Regexp.escape(app.index_file)}$/, '/'))
       end
     end
   end
