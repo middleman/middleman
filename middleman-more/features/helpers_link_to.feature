@@ -76,3 +76,18 @@ Feature: link_to helper
     And the Server is running at "indexable-app"
     When I go to "/link_to/"
     Then I should see '<a href="/needs_index/">Needs Index</a>'
+
+  Scenario: Setting http_prefix
+    Given a fixture app "indexable-app"
+    And a file named "config.rb" with:
+    """
+    set :http_prefix, "/foo"
+    """
+    And a file named "source/link_to.html.erb" with:
+    """
+    <%= link_to "Needs Index", "/needs_index.html" %>
+    """
+    And the Server is running at "indexable-app"
+    When I go to "/link_to.html"
+    Then I should see '<a href="/foo/needs_index.html">Needs Index</a>'
+
