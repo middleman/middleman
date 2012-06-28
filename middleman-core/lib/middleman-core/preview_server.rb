@@ -22,12 +22,14 @@ module Middleman
             set :logging, true
           end
         end
+
+        port = options[:port] || DEFAULT_PORT
     
-        puts "== The Middleman is standing watch on port #{options[:port]||4567}"
+        puts "== The Middleman is standing watch on port #{port}"
 
         @webrick ||= setup_webrick(
           options[:host]  || "0.0.0.0",
-          options[:port]  || DEFAULT_PORT,
+          port,
           options[:debug] || false
         )
         
@@ -53,6 +55,10 @@ module Middleman
       # @return [void]
       def stop
         puts "== The Middleman is shutting down"
+        if @listener
+          @listener.stop
+          @listener = nil
+        end
         unmount_instance
       end
     
@@ -76,16 +82,18 @@ module Middleman
         # Watcher Library
         require "listen"
     
-        listener = Listen.to(Dir.pwd, :relative_paths => true)
+        return if @listener
+
+        @listener = Listen.to(Dir.pwd, :relative_paths => true)
       
-        listener.change do |modified, added, removed|
+        @listener.change do |modified, added, removed|
           added_and_modified = (modified + added)
 
-          if added_and_modified.length > 0
+          unless added_and_modified.empty?
             # See if the changed file is config.rb or lib/*.rb
             if needs_to_reload?(added_and_modified)
               reload
-              return listener.stop
+              return
             end
 
             # Otherwise forward to Middleman
@@ -94,11 +102,11 @@ module Middleman
             end
           end
       
-          if removed.length > 0
+          unless removed.empty?
             # See if the changed file is config.rb or lib/*.rb
             if needs_to_reload?(removed)
               reload
-              return listener.stop
+              return
             end
 
             # Otherwise forward to Middleman
@@ -109,7 +117,7 @@ module Middleman
         end
     
         # Don't block this thread
-        listener.start(false)
+        @listener.start(false)
       end
       
       # Trap the interupt signal and shut down smoothly
