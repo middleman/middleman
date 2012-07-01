@@ -30,31 +30,13 @@ module Middleman
         # @param [String] prefix
         # @return [String]
         def asset_url(path, prefix="")
-          begin
-            prefix = images_dir if prefix == http_images_path
-          rescue
-          end
+          path = super(path, prefix)
 
-          if path.include?("://")
-            super(path, prefix)
-          elsif path[0,1] == "/"
+          if path.include?("//")
             path
           else
-            path = File.join(prefix, path) if prefix.length > 0
-            
-            request_path = current_path.dup
-            request_path << index_file if path.match(%r{/$})
-
-            parts = request_path.gsub(%r{^/}, '').split('/')
-
-            if parts.length > 1
-              arry = []
-              (parts.length - 1).times { arry << ".." }
-              arry << path
-              File.join(*arry)
-            else
-              path
-            end
+            current_dir = Pathname('/' + current_resource.destination_path).dirname
+            Pathname(path).relative_path_from(current_dir)
           end
         end
       end

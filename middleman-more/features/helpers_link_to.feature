@@ -61,11 +61,11 @@ Feature: link_to helper
     """
     And the Server is running at "indexable-app"
     When I go to "/link_to/"
-    Then I should see 'absolute: <a href="needs_index/">Needs Index</a>'
-    Then I should see 'relative: <a href="needs_index/">Relative</a>'
-    When I go to "/link_to/sub/"
     Then I should see 'absolute: <a href="../needs_index/">Needs Index</a>'
     Then I should see 'relative: <a href="../needs_index/">Relative</a>'
+    When I go to "/link_to/sub/"
+    Then I should see 'absolute: <a href="../../needs_index/">Needs Index</a>'
+    Then I should see 'relative: <a href="../../needs_index/">Relative</a>'
 
   Scenario: link_to can take a Resource
     Given a fixture app "indexable-app"

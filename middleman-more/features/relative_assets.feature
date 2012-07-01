@@ -89,3 +89,14 @@ Feature: Relative Assets
     And the Server is running at "fonts-app"
     When I go to "/stylesheets/fonts.css"
     Then I should see "url('../fonts/StMarie-Thin.otf"
+
+  Scenario: Relative assets via image_tag
+    Given a fixture app "relative-assets-app"
+    Given "relative_assets" feature is "enabled"
+    And a file named "source/sub/image_tag.html.erb" with:
+      """
+      <%= image_tag '/img/blank.gif' %>
+      """
+    And the Server is running at "relative-assets-app"
+    When I go to "/sub/image_tag.html"
+    Then I should see '<img src="../img/blank.gif" />'

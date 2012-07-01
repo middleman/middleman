@@ -102,9 +102,10 @@ module Middleman
           source = source.to_s.gsub(/\s/, '')
           ignore_extension = (kind == :images) # don't append extension
           source << ".#{kind}" unless ignore_extension or source =~ /\.#{kind}/
-          result_path   = source if source =~ %r{^/} # absolute path
-          result_path ||= asset_url(source, asset_folder)
-          "#{result_path}"
+          if source =~ %r{^/} # absolute path
+            asset_folder = ""
+          end
+          asset_url(source, asset_folder)
         end
 
         # Overload the regular link_to to be sitemap-aware - if you
@@ -131,10 +132,11 @@ module Middleman
               raise "Can't use the relative option with an external URL" if relative
             else
               # Handle relative urls
-              current_dir = Pathname('/' + current_resource.path).dirname
+              current_source_dir = Pathname('/' + current_resource.path).dirname
+
               path = Pathname(url)
 
-              url = current_dir.join(path).to_s if path.relative?
+              url = current_source_dir.join(path).to_s if path.relative?
 
               resource = sitemap.find_resource_by_path(url)
               
@@ -148,6 +150,9 @@ module Middleman
               if resource
                 if effective_relative
                   resource_url = resource.url
+
+                  # Output urls relative to the destination path, not the source path
+                  current_dir = Pathname('/' + current_resource.destination_path).dirname
                   new_url = Pathname(resource_url).relative_path_from(current_dir).to_s
 
                   # Put back the trailing slash to avoid unnecessary Apache redirects
