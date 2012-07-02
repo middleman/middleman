@@ -20,19 +20,19 @@ Gem::Specification.new do |s|
   
   # Core
   s.add_dependency("bundler", ["~> 1.1"])
-  s.add_dependency("rack", ["~> 1.4.0"])
+  s.add_dependency("rack", ["~> 1.4.1"])
   s.add_dependency("tilt", ["~> 1.3.1"])
   
   # Builder
   s.add_dependency("rack-test", ["~> 0.6.1"])
   
   # CLI
-  s.add_dependency("thor", ["~> 0.15.3"])
+  s.add_dependency("thor", ["~> 0.15.4"])
   
   # Helpers
   s.add_dependency("activesupport", ["~> 3.2.6"])
   
   # Watcher
-  s.add_dependency("listen", ["~> 0.4.6"])
+  s.add_dependency("listen", ["~> 0.4.7"])
 end
 

@@ -18,14 +18,14 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   s.add_dependency("middleman-core", Middleman::VERSION)
-  s.add_dependency("uglifier", ["~> 1.2.0"])
-  s.add_dependency("haml", [">= 3.1.0"])
-  s.add_dependency("sass", [">= 3.1.7"])
-  s.add_dependency("compass", [">= 0.12.1"])
+  s.add_dependency("uglifier", ["~> 1.2.6"])
+  s.add_dependency("haml", [">= 3.1.6"])
+  s.add_dependency("sass", [">= 3.1.20"])
+  s.add_dependency("compass", [">= 0.12.2"])
   s.add_dependency("coffee-script", ["~> 2.2.0"])
   s.add_dependency("coffee-script-source", ["~> 1.3.3"])
   s.add_dependency("execjs", ["~> 1.3.2"])
   s.add_dependency("maruku", ["~> 0.6.0"])
   s.add_dependency("i18n", ["~> 0.6.0"])
-  s.add_dependency("padrino-helpers", ["~> 0.10.7"])
+  s.add_dependency("padrino-helpers", ["0.10.7"])
 end
