@@ -1,0 +1,3 @@
+[submodule "middleman-sprockets"]
+	path = middleman-sprockets
+	url = git@github.com:middleman/middleman-sprockets.git

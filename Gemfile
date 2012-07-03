@@ -27,7 +27,7 @@ group :test do
   end
 end
 
-gem "middleman-sprockets", :github => "middleman/middleman-sprockets"
+gem "middleman-sprockets", :path => "middleman-sprockets"
 gem "middleman-core", :path => "middleman-core"
 gem "middleman-more", :path => "middleman-more"
 gem "middleman", :path => "middleman"
