@@ -1,5 +1,13 @@
 Master
 ===
+
+3.0.0.rc.3
+====
+* Improve asset methods and link_to by making them more clever and aware of options such as relative_assets and http_prefix
+* Refer to --verbose, instead of --debug in CLI error message (#505)
+* Cleanup listener setup and teardown
+* Update to Padrino 0.10.7 and Thor 0.15 (#495)
+* Build output correctly shows update and identical, instead of create for all.
 * automatic_directory_matcher (#491)
 
 3.0.0.rc.2
