@@ -115,9 +115,13 @@ module Middleman
           # handles cases like `style.css.sass.erb`
           content = nil
           while ::Tilt[path]
-            opts[:template_body] = content if content
-            content = render_individual_file(path, locs, opts, context)
-            path = File.basename(path, File.extname(path))
+            begin
+              opts[:template_body] = content if content
+              content = render_individual_file(path, locs, opts, context)
+              path = File.basename(path, File.extname(path))
+            rescue LocalJumpError => e
+              raise "Tried to render a layout (calls yield) at #{path} like it was a template. Non-default layouts need to be in #{source}/layouts."
+            end
           end
       
           # Certain output file types don't use layouts
