@@ -18,7 +18,9 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   s.add_dependency("middleman-core", Middleman::VERSION)
+  s.add_dependency("closure-compiler", ["~> 1.1.6"])
   s.add_dependency("uglifier", ["~> 1.2.6"])
+  s.add_dependency("yui-compressor", ["~> 0.9.6"])
   s.add_dependency("haml", [">= 3.1.6"])
   s.add_dependency("sass", [">= 3.1.20"])
   s.add_dependency("compass", [">= 0.12.2"])
