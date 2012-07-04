@@ -18,7 +18,6 @@ Feature: More default extensions
     Then I should see "section"
     When I go to "/stylesheets/style3.css"
     Then I should see "color"
-    
   
   Scenario: Default extensions build
     Given a fixture app "implied-extensions-app"
