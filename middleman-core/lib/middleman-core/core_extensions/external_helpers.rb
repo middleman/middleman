@@ -10,7 +10,7 @@ module Middleman
         def registered(app)
           # Setup a default helpers paths
           app.set :helpers_dir, "helpers"
-          app.set :helpers_filename_glob, "**/*_helper.rb"
+          app.set :helpers_filename_glob, "**/*.rb"
           app.set :helpers_filename_to_module_name_proc, Proc.new { |filename|
             basename = File.basename(filename, File.extname(filename))
             basename.camelcase

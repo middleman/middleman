@@ -1,3 +1,3 @@
-module TwoHelper
+module YetAnotherThingy
   def two; "Two"; end
 end

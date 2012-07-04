@@ -1,3 +1,3 @@
-module FourHelper
+module FourHelpers
   def four; "Four"; end
 end
