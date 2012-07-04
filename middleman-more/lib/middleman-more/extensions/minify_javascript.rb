@@ -17,11 +17,30 @@ module Middleman
 
           # Once config is parsed
           app.after_configuration do
-            chosen_compressor = js_compressor || options[:compressor] || begin
-              require 'uglifier'
-              ::Uglifier.new
+            chosen_compressor = js_compressor || options[:compressor]
+            case chosen_compressor
+              when "closure-compiler"
+                chosen_compressor = begin
+                  require "closure-compiler"
+                  ::Closure::Compiler.new
+                end
+              when "yui-compressor"
+                chosen_compressor = begin
+                  require "yui/compressor"
+                  ::YUI::JavaScriptCompressor.new
+                end
+              when "uglifier"
+                chosen_compressor = begin
+                  require "uglifier"
+                  ::Uglifier.new
+                end
+              when nil
+                chosen_compressor = begin
+                  require "uglifier"
+                  ::Uglifier.new
+                end
             end
-          
+
             # Setup Rack middlware to minify JS
             use Rack, :compressor => chosen_compressor, 
                       :ignore     => ignore,

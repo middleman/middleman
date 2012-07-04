@@ -234,3 +234,26 @@ Feature: Minify Javascript
     When I go to "/javascripts/coffee_test.js"
     Then I should see "11" lines
     
+  Scenario: Minify big coffeescript with closure-compiler
+    Given a fixture app "minify-js-app"
+    And a file named "config.rb" with:
+      """
+      activate :minify_javascript
+      set :js_compressor, "closure-compiler"
+      """
+    And the Server is running at "minify-js-app"
+    When I go to "/javascripts/coffee_test.js"
+    Then I should see "(function(){}).call(this)"
+    # because variable is unused
+    
+  Scenario: Minify big coffeescript with yui-compressor
+    Given a fixture app "minify-js-app"
+    And a file named "config.rb" with:
+      """
+      activate :minify_javascript
+      set :js_compressor, "yui-compressor"
+      """
+    And the Server is running at "minify-js-app"
+    When I go to "/javascripts/coffee_test.js"
+    Then I should see "(function(){var race,__slice=[].slice;race=function(){var runners,winner;winner=arguments[0],runners=2<=arguments.length?__slice.call(arguments,1):[];return print(winner,runners)}}).call(this);"
+    
