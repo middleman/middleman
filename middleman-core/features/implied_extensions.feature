@@ -2,6 +2,8 @@ Feature: Use default extensions when user doesn't supply them
 
   Scenario: Default extensions preview
     Given the Server is running at "implied-extensions-app"
+    When I go to "/"
+    Then I should see "hello: world"
     When I go to "/index.html"
     Then I should see "hello: world"
     When I go to "/index.erb"
@@ -9,13 +11,15 @@ Feature: Use default extensions when user doesn't supply them
     When I go to "/index"
     Then I should see "File Not Found"
     
-  Scenario: Default extensions preview  
+  Scenario: Override erb extension
     Given a fixture app "implied-extensions-app"
     And a file named "config.rb" with:
        """
        template_extensions :erb => :htm
        """
     And the Server is running
+    When I go to "/"
+    Then I should see "File Not Found"
     When I go to "/index.htm"
     Then I should see "hello: world"
     When I go to "/index.erb"
@@ -24,6 +28,19 @@ Feature: Use default extensions when user doesn't supply them
     Then I should see "File Not Found"
     When I go to "/index.html"
     Then I should see "File Not Found"
+    
+  Scenario: Override erb extension
+    Given a fixture app "implied-extensions-app"
+    And a file named "config.rb" with:
+       """
+       set :index_file, "index.htm"
+       template_extensions :erb => :htm
+       """
+    And the Server is running
+    When I go to "/"
+    Then I should see "hello: world"
+    When I go to "/index.htm"
+    Then I should see "hello: world"
   
   Scenario: Default extensions build
     Given a fixture app "implied-extensions-app"
