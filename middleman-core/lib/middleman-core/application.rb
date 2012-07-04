@@ -217,6 +217,14 @@ module Middleman
       logging
     end
 
+    # Work around this bug: http://bugs.ruby-lang.org/issues/4521
+    # where Ruby will call to_s/inspect while printing exception
+    # messages, which can take a long time (minutes at full CPU)
+    # if the object is huge or has cyclic references, like this.
+    def to_s
+      "the Middleman application context"
+    end
+
     # Expand a path to include the index file if it's a directory
     #
     # @private
