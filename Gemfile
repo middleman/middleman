@@ -19,12 +19,16 @@ group :test do
   gem "liquid", "~> 2.2"
 
   platforms :ruby do
-    # For less tests
     gem "therubyracer"
-    gem "less", "~> 2.2"
     
     gem "redcarpet", "~> 2.1.1"
   end
+  
+  platforms :jruby do 
+    gem "therubyrhino"
+  end
+  
+  gem "less", "~> 2.2"
 end
 
 gem "middleman-sprockets", :path => "middleman-sprockets"
