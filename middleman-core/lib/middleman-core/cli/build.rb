@@ -206,12 +206,12 @@ module Middleman::Cli
     # @return [void]
     def queue_current_paths
       @cleaning_queue = []
-      Find.find(@destination) do |path|
-        next if path.match(/\/\./) && !path.match(/\.htaccess/)
-        unless path == destination
-          @cleaning_queue << Pathname.new(path)
-        end
-      end if File.exist?(@destination)
+      return unless File.exist?(@destination)
+      
+      paths = ::Middleman::Util.all_files_under(@destination)
+      @cleaning_queue += paths.select do |path|
+        !path.to_s.match(/\/\./) || path.to_s.match(/\.htaccess/)
+      end 
     end
 
     # Actually build the app

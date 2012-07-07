@@ -112,9 +112,8 @@ module Middleman
           glob = "#{path}**/*"
           subset = @known_paths.select { |p| p.fnmatch(glob) }
           
-          path.find do |filepath|
+          ::Middleman::Util.all_files_under(path).each do |filepath|
             full_path = path + filepath
-            next if full_path.directory?
             
             if only_new
               next if subset.include?(full_path)

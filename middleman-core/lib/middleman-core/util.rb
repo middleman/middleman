@@ -74,6 +74,21 @@ module Middleman
         File.fnmatch(matcher.to_s, path)
       end
     end
+    
+    # Get a recusive list of files inside a set of paths.
+    # Works with symlinks.
+    #
+    # @param path A path string or Pathname
+    # @return [Array] An array of filenames
+    def self.all_files_under(*paths)
+      paths.flatten!
+      paths.map! { |p| Pathname(p) }
+      files = paths.select { |p| p.file? }
+      (paths - files).each do |dir|
+        files << all_files_under(dir.children)
+      end
+      files.flatten
+    end
 
     # Simple shared cache implementation
     class Cache
