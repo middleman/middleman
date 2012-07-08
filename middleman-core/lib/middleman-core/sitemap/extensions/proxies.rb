@@ -31,6 +31,8 @@ module Middleman
           # @param [String] target
           # @return [void]
           def proxy_to(target)
+            target = ::Middleman::Util.normalize_path(target)
+            raise "You can't proxy #{path} to itself!" if target == path
             @proxied_to = target
           end
       
@@ -55,9 +57,13 @@ module Middleman
               proxy_resource = store.find_resource_by_path(proxied_to)
           
               unless proxy_resource
-                raise "Path #{path} proxies to unknown file #{proxied_to}"
+                raise "Path #{path} proxies to unknown file #{proxied_to}:#{store.resources.map(&:path)}"
               end
           
+              if proxy_resource.proxy?
+                raise "You can't proxy #{path} to #{proxied_to} which is itself a proxy."
+              end
+
               proxy_resource.source_file
             end
           end
