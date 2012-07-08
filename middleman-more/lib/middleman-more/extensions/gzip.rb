@@ -27,9 +27,11 @@ module Middleman::Extensions
             next unless exts.include? path.extname
             
             output_filename, old_size, new_size = Middleman::Extensions::Gzip.gzip_file(path.to_s)
-            
-            size_change_word = (old_size - new_size) > 0 ? 'smaller' : 'larger'
-            builder.say_status :gzip, "#{output_filename} (#{number_to_human_size((old_size - new_size).abs)} #{size_change_word})"
+ 
+            if output_filename
+              size_change_word = (old_size - new_size) > 0 ? 'smaller' : 'larger'
+              builder.say_status :gzip, "#{output_filename} (#{number_to_human_size((old_size - new_size).abs)} #{size_change_word})"
+            end
           end
         end
       end
