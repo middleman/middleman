@@ -31,7 +31,9 @@ module Middleman
         def evaluate(context, locals, &block)
           begin
             super
-          rescue ::ExecJS::RuntimeError=> e
+          rescue ::ExecJS::RuntimeError => e
+            e.to_s
+          rescue => e
             e.to_s
           end
         end
