@@ -1,3 +1,5 @@
+require "webrick"
+
 module Middleman
   
   WINDOWS = !!(RUBY_PLATFORM =~ /(mingw|bccwin|wince|mswin32)/i) unless const_defined?(:WINDOWS)
@@ -11,8 +13,6 @@ module Middleman
       # Start an instance of Middleman::Application
       # @return [void]
       def start(options={})
-        require "webrick"
-        
         app = ::Middleman::Application.server.inst do
           if options[:environment]
             set :environment, options[:environment].to_sym
@@ -140,8 +140,10 @@ module Middleman
           :AccessLog   => []
         }
         
-        unless is_logging
-          http_opts[:Logger] = ::WEBrick::Log::new(nil, 0)
+        if is_logging
+          http_opts[:Logger] = FilteredWebrickLog.new
+        else
+          http_opts[:Logger] = ::WEBrick::Log.new(nil, 0)
         end
       
         ::WEBrick::HTTPServer.new(http_opts)
@@ -168,6 +170,14 @@ module Middleman
       def needs_to_reload?(paths)
         paths.any? do |path|
           path.match(%{^config\.rb}) || path.match(%r{^lib/^[^\.](.*)\.rb$}) || path.match(%r{^helpers/^[^\.](.*)_helper\.rb$})
+        end
+      end
+    end
+
+    class FilteredWebrickLog < ::WEBrick::Log
+      def log(level, data)
+        unless data =~ %r{Could not determine content-length of response body.}
+          super(level, data)
         end
       end
     end
