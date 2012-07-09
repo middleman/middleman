@@ -16,7 +16,8 @@ module Middleman
         /^\.rbenv-.*$/,
         /^Gemfile$/,
         /^Gemfile\.lock$/,
-        /~$/
+        /~$/,
+        /(^|\/)\.?#/
       ]
 
       # Setup extension

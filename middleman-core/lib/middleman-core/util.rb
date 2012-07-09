@@ -84,7 +84,7 @@ module Middleman
       paths.flatten!
       paths.map! { |p| Pathname(p) }
       files = paths.select { |p| p.file? }
-      (paths - files).each do |dir|
+      paths.select {|p| p.directory? }.each do |dir|
         files << all_files_under(dir.children)
       end
       files.flatten
