@@ -47,14 +47,16 @@ module Middleman
       # @return [void]
       def rebuild_resource_list!(reason=nil)
         @resources = @resource_list_manipulators.inject([]) do |result, (_, inst)|
-          inst.manipulate_resource_list(result)
-        end
-      
-        # Reset lookup cache
-        @_lookup_cache = { :path => {}, :destination_path => {} }
-        @resources.each do |resource|
-          @_lookup_cache[:path][resource.path] = resource
-          @_lookup_cache[:destination_path][resource.destination_path] = resource
+          newres = inst.manipulate_resource_list(result)
+
+          # Reset lookup cache
+          @_lookup_cache = { :path => {}, :destination_path => {} }
+          newres.each do |resource|
+            @_lookup_cache[:path][resource.path] = resource
+            @_lookup_cache[:destination_path][resource.destination_path] = resource
+          end
+
+          newres
         end
       end
     
