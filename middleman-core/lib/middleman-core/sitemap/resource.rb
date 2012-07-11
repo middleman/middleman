@@ -57,15 +57,13 @@ module Middleman
 
         path_meta = store.metadata_for_path(path).dup
         if path_meta.has_key?(:blocks)
-          result[:blocks] << path_meta[:blocks]
-          path_meta.delete(:blocks)
+          result[:blocks] << path_meta.delete(:blocks)
         end
         result.deep_merge!(path_meta)
 
         local_meta = @local_metadata.dup
         if local_meta.has_key?(:blocks)
-          result[:blocks] << local_meta[:blocks]
-          local_meta.delete(:blocks)
+          result[:blocks] << local_meta.delete(:blocks)
         end
         result.deep_merge!(local_meta)
 
@@ -78,8 +76,7 @@ module Middleman
       # @param [Hash] metadata A metadata block like provides_metadata_for_path takes
       def add_metadata(metadata={}, &block)
         if metadata.has_key?(:blocks)
-          @local_metadata[:blocks] << metadata[:blocks]
-          metadata.delete(:blocks)
+          @local_metadata[:blocks] << metadata.delete(:blocks)
         end
         @local_metadata.deep_merge!(metadata)
         @local_metadata[:blocks] << block if block_given?
