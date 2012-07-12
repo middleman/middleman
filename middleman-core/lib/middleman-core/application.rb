@@ -93,6 +93,10 @@ module Middleman
     # @return [String]
     set :index_file,  "index.html"
 
+    # Whether to include a trailing slash on links to directory indexes
+    # @return [Boolean]
+    set :trailing_slash, true
+
     # Location of javascripts within source.
     # @return [String]
     set :js_dir,      "javascripts"

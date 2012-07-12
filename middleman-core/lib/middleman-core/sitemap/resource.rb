@@ -142,7 +142,7 @@ module Middleman
       # @return [String]
       def url
         File.join(app.respond_to?(:http_prefix) ? app.http_prefix : '/',
-          destination_path.sub(/\/#{Regexp.escape(app.index_file)}$/, '/'))
+          destination_path.sub(/\/#{Regexp.escape(app.index_file)}$/, app.trailing_slash ? '/' : ''))
       end
     end
   end
