@@ -143,7 +143,7 @@ module Middleman
       def url
         url_path = destination_path
         if app.strip_index_file
-          url_path = url_path.sub(/\/#{Regexp.escape(app.index_file)}$/,
+          url_path = url_path.sub(/(^|\/)#{Regexp.escape(app.index_file)}$/,
                                   app.trailing_slash ? '/' : '')
         end
         File.join(app.respond_to?(:http_prefix) ? app.http_prefix : '/', url_path)
