@@ -93,6 +93,14 @@ module Middleman
     # @return [String]
     set :index_file,  "index.html"
 
+    # Whether to strip the index file name off links to directory indexes
+    # @return [Boolean]
+    set :strip_index_file, true
+
+    # Whether to include a trailing slash when stripping the index file
+    # @return [Boolean]
+    set :trailing_slash, true
+
     # Location of javascripts within source.
     # @return [String]
     set :js_dir,      "javascripts"

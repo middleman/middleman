@@ -34,8 +34,8 @@ module Middleman
         
           resources.each do |resource|
             # Check if it would be pointless to reroute
-            next if resource.path == index_file || 
-                    resource.path.end_with?(new_index_path) || 
+            next if resource.destination_path == index_file ||
+                    resource.destination_path.end_with?(new_index_path) ||
                     File.extname(index_file) != resource.ext
           
             # Check if frontmatter turns directory_index off
