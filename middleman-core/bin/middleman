@@ -63,9 +63,8 @@ end
 # Start the CLI
 if ENV["MM_ROOT"]
   # Change directory to the root
-  Dir.chdir(ENV["MM_ROOT"]) do
-    Middleman::Cli::Base.start
-  end
+  Dir.chdir(ENV["MM_ROOT"])
+  Middleman::Cli::Base.start
 else
   Middleman::Cli::Base.start
 end
