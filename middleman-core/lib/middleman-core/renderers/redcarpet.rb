@@ -7,12 +7,12 @@ module Middleman
       
       # Overwrite built-in Tilt version. 
       # Don't overload :renderer option with smartypants
-      # Supper renderer-level options
+      # Support renderer-level options
       def generate_renderer
         return options.delete(:renderer) if options.has_key?(:renderer)
         
         # Pick a renderer
-        renderer = ::Redcarpet::Render::HTML
+        renderer = MiddlemanRedcarpetHTML
         
         # Support SmartyPants
         if options.delete(:smartypants)
@@ -28,8 +28,28 @@ module Middleman
           sum[opt] = options.delete(opt) if options.has_key?(opt)
           sum
         end
-        
+
         renderer.new(render_options)
+      end
+
+      def evaluate(scope, locals, &block)
+        if @engine.renderer.respond_to? :middleman_app=
+          @engine.renderer.middleman_app = scope
+        end
+        super
+      end
+    end
+
+    # Custom Redcarpet renderer that uses our helpers for images and links
+    class MiddlemanRedcarpetHTML < ::Redcarpet::Render::HTML
+      attr_accessor :middleman_app
+
+      def image(link, title, alt_text)
+        middleman_app.image_tag(link, :title => title, :alt => alt_text)
+      end
+
+      def link(link, title, content)
+        middleman_app.link_to(content, link, :title => title)
       end
     end
    
