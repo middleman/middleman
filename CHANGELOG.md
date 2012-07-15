@@ -1,6 +1,8 @@
 Master
 ===
 
+* Use centralized Logger and add benchmark methods
+
 3.0.0.rc.3
 ====
 * Improve asset methods and link_to by making them more clever and aware of options such as relative_assets and http_prefix

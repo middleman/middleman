@@ -23,6 +23,9 @@ module Middleman
       end
   
       class Localizer
+        attr_reader :app
+        delegate :logger, :to => :app
+      
         def initialize(app, options={})
           @app = app
           @maps = {}
@@ -34,7 +37,7 @@ module Middleman
           @mount_at_root = @options.has_key?(:mount_at_root) ? @options[:mount_at_root] : langs.first
       
           if !@app.build?
-            puts "== Locales: #{langs.join(", ")}"
+            logger.info "== Locales: #{langs.join(", ")}"
           end
       
           # Don't output localizable files

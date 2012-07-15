@@ -113,9 +113,9 @@ module Middleman
           end
       
           if ext_module.nil?
-            puts "== Unknown Extension: #{ext}"
+            logger.warning "== Unknown Extension: #{ext}"
           else
-            puts "== Activating: #{ext}" if logging?
+            logger.debug "== Activating: #{ext}"
             self.class.register(ext_module, options, &block)
           end
         end
@@ -133,7 +133,7 @@ module Middleman
           # Check for and evaluate local configuration
           local_config = File.join(root, "config.rb")
           if File.exists? local_config
-            puts "== Reading:  Local config" if logging?
+            logger.debug "== Reading:  Local config"
             instance_eval File.read(local_config), local_config, 1
           end
           
@@ -150,10 +150,9 @@ module Middleman
       
           run_hook :after_configuration
       
-          if logging?
-            self.class.extensions.each do |ext|
-              puts "== Extension: #{ext}"
-            end
+          logger.debug "Loaded extensions:"
+          self.class.extensions.each do |ext|
+            logger.debug "== Extension: #{ext}"
           end
         end
       end

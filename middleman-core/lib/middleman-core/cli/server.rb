@@ -25,6 +25,10 @@ module Middleman::Cli
       :type    => :boolean, 
       :default => false,
       :desc    => 'Print debug messages'
+    method_option :instrument,
+      :type    => :string, 
+      :default => false,
+      :desc    => 'Print instrument messages'
     method_option "disable-watcher", 
       :type    => :boolean, 
       :default => false,
@@ -47,6 +51,7 @@ module Middleman::Cli
         :host              => options["host"],
         :environment       => options["environment"],
         :debug             => options["verbose"],
+        :instrumenting     => options["instrument"],
         :"disable-watcher" => options["disable-watcher"]
       }
       

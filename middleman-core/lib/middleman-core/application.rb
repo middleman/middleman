@@ -4,6 +4,7 @@ require "tilt"
 # Use ActiveSupport JSON
 require "active_support/json"
 require "active_support/core_ext/integer/inflections"
+require "active_support/core_ext/float/rounding"
 
 # Simple callback library
 require "middleman-core/vendor/hooks-0.2.0/lib/hooks"
@@ -17,7 +18,7 @@ module Middleman
   class Application
     # Uses callbacks
     include Hooks
-
+    
     # Before request hook
     define_hook :before
 
@@ -84,10 +85,6 @@ module Middleman
     # Middleman environment. Defaults to :development, set to :build by the build process
     # @return [String]
     set :environment, (ENV['MM_ENV'] && ENV['MM_ENV'].to_sym) || :development
-
-    # Whether logging is active, disabled by default
-    # @return [String]
-    set :logging, false
 
     # Which file should be used for directory indexes
     # @return [String]
@@ -227,13 +224,8 @@ module Middleman
     def settings
       self
     end
-
-    # Whether we're logging
-    #
-    # @return [Boolean] If we're logging
-    def logging?
-      logging
-    end
+    
+    delegate :logger, :instrument, :to => ::Middleman::Util
 
     # Work around this bug: http://bugs.ruby-lang.org/issues/4521
     # where Ruby will call to_s/inspect while printing exception
