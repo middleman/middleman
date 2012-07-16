@@ -109,6 +109,11 @@ module Middleman
     # @return [String]
     set :css_dir,     "stylesheets"
 
+    # Location of javascripts external to source directory.
+    # @return [Array]
+    #   set :js_assets_paths, ["#{root}/assets/javascripts/", "/path/2/external/js/repository/"]
+    set :js_assets_paths, []
+
     # Location of SASS/SCSS files external to source directory.
     # @return [Array]
     #   set :sass_assets_paths, ["#{root}/assets/sass/", "/path/2/external/sass/repository/"]
