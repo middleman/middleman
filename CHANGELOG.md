@@ -1,6 +1,8 @@
 Master
 ===
 
+* Extract load_paths so they aren't locked into the binary
+* Add middleman/rack for better config.ru support
 * Use centralized Logger and add benchmark methods
 
 3.0.0.rc.3

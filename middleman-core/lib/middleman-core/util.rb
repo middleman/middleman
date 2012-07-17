@@ -11,6 +11,7 @@ require "thor"
 require "pathname"
 
 module Middleman
+  
   module Util
 
     # The logger
