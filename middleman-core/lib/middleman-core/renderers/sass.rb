@@ -14,6 +14,11 @@ module Middleman
           # Default sass options
           app.set :sass, {}
       
+          # Location of SASS .sass_cache directory.
+          # @return [String]
+          #   set :sass_cache_path, "/tmp/middleman-app-name/sass_cache"
+          app.set(:sass_cache_path) { File.join(app.root_path, '.sass_cache') } # runtime compile of path
+      
           app.before_configuration do
             template_extensions :scss => :css,
                                 :sass => :css

@@ -101,11 +101,6 @@ module Middleman
     # @return [String]
     set :css_dir,     "stylesheets"
 
-    # Location of SASS .sass_cache directory.
-    # @return [String]
-    #   set :sass_cache_path, "/tmp/middleman-app-name/sass_cache"
-    set(:sass_cache_path) { File.join(root_path, '.sass_cache') } # runtime compile of path
-
     # Location of images within source. Used by HTML helpers and Compass.
     # @return [String]
     set :images_dir,  "images"
