@@ -21,7 +21,7 @@ module Middleman
             ::Compass.configuration do |config|
               config.project_path    = source_dir
               config.environment     = :development
-              config.cache_path      = File.join(root, ".sass-cache")
+              config.cache_path      = sass_cache_path
               config.sass_dir        = css_dir
               config.css_dir         = css_dir
               config.javascripts_dir = js_dir
