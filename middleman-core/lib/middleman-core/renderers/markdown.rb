@@ -43,7 +43,7 @@ module Middleman
                 ::Tilt.prefer(markdown_engine_klass)
               end  
             rescue LoadError
-              $stderr.puts "Requested Markdown engine (#{markdown_engine}) not found. Maybe the gem needs to be installed and required?"
+              logger.warn "Requested Markdown engine (#{markdown_engine}) not found. Maybe the gem needs to be installed and required?"
             end
           end
         end

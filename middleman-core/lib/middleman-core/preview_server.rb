@@ -9,23 +9,23 @@ module Middleman
     DEFAULT_PORT = 4567
     
     class << self
+      attr_reader :app
+      delegate :logger, :to => :app
       
       # Start an instance of Middleman::Application
       # @return [void]
       def start(options={})
-        app = ::Middleman::Application.server.inst do
+        @app = ::Middleman::Application.server.inst do
           if options[:environment]
             set :environment, options[:environment].to_sym
           end
           
-          if options[:debug]
-            set :logging, true
-          end
+          logger(options[:debug] ? 0 : 1, options[:instrumenting] || false)
         end
 
         port = options[:port] || DEFAULT_PORT
     
-        puts "== The Middleman is standing watch on port #{port}"
+        logger.info "== The Middleman is standing watch on port #{port}"
 
         @webrick ||= setup_webrick(
           options[:host]  || "0.0.0.0",
@@ -54,7 +54,7 @@ module Middleman
       # Detach the current Middleman::Application instance
       # @return [void]
       def stop
-        puts "== The Middleman is shutting down"
+        logger.info "== The Middleman is shutting down"
         if @listener
           @listener.stop
           @listener = nil

@@ -11,6 +11,7 @@ module Middleman
         
       # @return [Middleman::Application]
       attr_reader :app
+      delegate :logger, :instrument, :to => :app
     
       # @return [Middleman::Sitemap::Store]
       attr_reader :store
@@ -111,30 +112,28 @@ module Middleman
       # @return [String]
       def render(opts={}, locs={}, &block)
         return File.open(source_file).read unless template?
-      
-        start_time = Time.now
-        puts "== Render Start: #{source_file}" if app.logging?
 
-        md   = metadata.dup
-        opts = md[:options].deep_merge(opts)
-        locs = md[:locals].deep_merge(locs)
-
-        # Forward remaining data to helpers
-        if md.has_key?(:page)
-          app.data.store("page", md[:page])
-        end
-
-        md[:blocks].each do |aBlock|
-          app.instance_eval(&aBlock)
-        end
-      
-        app.instance_eval(&block) if block_given?
+        relative_source = Pathname(source_file).relative_path_from(Pathname(app.root))
         
-        app.current_path ||= self.destination_path
-        result = app.render_template(source_file, locs, opts)
+        instrument "render.resource", :path => relative_source  do
+          md   = metadata.dup
+          opts = md[:options].deep_merge(opts)
+          locs = md[:locals].deep_merge(locs)
 
-        puts "== Render End: #{source_file} (#{(Time.now - start_time).round(2)}s)" if app.logging?
-        result
+          # Forward remaining data to helpers
+          if md.has_key?(:page)
+            app.data.store("page", md[:page])
+          end
+        
+          md[:blocks].each do |aBlock|
+            app.instance_eval(&aBlock)
+          end
+      
+          app.instance_eval(&block) if block_given?
+        
+          app.current_path ||= self.destination_path
+          app.render_template(source_file, locs, opts)
+        end
       end
     
       # A path without the directory index - so foo/index.html becomes

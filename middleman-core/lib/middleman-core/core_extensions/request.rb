@@ -197,7 +197,7 @@ module Middleman
           self.req = req = ::Rack::Request.new(env)
           self.res = res = ::Rack::Response.new
 
-          puts "== Request: #{env["PATH_INFO"]}" if logging?
+          logger.debug "== Request: #{env["PATH_INFO"]}"
 
           # Catch :halt exceptions and use that response if given
           catch(:halt) do
@@ -271,7 +271,7 @@ module Middleman
           end
 
           # End the request
-          puts "== Finishing Request: #{request_path} (#{(Time.now - start_time).round(2)}s)" if logging?
+          logger.debug "== Finishing Request: #{request_path} (#{(Time.now - start_time).round(2)}s)"
           halt res.finish
         end
       

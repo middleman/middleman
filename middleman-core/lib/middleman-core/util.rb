@@ -1,3 +1,9 @@
+# Our custom logger
+require "middleman-core/logger"
+
+# For instrumenting
+require "active_support/notifications"
+
 # Using Thor's indifferent hash access
 require "thor"
 
@@ -6,6 +12,23 @@ require "pathname"
 
 module Middleman
   module Util
+
+    # The logger
+    #
+    # @return [Middleman::Logger] The logger
+    def self.logger(*args)
+      if !@_logger || args.length > 0
+        @_logger = ::Middleman::Logger.new(*args)
+      end
+      
+      @_logger
+    end
+    
+    # Facade for ActiveSupport/Notification
+    def self.instrument(name, payload={}, &block)
+      name << ".middleman" unless name =~ /\.middleman$/
+      ::ActiveSupport::Notifications.instrument(name, payload, &block)
+    end
     
     # Recursively convert a normal Hash into a HashWithIndifferentAccess
     #
