@@ -53,6 +53,9 @@ module Middleman
       # Core File Change API class
       class API
         
+        attr_reader :app
+        delegate :logger, :to => :app
+        
         # Initialize api and internal path cache
         def initialize(app)
           @app = app
@@ -86,7 +89,7 @@ module Middleman
         # @return [void]
         def did_change(path)
           return if ignored?(path)
-          puts "== File Change: #{path.relative_path_from(@app.root_path)}" if @app.logging?
+          logger.debug "== File Change: #{path.relative_path_from(@app.root_path)}"
           @known_paths << path
           self.run_callbacks(path, :changed)
         end
@@ -97,7 +100,7 @@ module Middleman
         # @return [void]
         def did_delete(path)
           return if ignored?(path)
-          puts "== File Deletion: #{path.relative_path_from(@app.root_path)}" if @app.logging?
+          logger.debug "== File Deletion: #{path.relative_path_from(@app.root_path)}"
           @known_paths.delete(path)
           self.run_callbacks(path, :deleted)
         end

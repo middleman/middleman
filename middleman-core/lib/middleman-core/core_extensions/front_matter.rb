@@ -46,6 +46,9 @@ module Middleman::CoreExtensions
     end
   
     class FrontmatterManager
+      attr_reader :app
+      delegate :logger, :to => :app
+    
       def initialize(app)
         @app = app
         @cache = {}
@@ -84,7 +87,7 @@ module Middleman::CoreExtensions
           begin
             data = YAML.load($1)
           rescue *YAML_ERRORS => e
-            puts "YAML Exception: #{e.message}"
+            logger.error "YAML Exception: #{e.message}"
             return false
           end
 
@@ -107,7 +110,7 @@ module Middleman::CoreExtensions
             json = ($1+$2).sub(";;;", "{").sub(";;;", "}")
             data = ActiveSupport::JSON.decode(json)
           rescue => e
-            puts "JSON Exception: #{e.message}"
+            logger.error "JSON Exception: #{e.message}"
             return false
           end
 
