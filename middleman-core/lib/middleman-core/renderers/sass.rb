@@ -24,6 +24,8 @@ module Middleman
                                 :sass => :css
           end
 
+          ::Sass::Script::Functions.send :include, SassFunctions
+          
           # Tell Tilt to use it as well (for inline sass blocks)
           ::Tilt.register 'sass', SassPlusCSSFilenameTemplate
           ::Tilt.prefer(SassPlusCSSFilenameTemplate)
@@ -35,7 +37,28 @@ module Middleman
     
         alias :included :registered
       end
-  
+      
+      module SassFunctions
+        def data(string)
+          assert_type string, :String
+          
+          d = options[:custom][:data]
+          string.value.split(".").each do |key|
+            d = d[key.to_s]
+          end
+          
+          if d.is_a?(String)
+            ::Sass::Script.parse(d, 1, 0)
+          elsif d.is_a?(Fixnum) || d.is_a?(Float)
+            ::Sass::Script::Number.new(d)
+          elsif d == true || d == false
+            ::Sass::Script::Bool.new(d)
+          else
+            ::Sass::Script::Bool.new(false)
+          end
+        end
+      end
+      
       # A SassTemplate for Tilt which outputs debug messages
       class SassPlusCSSFilenameTemplate < ::Tilt::SassTemplate
   
@@ -72,7 +95,13 @@ module Middleman
           parts.pop
           css_filename = File.join(location_of_sass_file, @context.css_dir, parts.join("."))
       
-          options.merge(:filename => eval_file, :line => line, :syntax => syntax, :css_filename => css_filename)
+          options.merge({
+            :custom => { :data => @context.data.to_h },
+            :filename => eval_file,
+            :line => line,
+            :syntax => syntax,
+            :css_filename => css_filename
+          })
         end
       end
   

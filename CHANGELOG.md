@@ -1,6 +1,7 @@
 Master
 ===
 
+* Add data() method to allow Sass to access Yaml data
 * Use centralized Logger and add benchmark methods
 
 3.0.0.rc.3
