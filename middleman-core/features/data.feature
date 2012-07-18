@@ -20,3 +20,11 @@ Feature: Local Data API
     Given the Server is running at "data-app"
     When I go to "/test2.html"
     Then I should see "Welcome"
+    
+  Scenario: Using data in sass
+    Given the Server is running at "data-app"
+    When I go to "/stylesheets/theme.css"
+    Then I should see "background: yellow"
+    Then I should see "font-weight: bold"
+    Then I should not see "extra:"
+    Then I should see "color: rgba(255, 0, 0, 0.5)"

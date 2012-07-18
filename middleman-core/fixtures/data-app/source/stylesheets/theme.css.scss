@@ -1,0 +1,8 @@
+body {
+  font-weight: data("theme.weight");
+  background: data("theme.background");
+  @if data("theme.extra") {
+    extra: data("theme.extra");
+  }
+  color: rgba(data("theme.color"), 0.5);
+}
