@@ -10,6 +10,20 @@ module Middleman
     # The base task from which everything else etends
     class Base < Thor
     
+      class << self
+        def start(*args)
+          # Change flag to a module
+          ARGV.unshift("help") if ARGV.delete("--help")
+
+          # Default command is server
+          if ARGV[0] != "help" && (ARGV.length < 1 || ARGV.first.include?("-"))
+            ARGV.unshift("server")
+          end
+          
+          super
+        end
+      end
+    
       desc "version", "Show version"
       def version
         require 'middleman-core/version'

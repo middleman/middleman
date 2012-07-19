@@ -26,6 +26,7 @@ module Middleman
     define_hook :ready
 
     class << self
+
       # Mix-in helper methods. Accepts either a list of Modules
       # and/or a block to be evaluated
       # @return [void]
