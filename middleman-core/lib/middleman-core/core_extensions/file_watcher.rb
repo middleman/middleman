@@ -29,12 +29,12 @@ module Middleman
       
           # Before parsing config, load the data/ directory
           app.before_configuration do
-            files.reload_path(root_path + data_dir)
+            files.reload_path(data_dir)
           end
       
           # After config, load everything else
           app.ready do
-            files.reload_path(root_path)
+            files.reload_path('.')
           end
         end
         alias :included :registered
@@ -89,7 +89,7 @@ module Middleman
         # @return [void]
         def did_change(path)
           return if ignored?(path)
-          logger.debug "== File Change: #{path.relative_path_from(@app.root_path)}"
+          logger.debug "== File Change: #{path}"
           @known_paths << path
           self.run_callbacks(path, :changed)
         end
@@ -100,7 +100,7 @@ module Middleman
         # @return [void]
         def did_delete(path)
           return if ignored?(path)
-          logger.debug "== File Deletion: #{path.relative_path_from(@app.root_path)}"
+          logger.debug "== File Deletion: #{path}"
           @known_paths.delete(path)
           self.run_callbacks(path, :deleted)
         end
@@ -111,24 +111,26 @@ module Middleman
         # @param [Boolean] only_new Whether we only look for new files
         # @return [void]
         def reload_path(path, only_new=false)
-          return unless path.exist?
+          # chdir into the root directory so Pathname can work with relative paths
+          Dir.chdir @app.root_path do
+            path = Pathname(path)
+            return unless path.exist?
           
-          glob = "#{path}**/*"
-          subset = @known_paths.select { |p| p.fnmatch(glob) }
+            glob = (path + "**/*").to_s
+            subset = @known_paths.select { |p| p.fnmatch(glob) }
           
-          ::Middleman::Util.all_files_under(path).each do |filepath|
-            full_path = path + filepath
+            ::Middleman::Util.all_files_under(path).each do |filepath|
+              if only_new
+                next if subset.include?(filepath)
+              else
+                subset.delete(filepath)
+              end
             
-            if only_new
-              next if subset.include?(full_path)
-            else
-              subset.delete(full_path)
+              self.did_change(filepath)
             end
-            
-            self.did_change(full_path)
-          end
           
-          subset.each(&method(:did_delete)) unless only_new
+            subset.each(&method(:did_delete)) unless only_new
+          end
         end
 
         # Like reload_path, but only triggers events on new files
@@ -144,7 +146,6 @@ module Middleman
         # @param [Pathname] path
         # @return [Boolean]
         def ignored?(path)
-          path = path.relative_path_from(@app.root_path).to_s if path.is_a? Pathname
           IGNORE_LIST.any? { |r| path.to_s.match(r) }
         end
       
@@ -154,9 +155,8 @@ module Middleman
         # @param [Symbol] callbacks_name The name of the callbacks method
         # @return [void]
         def run_callbacks(path, callbacks_name)
-          path = path.relative_path_from(@app.root_path).to_s if path.is_a? Pathname
+          path = path.to_s
           self.send(callbacks_name).each do |callback, matcher|
-            next if path.match(%r{^#{@app.build_dir}/})
             next unless matcher.nil? || path.match(matcher)
             @app.instance_exec(path, &callback)
           end

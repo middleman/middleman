@@ -40,13 +40,13 @@ module Middleman
         # @param [String] file
         # @return [Boolean]
         def touch_file(file, rebuild=true)
-          return false if file == @app.source_dir || File.directory?(file)
+          return false if File.directory?(file)
 
           path = @sitemap.file_to_path(file)
           return false unless path
 
           ignored = @app.ignored_sitemap_matchers.any? do |name, callback|
-            callback.call(file, path)
+            callback.call(file)
           end
 
           @file_paths_on_disk << file unless ignored
