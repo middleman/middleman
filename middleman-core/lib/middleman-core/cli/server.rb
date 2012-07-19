@@ -33,7 +33,11 @@ module Middleman::Cli
       :type    => :boolean, 
       :default => false,
       :desc    => 'Disable the file change and delete watcher process'
-    
+    method_option :profile,
+      :type    => :boolean,
+      :default => false,
+      :desc    => 'Generate profiling report for server startup'
+
     # Start the server
     def server
       require "middleman-core"

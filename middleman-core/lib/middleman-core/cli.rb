@@ -9,7 +9,6 @@ module Middleman
     
     # The base task from which everything else etends
     class Base < Thor
-    
       class << self
         def start(*args)
           # Change flag to a module
@@ -23,7 +22,7 @@ module Middleman
           super
         end
       end
-    
+
       desc "version", "Show version"
       def version
         require 'middleman-core/version'

@@ -32,6 +32,10 @@ module Middleman::Cli
       :type    => :string, 
       :default => false,
       :desc    => 'Print instrument messages'
+    method_option :profile,
+      :type    => :boolean,
+      :default => false,
+      :desc    => 'Generate profiling report for the build'
     
     # Core build Thor command
     # @return [void]
@@ -257,6 +261,8 @@ module Middleman::Cli
 
         @cleaning_queue.delete(Pathname.new(output_path).realpath) if cleaning?
       end
+
+      ::Middleman::Profiling.report("build")
     end
   end
   
