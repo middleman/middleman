@@ -237,7 +237,7 @@ module Middleman::Cli
       logger.debug "== Checking for Compass sprites"
 
       # Double-check for compass sprites
-      @app.files.find_new_files(Pathname.new(@app.source_dir) + @app.images_dir)
+      @app.files.find_new_files((Pathname(@app.source_dir) + @app.images_dir).relative_path_from(@app.root_path))
 
       # Sort paths to be built by the above order. This is primarily so Compass can
       # find files in the build folder when it needs to generate sprites for the
@@ -245,11 +245,8 @@ module Middleman::Cli
 
       logger.debug "== Building files"
 
-      resources = @app.sitemap.resources.sort do |a, b|
-        a_idx = sort_order.index(a.ext) || 100
-        b_idx = sort_order.index(b.ext) || 100
-
-        a_idx <=> b_idx
+      resources = @app.sitemap.resources.sort_by do |r|
+        sort_order.index(r.ext) || 100
       end
 
       # Loop over all the paths and build them.

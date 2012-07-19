@@ -173,7 +173,7 @@ module Middleman
         file = File.expand_path(file, @app.root)
   
         prefix = @app.source_dir.sub(/\/$/, "") + "/"
-        return false unless file.include?(prefix)
+        return false unless file.start_with?(prefix)
   
         path = file.sub(prefix, "")
         
