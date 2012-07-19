@@ -25,22 +25,19 @@ module Middleman
         # Setup callbacks which can exclude paths from the sitemap
         app.set :ignored_sitemap_matchers, {
           # dotfiles and folders in the root
-          :root_dotfiles => proc { |file, path| file.match(/^\./) },
+          :root_dotfiles => proc { |file| file.match(%r{^\.}) },
         
           # Files starting with an dot, but not .htaccess
-          :source_dotfiles => proc { |file, path| 
-            (file.match(/\/\./) && !file.match(/\/\.htaccess/)) 
+          :source_dotfiles => proc { |file| 
+            file.match(%r{/\.}) && !file.match(%r{/\.htaccess})
           },
         
           # Files starting with an underscore, but not a double-underscore
-          :partials => proc { |file, path| (file.match(/\/_/) && !file.match(/\/__/)) },
+          :partials => proc { |file| file.match(%r{/_}) && !file.match(%r{/__}) },
         
-          :layout => proc { |file, path| 
-            file.match(/^source\/layout\./) || file.match(/^source\/layouts\//)
-          },
-        
-          # Files without any output extension (layouts, partials)
-          # :extensionless => proc { |file, path| !path.match(/\./) },
+          :layout => proc { |file| 
+            file.match(%r{^source/layout\.}) || file.match(%r{^source/layouts/})
+          }
         }
       
         # Include instance methods
