@@ -145,7 +145,7 @@ module Middleman
         #
         # @return [Class]
         def server(&block)
-          ::Middleman::Application.server(&block)
+          ::Middleman::Application.server
         end
       end
 
