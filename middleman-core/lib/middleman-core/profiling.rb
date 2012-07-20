@@ -24,7 +24,7 @@ module Middleman
       def start
       end
 
-      def report
+      def report(report_name)
       end
     end
 
