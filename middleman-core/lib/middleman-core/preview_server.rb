@@ -46,7 +46,8 @@ module Middleman
           # Save the last-used options so it may be re-used when
           # reloading later on.
           @last_options = options
-          
+          ::Middleman::Profiling.report("server_start")
+
           @webrick.start
         end
       end

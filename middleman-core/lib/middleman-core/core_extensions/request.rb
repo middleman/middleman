@@ -204,6 +204,7 @@ module Middleman
             process_request(env, req, res)
 
             res.status = 404
+
             res.finish
           end
         end
