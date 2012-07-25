@@ -1,6 +1,7 @@
 Master
 ===
 
+* Add `sass_assets_paths` option for arbitrary sass partial locations.
 * Don't catch CoffeeScript errors when in build mode.
 * Extract load_paths so they aren't locked into the binary
 * Add middleman/rack for better config.ru support

@@ -1,6 +1,4 @@
-
 set :sass_assets_paths, [
-  "#{root}/assets/stylesheets/", 
-  # load from another app within gem source
-  "#{File.dirname(File.dirname(File.dirname(File.dirname(__FILE__))))}/fixtures/preview-app/source/stylesheets/"
+  File.join(root, "assets", "stylesheets"),
+  File.join(root, "my-vendor", "stylesheets")
 ]
