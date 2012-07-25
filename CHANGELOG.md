@@ -1,6 +1,7 @@
 Master
 ===
 
+* Don't catch CoffeeScript errors when in build mode.
 * Extract load_paths so they aren't locked into the binary
 * Add middleman/rack for better config.ru support
 * Use centralized Logger and add benchmark methods

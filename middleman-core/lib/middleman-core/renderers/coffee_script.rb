@@ -29,6 +29,8 @@ module Middleman
         # @param [Hash] locals
         # @return [String]
         def evaluate(context, locals, &block)
+          return super if context.build?
+          
           begin
             super
           rescue ::ExecJS::RuntimeError => e
