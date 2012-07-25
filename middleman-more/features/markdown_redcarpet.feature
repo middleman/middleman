@@ -59,5 +59,7 @@ Feature: Markdown support
     Given the Server is running at "markdown-app"
     When I go to "/link_and_image/"
     Then I should see "/smarty_pants/"
-    Then I should see 'width="1" height="1" src="/images/blank.gif"'
+    Then I should see 'width="1"'
+    And I should see 'height="1"'
+    And I should see 'src="/images/blank.gif"'
     
