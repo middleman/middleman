@@ -125,14 +125,11 @@ module Middleman
             app.data.store("page", md[:page])
           end
         
-          md[:blocks].each do |aBlock|
-            app.instance_eval(&aBlock)
-          end
-      
-          app.instance_eval(&block) if block_given?
-        
+          blocks = md[:blocks].dup rescue []
+          blocks << block if block_given?
+
           app.current_path ||= self.destination_path
-          app.render_template(source_file, locs, opts)
+          app.render_template(source_file, locs, opts, blocks)
         end
       end
     
