@@ -18,7 +18,8 @@ Feature: Setting page settings through frontmatter
     Then I should see "File Not Found"
 
   Scenario: Changing frontmatter in preview server
-    Given the Server is running at "frontmatter-settings-app"
+    Given the File Watcher is running
+    And the Server is running at "frontmatter-settings-app"
     When I go to "/ignored.html"
     Then I should see "File Not Found"
     And the file "source/ignored.html.erb" has the contents

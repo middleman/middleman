@@ -1,6 +1,3 @@
-# Rack Request
-require "middleman-core/core_extensions/request"
-
 # File Change Notifier
 require "middleman-core/core_extensions/file_watcher"
 

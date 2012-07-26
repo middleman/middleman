@@ -44,18 +44,12 @@ module Middleman::Cli
         raise Thor::Error, "Error: Could not find a Middleman project config, perhaps you are in the wrong folder?"
       end
 
-      # Use Rack::Test for inspecting a running server for output
-      require "rack"
-      require "rack/test"
-
       require 'find'
 
       @debugging = Middleman::Cli::Base.respond_to?(:debugging) && Middleman::Cli::Base.debugging
       @had_errors = false
 
-      self.class.shared_instance(options["verbose"], options["instrument"])
-
-      self.class.shared_rack
+      start_app(options["verbose"], options["instrument"])
 
       opts = {}
       opts[:glob]  = options["glob"]  if options.has_key?("glob")
@@ -78,30 +72,8 @@ module Middleman::Cli
         true
       end
 
-      # Middleman::Application singleton
-      #
-      # @return [Middleman::Application]
-      def shared_instance(verbose=false, instrument=false)
-        @_shared_instance ||= ::Middleman::Application.server.inst do
-          config[:environment] = :build
-          logger(verbose ? 0 : 1, instrument)
-        end
-      end
-
-      # Middleman::Application class singleton
-      #
-      # @return [Middleman::Application]
-      def shared_server
-        @_shared_server ||= shared_instance.class
-      end
-
-      # Rack::Test::Session singleton
-      #
-      # @return [Rack::Test::Session]
-      def shared_rack
-        @_shared_rack ||= ::Rack::Test::Session.new(shared_server.to_rack_app)
-      end
-
+      attr_accessor :shared_instance, :shared_rack
+    
       # Set the root path to the Middleman::Application's root
       def source_root
         shared_instance.root
@@ -109,6 +81,21 @@ module Middleman::Cli
     end
 
     no_tasks {
+    
+      def start_app(verbose=false, instrument=false)
+        # Use Rack::Test for inspecting a running server for output
+        require "rack"
+        require "rack/test"
+        require "middleman-core/rack/interface"
+    
+        self.class.shared_instance = ::Middleman::Application.new do
+          set :environment, :build
+          logger(verbose ? 0 : 1, instrument)
+        end
+
+        self.class.shared_rack = ::Rack::Test::Session.new(::Rack::MockSession.new(self.class.shared_instance))
+      end
+      
       # Render a resource to a file.
       #
       # @param [Middleman::Sitemap::Resource] resource

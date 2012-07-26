@@ -23,7 +23,6 @@ module Middleman
         # @return [void]
         def set(key, default=nil, &block)
           config.define_setting(key, default)
-          @inst.set(key, default, &block) if @inst
         end
 
         # Access global settings as methods, to preserve compatibility with
@@ -45,7 +44,7 @@ module Middleman
       end
 
       def config
-        self.class.config
+        @_inst_config ||= self.class.config.make_descendant_config
       end
 
       # Backwards compatibilty with old Sinatra template interface
@@ -94,6 +93,10 @@ module Middleman
         # A hash from setting key to ConfigSetting instance.
         @settings = {}
         @finalized = false
+      end
+
+      def make_descendant_config
+        DescendantConfigurationManager.new(self)
       end
 
       # Get all settings, sorted by key, as ConfigSetting objects.
@@ -190,6 +193,56 @@ module Middleman
       end
     end
 
+    # A Configuration manager which can have a parent manager to lookup against.
+    class DescendantConfigurationManager < ConfigurationManager
+      def initialize(parent)
+        @parent = parent
+        super()
+      end
+
+      # Get all settings, sorted by key, as ConfigSetting objects.
+      # @return [Array<ConfigSetting>]
+      def all_settings
+        @parent.all_settings.concat(super).uniq
+      end
+
+      # Get a full ConfigSetting object for the setting with the give key.
+      # @return [ConfigSetting]
+      def setting(key)
+        res = super
+        res.nil? ? @parent.setting(key) : res
+      end
+
+      # Get the value of a setting by key. Returns nil if there is no such setting.
+      # @return [Object]
+      def [](key)
+        res = super
+        res.nil? ? @parent[key] : res
+      end
+
+      # Does this configuration manager know about the setting identified by key?
+      # @param [Symbol] key
+      # @return [Boolean]
+      def defines_setting?(key)
+        super || @parent.defines_setting?(key)
+      end
+
+      def dup
+        copy = DescendantConfigurationManager.new(@parent)
+        @settings.each do |key, setting|
+          copy_setting = copy.define_setting setting.key, setting.default, setting.description
+          copy_setting.value = setting.value if setting.value_set?
+        end
+        copy
+      end
+
+      def to_h
+        hash = super
+        hash.merge(@parent.to_h)
+        hash
+      end
+    end
+
     # An individual configuration setting, with an optional default and description.
     # Also models whether or not a value has been set.
     class ConfigSetting
@@ -225,6 +278,10 @@ module Middleman
       # Whether or not there has been a value set beyond the default
       def value_set?
         @value_set
+      end
+
+      def reset
+        @value_set = false
       end
     end
   end

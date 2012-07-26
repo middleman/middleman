@@ -49,7 +49,8 @@ Feature: YAML Front Matter
     Then I should not see ";;;"
 
   Scenario: A template changes frontmatter during preview
-    Given the Server is running at "frontmatter-app"
+    Given the File Watcher is running
+    And the Server is running at "frontmatter-app"
     And the file "source/front-matter-change.html.erb" has the contents
       """
       ---

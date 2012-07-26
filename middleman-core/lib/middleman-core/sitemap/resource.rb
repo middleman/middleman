@@ -105,7 +105,7 @@ module Middleman
       # Mime type of the path
       # @return [String]
       def mime_type
-        app.mime_type ext
+        ::Middleman::Util.mime_type(ext)
       end
 
       # Render this resource

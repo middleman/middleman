@@ -1,6 +1,7 @@
 # encoding: UTF-8
 
 require "rack/test"
+require "middleman-core/rack/controller"
 
 Given /^a clean server$/ do
   @initialize_commands = []
@@ -20,6 +21,12 @@ Given /^"([^\"]*)" feature is "enabled" with "([^\"]*)"$/ do |feature, options_s
   options = eval("{#{options_str}}")
 
   @initialize_commands << lambda { activate(feature.to_sym, options) }
+end
+
+Given /^the File Watcher is running$/ do
+  @server_options ||= {}
+  @server_options[:watcher] = true
+  @server_options[:force_polling] = true
 end
 
 Given /^"([^\"]*)" is set to "([^\"]*)"$/ do |variable, value|
@@ -42,20 +49,19 @@ Given /^the Server is running$/ do
 
   ENV["MM_ROOT"] = root_dir
 
+  server_options = @server_options || {}
+  server_options[:root] = root_dir
   initialize_commands = @initialize_commands || []
-  initialize_commands.unshift lambda {
+
+  @app_rack = ::Middleman::Rack::Controller.new(server_options) do
     set :environment, @current_env || :development
     set :show_exceptions, false
-  }
-
-  @server_inst = Middleman::Application.server.inst do
     initialize_commands.each do |p|
       instance_exec(&p)
     end
   end
-
-  app_rack = @server_inst.class.to_rack_app
-  @browser = ::Rack::Test::Session.new(::Rack::MockSession.new(app_rack))
+  
+  @browser = ::Rack::Test::Session.new(::Rack::MockSession.new(@app_rack))
 end
 
 Given /^the Server is running at "([^\"]*)"$/ do |app_path|

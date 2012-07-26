@@ -80,6 +80,14 @@ module Middleman
       # Rendering instance methods
       module InstanceMethods
 
+        # Shared cache
+        #
+        # @private
+        # @return [Middleman::Util::Cache] The cache
+        def cache
+          @_cache ||= ::Middleman::Util::Cache.new
+        end
+
         # Add or overwrite a default template extension
         #
         # @param [Hash] extension_map

@@ -2,7 +2,8 @@ Feature: Preview Changes
   In order to run quickly, we should update internal caches on file changes
   
   Scenario: A template changes contents during preview
-    Given the Server is running at "preview-app"
+    Given the File Watcher is running
+    And the Server is running at "preview-app"
     And the file "source/content.html.erb" has the contents
       """
       Hello World
@@ -17,7 +18,8 @@ Feature: Preview Changes
     Then I should see "Hola Mundo"
     
   Scenario: A template is removed during preview
-    Given the Server is running at "preview-app"
+    Given the File Watcher is running
+    And the Server is running at "preview-app"
     And the file "source/a-page.html.erb" has the contents
       """
       Hello World
