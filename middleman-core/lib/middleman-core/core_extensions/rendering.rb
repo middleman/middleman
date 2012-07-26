@@ -96,7 +96,7 @@ module Middleman
         # @param [Hash] locs
         # @param [Hash] opts
         # @return [String]
-        def render_template(path, locs={}, opts={})
+        def render_template(path, locs={}, opts={}, blocks=[])
           # Detect the remdering engine from the extension
           extension = File.extname(path)
           engine = extension[1..-1].to_sym
@@ -107,6 +107,9 @@ module Middleman
           # Use a dup of self as a context so that instance variables set within 
           # the template don't persist for other templates.
           context = self.dup
+          blocks.each do |block|
+            context.instance_eval(&block)
+          end
 
           # Store current locs/opts for later
           @current_locs = locs, @current_opts = opts
