@@ -6,7 +6,7 @@ Feature: Setting page settings through frontmatter
     And the file "build/alternate_layout.html" should contain "Alternate layout"
     And the following files should not exist:
       | build/ignored.html  |
-    
+
   Scenario: Setting layout, ignoring, and disabling directory indexes through frontmatter (preview)
     Given the Server is running at "frontmatter-settings-app"
     When I go to "/alternate_layout.html"
@@ -31,3 +31,13 @@ Feature: Setting page settings through frontmatter
       """
     When I go to "/ignored.html"
     Then I should see "This file is no longer ignored."
+
+  Scenario: Overriding layout through frontmatter
+    Given the Server is running at "frontmatter-settings-app"
+    When I go to "/override_layout.html"
+    Then I should see "Layout in use: Override"
+
+  Scenario: Setting layout through frontmatter even if page is mentioned in config
+    Given the Server is running at "frontmatter-settings-app"
+    When I go to "/page_mentioned.html"
+    Then I should see "Layout in use: Override"
