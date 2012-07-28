@@ -101,13 +101,19 @@ module Middleman
     end
   end
   
+  require 'active_support/descendants_tracker'
+  require 'active_support/callbacks'
+  require 'active_support/core_ext/module/delegation'
+  
   # Auto-registration class, in the style of Rails::Engine
   class Extension
+    include ::ActiveSupport::Callbacks
+    extend ::ActiveSupport::DescendantsTracker
     
     class << self
-      
-      def subclasses
-        @subclasses ||= []
+    
+      def add_hooks(&block)
+        class_eval(&block)
       end
     
       def extension_name(name = nil)
@@ -116,39 +122,29 @@ module Middleman
       end
       
       def inherited(base)
-        subclasses << base
         ::Middleman::Extensions.register(base.extension_name) { base }
+        super
       end
       
-      protected
-        def generate_extension_name(class_or_module)
-          ActiveSupport::Inflector.underscore(class_or_module).tr("/", "_").to_sym
-        end
+    protected
+      def generate_extension_name(class_or_module)
+        ActiveSupport::Inflector.underscore(class_or_module).tr("/", "_").to_sym
+      end
     end
     
     attr_reader :app
     attr_reader :options
     
+    delegate :logger, :to => :app
+    
+    define_callbacks :activate
+    
     def initialize(app, options={}, &block)
       @app     = app
       @options = options
       
-      activated(&block)
-    end
-    
-    def activated(&block)
-      autoregister_resource_list_manipulator
-    end
-    
-    def autoregister_resource_list_manipulator
-      return unless respond_to?(:manipulate_resource_list)
-      
-      extension = self
-      app.ready do
-        sitemap.register_resource_list_manipulator(
-          extension.class.extension_name,
-          extension
-        )
+      run_callbacks :activate do
+        #
       end
     end
   end

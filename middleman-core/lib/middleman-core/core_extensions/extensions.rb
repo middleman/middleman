@@ -37,9 +37,6 @@ module Middleman
       class << self
         # @private
         def registered(app)
-          # Using for version parsing
-          require "rubygems"
-
           app.define_hook :after_configuration
           app.define_hook :before_configuration
           app.define_hook :build_config
@@ -112,7 +109,6 @@ module Middleman
             ::Middleman::Extensions.load(ext.to_sym)
           end
       
-          $stderr.puts extension_container.to_s
           if extension_container.nil?
             logger.warning "== Unknown Extension: #{ext}"
           elsif extension_container.is_a? Class

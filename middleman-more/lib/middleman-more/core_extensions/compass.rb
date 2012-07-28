@@ -65,6 +65,15 @@ module Middleman
             ::Tilt.register 'scss', CompassScssTemplate
             ::Tilt.prefer(CompassScssTemplate)
           end
+          
+          ::Middleman::Extension.add_hooks do
+            set_callback :activate, :after, :autoregister_compass_config
+
+            def autoregister_compass_config
+              return unless respond_to?(:compass_config)
+              app.compass_config(&method(:compass_config))
+            end
+          end
         end
         alias :included :registered
       end
