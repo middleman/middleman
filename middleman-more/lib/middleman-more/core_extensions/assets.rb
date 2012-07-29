@@ -74,11 +74,7 @@ module Middleman
 
         def autoregister_asset_url
           return unless respond_to?(:asset_url)
-
-          extension = self
-          app.ready do
-            assets_paths.register_handler(&extension.method(:asset_url))
-          end
+          app.assets_paths.register_handler(&method(:asset_url))
         end
       end
     end

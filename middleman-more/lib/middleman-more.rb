@@ -51,37 +51,22 @@ module Middleman
         # Setup Optional Extensions
         ###
 
-        # CacheBuster adds a query string to assets in dynamic templates to
-        # avoid browser caches failing to update to your new content.
-        Middleman::Extensions.register(:cache_buster) do
-          require "middleman-more/extensions/cache_buster"
-          Middleman::Extensions::CacheBuster
-        end
+        # CacheBuster adds a query string to assets in dynamic templates to avoid
+        # browser caches failing to update to your new content.
+        require "middleman-more/extensions/cache_buster"
 
         # MinifyCss compresses CSS
-        Middleman::Extensions.register(:minify_css) do
-          require "middleman-more/extensions/minify_css"
-          Middleman::Extensions::MinifyCss
-        end
+        require "middleman-more/extensions/minify_css"
 
         # MinifyJavascript compresses JS
-        Middleman::Extensions.register(:minify_javascript) do
-          require "middleman-more/extensions/minify_javascript"
-          Middleman::Extensions::MinifyJavascript
-        end
+        require "middleman-more/extensions/minify_javascript"
 
         # RelativeAssets allow any asset path in dynamic templates to be either
         # relative to the root of the project or use an absolute URL.
-        Middleman::Extensions.register(:relative_assets) do
-          require "middleman-more/extensions/relative_assets"
-          Middleman::Extensions::RelativeAssets
-        end
+        require "middleman-more/extensions/relative_assets"
 
         # GZIP assets and pages during build
-        Middleman::Extensions.register(:gzip) do
-          require "middleman-more/extensions/gzip"
-          Middleman::Extensions::Gzip
-        end
+        require "middleman-more/extensions/gzip"
 
         # AssetHash appends a hash of the file contents to the assets filename
         # to avoid browser caches failing to update to your new content.
@@ -93,10 +78,7 @@ module Middleman
         # AssetHost allows you to setup multiple domains to host your static
         # assets. Calls to asset paths in dynamic templates will then rotate
         # through each of the asset servers to better spread the load.
-        Middleman::Extensions.register(:asset_host) do
-          require "middleman-more/extensions/asset_host"
-          Middleman::Extensions::AssetHost
-        end
+        require "middleman-more/extensions/asset_host"
 
         # Provide Apache-style index.html files for directories
         require "middleman-more/extensions/directory_indexes"
@@ -104,15 +86,14 @@ module Middleman
         # Lorem provides a handful of helpful prototyping methods to generate
         # words, paragraphs, fake images, names and email addresses.
         require "middleman-more/extensions/lorem"
-        Middleman::Application.register Middleman::Extensions::Lorem
+        app.before_configuration do
+          activate :lorem
+        end
 
         # AutomaticImageSizes inspects the images used in your dynamic templates
         # and automatically adds width and height attributes to their HTML
         # elements.
-        Middleman::Extensions.register(:automatic_image_sizes) do
-          require "middleman-more/extensions/automatic_image_sizes"
-          Middleman::Extensions::AutomaticImageSizes
-        end
+        require "middleman-more/extensions/automatic_image_sizes"
       end
     end
   end

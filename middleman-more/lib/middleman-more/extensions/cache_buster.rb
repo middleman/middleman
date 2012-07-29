@@ -21,7 +21,7 @@ module Middleman
       # asset_url override if we're using cache busting
       # @param [String] path
       # @param [String] prefix
-      def asset_url(path, prefix="", result)
+      def asset_url(path, prefix, result)
         if result.include?("://") || !%w(.css .png .jpg .jpeg .svg .svgz .js .gif).include?(File.extname(result))
           result
         else

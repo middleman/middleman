@@ -110,20 +110,33 @@ module Middleman
     include ::ActiveSupport::Callbacks
     extend ::ActiveSupport::DescendantsTracker
     
+    class_attribute :autoregister
+    class_attribute :extension_name
+    
     class << self
+      def config_options(opts={})
+        @_config_options ||= {}
+        @_config_options.merge!(opts)
+        @_config_options
+      end
+      
+      def helpers(&block)
+        @_helpers ||= Set.new
+        @_helpers << block if block_given?
+        @_helpers
+      end
     
       def add_hooks(&block)
         class_eval(&block)
       end
-    
-      def extension_name(name = nil)
-        @extension_name = name.to_sym if name
-        @extension_name ||= generate_extension_name(self.name.split("::").last)
-      end
       
       def inherited(base)
-        ::Middleman::Extensions.register(base.extension_name) { base }
         super
+        
+        if base.autoregister.nil? || base.autoregister === true
+          extension_name = base.extension_name || generate_extension_name(base.name.split("::").last)
+          ::Middleman::Extensions.register(extension_name) { base }
+        end
       end
       
     protected
@@ -132,8 +145,7 @@ module Middleman
       end
     end
     
-    attr_reader :app
-    attr_reader :options
+    attr_reader :app, :options
     
     delegate :logger, :to => :app
     
@@ -143,8 +155,16 @@ module Middleman
       @app     = app
       @options = options
       
+      self.class.config_options.each do |k,v|
+        @app.set(k, v)
+      end
+      
+      self.class.helpers.each do |h|
+        @app.class.helpers(&h)
+      end
+      
       run_callbacks :activate do
-        #
+        # Derp
       end
     end
   end
