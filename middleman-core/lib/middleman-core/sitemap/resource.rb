@@ -54,13 +54,13 @@ module Middleman
       # Get the metadata for both the current source_file and the current path
       # @return [Hash]
       def metadata
-        result = store.metadata_for_file(source_file).dup
-
-        path_meta = store.metadata_for_path(path).dup
-        if path_meta.has_key?(:blocks)
-          result[:blocks] << path_meta.delete(:blocks)
+        result = store.metadata_for_path(path).dup
+        
+        file_meta = store.metadata_for_file(source_file).dup
+        if file_meta.has_key?(:blocks)
+          result[:blocks] << file_meta.delete(:blocks)
         end
-        result.deep_merge!(path_meta)
+        result.deep_merge!(file_meta)
 
         local_meta = @local_metadata.dup
         if local_meta.has_key?(:blocks)
@@ -114,7 +114,7 @@ module Middleman
         return File.open(source_file).read unless template?
 
         relative_source = Pathname(source_file).relative_path_from(Pathname(app.root))
-        
+
         instrument "render.resource", :path => relative_source  do
           md   = metadata.dup
           opts = md[:options].deep_merge(opts)
