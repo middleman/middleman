@@ -1,3 +1,5 @@
-background: "yellow"
+background: "#ffff00"
+border: "#ffff01"
+shadow: "rgba(255, 0, 15, 0.5)"
 color: "red"
 weight: "bold"

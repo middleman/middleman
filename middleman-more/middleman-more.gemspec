@@ -19,8 +19,8 @@ Gem::Specification.new do |s|
 
   s.add_dependency("middleman-core", Middleman::VERSION)
   s.add_dependency("uglifier", ["~> 1.2.6"])
-  s.add_dependency("haml", [">= 3.1.6"])
-  s.add_dependency("sass", [">= 3.1.20"])
+  s.add_dependency("haml", [">= 3.2.0.beta.1"])
+  s.add_dependency("sass", [">= 3.2.0.alpha.277"])
   s.add_dependency("compass", [">= 0.12.2"])
   s.add_dependency("coffee-script", ["~> 2.2.0"])
   s.add_dependency("coffee-script-source", ["~> 1.3.3"])

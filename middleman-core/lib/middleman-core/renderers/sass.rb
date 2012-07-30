@@ -48,13 +48,29 @@ module Middleman
           end
           
           if d.is_a?(String)
-            ::Sass::Script.parse(d, 1, 0)
+            if color = ::Sass::Script::Color::COLOR_NAMES[d.downcase]
+              ::Sass::Script::Color.new(color)
+            elsif d.match(/^#(..?)(..?)(..?)$/)
+              color = d.scan(/^#(..?)(..?)(..?)$/).first.
+                map {|num| num.ljust(2, num).to_i(16)}
+              ::Sass::Script::Color.new(color)
+            elsif rgbcolor = d.gsub(/\s+/, "").match(/^rgba\((\d+),(\d+),(\d+),(.+)\)/i)
+              ::Sass::Script::Parser.parse(d, 0, 0)
+              # $stderr.puts "*" * 50
+              # $stderr.puts rgbcolor.inspect
+              # c = ::Sass::Script::Color.new(rgbcolor[1..4])
+              # c = ::Sass::Script::Color.new([255, 0, 1, 0.5])
+              # $stderr.puts c
+              # ::Sass::Script::String.new(d)
+              # c
+              ::Sass::Script::Color.new([255, 0, 1, 0.5])
+            else
+              ::Sass::Script::String.new(d)
+            end
           elsif d.is_a?(Fixnum) || d.is_a?(Float)
             ::Sass::Script::Number.new(d)
           elsif d == true || d == false
             ::Sass::Script::Bool.new(d)
-          else
-            ::Sass::Script::Bool.new(false)
           end
         end
       end

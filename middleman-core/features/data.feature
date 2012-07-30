@@ -25,6 +25,8 @@ Feature: Local Data API
     Given the Server is running at "data-app"
     When I go to "/stylesheets/theme.css"
     Then I should see "background: yellow"
+    Then I should see "border-color: #ffff01"
     Then I should see "font-weight: bold"
     Then I should not see "extra:"
     Then I should see "color: rgba(255, 0, 0, 0.5)"
+    Then I should see "text-shadow: rgba(0, 0, 15, 0.5)"

@@ -1,6 +1,8 @@
 body {
   font-weight: data("theme.weight");
   background: data("theme.background");
+  border-color: rgba(data("theme.border"), 0.5);
+  text-shadow: transparentize(data("theme.shadow"), 0.5);
   @if data("theme.extra") {
     extra: data("theme.extra");
   }
