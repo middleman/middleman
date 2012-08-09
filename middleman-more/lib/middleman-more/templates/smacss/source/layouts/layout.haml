@@ -1,0 +1,15 @@
+!!! 5
+%html
+  %head
+    %title Middleman
+    %meta{:charset => "utf-8"}
+    %meta{:content => "Middleman", :name => "description"}
+    %meta{:content => "on", "http-equiv" => "cleartype"}
+    %meta{:content => "IE=edge,chrome=1", "http-equiv" => "X-UA-Compatible"}
+    %link{:href => "css/style.css", :rel => "stylesheet"}
+    %script{:src => "https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"}
+
+  %body
+    #wrapper
+      = yield
+      = render_partial 'footer'
