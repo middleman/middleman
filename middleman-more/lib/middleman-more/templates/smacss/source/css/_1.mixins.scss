@@ -1,0 +1,17 @@
+@mixin transition($property, $t: .4s) {
+	-webkit-transition: $property $t ease; 
+	-moz-transition: $property $t ease; 
+	transition: $property $t ease; }
+	
+@mixin rounded($radius) {
+	-webkit-border-radius: $radius; 
+	-moz-border-radius: $radius; 
+	border-radius: $radius; }
+	
+@mixin gradient($from, $to){
+	background: $from;
+	background: -webkit-gradient(linear, left top, left bottom, from($from), to($to));
+	background: -webkit-linear-gradient(top, $from, $to);
+	background: -moz-linear-gradient(top, $from, $to);
+	background: -ms-linear-gradient(top, $from, $to);
+	background: -o-linear-gradient(top, $from, $to); }
