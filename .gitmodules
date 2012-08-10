@@ -1,0 +1,3 @@
+[submodule "middleman-more/lib/middleman-more/templates/smacss"]
+	path = middleman-more/lib/middleman-more/templates/smacss
+	url = git@github.com:nsteiner/middleman-smacss.git
