@@ -21,7 +21,7 @@ Cucumber::Rake::Task.new(:test, 'Run features that should pass') do |t|
   exempt_tags << "--tags ~@nojava" if RUBY_PLATFORM == "java"
   exempt_tags << "--tags ~@encoding" unless Object.const_defined?(:Encoding)
   exempt_tags << "--tags ~@travishatesme" if ENV["TRAVIS"] == "true"
-  
+
   t.cucumber_opts = "--color #{exempt_tags.join(" ")} --strict --format #{ENV['CUCUMBER_FORMAT'] || 'Fivemat'}"
 end
 

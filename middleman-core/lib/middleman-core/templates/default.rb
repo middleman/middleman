@@ -1,22 +1,22 @@
 # Default Middleman template
 class Middleman::Templates::Default < Middleman::Templates::Base
-  
-  class_option "css_dir", 
-    :default => "stylesheets", 
+
+  class_option "css_dir",
+    :default => "stylesheets",
     :desc    => 'The path to the css files'
-  class_option "js_dir", 
-    :default => "javascripts", 
+  class_option "js_dir",
+    :default => "javascripts",
     :desc    => 'The path to the javascript files'
-  class_option "images_dir", 
-    :default => "images", 
+  class_option "images_dir",
+    :default => "images",
     :desc    => 'The path to the image files'
-    
+
   # Template files are relative to this file
   # @return [String]
   def self.source_root
     File.dirname(__FILE__)
   end
-  
+
   # Actually output the files
   # @return [void]
   def build_scaffold!
@@ -31,7 +31,7 @@ class Middleman::Templates::Default < Middleman::Templates::Base
     empty_directory File.join(location, "source", options[:images_dir])
     copy_file "default/source/images/background.png", File.join(location, "source", options[:images_dir], "background.png")
     copy_file "default/source/images/middleman.png", File.join(location, "source", options[:images_dir], "middleman.png")
-  end  
+  end
 end
 
 # Register this template

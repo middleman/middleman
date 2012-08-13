@@ -2,10 +2,10 @@
 require "active_support/core_ext/hash/deep_merge"
 
 module Middleman
-  
+
   # Sitemap namespace
   module Sitemap
-  
+
     # The Store class
     #
     # The Store manages a collection of Resource objects, which represent
@@ -13,10 +13,10 @@ module Middleman
     # which is the path relative to the source directory, minus any template
     # extensions. All "path" parameters used in this class are source paths.
     class Store
-    
+
       # @return [Middleman::Application]
       attr_accessor :app
-    
+
       # Initialize with parent app
       # @param [Middleman::Application] app
       def initialize(app)
@@ -25,10 +25,10 @@ module Middleman
         @_cached_metadata = {}
         @_lookup_cache = { :path => {}, :destination_path => {} }
         @resource_list_manipulators = []
-      
+
         # Register classes which can manipulate the main site map list
         register_resource_list_manipulator(:on_disk, Middleman::Sitemap::Extensions::OnDisk.new(self),  false)
-      
+
         # Proxies
         register_resource_list_manipulator(:proxies, @app.proxy_manager, false)
       end
@@ -42,7 +42,7 @@ module Middleman
         @resource_list_manipulators << [name, inst]
         rebuild_resource_list!(:registered_new) if immediately_rebuild
       end
-    
+
       # Rebuild the list of resources from scratch, using registed manipulators
       # @return [void]
       def rebuild_resource_list!(reason=nil)
@@ -59,7 +59,7 @@ module Middleman
           newres
         end
       end
-    
+
       # Find a resource given its original path
       # @param [String] request_path The original path of a resource.
       # @return [Middleman::Sitemap::Resource]
@@ -67,7 +67,7 @@ module Middleman
         request_path = ::Middleman::Util.normalize_path(request_path)
         @_lookup_cache[:path][request_path]
       end
-    
+
       # Find a resource given its destination path
       # @param [String] request_path The destination (output) path of a resource.
       # @return [Middleman::Sitemap::Resource]
@@ -75,7 +75,7 @@ module Middleman
         request_path = ::Middleman::Util.normalize_path(request_path)
         @_lookup_cache[:destination_path][request_path]
       end
-    
+
       # Get the array of all resources
       # @param [Boolean] include_ignored Whether to include ignored resources
       # @return [Array<Middleman::Sitemap::Resource>]
@@ -86,7 +86,7 @@ module Middleman
           @resources.reject(&:ignored?)
         end
       end
-    
+
       # Register a handler to provide metadata on a file path
       # @param [Regexp] matcher
       # @return [Array<Array<Proc, Regexp>>]
@@ -95,16 +95,16 @@ module Middleman
         @_provides_metadata << [block, matcher] if block_given?
         @_provides_metadata
       end
-    
+
       # Get the metadata for a specific file
       # @param [String] source_file
       # @return [Hash]
       def metadata_for_file(source_file)
         blank_metadata = { :options => {}, :locals => {}, :page => {}, :blocks => [] }
-      
+
         provides_metadata.inject(blank_metadata) do |result, (callback, matcher)|
           next result if !matcher.nil? && !source_file.match(matcher)
-        
+
           metadata = callback.call(source_file)
 
           if metadata.has_key?(:blocks)
@@ -115,10 +115,10 @@ module Middleman
           result.deep_merge(metadata)
         end
       end
-    
+
       # Register a handler to provide metadata on a url path
       # @param [Regexp] matcher
-      # @param [Symbol] origin an indicator of where this metadata came from - only one 
+      # @param [Symbol] origin an indicator of where this metadata came from - only one
       #                        block per [matcher, origin] pair may exist.
       # @return [Array<Array<Proc, Regexp>>]
       def provides_metadata_for_path(matcher=nil, origin=nil, &block)
@@ -138,7 +138,7 @@ module Middleman
         end
         @_provides_metadata_for_path
       end
-    
+
       # Get the metadata for a specific URL
       # @param [String] request_path
       # @return [Hash]
@@ -146,7 +146,7 @@ module Middleman
         return @_cached_metadata[request_path] if @_cached_metadata[request_path]
 
         blank_metadata = { :options => {}, :locals => {}, :page => {}, :blocks => [] }
-      
+
         @_cached_metadata[request_path] = provides_metadata_for_path.inject(blank_metadata) do |result, (callback, matcher)|
           case matcher
           when Regexp
@@ -154,9 +154,9 @@ module Middleman
           when String
             next result unless File.fnmatch("/" + matcher.sub(%r{^/}, ''), "/#{request_path}")
           end
-        
+
           metadata = callback.call(request_path)
-        
+
           if metadata.has_key?(:blocks)
             result[:blocks] << metadata[:blocks]
             metadata.delete(:blocks)
@@ -165,26 +165,26 @@ module Middleman
           result.deep_merge(metadata)
         end
       end
-    
+
       # Get the URL path for an on-disk file
       # @param [String] file
       # @return [String]
       def file_to_path(file)
         file = File.expand_path(file, @app.root)
-  
+
         prefix = @app.source_dir.sub(/\/$/, "") + "/"
         return false unless file.start_with?(prefix)
-  
+
         path = file.sub(prefix, "")
-        
+
         # Replace a file name containing automatic_directory_matcher with a folder
         unless @app.automatic_directory_matcher.nil?
           path = path.gsub(@app.automatic_directory_matcher, "/")
         end
-              
+
         extensionless_path(path)
       end
-    
+
       # Get a path without templating extensions
       # @param [String] file
       # @return [String]

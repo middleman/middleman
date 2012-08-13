@@ -1,22 +1,22 @@
 # Extensions namespace
 module Middleman::CoreExtensions
-  
+
   # Frontmatter namespace
   module FrontMatter
-  
+
     # Setup extension
     class << self
-    
+
       # Once registered
       def registered(app)
         # Parsing YAML frontmatter
         require "yaml"
-        
+
         # Parsing JSON frontmatter
         require "active_support/json"
-      
+
         app.send :include, InstanceMethods
-        
+
         app.before_configuration do
           files.changed { |file| frontmatter_manager.clear_data(file) }
           files.deleted { |file| frontmatter_manager.clear_data(file) }
@@ -29,36 +29,36 @@ module Middleman::CoreExtensions
             :frontmatter,
             frontmatter_manager
           )
-          
+
           sitemap.provides_metadata do |path|
             fmdata = frontmatter_manager.data(path).first
-        
+
             data = {}
             %w(layout layout_engine).each do |opt|
               data[opt.to_sym] = fmdata[opt] unless fmdata[opt].nil?
             end
-            
+
             { :options => data, :page => fmdata }
           end
         end
       end
       alias :included :registered
     end
-  
+
     class FrontmatterManager
       attr_reader :app
       delegate :logger, :to => :app
-    
+
       def initialize(app)
         @app = app
         @cache = {}
       end
-      
+
       def data(path)
         p = normalize_path(path)
         @cache[p] ||= frontmatter_and_content(p)
       end
-      
+
       def clear_data(file)
         # Copied from Sitemap::Store#file_to_path, but without
         # removing the file extension
@@ -69,13 +69,13 @@ module Middleman::CoreExtensions
 
         @cache.delete(path)
       end
-      
+
       YAML_ERRORS = [ Exception, ArgumentError ]
-      
+
       if defined?(Psych) && defined?(Psych::SyntaxError)
         YAML_ERRORS << Psych::SyntaxError
       end
-      
+
       # Parse YAML frontmatter out of a string
       # @param [String] content
       # @return [Array<Hash, String>]
@@ -99,10 +99,10 @@ module Middleman::CoreExtensions
       rescue
         [{}, content]
       end
-      
+
       def parse_json_front_matter(content)
         json_regex = /\A(;;;\s*\n.*?\n?)^(;;;\s*$\n?)/m
-        
+
         if content =~ json_regex
           content = content.sub(json_regex, "")
 
@@ -122,16 +122,16 @@ module Middleman::CoreExtensions
       rescue
         [{}, content]
       end
-      
+
       # Get the frontmatter and plain content from a file
       # @param [String] path
       # @return [Array<Thor::CoreExt::HashWithIndifferentAccess, String>]
       def frontmatter_and_content(path)
         full_path = File.expand_path(path, @app.source_dir)
-        
+
         content = File.read(full_path)
         data = {}
-        
+
         begin
           if content =~ /\A.*coding:/
             lines = content.split(/\n/)
@@ -150,11 +150,11 @@ module Middleman::CoreExtensions
 
         [::Middleman::Util.recursively_enhance(data).freeze, content]
       end
-      
+
       def normalize_path(path)
         path.sub(@app.source_dir, "").sub(/^\//, "")
       end
-      
+
       # Update the main sitemap resource list
       # @return [void]
       def manipulate_resource_list(resources)
@@ -163,21 +163,21 @@ module Middleman::CoreExtensions
             r.frontmatter_ignored = true
           end
         end
-        
+
         resources
       end
     end
-  
+
     module ResourceInstanceMethods
-      
+
       def frontmatter_ignored?
         @_frontmatter_ignored || false
       end
-      
+
       def frontmatter_ignored=(v)
         @_frontmatter_ignored = v
       end
-      
+
       def ignored?
         if frontmatter_ignored?
           true
@@ -193,21 +193,21 @@ module Middleman::CoreExtensions
       end
 
     end
-    
+
     module InstanceMethods
-    
+
       # Access the Frontmatter API
       def frontmatter_manager
         @_frontmatter_manager ||= FrontmatterManager.new(self)
       end
-    
+
       # Get the template data from a path
       # @param [String] path
       # @return [String]
       def template_data_for_file(path)
         frontmatter_manager.data(path).last
       end
-    
+
     end
   end
 end

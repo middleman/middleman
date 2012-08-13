@@ -2,11 +2,11 @@
 require "pathname"
 
 module Middleman
-  
+
   class << self
     def setup_load_paths
       @_is_setup ||= begin
-      
+
         # Only look for config.rb if MM_ROOT isn't set
         if !ENV["MM_ROOT"] && found_path = locate_root
           ENV["MM_ROOT"] = found_path
@@ -39,18 +39,18 @@ module Middleman
         else
           ::Middleman.load_extensions_in_path
         end
-        
+
         true
       end
     end
-    
+
     # Recursive method to find config.rb
     def locate_root(cwd = Pathname.new(Dir.pwd))
       return cwd.to_s if (cwd + 'config.rb').exist?
       return false if cwd.root?
       locate_root(cwd.parent)
     end
-    
+
   end
-  
+
 end

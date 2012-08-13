@@ -1,6 +1,6 @@
 # Mobile HTML5 Boilerplate
 class Middleman::Templates::Mobile < Middleman::Templates::Base
-  
+
   # Slightly different paths
   class_option :css_dir, :default => "css"
   class_option :js_dir, :default => "js"
@@ -11,7 +11,7 @@ class Middleman::Templates::Mobile < Middleman::Templates::Base
   def self.source_root
     File.dirname(__FILE__)
   end
-  
+
   # Output the files
   # @return [void]
   def build_scaffold!

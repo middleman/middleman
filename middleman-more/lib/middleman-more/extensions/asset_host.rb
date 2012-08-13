@@ -1,28 +1,28 @@
 # Extensions namespace
 module Middleman
   module Extensions
-  
+
     # Asset Host module
     module AssetHost
-    
+
       # Setup extension
       class << self
-      
+
         # Once registered
         def registered(app)
           # Default to no host
           app.set :asset_host, false
-      
+
           # Include methods
           app.send :include, InstanceMethods
         end
-      
+
         alias :included :registered
       end
-  
+
       # Asset Host Instance Methods
       module InstanceMethods
-      
+
         # Override default asset url helper to include asset hosts
         #
         # @param [String] path
@@ -37,7 +37,7 @@ module Middleman
           elsif asset_host.is_a?(String)
             asset_host
           end
-        
+
           File.join(asset_prefix, original_output)
         end
       end

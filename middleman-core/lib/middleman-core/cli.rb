@@ -6,7 +6,7 @@ require "thor/group"
 module Middleman
 
   module Cli
-    
+
     # The base task from which everything else etends
     class Base < Thor
       class << self
@@ -18,7 +18,7 @@ module Middleman
           if ARGV[0] != "help" && (ARGV.length < 1 || ARGV.first.include?("-"))
             ARGV.unshift("server")
           end
-          
+
           super
         end
       end
@@ -28,7 +28,7 @@ module Middleman
         require 'middleman-core/version'
         say "Middleman #{Middleman::VERSION}"
       end
-    
+
       # Override the Thor help method to find help for subtasks
       # @param [Symbol, String, nil] meth
       # @param [Boolean] subcommand
@@ -43,24 +43,24 @@ module Middleman
             list += klass.printable_tasks(false)
           end
           list.sort!{ |a,b| a[0] <=> b[0] }
-        
+
           shell.say "Tasks:"
           shell.print_table(list, :ident => 2, :truncate => true)
           shell.say
         end
       end
-    
+
       # Intercept missing methods and search subtasks for them
       # @param [Symbol] meth
       def method_missing(meth, *args)
         meth = meth.to_s
-      
+
         if self.class.map.has_key?(meth)
           meth = self.class.map[meth]
         end
-      
+
         klass, task = Thor::Util.find_class_and_task_by_namespace("#{meth}:#{meth}")
-      
+
         if klass.nil?
           tasks_dir = File.join(Dir.pwd, "tasks")
 
@@ -69,7 +69,7 @@ module Middleman
             klass, task = Thor::Util.find_class_and_task_by_namespace("#{meth}:#{meth}")
           end
         end
-      
+
         if klass.nil?
           super
         else

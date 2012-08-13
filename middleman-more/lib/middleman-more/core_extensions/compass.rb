@@ -16,7 +16,7 @@ module Middleman
           # Hooks to manually update the compass config after we're
           # done with it
           app.define_hook :compass_config
-          
+
           # Location of SASS/SCSS files external to source directory.
           # @return [Array]
           #   set :sass_assets_paths, ["#{root}/assets/sass/", "/path/2/external/sass/repository/"]
@@ -71,7 +71,7 @@ module Middleman
 
     end
 
-    # A Compass template for Tilt
+    # A Compass Sass template for Tilt, adding our options in
     class CompassSassTemplate < ::Middleman::Renderers::Sass::SassPlusCSSFilenameTemplate
     private
       def sass_options
@@ -79,6 +79,7 @@ module Middleman
       end
     end
 
+    # A Compass Scss template for Tilt, adding our options in
     class CompassScssTemplate < ::Middleman::Renderers::Sass::ScssPlusCSSFilenameTemplate
     private
       def sass_options

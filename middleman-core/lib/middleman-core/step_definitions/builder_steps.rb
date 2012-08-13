@@ -21,7 +21,7 @@ Given /^a fixture app "([^\"]*)"$/ do |path|
 
   target_path = File.join(PROJECT_ROOT_PATH, "fixtures", path)
   FileUtils.cp_r(target_path, current_dir)
-  
+
   step %Q{I cd to "#{path}"}
 end
 

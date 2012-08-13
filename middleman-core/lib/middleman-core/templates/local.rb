@@ -1,6 +1,6 @@
 # Local templates
 class Middleman::Templates::Local < Middleman::Templates::Base
-  
+
   # Look for templates in ~/.middleman
   # @return [String]
   def self.source_root
@@ -11,15 +11,15 @@ class Middleman::Templates::Local < Middleman::Templates::Base
   # @return [void]
   def build_scaffold!
     directory options[:template].to_s, location
-  end  
+  end
 end
 
 # Iterate over the directories in the templates path and register each one.
 Dir[File.join(Middleman::Templates::Local.source_root, "*")].each do |dir|
   next unless File.directory?(dir)
-  
+
   template_file = File.join(dir, "template.rb")
-  
+
   if File.exists?(template_file)
     require template_file
   else

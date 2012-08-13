@@ -2,59 +2,59 @@ require "middleman-core"
 
 # CLI Module
 module Middleman::Cli
-  
+
   # The CLI Build class
   class Build < Thor
     include Thor::Actions
-    
+
     attr_reader :debugging
-    
+
     check_unknown_options!
-    
+
     namespace :build
-    
+
     desc "build [options]", "Builds the static site for deployment"
-    method_option :clean, 
-      :type    => :boolean, 
-      :aliases => "-c", 
-      :default => false, 
+    method_option :clean,
+      :type    => :boolean,
+      :aliases => "-c",
+      :default => false,
       :desc    => 'Removes orphaned files or directories from build'
-    method_option :glob, 
-      :type    => :string, 
-      :aliases => "-g", 
-      :default => nil, 
+    method_option :glob,
+      :type    => :string,
+      :aliases => "-g",
+      :default => nil,
       :desc    => 'Build a subset of the project'
     method_option :verbose,
-      :type    => :boolean, 
+      :type    => :boolean,
       :default => false,
       :desc    => 'Print debug messages'
     method_option :instrument,
-      :type    => :string, 
+      :type    => :string,
       :default => false,
       :desc    => 'Print instrument messages'
     method_option :profile,
       :type    => :boolean,
       :default => false,
       :desc    => 'Generate profiling report for the build'
-    
+
     # Core build Thor command
     # @return [void]
     def build
       if !ENV["MM_ROOT"]
         raise Thor::Error, "Error: Could not find a Middleman project config, perhaps you are in the wrong folder?"
       end
-      
+
       # Use Rack::Test for inspecting a running server for output
       require "rack"
       require "rack/test"
 
       require 'find'
-      
+
       @debugging = Middleman::Cli::Base.respond_to?(:debugging) && Middleman::Cli::Base.debugging
       @had_errors = false
-      
+
       self.class.shared_instance(options["verbose"], options["instrument"])
-      
+
       self.class.shared_rack
 
       opts = {}
@@ -66,12 +66,12 @@ module Middleman::Cli
       if @had_errors && !@debugging
         self.shell.say "There were errors during this build, re-run with --verbose to see the full exception."
       end
-      
+
       exit(1) if @had_errors
 
       self.class.shared_instance.run_hook :after_build, self
     end
-    
+
     # Static methods
     class << self
       def exit_on_failure?
@@ -87,14 +87,14 @@ module Middleman::Cli
           logger(verbose ? 0 : 1, instrument)
         end
       end
-      
+
       # Middleman::Application class singleton
       #
       # @return [Middleman::Application]
       def shared_server
         @_shared_server ||= shared_instance.class
       end
-      
+
       # Rack::Test::Session singleton
       #
       # @return [Rack::Test::Session]
@@ -104,13 +104,13 @@ module Middleman::Cli
           ::Rack::Test::Session.new(mock)
         end
       end
-    
+
       # Set the root path to the Middleman::Application's root
       def source_root
         shared_instance.root
       end
     end
-    
+
     no_tasks {
       # Render a resource to a file.
       #
@@ -134,10 +134,10 @@ module Middleman::Cli
 
         output_file
       end
-    
+
       def handle_error(file_name, response, e=Thor::Error.new(response))
         @had_errors = true
-        
+
         say_status :error, file_name, :red
         if self.debugging
           raise e
@@ -148,7 +148,7 @@ module Middleman::Cli
       end
     }
   end
-  
+
   # A Thor Action, modular code, which does the majority of the work.
   class GlobAction < ::Thor::Actions::EmptyDirectory
     attr_reader :source
@@ -169,7 +169,7 @@ module Middleman::Cli
 
       super(base, @destination, config)
     end
-    
+
     # Execute the action
     # @return [void]
     def invoke!
@@ -179,21 +179,21 @@ module Middleman::Cli
     end
 
   protected
-    
+
     # Remove files which were not built in this cycle
     # @return [void]
     def clean!
       files       = @cleaning_queue.select { |q| q.file? }
       directories = @cleaning_queue.select { |q| q.directory? }
 
-      files.each do |f| 
+      files.each do |f|
         base.remove_file f, :force => true
       end
 
       directories = directories.sort_by {|d| d.to_s.length }.reverse!
 
       directories.each do |d|
-        base.remove_file d, :force => true if directory_empty? d 
+        base.remove_file d, :force => true if directory_empty? d
       end
     end
 
@@ -216,11 +216,11 @@ module Middleman::Cli
     def queue_current_paths
       @cleaning_queue = []
       return unless File.exist?(@destination)
-      
+
       paths = ::Middleman::Util.all_files_under(@destination)
       @cleaning_queue += paths.select do |path|
         !path.to_s.match(/\/\./) || path.to_s.match(/\.htaccess/)
-      end 
+      end
     end
 
     # Actually build the app
@@ -228,7 +228,7 @@ module Middleman::Cli
     def execute!
       # Sort order, images, fonts, js/css and finally everything else.
       sort_order = %w(.png .jpeg .jpg .gif .bmp .svg .svgz .ico .woff .otf .ttf .eot .js .css)
-      
+
       # Pre-request CSS to give Compass a chance to build sprites
       logger.debug "== Prerendering CSS"
 
@@ -237,7 +237,7 @@ module Middleman::Cli
       end.each do |resource|
         Middleman::Cli::Build.shared_rack.get(URI.escape(resource.destination_path))
       end
-      
+
       logger.debug "== Checking for Compass sprites"
 
       # Double-check for compass sprites
@@ -265,7 +265,7 @@ module Middleman::Cli
       ::Middleman::Profiling.report("build")
     end
   end
-  
+
   # Alias "b" to "build"
   Base.map({ "b" => "build" })
 end

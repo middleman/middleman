@@ -3,7 +3,7 @@
 # It does this by using a feature of Net::HTTP that yields strings from the resource being fetched
 # as soon as the packets arrive.
 #
-# No external libraries such as ImageMagick are used here, this is a very lightweight solution to 
+# No external libraries such as ImageMagick are used here, this is a very lightweight solution to
 # finding image information.
 #
 # FastImage knows about GIF, JPEG, BMP and PNG files.
@@ -47,7 +47,7 @@ class FastImage
   end
 
   DefaultTimeout = 2
-  
+
   LocalFileChunkSize = 256
 
   # Returns an array containing the width and height of the image.
@@ -148,7 +148,7 @@ class FastImage
       end
     end
     raise SizeNotFound if options[:raise_on_failure] && @property == :size && !@size
-  rescue Timeout::Error, SocketError, Errno::ECONNREFUSED, Errno::EHOSTUNREACH, Errno::ECONNRESET, 
+  rescue Timeout::Error, SocketError, Errno::ECONNREFUSED, Errno::EHOSTUNREACH, Errno::ECONNRESET,
     ImageFetchFailure, Net::HTTPBadResponse, EOFError, Errno::ENOENT
     raise ImageFetchFailure if options[:raise_on_failure]
   rescue NoMethodError  # 1.8.7p248 can raise this due to a net/http bug
@@ -192,7 +192,7 @@ class FastImage
     @strpos = 0
     begin
       result = send("parse_#{@property}")
-      if result 
+      if result
         instance_variable_set("@#{@property}", result)
         true
       end
@@ -257,7 +257,7 @@ class FastImage
         get_chars(2)
         :started
       when :started
-        get_byte == 0xFF ? :sof : :started          
+        get_byte == 0xFF ? :sof : :started
       when :sof
         c = get_byte
         if (0xe0..0xef).include?(c)

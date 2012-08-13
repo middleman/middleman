@@ -59,16 +59,16 @@ module Middleman
     # @private
     def load_extensions_in_path
       require "rubygems"
-      
+
       begin
         require "middleman-more"
       rescue LoadError
       end
-      
+
       extensions = rubygems_latest_specs.select do |spec|
         spec_has_file?(spec, EXTENSION_FILE)
       end
-      
+
       extensions.each do |spec|
         require spec.name
       end

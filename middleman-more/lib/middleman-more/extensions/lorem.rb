@@ -1,22 +1,22 @@
 # Extension namespace
 module Middleman
   module Extensions
-  
+
     # Lorem helper
     module Lorem
-    
+
       # Setup extension
       class << self
-      
+
         # Once registered
         def registered(app)
           # Include methods
           app.send :include, InstanceMethods
         end
-      
+
         alias :included :registered
       end
-  
+
       # Lorem extension instance methods
       module InstanceMethods
         # Access to the Lorem object
@@ -24,7 +24,7 @@ module Middleman
         def lorem
           @_lorem ||= LoremObject.new
         end
-      
+
         # Return a placeholder image using placekitten.com
         #
         # @param [String] size
@@ -39,7 +39,7 @@ module Middleman
       # Adapted from Frank:
       # https://github.com/blahed/frank/
       # Copyright (c) 2010 Travis Dunn
-      # 
+      #
       #   Permission is hereby granted, free of charge, to any person
       #   obtaining a copy of this software and associated documentation
       #   files (the "Software"), to deal in the Software without
@@ -48,10 +48,10 @@ module Middleman
       #   copies of the Software, and to permit persons to whom the
       #   Software is furnished to do so, subject to the following
       #   conditions:
-      # 
+      #
       #   The above copyright notice and this permission notice shall be
       #   included in all copies or substantial portions of the Software.
-      # 
+      #
       #   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
       #   EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
       #   OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND

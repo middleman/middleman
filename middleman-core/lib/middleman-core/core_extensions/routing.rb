@@ -2,22 +2,22 @@
 module Middleman
   module CoreExtensions
     module Routing
-  
+
       # Setup extension
       class << self
-    
+
         # Once registered
         def registered(app)
           # Include methods
           app.send :include, InstanceMethods
         end
-    
+
         alias :included :registered
       end
-  
+
       # Routing instance methods
       module InstanceMethods
-    
+
         # Takes a block which allows many pages to have the same layout
         #
         #   with_layout :admin do
@@ -29,13 +29,13 @@ module Middleman
         # @return [void]
         def with_layout(layout_name, &block)
           old_layout = layout
-    
+
           set :layout, layout_name
           instance_exec(&block) if block_given?
         ensure
           set :layout, old_layout
         end
-    
+
         # The page method allows the layout to be set on a specific path
         #
         #   page "/about.html", :layout => false
@@ -45,36 +45,36 @@ module Middleman
         # @param [Hash] opts
         # @return [void]
         def page(url, opts={}, &block)
-          
+
           blocks = []
           blocks << block if block_given?
-      
+
           # Default layout
           opts[:layout] = layout if opts[:layout].nil?
 
           # If the url is a regexp
           if url.is_a?(Regexp) || url.include?("*")
-        
+
             # Use the metadata loop for matching against paths at runtime
             sitemap.provides_metadata_for_path url do |url|
               { :options => opts, :blocks => blocks }
             end
-        
+
             return
           end
-      
+
           # Normalized path
           url = full_path(url)
 
           # Setup proxy
           if opts.has_key?(:proxy)
             proxy(url, opts[:proxy])
-        
+
             if opts.has_key?(:ignore) && opts[:ignore]
               ignore(opts[:proxy])
               opts.delete(:ignore)
-            end  
-        
+            end
+
             opts.delete(:proxy)
           else
             if opts.has_key?(:ignore) && opts[:ignore]
@@ -82,7 +82,7 @@ module Middleman
               opts.delete(:ignore)
             end
           end
-      
+
           # Setup a metadata matcher for rendering those options
           sitemap.provides_metadata_for_path url do |url|
             { :options => opts, :blocks => blocks }

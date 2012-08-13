@@ -1,11 +1,11 @@
 require 'set'
 
 module Middleman
-  
+
   module Sitemap
-    
+
     module Extensions
-      
+
       class OnDisk
 
         attr_accessor :sitemap
@@ -14,22 +14,22 @@ module Middleman
         def initialize(sitemap)
           @sitemap = sitemap
           @app     = @sitemap.app
-      
+
           @file_paths_on_disk = Set.new
 
           scoped_self = self
           @waiting_for_ready = true
-      
+
           # Register file change callback
           @app.files.changed do |file|
             scoped_self.touch_file(file, !scoped_self.waiting_for_ready)
           end
-      
+
           # Register file delete callback
           @app.files.deleted do |file|
             scoped_self.remove_file(file, !scoped_self.waiting_for_ready)
           end
-      
+
           @app.ready do
             scoped_self.waiting_for_ready = false
             scoped_self.sitemap.rebuild_resource_list!(:on_disk_ready)
@@ -57,7 +57,7 @@ module Middleman
           # whether or not it belongs in the sitemap (like a partial)
           @sitemap.rebuild_resource_list!(:touched_file) if rebuild
         end
-    
+
         # Remove a file from the store
         # @param [String] file
         # @return [void]
@@ -66,7 +66,7 @@ module Middleman
             @sitemap.rebuild_resource_list!(:removed_file) if rebuild
           end
         end
-   
+
         # Update the main sitemap resource list
         # @return [void]
         def manipulate_resource_list(resources)

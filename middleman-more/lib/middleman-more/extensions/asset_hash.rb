@@ -5,13 +5,13 @@ module Middleman
         def registered(app, options={})
           require 'digest/sha1'
           exts = options[:exts] || %w(.jpg .jpeg .png .gif .js .css)
-        
+
           # Allow specifying regexes to ignore, plus always ignore apple touch icons
           ignore = Array(options[:ignore]) << /^apple-touch-icon/
 
           app.ready do
             sitemap.register_resource_list_manipulator(
-              :asset_hash, 
+              :asset_hash,
               AssetHashManager.new(self, exts, ignore)
             )
             use Middleware, :exts => exts, :middleman_app => self, :ignore => ignore
@@ -20,20 +20,21 @@ module Middleman
         alias :included :registered
       end
 
+      # Central class for managing asset_hash extension
       class AssetHashManager
         def initialize(app, exts, ignore)
           @app = app
           @exts = exts
           @ignore = ignore
         end
-      
+
         # Update the main sitemap resource list
         # @return [void]
         def manipulate_resource_list(resources)
           resources.each do |resource|
             next unless @exts.include? resource.ext
             next if @ignore.any? { |ignore| Middleman::Util.path_match(ignore, resource.destination_path) }
-              
+
             if resource.template? # if it's a template, render it out
               digest = Digest::SHA1.hexdigest(resource.render)[0..7]
             else # if it's a static file, just hash it
@@ -70,17 +71,17 @@ module Middleman
               body.gsub! /([=\'\"\(]\s*)([^\s\'\"\)]+(#{@exts_regex_text}))/ do |match|
                 opening_character = $1
                 asset_path = $2
-                
+
                 relative_path = Pathname.new(asset_path).relative?
 
                 asset_path = dirpath.join(asset_path).to_s if relative_path
-                
+
                 if @ignore.any? { |r| asset_path.match(r) }
                   match
                 elsif asset_page = @middleman_app.sitemap.find_resource_by_path(asset_path)
                   replacement_path = "/#{asset_page.destination_path}"
                   replacement_path = Pathname.new(replacement_path).relative_path_from(dirpath).to_s if relative_path
-                  
+
                   "#{opening_character}#{replacement_path}"
                 else
                   match

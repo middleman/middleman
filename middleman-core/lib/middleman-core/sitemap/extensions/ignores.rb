@@ -3,42 +3,42 @@ module Middleman
   module Sitemap
 
     module Extensions
-  
+
       module Ignores
-    
+
         # Setup extension
         class << self
-    
+
           # Once registered
           def registered(app)
             # Include methods
             app.send :include, InstanceMethods
-        
+
             ::Middleman::Sitemap::Resource.send :include, ResourceInstanceMethods
           end
-    
+
           alias :included :registered
         end
-    
+
         # Helpers methods for Resources
         module ResourceInstanceMethods
-      
+
           # Whether the Resource is ignored
           # @return [Boolean]
           def ignored?
-            @app.ignore_manager.ignored?(path) || 
+            @app.ignore_manager.ignored?(path) ||
             (!proxy? &&
               @app.ignore_manager.ignored?(source_file.sub("#{@app.source_dir}/", ""))
             )
           end
         end
-    
+
         # Ignore-related instance methods
         module InstanceMethods
           def ignore_manager
             @_ignore_manager ||= IgnoreManager.new(self)
           end
-      
+
           # Ignore a path or add an ignore callback
           # @param [String, Regexp] path Path glob expression, or path regex
           # @return [void]
@@ -46,7 +46,7 @@ module Middleman
             ignore_manager.ignore(path, &block)
           end
         end
-    
+
         # Class to handle managing ignores
         class IgnoreManager
           def initialize(app)
@@ -55,7 +55,7 @@ module Middleman
             # Array of callbacks which can ass ignored
             @ignored_callbacks = []
           end
-      
+
           # Ignore a path or add an ignore callback
           # @param [String, Regexp] path Path glob expression, or path regex
           # @return [void]

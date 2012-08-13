@@ -1,6 +1,6 @@
 module Middleman
   module Profiling
-    
+
     # The profiler instance. There can only be one!
     def self.profiler=(prof)
       @profiler = prof

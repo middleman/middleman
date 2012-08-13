@@ -8,7 +8,7 @@ end
 
 Given /^"([^\"]*)" feature is "([^\"]*)"$/ do |feature, state|
   @initialize_commands ||= []
-  
+
   if state == "enabled"
     @initialize_commands << lambda { activate(feature.to_sym) }
   end
@@ -16,7 +16,7 @@ end
 
 Given /^"([^\"]*)" feature is "enabled" with "([^\"]*)"$/ do |feature, options_str|
   @initialize_commands ||= []
-  
+
   options = eval("{#{options_str}}")
 
   @initialize_commands << lambda { activate(feature.to_sym, options) }
@@ -39,20 +39,20 @@ Given /^the Server is running$/ do
   else
     ENV["MM_SOURCE"] = ""
   end
-  
+
   initialize_commands = @initialize_commands || []
   initialize_commands.unshift lambda {
     set :root, root_dir
     set :environment, @current_env || :development
     set :show_exceptions, false
   }
-  
+
   @server_inst = Middleman::Application.server.inst do
     initialize_commands.each do |p|
       instance_exec(&p)
     end
   end
-  
+
   app_rack = @server_inst.class.to_rack_app
   @browser = ::Rack::Test::Session.new(::Rack::MockSession.new(app_rack))
 end

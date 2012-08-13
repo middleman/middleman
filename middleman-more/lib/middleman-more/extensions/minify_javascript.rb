@@ -1,13 +1,13 @@
 # Extension namespace
 module Middleman
   module Extensions
-  
+
     # Minify Javascript Extension
     module MinifyJavascript
-    
+
       # Setup extension
       class << self
-      
+
         # Once registered
         def registered(app, options={})
           app.set :js_compressor, false
@@ -21,9 +21,9 @@ module Middleman
               require 'uglifier'
               ::Uglifier.new
             end
-          
+
             # Setup Rack middlware to minify JS
-            use Rack, :compressor => chosen_compressor, 
+            use Rack, :compressor => chosen_compressor,
                       :ignore     => ignore,
                       :inline     => inline
           end
@@ -33,7 +33,7 @@ module Middleman
 
       # Rack middleware to look for JS and compress it
       class Rack
-      
+
         # Init
         # @param [Class] app
         # @param [Hash] options
@@ -84,7 +84,7 @@ module Middleman
             end
           rescue ExecJS::ProgramError => e
             warn "WARNING: Couldn't compress JavaScript in #{path}: #{e.message}"
-          end 
+          end
 
           [status, headers, response]
         end

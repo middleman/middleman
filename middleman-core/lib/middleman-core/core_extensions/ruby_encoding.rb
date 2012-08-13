@@ -3,7 +3,7 @@ module Middleman::CoreExtensions::RubyEncoding
 
   # Setup extension
   class << self
-    
+
     # Once registerd
     def registered(app)
       app.send :include, InstanceMethods

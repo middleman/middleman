@@ -1,24 +1,24 @@
 module Middleman
   module CoreExtensions
-    
+
     # Base helper to manipulate asset paths
     module Assets
-  
+
       # Extension registered
       class << self
         def registered(app)
           # Disable Padrino cache buster
           app.set :asset_stamp, false
-      
+
           # Include helpers
           app.send :include, InstanceMethod
         end
         alias :included :registered
       end
-  
+
       # Methods to be mixed-in to Middleman::Application
       module InstanceMethod
-    
+
         # Get the URL of an asset given a type/prefix
         #
         # @param [String] path The path (such as "photo.jpg")

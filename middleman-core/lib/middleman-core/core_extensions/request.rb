@@ -4,33 +4,33 @@ require "rack/file"
 
 module Middleman
   module CoreExtensions
-    
+
     # Base helper to manipulate asset paths
     module Request
-  
+
       # Extension registered
       class << self
         # @private
         def registered(app)
-          
+
           # CSSPIE HTC File
           ::Rack::Mime::MIME_TYPES['.htc'] = 'text/x-component'
 
           # Let's serve all HTML as UTF-8
           ::Rack::Mime::MIME_TYPES['.html'] = 'text/html; charset=utf-8'
           ::Rack::Mime::MIME_TYPES['.htm'] = 'text/html; charset=utf-8'
-          
+
           app.extend ClassMethods
           app.extend ServerMethods
-          
+
           Middleman.extend CompatibleClassMethods
-      
+
           # Include instance methods
           app.send :include, InstanceMethods
         end
         alias :included :registered
       end
-    
+
       module ClassMethods
         # Reset Rack setup
         #
@@ -39,7 +39,7 @@ module Middleman
           @app = nil
           @prototype = nil
         end
-  
+
         # The shared Rack instance being build
         #
         # @private
@@ -47,7 +47,7 @@ module Middleman
         def app
           @app ||= ::Rack::Builder.new
         end
-  
+
         # Get the static instance
         #
         # @private
@@ -59,7 +59,7 @@ module Middleman
             mm
           end
         end
-  
+
         # Set the shared instance
         #
         # @private
@@ -68,27 +68,27 @@ module Middleman
         def inst=(inst)
           @inst = inst
         end
-  
+
         # Return built Rack app
         #
         # @private
         # @return [Rack::Builder]
         def to_rack_app(&block)
           inner_app = inst(&block)
-    
+
           (@middleware || []).each do |m|
             app.use(m[0], *m[1], &m[2])
           end
-    
+
           app.map("/") { run inner_app }
-    
+
           (@mappings || []).each do |m|
             app.map(m[0], &m[1])
           end
-    
+
           app
         end
-  
+
         # Prototype app. Used in config.ru
         #
         # @private
@@ -103,7 +103,7 @@ module Middleman
         def call(env)
           prototype.call(env)
         end
-  
+
         # Use Rack middleware
         #
         # @param [Class] middleware Middleware module
@@ -112,7 +112,7 @@ module Middleman
           @middleware ||= []
           @middleware << [middleware, args, block]
         end
-  
+
         # Add Rack App mapped to specific path
         #
         # @param [String] map Path to map
@@ -122,7 +122,7 @@ module Middleman
           @mappings << [map, block]
         end
       end
-  
+
       module ServerMethods
         # Create a new Class which is based on Middleman::Application
         # Used to create a safe sandbox into which extensions and
@@ -136,7 +136,7 @@ module Middleman
           const_set("MiddlemanApplication#{@@servercounter}", Class.new(Middleman::Application))
         end
       end
-      
+
       module CompatibleClassMethods
         # Create a new Class which is based on Middleman::Application
         # Used to create a safe sandbox into which extensions and
@@ -164,15 +164,15 @@ module Middleman
         # @return [void]
         def current_path=(path)
           @current_path = path
-          @request = ::Thor::CoreExt::HashWithIndifferentAccess.new({ 
-            :path   => path, 
-            :params => req ? ::Thor::CoreExt::HashWithIndifferentAccess.new(req.params) : {} 
+          @request = ::Thor::CoreExt::HashWithIndifferentAccess.new({
+            :path   => path,
+            :params => req ? ::Thor::CoreExt::HashWithIndifferentAccess.new(req.params) : {}
           })
         end
-        
+
         def use(*args, &block); self.class.use(*args, &block); end
         def map(*args, &block); self.class.map(*args, &block); end
-        
+
         # Rack env
         attr_accessor :env
 
@@ -187,7 +187,7 @@ module Middleman
         def call(env)
           dup.call!(env)
         end
-        
+
         # Rack Interface
         #
         # @param env Rack environment
@@ -215,8 +215,8 @@ module Middleman
         def halt(response)
           throw :halt, response
         end
-        
-        # Core response method. We process the request, check with 
+
+        # Core response method. We process the request, check with
         # the sitemap, and return the correct file, response or status
         # message.
         #
@@ -252,7 +252,7 @@ module Middleman
           return send_file(resource.source_file, env, res) unless resource.template?
 
           current_path = request_path.dup
-          
+
           # Set a HTTP content type based on the request's extensions
           content_type(res, resource.mime_type)
 
@@ -275,7 +275,7 @@ module Middleman
           logger.debug "== Finishing Request: #{request_path} (#{(Time.now - start_time).round(2)}s)"
           halt res.finish
         end
-      
+
         # Add a new mime-type for a specific extension
         #
         # @param [Symbol] type File extension

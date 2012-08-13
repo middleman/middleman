@@ -5,7 +5,7 @@ require "set"
 module Middleman
   module CoreExtensions
     module FileWatcher
-  
+
       IGNORE_LIST = [
         /^\.bundle\//,
         /^\.sass-cache\//,
@@ -22,16 +22,16 @@ module Middleman
 
       # Setup extension
       class << self
-    
+
         # Once registered
         def registered(app)
           app.send :include, InstanceMethods
-      
+
           # Before parsing config, load the data/ directory
           app.before_configuration do
             files.reload_path(data_dir)
           end
-      
+
           # After config, load everything else
           app.ready do
             files.reload_path('.')
@@ -39,32 +39,32 @@ module Middleman
         end
         alias :included :registered
       end
-  
+
       # Instance methods
       module InstanceMethods
-    
+
         # Access the file api
         # @return [Middleman::CoreExtensions::FileWatcher::API]
         def files
           @_files_api ||= API.new(self)
         end
       end
-  
+
       # Core File Change API class
       class API
-        
+
         attr_reader :app
         delegate :logger, :to => :app
-        
+
         # Initialize api and internal path cache
         def initialize(app)
           @app = app
           @known_paths = Set.new
-          
+
           @_changed = []
           @_deleted = []
         end
-    
+
         # Add callback to be run on file change
         #
         # @param [nil,Regexp] matcher A Regexp to match the change path against
@@ -73,7 +73,7 @@ module Middleman
           @_changed << [block, matcher] if block_given?
           @_changed
         end
-    
+
         # Add callback to be run on file deletion
         #
         # @param [nil,Regexp] matcher A Regexp to match the deleted path against
@@ -82,7 +82,7 @@ module Middleman
           @_deleted << [block, matcher] if block_given?
           @_deleted
         end
-  
+
         # Notify callbacks that a file changed
         #
         # @param [Pathname] path The file that changed
@@ -104,7 +104,7 @@ module Middleman
           @known_paths.delete(path)
           self.run_callbacks(path, :deleted)
         end
-    
+
         # Manually trigger update events
         #
         # @param [Pathname] path The path to reload
@@ -115,20 +115,20 @@ module Middleman
           Dir.chdir @app.root_path do
             path = Pathname(path)
             return unless path.exist?
-          
+
             glob = (path + "**/*").to_s
             subset = @known_paths.select { |p| p.fnmatch(glob) }
-          
+
             ::Middleman::Util.all_files_under(path).each do |filepath|
               if only_new
                 next if subset.include?(filepath)
               else
                 subset.delete(filepath)
               end
-            
+
               self.did_change(filepath)
             end
-          
+
             subset.each(&method(:did_delete)) unless only_new
           end
         end
@@ -140,7 +140,7 @@ module Middleman
         def find_new_files(path)
           reload_path(path, true)
         end
-    
+
       protected
         # Whether this path is ignored
         # @param [Pathname] path
@@ -148,7 +148,7 @@ module Middleman
         def ignored?(path)
           IGNORE_LIST.any? { |r| path.to_s.match(r) }
         end
-      
+
         # Notify callbacks for a file given an array of callbacks
         #
         # @param [Pathname] path The file that was changed

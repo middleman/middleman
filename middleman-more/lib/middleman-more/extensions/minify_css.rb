@@ -1,13 +1,13 @@
 # Extensions namespace
 module Middleman
   module Extensions
-  
-    # Minify CSS Extension 
+
+    # Minify CSS Extension
     module MinifyCss
-    
+
       # Setup extension
       class << self
-      
+
         # Once registered
         def registered(app, options={})
           app.set :css_compressor, false
@@ -29,7 +29,7 @@ module Middleman
         end
         alias :included :registered
       end
-    
+
       # Rack middleware to look for CSS and compress it
       class Rack
 

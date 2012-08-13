@@ -87,5 +87,12 @@ task :test do
   end
 end
 
+desc "Rune cane for all middleman gems"
+task :cane do
+  GEM_PATHS.each do |g|
+    sh "cd #{File.join(ROOT, g)} && #{Gem.ruby} -S cane"
+  end
+end
+
 desc "Run tests for all middleman gems"
 task :default => :test

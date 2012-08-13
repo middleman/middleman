@@ -1,9 +1,9 @@
 module Middleman
   module CoreExtensions
-    
+
     # Convenience methods to allow config.rb to talk to the Builder
     module Builder
-  
+
       # Extension registered
       class << self
         # @private

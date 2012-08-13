@@ -5,10 +5,10 @@ require 'rack/showexceptions'
 module Middleman
   module CoreExtensions
     module ShowExceptions
-  
+
       # Setup extension
       class << self
-    
+
         # Once registered
         def registered(app)
           # When in dev
@@ -20,12 +20,12 @@ module Middleman
           end
         end
       end
-  
+
       # Custom exception class
       # TODO: Style this ourselves
       class Middleware < ::Rack::ShowExceptions
       end
-      
+
     end
   end
 end

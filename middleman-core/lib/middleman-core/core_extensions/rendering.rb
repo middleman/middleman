@@ -10,15 +10,15 @@ end
 module Middleman
   module CoreExtensions
     module Rendering
-  
+
       # Setup extension
       class << self
-    
+
         # Once registered
         def registered(app)
           # Include methods
           app.send :include, InstanceMethods
-      
+
           # Activate custom renderers
           require "middleman-core/renderers/erb"
           app.register Middleman::Renderers::ERb
@@ -61,7 +61,7 @@ module Middleman
             app.register Middleman::Renderers::Slim
           rescue LoadError
           end
-          
+
           # Less Support
           begin
             require "middleman-core/renderers/less"
@@ -69,17 +69,17 @@ module Middleman
           rescue LoadError
           end
         end
-    
+
         alias :included :registered
       end
-  
+
       # Custom error class for handling
       class TemplateNotFound < RuntimeError
       end
-  
+
       # Rendering instance methods
       module InstanceMethods
-    
+
         # Add or overwrite a default template extension
         #
         # @param [Hash] extension_map
@@ -89,7 +89,7 @@ module Middleman
           @_template_extensions.merge!(extension_map) if extension_map
           @_template_extensions
         end
-    
+
         # Render a template, with layout, given a path
         #
         # @param [String] path
@@ -103,8 +103,8 @@ module Middleman
 
           # Store last engine for later (could be inside nested renders)
           @current_engine, engine_was = engine, @current_engine
-      
-          # Use a dup of self as a context so that instance variables set within 
+
+          # Use a dup of self as a context so that instance variables set within
           # the template don't persist for other templates.
           context = self.dup
           blocks.each do |block|
@@ -126,26 +126,26 @@ module Middleman
               raise "Tried to render a layout (calls yield) at #{path} like it was a template. Non-default layouts need to be in #{source}/layouts."
             end
           end
-      
+
           # Certain output file types don't use layouts
           needs_layout = !%w(.js .json .css .txt).include?(File.extname(path))
-      
+
           # If we need a layout and have a layout, use it
           if needs_layout && layout_path = fetch_layout(engine, opts)
             content = render_individual_file(layout_path, locs, opts, context) { content }
           end
-        
+
           # Return result
           content
         ensure
-          # Pop all the saved variables from earlier as we may be returning to a 
+          # Pop all the saved variables from earlier as we may be returning to a
           # previous render (layouts, partials, nested layouts).
           @current_engine = engine_was
           @content_blocks = nil
           @current_locs = nil
           @current_opts = nil
         end
-    
+
         # Sinatra/Padrino compatible render method signature referenced by some view
         # helpers. Especially partials.
         #
@@ -179,7 +179,7 @@ module Middleman
               end
             end
           end
-      
+
           # Look in the root for the partial with the current engine
           if !found_partial && !engine.nil?
             found_partial, found_engine = resolve_template(data, :preferred_engine => engine, :try_without_underscore => true)
@@ -207,17 +207,17 @@ module Middleman
         # @return [String]
         def render_individual_file(path, locs = {}, opts = {}, context = self, &block)
           path = path.to_s
-      
+
           # Save current buffer for later
           @_out_buf, _buf_was = "", @_out_buf
-      
+
           # Read from disk or cache the contents of the file
           body = if opts[:template_body]
             opts.delete(:template_body)
           else
             template_data_for_file(path)
           end
-      
+
           # Merge per-extension options from config
           extension = File.extname(path)
           options = opts.merge(options_for_ext(extension))
@@ -234,15 +234,15 @@ module Middleman
           # Reset stored buffer
           @_out_buf = _buf_was
         end
-    
+
         # Get the template data from a path
         # @param [String] path
         # @return [String]
         def template_data_for_file(path)
           File.read(File.expand_path(path, source_dir))
         end
-    
-        # Get a hash of configuration options for a given file extension, from 
+
+        # Get a hash of configuration options for a given file extension, from
         # config.rb
         #
         # @param [String] ext
@@ -252,7 +252,7 @@ module Middleman
           cache.fetch(:options_for_ext, ext) do
             options = {}
 
-            # Find all the engines which handle this extension in tilt. Look for 
+            # Find all the engines which handle this extension in tilt. Look for
             # config variables of that name and merge it
             extension_class = ::Tilt[ext]
             ::Tilt.mappings.each do |ext, engines|
@@ -264,7 +264,7 @@ module Middleman
             options
           end
         end
-  
+
         # Find a layout for a given engine
         #
         # @param [Symbol] engine
@@ -274,7 +274,7 @@ module Middleman
           # The layout name comes from either the system default or the options
           local_layout = opts.has_key?(:layout) ? opts[:layout] : layout
           return false unless local_layout
-    
+
           # Look for engine-specific options
           engine_options = respond_to?(engine) ? send(engine) : {}
 
@@ -303,7 +303,7 @@ module Middleman
             end
           end
         end
-  
+
         # Find a layout on-disk, optionally using a specific engine
         # @param [String] name
         # @param [Symbol] preferred_engine
@@ -311,47 +311,47 @@ module Middleman
         def locate_layout(name, preferred_engine=nil)
           # Whether we've found the layout
           layout_path = false
-      
+
           # If we prefer a specific engine
           if !preferred_engine.nil?
             # Check root
             layout_path, layout_engine = resolve_template(name, :preferred_engine => preferred_engine)
-        
+
             # Check layouts folder
             if !layout_path
               layout_path, layout_engine = resolve_template(File.join("layouts", name.to_s), :preferred_engine => preferred_engine)
             end
           end
-    
+
           # Check root, no preference
           if !layout_path
             layout_path, layout_engine = resolve_template(name)
           end
-    
+
           # Check layouts folder, no preference
           if !layout_path
             layout_path, layout_engine = resolve_template(File.join("layouts", name.to_s))
           end
-    
+
           # Return the path
           layout_path
         end
-    
+
         # Allow layouts to be wrapped in the contents of other layouts
         # @param [String, Symbol] layout_name
         # @return [void]
         def wrap_layout(layout_name, &block)
           # Save current buffer for later
           @_out_buf, _buf_was = "", @_out_buf
-          
+
           layout_path = locate_layout(layout_name, current_engine)
-          
+
           extension = File.extname(layout_path)
           engine = extension[1..-1].to_sym
-          
+
           # Store last engine for later (could be inside nested renders)
           @current_engine, engine_was = engine, @current_engine
-            
+
           begin
             content = if block_given?
               capture_html(&block)
@@ -362,18 +362,18 @@ module Middleman
             # Reset stored buffer
             @_out_buf = _buf_was
           end
-          
+
           concat_content render_individual_file(layout_path, @current_locs || {}, @current_opts || {}, self) { content }
         ensure
           @current_engine = engine_was
         end
-    
+
         # The currently rendering engine
         # @return [Symbol, nil]
         def current_engine
           @current_engine ||= nil
         end
-    
+
         # Find a template on disk given a output path
         # @param [String] request_path
         # @param [Hash] options
@@ -387,7 +387,7 @@ module Middleman
 
             # By default, any engine will do
             preferred_engine = "*"
-      
+
             # Unless we're specifically looking for a preferred engine
             if options.has_key?(:preferred_engine)
               extension_class = ::Tilt[options[:preferred_engine]]
@@ -410,12 +410,12 @@ module Middleman
 
             # Look for files that match
             path_with_ext = on_disk_path + "." + preferred_engine
-        
+
             found_path = Dir[path_with_ext].find do |path|
               ::Tilt[path]
             end
-        
-            if !found_path && options[:try_without_underscore] && 
+
+            if !found_path && options[:try_without_underscore] &&
               path_no_underscore = path_with_ext.
                 sub(relative_path, relative_path.sub(/^_/, "").
                 sub(/\/_/, "/"))
@@ -423,7 +423,7 @@ module Middleman
                 ::Tilt[path]
               end
             end
-        
+
             # If we found one, return it and the found engine
             if found_path || (File.exists?(on_disk_path) && !File.directory?(on_disk_path))
               engine = found_path ? File.extname(found_path)[1..-1].to_sym : nil

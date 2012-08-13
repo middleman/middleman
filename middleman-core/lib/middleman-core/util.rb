@@ -11,7 +11,7 @@ require "thor"
 require "pathname"
 
 module Middleman
-  
+
   module Util
 
     # The logger
@@ -21,16 +21,16 @@ module Middleman
       if !@_logger || args.length > 0
         @_logger = ::Middleman::Logger.new(*args)
       end
-      
+
       @_logger
     end
-    
+
     # Facade for ActiveSupport/Notification
     def self.instrument(name, payload={}, &block)
       name << ".middleman" unless name =~ /\.middleman$/
       ::ActiveSupport::Notifications.instrument(name, payload, &block)
     end
-    
+
     # Recursively convert a normal Hash into a HashWithIndifferentAccess
     #
     # @private
@@ -52,13 +52,13 @@ module Middleman
         data
       end
     end
-    
+
     # Normalize a path to not include a leading slash
     # @param [String] path
     # @return [String]
     def self.normalize_path(path)
       # The tr call works around a bug in Ruby's Unicode handling
-      path.sub(/^\//, "").tr('','') 
+      path.sub(/^\//, "").tr('','')
     end
 
     # Extract the text of a Rack response as a string.
@@ -79,7 +79,7 @@ module Middleman
         response.to_s
       end
     end
-    
+
     # Takes a matcher, which can be a literal string
     # or a string containing glob expressions, or a
     # regexp, or a proc, or anything else that responds
@@ -98,7 +98,7 @@ module Middleman
         File.fnmatch(matcher.to_s, path)
       end
     end
-    
+
     # Get a recusive list of files inside a set of paths.
     # Works with symlinks.
     #
@@ -129,7 +129,7 @@ module Middleman
       end
 
       # Whether the key is in the cache
-      # 
+      #
       # @param key Anything Hash can use as a key
       # @return [Boolean]
       def has_key?(key)

@@ -17,6 +17,7 @@ group :test do
   gem "slim"
   gem "coffee-filter", "~> 0.1.1"
   gem "liquid", "~> 2.2"
+  gem "cane"
 
   platforms :ruby do
     gem "therubyracer"

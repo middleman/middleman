@@ -1,13 +1,13 @@
 # Extensions namespace
 module Middleman
   module Extensions
-  
+
     # Automatic Image Sizes extension
     module AutomaticImageSizes
-    
+
       # Setup extension
       class << self
-      
+
         # Once registered
         def registered(app)
           # Include 3rd-party fastimage library
@@ -16,13 +16,13 @@ module Middleman
           # Include methods
           app.send :include, InstanceMethods
         end
-      
+
         alias :included :registered
       end
-  
+
       # Automatic Image Sizes Instance Methods
       module InstanceMethods
-      
+
         # Override default image_tag helper to automatically calculate and include
         # image dimensions.
         #

@@ -8,7 +8,7 @@ module Middleman
         # @private
         def registered(app)
           require 'padrino-helpers'
-      
+
           app.helpers ::Padrino::Helpers::OutputHelpers
           app.helpers ::Padrino::Helpers::TagHelpers
           app.helpers ::Padrino::Helpers::AssetTagHelpers
@@ -124,7 +124,7 @@ module Middleman
           if url = args[url_arg_index]
             options = args[options_index] || {}
             relative = options.delete(:relative)
-            
+
             # Handle Resources, which define their own url method
             if url.respond_to? :url
               args[url_arg_index] = url.url
@@ -139,7 +139,7 @@ module Middleman
               url = current_source_dir.join(path).to_s if path.relative?
 
               resource = sitemap.find_resource_by_path(url)
-              
+
               # Allow people to turn on relative paths for all links with set :relative_links, true
               # but still override on a case by case basis with the :relative parameter.
               effective_relative = relative || false

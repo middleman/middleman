@@ -18,7 +18,7 @@ module Middleman
   class Application
     # Uses callbacks
     include Hooks
-    
+
     # Before request hook
     define_hook :before
 
@@ -215,7 +215,7 @@ module Middleman
     def settings
       self
     end
-    
+
     delegate :logger, :instrument, :to => ::Middleman::Util
 
     # Work around this bug: http://bugs.ruby-lang.org/issues/4521
