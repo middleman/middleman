@@ -15,6 +15,9 @@ module Middleman
         ###
         # Setup Core Extensions
         ###
+        
+        require "middleman-core/templates"
+        require "middleman-more/templates/smacss"
 
         # Setup default helpers
         require "middleman-more/core_extensions/default_helpers"
