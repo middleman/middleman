@@ -26,7 +26,7 @@ group :test do
   end
   
   platforms :jruby do 
-    gem "therubyrhino"
+    gem "therubyrhino", "1.73.5"
   end
   
   gem "less", "~> 2.2"
