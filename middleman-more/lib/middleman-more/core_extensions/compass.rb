@@ -73,7 +73,6 @@ module Middleman
 
     # A Compass Sass template for Tilt, adding our options in
     class CompassSassTemplate < ::Middleman::Renderers::Sass::SassPlusCSSFilenameTemplate
-    private
       def sass_options
         super.merge(::Compass.configuration.to_sass_engine_options)
       end
@@ -81,7 +80,6 @@ module Middleman
 
     # A Compass Scss template for Tilt, adding our options in
     class CompassScssTemplate < ::Middleman::Renderers::Sass::ScssPlusCSSFilenameTemplate
-    private
       def sass_options
         super.merge(::Compass.configuration.to_sass_engine_options)
       end

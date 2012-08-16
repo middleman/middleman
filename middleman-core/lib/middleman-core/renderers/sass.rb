@@ -39,6 +39,14 @@ module Middleman
       # A SassTemplate for Tilt which outputs debug messages
       class SassPlusCSSFilenameTemplate < ::Tilt::SassTemplate
 
+        def initialize(*args, &block)
+          super
+          
+          if @options.has_key?(:context)
+            @context = @options[:context]
+          end
+        end
+        
         # Define the expected syntax for the template
         # @return [Symbol]
         def syntax
@@ -52,7 +60,7 @@ module Middleman
         # @param [Hash] locals
         # @return [String]
         def evaluate(context, locals, &block)
-          @context = context
+          @context ||= context
           @engine = ::Sass::Engine.new(data, sass_options)
 
           begin
@@ -62,17 +70,20 @@ module Middleman
           end
         end
 
-      private
         # Change Sass path, for url functions, to the build folder if we're building
         # @return [Hash]
         def sass_options
-          location_of_sass_file = File.expand_path(@context.source, @context.root)
-
-          parts = basename.split('.')
-          parts.pop
-          css_filename = File.join(location_of_sass_file, @context.css_dir, parts.join("."))
-
-          options.merge(:filename => eval_file, :line => line, :syntax => syntax, :css_filename => css_filename)
+          more_opts = { :filename => eval_file, :line => line, :syntax => syntax }
+          
+          if @context.is_a?(::Middleman::Application) && file
+            location_of_sass_file = File.expand_path(@context.source, @context.root)
+          
+            parts = basename.split('.')
+            parts.pop
+            more_opts[:css_filename] = File.join(location_of_sass_file, @context.css_dir, parts.join("."))
+          end
+          
+          options.merge(more_opts)
         end
       end
 

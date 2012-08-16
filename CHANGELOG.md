@@ -1,6 +1,7 @@
 Master
 ===
 
+* Fix Sass/Scss filter in Slim templates
 * Added SMACSS template
 * Give file metadata (such as frontmatter) precedence over path meta. #552
 * Add `sass_assets_paths` option for arbitrary sass partial locations.

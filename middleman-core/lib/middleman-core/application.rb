@@ -223,7 +223,7 @@ module Middleman
     # messages, which can take a long time (minutes at full CPU)
     # if the object is huge or has cyclic references, like this.
     def to_s
-      "the Middleman application context"
+      "#<Middleman::Application>"
     end
 
     # Expand a path to include the index file if it's a directory
