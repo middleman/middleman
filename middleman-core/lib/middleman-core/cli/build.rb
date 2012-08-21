@@ -259,7 +259,10 @@ module Middleman::Cli
 
         output_path = base.render_to_file(resource)
 
-        @cleaning_queue.delete(Pathname.new(output_path).realpath) if cleaning?
+        if cleaning?
+          pn = Pathname(output_path)
+          @cleaning_queue.delete(pn.realpath) if pn.exist?
+        end
       end
 
       ::Middleman::Profiling.report("build")
