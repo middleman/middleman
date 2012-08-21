@@ -11,3 +11,4 @@ Feature: Middleman New Extension CLI
       | features/support/env.rb                       |
       | lib/middleman_extension.rb                    |
       | lib/my-extension-library.rb                   |
+      | .gitignore                                    |
