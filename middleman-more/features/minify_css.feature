@@ -23,6 +23,8 @@ Feature: Minify CSS
     And I should see "only screen and (device-width"
     When I go to "/more-css/site.css"
     Then I should see "1" lines
+    When I go to "/stylesheets/report.css"
+    Then I should see "p{border:1px solid #ff6600}"
     
   Scenario: Rendering external css with passthrough compressor
     Given a fixture app "passthrough-app"

@@ -1,6 +1,7 @@
 Master
 ===
 
+* Fix buggy color renaming in built-in CSS minifier. #576
 * Fix Sass/Scss filter in Slim templates
 * Added SMACSS template
 * Give file metadata (such as frontmatter) precedence over path meta. #552

@@ -25,7 +25,7 @@ class Rainpress
       :comments => true,
       :newlines => true,
       :spaces   => true,
-      :colors   => true,
+      :colors   => false,
       :misc     => true
     }
     @opts.merge! opts
