@@ -3,7 +3,7 @@ $:.push File.expand_path("../lib", __FILE__)
 require "middleman-core/version"
 
 Gem::Specification.new do |s|
-  s.name        = "middleman-core"
+  s.name        = "middleman-core-x86-mingw32"
   s.version     = Middleman::VERSION
   s.platform    = Gem::Platform::RUBY
   s.license     = "MIT"
