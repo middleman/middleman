@@ -1,6 +1,10 @@
 Master
 ===
 
+3.0.1.pre
+====
+
+* Use wdm for Windows
 * Fix buggy color renaming in built-in CSS minifier. #576
 * Fix Sass/Scss filter in Slim templates
 * Added SMACSS template
