@@ -111,3 +111,20 @@ Feature: i18n Preview
     Then I should see "File Not Found"
     When I go to "/es/hola.html"
     Then I should see "File Not Found"
+    
+  Scenario: Running localize with relative_assets
+    Given a fixture app "i18n-test-app"
+    And a file named "config.rb" with:
+      """
+      activate :i18n
+      activate :relative_assets
+      """
+    Given the Server is running at "i18n-test-app"
+    When I go to "/"
+    Then I should see '"stylesheets/site.css"'
+    When I go to "/hello.html"
+    Then I should see '"stylesheets/site.css"'
+    When I go to "/es/index.html"
+    Then I should see '"../stylesheets/site.css"'
+    When I go to "/es/hola.html"
+    Then I should see '"../stylesheets/site.css"'

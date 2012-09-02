@@ -119,3 +119,22 @@ Feature: i18n Builder
       | es/hola.html                                  |
     And the file "index.html" should contain "Howdy"  
     And the file "hello.html" should contain "Hello World"
+    
+  Scenario: Running localize with relative_assets
+    Given a fixture app "i18n-test-app"
+    And a file named "config.rb" with:
+      """
+      activate :i18n
+      activate :relative_assets
+      """
+    Given a successfully built app at "i18n-test-app"
+    When I cd to "build"
+    Then the following files should exist:
+      | index.html                                    |
+      | hello.html                                    |
+      | es/index.html                                 |
+      | es/hola.html                                  |
+    And the file "index.html" should contain '"stylesheets/site.css"'
+    And the file "hello.html" should contain '"stylesheets/site.css"'
+    And the file "es/index.html" should contain '"../stylesheets/site.css"'
+    And the file "es/hola.html" should contain '"../stylesheets/site.css"'
