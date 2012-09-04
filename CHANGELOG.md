@@ -1,9 +1,9 @@
 Master
 ===
 
-3.0.1.pre
+3.0.1
 ====
-
+* HTML5 Boilerplate version 4.0.0
 * Use wdm for Windows
 * Fix buggy color renaming in built-in CSS minifier. #576
 * Fix Sass/Scss filter in Slim templates
@@ -15,7 +15,7 @@ Master
 * Add middleman/rack for better config.ru support
 * Use centralized Logger and add benchmark methods
 
-3.0.0.rc.3
+3.0.0
 ====
 * Improve asset methods and link_to by making them more clever and aware of options such as relative_assets and http_prefix
 * Refer to --verbose, instead of --debug in CLI error message (#505)
