@@ -113,7 +113,7 @@ module Middleman
           end
 
           if ext_module.nil?
-            logger.warning "== Unknown Extension: #{ext}"
+            logger.error "== Unknown Extension: #{ext}"
           else
             logger.debug "== Activating: #{ext}"
             self.class.register(ext_module, options, &block)
