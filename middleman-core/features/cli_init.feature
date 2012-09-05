@@ -52,7 +52,7 @@ Feature: Middleman CLI
     Then the following files should exist:
       | index.html                                    |
       | humans.txt                                    |
-      | js/script.js                                  |
+      | js/main.js                                  |
       
   Scenario: Create a new HTML5 project with Rack
     When I run `middleman init MY_PROJECT --rack --template=html5`
