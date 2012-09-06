@@ -85,3 +85,16 @@ Feature: Assets get a file hash appended to their and references to them are upd
       """
     When I go to "/partials/"
     Then I should see 'href="../stylesheets/uses_partials-e8c3d4eb.css'
+
+  Scenario: The asset hash should change when a Rack-based filter changes
+    Given the Server is running at "asset-hash-app"
+    And the file "config.rb" has the contents
+      """
+      activate :asset_hash
+      activate :relative_assets
+      activate :directory_indexes
+      require 'lib/middleware.rb'
+      use Middleware
+      """
+    When I go to "/"
+    Then I should see 'href="stylesheets/site-d7d72dc2.css'
