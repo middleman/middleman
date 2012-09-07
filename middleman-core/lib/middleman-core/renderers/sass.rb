@@ -14,6 +14,11 @@ module Middleman
           # Default sass options
           app.set :sass, {}
 
+          # Location of SASS/SCSS files external to source directory.
+          # @return [Array]
+          #   set :sass_assets_paths, ["#{root}/assets/sass/", "/path/2/external/sass/repository/"]
+          app.set :sass_assets_paths, []
+
           # Location of SASS .sass_cache directory.
           # @return [String]
           #   set :sass_cache_path, "/tmp/middleman-app-name/sass_cache"
@@ -41,12 +46,12 @@ module Middleman
 
         def initialize(*args, &block)
           super
-          
+
           if @options.has_key?(:context)
             @context = @options[:context]
           end
         end
-        
+
         # Define the expected syntax for the template
         # @return [Symbol]
         def syntax
@@ -74,15 +79,15 @@ module Middleman
         # @return [Hash]
         def sass_options
           more_opts = { :filename => eval_file, :line => line, :syntax => syntax }
-          
+
           if @context.is_a?(::Middleman::Application) && file
             location_of_sass_file = File.expand_path(@context.source, @context.root)
-          
+
             parts = basename.split('.')
             parts.pop
             more_opts[:css_filename] = File.join(location_of_sass_file, @context.css_dir, parts.join("."))
           end
-          
+
           options.merge(more_opts)
         end
       end
