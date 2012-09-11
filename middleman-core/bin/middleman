@@ -1,12 +1,5 @@
 #!/usr/bin/env ruby
 
-# Add our lib/ directory to the path
-libdir = File.expand_path(File.join(File.dirname(File.dirname(__FILE__)), "lib"))
-$LOAD_PATH.unshift(libdir) unless $LOAD_PATH.include?(libdir)
-
-moredir = File.expand_path(File.join(File.dirname(File.dirname(libdir)), "middleman-more", "lib", "middleman-more"))
-$LOAD_PATH.unshift(moredir) unless $LOAD_PATH.include?(moredir)
-
 require 'middleman-core/profiling'
 if ARGV.include? '--profile'
   Middleman::Profiling.profiler = Middleman::Profiling::RubyProfProfiler.new
