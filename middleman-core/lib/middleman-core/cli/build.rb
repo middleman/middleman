@@ -99,10 +99,7 @@ module Middleman::Cli
       #
       # @return [Rack::Test::Session]
       def shared_rack
-        @_shared_rack ||= begin
-          mock = ::Rack::MockSession.new(shared_server.to_rack_app)
-          ::Rack::Test::Session.new(mock)
-        end
+        @_shared_rack ||= ::Rack::Test::Session.new(shared_server.to_rack_app)
       end
 
       # Set the root path to the Middleman::Application's root

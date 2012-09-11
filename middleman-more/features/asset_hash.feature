@@ -99,3 +99,8 @@ Feature: Assets get a file hash appended to their and references to them are upd
     Given the Server is running at "asset-hash-app"
     When I go to "/"
     Then I should see 'href="stylesheets/site-5770af52.css'
+    When I go to "stylesheets/site-5770af52.css"
+    Then I should see 'background-image'
+    Then I should see 'Added by Rack filter'
+    When I go to "stylesheets/site-50eaa978.css"
+    Then I should see 'Not Found'
