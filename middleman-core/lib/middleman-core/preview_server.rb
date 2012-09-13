@@ -21,8 +21,6 @@ module Middleman
         mount_instance
         logger.info "== The Middleman is standing watch on port #{port}"
 
-        start_file_watcher unless @options[:"disable-watcher"]
-
         @initialized ||= false
         unless @initialized
           @initialized = true
@@ -79,37 +77,27 @@ module Middleman
       end
 
       def start_file_watcher
-        # Watcher Library
-        require "listen"
-
-        return if @listener
-
-        @listener = Listen.to(Dir.pwd, :relative_paths => true)
-
+        return if @options[:"disable-watcher"]
+        
+        first_run = !@listener
+        
+        if first_run
+          # Watcher Library
+          require "listen"
+          @listener = Listen.to(Dir.pwd, :relative_paths => true)
+        end
+        
         @listener.change do |modified, added, removed|
           added_and_modified = (modified + added)
 
-          unless added_and_modified.empty?
-            # See if the changed file is config.rb or lib/*.rb
-            if needs_to_reload?(added_and_modified)
-              reload
-              return
-            end
-
-            # Otherwise forward to Middleman
+          # See if the changed file is config.rb or lib/*.rb
+          if needs_to_reload?(added_and_modified) || needs_to_reload?(removed)
+            reload
+          else
             added_and_modified.each do |path|
               app.files.did_change(path)
             end
-          end
 
-          unless removed.empty?
-            # See if the changed file is config.rb or lib/*.rb
-            if needs_to_reload?(removed)
-              reload
-              return
-            end
-
-            # Otherwise forward to Middleman
             removed.each do |path|
               app.files.did_delete(path)
             end
@@ -117,7 +105,7 @@ module Middleman
         end
 
         # Don't block this thread
-        @listener.start(false)
+        @listener.start(false) if first_run
       end
 
       # Trap the interupt signal and shut down smoothly
@@ -164,6 +152,7 @@ module Middleman
         )
         
         @app = new_app
+        start_file_watcher
           
         @webrick.mount "/", ::Rack::Handler::WEBrick, app.class.to_rack_app
       end

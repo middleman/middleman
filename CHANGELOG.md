@@ -1,7 +1,7 @@
 Master
 ===
 
-3.0.3
+3.0.3-3.0.4
 ====
 * Add reload_paths to server CLI to add additional paths to reload MM on change.
 * Re-organize app reloading code, don't need to restart listen every time.
