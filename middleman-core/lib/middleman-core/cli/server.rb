@@ -37,6 +37,10 @@ module Middleman::Cli
       :type    => :boolean,
       :default => false,
       :desc    => 'Generate profiling report for server startup'
+    method_option :reload_paths,
+      :type    => :string,
+      :default => false,
+      :desc    => 'Additional paths to auto-reload when files change'
 
     # Start the server
     def server
@@ -56,7 +60,8 @@ module Middleman::Cli
         :environment       => options["environment"],
         :debug             => options["verbose"],
         :instrumenting     => options["instrument"],
-        :"disable-watcher" => options["disable-watcher"]
+        :"disable-watcher" => options["disable-watcher"],
+        :reload_paths      => options["reload_paths"]
       }
 
       puts "== The Middleman is loading"

@@ -1,6 +1,15 @@
 Master
 ===
 
+3.0.3
+====
+* Add reload_paths to server CLI to add additional paths to reload MM on change.
+* Re-organize app reloading code, don't need to restart listen every time.
+
+3.0.2
+====
+* Logger has no such method .warning. Closes #582
+
 3.0.1
 ====
 * HTML5 Boilerplate version 4.0.0
