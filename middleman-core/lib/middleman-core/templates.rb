@@ -50,23 +50,28 @@ module Middleman::Templates
       template "shared/config.ru", File.join(location, "config.ru")
     end
 
+    class_option :'skip-bundle', :type => :boolean, :default => false
+    class_option :'skip-gemfile', :type => :boolean, :default => false
+
     # Write a Bundler Gemfile file for project
     # @return [void]
     def generate_bundler!
+      return if options[:'skip-gemfile']
       template "shared/Gemfile.tt", File.join(location, "Gemfile")
 
+      return if options[:'skip-bundle']
       inside(location) do
         ::Middleman::Cli::Bundle.new.invoke(:bundle)
       end unless ENV["TEST"]
     end
 
     # Output a .gitignore file
-    class_option :git, :type => :boolean, :default => true
+    class_option :'skip-git', :type => :boolean, :default => false
 
     # Write a .gitignore file for project
     # @return [void]
     def generate_gitignore!
-      return unless options[:git]
+      return if options[:'skip-git']
       copy_file "shared/gitignore", File.join(location, ".gitignore")
     end
   end

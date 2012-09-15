@@ -28,10 +28,18 @@ module Middleman::Cli
       :type    => :boolean,
       :default => false,
       :desc    => 'Include a config.ru file'
-    method_option "bundler",
+    method_option "skip-gemfile",
       :type    => :boolean,
       :default => false,
-      :desc    => 'Create a Gemfile and use Bundler to manage gems'
+      :desc    => "Don't create a Gemfile"
+    method_option "skip-bundle",
+      :type    => :boolean,
+      :default => false,
+      :desc    => "Don't run bundle install"
+    method_option "skip-git",
+      :type    => :boolean,
+      :default => false,
+      :desc    => 'Skip Git ignores and keeps'
     # The init task
     # @param [String] name
     def init(name)
