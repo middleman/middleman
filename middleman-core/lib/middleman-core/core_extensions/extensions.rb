@@ -28,6 +28,8 @@
 # methods to use in your views. Some modify the output on-the-fly. And some
 # apply computationally-intensive changes to your final build files.
 
+require 'active_support/core_ext/time/zones'
+
 # Namespace extensions module
 module Middleman
   module CoreExtensions
@@ -144,6 +146,15 @@ module Middleman
             rescue LoadError
             end
           end
+
+          # Make sure ActiveSupport's TimeZone stuff has something to work with,
+          # and 
+          time_zone = Time.zone if Time.zone
+          zone_default = Time.find_zone!(time_zone || 'UTC')
+          unless zone_default
+            raise 'Value assigned to config.time_zone not recognized.'
+          end
+          Time.zone_default = zone_default
 
           run_hook :build_config if build?
           run_hook :development_config if development?

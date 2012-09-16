@@ -135,6 +135,10 @@ module Middleman
     # @return [String, Symbold]
     set :layout, :_auto_layout
 
+    # Default time zone
+    # @return [String]
+    set :time_zone, 'UTC'
+
     # Activate custom features and extensions
     include Middleman::CoreExtensions::Extensions
 
