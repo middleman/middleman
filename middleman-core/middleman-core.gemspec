@@ -31,6 +31,7 @@ Gem::Specification.new do |s|
   
   # Helpers
   s.add_dependency("activesupport", ["~> 3.2.6"])
+  s.add_dependency("tzinfo", ["~> 0.3.0"])
   
   # Watcher
   s.add_dependency("listen", ["~> 0.5.0"])
