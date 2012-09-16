@@ -17,11 +17,6 @@ module Middleman
           # done with it
           app.define_hook :compass_config
 
-          # Location of SASS/SCSS files external to source directory.
-          # @return [Array]
-          #   set :sass_assets_paths, ["#{root}/assets/sass/", "/path/2/external/sass/repository/"]
-          app.set :sass_assets_paths, []
-
           app.after_configuration do
             ::Compass.configuration do |config|
               config.project_path    = source_dir
