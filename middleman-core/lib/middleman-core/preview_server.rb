@@ -145,7 +145,6 @@ module Middleman
       # @param [Middleman::Application] app
       # @return [void]
       def mount_instance
-        @app = new_app
         @webrick ||= setup_webrick(
           @options[:host]  || "0.0.0.0",
           @options[:debug] || false
