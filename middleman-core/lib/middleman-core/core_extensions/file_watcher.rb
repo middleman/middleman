@@ -11,7 +11,7 @@ module Middleman
         /^\.sass-cache\//,
         /^\.git\//,
         /^\.gitignore$/,
-        /^\.DS_Store$/,
+        /\.DS_Store/,
         /^build\//,
         /^\.rbenv-.*$/,
         /^Gemfile$/,
@@ -116,17 +116,14 @@ module Middleman
             path = Pathname(path)
             return unless path.exist?
 
-            glob = (path + "**/*").to_s
+            glob = (path + "**").to_s
             subset = @known_paths.select { |p| p.fnmatch(glob) }
 
             ::Middleman::Util.all_files_under(path).each do |filepath|
-              if only_new
-                next if subset.include?(filepath)
-              else
-                subset.delete(filepath)
-              end
+              next if only_new && subset.include?(filepath)
 
-              self.did_change(filepath)
+              subset.delete(filepath)
+              did_change(filepath)
             end
 
             subset.each(&method(:did_delete)) unless only_new

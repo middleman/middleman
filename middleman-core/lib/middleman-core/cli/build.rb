@@ -242,6 +242,7 @@ module Middleman::Cli
 
       # Double-check for compass sprites
       @app.files.find_new_files((Pathname(@app.source_dir) + @app.images_dir).relative_path_from(@app.root_path))
+      @app.sitemap.ensure_resource_list_updated!
 
       # Sort paths to be built by the above order. This is primarily so Compass can
       # find files in the build folder when it needs to generate sprites for the
