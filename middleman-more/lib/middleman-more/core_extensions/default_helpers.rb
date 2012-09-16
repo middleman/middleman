@@ -29,20 +29,18 @@ module Middleman
       module Helpers
         # Output a stylesheet link tag based on the current path
         #
-        # @param [String] separator How to break up path in parts
         # @return [String]
-        def auto_stylesheet_link_tag(separator="/")
-          auto_tag(:css, separator) do |path|
+        def auto_stylesheet_link_tag
+          auto_tag(:css) do |path|
             stylesheet_link_tag path
           end
         end
 
         # Output a javascript tag based on the current path
         #
-        # @param [String] separator How to break up path in parts
         # @return [String]
-        def auto_javascript_include_tag(separator="/")
-          auto_tag(:js, separator) do |path|
+        def auto_javascript_include_tag
+          auto_tag(:js) do |path|
             javascript_include_tag path
           end
         end
@@ -53,7 +51,7 @@ module Middleman
         # @param [String] separator How to break up path in parts
         # @param [String] asset_dir Where to look for assets
         # @return [void]
-        def auto_tag(asset_ext, separator="/", asset_dir=nil)
+        def auto_tag(asset_ext, asset_dir=nil)
           if asset_dir.nil?
             asset_dir = case asset_ext
               when :js  then js_dir
@@ -63,12 +61,10 @@ module Middleman
 
           # If the basename of the request as no extension, assume we are serving a
           # directory and join index_file to the path.
-          path = full_path(current_path.dup)
-          path = path.sub(%r{^/}, '')
+          path = File.join(asset_dir, current_path)
           path = path.gsub(File.extname(path), ".#{asset_ext}")
-          path = path.gsub("/", separator)
 
-          yield path if sitemap.find_resource_by_path(File.join(asset_dir, path))
+          yield path if sitemap.find_resource_by_path(path)
         end
 
         # Generate body css classes based on the current path
