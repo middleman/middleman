@@ -183,11 +183,7 @@ module Middleman
       # Evaluate a passed block if given
       instance_exec(&block) if block_given?
 
-      # Build expanded source path once paths have been parsed
-      path = root.dup
-      source_path = ENV["MM_SOURCE"] || self.source
-      path = File.join(root, source_path) unless source_path.empty?
-      set :source_dir, path
+      set :source, ENV["MM_SOURCE"] if ENV["MM_SOURCE"]
 
       super
     end
@@ -216,6 +212,13 @@ module Middleman
       self
     end
 
+    # The full path to the source directory
+    #
+    # @return [String]
+    def source_dir
+      File.join(root, source)
+    end
+
     delegate :logger, :instrument, :to => ::Middleman::Util
 
     # Work around this bug: http://bugs.ruby-lang.org/issues/4521
@@ -232,12 +235,18 @@ module Middleman
     # @param [String] path Request path
     # @return [String] Path with index file if necessary
     def full_path(path)
-      cache.fetch(:full_path, path) do
-        parts = path ? path.split('/') : []
-        if parts.last.nil? || parts.last.split('.').length == 1
-          path = File.join(path, index_file)
-        end
-        "/" + path.sub(%r{^/}, '')
+      resource = sitemap.find_resource_by_destination_path(path)
+
+      if !resource
+        # Try it with /index.html at the end
+        indexed_path = File.join(path.sub(%r{/$}, ''), index_file)
+        resource = sitemap.find_resource_by_destination_path(indexed_path)
+      end
+
+      if resource
+        '/' + resource.destination_path
+      else
+        '/' + Middleman::Util.normalize_path(path)
       end
     end
 

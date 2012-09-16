@@ -227,31 +227,25 @@ module Middleman
           start_time = Time.now
           @current_path = nil
 
-          # Normalize the path and add index if we're looking at a directory
-          original_path = URI.decode(env["PATH_INFO"].dup)
-          if original_path.respond_to? :force_encoding
-            original_path.force_encoding('UTF-8')
+          request_path = URI.decode(env["PATH_INFO"].dup)
+          if request_path.respond_to? :force_encoding
+            request_path.force_encoding('UTF-8')
           end
-          request_path = full_path(original_path)
+          request_path = full_path(request_path)
 
           # Run before callbacks
           run_hook :before
 
-          if original_path != request_path
-            # Get the resource object for this path
-            resource = sitemap.find_resource_by_destination_path(original_path)
-          end
-
-          # Get the resource object for this full path
-          resource ||= sitemap.find_resource_by_destination_path(request_path)
+          # Get the resource object for this path
+          resource = sitemap.find_resource_by_destination_path(request_path)
 
           # Return 404 if not in sitemap
-          return not_found(res) unless resource && !resource.ignored?
+          return not_found(res, request_path) unless resource && !resource.ignored?
+
+          current_path = resource.destination_path
 
           # If this path is a static file, send it immediately
           return send_file(resource.source_file, env, res) unless resource.template?
-
-          current_path = request_path.dup
 
           # Set a HTTP content type based on the request's extensions
           content_type(res, resource.mime_type)
@@ -272,7 +266,7 @@ module Middleman
           end
 
           # End the request
-          logger.debug "== Finishing Request: #{request_path} (#{(Time.now - start_time).round(2)}s)"
+          logger.debug "== Finishing Request: #{current_path} (#{(Time.now - start_time).round(2)}s)"
           halt res.finish
         end
 
@@ -289,9 +283,9 @@ module Middleman
         end
 
         # Halt request and return 404
-        def not_found(res)
+        def not_found(res, path)
           res.status == 404
-          res.write "<html><body><h1>File Not Found</h1><p>#{@request_path}</p></body>"
+          res.write "<html><body><h1>File Not Found</h1><p>#{path}</p></body>"
           res.finish
         end
 

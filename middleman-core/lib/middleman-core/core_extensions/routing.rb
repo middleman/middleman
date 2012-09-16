@@ -64,7 +64,10 @@ module Middleman
           end
 
           # Normalized path
-          url = full_path(url)
+          url = '/' + Middleman::Util.normalize_path(url)
+          if url.end_with?('/') || File.directory?(File.join(source_dir, url))
+            url = File.join(url, index_file)
+          end
 
           # Setup proxy
           if opts.has_key?(:proxy)
