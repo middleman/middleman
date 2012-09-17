@@ -10,7 +10,7 @@ module Middleman
 
         # Once registered
         def registered(app)
-          app.ready do
+          app.after_configuration do
             sitemap.register_resource_list_manipulator(
               :directory_indexes,
               DirectoryIndexManager.new(self)
