@@ -23,41 +23,32 @@ module Middleman
         @app   = app
         @resources = []
         @_cached_metadata = {}
-        @_lookup_cache = { :path => {}, :destination_path => {} }
         @resource_list_manipulators = []
+        @needs_sitemap_rebuild = true
+        reset_lookup_cache!
 
         # Register classes which can manipulate the main site map list
-        register_resource_list_manipulator(:on_disk, Middleman::Sitemap::Extensions::OnDisk.new(self),  false)
+        register_resource_list_manipulator(:on_disk, Middleman::Sitemap::Extensions::OnDisk.new(self))
 
         # Proxies
-        register_resource_list_manipulator(:proxies, @app.proxy_manager, false)
+        register_resource_list_manipulator(:proxies, @app.proxy_manager)
       end
 
-      # Register a klass which can manipulate the main site map list
+      # Register a klass which can manipulate the main site map list. Best to register
+      # these in a before_configuration or after_configuration hook.
+      #
       # @param [Symbol] name Name of the manipulator for debugging
       # @param [Class, Module] inst Abstract namespace which can update the resource list
-      # @param [Boolean] immediately_rebuild Whether the resource list should be immediately recalculated
       # @return [void]
-      def register_resource_list_manipulator(name, inst, immediately_rebuild=true)
+      def register_resource_list_manipulator(name, inst, unused=true)
         @resource_list_manipulators << [name, inst]
-        rebuild_resource_list!(:registered_new) if immediately_rebuild
+        rebuild_resource_list!(:registered_new)
       end
 
       # Rebuild the list of resources from scratch, using registed manipulators
       # @return [void]
       def rebuild_resource_list!(reason=nil)
-        @resources = @resource_list_manipulators.inject([]) do |result, (_, inst)|
-          newres = inst.manipulate_resource_list(result)
-
-          # Reset lookup cache
-          @_lookup_cache = { :path => {}, :destination_path => {} }
-          newres.each do |resource|
-            @_lookup_cache[:path][resource.path] = resource
-            @_lookup_cache[:destination_path][resource.destination_path] = resource
-          end
-
-          newres
-        end
+        @needs_sitemap_rebuild = true
       end
 
       # Find a resource given its original path
@@ -65,7 +56,8 @@ module Middleman
       # @return [Middleman::Sitemap::Resource]
       def find_resource_by_path(request_path)
         request_path = ::Middleman::Util.normalize_path(request_path)
-        @_lookup_cache[:path][request_path]
+        ensure_resource_list_updated!
+        @_lookup_by_path[request_path]
       end
 
       # Find a resource given its destination path
@@ -73,13 +65,15 @@ module Middleman
       # @return [Middleman::Sitemap::Resource]
       def find_resource_by_destination_path(request_path)
         request_path = ::Middleman::Util.normalize_path(request_path)
-        @_lookup_cache[:destination_path][request_path]
+        ensure_resource_list_updated!
+        @_lookup_by_destination_path[request_path]
       end
 
       # Get the array of all resources
       # @param [Boolean] include_ignored Whether to include ignored resources
       # @return [Array<Middleman::Sitemap::Resource>]
       def resources(include_ignored=false)
+        ensure_resource_list_updated!
         if include_ignored
           @resources
         else
@@ -213,6 +207,36 @@ module Middleman
         end
 
         path
+      end
+
+      # Actually update the resource list, assuming anything has called
+      # rebuild_resource_list! since the last time it was run. This is
+      # very expensive!
+      def ensure_resource_list_updated!
+        return unless @needs_sitemap_rebuild
+        @needs_sitemap_rebuild = false
+
+        @app.logger.debug "== Rebuilding resource list"
+
+        @resources = @resource_list_manipulators.inject([]) do |result, (_, inst)|
+          newres = inst.manipulate_resource_list(result)
+
+          # Reset lookup cache
+          reset_lookup_cache!
+          newres.each do |resource|
+            @_lookup_by_path[resource.path] = resource
+            @_lookup_by_destination_path[resource.destination_path] = resource
+          end
+
+          newres
+        end
+      end
+
+      private
+
+      def reset_lookup_cache!
+        @_lookup_by_path = {}
+        @_lookup_by_destination_path = {}
       end
     end
   end

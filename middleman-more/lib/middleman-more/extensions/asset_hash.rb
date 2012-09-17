@@ -14,6 +14,7 @@ module Middleman
               :asset_hash,
               AssetHashManager.new(self, exts, ignore)
             )
+
             use Middleware, :exts => exts, :middleman_app => self, :ignore => ignore
           end
         end

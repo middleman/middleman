@@ -14,7 +14,6 @@ module Middleman
         def initialize(sitemap)
           @sitemap = sitemap
           @app     = @sitemap.app
-
           @file_paths_on_disk = Set.new
 
           scoped_self = self
@@ -22,17 +21,18 @@ module Middleman
 
           # Register file change callback
           @app.files.changed do |file|
-            scoped_self.touch_file(file, !scoped_self.waiting_for_ready)
+            scoped_self.touch_file(file)
           end
 
           # Register file delete callback
           @app.files.deleted do |file|
-            scoped_self.remove_file(file, !scoped_self.waiting_for_ready)
+            scoped_self.remove_file(file)
           end
 
           @app.ready do
             scoped_self.waiting_for_ready = false
-            scoped_self.sitemap.rebuild_resource_list!(:on_disk_ready)
+            # Make sure the sitemap is ready for the first request
+            sitemap.ensure_resource_list_updated!
           end
         end
 
@@ -55,7 +55,13 @@ module Middleman
           # in case one of the other manipulators
           # (like asset_hash) cares about the contents of this file,
           # whether or not it belongs in the sitemap (like a partial)
-          @sitemap.rebuild_resource_list!(:touched_file) if rebuild
+          @sitemap.rebuild_resource_list!(:touched_file)
+
+          unless waiting_for_ready || @app.build?
+            # Force sitemap rebuild so the next request is ready to go.
+            # Skip this during build because the builder will control sitemap refresh.
+            @sitemap.ensure_resource_list_updated!
+          end
         end
 
         # Remove a file from the store
@@ -63,7 +69,12 @@ module Middleman
         # @return [void]
         def remove_file(file, rebuild=true)
           if @file_paths_on_disk.delete?(file)
-            @sitemap.rebuild_resource_list!(:removed_file) if rebuild
+            @sitemap.rebuild_resource_list!(:removed_file)
+            unless waiting_for_ready || @app.build?
+              # Force sitemap rebuild so the next request is ready to go.
+              # Skip this during build because the builder will control sitemap refresh.
+              @sitemap.ensure_resource_list_updated!
+            end
           end
         end
 
