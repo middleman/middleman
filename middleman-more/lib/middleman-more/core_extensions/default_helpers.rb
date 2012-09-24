@@ -126,7 +126,7 @@ module Middleman
               args[url_arg_index] = url.url
             elsif url.include? '://'
               raise "Can't use the relative option with an external URL" if relative
-            else
+            elsif current_resource
               # Handle relative urls
               current_source_dir = Pathname('/' + current_resource.path).dirname
 
