@@ -33,7 +33,7 @@ Gem::Specification.new do |s|
   s.add_dependency("activesupport", ["~> 3.2.6"])
   
   # Watcher
-  s.add_dependency("listen", ["~> 0.5.0"])
+  s.add_dependency("listen", ["~> 0.5.2"])
   s.add_dependency("rb-fsevent", ["~> 0.9.1"]) # Linux
   s.add_dependency("rb-inotify", ["~> 0.8.8"]) # OS X
 end

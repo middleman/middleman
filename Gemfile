@@ -14,7 +14,7 @@ group :test do
 
   # For actual tests
   gem "sinatra"
-  gem "slim"
+  gem "slim", "~> 1.2.0"
   gem "coffee-filter", "~> 0.1.1"
   gem "liquid", "~> 2.2"
   gem "cane"

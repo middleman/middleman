@@ -1,6 +1,15 @@
 Master
 ===
 
+3.0.5
+====
+* Require newer version of listen.
+* Handful of sitemap speed improvements.
+* Fix previewing of directories with periods in their name.
+* Add CLI ability to skip gemfile and bundler init.
+* Fix asset_hash when used in conjunction with Rack middleware.
+* Fix LiveReload extension issues.
+
 3.0.3-3.0.4
 ====
 * Add reload_paths to server CLI to add additional paths to reload MM on change.
