@@ -37,7 +37,6 @@ module Middleman
         # @private
         def reset!
           @app = nil
-          @prototype = nil
         end
 
         # The shared Rack instance being build
@@ -94,7 +93,8 @@ module Middleman
         # @private
         # @return [Rack::Builder]
         def prototype
-          @prototype ||= to_rack_app
+          reset!
+          to_rack_app
         end
 
         # Call prototype, use in config.ru
