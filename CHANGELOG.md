@@ -1,5 +1,6 @@
 Master
 ===
+* Bundled Normalize.css updated to 2.0.1
 
 3.0.5
 ====
