@@ -71,7 +71,7 @@ module Middleman
         end
 
         if klass.nil?
-          super
+          raise Thor::Error.new "There's no '#{meth}' command for Middleman. Try 'middleman help' for a list of commands."
         else
           args.unshift(task) if task
           klass.start(args, :shell => self.shell)
