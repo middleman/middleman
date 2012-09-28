@@ -1,9 +1,6 @@
 require "webrick"
 
 module Middleman
-
-  WINDOWS = !!(RUBY_PLATFORM =~ /(mingw|bccwin|wince|mswin32)/i) unless const_defined?(:WINDOWS)
-
   module PreviewServer
 
     DEFAULT_PORT = 4567
@@ -25,7 +22,7 @@ module Middleman
         unless @initialized
           @initialized = true
 
-          register_signal_handlers unless ::Middleman::WINDOWS
+          register_signal_handlers
 
           # Save the last-used @options so it may be re-used when
           # reloading later on.
@@ -38,7 +35,12 @@ module Middleman
       # Detach the current Middleman::Application instance
       # @return [void]
       def stop
-        logger.info "== The Middleman is shutting down"
+        begin
+          logger.info "== The Middleman is shutting down"
+        rescue
+          # if the user closed their terminal STDOUT/STDERR won't exist
+        end
+
         if @listener
           @listener.stop
           @listener = nil
@@ -108,12 +110,17 @@ module Middleman
         @listener.start(false) if first_run
       end
 
-      # Trap the interupt signal and shut down smoothly
+      # Trap some interupt signals and shut down smoothly
       # @return [void]
       def register_signal_handlers
-        trap("INT")  { shutdown }
-        trap("TERM") { shutdown }
-        trap("QUIT") { shutdown }
+        %w(INT HUP TERM QUIT).each do |sig|
+          if Signal.list[sig]
+            Signal.trap(sig) do
+              shutdown
+              exit
+            end
+          end
+        end
       end
 
       # Initialize webrick
@@ -145,12 +152,13 @@ module Middleman
       # @param [Middleman::Application] app
       # @return [void]
       def mount_instance
+        @app = new_app
+
         @webrick ||= setup_webrick(
           @options[:host]  || "0.0.0.0",
           @options[:debug] || false
         )
         
-        @app = new_app
         start_file_watcher
           
         @webrick.mount "/", ::Rack::Handler::WEBrick, app.class.to_rack_app
