@@ -142,7 +142,7 @@ module Middleman
     include Middleman::CoreExtensions::RubyEncoding
 
     # Basic Rack Request Handling
-    include Middleman::CoreExtensions::Request
+    register Middleman::CoreExtensions::Request
 
     # Handle exceptions
     register Middleman::CoreExtensions::ShowExceptions

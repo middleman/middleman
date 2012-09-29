@@ -40,7 +40,7 @@ module Middleman::Extensions
     end
 
     def self.gzip_file(path)
-      input_file = File.open(path, 'r').read
+      input_file = File.open(path, 'rb').read
       output_filename = path + '.gz'
       input_file_time = File.mtime(path)
 
@@ -49,7 +49,7 @@ module Middleman::Extensions
         return
       end
 
-      File.open(output_filename, 'w') do |f|
+      File.open(output_filename, 'wb') do |f|
         gz = Zlib::GzipWriter.new(f, Zlib::BEST_COMPRESSION)
         gz.mtime = input_file_time.to_i
         gz.write input_file

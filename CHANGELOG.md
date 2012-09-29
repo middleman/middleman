@@ -1,6 +1,7 @@
 Master
 ===
 * Bundled Normalize.css updated to 2.0.1
+* Fixed encoding extension activation
 
 3.0.5
 ====

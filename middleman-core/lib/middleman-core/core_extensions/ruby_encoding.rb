@@ -9,6 +9,7 @@ module Middleman::CoreExtensions::RubyEncoding
       app.send :include, InstanceMethods
     end
 
+    alias :included :registered
   end
 
   module InstanceMethods
