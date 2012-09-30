@@ -18,7 +18,37 @@ Feature: i18n Preview
     Then I should see "Como Esta?"
     When I go to "/es/hola.html"
     Then I should see "Hola World"
-    
+
+  Scenario: A template changes i18n during preview
+    Given a fixture app "i18n-test-app"
+    And a file named "config.rb" with:
+      """
+      activate :i18n
+      """
+    Given the Server is running at "i18n-test-app"
+    And the file "locales/en.yml" has the contents
+      """
+      ---
+      en:
+        greetings: "Howdy"
+        hi: "Hello"
+      """
+    When I go to "/"
+    Then I should see "Howdy"
+    When I go to "/hello.html"
+    Then I should see "Hello World"
+    When the file "locales/en.yml" has the contents
+      """
+      ---
+      en:
+        greetings: "How You Doin"
+        hi: "Sup"
+      """
+    When I go to "/"
+    Then I should see "How You Doin"
+    When I go to "/hello.html"
+    Then I should see "Sup World"
+
   Scenario: Running localize with the alt path config
     Given a fixture app "i18n-test-app"
     And a file named "config.rb" with:

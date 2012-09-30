@@ -13,10 +13,12 @@ module Middleman
 
           # Needed for helpers as well
           app.after_configuration do
-            ::I18n.load_path += Dir[File.join(root, locales_dir, "*.yml")]
+            locales_glob = File.join(locales_dir, "*.yml");
+
+            ::I18n.load_path += Dir[File.join(root, locales_glob)]
             ::I18n.reload!
 
-            Localizer.new(self, options)
+            Localizer.new(self, locales_glob, options)
           end
         end
         alias :included :registered
@@ -27,8 +29,9 @@ module Middleman
         attr_reader :app
         delegate :logger, :to => :app
 
-        def initialize(app, options={})
+        def initialize(app, locales_glob, options={})
           @app = app
+          @locales_glob = locales_glob
           @maps = {}
           @options = options
 
@@ -62,11 +65,20 @@ module Middleman
             :i18n,
             self
           )
+
+          @app.files.changed(&method(:on_file_changed))
+          @app.files.deleted(&method(:on_file_changed))
+        end
+
+        def on_file_changed(file)
+          if File.fnmatch(@locales_glob, file)
+            ::I18n.reload!
+          end
         end
 
         def langs
           @options[:langs] || begin
-            Dir[File.join(@app.root, @app.locales_dir, "*.yml")].map { |file|
+            Dir[File.join(@app.root, @locales_glob)].map { |file|
               File.basename(file).gsub(".yml", "")
             }.sort.map(&:to_sym)
           end

@@ -2,6 +2,7 @@ Master
 ===
 * Bundled Normalize.css updated to 2.0.1
 * Fixed encoding extension activation
+* Reload i18n on file changes (#616)
 
 3.0.5
 ====
