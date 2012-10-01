@@ -2,7 +2,59 @@ require "middleman-core"
 
 # CLI Module
 module Middleman::Cli
-
+  
+  # Queue to manage the build process
+  class BuildQueue
+    
+    ##
+    # Creates a new build queue that keeps track of pages dynamically added to the 
+    # sitemap during runtime.
+    #
+    # Sorts paths intially by the specified order. This is primarily so Compass can
+    # find files in the build folder when it needs to generate sprites for the
+    # css files.
+    def initialize(sitemap, initial_sort_order = %w(.png .jpeg .jpg .gif .bmp .svg .svgz .ico .woff .otf .ttf .eot .js .css))
+      sitemap.ensure_resource_list_updated!
+      
+      @scheduled = sitemap.resources.sort_by do |r|
+        initial_sort_order.index(r.ext) || 100
+      end
+      @finished = []
+      @sitemap = sitemap
+    end
+    
+    def each
+      while not empty? do
+        yield next_page
+        update_schedule
+      end
+    end
+    
+    def empty?
+      @scheduled.empty?
+    end
+    
+    def scheduled?(resource)
+      @scheduled.any? { |scheduled_resource| scheduled_resource.url == resource.url }
+    end
+    
+    def finished?(resource)
+      @finished.any? { |finished_resource| finished_resource.url == resource.url }
+    end
+    
+    private
+      
+      def next_page
+        @finished.push(@scheduled.shift)
+        @finished.last
+      end
+      
+      def update_schedule
+        @scheduled.push(*@sitemap.resources.reject { |r| scheduled?(r) || finished?(r) })
+      end
+    
+  end
+  
   # The CLI Build class
   class Build < Thor
     include Thor::Actions
@@ -223,9 +275,6 @@ module Middleman::Cli
     # Actually build the app
     # @return [void]
     def execute!
-      # Sort order, images, fonts, js/css and finally everything else.
-      sort_order = %w(.png .jpeg .jpg .gif .bmp .svg .svgz .ico .woff .otf .ttf .eot .js .css)
-
       # Pre-request CSS to give Compass a chance to build sprites
       logger.debug "== Prerendering CSS"
 
@@ -239,20 +288,11 @@ module Middleman::Cli
 
       # Double-check for compass sprites
       @app.files.find_new_files((Pathname(@app.source_dir) + @app.images_dir).relative_path_from(@app.root_path))
-      @app.sitemap.ensure_resource_list_updated!
-
-      # Sort paths to be built by the above order. This is primarily so Compass can
-      # find files in the build folder when it needs to generate sprites for the
-      # css files
 
       logger.debug "== Building files"
 
-      resources = @app.sitemap.resources.sort_by do |r|
-        sort_order.index(r.ext) || 100
-      end
-
       # Loop over all the paths and build them.
-      resources.each do |resource|
+      BuildQueue.new(@app.sitemap).each do |resource|
         next if @config[:glob] && !File.fnmatch(@config[:glob], resource.destination_path)
 
         output_path = base.render_to_file(resource)
