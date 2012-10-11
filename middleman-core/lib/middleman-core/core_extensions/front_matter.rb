@@ -127,8 +127,7 @@ module Middleman::CoreExtensions
       # @param [String] path
       # @return [Array<Thor::CoreExt::HashWithIndifferentAccess, String>]
       def frontmatter_and_content(path)
-        full_path = File.expand_path(path, @app.source_dir)
-
+        full_path = File.expand_path(File.join(@app.source_dir, path))
         content = File.read(full_path)
         data = {}
 
