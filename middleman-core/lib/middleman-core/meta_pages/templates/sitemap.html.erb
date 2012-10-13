@@ -4,13 +4,14 @@
     <meta charset="utf-8">
         
     <title>Middleman Sitemap</title>
+    <script src="../assets/sitemap.js"></script>
   </head>
   
   <body>
     <h1>Middleman Sitemap</h1>
     <a href="../">More meta pages</a>
 
-    <%= partial 'sitemap_tree.html.erb', :tree => resource_tree %>
+    <%= sitemap_tree.render %>
   </body>
 </html>
 

@@ -1,6 +1,7 @@
 require 'rack/builder'
 require 'rack/static'
 require 'tilt'
+require 'middleman-core/meta_pages/sitemap_tree'
 
 module Middleman
   module MetaPages
@@ -42,18 +43,13 @@ module Middleman
       def sitemap(env)
         resources = @middleman.sitemap.resources(true)
 
-        resource_tree = {}
+        sitemap_tree = SitemapTree.new
+
         resources.each do |resource|
-          branch = resource_tree
-          path_parts = resource.path.split('/')
-          path_parts[0...-1].each do |path_part|
-            branch[path_part] ||= {}
-            branch = branch[path_part]
-          end
-          branch[path_parts.last] = resource
+          sitemap_tree.add_resource resource
         end
 
-        template('sitemap.html.erb', :resource_tree => resource_tree)
+        template('sitemap.html.erb', :sitemap_tree => sitemap_tree)
       end
 
       private
@@ -61,20 +57,13 @@ module Middleman
       # Render a template with the given name and locals
       def template(template_name, locals={})
         template_path = File.join(File.dirname(__FILE__), 'meta_pages', 'templates', template_name)
-        content = Tilt.new(template_path).render(RenderHelper.new, locals)
+        content = Tilt.new(template_path).render(nil, locals)
         response(content)
       end
 
       # Respond to an HTML request
       def response(content)
         [ 200, {"Content-Type" => "text/html"}, Array(content) ]
-      end
-
-      class RenderHelper
-        def partial(partial_name, locals={})
-          partial_path = File.join(File.dirname(__FILE__), 'meta_pages', 'templates', 'partials', partial_name)
-          content = Tilt.new(partial_path).render(RenderHelper.new, locals)
-        end
       end
     end
   end
