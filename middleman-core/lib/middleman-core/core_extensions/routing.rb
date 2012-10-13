@@ -45,9 +45,7 @@ module Middleman
         # @param [Hash] opts
         # @return [void]
         def page(url, opts={}, &block)
-
-          blocks = []
-          blocks << block if block_given?
+          blocks = Array(block)
 
           # Default layout
           opts[:layout] = layout if opts[:layout].nil?
@@ -70,20 +68,12 @@ module Middleman
           end
 
           # Setup proxy
-          if opts.has_key?(:proxy)
-            proxy(url, opts[:proxy])
-
-            if opts.has_key?(:ignore) && opts[:ignore]
-              ignore(opts[:proxy])
-              opts.delete(:ignore)
-            end
-
-            opts.delete(:proxy)
-          else
-            if opts.has_key?(:ignore) && opts[:ignore]
-              ignore(url)
-              opts.delete(:ignore)
-            end
+          if target = opts.delete(:proxy)
+            # TODO: deprecate proxy through page?
+            proxy(url, target, opts, &block) and return
+          elsif opts.delete(:ignore)
+            # TODO: deprecate ignore through page?
+            ignore(url)
           end
 
           # Setup a metadata matcher for rendering those options

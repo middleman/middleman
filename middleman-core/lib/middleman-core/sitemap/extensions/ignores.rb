@@ -60,8 +60,6 @@ module Middleman
           # @param [String, Regexp] path Path glob expression, or path regex
           # @return [void]
           def ignore(path=nil, &block)
-            original_callback_size = @ignored_callbacks.size
-
             if path.is_a? Regexp
               @ignored_callbacks << Proc.new {|p| p =~ path }
             elsif path.is_a? String

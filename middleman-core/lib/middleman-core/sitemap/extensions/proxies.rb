@@ -74,38 +74,85 @@ module Middleman
             @_proxy_manager ||= ProxyManager.new(self)
           end
 
-          def proxy(*args)
-            proxy_manager.proxy(*args)
+          def proxy(*args, &block)
+            proxy_manager.proxy(*args, &block)
           end
         end
 
+        # Manages the list of proxy configurations and manipulates the sitemap
+        # to include new resources based on those configurations
         class ProxyManager
           def initialize(app)
             @app = app
-
-            @proxy_paths = {}
+            @proxy_configs = Set.new
           end
 
           # Setup a proxy from a path to a target
           # @param [String] path
           # @param [String] target
+          # @param [Hash] opts options to apply to the proxy, including things like
+          #               :locals, :ignore to hide the proxy target, :layout, and :directory_indexes.
           # @return [void]
-          def proxy(path, target)
-            @proxy_paths[::Middleman::Util.normalize_path(path)] = ::Middleman::Util.normalize_path(target)
+          def proxy(path, target, opts={}, &block)
+            metadata = { :options => {}, :locals => {}, :blocks => [] }
+            metadata[:blocks] << block if block_given?
+            metadata[:locals] = opts.delete(:locals) || {}
+
+            @app.ignore(target) if opts.delete(:ignore)
+            metadata[:options] = opts
+
+            @proxy_configs << ProxyConfiguration.new(:path => path, :target => target, :metadata => metadata)
+
             @app.sitemap.rebuild_resource_list!(:added_proxy)
           end
 
           # Update the main sitemap resource list
           # @return [void]
           def manipulate_resource_list(resources)
-            resources + @proxy_paths.map do |key, value|
+            resources + @proxy_configs.map do |config|
               p = ::Middleman::Sitemap::Resource.new(
                 @app.sitemap,
-                key
+                config.path
               )
-              p.proxy_to(value)
+              p.proxy_to(config.target)
+              p.add_metadata(config.metadata)
               p
             end
+          end
+        end
+
+        # Configuration for a proxy instance
+        class ProxyConfiguration
+          # The path that this proxy will appear at in the sitemap
+          attr_reader :path
+          def path=(p)
+            @path = ::Middleman::Util.normalize_path(p)
+          end
+
+          # The existing sitemap path that this will proxy to
+          attr_reader :target
+          def target=(t)
+            @target = ::Middleman::Util.normalize_path(t)
+          end
+
+          # Additional metadata like blocks and locals to apply to the proxy
+          attr_accessor :metadata
+
+          # Create a new proxy configuration from hash options
+          def initialize(options={})
+            options.each do |key, value|
+              send "#{key}=", value
+            end
+          end
+
+          # Two configurations are equal if they reference the same path
+          def eql?(other)
+            other.path == path
+          end
+
+          # Two configurations are equal if they reference the same path
+          def hash
+            path.hash
           end
         end
       end
