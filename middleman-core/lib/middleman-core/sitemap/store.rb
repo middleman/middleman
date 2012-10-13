@@ -115,19 +115,10 @@ module Middleman
       # @param [Symbol] origin an indicator of where this metadata came from - only one
       #                        block per [matcher, origin] pair may exist.
       # @return [Array<Array<Proc, Regexp>>]
-      def provides_metadata_for_path(matcher=nil, origin=nil, &block)
+      def provides_metadata_for_path(matcher=nil, &block)
         @_provides_metadata_for_path ||= []
         if block_given?
-          if origin
-            existing_provider = @_provides_metadata_for_path.find {|b,m,o| o == origin && m == matcher}
-          end
-
-          if existing_provider
-            existing_provider[0] = block
-          else
-            @_provides_metadata_for_path << [block, matcher, origin]
-          end
-
+          @_provides_metadata_for_path << [block, matcher]
           @_cached_metadata = {}
         end
         @_provides_metadata_for_path
@@ -151,10 +142,7 @@ module Middleman
 
           metadata = callback.call(request_path)
 
-          if metadata.has_key?(:blocks)
-            result[:blocks] << metadata[:blocks]
-            metadata.delete(:blocks)
-          end
+          result[:blocks] += Array(metadata.delete(:blocks))
 
           result.deep_merge(metadata)
         end
