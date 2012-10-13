@@ -1,6 +1,7 @@
 # Built on Rack
 require "rack"
 require "rack/file"
+require "rack/lint"
 
 module Middleman
   module CoreExtensions
@@ -74,6 +75,8 @@ module Middleman
         # @return [Rack::Builder]
         def to_rack_app(&block)
           inner_app = inst(&block)
+
+          app.use Rack::Lint
 
           (@middleware || []).each do |m|
             app.use(m[0], *m[1], &m[2])
