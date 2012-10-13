@@ -4,7 +4,7 @@ module Middleman
 
     # Asset Host module
     class AssetHost < ::Middleman::Extension
-      config_options :asset_host => false
+      config_options :host => false
       
       # Override default asset url helper to include asset hosts
       #
@@ -12,7 +12,9 @@ module Middleman
       # @param [String] prefix
       # @return [String]
       def asset_url(path, prefix, result)
-        host = app.asset_host || options[:host]
+        host = options[:host]
+
+        # TODO: Deprecation warning for set :asset_host
         return result unless host
 
         asset_prefix = if host.is_a?(Proc)

@@ -4,21 +4,22 @@ module Middleman
   
     # Minify CSS Extension 
     class MinifyCss < ::Middleman::Extension
-      config_options :css_compressor => false
+      config_options :compressor => false,
+                     :ignore => [],
+                     :inline => false
       
       def after_configuration
-        ignore = Array(options[:ignore]) << /\.min\./
-        inline = options[:inline] || false
-      
-        chosen_compressor = app.css_compressor || options[:compressor] || begin
+        # TODO: Deprecation warning for set :css_compressor 
+        chosen_compressor = options[:compressor] || begin
           require "middleman-more/extensions/minify_css/rainpress"
           ::Rainpress
         end
 
         # Setup Rack middleware to minify CSS
+        ignore = Array(options[:ignore]) << /\.min\./
         use Rack, :compressor => chosen_compressor,
                   :ignore     => ignore,
-                  :inline     => inline
+                  :inline     => options[:inline]
       end
 
       # Rack middleware to look for CSS and compress it

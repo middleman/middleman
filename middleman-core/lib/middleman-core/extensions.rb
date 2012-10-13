@@ -153,11 +153,7 @@ module Middleman
     
     def initialize(app, options={}, &block)
       @app     = app
-      @options = options
-      
-      self.class.config_options.each do |k,v|
-        @app.set(k, v)
-      end
+      @options = self.class.config_options.dup.merge(options)
       
       self.class.helpers.each do |h|
         @app.class.helpers(&h)

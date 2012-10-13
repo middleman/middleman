@@ -1,57 +1,43 @@
 module Middleman
   module Extensions
-    module AssetHash
-      class << self
-        def registered(app, options={})
-          require 'digest/sha1'
-          require 'rack/test'
-          require 'uri'
+    class AssetHash < ::Middleman::Extension
+      config_options :exts => %w(.jpg .jpeg .png .gif .js .css),
+                     :ignore => []
 
-          exts = options[:exts] || %w(.jpg .jpeg .png .gif .js .css)
-
-          # Allow specifying regexes to ignore, plus always ignore apple touch icons
-          ignore = Array(options[:ignore]) << /^apple-touch-icon/
-
-          app.ready do
-            sitemap.register_resource_list_manipulator(
-              :asset_hash,
-              AssetHashManager.new(self, exts, ignore)
-            )
-
-            use Middleware, :exts => exts, :middleman_app => self, :ignore => ignore
-          end
-        end
-        alias :included :registered
+      def initialize(*args)
+        require 'digest/sha1'
+        require 'rack/test'
+        require 'uri'
+        
+        super
       end
 
-      # Central class for managing asset_hash extension
-      class AssetHashManager
-        def initialize(app, exts, ignore)
-          @app = app
-          @exts = exts
-          @ignore = ignore
-        end
+      def after_configuration
+        ignore = Array(options[:ignore]) << /^apple-touch-icon/
+        app.use Middleware, :middleman_app => app,
+                            :exts => options[:exts],
+                            :ignore => ignore
+      end
 
-        # Update the main sitemap resource list
-        # @return [void]
-        def manipulate_resource_list(resources)
-          resources.each do |resource|
-            next unless @exts.include? resource.ext
-            next if @ignore.any? { |ignore| Middleman::Util.path_match(ignore, resource.destination_path) }
+      # Update the main sitemap resource list
+      # @return [void]
+      def manipulate_resource_list(resources)
+        resources.each do |resource|
+          next unless options[:exts].include? resource.ext
+          next if options[:ignore].any? { |ignore| Middleman::Util.path_match(ignore, resource.destination_path) }
 
-            if resource.template? # if it's a template, render it out
-              # Render through the Rack interface so middleware and mounted apps get a shot
-              rack_client = ::Rack::Test::Session.new(@app.class)
-              response = rack_client.get(URI.escape(resource.destination_path), {}, { "bypass_asset_hash" => true })
-              raise "#{resource.path} should be in the sitemap!" unless response.status == 200
+          if resource.template? # if it's a template, render it out
+            # Render through the Rack interface so middleware and mounted apps get a shot
+            rack_client = ::Rack::Test::Session.new(app.class)
+            response = rack_client.get(URI.escape(resource.destination_path), {}, { "bypass_asset_hash" => true })
+            raise "#{resource.path} should be in the sitemap!" unless response.status == 200
 
-              digest = Digest::SHA1.hexdigest(response.body)[0..7]
-            else # if it's a static file, just hash it
-              digest = Digest::SHA1.file(resource.source_file).hexdigest[0..7]
-            end
-
-            resource.destination_path = resource.destination_path.sub(/\.(\w+)$/) { |ext| "-#{digest}#{ext}" }
+            digest = Digest::SHA1.hexdigest(response.body)[0..7]
+          else # if it's a static file, just hash it
+            digest = Digest::SHA1.file(resource.source_file).hexdigest[0..7]
           end
+
+          resource.destination_path = resource.destination_path.sub(/\.(\w+)$/) { |ext| "-#{digest}#{ext}" }
         end
       end
 

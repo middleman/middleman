@@ -17,11 +17,12 @@ module Middleman
     # to .html, .htm, .js and .css.
     #
     class Gzip < ::Middleman::Extension
+      config_options :exts => %w(.js .css .html .htm)
+
       def after_build(builder)
-        exts = @options[:exts] || %w(.js .css .html .htm)
         paths = ::Middleman::Util.all_files_under(app.build_dir)
         paths.each do |path|
-          next unless exts.include? path.extname
+          next unless options[:exts].include? path.extname
         
           output_filename, old_size, new_size = gzip_file(path.to_s)
 
