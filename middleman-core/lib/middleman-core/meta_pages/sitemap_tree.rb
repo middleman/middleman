@@ -15,16 +15,17 @@ module Middleman
       def render
         content = ""
         @children.keys.sort_by(&:downcase).each do |path_part|
-          content << "<details>"
-          content << "<summary>"
-          content << path_part
-          content << "</summary>"
-
           subtree = @children[path_part]
+          content << "<details class='#{subtree.css_classes.join(' ')}'>"
+          content << "<summary>#{path_part}</summary>"
           content << subtree.render
           content << "</details>"
         end
         content
+      end
+
+      def css_classes
+        ['tree']
       end
 
       protected
@@ -33,7 +34,11 @@ module Middleman
         first_part = path_parts.first
 
         if path_parts.size == 1
-          @children[first_part] = SitemapResource.new(resource)
+          sitemap_class = SitemapResource
+          # Allow special sitemap resources to use custom metadata view calsses
+          sitemap_class = resource.meta_pages_class if resource.respond_to? :meta_pages_class
+
+          @children[first_part] = sitemap_class.new(resource)
         else
           @children[first_part] ||= SitemapTree.new
           @children[first_part].add_path(path_parts[1..-1], resource)
