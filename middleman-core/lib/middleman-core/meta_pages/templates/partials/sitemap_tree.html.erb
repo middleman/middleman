@@ -1,0 +1,12 @@
+<ul>
+  <% tree.each do |path_part, subtree| %>
+  <li>
+    <%= path_part %>
+    <% if subtree.respond_to? :path %>
+      Path!
+    <% else %>
+      <%= partial 'sitemap_tree.html.erb', :tree => subtree %>
+    <% end %>
+  </li>
+  <% end %>
+</ul>
