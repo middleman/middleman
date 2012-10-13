@@ -100,4 +100,68 @@ module Middleman
       File.exists?(full_path)
     end
   end
+  
+  require 'active_support/descendants_tracker'
+  require 'active_support/callbacks'
+  require 'active_support/core_ext/module/delegation'
+  
+  # Auto-registration class, in the style of Rails::Engine
+  class Extension
+    include ::ActiveSupport::Callbacks
+    extend ::ActiveSupport::DescendantsTracker
+    
+    class_attribute :autoregister
+    class_attribute :extension_name
+    
+    class << self
+      def config_options(opts={})
+        @_config_options ||= {}
+        @_config_options.merge!(opts)
+        @_config_options
+      end
+      
+      def helpers(&block)
+        @_helpers ||= Set.new
+        @_helpers << block if block_given?
+        @_helpers
+      end
+    
+      def add_hooks(&block)
+        class_eval(&block)
+      end
+      
+      def inherited(base)
+        super
+        
+        if base.autoregister.nil? || base.autoregister === true
+          extension_name = base.extension_name || generate_extension_name(base.name.split("::").last)
+          ::Middleman::Extensions.register(extension_name) { base }
+        end
+      end
+      
+    protected
+      def generate_extension_name(class_or_module)
+        ActiveSupport::Inflector.underscore(class_or_module).tr("/", "_").to_sym
+      end
+    end
+    
+    attr_reader :app, :options
+    
+    delegate :logger, :to => :app
+    
+    define_callbacks :activate
+    
+    def initialize(app, options={}, &block)
+      @app     = app
+      @options = self.class.config_options.dup.merge(options)
+      
+      self.class.helpers.each do |h|
+        @app.class.helpers(&h)
+      end
+      
+      run_callbacks :activate do
+        # Derp
+      end
+    end
+  end
 end

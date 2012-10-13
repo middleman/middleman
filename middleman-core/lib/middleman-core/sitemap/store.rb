@@ -229,3 +229,19 @@ module Middleman
     end
   end
 end
+
+::Middleman::Extension.add_hooks do
+  set_callback :activate, :after, :autoregister_resource_list_manipulator
+  
+  def autoregister_resource_list_manipulator
+    return unless respond_to?(:manipulate_resource_list)
+  
+    extension = self
+    app.ready do
+      sitemap.register_resource_list_manipulator(
+        extension.class.extension_name,
+        extension
+      )
+    end
+  end
+end

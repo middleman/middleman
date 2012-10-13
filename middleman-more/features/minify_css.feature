@@ -36,9 +36,7 @@ Feature: Minify CSS
         end
       end
 
-      activate :minify_css
-
-      set :css_compressor, ::PassThrough
+      activate :minify_css, :compressor => ::PassThrough
       """
     And the Server is running at "passthrough-app"
     When I go to "/stylesheets/site.css"
@@ -73,9 +71,7 @@ Feature: Minify CSS
         end
       end
 
-      activate :minify_css, :inline => true
-
-      set :css_compressor, ::PassThrough
+      activate :minify_css, :inline => true, :compressor => ::PassThrough
 
       page "/inline-css.html", :layout => false
       """
@@ -87,29 +83,6 @@ Feature: Minify CSS
       body {
         test: style;
         good: deal; }
-    </style>
-    """
-
-  Scenario: Rendering inline css with a passthrough minifier using activate-style compressor
-    Given a fixture app "passthrough-app"
-    And a file named "config.rb" with:
-      """
-      module ::HelloCompressor
-        def self.compress(data)
-          "Hello"
-        end
-      end
-
-      activate :minify_css, :inline => true, :compressor => ::HelloCompressor
-
-      page "/inline-css.html", :layout => false
-      """
-    And the Server is running at "passthrough-app"
-    When I go to "/inline-css.html"
-    Then I should see:
-    """
-    <style type='text/css'>
-      Hello
     </style>
     """
     

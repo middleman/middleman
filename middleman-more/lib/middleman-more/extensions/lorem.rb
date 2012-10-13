@@ -3,22 +3,8 @@ module Middleman
   module Extensions
 
     # Lorem helper
-    module Lorem
-
-      # Setup extension
-      class << self
-
-        # Once registered
-        def registered(app)
-          # Include methods
-          app.send :include, InstanceMethods
-        end
-
-        alias :included :registered
-      end
-
-      # Lorem extension instance methods
-      module InstanceMethods
+    class Lorem < ::Middleman::Extension
+      helpers do
         # Access to the Lorem object
         # @return [Middleman::Extensions::Lorem::LoremObject]
         def lorem
@@ -35,7 +21,7 @@ module Middleman
           lorem.image(size, options)
         end
       end
-
+    
       # Adapted from Frank:
       # https://github.com/blahed/frank/
       # Copyright (c) 2010 Travis Dunn

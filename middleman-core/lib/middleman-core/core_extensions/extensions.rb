@@ -37,9 +37,6 @@ module Middleman
       class << self
         # @private
         def registered(app)
-          # Using for version parsing
-          require "rubygems"
-
           app.define_hook :after_configuration
           app.define_hook :before_configuration
           app.define_hook :build_config
@@ -54,6 +51,29 @@ module Middleman
           app.extend ClassMethods
           app.send :include, InstanceMethods
           app.delegate :configure, :to => :"self.class"
+          
+          ::Middleman::Extension.add_hooks do
+            set_callback :activate, :after, :autoregister_config_callbacks
+            
+            def autoregister_config_callbacks
+              if respond_to?(:on_build) && app.build?
+                app.build_config(&method(:on_build))
+              end
+              
+              if respond_to?(:in_dev) && app.development?
+                app.build_config(&method(:in_dev))
+              end
+              
+              if respond_to?(:before_configuration)
+                app.before_configuration(&method(:before_configuration))
+              end
+              
+              if respond_to?(:after_configuration)
+                app.after_configuration(&method(:after_configuration))
+              end
+            end
+          end
+          
         end
         alias :included :registered
       end
@@ -106,17 +126,20 @@ module Middleman
         # @param [Symbol, Module] ext Which extension to activate
         # @return [void]
         def activate(ext, options={}, &block)
-          ext_module = if ext.is_a?(Module)
+          extension_container = if ext.is_a?(Module)
             ext
           else
             ::Middleman::Extensions.load(ext.to_sym)
           end
-
-          if ext_module.nil?
-            logger.error "== Unknown Extension: #{ext}"
-          else
+      
+          if extension_container.nil?
+            logger.warn "== Unknown Extension: #{ext}"
+          elsif extension_container.is_a? Class
             logger.debug "== Activating: #{ext}"
-            self.class.register(ext_module, options, &block)
+            extension_container.new(self, options, &block)
+          elsif extension_container.is_a? Module
+            logger.debug "== Activating: #{ext}"
+            self.class.register(extension_container, options, &block)
           end
         end
 

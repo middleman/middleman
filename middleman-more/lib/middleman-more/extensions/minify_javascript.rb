@@ -3,32 +3,23 @@ module Middleman
   module Extensions
 
     # Minify Javascript Extension
-    module MinifyJavascript
-
-      # Setup extension
-      class << self
-
-        # Once registered
-        def registered(app, options={})
-          app.set :js_compressor, false
-
-          ignore = Array(options[:ignore]) << /\.min\./
-          inline = options[:inline] || false
-
-          # Once config is parsed
-          app.after_configuration do
-            chosen_compressor = js_compressor || options[:compressor] || begin
-              require 'uglifier'
-              ::Uglifier.new
-            end
-
-            # Setup Rack middlware to minify JS
-            use Rack, :compressor => chosen_compressor,
-                      :ignore     => ignore,
-                      :inline     => inline
-          end
+    class MinifyJavascript < ::Middleman::Extension
+      config_options :compressor => false,
+                     :ignore => [],
+                     :inline => false
+      
+      def after_configuration
+        # TODO: Deprecation warning for set :js_compressor 
+        chosen_compressor = options[:compressor] || begin
+          require 'uglifier'
+          ::Uglifier.new
         end
-        alias :included :registered
+      
+        # Setup Rack middlware to minify JS
+        ignore = Array(options[:ignore]) << /\.min\./
+        use Rack, :compressor => chosen_compressor, 
+                  :ignore     => ignore,
+                  :inline     => options[:inline]
       end
 
       # Rack middleware to look for JS and compress it

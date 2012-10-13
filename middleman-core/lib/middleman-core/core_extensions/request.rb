@@ -27,6 +27,10 @@ module Middleman
 
           # Include instance methods
           app.send :include, InstanceMethods
+          
+          ::Middleman::Extension.add_hooks do
+            delegate :use, :map, :to => :app
+          end
         end
         alias :included :registered
       end

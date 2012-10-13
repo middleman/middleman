@@ -40,59 +40,8 @@ Feature: Minify Javascript
       I'm a jQuery {{template}}.
     </script>
     """
-    
-  Scenario: Rendering inline js with a passthrough minifier
-    Given a fixture app "passthrough-app"
-    And a file named "config.rb" with:
-      """
-      module ::PassThrough
-        def self.compress(data)
-          data
-        end
-      end
 
-      activate :minify_javascript, :inline => true
-
-      set :js_compressor, ::PassThrough
-
-      page "/inline-js.html", :layout => false
-      """
-    And the Server is running at "passthrough-app"
-    When I go to "/inline-js.html"
-    Then I should see:
-    """
-    <script type='text/javascript'>
-      //<![CDATA[
-        ;(function() {
-          this;
-          should();
-          all.be();
-          on = { one: line };
-        })();
-      //]]>
-    </script>
-    <script>
-      ;(function() {
-        this;
-        should();
-        too();
-      })();
-    </script>
-    <script type='text/javascript'>
-      //<!--
-      ;(function() {
-        one;
-        line();
-        here();
-      })();
-      //-->
-    </script>
-    <script type='text/html'>
-      I'm a jQuery {{template}}.
-    </script>
-    """
-
-  Scenario: Rendering inline css with a passthrough minifier using activate-style compressor
+  Scenario: Rendering inline css with a passthrough minifier
     Given a fixture app "passthrough-app"
     And a file named "config.rb" with:
       """
@@ -206,9 +155,7 @@ Feature: Minify Javascript
         end
       end
 
-      activate :minify_javascript, :inline => true
-
-      set :js_compressor, ::PassThrough
+      activate :minify_javascript, :inline => true, :compressor => ::PassThrough
 
       page "/inline-coffeescript.html", :layout => false
       """
@@ -226,9 +173,7 @@ Feature: Minify Javascript
         end
       end
 
-      activate :minify_javascript
-
-      set :js_compressor, ::PassThrough
+      activate :minify_javascript, :compressor => ::PassThrough
       """
     And the Server is running at "passthrough-app"
     When I go to "/javascripts/coffee_test.js"
