@@ -12,10 +12,14 @@ require "middleman-core/vendor/hooks-0.2.0/lib/hooks"
 require "middleman-core/sitemap"
 
 require "middleman-core/core_extensions"
+require "middleman-core/configuration"
 
 # Core Middleman Class
 module Middleman
   class Application
+    # Global configuration
+    include Configuration::Global
+
     # Uses callbacks
     include Hooks
 
@@ -34,50 +38,19 @@ module Middleman
         class_eval(&block)   if block_given?
         include(*extensions) if extensions.any?
       end
-
-      # Access class-wide defaults
-      #
-      # @private
-      # @return [Hash] Hash of default values
-      def defaults
-        @defaults ||= {}
-      end
-
-      # Set class-wide defaults
-      #
-      # @param [Symbol] key Unique key name
-      # @param value Default value
-      # @return [void]
-      def set(key, value=nil, &block)
-        @defaults ||= {}
-        @defaults[key] = value
-
-        @inst.set(key, value, &block) if @inst
-      end
     end
 
     delegate :helpers, :to => :"self.class"
-
-    # Set attributes (global variables)
-    #
-    # @param [Symbol] key Name of the attribue
-    # @param value Attribute value
-    # @return [void]
-    def set(key, value=nil, &block)
-      setter = "#{key}=".to_sym
-      self.class.send(:attr_accessor, key) if !respond_to?(setter)
-      value = block if block_given?
-      send(setter, value)
-    end
 
     # Root project directory (overwritten in middleman build/server)
     # @return [String]
     set :root,        ENV["MM_ROOT"] || Dir.pwd
 
     # Pathname-addressed root
-    def root_path
-      @_root_path ||= Pathname.new(root)
+    def self.root_path
+      Pathname(root)
     end
+    delegate :root_path, :to => :"self.class"
 
     # Name of the source directory
     # @return [String]
@@ -178,7 +151,7 @@ module Middleman
       cache.clear
 
       # Setup the default values from calls to set before initialization
-      self.class.superclass.defaults.each { |k,v| set(k,v) }
+      self.class.superclass.config.to_h.each { |k,v| self.class.set(k,v) }
 
       # Evaluate a passed block if given
       instance_exec(&block) if block_given?
@@ -204,13 +177,6 @@ module Middleman
     # Whether we're in build mode
     # @return [Boolean] If we're in build mode
     def build?; environment == :build; end
-
-    # Backwards compatibilty with old Sinatra template interface
-    #
-    # @return [Middleman::Application]
-    def settings
-      self
-    end
 
     # The full path to the source directory
     #

@@ -37,9 +37,6 @@ module Middleman
       class << self
         # @private
         def registered(app)
-          # Using for version parsing
-          require "rubygems"
-
           app.define_hook :after_configuration
           app.define_hook :before_configuration
           app.define_hook :build_config
