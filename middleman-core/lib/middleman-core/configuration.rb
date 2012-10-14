@@ -45,7 +45,7 @@ module Middleman
       end
 
       def config
-        self.class.config
+        @_inst_config ||= self.class.config.dup
       end
 
       # Backwards compatibilty with old Sinatra template interface
