@@ -19,7 +19,7 @@ module Middleman
           end
 
           app.after_configuration do
-            ::Less.paths << File.expand_path(css_dir, source_dir)
+            ::Less.paths << File.join(source_dir, config[:css_dir])
           end
 
           # Tell Tilt to use it as well (for inline sass blocks)

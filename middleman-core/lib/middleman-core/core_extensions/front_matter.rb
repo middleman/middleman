@@ -62,7 +62,7 @@ module Middleman::CoreExtensions
       def clear_data(file)
         # Copied from Sitemap::Store#file_to_path, but without
         # removing the file extension
-        file = File.expand_path(file, @app.root)
+        file = File.join(@app.root, file)
         prefix = @app.source_dir.sub(/\/$/, "") + "/"
         return unless file.include?(prefix)
         path = file.sub(prefix, "")

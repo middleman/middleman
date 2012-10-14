@@ -29,26 +29,25 @@ module Middleman
     # Ready (all loading and parsing of extensions complete) hook
     define_hook :ready
 
-    class << self
-
-      # Mix-in helper methods. Accepts either a list of Modules
-      # and/or a block to be evaluated
-      # @return [void]
-      def helpers(*extensions, &block)
-        class_eval(&block)   if block_given?
-        include(*extensions) if extensions.any?
-      end
+    # Mix-in helper methods. Accepts either a list of Modules
+    # and/or a block to be evaluated
+    # @return [void]
+    def self.helpers(*extensions, &block)
+      class_eval(&block)   if block_given?
+      include(*extensions) if extensions.any?
     end
-
     delegate :helpers, :to => :"self.class"
 
     # Root project directory (overwritten in middleman build/server)
     # @return [String]
-    config.define_setting :root, (ENV["MM_ROOT"] || Dir.pwd), 'Root project directory'
+    def self.root
+      ENV["MM_ROOT"] || Dir.pwd
+    end
+    delegate :root, :to => :"self.class"
 
     # Pathname-addressed root
     def self.root_path
-      Pathname(config[:root])
+      Pathname(root)
     end
     delegate :root_path, :to => :"self.class"
 
@@ -95,14 +94,6 @@ module Middleman
     # Default prefix for building paths. Used by HTML helpers and Compass.
     # @return [String]
     config.define_setting :http_prefix, "/", 'Default prefix for building paths'
-
-    # Default string encoding for templates and output.
-    # @return [String]
-    config.define_setting :encoding,    "utf-8", 'Default string encoding for templates and output'
-
-    # Whether to catch and display exceptions
-    # @return [Boolean]
-    config.define_setting :show_exceptions, true, 'Whether to catch and display exceptions'
 
     # Default layout name
     # @return [String, Symbold]
@@ -182,7 +173,7 @@ module Middleman
     #
     # @return [String]
     def source_dir
-      File.join(config[:root], config[:source])
+      File.join(root, config[:source])
     end
 
     delegate :logger, :instrument, :to => ::Middleman::Util

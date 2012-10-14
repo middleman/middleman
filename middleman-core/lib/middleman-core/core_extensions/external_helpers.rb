@@ -18,7 +18,7 @@ module Middleman
 
           # After config
           app.after_configuration do
-            helpers_path = File.expand_path(config[:helpers_dir], config[:root])
+            helpers_path = File.join(root, config[:helpers_dir])
             next unless File.exists?(helpers_path)
 
             Dir[File.join(helpers_path, config[:helpers_filename_glob])].each do |filename|

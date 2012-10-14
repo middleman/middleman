@@ -272,7 +272,7 @@ module Middleman
         # @return [String]
         def fetch_layout(engine, opts)
           # The layout name comes from either the system default or the options
-          local_layout = opts.has_key?(:layout) ? opts[:layout] : layout
+          local_layout = opts.has_key?(:layout) ? opts[:layout] : config[:layout]
           return false unless local_layout
 
           # Look for engine-specific options
