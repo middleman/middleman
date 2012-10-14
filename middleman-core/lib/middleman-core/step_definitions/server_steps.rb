@@ -40,9 +40,10 @@ Given /^the Server is running$/ do
     ENV["MM_SOURCE"] = ""
   end
 
+  ENV["MM_ROOT"] = root_dir
+
   initialize_commands = @initialize_commands || []
   initialize_commands.unshift lambda {
-    set :root, root_dir
     set :environment, @current_env || :development
     set :show_exceptions, false
   }

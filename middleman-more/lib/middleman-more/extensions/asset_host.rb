@@ -11,7 +11,7 @@ module Middleman
         # Once registered
         def registered(app)
           # Default to no host
-          app.set :asset_host, false
+          app.config.define_setting :asset_host, false, 'The asset host to use, or false for no asset host, or a Proc to determine asset host'
 
           # Include methods
           app.send :include, InstanceMethods
@@ -30,12 +30,12 @@ module Middleman
         # @return [String]
         def asset_url(path, prefix="")
           original_output = super
-          return original_output unless asset_host
+          return original_output unless config[:asset_host]
 
-          asset_prefix = if asset_host.is_a?(Proc)
-            asset_host.call(original_output)
-          elsif asset_host.is_a?(String)
-            asset_host
+          asset_prefix = if config[:asset_host].is_a?(Proc)
+            config[:asset_host].call(original_output)
+          elsif config[:asset_host].is_a?(String)
+            config[:asset_host]
           end
 
           File.join(asset_prefix, original_output)

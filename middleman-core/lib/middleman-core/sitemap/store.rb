@@ -152,7 +152,7 @@ module Middleman
       # @param [String] file
       # @return [String]
       def file_to_path(file)
-        file = File.expand_path(file, @app.root)
+        file = File.join(@app.root, file)
 
         prefix = @app.source_dir.sub(/\/$/, "") + "/"
         return false unless file.start_with?(prefix)
@@ -160,8 +160,8 @@ module Middleman
         path = file.sub(prefix, "")
 
         # Replace a file name containing automatic_directory_matcher with a folder
-        unless @app.automatic_directory_matcher.nil?
-          path = path.gsub(@app.automatic_directory_matcher, "/")
+        unless @app.config[:automatic_directory_matcher].nil?
+          path = path.gsub(@app.config[:automatic_directory_matcher], "/")
         end
 
         extensionless_path(path)

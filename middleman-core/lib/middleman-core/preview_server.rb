@@ -71,7 +71,7 @@ module Middleman
         opts = @options
         @app =::Middleman::Application.server.inst do
           if opts[:environment]
-            set :environment, opts[:environment].to_sym
+            config[:environment] = opts[:environment].to_sym
           end
           
           logger(opts[:debug] ? 0 : 1, opts[:instrumenting] || false)

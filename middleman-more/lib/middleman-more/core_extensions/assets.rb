@@ -33,7 +33,7 @@ module Middleman
             if resource = sitemap.find_resource_by_path(path)
               resource.url
             else
-              File.join(http_prefix, path)
+              File.join(config[:http_prefix], path)
             end
           end
         end

@@ -83,7 +83,7 @@ module Middleman::Cli
       # @return [Middleman::Application]
       def shared_instance(verbose=false, instrument=false)
         @_shared_instance ||= ::Middleman::Application.server.inst do
-          set :environment, :build
+          config[:environment] = :build
           logger(verbose ? 0 : 1, instrument)
         end
       end
@@ -114,7 +114,7 @@ module Middleman::Cli
       # @param [Middleman::Sitemap::Resource] resource
       # @return [String] The full path of the file that was written
       def render_to_file(resource)
-        build_dir = self.class.shared_instance.build_dir
+        build_dir = self.class.shared_instance.config[:build_dir]
         output_file = File.join(build_dir, resource.destination_path)
 
         begin

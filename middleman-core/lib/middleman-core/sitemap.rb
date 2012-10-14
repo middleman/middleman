@@ -20,10 +20,10 @@ module Middleman
         app.register Middleman::Sitemap::Extensions::Ignores
 
         # Set to automatically convert some characters into a directory
-        app.set :automatic_directory_matcher, nil
+        app.config.define_setting :automatic_directory_matcher, nil, 'Set to automatically convert some characters into a directory'
 
         # Setup callbacks which can exclude paths from the sitemap
-        app.set :ignored_sitemap_matchers, {
+        app.config.define_setting :ignored_sitemap_matchers, {
           # dotfiles and folders in the root
           :root_dotfiles => proc { |file| file.match(%r{^\.}) },
 
@@ -38,7 +38,7 @@ module Middleman
           :layout => proc { |file|
             file.match(%r{^source/layout\.}) || file.match(%r{^source/layouts/})
           }
-        }
+        }, 'Callbacks that can exclude paths from the sitemap'
 
         # Include instance methods
         app.send :include, InstanceMethods

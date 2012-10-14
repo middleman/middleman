@@ -28,12 +28,12 @@ module Middleman
         # @param [String, Symbol] layout_name
         # @return [void]
         def with_layout(layout_name, &block)
-          old_layout = layout
+          old_layout = config[:layout]
 
-          set :layout, layout_name
+          config[:layout] = layout_name
           instance_exec(&block) if block_given?
         ensure
-          set :layout, old_layout
+          config[:layout] = old_layout
         end
 
         # The page method allows the layout to be set on a specific path
@@ -48,7 +48,7 @@ module Middleman
           blocks = Array(block)
 
           # Default layout
-          opts[:layout] = layout if opts[:layout].nil?
+          opts[:layout] = config[:layout] if opts[:layout].nil?
 
           # If the url is a regexp
           if url.is_a?(Regexp) || url.include?("*")
@@ -64,7 +64,7 @@ module Middleman
           # Normalized path
           url = '/' + Middleman::Util.normalize_path(url)
           if url.end_with?('/') || File.directory?(File.join(source_dir, url))
-            url = File.join(url, index_file)
+            url = File.join(url, config[:index_file])
           end
 
           # Setup proxy

@@ -7,9 +7,6 @@ module MyExtension
 
     # Called when user `activate`s your extension
     def registered(app, options={})
-      # Setup extension-specific config
-      app.set :config_variable, false
-
       # Include class methods
       # app.extend ClassMethods
 
@@ -18,9 +15,6 @@ module MyExtension
 
       app.after_configuration do
         # Do something
-
-        # config_variable is now either the default or the user's
-        # setting from config.rb
       end
     end
     alias :included :registered

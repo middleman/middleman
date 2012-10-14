@@ -37,19 +37,13 @@ module Middleman
       class << self
         # @private
         def registered(app)
-          # Using for version parsing
-          require "rubygems"
-
           app.define_hook :after_configuration
           app.define_hook :before_configuration
           app.define_hook :build_config
           app.define_hook :development_config
 
-          if ENV["AUTOLOAD_SPROCKETS"]
-            app.set :autoload_sprockets, (ENV["AUTOLOAD_SPROCKETS"] == "true")
-          else
-            app.set :autoload_sprockets, true
-          end
+          app.config.define_setting :autoload_sprockets, true, 'Automatically load sprockets at startup?'
+          app.config[:autoload_sprockets] = (ENV["AUTOLOAD_SPROCKETS"] == "true") if ENV["AUTOLOAD_SPROCKETS"]
 
           app.extend ClassMethods
           app.send :include, InstanceMethods
@@ -137,7 +131,7 @@ module Middleman
             instance_eval File.read(local_config), local_config, 1
           end
 
-          if autoload_sprockets
+          if config[:autoload_sprockets]
             begin
               require "middleman-sprockets"
               activate(:sprockets)
