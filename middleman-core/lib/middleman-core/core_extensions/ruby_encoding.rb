@@ -6,6 +6,10 @@ module Middleman::CoreExtensions::RubyEncoding
 
     # Once registerd
     def registered(app)
+      # Default string encoding for templates and output.
+      # @return [String]
+      app.config.define_setting :encoding,    "utf-8", 'Default string encoding for templates and output'
+
       app.send :include, InstanceMethods
     end
 
@@ -15,8 +19,8 @@ module Middleman::CoreExtensions::RubyEncoding
   module InstanceMethods
     def initialize
       if Object.const_defined?(:Encoding)
-        Encoding.default_internal = encoding
-        Encoding.default_external = encoding
+        Encoding.default_internal = config[:encoding]
+        Encoding.default_external = config[:encoding]
       end
 
       super

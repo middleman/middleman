@@ -10,8 +10,8 @@ module Middleman
         # Once registered
         def registered(app)
           # Set our preference for a markdown engine
-          app.set :markdown_engine, :maruku
-          app.set :markdown_engine_prefix, ::Tilt
+          app.config.define_setting :markdown_engine, :maruku, 'Preferred markdown engine'
+          app.config.define_setting :markdown_engine_prefix, ::Tilt, 'The parent module for markdown template engines'
 
           app.before_configuration do
             template_extensions :markdown => :html,
@@ -26,24 +26,24 @@ module Middleman
 
             begin
               # Look for the user's preferred engine
-              if markdown_engine == :redcarpet
+              if config[:markdown_engine] == :redcarpet
                 require "middleman-core/renderers/redcarpet"
                 ::Tilt.prefer(::Middleman::Renderers::RedcarpetTemplate)
-              elsif !markdown_engine.nil?
+              elsif !config[:markdown_engine].nil?
                 # Map symbols to classes
-                markdown_engine_klass = if markdown_engine.is_a? Symbol
-                  engine = markdown_engine.to_s
+                markdown_engine_klass = if config[:markdown_engine].is_a? Symbol
+                  engine = config[:markdown_engine].to_s
                   engine = engine == "rdiscount" ? "RDiscount" : engine.camelize
-                  markdown_engine_prefix.const_get("#{engine}Template")
+                  config[:markdown_engine_prefix].const_get("#{engine}Template")
                 else
-                  markdown_engine_prefix
+                  config[:markdown_engine_prefix]
                 end
 
                 # Tell tilt to use that engine
                 ::Tilt.prefer(markdown_engine_klass)
               end
             rescue LoadError
-              logger.warn "Requested Markdown engine (#{markdown_engine}) not found. Maybe the gem needs to be installed and required?"
+              logger.warn "Requested Markdown engine (#{config[:markdown_engine]}) not found. Maybe the gem needs to be installed and required?"
             end
           end
         end

@@ -29,7 +29,7 @@ module Middleman
 
           # Before parsing config, load the data/ directory
           app.before_configuration do
-            files.reload_path(data_dir)
+            files.reload_path(config[:data_dir])
           end
 
           # After config, load everything else

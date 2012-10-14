@@ -10,13 +10,13 @@ module Middleman
 
         # Once registered
         def registered(app, options={})
-          app.set :css_compressor, false
+          app.config.define_setting :css_compressor, nil, 'Set the CSS compressor to use. Deprecated in favor of the :compressor option when activating :minify_css'
 
           ignore = Array(options[:ignore]) << /\.min\./
           inline = options[:inline] || false
 
           app.after_configuration do
-            chosen_compressor = css_compressor || options[:compressor] || begin
+            chosen_compressor = config[:css_compressor] || options[:compressor] || begin
               require "middleman-more/extensions/minify_css/rainpress"
               ::Rainpress
             end

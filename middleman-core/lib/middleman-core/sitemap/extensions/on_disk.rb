@@ -45,7 +45,7 @@ module Middleman
           path = @sitemap.file_to_path(file)
           return false unless path
 
-          ignored = @app.ignored_sitemap_matchers.any? do |name, callback|
+          ignored = @app.config[:ignored_sitemap_matchers].any? do |name, callback|
             callback.call(file)
           end
 
@@ -85,7 +85,7 @@ module Middleman
             ::Middleman::Sitemap::Resource.new(
               @sitemap,
               @sitemap.file_to_path(file),
-              File.expand_path(file, @app.root)
+              File.join(@app.root, file)
             )
           end
         end

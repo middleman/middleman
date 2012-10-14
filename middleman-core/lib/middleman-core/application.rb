@@ -12,10 +12,14 @@ require "middleman-core/vendor/hooks-0.2.0/lib/hooks"
 require "middleman-core/sitemap"
 
 require "middleman-core/core_extensions"
+require "middleman-core/configuration"
 
 # Core Middleman Class
 module Middleman
   class Application
+    # Global configuration
+    include Configuration::Global
+
     # Uses callbacks
     include Hooks
 
@@ -25,115 +29,75 @@ module Middleman
     # Ready (all loading and parsing of extensions complete) hook
     define_hook :ready
 
-    class << self
-
-      # Mix-in helper methods. Accepts either a list of Modules
-      # and/or a block to be evaluated
-      # @return [void]
-      def helpers(*extensions, &block)
-        class_eval(&block)   if block_given?
-        include(*extensions) if extensions.any?
-      end
-
-      # Access class-wide defaults
-      #
-      # @private
-      # @return [Hash] Hash of default values
-      def defaults
-        @defaults ||= {}
-      end
-
-      # Set class-wide defaults
-      #
-      # @param [Symbol] key Unique key name
-      # @param value Default value
-      # @return [void]
-      def set(key, value=nil, &block)
-        @defaults ||= {}
-        @defaults[key] = value
-
-        @inst.set(key, value, &block) if @inst
-      end
-    end
-
-    delegate :helpers, :to => :"self.class"
-
-    # Set attributes (global variables)
-    #
-    # @param [Symbol] key Name of the attribue
-    # @param value Attribute value
+    # Mix-in helper methods. Accepts either a list of Modules
+    # and/or a block to be evaluated
     # @return [void]
-    def set(key, value=nil, &block)
-      setter = "#{key}=".to_sym
-      self.class.send(:attr_accessor, key) if !respond_to?(setter)
-      value = block if block_given?
-      send(setter, value)
+    def self.helpers(*extensions, &block)
+      class_eval(&block)   if block_given?
+      include(*extensions) if extensions.any?
     end
+    delegate :helpers, :to => :"self.class"
 
     # Root project directory (overwritten in middleman build/server)
     # @return [String]
-    set :root,        ENV["MM_ROOT"] || Dir.pwd
+    def self.root
+      ENV["MM_ROOT"] || Dir.pwd
+    end
+    delegate :root, :to => :"self.class"
 
     # Pathname-addressed root
-    def root_path
-      @_root_path ||= Pathname.new(root)
+    def self.root_path
+      Pathname(root)
     end
+    delegate :root_path, :to => :"self.class"
 
     # Name of the source directory
     # @return [String]
-    set :source,      "source"
+    config.define_setting :source,      "source", 'Name of the source directory'
 
     # Middleman environment. Defaults to :development, set to :build by the build process
     # @return [String]
-    set :environment, (ENV['MM_ENV'] && ENV['MM_ENV'].to_sym) || :development
+    config.define_setting :environment, ((ENV['MM_ENV'] && ENV['MM_ENV'].to_sym) || :development), 'Middleman environment. Defaults to :development, set to :build by the build process'
 
     # Which file should be used for directory indexes
     # @return [String]
-    set :index_file,  "index.html"
+    config.define_setting :index_file,  "index.html", 'Which file should be used for directory indexes'
 
     # Whether to strip the index file name off links to directory indexes
     # @return [Boolean]
-    set :strip_index_file, true
+    config.define_setting :strip_index_file, true, 'Whether to strip the index file name off links to directory indexes'
 
     # Whether to include a trailing slash when stripping the index file
     # @return [Boolean]
-    set :trailing_slash, true
+    config.define_setting :trailing_slash, true, 'Whether to include a trailing slash when stripping the index file'
 
     # Location of javascripts within source.
     # @return [String]
-    set :js_dir,      "javascripts"
+    config.define_setting :js_dir,      "javascripts", 'Location of javascripts within source'
 
     # Location of stylesheets within source. Used by Compass.
     # @return [String]
-    set :css_dir,     "stylesheets"
+    config.define_setting :css_dir,     "stylesheets", 'Location of stylesheets within source'
 
     # Location of images within source. Used by HTML helpers and Compass.
     # @return [String]
-    set :images_dir,  "images"
+    config.define_setting :images_dir,  "images", 'Location of images within source'
 
     # Location of fonts within source. Used by Compass.
     # @return [String]
-    set :fonts_dir,   "fonts"
+    config.define_setting :fonts_dir,   "fonts", 'Location of fonts within source'
 
     # Where to build output files
     # @return [String]
-    set :build_dir,   "build"
+    config.define_setting :build_dir,   "build", 'Where to build output files'
 
     # Default prefix for building paths. Used by HTML helpers and Compass.
     # @return [String]
-    set :http_prefix, "/"
-
-    # Default string encoding for templates and output.
-    # @return [String]
-    set :encoding,    "utf-8"
-
-    # Whether to catch and display exceptions
-    # @return [Boolean]
-    set :show_exceptions, true
+    config.define_setting :http_prefix, "/", 'Default prefix for building paths'
 
     # Default layout name
     # @return [String, Symbold]
-    set :layout, :_auto_layout
+    config.define_setting :layout, :_auto_layout, 'Default layout name'
 
     # Activate custom features and extensions
     include Middleman::CoreExtensions::Extensions
@@ -178,12 +142,12 @@ module Middleman
       cache.clear
 
       # Setup the default values from calls to set before initialization
-      self.class.superclass.defaults.each { |k,v| set(k,v) }
+      self.class.superclass.config.to_h.each { |k,v| self.class.config.define_setting(k,v) }
 
       # Evaluate a passed block if given
       instance_exec(&block) if block_given?
 
-      set :source, ENV["MM_SOURCE"] if ENV["MM_SOURCE"]
+      config[:source] = ENV["MM_SOURCE"] if ENV["MM_SOURCE"]
 
       super
     end
@@ -199,24 +163,17 @@ module Middleman
 
     # Whether we're in development mode
     # @return [Boolean] If we're in dev mode
-    def development?; environment == :development; end
+    def development?; config[:environment] == :development; end
 
     # Whether we're in build mode
     # @return [Boolean] If we're in build mode
-    def build?; environment == :build; end
-
-    # Backwards compatibilty with old Sinatra template interface
-    #
-    # @return [Middleman::Application]
-    def settings
-      self
-    end
+    def build?; config[:environment] == :build; end
 
     # The full path to the source directory
     #
     # @return [String]
     def source_dir
-      File.join(root, source)
+      File.join(root, config[:source])
     end
 
     delegate :logger, :instrument, :to => ::Middleman::Util
@@ -239,7 +196,7 @@ module Middleman
 
       if !resource
         # Try it with /index.html at the end
-        indexed_path = File.join(path.sub(%r{/$}, ''), index_file)
+        indexed_path = File.join(path.sub(%r{/$}, ''), config[:index_file])
         resource = sitemap.find_resource_by_destination_path(indexed_path)
       end
 

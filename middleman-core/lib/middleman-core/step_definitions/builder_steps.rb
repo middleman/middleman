@@ -10,9 +10,12 @@ end
 Given /^an empty app$/ do
   step %Q{a directory named "empty_app"}
   step %Q{I cd to "empty_app"}
+  ENV["MM_ROOT"] = nil
 end
 
 Given /^a fixture app "([^\"]*)"$/ do |path|
+  ENV["MM_ROOT"] = nil
+
   # This step can be reentered from several places but we don't want
   # to keep re-copying and re-cd-ing into ever-deeper directories
   next if File.basename(current_dir) == path

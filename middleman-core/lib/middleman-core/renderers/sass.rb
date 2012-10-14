@@ -12,16 +12,16 @@ module Middleman
         # Once registered
         def registered(app)
           # Default sass options
-          app.set :sass, {}
+          app.config.define_setting :sass, {}, 'Sass engine options'
 
           # Location of SASS .sass_cache directory.
           # @return [String]
-          #   set :sass_cache_path, "/tmp/middleman-app-name/sass_cache"
-          app.set(:sass_cache_path) { File.join(app.root_path, '.sass_cache') } # runtime compile of path
+          app.config.define_setting :sass_cache_path, nil, 'Location of sass cache' # runtime compile of path
 
           app.before_configuration do
             template_extensions :scss => :css,
                                 :sass => :css
+            config[:sass_cache_path] = File.join(app.root_path, '.sass_cache')
           end
 
           # Tell Tilt to use it as well (for inline sass blocks)
@@ -76,11 +76,11 @@ module Middleman
           more_opts = { :filename => eval_file, :line => line, :syntax => syntax }
           
           if @context.is_a?(::Middleman::Application) && file
-            location_of_sass_file = File.expand_path(@context.source, @context.root)
+            location_of_sass_file = @context.source_dir
           
             parts = basename.split('.')
             parts.pop
-            more_opts[:css_filename] = File.join(location_of_sass_file, @context.css_dir, parts.join("."))
+            more_opts[:css_filename] = File.join(location_of_sass_file, @context.config[:css_dir], parts.join("."))
           end
           
           options.merge(more_opts)

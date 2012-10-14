@@ -11,10 +11,14 @@ module Middleman
 
         # Once registered
         def registered(app)
+          # Whether to catch and display exceptions
+          # @return [Boolean]
+          app.config.define_setting :show_exceptions, true, 'Whether to catch and display exceptions'
+
           # When in dev
           app.configure :development do
             # Include middlemare
-            if show_exceptions
+            if config[:show_exceptions]
               use ::Middleman::CoreExtensions::ShowExceptions::Middleware
             end
           end

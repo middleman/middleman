@@ -257,7 +257,7 @@ module Middleman
             extension_class = ::Tilt[ext]
             ::Tilt.mappings.each do |ext, engines|
               next unless engines.include? extension_class
-              engine_options = respond_to?(ext.to_sym) ? send(ext.to_sym) : {}
+              engine_options = config[ext.to_sym] || {}
               options.merge!(engine_options)
             end
 
@@ -272,7 +272,7 @@ module Middleman
         # @return [String]
         def fetch_layout(engine, opts)
           # The layout name comes from either the system default or the options
-          local_layout = opts.has_key?(:layout) ? opts[:layout] : layout
+          local_layout = opts.has_key?(:layout) ? opts[:layout] : config[:layout]
           return false unless local_layout
 
           # Look for engine-specific options

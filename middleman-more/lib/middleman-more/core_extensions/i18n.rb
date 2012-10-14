@@ -9,11 +9,11 @@ module Middleman
 
         # Once registerd
         def registered(app, options={})
-          app.set :locales_dir, "locales"
+          app.config.define_setting :locales_dir, "locales", 'The directory holding your locale configurations'
 
           # Needed for helpers as well
           app.after_configuration do
-            locales_glob = File.join(locales_dir, "*.yml");
+            locales_glob = File.join(config[:locales_dir], "*.yml");
 
             ::I18n.load_path += Dir[File.join(root, locales_glob)]
             ::I18n.reload!

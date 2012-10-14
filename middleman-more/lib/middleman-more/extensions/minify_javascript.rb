@@ -10,7 +10,7 @@ module Middleman
 
         # Once registered
         def registered(app, options={})
-          app.set :js_compressor, false
+          app.config.define_setting :js_compressor, nil, 'Set the JS compressor to use. Deprecated in favor of the :compressor option when activating :minify_js'
 
           ignore = Array(options[:ignore]) << /\.min\./
           inline = options[:inline] || false
