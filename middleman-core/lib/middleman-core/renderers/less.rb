@@ -11,8 +11,8 @@ module Middleman
 
         # Once registered
         def registered(app)
-          # Default sass options
-          app.set :less, {}
+          # Default less options
+          app.config.define_setting :less, {}, 'LESS compiler options'
 
           app.before_configuration do
             template_extensions :less => :css

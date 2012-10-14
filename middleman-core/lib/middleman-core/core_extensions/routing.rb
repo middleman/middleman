@@ -30,10 +30,10 @@ module Middleman
         def with_layout(layout_name, &block)
           old_layout = layout
 
-          set :layout, layout_name
+          config[:layout] = layout_name
           instance_exec(&block) if block_given?
         ensure
-          set :layout, old_layout
+          config[:layout] = old_layout
         end
 
         # The page method allows the layout to be set on a specific path

@@ -8,8 +8,8 @@ module Middleman
         # once registered
         def registered(app)
           # Setup a default ERb engine
-          app.set :erb_engine, :erb
-          app.set :erb_engine_prefix, ::Tilt
+          app.config.define_setting :erb_engine, :erb, 'The engine to use for rendering ERb templates'
+          app.config.define_setting :erb_engine_prefix, ::Tilt, 'The parent module for ERb template engines'
 
           app.before_configuration do
             template_extensions :erb => :html
@@ -19,14 +19,14 @@ module Middleman
           app.after_configuration do
             # Find the user's prefered engine
             # Convert symbols to classes
-            if erb_engine.is_a? Symbol
+            if config[:erb_engine].is_a? Symbol
               engine = engine.to_s
               engine = engine == "erb" ? "ERB" : engine.camelize
-              erb_engine = erb_engine_prefix.const_get("#{engine}Template")
+              config[:erb_engine] = config[:erb_engine_prefix].const_get("#{engine}Template")
             end
 
             # Tell Tilt to use the preferred engine
-            ::Tilt.prefer(erb_engine)
+            ::Tilt.prefer(config[:erb_engine])
           end
         end
         alias :included :registered

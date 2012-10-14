@@ -19,38 +19,38 @@ module Middleman
 
           # Location of SASS/SCSS files external to source directory.
           # @return [Array]
-          #   set :sass_assets_paths, ["#{root}/assets/sass/", "/path/2/external/sass/repository/"]
-          app.set :sass_assets_paths, []
+          #   config[:sass_assets_paths] = ["#{root}/assets/sass/", "/path/2/external/sass/repository/"]
+          app.config.define_setting :sass_assets_paths, [], 'Paths to extra SASS/SCSS files'
 
           app.after_configuration do
-            ::Compass.configuration do |config|
-              config.project_path    = source_dir
-              config.environment     = :development
-              config.cache_path      = sass_cache_path
-              config.sass_dir        = css_dir
-              config.additional_import_paths = sass_assets_paths
-              config.css_dir         = css_dir
-              config.javascripts_dir = js_dir
-              config.fonts_dir       = fonts_dir
-              config.images_dir      = images_dir
-              config.http_path       = http_prefix
+            ::Compass.configuration do |compass_config|
+              compass_config.project_path    = source_dir
+              compass_config.environment     = :development
+              compass_config.cache_path      = config[:sass_cache_path]
+              compass_config.sass_dir        = config[:css_dir]
+              compass_config.additional_import_paths = config[:sass_assets_paths]
+              compass_config.css_dir         = config[:css_dir]
+              compass_config.javascripts_dir = config[:js_dir]
+              compass_config.fonts_dir       = config[:fonts_dir]
+              compass_config.images_dir      = config[:images_dir]
+              compass_config.http_path       = config[:http_prefix]
 
               # Disable this initially, the cache_buster extension will
               # re-enable it if requested.
-              config.asset_cache_buster :none
+              compass_config.asset_cache_buster :none
 
               # Disable this initially, the relative_assets extension will
               # re-enable it if requested.
-              config.relative_assets = false
+              compass_config.relative_assets = false
 
               # Default output style
-              config.output_style = :nested
+              compass_config.output_style = :nested
 
               # No line-comments in test mode (changing paths mess with sha1)
-              config.line_comments = false if ENV["TEST"]
+              compass_config.line_comments = false if ENV["TEST"]
 
-              if respond_to?(:asset_host) && asset_host.is_a?(Proc)
-                config.asset_host(&asset_host)
+              if config.defines_setting?(:asset_host) && config[:asset_host].is_a?(Proc)
+                compass_config.asset_host(&config[:asset_host])
               end
             end
 

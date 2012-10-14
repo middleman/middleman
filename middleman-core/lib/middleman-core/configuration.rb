@@ -30,7 +30,7 @@ module Middleman
         # old Middleman.
         #
         # @deprecated Prefer accessing settings through "config".
-        def method_missing(method)
+        def method_missing(method, *args)
           if config.defines_setting? method
             config[method]
           else
@@ -71,7 +71,7 @@ module Middleman
       # old Middleman.
       #
       # @deprecated Prefer accessing settings through "config".
-      def method_missing(method)
+      def method_missing(method, *args)
         if config.defines_setting? method
           config[method]
         else
@@ -128,7 +128,7 @@ module Middleman
         if defines_setting?(method) && args.size == 0
           self[method]
         elsif method =~ /^(\w+)=$/ && args.size == 1
-          self[$1] = args[0]
+          self[$1.to_sym] = args[0]
         else
           super
         end
@@ -190,9 +190,17 @@ module Middleman
       end
     end
 
+    # An individual configuration setting, with an optional default and description.
+    # Also models whether or not a value has been set.
     class ConfigSetting
-      attr_accessor :key, :default, :description
-      attr_writer :value
+      # The name of this setting
+      attr_accessor :key
+
+      # The default value for this setting
+      attr_accessor :default
+
+      # A human-friendly description of the setting
+      attr_accessor :description
 
       def initialize(key, default, description)
         @value_set = false
@@ -201,15 +209,20 @@ module Middleman
         self.description = description
       end
 
+      # The user-supplied value for this setting, overriding the default
       def value=(value)
         @value = value
         @value_set = true
       end
 
+      # The effective value of the setting, which may be the default
+      # if the user has not set a value themselves. Note that even if the
+      # user sets the value to nil it will override the default.
       def value
         value_set? ? @value : default
       end
 
+      # Whether or not there has been a value set beyond the default
       def value_set?
         @value_set
       end

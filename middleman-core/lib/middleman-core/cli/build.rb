@@ -83,7 +83,7 @@ module Middleman::Cli
       # @return [Middleman::Application]
       def shared_instance(verbose=false, instrument=false)
         @_shared_instance ||= ::Middleman::Application.server.inst do
-          set :environment, :build
+          config[:environment] = :build
           logger(verbose ? 0 : 1, instrument)
         end
       end

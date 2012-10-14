@@ -257,7 +257,7 @@ module Middleman
             extension_class = ::Tilt[ext]
             ::Tilt.mappings.each do |ext, engines|
               next unless engines.include? extension_class
-              engine_options = respond_to?(ext.to_sym) ? send(ext.to_sym) : {}
+              engine_options = config[ext.to_sym] || {}
               options.merge!(engine_options)
             end
 
