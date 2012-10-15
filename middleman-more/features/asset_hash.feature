@@ -9,7 +9,7 @@ Feature: Assets get a file hash appended to their and references to them are upd
       | images/100px-1242c368.png |
       | images/100px-5fd6fb90.jpg |
       | images/100px-5fd6fb90.gif |
-      | javascripts/application-1d8d5276.js |
+      | javascripts/application-9b3adada.js |
       | stylesheets/site-50eaa978.css |
       | index.html |
       | subdir/index.html |
@@ -20,41 +20,41 @@ Feature: Assets get a file hash appended to their and references to them are upd
       | images/100px.gif |
       | javascripts/application.js |
       | stylesheets/site.css |
-      
-    And the file "javascripts/application-1d8d5276.js" should contain "img.src = '/images/100px-5fd6fb90.jpg'"
+
+    And the file "javascripts/application-9b3adada.js" should contain "img.src = '/images/100px-5fd6fb90.jpg'"
     And the file "stylesheets/site-50eaa978.css" should contain "background-image: url('../images/100px-5fd6fb90.jpg')"
     And the file "index.html" should contain 'href="apple-touch-icon.png"'
     And the file "index.html" should contain 'href="stylesheets/site-50eaa978.css"'
-    And the file "index.html" should contain 'src="javascripts/application-1d8d5276.js"'
+    And the file "index.html" should contain 'src="javascripts/application-9b3adada.js"'
     And the file "index.html" should contain 'src="images/100px-5fd6fb90.jpg"'
     And the file "subdir/index.html" should contain 'href="../stylesheets/site-50eaa978.css"'
-    And the file "subdir/index.html" should contain 'src="../javascripts/application-1d8d5276.js"'
+    And the file "subdir/index.html" should contain 'src="../javascripts/application-9b3adada.js"'
     And the file "subdir/index.html" should contain 'src="../images/100px-5fd6fb90.jpg"'
     And the file "other/index.html" should contain 'href="../stylesheets/site-50eaa978.css"'
-    And the file "other/index.html" should contain 'src="../javascripts/application-1d8d5276.js"'
+    And the file "other/index.html" should contain 'src="../javascripts/application-9b3adada.js"'
     And the file "other/index.html" should contain 'src="../images/100px-5fd6fb90.jpg"'
-    
+
   Scenario: Hashed assets work in preview server
     Given the Server is running at "asset-hash-app"
     When I go to "/"
     Then I should see 'href="apple-touch-icon.png"'
     And I should see 'href="stylesheets/site-50eaa978.css"'
-    And I should see 'src="javascripts/application-1d8d5276.js"'
+    And I should see 'src="javascripts/application-9b3adada.js"'
     And I should see 'src="images/100px-5fd6fb90.jpg"'
     When I go to "/subdir/"
     Then I should see 'href="../stylesheets/site-50eaa978.css"'
-    And I should see 'src="../javascripts/application-1d8d5276.js"'
+    And I should see 'src="../javascripts/application-9b3adada.js"'
     And I should see 'src="../images/100px-5fd6fb90.jpg"'
     When I go to "/other/"
     Then I should see 'href="../stylesheets/site-50eaa978.css"'
-    And I should see 'src="../javascripts/application-1d8d5276.js"'
+    And I should see 'src="../javascripts/application-9b3adada.js"'
     And I should see 'src="../images/100px-5fd6fb90.jpg"'
-    When I go to "/javascripts/application-1d8d5276.js"
+    When I go to "/javascripts/application-9b3adada.js"
     Then I should see "img.src = '/images/100px-5fd6fb90.jpg'"
     When I go to "/stylesheets/site-50eaa978.css"
     Then I should see "background-image: url('../images/100px-5fd6fb90.jpg')"
 
-  Scenario: Enabling an asset host still produces hashed files and references  
+  Scenario: Enabling an asset host still produces hashed files and references
     Given the Server is running at "asset-hash-host-app"
     When I go to "/"
     Then I should see 'href="http://middlemanapp.com/stylesheets/site-171eb3c0.css"'
@@ -104,3 +104,21 @@ Feature: Assets get a file hash appended to their and references to them are upd
     Then I should see 'Added by Rack filter'
     When I go to "stylesheets/site-50eaa978.css"
     Then I should see 'Not Found'
+
+  Scenario: The asset hash should change when a JavaScript dependency changes
+    Given the Server is running at "asset-hash-app"
+    And the file "source/javascripts/library.js" has the contents
+      """
+      /* Example JS library */
+      document.documentElement.className = "js";
+      """
+    When I go to "/"
+    Then I should see 'src="javascripts/application-9b3adada.js"'
+    Given the Server is running at "asset-hash-app"
+    And the file "source/javascripts/library.js" has the contents
+      """
+      /* Example JS library v2 */
+      document.documentElement.className = "javascript";
+      """
+    When I go to "/"
+    Then I should see 'src="javascripts/application-496e97c8.js"'
