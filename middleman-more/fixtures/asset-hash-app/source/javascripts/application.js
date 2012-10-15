@@ -1,3 +1,7 @@
+/*
+ *= require "./library"
+ */
+
 function foo() {
   var img = document.createElement('img');
   img.src = '/images/100px.jpg';
