@@ -39,16 +39,12 @@ module Middleman
             next unless @exts.include? resource.ext
             next if @ignore.any? { |ignore| Middleman::Util.path_match(ignore, resource.destination_path) }
 
-            if resource.template? # if it's a template, render it out
-              # Render through the Rack interface so middleware and mounted apps get a shot
-              rack_client = ::Rack::Test::Session.new(@app.class)
-              response = rack_client.get(URI.escape(resource.destination_path), {}, { "bypass_asset_hash" => true })
-              raise "#{resource.path} should be in the sitemap!" unless response.status == 200
+            # Render through the Rack interface so middleware and mounted apps get a shot
+            rack_client = ::Rack::Test::Session.new(@app.class)
+            response = rack_client.get(URI.escape(resource.destination_path), {}, { "bypass_asset_hash" => true })
+            raise "#{resource.path} should be in the sitemap!" unless response.status == 200
 
-              digest = Digest::SHA1.hexdigest(response.body)[0..7]
-            else # if it's a static file, just hash it
-              digest = Digest::SHA1.file(resource.source_file).hexdigest[0..7]
-            end
+            digest = Digest::SHA1.hexdigest(response.body)[0..7]
 
             resource.destination_path = resource.destination_path.sub(/\.(\w+)$/) { |ext| "-#{digest}#{ext}" }
           end
