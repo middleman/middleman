@@ -41,7 +41,7 @@ module Middleman
 
             if resource.template? # if it's a template, render it out
               # Render through the Rack interface so middleware and mounted apps get a shot
-              rack_client = ::Rack::Test::Session.new(@app.class)
+              rack_client = ::Rack::Test::Session.new(@app)
               response = rack_client.get(URI.escape(resource.destination_path), {}, { "bypass_asset_hash" => true })
               raise "#{resource.path} should be in the sitemap!" unless response.status == 200
 
@@ -100,7 +100,7 @@ module Middleman
                 end
               end
 
-              status, headers, response = Rack::Response.new(body, status, headers).finish
+              status, headers, response = ::Rack::Response.new(body, status, headers).finish
             end
           end
           [status, headers, response]

@@ -9,10 +9,10 @@ require "active_support/core_ext/float/rounding"
 # Simple callback library
 require "middleman-core/vendor/hooks-0.2.0/lib/hooks"
 
-require "middleman-core/sitemap"
-
-require "middleman-core/core_extensions"
 require "middleman-core/configuration"
+require "middleman-core/sitemap"
+require "middleman-core/core_extensions"
+require "middleman-core/rack/interface"
 
 # Core Middleman Class
 module Middleman
@@ -22,12 +22,6 @@ module Middleman
 
     # Uses callbacks
     include Hooks
-
-    # Before request hook
-    define_hook :before
-
-    # Ready (all loading and parsing of extensions complete) hook
-    define_hook :ready
 
     # Mix-in helper methods. Accepts either a list of Modules
     # and/or a block to be evaluated
@@ -99,14 +93,14 @@ module Middleman
     # @return [String, Symbold]
     config.define_setting :layout, :_auto_layout, 'Default layout name'
 
+    # Ready (all loading and parsing of extensions complete) hook
+    define_hook :ready
+
     # Activate custom features and extensions
     include Middleman::CoreExtensions::Extensions
 
     # Manage Ruby string encodings
     include Middleman::CoreExtensions::RubyEncoding
-
-    # Basic Rack Request Handling
-    register Middleman::CoreExtensions::Request
 
     # Handle exceptions
     register Middleman::CoreExtensions::ShowExceptions
@@ -136,30 +130,20 @@ module Middleman
     # with_layout and page routing
     register Middleman::CoreExtensions::Routing
 
+    # Global configuration
+    include Rack::Interface
+
     # Initialize the Middleman project
     def initialize(&block)
-      # Clear the static class cache
-      cache.clear
-
-      # Setup the default values from calls to set before initialization
-      self.class.superclass.config.to_h.each { |k,v| self.class.config.define_setting(k,v) }
-
       # Evaluate a passed block if given
       instance_exec(&block) if block_given?
 
       config[:source] = ENV["MM_SOURCE"] if ENV["MM_SOURCE"]
 
       super
-    end
 
-    # Shared cache instance
-    #
-    # @private
-    # @return [Middleman::Util::Cache] The cache
-    def self.cache
-      @_cache ||= ::Middleman::Util::Cache.new
+      run_hook :ready
     end
-    delegate :cache, :to => :"self.class"
 
     # Whether we're in development mode
     # @return [Boolean] If we're in dev mode
@@ -205,6 +189,80 @@ module Middleman
       else
         '/' + Middleman::Util.normalize_path(path)
       end
+    end
+
+    delegate :mime_type, :to => ::Middleman::Util
+    
+    # CSSPIE HTC File
+    ::Middleman::Util.mime_type('htc', 'text/x-component')
+
+    # Let's serve all HTML as UTF-8
+    ::Middleman::Util.mime_type('html', 'text/html; charset=utf-8')
+    ::Middleman::Util.mime_type('htm', 'text/html; charset=utf-8')
+
+    # The list of added Rack middleware
+    #
+    # @return [Array]
+    def middleware
+      @middleware ||= []
+    end 
+
+    # Use Rack middleware
+    #
+    # @param [Class] app Middleware module
+    # @return [void]
+    def use(app, *args, &block)
+      middleware << [app, args, block]
+    end
+
+    # The list of added Rack maps
+    #
+    # @return [Array]
+    def mappings
+      @mappings ||= []
+    end
+    
+    # Add Rack App mapped to specific path
+    #
+    # @param [String] map Path to map
+    # @return [void]
+    def map(map, &block)
+      mappings << [map, block]
+    end
+
+    class FileNotFound < RuntimeError; end
+
+    # Accessor for current path
+    # @return [String]
+    attr_accessor :current_path
+
+    def render(request_path)
+      logger.debug "== Request: #{request_path}"
+      start_time = Time.now
+
+      request_path = full_path(request_path)
+
+      # Get the resource object for this path
+      resource = sitemap.find_resource_by_destination_path(request_path)
+
+      # Return 404 if not in sitemap
+      if !resource || resource.ignored?
+        raise ::Middleman::Application::FileNotFound
+      end
+
+      if !resource.template?
+        return [nil, nil, resource.source_file]
+      end
+
+      # Write out the contents of the page
+      output = resource.render do
+        self.current_path = resource.destination_path
+      end
+
+      # End the request
+      logger.debug "== Finishing Request: #{current_path} (#{(Time.now - start_time).round(2)}s)"
+
+      [output, resource.mime_type, nil]
     end
 
   end

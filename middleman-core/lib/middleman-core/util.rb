@@ -10,6 +10,8 @@ require "thor"
 # Core Pathname library used for traversal
 require "pathname"
 
+require "rack"
+
 module Middleman
 
   module Util
@@ -29,6 +31,18 @@ module Middleman
     def self.instrument(name, payload={}, &block)
       name << ".middleman" unless name =~ /\.middleman$/
       ::ActiveSupport::Notifications.instrument(name, payload, &block)
+    end
+
+    # Add a new mime-type for a specific extension
+    #
+    # @param [Symbol] type File extension
+    # @param [String] value Mime type
+    # @return [void]
+    def self.mime_type(type, value=nil)
+      return type if type.nil? || type.to_s.include?('/')
+      type = ".#{type}" unless type.to_s[0] == ?.
+      return ::Rack::Mime.mime_type(type, nil) unless value
+      ::Rack::Mime::MIME_TYPES[type] = value
     end
 
     # Recursively convert a normal Hash into a HashWithIndifferentAccess
@@ -71,9 +85,9 @@ module Middleman
         response
       when Array
         response.join
-      when Rack::Response
+      when ::Rack::Response
         response.body.join
-      when Rack::File
+      when ::Rack::File
         File.read(response.path)
       else
         response.to_s

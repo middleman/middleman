@@ -117,8 +117,7 @@ module Middleman
         # Load features before starting server
         def initialize
           super
-
-          self.class.inst = self
+      
           run_hook :before_configuration
 
           # Search the root of the project for required files

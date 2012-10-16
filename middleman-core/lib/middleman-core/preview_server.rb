@@ -1,4 +1,5 @@
 require "webrick"
+require "middleman-core/rack/controller"
 
 module Middleman
   module PreviewServer
@@ -6,18 +7,35 @@ module Middleman
     DEFAULT_PORT = 4567
 
     class << self
-      attr_reader :app, :port
-      delegate :logger, :to => :app
-
+      attr_reader :rack_app
+      delegate :logger, :to => :rack_app
+      
       # Start an instance of Middleman::Application
       # @return [void]
-      def start(opts={})
-        @options = opts
-        @port = @options[:port] || DEFAULT_PORT
+      def start(options={})
+        options[:watcher] = !options[:"disable-watcher"]
+        port = options[:post] || DEFAULT_PORT
 
-        mount_instance
+        @rack_app = ::Middleman::Rack::Controller.new(options) do
+          if options[:environment]
+            set :environment, options[:environment].to_sym
+          end
+          
+          logger(options[:debug] ? 0 : 1, options[:instrumenting] || false)
+        end
+
         logger.info "== The Middleman is standing watch on port #{port}"
 
+        @webrick ||= begin
+          w = setup_webrick(
+            options[:host]  || "0.0.0.0",
+            port,
+            options[:debug] || false
+          )
+          w.mount "/", ::Rack::Handler::WEBrick, @rack_app
+          w
+        end
+        
         @initialized ||= false
         unless @initialized
           @initialized = true
@@ -40,23 +58,6 @@ module Middleman
         rescue
           # if the user closed their terminal STDOUT/STDERR won't exist
         end
-
-        if @listener
-          @listener.stop
-          @listener = nil
-        end
-        unmount_instance
-      end
-
-      # Simply stop, then start the server
-      # @return [void]
-      def reload
-        logger.info "== The Middleman is reloading"
-        
-        unmount_instance
-        mount_instance
-        
-        logger.info "== The Middleman is standing watch on port #{port}"
       end
 
       # Stop the current instance, exit Webrick
@@ -67,48 +68,6 @@ module Middleman
       end
 
     private
-      def new_app
-        opts = @options
-        @app =::Middleman::Application.server.inst do
-          if opts[:environment]
-            config[:environment] = opts[:environment].to_sym
-          end
-          
-          logger(opts[:debug] ? 0 : 1, opts[:instrumenting] || false)
-        end
-      end
-
-      def start_file_watcher
-        return if @options[:"disable-watcher"]
-        
-        first_run = !@listener
-        
-        if first_run
-          # Watcher Library
-          require "listen"
-          @listener = Listen.to(Dir.pwd, :relative_paths => true)
-        end
-        
-        @listener.change do |modified, added, removed|
-          added_and_modified = (modified + added)
-
-          # See if the changed file is config.rb or lib/*.rb
-          if needs_to_reload?(added_and_modified) || needs_to_reload?(removed)
-            reload
-          else
-            added_and_modified.each do |path|
-              app.files.did_change(path)
-            end
-
-            removed.each do |path|
-              app.files.did_delete(path)
-            end
-          end
-        end
-
-        # Don't block this thread
-        @listener.start(false) if first_run
-      end
 
       # Trap some interupt signals and shut down smoothly
       # @return [void]
@@ -125,7 +84,7 @@ module Middleman
 
       # Initialize webrick
       # @return [void]
-      def setup_webrick(host, is_logging)
+      def setup_webrick(host, port, is_logging)
         @host = host
 
         http_opts = {
@@ -145,52 +104,6 @@ module Middleman
         rescue Errno::EADDRINUSE => e
           logger.error "== Port #{port} is unavailable. Either close the instance of Middleman already running on #{port} or start this Middleman on a new port with: --port=#{port.to_i+1}"
           exit(1)
-        end
-      end
-
-      # Attach a new Middleman::Application instance
-      # @param [Middleman::Application] app
-      # @return [void]
-      def mount_instance
-        @app = new_app
-
-        @webrick ||= setup_webrick(
-          @options[:host]  || "0.0.0.0",
-          @options[:debug] || false
-        )
-        
-        start_file_watcher
-          
-        @webrick.mount "/", ::Rack::Handler::WEBrick, app.class.to_rack_app
-      end
-
-      # Detach the current Middleman::Application instance
-      # @return [void]
-      def unmount_instance
-        @webrick.unmount "/"
-        @app = nil
-      end
-
-      # Whether the passed files are config.rb, lib/*.rb or helpers
-      # @param [Array<String>] paths Array of paths to check
-      # @return [Boolean] Whether the server needs to reload
-      def needs_to_reload?(paths)
-        match_against = [
-          %r{^config\.rb},
-          %r{^lib/^[^\.](.*)\.rb$},
-          %r{^helpers/^[^\.](.*)_helper\.rb$}
-        ]
-        
-        if @options[:reload_paths]
-          @options[:reload_paths].split(',').each do |part|
-            match_against << %r{^#{part}}
-          end
-        end
-        
-        paths.any? do |path|
-          match_against.any? do |matcher|
-            path.match(matcher)
-          end
         end
       end
     end

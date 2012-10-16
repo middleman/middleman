@@ -8,6 +8,14 @@ module Middleman
   # Backwards compatibility namespace
   module Features; end
 
+  # Backwards compatible API for setting up the rack server
+  #
+  # @return [Middleman::Rack]
+  def self.server(options={}, &block)
+    require "middleman-core/rack/controller"
+    ::Middleman::Rack::Controller.new(options, &block)
+  end
+
 end
 
 require "middleman-core/version"

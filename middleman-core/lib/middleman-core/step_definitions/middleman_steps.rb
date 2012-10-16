@@ -1,17 +1,23 @@
 Then /^the file "([^\"]*)" has the contents$/ do |path, contents|
-  write_file(path, contents)
-  step %Q{the file "#{path}" did change}
+  watch(@app_rack.watcher, 1) do
+    write_file(path, contents)
+  end
 end
 
 Then /^the file "([^\"]*)" is removed$/ do |path|
-  step %Q{I remove the file "#{path}"}
-  step %Q{the file "#{path}" did delete}
+  watch(@app_rack.watcher, 1) do
+    step %Q{I remove the file "#{path}"}
+  end
 end
 
-Then /^the file "([^\"]*)" did change$/ do |path|
-  @server_inst.files.did_change(path)
-end
+# Then /^the listener should shutdown$/ do
+#   return unless @app_rack.watcher && @app_rack.watcher.listener
+#   @app_rack.watcher.listener.adapter.stop
+#   @app_rack.watcher.listener.adapter.started?.should == false
+# end
 
-Then /^the file "([^\"]*)" did delete$/ do |path|
-  @server_inst.files.did_delete(path)
+def watch(watcher, n, &block)
+  return yield unless watcher
+
+  watcher.wait_for_changes(1, &block)
 end

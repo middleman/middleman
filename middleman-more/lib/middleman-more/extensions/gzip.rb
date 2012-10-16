@@ -21,8 +21,8 @@ module Middleman::Extensions
         exts = options[:exts] || %w(.js .css .html .htm)
 
         app.after_build do |builder|
+          paths = ::Middleman::Util.all_files_under(self.build_dir)
 
-          paths = ::Middleman::Util.all_files_under(self.class.inst.build_dir)
           paths.each do |path|
             next unless exts.include? path.extname
 
