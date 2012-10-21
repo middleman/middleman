@@ -1,5 +1,6 @@
 # Used for merging results of metadata callbacks
 require "active_support/core_ext/hash/deep_merge"
+require 'monitor'
 
 module Middleman
 
@@ -25,6 +26,8 @@ module Middleman
         @_cached_metadata = {}
         @resource_list_manipulators = []
         @needs_sitemap_rebuild = true
+        @lock = Monitor.new
+
         reset_lookup_cache!
 
         # Register classes which can manipulate the main site map list
@@ -48,36 +51,44 @@ module Middleman
       # Rebuild the list of resources from scratch, using registed manipulators
       # @return [void]
       def rebuild_resource_list!(reason=nil)
-        @needs_sitemap_rebuild = true
+        @lock.synchronize do
+          @needs_sitemap_rebuild = true
+        end
       end
 
       # Find a resource given its original path
       # @param [String] request_path The original path of a resource.
       # @return [Middleman::Sitemap::Resource]
       def find_resource_by_path(request_path)
-        request_path = ::Middleman::Util.normalize_path(request_path)
-        ensure_resource_list_updated!
-        @_lookup_by_path[request_path]
+        @lock.synchronize do
+          request_path = ::Middleman::Util.normalize_path(request_path)
+          ensure_resource_list_updated!
+          @_lookup_by_path[request_path]
+        end
       end
 
       # Find a resource given its destination path
       # @param [String] request_path The destination (output) path of a resource.
       # @return [Middleman::Sitemap::Resource]
       def find_resource_by_destination_path(request_path)
-        request_path = ::Middleman::Util.normalize_path(request_path)
-        ensure_resource_list_updated!
-        @_lookup_by_destination_path[request_path]
+        @lock.synchronize do
+          request_path = ::Middleman::Util.normalize_path(request_path)
+          ensure_resource_list_updated!
+          @_lookup_by_destination_path[request_path]
+        end
       end
 
       # Get the array of all resources
       # @param [Boolean] include_ignored Whether to include ignored resources
       # @return [Array<Middleman::Sitemap::Resource>]
       def resources(include_ignored=false)
-        ensure_resource_list_updated!
-        if include_ignored
-          @resources
-        else
-          @resources.reject(&:ignored?)
+        @lock.synchronize do
+          ensure_resource_list_updated!
+          if include_ignored
+            @resources
+          else
+            @resources.reject(&:ignored?)
+          end
         end
       end
 
@@ -201,30 +212,34 @@ module Middleman
       # rebuild_resource_list! since the last time it was run. This is
       # very expensive!
       def ensure_resource_list_updated!
-        return unless @needs_sitemap_rebuild
-        @needs_sitemap_rebuild = false
+        @lock.synchronize do
+          return unless @needs_sitemap_rebuild
+          @needs_sitemap_rebuild = false
 
-        @app.logger.debug "== Rebuilding resource list"
+          @app.logger.debug "== Rebuilding resource list"
 
-        @resources = @resource_list_manipulators.inject([]) do |result, (_, inst)|
-          newres = inst.manipulate_resource_list(result)
+          @resources = @resource_list_manipulators.inject([]) do |result, (_, inst)|
+            newres = inst.manipulate_resource_list(result)
 
-          # Reset lookup cache
-          reset_lookup_cache!
-          newres.each do |resource|
-            @_lookup_by_path[resource.path] = resource
-            @_lookup_by_destination_path[resource.destination_path] = resource
+            # Reset lookup cache
+            reset_lookup_cache!
+            newres.each do |resource|
+              @_lookup_by_path[resource.path] = resource
+              @_lookup_by_destination_path[resource.destination_path] = resource
+            end
+
+            newres
           end
-
-          newres
         end
       end
 
       private
 
       def reset_lookup_cache!
-        @_lookup_by_path = {}
-        @_lookup_by_destination_path = {}
+        @lock.synchronize {
+          @_lookup_by_path = {}
+          @_lookup_by_destination_path = {}
+        }
       end
     end
   end
