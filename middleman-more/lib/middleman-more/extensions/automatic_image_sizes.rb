@@ -37,11 +37,13 @@ module Middleman
             real_path = File.join(images_dir, real_path) unless real_path =~ %r{^/}
             full_path = File.join(source_dir, real_path)
 
-            if File.exists? full_path
+            if File.exists?(full_path)
               begin
                 width, height = ::FastImage.size(full_path, :raise_on_failure => true)
                 params[:width]  = width
                 params[:height] = height
+              rescue FastImage::UnknownImageType
+                # No message, it's just not supported
               rescue
                 warn "Couldn't determine dimensions for image #{path}: #{$!.message}"
               end
