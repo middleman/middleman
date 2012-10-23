@@ -1,7 +1,16 @@
 Master
 ===
+
+3.0.6
+====
+* Make Sitemap more thread-safe.
+* Asset-hash fixes in conjunction with Sprockets.
+* Proxy improvements.
+* Handle directories with a tilde (~) in their path.
+* Print better error message which port is already in use.
+* Terminal signal improvements, shutsdown correctly when Terminal closed.
 * Bundled Normalize.css updated to 2.0.1
-* Fixed encoding extension activation
+* Fixed Encoding extension activation
 * Reload i18n on file changes (#616)
 
 3.0.5
