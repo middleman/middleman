@@ -1,6 +1,7 @@
 # Used for merging results of metadata callbacks
 require "active_support/core_ext/hash/deep_merge"
 require 'monitor'
+require "middleman-core/sitemap/queryable"
 
 module Middleman
 
@@ -17,6 +18,8 @@ module Middleman
 
       # @return [Middleman::Application]
       attr_accessor :app
+
+      include ::Middleman::Sitemap::Queryable::API
 
       # Initialize with parent app
       # @param [Middleman::Application] app
