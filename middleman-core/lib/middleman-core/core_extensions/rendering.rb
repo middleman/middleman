@@ -68,6 +68,13 @@ module Middleman
             app.register Middleman::Renderers::Less
           rescue LoadError
           end
+
+          # Stylus Support
+          begin
+            require "middleman-core/renderers/stylus"
+            app.register Middleman::Renderers::Stylus
+          rescue LoadError
+          end
         end
 
         alias :included :registered

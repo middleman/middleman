@@ -30,6 +30,7 @@ group :test do
   end
   
   gem "less", "~> 2.2"
+  gem "stylus"
 end
 
 gem "middleman-sprockets", :github => "middleman/middleman-sprockets"
