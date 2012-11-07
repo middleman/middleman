@@ -23,11 +23,12 @@ module Middleman
           )
           
           app.after_configuration do
-            sass_context_hack = {
+            context_hack = {
               :context => self
             }
-            ::Slim::EmbeddedEngine.default_options[:sass] = sass_context_hack
-            ::Slim::EmbeddedEngine.default_options[:scss] = sass_context_hack
+            %w(sass scss markdown).each do |engine|
+              ::Slim::EmbeddedEngine.default_options[engine.to_sym] = context_hack
+            end
           end
         end
 

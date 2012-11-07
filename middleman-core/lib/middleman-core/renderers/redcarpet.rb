@@ -5,6 +5,14 @@ module Middleman
 
     class RedcarpetTemplate < ::Tilt::RedcarpetTemplate::Redcarpet2
 
+      def initialize(*args, &block)
+        super
+        
+        if @options.has_key?(:context)
+          @context = @options[:context]
+        end
+      end
+
       # Overwrite built-in Tilt version.
       # Don't overload :renderer option with smartypants
       # Support renderer-level options
@@ -32,9 +40,11 @@ module Middleman
         renderer.new(render_options)
       end
 
-      def evaluate(scope, locals, &block)
+      def evaluate(context, locals, &block)
+        @context ||= context
+
         if @engine.renderer.respond_to? :middleman_app=
-          @engine.renderer.middleman_app = scope
+          @engine.renderer.middleman_app = @context
         end
         super
       end
