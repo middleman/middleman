@@ -3,7 +3,6 @@ require "webrick"
 module Middleman
   module PreviewServer
 
-    DEFAULT_HOST = '0.0.0.0'
     DEFAULT_PORT = 4567
 
     class << self
@@ -14,7 +13,7 @@ module Middleman
       # @return [void]
       def start(opts={})
         @options = opts
-        @host = @options[:host] || DEFAULT_HOST
+        @host = @options[:host] || Socket.gethostname
         @port = @options[:port] || DEFAULT_PORT
 
         mount_instance
