@@ -83,7 +83,7 @@ The best way to get quick responses to your issues and swift fixes to your bugs 
 
 # Donate
 
-[![Click here to lend your support to Middleman](https://www.pledgie.com/campaigns/15807.png)](http://www.pledgie.com/campaigns/15807)
+Please, [help support the Middleman team with a donation](https://spb.io/s/4dXbHBorC3).
 
 # License
 
