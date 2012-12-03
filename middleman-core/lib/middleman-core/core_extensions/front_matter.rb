@@ -31,7 +31,7 @@ module Middleman::CoreExtensions
           )
 
           sitemap.provides_metadata do |path|
-            fmdata = frontmatter_manager.data(path).first
+            fmdata = frontmatter_manager.data(path).first || {}
 
             data = {}
             %w(layout layout_engine).each do |opt|
@@ -158,7 +158,7 @@ module Middleman::CoreExtensions
       # @return [void]
       def manipulate_resource_list(resources)
         resources.each do |r|
-          if !r.proxy? && r.data["ignored"] == true
+          if !r.proxy? && !r.data.nil? && r.data["ignored"] == true
             r.frontmatter_ignored = true
           end
         end
