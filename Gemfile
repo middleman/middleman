@@ -20,7 +20,8 @@ group :test do
   # gem "cane"
 
   platforms :ruby do
-    gem "therubyracer", "0.10.2"
+    gem "therubyracer", :require => 'v8'
+    gem "libv8", "~> 3.11.8"
     
     gem "redcarpet", "~> 2.1.1"
   end
