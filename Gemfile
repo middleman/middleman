@@ -20,7 +20,7 @@ group :test do
   # gem "cane"
 
   platforms :ruby do
-    gem "therubyracer"
+    gem "therubyracer", "0.10.2"
     
     gem "redcarpet", "~> 2.1.1"
   end
