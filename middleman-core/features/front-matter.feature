@@ -70,3 +70,14 @@ Feature: YAML Front Matter
       """
     When I go to "/front-matter-change.html"
     Then I should see "Hola Mundo"
+
+  Scenario: A template should handle an empty YAML feed
+    Given the Server is running at "frontmatter-app"
+    And the file "source/front-matter-change.html.erb" has the contents
+    """
+    ---
+    ---
+    Hello World
+    """
+    When I go to "/front-matter-change.html"
+    Then I should see "Hello World"
