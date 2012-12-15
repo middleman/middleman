@@ -1,6 +1,15 @@
 Master
 ===
 
+3.0.7
+====
+
+* Turn html5 boilerplate into a layout
+* Fix errors when templates have empty YAML
+* Show the hostname when initializing MM
+* Fix issues when using Redcarpet inside Slim
+* Make automatic_image_sizes avoid SVGs
+
 3.0.6
 ====
 * Make Sitemap more thread-safe.
