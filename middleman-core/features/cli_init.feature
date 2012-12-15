@@ -50,9 +50,10 @@ Feature: Middleman CLI
     Then a directory named "source" should exist
     When I cd to "source"
     Then the following files should exist:
-      | index.html                                    |
+      | index.html.erb                                |
+      | layouts/layout.erb                            |
       | humans.txt                                    |
-      | js/main.js                                  |
+      | js/main.js                                    |
       
   Scenario: Create a new HTML5 project with Rack
     When I run `middleman init MY_PROJECT --rack --template=html5`
