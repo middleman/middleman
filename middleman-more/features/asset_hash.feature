@@ -104,3 +104,32 @@ Feature: Assets get a file hash appended to their and references to them are upd
     Then I should see 'Added by Rack filter'
     When I go to "stylesheets/site-50eaa978.css"
     Then I should see 'Not Found'
+
+  Scenario: Hashed-asset files are not produced for ignored paths
+    Given a fixture app "asset-hash-app"
+    And a file named "config.rb" with:
+      """
+      activate :asset_hash, :ignore => [%r(javascripts/*), 'images/*']
+      activate :relative_assets
+      activate :directory_indexes
+      """
+    And a successfully built app at "asset-hash-app"
+    When I cd to "build"
+    Then the following files should exist:
+      | index.html |
+      | apple-touch-icon.png |
+      | favicon.ico |
+      | images/100px.png |
+      | images/100px.jpg |
+      | images/100px.gif |
+      | javascripts/application.js |
+      | stylesheets/site-50eaa978.css |
+      | index.html |
+      | subdir/index.html |
+      | other/index.html |
+    And the following files should not exist:
+      | images/100px-1242c368.png |
+      | images/100px-5fd6fb90.jpg |
+      | images/100px-5fd6fb90.gif |
+      | javascripts/application-1d8d5276.js |
+      | stylesheets/site.css |
