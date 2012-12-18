@@ -90,7 +90,9 @@ module Middleman
     # @param path A path as a string
     # @return [Boolean] Whether the path matches the matcher
     def self.path_match(matcher, path)
-      if matcher.respond_to? :match
+      if matcher.is_a? String
+        path.match matcher
+      elsif matcher.respond_to? :match
         matcher.match path
       elsif matcher.respond_to? :call
         matcher.call path
