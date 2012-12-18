@@ -21,7 +21,7 @@ group :test do
 
   platforms :ruby do
     gem "therubyracer", :require => 'v8'
-    gem "libv8", "~> 3.11.8"
+    gem "libv8", "3.11.8.3"
     
     gem "redcarpet", "~> 2.1.1"
   end
