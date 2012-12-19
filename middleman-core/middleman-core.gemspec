@@ -34,6 +34,4 @@ Gem::Specification.new do |s|
   
   # Watcher
   s.add_dependency("listen", ["~> 0.5.2"])
-  s.add_dependency("rb-fsevent", ["~> 0.9.1"]) # Linux
-  s.add_dependency("rb-inotify", ["~> 0.8.8"]) # OS X
 end
