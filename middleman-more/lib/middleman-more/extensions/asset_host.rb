@@ -9,9 +9,12 @@ module Middleman
       class << self
 
         # Once registered
-        def registered(app)
-          # Default to no host
+        def registered(app, options={})
           app.config.define_setting :asset_host, false, 'The asset host to use, or false for no asset host, or a Proc to determine asset host'
+
+          if options[:host]
+            config[:asset_host] = options[:host]
+          end
 
           # Include methods
           app.send :include, InstanceMethods
