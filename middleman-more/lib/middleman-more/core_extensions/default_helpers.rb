@@ -158,8 +158,9 @@ module Middleman
                 else
                   new_url = resource.url
                 end
+                qs  = "?#{options.delete(:querystring).to_s}" if options[:querystring]
 
-                args[url_arg_index] = new_url
+                args[url_arg_index] = new_url + qs.to_s
               else
                 raise "No resource exists at #{url}" if relative
               end
