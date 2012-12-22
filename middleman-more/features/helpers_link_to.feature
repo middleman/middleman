@@ -91,3 +91,16 @@ Feature: link_to helper
     When I go to "/link_to.html"
     Then I should see '<a href="/foo/needs_index.html">Needs Index</a>'
 
+  Scenario: link_to preserves query string and anchor and isn't messed up by them
+    Given a fixture app "indexable-app"
+    And a file named "source/link_to.html.erb" with:
+    """
+    <%= link_to "Needs Index Anchor", "/needs_index.html#foo" %>
+    <%= link_to "Needs Index Query", "/needs_index.html?foo" %>
+    <%= link_to "Needs Index Query and Anchor", "/needs_index.html?foo#foo" %>
+    """
+    And the Server is running at "indexable-app"
+    When I go to "/link_to/"
+    Then I should see '<a href="/needs_index/#foo">Needs Index Anchor</a>'
+    Then I should see '<a href="/needs_index/?foo">Needs Index Query</a>'
+    Then I should see '<a href="/needs_index/?foo#foo">Needs Index Query and Anchor</a>'

@@ -130,11 +130,13 @@ module Middleman
               # Handle relative urls
               current_source_dir = Pathname('/' + current_resource.path).dirname
 
-              path = Pathname(url)
+              uri = URI(url)
+              url_path = uri.path
 
-              url = current_source_dir.join(path).to_s if path.relative?
+              path = Pathname(url_path)
+              url_path = current_source_dir.join(path).to_s if path.relative?
 
-              resource = sitemap.find_resource_by_path(url)
+              resource = sitemap.find_resource_by_path(url_path)
 
               # Allow people to turn on relative paths for all links with set :relative_links, true
               # but still override on a case by case basis with the :relative parameter.
@@ -159,7 +161,9 @@ module Middleman
                   new_url = resource.url
                 end
 
-                args[url_arg_index] = new_url
+                uri.path = new_url
+
+                args[url_arg_index] = uri.to_s
               else
                 raise "No resource exists at #{url}" if relative
               end
