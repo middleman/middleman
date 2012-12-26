@@ -1,3 +1,5 @@
+require "active_support/core_ext/hash/keys"
+
 # Extensions namespace
 module Middleman::CoreExtensions
 
@@ -34,8 +36,8 @@ module Middleman::CoreExtensions
             fmdata = frontmatter_manager.data(path).first || {}
 
             data = {}
-            %w(layout layout_engine).each do |opt|
-              data[opt.to_sym] = fmdata[opt] unless fmdata[opt].nil?
+            [:layout, :layout_engine].each do |opt|
+              data[opt] = fmdata[opt] unless fmdata[opt].nil?
             end
 
             { :options => data, :page => fmdata }
@@ -85,7 +87,7 @@ module Middleman::CoreExtensions
           content = content.sub(yaml_regex, "")
 
           begin
-            data = YAML.load($1)
+            data = YAML.load($1).symbolize_keys
           rescue *YAML_ERRORS => e
             logger.error "YAML Exception: #{e.message}"
             return false
@@ -108,7 +110,7 @@ module Middleman::CoreExtensions
 
           begin
             json = ($1+$2).sub(";;;", "{").sub(";;;", "}")
-            data = ActiveSupport::JSON.decode(json)
+            data = ActiveSupport::JSON.decode(json).symbolize_keys
           rescue => e
             logger.error "JSON Exception: #{e.message}"
             return false
@@ -147,7 +149,7 @@ module Middleman::CoreExtensions
           # Probably a binary file, move on
         end
 
-        [::Middleman::Util.recursively_enhance(data).freeze, content]
+        [data, content]
       end
 
       def normalize_path(path)
@@ -187,8 +189,18 @@ module Middleman::CoreExtensions
 
       # This page's frontmatter
       # @return [Hash]
-      def data
+      def raw_data
         app.frontmatter_manager.data(source_file).first
+      end
+
+      def data
+        @_last_raw ||= nil
+        @_last_enhanced ||= nil
+
+        if @_last_raw != raw_data
+          @_last_raw == raw_data
+          @_last_enhanced = ::Middleman::Util.recursively_enhance(raw_data).freeze
+        end
       end
 
     end
