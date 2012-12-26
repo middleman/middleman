@@ -40,8 +40,8 @@ module Middleman
                     File.extname(index_file) != resource.ext
 
             # Check if frontmatter turns directory_index off
-            d = resource.data
-            next if d && d["directory_index"] == false
+            d = resource.raw_data
+            next if d && d[:directory_index] == false
 
             # Check if file metadata (options set by "page" in config.rb) turns directory_index off
             if resource.metadata[:options] && resource.metadata[:options][:directory_index] == false
