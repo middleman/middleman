@@ -66,7 +66,7 @@ module Middleman
           status, headers, response = @rack_app.call(env)
 
           # We don't want to use this middleware when rendering files to figure out their hash!
-          return [status, headers, response] if env["bypass_asset_hash"]
+          return [status, headers, response] if env["bypass_asset_hash"] == 'true'
 
           path = @middleman_app.full_path(env["PATH_INFO"])
           dirpath = Pathname.new(File.dirname(path))

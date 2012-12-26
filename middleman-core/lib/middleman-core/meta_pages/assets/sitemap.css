@@ -1,0 +1,15 @@
+summary {
+    display: block;
+}
+
+details > details {
+    margin-left: 15px;
+}
+
+details.resource > summary {
+  font-weight: bold;
+}
+
+.resource-details {
+    margin-left: 15px;
+}
