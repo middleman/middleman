@@ -133,40 +133,41 @@ module Middleman
               uri = URI(url)
               url_path = uri.path
 
-              path = Pathname(url_path)
+              if url_path
+                path = Pathname(url_path)
+                url_path = current_source_dir.join(path).to_s if path.relative?
 
-              url_path = current_source_dir.join(path).to_s if path.relative?
+                resource = sitemap.find_resource_by_path(url_path)
 
-              resource = sitemap.find_resource_by_path(url_path)
-
-              # Allow people to turn on relative paths for all links with config[:relative_links] = true
-              # but still override on a case by case basis with the :relative parameter.
-              effective_relative = relative || false
-              if relative.nil? && config[:relative_links]
-                effective_relative = true
-              end
-
-              if resource
-                if effective_relative
-                  resource_url = resource.url
-
-                  # Output urls relative to the destination path, not the source path
-                  current_dir = Pathname('/' + current_resource.destination_path).dirname
-                  new_url = Pathname(resource_url).relative_path_from(current_dir).to_s
-
-                  # Put back the trailing slash to avoid unnecessary Apache redirects
-                  if resource_url.end_with?('/') && !new_url.end_with?('/')
-                    new_url << '/'
-                  end
-                else
-                  new_url = resource.url
+                # Allow people to turn on relative paths for all links with config[:relative_links] = true
+                # but still override on a case by case basis with the :relative parameter.
+                effective_relative = relative || false
+                if relative.nil? && config[:relative_links]
+                  effective_relative = true
                 end
 
-                uri.path = new_url
+                if resource
+                  if effective_relative
+                    resource_url = resource.url
 
-                args[url_arg_index] = uri.to_s
-              else
-                raise "No resource exists at #{url}" if relative
+                    # Output urls relative to the destination path, not the source path
+                    current_dir = Pathname('/' + current_resource.destination_path).dirname
+                    new_url = Pathname(resource_url).relative_path_from(current_dir).to_s
+
+                    # Put back the trailing slash to avoid unnecessary Apache redirects
+                    if resource_url.end_with?('/') && !new_url.end_with?('/')
+                      new_url << '/'
+                    end
+                  else
+                    new_url = resource.url
+                  end
+
+                  uri.path = new_url
+
+                  args[url_arg_index] = uri.to_s
+                else
+                  raise "No resource exists at #{url}" if relative
+                end
               end
             end
           end
