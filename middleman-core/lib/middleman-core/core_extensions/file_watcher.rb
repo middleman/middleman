@@ -88,6 +88,7 @@ module Middleman
         # @param [Pathname] path The file that changed
         # @return [void]
         def did_change(path)
+          path = Pathname(path)
           return if ignored?(path)
           logger.debug "== File Change: #{path}"
           @known_paths << path
@@ -99,6 +100,7 @@ module Middleman
         # @param [Pathname] path The file that was deleted
         # @return [void]
         def did_delete(path)
+          path = Pathname(path)
           return if ignored?(path)
           logger.debug "== File Deletion: #{path}"
           @known_paths.delete(path)
