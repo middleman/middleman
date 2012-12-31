@@ -245,6 +245,9 @@ module Middleman
           # Return 404 if not in sitemap
           return not_found(res, request_path) unless resource && !resource.ignored?
 
+          # If this path is a binary file, send it immediately
+          return send_file(resource.source_file, env, res) if resource.binary?
+
           current_path = resource.destination_path
 
           # Set a HTTP content type based on the request's extensions
