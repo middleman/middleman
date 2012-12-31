@@ -117,16 +117,20 @@ module Middleman::Cli
         build_dir = self.class.shared_instance.build_dir
         output_file = File.join(build_dir, resource.destination_path)
 
-        begin
-          response = self.class.shared_rack.get(URI.escape(resource.destination_path))
+        if resource.binary?
+          copy_file(resource.source_file, output_file)
+        else
+          begin
+            response = self.class.shared_rack.get(URI.escape(resource.destination_path))
 
-          if response.status == 200
-            create_file(output_file, response.body)
-          else
-            handle_error(output_file, response.body)
+            if response.status == 200
+              create_file(output_file, response.body)
+            else
+              handle_error(output_file, response.body)
+            end
+          rescue => e
+            handle_error(output_file, "#{e}\n#{e.backtrace.join("\n")}", e)
           end
-        rescue => e
-          handle_error(output_file, "#{e}\n#{e.backtrace.join("\n")}", e)
         end
 
         output_file

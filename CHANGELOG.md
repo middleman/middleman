@@ -1,6 +1,8 @@
 Master
 ===
 
+* Directly send binary files in preview and copy them in build, avoiding reading large binary files into memory for rendering. #643 #699
+
 3.0.7
 ====
 
