@@ -1,3 +1,5 @@
+require 'active_support/core_ext/object/to_query'
+
 module Middleman
   module CoreExtensions
     # Built-in helpers
@@ -113,6 +115,10 @@ module Middleman
         # config[:relative_links] = true
         #
         # to config.rb to have all links default to relative.
+        # 
+        # There is also a :query option that can be used to append a
+        # query string, which can be expressed as either a String,
+        # or a Hash which will be turned into URL parameters.
         def link_to(*args, &block)
           url_arg_index = block_given? ? 0 : 1
           options_index = block_given? ? 1 : 2
@@ -130,42 +136,56 @@ module Middleman
               # Handle relative urls
               current_source_dir = Pathname('/' + current_resource.path).dirname
 
-              path = Pathname(url)
+              uri = URI(url)
+              url_path = uri.path
 
-              url = current_source_dir.join(path).to_s if path.relative?
+              if url_path
+                path = Pathname(url_path)
+                url_path = current_source_dir.join(path).to_s if path.relative?
 
-              resource = sitemap.find_resource_by_path(url)
+                resource = sitemap.find_resource_by_path(url_path)
 
-              # Allow people to turn on relative paths for all links with config[:relative_links] = true
-              # but still override on a case by case basis with the :relative parameter.
-              effective_relative = relative || false
-              if relative.nil? && config[:relative_links]
-                effective_relative = true
-              end
-
-              if resource
-                if effective_relative
-                  resource_url = resource.url
-
-                  # Output urls relative to the destination path, not the source path
-                  current_dir = Pathname('/' + current_resource.destination_path).dirname
-                  new_url = Pathname(resource_url).relative_path_from(current_dir).to_s
-
-                  # Put back the trailing slash to avoid unnecessary Apache redirects
-                  if resource_url.end_with?('/') && !new_url.end_with?('/')
-                    new_url << '/'
-                  end
-                else
-                  new_url = resource.url
+                # Allow people to turn on relative paths for all links with config[:relative_links] = true
+                # but still override on a case by case basis with the :relative parameter.
+                effective_relative = relative || false
+                if relative.nil? && config[:relative_links]
+                  effective_relative = true
                 end
 
-                args[url_arg_index] = new_url
-              else
-                raise "No resource exists at #{url}" if relative
+                if resource
+                  if effective_relative
+                    resource_url = resource.url
+
+                    # Output urls relative to the destination path, not the source path
+                    current_dir = Pathname('/' + current_resource.destination_path).dirname
+                    new_url = Pathname(resource_url).relative_path_from(current_dir).to_s
+
+                    # Put back the trailing slash to avoid unnecessary Apache redirects
+                    if resource_url.end_with?('/') && !new_url.end_with?('/')
+                      new_url << '/'
+                    end
+                  else
+                    new_url = resource.url
+                  end
+
+                  uri.path = new_url
+
+                  args[url_arg_index] = uri.to_s
+                else
+                  raise "No resource exists at #{url}" if relative
+                end
               end
             end
           end
 
+          # Support a :query option that can be a string or hash
+          query = options.delete(:query)
+          if query
+            uri = URI(args[url_arg_index])
+            uri.query = query.respond_to?(:to_param) ? query.to_param : query.to_s
+            args[url_arg_index] = uri.to_s
+          end
+            
           super(*args, &block)
         end
       end
