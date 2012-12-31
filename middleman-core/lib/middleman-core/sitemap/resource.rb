@@ -111,7 +111,9 @@ module Middleman
       # Render this resource
       # @return [String]
       def render(opts={}, locs={}, &block)
-        return File.open(source_file).read unless template?
+        if !template?
+          return app.template_data_for_file(source_file)
+        end
 
         relative_source = Pathname(source_file).relative_path_from(Pathname(app.root))
 

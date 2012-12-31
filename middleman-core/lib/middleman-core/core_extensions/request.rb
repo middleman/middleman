@@ -247,9 +247,6 @@ module Middleman
 
           current_path = resource.destination_path
 
-          # If this path is a static file, send it immediately
-          return send_file(resource.source_file, env, res) unless resource.template?
-
           # Set a HTTP content type based on the request's extensions
           content_type(res, resource.mime_type)
 
