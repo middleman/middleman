@@ -104,3 +104,15 @@ Feature: link_to helper
     Then I should see '<a href="/needs_index/#foo">Needs Index Anchor</a>'
     Then I should see '<a href="/needs_index/?foo">Needs Index Query</a>'
     Then I should see '<a href="/needs_index/?foo#foo">Needs Index Query and Anchor</a>'
+
+  Scenario: link_to accepts a :query option that appends a query string
+    Given a fixture app "indexable-app"
+    And a file named "source/link_to.html.erb" with:
+    """
+    <%= link_to "Needs Index String", "/needs_index.html", :query => "foo" %>
+    <%= link_to "Needs Index Hash", "/needs_index.html", :query => { :foo => :bar } %>
+    """
+    And the Server is running at "indexable-app"
+    When I go to "/link_to/"
+    Then I should see '<a href="/needs_index/?foo">Needs Index String</a>'
+    Then I should see '<a href="/needs_index/?foo=bar">Needs Index Hash</a>'

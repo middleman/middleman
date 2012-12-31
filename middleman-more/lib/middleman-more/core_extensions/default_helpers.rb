@@ -1,3 +1,5 @@
+require 'active_support/core_ext/object/to_query'
+
 module Middleman
   module CoreExtensions
     # Built-in helpers
@@ -113,6 +115,10 @@ module Middleman
         # set :relative_links, true
         #
         # to config.rb to have all links default to relative.
+        # 
+        # There is also a :query option that can be used to append a
+        # query string, which can be expressed as either a String,
+        # or a Hash which will be turned into URL parameters.
         def link_to(*args, &block)
           url_arg_index = block_given? ? 0 : 1
           options_index = block_given? ? 1 : 2
@@ -172,6 +178,14 @@ module Middleman
             end
           end
 
+          # Support a :query option that can be a string or hash
+          query = options.delete(:query)
+          if query
+            uri = URI(args[url_arg_index])
+            uri.query = query.respond_to?(:to_param) ? query.to_param : query.to_s
+            args[url_arg_index] = uri.to_s
+          end
+            
           super(*args, &block)
         end
       end
