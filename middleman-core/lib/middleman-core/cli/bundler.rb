@@ -12,7 +12,7 @@ module Middleman::Cli
 
     # The setup task
     def bundle
-      run('bundle install --without development test')#, :capture => true)
+      run('bundle install')#, :capture => true)
     end
   end
 
