@@ -11,6 +11,16 @@ Feature: YAML Front Matter
     Then I should see "<?php"
     Then I should not see "---"
 
+  Scenario: Rendering raw (template-less) (yaml)
+    Given the Server is running at "frontmatter-app"
+    When I go to "/raw-front-matter.html"
+    Then I should see "<h1><%= data.page.title %></h1>"
+    Then I should not see "---"
+    When I go to "/raw-front-matter.php"
+    Then I should see '<?php echo "sup"; ?>'
+    Then I should see "<?php"
+    Then I should not see "---"
+
   Scenario: YAML not on first line, no encoding
     Given the Server is running at "frontmatter-app"
     When I go to "/front-matter-line-2.html"
