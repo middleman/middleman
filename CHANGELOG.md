@@ -1,7 +1,13 @@
 Master
 ===
 
+3.0.8
+====
+
 * Directly send binary files in preview and copy them in build, avoiding reading large binary files into memory for rendering. #643 #699
+* Make link_to helper ignore QueryString values when looking up Sitemap resources
+* Directly copy binary files during build, and stream them during preview, to avoid reading them into memory
+* Make sure all paths in Sitemap are using Pathname
 
 3.0.7
 ====
