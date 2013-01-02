@@ -136,8 +136,11 @@ module Middleman
               # Handle relative urls
               current_source_dir = Pathname('/' + current_resource.path).dirname
 
-              uri = URI(url)
-              url_path = uri.path
+              begin
+                uri = URI(url)
+                url_path = uri.path
+              rescue
+              end
 
               if url_path
                 path = Pathname(url_path)
