@@ -1,4 +1,5 @@
 require "middleman-core"
+require "fileutils"
 
 # CLI Module
 module Middleman::Cli
@@ -118,7 +119,17 @@ module Middleman::Cli
         output_file = File.join(build_dir, resource.destination_path)
 
         if resource.binary?
-          copy_file(resource.source_file, output_file)
+          if !File.exists?(output_file)
+            say_status :create, output_file, :green
+          elsif FileUtils.compare_file(resource.source_file, output_file)
+            say_status :identical, output_file, :blue
+            return output_file
+          else
+            say_status :update, output_file, :yellow
+          end
+
+          FileUtils.mkdir_p(File.dirname(output_file))
+          FileUtils.cp(resource.source_file, output_file)
         else
           begin
             response = self.class.shared_rack.get(URI.escape(resource.destination_path))
