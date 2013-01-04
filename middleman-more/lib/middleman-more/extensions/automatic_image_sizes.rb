@@ -30,11 +30,7 @@ module Middleman
         # @param [Hash] params
         # @return [String]
         def image_tag(path, params={})
-          params[:supported_extensions] ||= %w(.png .jpg .jpeg .bmp .gif)
-          
-          if !params.has_key?(:width) && !params.has_key?(:height) && !path.include?("://") &&
-            params[:supported_extensions].include?(File.extname(path).downcase)
-            
+          if !params.has_key?(:width) && !params.has_key?(:height) && !path.include?("://")
             params[:alt] ||= ""
 
             real_path = path
@@ -53,8 +49,6 @@ module Middleman
               end
             end
           end
-          
-          params = params.delete_if {|key| key == :supported_extensions }
 
           super(path, params)
         end
