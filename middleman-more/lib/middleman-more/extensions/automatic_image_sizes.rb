@@ -53,6 +53,8 @@ module Middleman
               end
             end
           end
+          
+          params = params.delete_if {|key| key == :supported_extensions }
 
           super(path, params)
         end
