@@ -28,12 +28,15 @@ module Middleman
               config.environment     = :development
               config.cache_path      = sass_cache_path
               config.sass_dir        = css_dir
-              config.additional_import_paths = sass_assets_paths
               config.css_dir         = css_dir
               config.javascripts_dir = js_dir
               config.fonts_dir       = fonts_dir
               config.images_dir      = images_dir
               config.http_path       = http_prefix
+
+              sass_assets_paths.each do |path|
+                config.add_import_path path
+              end
 
               # Disable this initially, the cache_buster extension will
               # re-enable it if requested.
