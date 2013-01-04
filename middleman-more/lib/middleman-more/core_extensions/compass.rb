@@ -28,19 +28,22 @@ module Middleman
               compass_config.environment     = :development
               compass_config.cache_path      = config[:sass_cache_path]
               compass_config.sass_dir        = config[:css_dir]
-              compass_config.additional_import_paths = config[:sass_assets_paths]
               compass_config.css_dir         = config[:css_dir]
               compass_config.javascripts_dir = config[:js_dir]
               compass_config.fonts_dir       = config[:fonts_dir]
               compass_config.images_dir      = config[:images_dir]
               compass_config.http_path       = config[:http_prefix]
 
+              config[:sass_assets_paths].each do |path|
+                compass_config.add_import_path path
+              end
+
               # Disable this initially, the cache_buster extension will
               # re-enable it if requested.
               compass_config.asset_cache_buster :none
 
               # Disable this initially, the relative_assets extension will
-              # re-enable it if requested.
+
               compass_config.relative_assets = false
 
               # Default output style
