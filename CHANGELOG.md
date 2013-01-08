@@ -1,6 +1,12 @@
 Master
 ===
 
+3.0.9
+====
+
+* Lock Rack to 1.4.1 until BodyProxy bug is resolved. #709
+* Safely de-register Tilt extensions which are missing gems. #713
+
 3.0.8
 ====
 
