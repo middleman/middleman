@@ -75,6 +75,19 @@ module Middleman
             app.register Middleman::Renderers::Stylus
           rescue LoadError
           end
+
+          # Clean up missing Tilt exts
+          app.after_configuration do
+            Tilt.mappings.each do |key, klasses|
+              begin
+                Tilt[".#{key}"]
+              rescue LoadError
+                Tilt.mappings.delete(key)
+              rescue NameError
+                Tilt.mappings.delete(key)
+              end
+            end
+          end
         end
 
         alias :included :registered
