@@ -129,8 +129,10 @@ module Middleman
 
             # Handle Resources, which define their own url method
             if url.respond_to? :url
-              args[url_arg_index] = url.url
-            elsif url.include? '://'
+              url = args[url_arg_index] = url.url
+            end
+
+            if url.include? '://'
               raise "Can't use the relative option with an external URL" if relative
             elsif current_resource
               # Handle relative urls
