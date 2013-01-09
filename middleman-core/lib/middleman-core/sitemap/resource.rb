@@ -1,5 +1,7 @@
 require "middleman-core/sitemap/extensions/traversal"
 
+require 'win32/file' if File::ALT_SEPARATOR
+
 module Middleman
 
   # Sitemap namespace
