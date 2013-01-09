@@ -66,18 +66,12 @@ module Middleman
     # @param response The response from #call
     # @return [String] The whole response as a string.
     def self.extract_response_text(response)
-      case(response)
-      when String
-        response
-      when Array
-        response.join
-      when Rack::Response
-        response.body.join
-      when Rack::File
-        File.read(response.path)
-      else
-        response.to_s
+      # The rack spec states all response bodies must respond to each
+      result = ''
+      response.each do |part, s|
+        result << part
       end
+      result
     end
 
     # Takes a matcher, which can be a literal string
