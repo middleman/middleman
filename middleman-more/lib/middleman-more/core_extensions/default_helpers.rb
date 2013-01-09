@@ -181,14 +181,13 @@ module Middleman
                 end
               end
             end
-          end
 
-          # Support a :query option that can be a string or hash
-          query = options.delete(:query)
-          if query
-            uri = URI(args[url_arg_index])
-            uri.query = query.respond_to?(:to_param) ? query.to_param : query.to_s
-            args[url_arg_index] = uri.to_s
+            # Support a :query option that can be a string or hash
+            if query = options.delete(:query)
+              uri = URI(args[url_arg_index])
+              uri.query = query.respond_to?(:to_param) ? query.to_param : query.to_s
+              args[url_arg_index] = uri.to_s
+            end
           end
             
           super(*args, &block)
