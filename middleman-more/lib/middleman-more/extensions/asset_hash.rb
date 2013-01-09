@@ -7,7 +7,7 @@ module Middleman
           require 'rack/test'
           require 'uri'
 
-          exts = options[:exts] || %w(.jpg .jpeg .png .gif .js .css)
+          exts = options[:exts] || %w(.jpg .jpeg .png .gif .js .css .otf .woff .eot .ttf)
 
           # Allow specifying regexes to ignore, plus always ignore apple touch icons
           ignore = Array(options[:ignore]) << /^apple-touch-icon/
