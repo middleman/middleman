@@ -1,6 +1,22 @@
 Master
 ===
 
+3.0.10
+====
+
+* Avoid looking in binary files for frontmatter. #728
+* Allow nested i18n files. #725
+* Better adapt to Rack interface. #709
+
+3.0.9
+====
+
+* Lock Rack to 1.4.1 until BodyProxy bug is resolved. #709
+* Safely de-register Tilt extensions which are missing gems. #713
+
+3.0.8
+====
+
 * Directly send binary files in preview and copy them in build, avoiding reading large binary files into memory for rendering. #643 #699
 
 3.0.7

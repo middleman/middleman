@@ -13,12 +13,7 @@ module Middleman
 
           # Needed for helpers as well
           app.after_configuration do
-            locales_glob = File.join(config[:locales_dir], "*.yml");
-
-            ::I18n.load_path += Dir[File.join(root, locales_glob)]
-            ::I18n.reload!
-
-            Localizer.new(self, locales_glob, options)
+            Localizer.new(self, options)
           end
         end
         alias :included :registered
@@ -29,11 +24,18 @@ module Middleman
         attr_reader :app
         delegate :logger, :to => :app
 
-        def initialize(app, locales_glob, options={})
+        def initialize(app, options={})
           @app = app
-          @locales_glob = locales_glob
+          @locales_glob = File.join(app.locales_dir, "**", "*.{rb,yml}")
+
+          regex = @locales_glob.sub(/\./, '\.').sub(File.join("**", "*"), ".*").sub(/\//, '\/').sub("{rb,yml}", "rb|yml")
+          @locales_regex = %r{^#{regex}}
+
           @maps = {}
           @options = options
+
+          ::I18n.load_path += Dir[File.join(app.root, @locales_glob)]
+          ::I18n.reload!
 
           @lang_map      = @options[:lang_map]      || {}
           @path          = @options[:path]          || "/:locale/"
@@ -71,7 +73,7 @@ module Middleman
         end
 
         def on_file_changed(file)
-          if File.fnmatch(@locales_glob, file)
+          if @locales_regex.match(file)
             ::I18n.reload!
           end
         end
@@ -79,7 +81,7 @@ module Middleman
         def langs
           @options[:langs] || begin
             Dir[File.join(@app.root, @locales_glob)].map { |file|
-              File.basename(file).gsub(".yml", "")
+              File.basename(file).sub(/\.yml$/, "").sub(/\.rb$/, "")
             }.sort.map(&:to_sym)
           end
         end
