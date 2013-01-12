@@ -128,23 +128,27 @@ module Middleman::CoreExtensions
       # @return [Array<Thor::CoreExt::HashWithIndifferentAccess, String>]
       def frontmatter_and_content(path)
         full_path = File.expand_path(File.join(@app.source_dir, path))
-        content = File.read(full_path)
         data = {}
+        content = nil
 
-        begin
-          if content =~ /\A.*coding:/
-            lines = content.split(/\n/)
-            lines.shift
-            content = lines.join("\n")
-          end
+        if !::Middleman::Util.binary?(full_path)
+          content = File.read(full_path)
+          
+          begin
+            if content =~ /\A.*coding:/
+              lines = content.split(/\n/)
+              lines.shift
+              content = lines.join("\n")
+            end
 
-          if result = parse_yaml_front_matter(content)
-            data, content = result
-          elsif result = parse_json_front_matter(content)
-            data, content = result
+            if result = parse_yaml_front_matter(content)
+              data, content = result
+            elsif result = parse_json_front_matter(content)
+              data, content = result
+            end
+          rescue => e
+            # Probably a binary file, move on
           end
-        rescue => e
-          # Probably a binary file, move on
         end
 
         [::Middleman::Util.recursively_enhance(data).freeze, content]

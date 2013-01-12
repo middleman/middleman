@@ -1,7 +1,5 @@
 require "middleman-core/sitemap/extensions/traversal"
 
-require 'win32/file' if File::ALT_SEPARATOR
-
 module Middleman
 
   # Sitemap namespace
@@ -153,8 +151,7 @@ module Middleman
       #
       # @retrun [Boolean]
       def binary?
-        s = (File.read(source_file, File.stat(source_file).blksize) || "").split(//)
-        ((s.size - s.grep(" ".."~").size) / s.size.to_f) > 0.30
+        ::Middleman::Util.binary?(source_file)
       end
     end
   end
