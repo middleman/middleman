@@ -22,6 +22,9 @@ group :test do
   gem "pry"
   gem "pry-debugger"
 
+  gem "pry"
+  gem "pry-debugger"
+
   platforms :ruby do
     gem "therubyracer", "0.10.2"
     
