@@ -10,9 +10,20 @@ require "thor"
 # Core Pathname library used for traversal
 require "pathname"
 
+require 'win32/file' if File::ALT_SEPARATOR
+
 module Middleman
 
   module Util
+
+    # Whether the source file is binary.
+    #
+    # @param [String] filename The file to check.
+    # @return [Boolean]
+    def self.binary?(filename)
+      s = (File.read(filename, File.stat(filename).blksize) || "").split(//)
+      ((s.size - s.grep(" ".."~").size) / s.size.to_f) > 0.30
+    end
 
     # The logger
     #
