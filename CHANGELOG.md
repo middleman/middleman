@@ -1,6 +1,13 @@
 Master
 ===
 
+3.0.10
+====
+
+* Avoid looking in binary files for frontmatter. #728
+* Allow nested i18n files. #725
+* Better adapt to Rack interface. #709
+
 3.0.9
 ====
 
