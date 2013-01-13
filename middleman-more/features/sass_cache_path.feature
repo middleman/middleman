@@ -1,6 +1,6 @@
-Feature: SASS .sass_cache custom location
+Feature: SASS .sass-cache custom location
 
-  Scenario: Using the default location for .sass_cache folder
+  Scenario: Using the default location for .sass-cache folder
     Given the Server is running at "sass-cache-path-default-app"
 
     When I go to "/stylesheets/plain.css"
@@ -10,10 +10,10 @@ Feature: SASS .sass_cache custom location
     #  Not sure how to test this location, as the directory is stored outside of the app root
     #  during testing, but inside app root in "production"
 
-    # Then a directory named ".sass_cache" should exist
+    # Then a directory named ".sass-cache" should exist
 
 
-  Scenario: Using a custom location for .sass_cache folder
+  Scenario: Using a custom location for .sass-cache folder
     Given the Server is running at "sass-cache-path-custom-app"
 
     When I go to "/stylesheets/plain.css"
