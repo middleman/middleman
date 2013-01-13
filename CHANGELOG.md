@@ -7,6 +7,7 @@ Master
 * Avoid looking in binary files for frontmatter. #728
 * Allow nested i18n files. #725
 * Better adapt to Rack interface. #709
+* Add --force-polling flag. #730, #644
 
 3.0.9
 ====
