@@ -80,14 +80,14 @@ module Middleman
       end
 
       def start_file_watcher
-        return if @options[:"disable-watcher"]
+        return if @options[:disable_watcher]
 
         first_run = !@listener
 
         if first_run
           # Watcher Library
           require "listen"
-          @listener = Listen.to(Dir.pwd, :relative_paths => true)
+          @listener = Listen.to(Dir.pwd, :relative_paths => true, :force_polling => @options[:force_polling])
         end
 
         @listener.change do |modified, added, removed|

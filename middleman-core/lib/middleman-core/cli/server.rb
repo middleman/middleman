@@ -29,7 +29,7 @@ module Middleman::Cli
       :type    => :string,
       :default => false,
       :desc    => 'Print instrument messages'
-    method_option "disable-watcher",
+    method_option :disable_watcher,
       :type    => :boolean,
       :default => false,
       :desc    => 'Disable the file change and delete watcher process'
@@ -41,6 +41,10 @@ module Middleman::Cli
       :type    => :string,
       :default => false,
       :desc    => 'Additional paths to auto-reload when files change'
+    method_option :force_polling,
+      :type    => :boolean,
+      :default => false,
+      :desc    => 'Force file watcher into polling mode'
 
     # Start the server
     def server
@@ -60,8 +64,9 @@ module Middleman::Cli
         :environment       => options["environment"],
         :debug             => options["verbose"],
         :instrumenting     => options["instrument"],
-        :"disable-watcher" => options["disable-watcher"],
-        :reload_paths      => options["reload_paths"]
+        :disable_watcher   => options["disable_watcher"],
+        :reload_paths      => options["reload_paths"],
+        :force_polling     => options["force_polling"]
       }
 
       puts "== The Middleman is loading"
