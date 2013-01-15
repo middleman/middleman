@@ -19,11 +19,8 @@ group :test do
   gem "liquid", "~> 2.2"
   # gem "cane"
 
-  gem "pry"
-  gem "pry-debugger"
-
-  gem "pry"
-  gem "pry-debugger"
+  # gem "pry"
+  # gem "pry-debugger"
 
   platforms :ruby do
     gem "therubyracer", "0.10.2"
