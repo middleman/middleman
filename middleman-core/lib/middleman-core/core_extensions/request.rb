@@ -248,7 +248,7 @@ module Middleman
           current_path = resource.destination_path
 
           # Set a HTTP content type based on the request's extensions
-          content_type(res, resource.mime_type)
+          content_type(res, mime_type(resource.ext))
 
           begin
             # Write out the contents of the page
@@ -277,6 +277,7 @@ module Middleman
         # @return [void]
         def mime_type(type, value=nil)
           return type if type.nil? || type.to_s.include?('/')
+          return ::Rack::Mime.mime_type('.txt') if type.empty?
           type = ".#{type}" unless type.to_s[0] == ?.
           return ::Rack::Mime.mime_type(type, nil) unless value
           ::Rack::Mime::MIME_TYPES[type] = value
@@ -311,7 +312,7 @@ module Middleman
         # @param [Hash] params
         # @return [void]
         def content_type(res, type, params={})
-          return res['Content-Type'] unless type
+          return unless type
           default = params.delete :default
           mime_type = mime_type(type) || default
           throw "Unknown media type: %p" % type if mime_type.nil?
