@@ -11,6 +11,7 @@ Feature: Directory Index
       | wildcard_leave_me_alone.html                  |
       | regular/index.html                            |
       | .htaccess                                     |
+      | .htpasswd                                     |
     Then the following files should not exist:
       | egular/index/index.html                       |
       | needs_index.html                              |
