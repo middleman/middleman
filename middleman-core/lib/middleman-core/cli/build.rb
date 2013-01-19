@@ -220,7 +220,7 @@ module Middleman::Cli
 
       paths = ::Middleman::Util.all_files_under(@destination)
       @cleaning_queue += paths.select do |path|
-        !path.to_s.match(/\/\./) || path.to_s.match(/\.htaccess/)
+        !path.to_s.match(/\/\./) || path.to_s.match(/\.htaccess|\.htpasswd/)
       end
     end
 
