@@ -14,6 +14,7 @@ Feature: Builder
       | images/Read me (example).txt                  |
       | images/Child folder/regular_file(example).txt |
       | .htaccess                                     |
+      | .htpasswd                                     |
       | feed.xml                                      |
     Then the following files should not exist:
       | _partial                                      |
