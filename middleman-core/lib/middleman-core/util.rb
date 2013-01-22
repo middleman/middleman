@@ -10,8 +10,6 @@ require "thor"
 # Core Pathname library used for traversal
 require "pathname"
 
-require 'win32/file' if File::ALT_SEPARATOR
-
 module Middleman
 
   module Util
@@ -21,8 +19,17 @@ module Middleman
     # @param [String] filename The file to check.
     # @return [Boolean]
     def self.binary?(filename)
-      s = (File.read(filename, File.stat(filename).blksize) || "").split(//)
-      ((s.size - s.grep(" ".."~").size) / s.size.to_f) > 0.30
+      ext = File.extname(filename)
+      return false if Tilt.registered?(ext.sub('.',''))
+
+      ext = ".#{ext}" unless ext.to_s[0] == ?.
+      mime = ::Rack::Mime.mime_type(ext, nil) 
+      return false unless mime
+      return false if mime.start_with?('text/')
+      return false if mime.include?('xml')
+      return false if mime.include?('json')
+      return false if mime.include?('javascript')
+      true
     end
 
     # The logger
