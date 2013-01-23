@@ -35,7 +35,4 @@ Gem::Specification.new do |s|
   # Watcher
   s.add_dependency("listen", ["~> 0.5.2"])
   s.add_dependency("wdm", ["~> 0.0.3"]) # Windows
-
-  # Detect binary
-  s.add_dependency('win32-file', '>= 0.5.4')
 end
