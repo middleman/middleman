@@ -102,12 +102,6 @@ module Middleman
         File.extname(path)
       end
 
-      # Mime type of the path
-      # @return [String]
-      def mime_type
-        app.mime_type ext
-      end
-
       # Render this resource
       # @return [String]
       def render(opts={}, locs={}, &block)
