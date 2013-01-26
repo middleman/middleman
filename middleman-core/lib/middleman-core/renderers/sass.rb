@@ -16,12 +16,11 @@ module Middleman
 
           # Location of SASS .sass-cache directory.
           # @return [String]
-          app.config.define_setting :sass_cache_path, nil, 'Location of sass cache' # runtime compile of path
+          app.config.define_setting :sass_cache_path, File.join(app.root_path, '.sass-cache'), 'Location of sass cache' # runtime compile of path
 
           app.before_configuration do
             template_extensions :scss => :css,
                                 :sass => :css
-            config[:sass_cache_path] = File.join(app.root_path, '.sass-cache')
           end
 
           # Tell Tilt to use it as well (for inline sass blocks)

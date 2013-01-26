@@ -1,6 +1,5 @@
 # -*- encoding: utf-8 -*-
-$:.push File.expand_path("../lib", __FILE__)
-require "middleman-core/version"
+require File.expand_path("../lib/middleman-core/version", __FILE__)
 
 Gem::Specification.new do |s|
   s.name        = "middleman-core"
@@ -27,7 +26,7 @@ Gem::Specification.new do |s|
   s.add_dependency("rack-test", ["~> 0.6.1"])
   
   # CLI
-  s.add_dependency("thor", ["~> 0.15.4"])
+  s.add_dependency("thor", [">= 0.15.4", "~> 0.15"])
   
   # Helpers
   s.add_dependency("activesupport", ["~> 3.2.6"])
