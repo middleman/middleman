@@ -68,7 +68,7 @@ module Middleman::Cli
         if defined?(Bundler)
           self.shell.say "There were errors during this build, re-run with `bundle exec 'middleman build --verbose'` to see the full exception."
         else
-          self.shell.say "There were errors during this build, re-run with `middleman --verbose` to see the full exception."
+          self.shell.say "There were errors during this build, re-run with `middleman build --verbose` to see the full exception."
         end
       end
 
