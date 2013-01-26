@@ -21,6 +21,40 @@ Feature: link_to helper
     Then I should see 'absolute: <a href="../needs_index.html">Needs Index</a>'
     Then I should see 'relative: <a href="../needs_index.html">Relative</a>'
 
+  Scenario: link_to relative works with strip_index_file
+    Given a fixture app "indexable-app"
+    And a file named "config.rb" with:
+    """
+    set :relative_links, true
+    set :strip_index_file, true
+    helpers do
+      def menu_items(path='link_to.html')
+        sitemap.find_resource_by_destination_path(path).children
+      end
+    end
+    """
+    And a file named "source/link_to.html.erb" with:
+    """
+    <% menu_items.each do |item| %>
+        <%= link_to(item.metadata[:page]['title'], item.url) %>
+        <%= link_to(item.metadata[:page]['title'], item) %>
+    <% end %>
+    """
+    And a file named "source/link_to/sub.html.erb" with:
+    """
+    <% menu_items.each do |item| %>
+        <%= link_to(item.metadata[:page]['title'], item.url) %>
+        <%= link_to(item.metadata[:page]['title'], item) %>
+    <% end %>
+    """
+    And the Server is running at "indexable-app"
+    When I go to "/link_to.html"
+    Then I should see '"link_to/sub.html"'
+    Then I should not see "/link_to/sub.html"
+    When I go to "/link_to/sub.html"
+    Then I should see '"sub.html"'
+    Then I should not see "/link_to/sub.html"
+
   Scenario: link_to produces relative links when :relative_links is set to true
     Given a fixture app "indexable-app"
     And a file named "config.rb" with:
