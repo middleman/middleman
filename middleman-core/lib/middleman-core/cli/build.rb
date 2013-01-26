@@ -65,7 +65,11 @@ module Middleman::Cli
       action GlobAction.new(self, opts)
 
       if @had_errors && !@debugging
-        self.shell.say "There were errors during this build, re-run with --verbose to see the full exception."
+        if defined?(Bundler)
+          self.shell.say "There were errors during this build, re-run with `bundle exec 'middleman build --verbose'` to see the full exception."
+        else
+          self.shell.say "There were errors during this build, re-run with `middleman build --verbose` to see the full exception."
+        end
       end
 
       exit(1) if @had_errors
