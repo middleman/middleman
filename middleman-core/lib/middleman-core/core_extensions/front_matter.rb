@@ -70,8 +70,9 @@ module Middleman::CoreExtensions
         @cache.delete(path)
       end
 
-      YAML_ERRORS = [ Exception, ArgumentError ]
+      YAML_ERRORS = [ StandardError ]
 
+      # https://github.com/tenderlove/psych/issues/23
       if defined?(Psych) && defined?(Psych::SyntaxError)
         YAML_ERRORS << Psych::SyntaxError
       end
