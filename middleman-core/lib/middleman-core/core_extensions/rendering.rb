@@ -19,6 +19,9 @@ module Middleman
           # Include methods
           app.send :include, InstanceMethods
 
+          app.define_hook :before_render
+          app.define_hook :after_render
+
           # Activate custom renderers
           require "middleman-core/renderers/erb"
           app.register Middleman::Renderers::ERb
@@ -249,7 +252,10 @@ module Middleman
           end
 
           # Render using Tilt
-          template.render(context, locs, &block)
+          run_hook :before_render, template.data, template
+          content = template.render(context, locs, &block)
+          run_hook :after_render, content, template
+          return content
         ensure
           # Reset stored buffer
           @_out_buf = _buf_was
