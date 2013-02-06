@@ -71,7 +71,7 @@ The best way to get quick responses to your issues and swift fixes to your bugs 
 
 # Build & Dependency Status
 
-[![Build Status](https://secure.travis-ci.org/middleman/middleman.png?branch=master)](http://travis-ci.org/middleman/middleman)
+[![Build Status](https://travis-ci.org/middleman/middleman.png)](https://travis-ci.org/middleman/middleman)
 [![Dependency Status](https://gemnasium.com/middleman/middleman.png?travis)](https://gemnasium.com/middleman/middleman)
 
 # How to Run Cucumber Tests
@@ -83,7 +83,7 @@ The best way to get quick responses to your issues and swift fixes to your bugs 
 
 # Donate
 
-Please, [help support the Middleman team with a donation](https://spb.io/s/4dXbHBorC3).
+[Click here to lend your support to Middleman](https://spacebox.io/s/4dXbHBorC3)
 
 # License
 
