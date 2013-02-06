@@ -26,7 +26,7 @@ module Middleman
       mime = ::Rack::Mime.mime_type(ext, nil) 
       unless mime
         binary_bytes = [0, 1, 2, 3, 4, 5, 6, 11, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 28, 29, 30, 31]
-        s = File.read(filename, File.stat(filename).blksize) || ''        
+        s = File.read(filename, 4096) || ''        
         s.each_byte do |c|
           return true if binary_bytes.include?(c)          
         end
