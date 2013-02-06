@@ -194,8 +194,13 @@ module Middleman
           url_arg_index = block_given? ? 0 : 1
           options_index = block_given? ? 1 : 2
 
+          if block_given? && args.size > 2
+            raise ArgumentError.new("Too many arguments to link_to(url, options={}, &block)")
+          end
+
           if url = args[url_arg_index]
             options = args[options_index] || {}
+            raise ArgumentError.new("Options must be a hash") unless options.is_a?(Hash)
             
             # Transform the url through our magic url_for method
             args[url_arg_index] = url_for(url, options)
