@@ -20,6 +20,7 @@ module Middleman
     # @return [Boolean]
     def self.binary?(filename)
       ext = File.extname(filename)
+      return true if ext == '.svgz'
       return false if Tilt.registered?(ext.sub('.',''))
 
       ext = ".#{ext}" unless ext.to_s[0] == ?.
