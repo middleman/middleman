@@ -40,7 +40,7 @@ module Middleman::CoreExtensions
               data[opt] = fmdata[opt] unless fmdata[opt].nil?
             end
 
-            { :options => data, :page => fmdata }
+            { :options => data, :page => ::Middleman::Util.recursively_enhance(fmdata).freeze }
           end
         end
       end
@@ -199,15 +199,8 @@ module Middleman::CoreExtensions
       end
 
       def data
-        @_last_raw ||= nil
-        @_last_enhanced ||= nil
-
-        if @_last_raw != raw_data
-          @_last_raw == raw_data
-          @_last_enhanced = ::Middleman::Util.recursively_enhance(raw_data).freeze
-        end
+        ::Middleman::Util.recursively_enhance(raw_data).freeze
       end
-
     end
 
     module InstanceMethods
