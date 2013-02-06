@@ -1,3 +1,5 @@
+require 'pathname'
+
 # Extensions namespace
 module Middleman::CoreExtensions
 
@@ -128,7 +130,12 @@ module Middleman::CoreExtensions
       # @param [String] path
       # @return [Array<Thor::CoreExt::HashWithIndifferentAccess, String>]
       def frontmatter_and_content(path)
-        full_path = File.expand_path(File.join(@app.source_dir, path))
+        full_path = if Pathname(path).relative?
+          File.join(@app.source_dir, path)
+        else
+          path
+        end
+        
         data = {}
         content = nil
 
@@ -156,7 +163,7 @@ module Middleman::CoreExtensions
       end
 
       def normalize_path(path)
-        path.sub(@app.source_dir, "").sub(/^\//, "")
+        path.sub(%r{^#{@app.source_dir}\/}, "")
       end
 
       # Update the main sitemap resource list
