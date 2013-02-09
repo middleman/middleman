@@ -10,6 +10,9 @@ require "thor"
 # Core Pathname library used for traversal
 require "pathname"
 
+require "tilt"
+require "rack/mime"
+
 module Middleman
 
   module Util
