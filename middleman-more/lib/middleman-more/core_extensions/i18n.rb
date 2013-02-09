@@ -26,9 +26,9 @@ module Middleman
 
         def initialize(app, options={})
           @app = app
-          @locales_glob = File.join(app.locales_dir, "**", "*.{rb,yml}")
+          @locales_glob = File.join(app.locales_dir, "**", "*.{rb,yml,yaml}")
 
-          regex = @locales_glob.sub(/\./, '\.').sub(File.join("**", "*"), ".*").sub(/\//, '\/').sub("{rb,yml}", "rb|yml")
+          regex = @locales_glob.sub(/\./, '\.').sub(File.join("**", "*"), ".*").sub(/\//, '\/').sub("{rb,yml,yaml}", "rb|ya?ml")
           @locales_regex = %r{^#{regex}}
 
           @maps = {}
@@ -88,7 +88,7 @@ module Middleman
             Array(@options[:langs]).map(&:to_sym)
           else
             Dir[File.join(@app.root, @locales_glob)].map { |file|
-              File.basename(file).sub(/\.yml$/, "").sub(/\.rb$/, "")
+              File.basename(file).sub(/\.ya?ml$/, "").sub(/\.rb$/, "")
             }.sort.map(&:to_sym)
           end
         end
