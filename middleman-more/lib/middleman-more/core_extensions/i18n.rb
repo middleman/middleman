@@ -52,15 +52,20 @@ module Middleman
           @app.sitemap.provides_metadata_for_path do |url|
             if d = get_localization_data(url)
               lang, page_id = d
-              instance_vars = Proc.new {
-                ::I18n.locale = lang
-                @lang         = lang
-                @page_id      = page_id
-              }
-              { :blocks => [instance_vars] }
             else
-              {}
+              # Default to the @mount_at_root lang
+              page_id = nil
+              lang = @mount_at_root
             end
+
+            instance_vars = Proc.new do
+              ::I18n.locale = lang
+              @lang         = lang
+              @page_id      = page_id
+            end
+
+            locals = { :lang => lang, :page_id => page_id }
+            { :blocks => [instance_vars], :locals => locals }
           end
 
           @app.sitemap.register_resource_list_manipulator(
