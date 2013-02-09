@@ -25,11 +25,11 @@ module Middleman
         # parsing config.rb
         def initialize
           self.files.changed DataStore.matcher do |file|
-            self.data.touch_file(file) if file.match(%r{^#{self.data_dir}\/})
+            self.data.touch_file(file) if file.start_with?("#{self.data_dir}/")
           end
 
           self.files.deleted DataStore.matcher do |file|
-            self.data.remove_file(file) if file.match(%r{^#{self.data_dir}\/})
+            self.data.remove_file(file) if file.start_with?("#{self.data_dir}/")
           end
 
           super

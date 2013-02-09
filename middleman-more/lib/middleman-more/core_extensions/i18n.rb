@@ -28,6 +28,7 @@ module Middleman
           @app = app
           @locales_glob = File.join(app.locales_dir, "**", "*.{rb,yml,yaml}")
 
+          # File.fnmatch doesn't support brackets: {rb,yml}
           regex = @locales_glob.sub(/\./, '\.').sub(File.join("**", "*"), ".*").sub(/\//, '\/').sub("{rb,yml,yaml}", "rb|ya?ml")
           @locales_regex = %r{^#{regex}}
 
@@ -78,7 +79,7 @@ module Middleman
         end
 
         def on_file_changed(file)
-          if @locales_regex.match(file)
+          if @locales_regex =~ file
             ::I18n.reload!
           end
         end
