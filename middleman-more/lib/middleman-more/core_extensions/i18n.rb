@@ -43,7 +43,7 @@ module Middleman
           @mount_at_root = @options.has_key?(:mount_at_root) ? @options[:mount_at_root] : langs.first
 
           if !@app.build?
-            logger.info "== Locales: #{langs.join(", ")}"
+            logger.info "== Locales: #{langs.join(", ")} (Default #{@mount_at_root})"
           end
 
           # Don't output localizable files
@@ -79,7 +79,9 @@ module Middleman
         end
 
         def langs
-          @options[:langs] || begin
+          if @options[:langs]
+            Array(@options[:langs]).map(&:to_sym)
+          else
             Dir[File.join(@app.root, @locales_glob)].map { |file|
               File.basename(file).sub(/\.yml$/, "").sub(/\.rb$/, "")
             }.sort.map(&:to_sym)
