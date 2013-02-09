@@ -64,7 +64,7 @@ module Middleman
           # If the basename of the request as no extension, assume we are serving a
           # directory and join index_file to the path.
           path = File.join(asset_dir, current_path)
-          path = path.gsub(File.extname(path), ".#{asset_ext}")
+          path = path.sub(/#{File.extname(path)}$/, ".#{asset_ext}")
 
           yield path if sitemap.find_resource_by_path(path)
         end
@@ -74,11 +74,11 @@ module Middleman
         # @return [String]
         def page_classes
           path = current_path.dup
-          path << index_file if path.match(%r{/$})
-          path = path.gsub(%r{^/}, '')
+          path << index_file if path.end_with?('/')
+          path = Util.strip_leading_slash(path)
 
           classes = []
-          parts = path.split('.')[0].split('/')
+          parts = path.split('.').first.split('/')
           parts.each_with_index { |path, i| classes << parts.first(i+1).join('_') }
 
           classes.join(' ')
@@ -90,19 +90,18 @@ module Middleman
         # @param [String] source The path to the file
         # @return [String]
         def asset_path(kind, source)
-          return source if source =~ /^http/
+          return source if source.to_s.include?('//')
           asset_folder  = case kind
             when :css    then css_dir
             when :js     then js_dir
             when :images then images_dir
             else kind.to_s
           end
-          source = source.to_s.gsub(/\s/, '')
+          source = source.to_s.tr(' ', '')
           ignore_extension = (kind == :images) # don't append extension
-          source << ".#{kind}" unless ignore_extension or source =~ /\.#{kind}/
-          if source =~ %r{^/} # absolute path
-            asset_folder = ""
-          end
+          source << ".#{kind}" unless ignore_extension || source.end_with?(".#{kind}")
+          asset_folder = "" if source.start_with?('/') # absolute path
+
           asset_url(source, asset_folder)
         end
 

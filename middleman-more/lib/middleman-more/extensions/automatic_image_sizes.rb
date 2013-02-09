@@ -38,7 +38,7 @@ module Middleman
             params[:alt] ||= ""
 
             real_path = path
-            real_path = File.join(images_dir, real_path) unless real_path =~ %r{^/}
+            real_path = File.join(images_dir, real_path) unless real_path.start_with?('/')
             full_path = File.join(source_dir, real_path)
 
             if File.exists? full_path
