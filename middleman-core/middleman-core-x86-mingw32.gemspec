@@ -27,7 +27,7 @@ Gem::Specification.new do |s|
   s.add_dependency("rack-test", ["~> 0.6.1"])
   
   # CLI
-  s.add_dependency("thor", [">= 0.15.4", "~> 0.15"])
+  s.add_dependency("thor", [">~ 0.15.4"])
   
   # Helpers
   s.add_dependency("activesupport", ["~> 3.2.6"])
