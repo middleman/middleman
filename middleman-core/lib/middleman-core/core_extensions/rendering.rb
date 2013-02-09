@@ -408,7 +408,7 @@ module Middleman
           # Find the path by searching or using the cache
           request_path = request_path.to_s
           cache.fetch(:resolve_template, request_path, options) do
-            relative_path = request_path.sub(%r{^/}, "")
+            relative_path = Util.strip_leading_slash(request_path)
             on_disk_path  = File.expand_path(relative_path, self.source_dir)
 
             # By default, any engine will do

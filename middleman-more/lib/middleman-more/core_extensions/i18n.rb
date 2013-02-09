@@ -26,9 +26,10 @@ module Middleman
 
         def initialize(app, options={})
           @app = app
-          @locales_glob = File.join(app.locales_dir, "**", "*.{rb,yml}")
+          @locales_glob = File.join(app.locales_dir, "**", "*.{rb,yml,yaml}")
 
-          regex = @locales_glob.sub(/\./, '\.').sub(File.join("**", "*"), ".*").sub(/\//, '\/').sub("{rb,yml}", "rb|yml")
+          # File.fnmatch doesn't support brackets: {rb,yml}
+          regex = @locales_glob.sub(/\./, '\.').sub(File.join("**", "*"), ".*").sub(/\//, '\/').sub("{rb,yml,yaml}", "rb|ya?ml")
           @locales_regex = %r{^#{regex}}
 
           @maps = {}
@@ -43,7 +44,7 @@ module Middleman
           @mount_at_root = @options.has_key?(:mount_at_root) ? @options[:mount_at_root] : langs.first
 
           if !@app.build?
-            logger.info "== Locales: #{langs.join(", ")}"
+            logger.info "== Locales: #{langs.join(", ")} (Default #{@mount_at_root})"
           end
 
           # Don't output localizable files
@@ -52,15 +53,20 @@ module Middleman
           @app.sitemap.provides_metadata_for_path do |url|
             if d = get_localization_data(url)
               lang, page_id = d
-              instance_vars = Proc.new {
-                ::I18n.locale = lang
-                @lang         = lang
-                @page_id      = page_id
-              }
-              { :blocks => [instance_vars] }
             else
-              {}
+              # Default to the @mount_at_root lang
+              page_id = nil
+              lang = @mount_at_root
             end
+
+            instance_vars = Proc.new do
+              ::I18n.locale = lang
+              @lang         = lang
+              @page_id      = page_id
+            end
+
+            locals = { :lang => lang, :page_id => page_id }
+            { :blocks => [instance_vars], :locals => locals }
           end
 
           @app.sitemap.register_resource_list_manipulator(
@@ -73,15 +79,17 @@ module Middleman
         end
 
         def on_file_changed(file)
-          if @locales_regex.match(file)
+          if @locales_regex =~ file
             ::I18n.reload!
           end
         end
 
         def langs
-          @options[:langs] || begin
+          if @options[:langs]
+            Array(@options[:langs]).map(&:to_sym)
+          else
             Dir[File.join(@app.root, @locales_glob)].map { |file|
-              File.basename(file).sub(/\.yml$/, "").sub(/\.rb$/, "")
+              File.basename(file).sub(/\.ya?ml$/, "").sub(/\.rb$/, "")
             }.sort.map(&:to_sym)
           end
         end

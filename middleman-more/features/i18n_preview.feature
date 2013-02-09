@@ -103,6 +103,51 @@ Feature: i18n Preview
     Then I should see "Como Esta?"
     When I go to "/spanish/hola.html"
     Then I should see "Hola World"
+
+  Scenario: Running localize with a non-English mount config
+    Given a fixture app "i18n-test-app"
+    And a file named "config.rb" with:
+      """
+      activate :i18n, :mount_at_root => :es
+      """
+    Given the Server is running at "i18n-test-app"
+    When I go to "/en/index.html"
+    Then I should see "Howdy"
+    When I go to "/en/hello.html"
+    Then I should see "Hello World"
+    When I go to "/"
+    Then I should see "Como Esta?"
+    When I go to "/hola.html"
+    Then I should see "Hola World"
+    When I go to "/hello.html"
+    Then I should see "File Not Found"
+    When I go to "/es/index.html"
+    Then I should see "File Not Found"
+    When I go to "/es/hola.html"
+    Then I should see "File Not Found"
+
+  Scenario: Running localize with a non-English lang subset
+    Given a fixture app "i18n-test-app"
+    And a file named "config.rb" with:
+      """
+      activate :i18n, :langs => :es
+      """
+    Given the Server is running at "i18n-test-app"
+    When I go to "/en/index.html"
+    Then I should see "File Not Found"
+    When I go to "/en/hello.html"
+    Then I should see "File Not Found"
+    When I go to "/"
+    Then I should see "Como Esta?"
+    When I go to "/hola.html"
+    Then I should see "Hola World"
+    When I go to "/hello.html"
+    Then I should see "File Not Found"
+    When I go to "/es/index.html"
+    Then I should see "File Not Found"
+    When I go to "/es/hola.html"
+    Then I should see "File Not Found"
+    
     
   Scenario: Running localize with the no mount config
     Given a fixture app "i18n-test-app"
