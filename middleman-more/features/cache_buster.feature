@@ -25,3 +25,18 @@ Feature: Generate mtime-based query string for busting browser caches
     When I go to "/cache-buster.html"
     Then I should see "site.css?"
     Then I should see "blank.gif?"
+
+  Scenario: Rendering css with the feature and relative_assets enabled
+    Given "relative_assets" feature is "enabled"
+    Given "cache_buster" feature is "enabled"
+    And the Server is running at "cache-buster-app"
+    When I go to "/stylesheets/relative_assets.css"
+    Then I should see "blank.gif?"
+
+  Scenario: Rendering html with the feature and relative_assets enabled
+    Given "relative_assets" feature is "enabled"
+    Given "cache_buster" feature is "enabled"
+    And the Server is running at "cache-buster-app"
+    When I go to "/cache-buster.html"
+    Then I should see "site.css?"
+    Then I should see "blank.gif?"
