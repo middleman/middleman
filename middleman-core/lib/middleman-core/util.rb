@@ -76,7 +76,13 @@ module Middleman
     # @return [String]
     def self.normalize_path(path)
       # The tr call works around a bug in Ruby's Unicode handling
-      path.sub(/^\//, "").tr('','')
+      path.sub(%r{^/}, "").tr('','')
+    end
+
+    # This is a separate method from normalize_path in case we
+    # change how we normalize paths
+    def self.strip_leading_slash(path)
+      path.sub(%r{^/}, "")
     end
 
     # Extract the text of a Rack response as a string.

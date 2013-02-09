@@ -145,7 +145,8 @@ module Middleman
         # @param [Pathname] path
         # @return [Boolean]
         def ignored?(path)
-          IGNORE_LIST.any? { |r| path.to_s.match(r) }
+          path = path.to_s
+          IGNORE_LIST.any? { |r| path =~ r }
         end
 
         # Notify callbacks for a file given an array of callbacks
