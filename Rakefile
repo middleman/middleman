@@ -87,6 +87,13 @@ task :test do
   end
 end
 
+desc "Run specs for all middleman gems"
+task :spec do
+  GEM_PATHS.each do |g|
+    sh "cd #{File.join(ROOT, g)} && #{Gem.ruby} -S rake spec"
+  end
+end
+
 # desc "Rune cane for all middleman gems"
 # task :cane do
 #   GEM_PATHS.each do |g|
