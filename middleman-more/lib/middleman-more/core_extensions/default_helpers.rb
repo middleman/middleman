@@ -203,6 +203,13 @@ module Middleman
             
           super(*args, &block)
         end
+
+        # Modified Padrino form_for that uses Middleman's url_for
+        # to transform the URL.
+        def form_tag(url, options={}, &block)
+          url = url_for(url, options)
+          super
+        end
       end
     end
   end
