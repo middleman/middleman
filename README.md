@@ -48,11 +48,7 @@ A full set of in-depth instructional guides are available on the official websit
 
   http://middlemanapp.com/
 
-The community maintains its own collection of tips and tricks in the GitHub wiki:
-
-  https://github.com/middleman/middleman/wiki
-
-Finally, up-to-date generated code documentation is available on RubyDoc: 
+Additionally, up-to-date generated code documentation is available on RubyDoc: 
 http://rubydoc.info/github/middleman/middleman
 
 # Community
