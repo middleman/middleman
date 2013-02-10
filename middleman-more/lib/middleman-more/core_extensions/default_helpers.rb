@@ -64,7 +64,7 @@ module Middleman
           # If the basename of the request as no extension, assume we are serving a
           # directory and join index_file to the path.
           path = File.join(asset_dir, current_path)
-          path = path.gsub(File.extname(path), ".#{asset_ext}")
+          path = path.sub(/#{File.extname(path)}$/, ".#{asset_ext}")
 
           yield path if sitemap.find_resource_by_path(path)
         end
@@ -74,11 +74,11 @@ module Middleman
         # @return [String]
         def page_classes
           path = current_path.dup
-          path << index_file if path.match(%r{/$})
-          path = path.gsub(%r{^/}, '')
+          path << index_file if path.end_with?('/')
+          path = Util.strip_leading_slash(path)
 
           classes = []
-          parts = path.split('.')[0].split('/')
+          parts = path.split('.').first.split('/')
           parts.each_with_index { |path, i| classes << parts.first(i+1).join('_') }
 
           classes.join(' ')
@@ -90,20 +90,91 @@ module Middleman
         # @param [String] source The path to the file
         # @return [String]
         def asset_path(kind, source)
-          return source if source =~ /^http/
+          return source if source.to_s.include?('//')
           asset_folder  = case kind
             when :css    then css_dir
             when :js     then js_dir
             when :images then images_dir
             else kind.to_s
           end
-          source = source.to_s.gsub(/\s/, '')
+          source = source.to_s.tr(' ', '')
           ignore_extension = (kind == :images) # don't append extension
-          source << ".#{kind}" unless ignore_extension or source =~ /\.#{kind}/
-          if source =~ %r{^/} # absolute path
-            asset_folder = ""
-          end
+          source << ".#{kind}" unless ignore_extension || source.end_with?(".#{kind}")
+          asset_folder = "" if source.start_with?('/') # absolute path
+
           asset_url(source, asset_folder)
+        end
+
+        # Given a source path (referenced either absolutely or relatively)
+        # or a Resource, this will produce the nice URL configured for that
+        # path, respecting :relative_links, directory indexes, etc.
+        def url_for(path_or_resource, options={})
+          # Handle Resources and other things which define their own url method
+          url = path_or_resource.respond_to?(:url) ? path_or_resource.url : path_or_resource
+
+          begin
+            uri = URI(url)
+          rescue URI::InvalidURIError
+            # Nothing we can do with it, it's not really a URI
+            return url
+          end
+
+          relative = options.delete(:relative)
+          raise "Can't use the relative option with an external URL" if relative && uri.host
+
+          # Allow people to turn on relative paths for all links with 
+          # set :relative_links, true
+          # but still override on a case by case basis with the :relative parameter.
+          effective_relative = relative || false
+          effective_relative = true if relative.nil? && config[:relative_links]
+
+          # Try to find a sitemap resource corresponding to the desired path
+          this_resource = current_resource # store in a local var to save work
+          if path_or_resource.is_a?(Sitemap::Resource)
+            resource = path_or_resource 
+            resource_url = url
+          elsif this_resource && uri.path
+            # Handle relative urls
+            url_path = Pathname(uri.path)
+            current_source_dir = Pathname('/' + this_resource.path).dirname
+            url_path = current_source_dir.join(url_path) if url_path.relative?
+            resource = sitemap.find_resource_by_path(url_path.to_s)
+            resource_url = resource.url if resource
+          end
+
+          if resource
+            # Switch to the relative path between this_resource and the given resource
+            # if we've been asked to.
+            if effective_relative
+              # Output urls relative to the destination path, not the source path
+              current_dir = Pathname('/' + this_resource.destination_path).dirname
+              relative_path = Pathname(resource_url).relative_path_from(current_dir).to_s
+
+              # Put back the trailing slash to avoid unnecessary Apache redirects
+              if resource_url.end_with?('/') && !relative_path.end_with?('/')
+                relative_path << '/'
+              end
+
+              uri.path = relative_path
+            else
+              uri.path = resource_url
+            end
+          else
+            # If they explicitly asked for relative links but we can't find a resource...
+            raise "No resource exists at #{url}" if relative
+          end
+            
+          # Support a :query option that can be a string or hash
+          if query = options.delete(:query)
+            uri.query = query.respond_to?(:to_param) ? query.to_param : query.to_s
+          end
+
+          # Support a :fragment or :anchor option just like Padrino
+          fragment = options.delete(:anchor) || options.delete(:fragment)
+          uri.fragment = fragment.to_s if fragment
+          
+          # Finally make the URL back into a string
+          uri.to_s
         end
 
         # Overload the regular link_to to be sitemap-aware - if you
@@ -123,74 +194,26 @@ module Middleman
           url_arg_index = block_given? ? 0 : 1
           options_index = block_given? ? 1 : 2
 
+          if block_given? && args.size > 2
+            raise ArgumentError.new("Too many arguments to link_to(url, options={}, &block)")
+          end
+
           if url = args[url_arg_index]
             options = args[options_index] || {}
-            relative = options.delete(:relative)
-
-            # Handle Resources, which define their own url method
-            if url.respond_to? :url
-              url = args[url_arg_index] = url.url
-            end
-
-            if url.include? '://'
-              raise "Can't use the relative option with an external URL" if relative
-            elsif current_resource
-              # Handle relative urls
-              current_source_dir = Pathname('/' + current_resource.path).dirname
-
-              begin
-                uri = URI(url)
-                url_path = uri.path
-              rescue
-              end
-
-              if url_path
-                path = Pathname(url_path)
-                url_path = current_source_dir.join(path).to_s if path.relative?
-
-                resource = sitemap.find_resource_by_path(url_path)
-
-                # Allow people to turn on relative paths for all links with config[:relative_links] = true
-                # but still override on a case by case basis with the :relative parameter.
-                effective_relative = relative || false
-                if relative.nil? && config[:relative_links]
-                  effective_relative = true
-                end
-
-                if resource
-                  if effective_relative
-                    resource_url = resource.url
-
-                    # Output urls relative to the destination path, not the source path
-                    current_dir = Pathname('/' + current_resource.destination_path).dirname
-                    new_url = Pathname(resource_url).relative_path_from(current_dir).to_s
-
-                    # Put back the trailing slash to avoid unnecessary Apache redirects
-                    if resource_url.end_with?('/') && !new_url.end_with?('/')
-                      new_url << '/'
-                    end
-                  else
-                    new_url = resource.url
-                  end
-
-                  uri.path = new_url
-
-                  args[url_arg_index] = uri.to_s
-                else
-                  raise "No resource exists at #{url}" if relative
-                end
-              end
-            end
-
-            # Support a :query option that can be a string or hash
-            if query = options.delete(:query)
-              uri = URI(args[url_arg_index])
-              uri.query = query.respond_to?(:to_param) ? query.to_param : query.to_s
-              args[url_arg_index] = uri.to_s
-            end
+            raise ArgumentError.new("Options must be a hash") unless options.is_a?(Hash)
+            
+            # Transform the url through our magic url_for method
+            args[url_arg_index] = url_for(url, options)
           end
             
           super(*args, &block)
+        end
+
+        # Modified Padrino form_for that uses Middleman's url_for
+        # to transform the URL.
+        def form_tag(url, options={}, &block)
+          url = url_for(url, options)
+          super
         end
       end
     end

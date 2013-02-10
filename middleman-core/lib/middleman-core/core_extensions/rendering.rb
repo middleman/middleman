@@ -246,15 +246,26 @@ module Middleman
           options = opts.merge(options_for_ext(extension))
           options[:outvar] ||= '@_out_buf'
 
+          template_class = Tilt[path]
+          # Allow hooks to manipulate the template before render
+          self.class.callbacks_for_hook(:before_render).each do |callback|
+            newbody = callback.call(body, path, locs, template_class)
+            body = newbody if newbody # Allow the callback to return nil to skip it
+          end
+
           # Read compiled template from disk or cache
           template = cache.fetch(:compiled_template, options, body) do
             ::Tilt.new(path, 1, options) { body }
           end
 
           # Render using Tilt
-          run_hook :before_render, template.data, template
-          content = template.render(context, locs, &block)
-          run_hook :after_render, content, template
+          content = template.render(context, path, locs, &block)
+
+          # Allow hooks to manipulate the result after render
+          self.class.callbacks_for_hook(:after_render).each do |callback|
+            content = callback.call(content, locs, template_class)
+          end
+
           return content
         ensure
           # Reset stored buffer
@@ -408,7 +419,7 @@ module Middleman
           # Find the path by searching or using the cache
           request_path = request_path.to_s
           cache.fetch(:resolve_template, request_path, options) do
-            relative_path = request_path.sub(%r{^/}, "")
+            relative_path = Util.strip_leading_slash(request_path)
             on_disk_path  = File.expand_path(relative_path, self.source_dir)
 
             # By default, any engine will do

@@ -194,7 +194,7 @@ module Middleman
 
         paths.any? do |path|
           match_against.any? do |matcher|
-            path.match(matcher)
+            path =~ matcher
           end
         end
       end

@@ -111,7 +111,7 @@ module Middleman
         blank_metadata = { :options => {}, :locals => {}, :page => {}, :blocks => [] }
 
         provides_metadata.inject(blank_metadata) do |result, (callback, matcher)|
-          next result if !matcher.nil? && !source_file.match(matcher)
+          next result if matcher && !source_file.match(matcher)
 
           metadata = callback.call(source_file)
 
@@ -149,9 +149,9 @@ module Middleman
         @_cached_metadata[request_path] = provides_metadata_for_path.inject(blank_metadata) do |result, (callback, matcher)|
           case matcher
           when Regexp
-            next result unless request_path.match(matcher)
+            next result unless request_path =~ matcher
           when String
-            next result unless File.fnmatch("/" + matcher.sub(%r{^/}, ''), "/#{request_path}")
+            next result unless File.fnmatch("/" + Util.strip_leading_slash(matcher), "/#{request_path}")
           end
 
           metadata = callback.call(request_path)

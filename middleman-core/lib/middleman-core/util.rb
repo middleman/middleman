@@ -10,7 +10,8 @@ require "thor"
 # Core Pathname library used for traversal
 require "pathname"
 
-require "rack"
+require "tilt"
+require "rack/mime"
 
 module Middleman
 
@@ -22,11 +23,19 @@ module Middleman
     # @return [Boolean]
     def self.binary?(filename)
       ext = File.extname(filename)
+      return true if ext == '.svgz'
       return false if Tilt.registered?(ext.sub('.',''))
 
       ext = ".#{ext}" unless ext.to_s[0] == ?.
       mime = ::Rack::Mime.mime_type(ext, nil) 
-      return false unless mime
+      unless mime
+        binary_bytes = [0, 1, 2, 3, 4, 5, 6, 11, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 28, 29, 30, 31]
+        s = File.read(filename, 4096) || ''        
+        s.each_byte do |c|
+          return true if binary_bytes.include?(c)          
+        end
+        return false
+      end
       return false if mime.start_with?('text/')
       return false if mime.include?('xml')
       return false if mime.include?('json')
@@ -78,7 +87,13 @@ module Middleman
     # @return [String]
     def self.normalize_path(path)
       # The tr call works around a bug in Ruby's Unicode handling
-      path.sub(/^\//, "").tr('','')
+      path.sub(%r{^/}, "").tr('','')
+    end
+
+    # This is a separate method from normalize_path in case we
+    # change how we normalize paths
+    def self.strip_leading_slash(path)
+      path.sub(%r{^/}, "")
     end
 
     # Extract the text of a Rack response as a string.

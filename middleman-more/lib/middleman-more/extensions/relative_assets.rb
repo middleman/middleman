@@ -36,7 +36,7 @@ module Middleman
             path
           else
             current_dir = Pathname('/' + current_resource.destination_path)
-            Pathname(path).relative_path_from(current_dir.dirname)
+            Pathname(path).relative_path_from(current_dir.dirname).to_s
           end
         end
       end
