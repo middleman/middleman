@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+        
+    <title>Middleman Config</title>
+  </head>
+  
+  <body>
+    <h1>Middleman Config</h1>
+    <a href="../">More meta pages</a>
+
+    <ul>
+    <% config.all_settings.each do |setting| %>
+      <li>
+        <b><%= setting.key %></b>: 
+        <%= setting.value.inspect %>
+        <% if setting.value_set? %>
+          <br>
+          Default: <%= setting.default.inspect %>
+        <% else %>
+          (Default)
+        <% end %>
+        <br>
+        <i><%= setting.description %></i>
+      </li>
+    <% end %>
+    </ul>
+  </body>
+</html>
+
+
