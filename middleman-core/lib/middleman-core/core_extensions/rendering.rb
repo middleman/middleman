@@ -259,11 +259,11 @@ module Middleman
           end
 
           # Render using Tilt
-          content = template.render(context, path, locs, &block)
+          content = template.render(context, locs, &block)
 
           # Allow hooks to manipulate the result after render
           self.class.callbacks_for_hook(:after_render).each do |callback|
-            content = callback.call(content, locs, template_class)
+            content = callback.call(content, path, locs, template_class)
           end
 
           return content
