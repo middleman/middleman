@@ -32,7 +32,7 @@ module Middleman
         def asset_url(path, prefix="")
           path = super(path, prefix)
 
-          if path.include?("//")
+          if path.include?("//") || !current_resource
             path
           else
             current_dir = Pathname('/' + current_resource.destination_path)

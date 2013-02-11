@@ -70,6 +70,7 @@ module Middleman
       # Get the resource object for the current path
       # @return [Middleman::Sitemap::Resource]
       def current_resource
+        return nil unless current_path
         sitemap.find_resource_by_destination_path(current_path)
       end
 
