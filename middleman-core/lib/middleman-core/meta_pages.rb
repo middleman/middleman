@@ -27,13 +27,17 @@ module Middleman
           map '/sitemap' do
             run meta_pages.method(:sitemap)
           end
+
+          map '/config' do
+            run meta_pages.method(:config)
+          end
         end
       end
 
       def call(*args)
         @rack_app.call(*args)
       end
-      
+
       # The index page
       def index(env)
         template('index.html.erb')
@@ -50,6 +54,11 @@ module Middleman
         end
 
         template('sitemap.html.erb', :sitemap_tree => sitemap_tree)
+      end
+
+      # Inspect configuration
+      def config(env)
+        template('config.html.erb', :config => @middleman.config)
       end
 
       private
