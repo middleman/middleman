@@ -142,7 +142,7 @@ module Middleman
       cache.clear
 
       # Setup the default values from calls to set before initialization
-      self.class.superclass.config.to_h.each { |k,v| self.class.config.define_setting(k,v) }
+      self.class.config.load_settings(self.class.superclass.config.all_settings)
 
       # Evaluate a passed block if given
       instance_exec(&block) if block_given?

@@ -171,10 +171,18 @@ module Middleman
       def dup
         copy = ConfigurationManager.new
         @settings.each do |key, setting|
-          copy_setting = copy.define_setting setting.key, setting.default, setting.description
+          copy_setting = copy.define_setting(setting.key, setting.default, setting.description)
           copy_setting.value = setting.value if setting.value_set?
         end
         copy
+      end
+
+      # Load in a list of settings
+      def load_settings(other_settings)
+        other_settings.each do |setting|
+          new_setting = define_setting(setting.key, setting.default, setting.description)
+          new_setting.value = setting.value if setting.value_set?
+        end
       end
 
       def to_h
