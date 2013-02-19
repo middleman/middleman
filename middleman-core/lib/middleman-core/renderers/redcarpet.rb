@@ -1,4 +1,5 @@
 require "redcarpet"
+require "pygments"
 
 module Middleman
   module Renderers
@@ -7,7 +8,7 @@ module Middleman
 
       def initialize(*args, &block)
         super
-        
+
         if @options.has_key?(:context)
           @context = @options[:context]
         end
@@ -18,6 +19,8 @@ module Middleman
       # Support renderer-level options
       def generate_renderer
         return options.delete(:renderer) if options.has_key?(:renderer)
+
+        options.merge!(:fenced_code_blocks => true)
 
         # Pick a renderer
         renderer = MiddlemanRedcarpetHTML
@@ -60,6 +63,13 @@ module Middleman
 
       def link(link, title, content)
         middleman_app.link_to(content, link, :title => title)
+      end
+
+      def block_code(code, language)
+        syntax_highlighted_html = Pygments.highlight code, :lexer => language,
+          :options => {:encoding => 'utf-8'}
+
+        syntax_highlighted_html.gsub('class="highlight"',"class=\"highlight sh_#{language}\"")
       end
     end
 
