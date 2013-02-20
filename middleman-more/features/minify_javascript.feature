@@ -10,15 +10,13 @@ Feature: Minify Javascript
     When I go to "/inline-js.html"
     Then I should see:
     """
-    <script type='text/javascript'>
-      //<![CDATA[
-        ;(function() {
-          this;
-          should();
-          all.be();
-          on = { one: line };
-        })();
-      //]]>
+    <script>
+      ;(function() {
+        this;
+        should();
+        all.be();
+        on = { one: line };
+      })();
     </script>
     <script>
       ;(function() {
@@ -61,15 +59,13 @@ Feature: Minify Javascript
     When I go to "/inline-js.html"
     Then I should see:
     """
-    <script type='text/javascript'>
-      //<![CDATA[
-        ;(function() {
-          this;
-          should();
-          all.be();
-          on = { one: line };
-        })();
-      //]]>
+    <script>
+      ;(function() {
+        this;
+        should();
+        all.be();
+        on = { one: line };
+      })();
     </script>
     <script>
       ;(function() {
@@ -110,10 +106,8 @@ Feature: Minify Javascript
     When I go to "/inline-js.html"
     Then I should see:
     """
-    <script type='text/javascript'>
-      //<![CDATA[
-    Hello
-      //]]>
+    <script>
+      Hello
     </script>
     <script>
       Hello
@@ -138,10 +132,8 @@ Feature: Minify Javascript
     When I go to "/inline-js.html"
     Then I should see:
     """
-    <script type='text/javascript'>
-      //<![CDATA[
-    (function(){this,should(),all.be(),on={one:line}})();
-      //]]>
+    <script>
+      (function(){this,should(),all.be(),on={one:line}})();
     </script>
     <script>
       (function(){this,should(),too()})();
@@ -177,12 +169,11 @@ Feature: Minify Javascript
     Given a fixture app "minify-js-app"
     And a file named "config.rb" with:
       """
-      require "coffee-filter"
       activate :minify_javascript, :inline => true
       """
     And the Server is running at "minify-js-app"
     When I go to "/inline-coffeescript.html"
-    Then I should see "6" lines
+    Then I should see "3" lines
   
   Scenario: Rendering external js (coffeescript) with the feature enabled
     Given a fixture app "minify-js-app"
@@ -198,8 +189,6 @@ Feature: Minify Javascript
     Given a fixture app "passthrough-app"
     And a file named "config.rb" with:
       """
-      require "coffee-filter"
-      
       module ::PassThrough
         def self.compress(data)
           data
@@ -214,7 +203,7 @@ Feature: Minify Javascript
       """
     And the Server is running at "passthrough-app"
     When I go to "/inline-coffeescript.html"
-    Then I should see "16" lines
+    Then I should see "13" lines
     
   Scenario: Rendering external js (coffeescript) with a passthrough minifier
     Given a fixture app "passthrough-app"

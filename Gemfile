@@ -1,5 +1,8 @@
 source :rubygems
 
+# Make sure to use Haml 4 for tests
+gem "haml", "~> 4.0.0"
+
 # Build and doc tools
 gem "rake",     "~> 10.0.3"
 gem "yard",     "~> 0.8.0"
@@ -13,7 +16,6 @@ gem "rspec",    "~> 2.12"
 # Optional middleman dependencies, included for tests
 gem "sinatra"
 gem "slim", "~> 1.2.0"
-gem "coffee-filter", "~> 0.1.1"
 gem "liquid", "~> 2.2"
 gem "less", "~> 2.2"
 gem "stylus", "~> 0.6.2"
