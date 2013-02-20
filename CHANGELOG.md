@@ -1,6 +1,8 @@
 3.0.12
 ===
 
+* Update to listen 0.7.x. No longer depend on rb-inotify. *nix users should add to Gemfile.
+* Support Haml 4
 * :debug_assets can no longer be turned on in the build environment.
 * Helpers now work with JS/CSS files with .erb processing.
 * Provide an informative exception when link_to is used improperly.

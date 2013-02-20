@@ -15,10 +15,10 @@ gem "rspec",    "~> 2.12"
 
 # Optional middleman dependencies, included for tests
 gem "sinatra"
-gem "slim", "~> 1.2.0"
-gem "liquid", "~> 2.2"
-gem "less", "~> 2.2"
-gem "stylus", "~> 0.6.2"
+gem "slim", "~> 1.2.0", :require => false
+gem "liquid", "~> 2.2", :require => false
+gem "less", "~> 2.2", :require => false
+gem "stylus", "~> 0.6.2", :require => false
 
 platforms :ruby do
   gem "therubyracer", "0.10.2"
