@@ -1,4 +1,4 @@
-source :rubygems
+source 'https://rubygems.org'
 
 # Build and doc tools
 gem "rake",     "~> 10.0.3"
