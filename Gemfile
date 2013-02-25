@@ -1,4 +1,4 @@
-source 'https://rubygems.org'
+source 'http://rubygems.org'
 
 # Make sure to use Haml 4 for tests
 gem "haml", "~> 4.0.0"
