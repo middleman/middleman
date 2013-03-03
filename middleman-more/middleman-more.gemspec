@@ -25,6 +25,6 @@ Gem::Specification.new do |s|
   s.add_dependency("coffee-script-source", ["~> 1.3.3"])
   s.add_dependency("execjs", ["~> 1.4.0"])
   s.add_dependency("maruku", ["~> 0.6.0"])
-  s.add_dependency("i18n", ["~> 0.6.0"])
+  s.add_dependency("i18n", ["~> 0.6.0", "< 0.6.2"]) # 0.6.2 broke Ruby 1.8 support
   s.add_dependency("padrino-helpers", ["0.10.7"])
 end

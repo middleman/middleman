@@ -53,13 +53,11 @@ Feature: Minify CSS
     When I go to "/inline-css.html"
     Then I should see:
     """
-    <style type='text/css'>
-      /*<![CDATA[*/
-        body {
-          test: style;
-          good: deal;
-        }
-      /*]]>*/
+    <style>
+      body {
+        test: style;
+        good: deal;
+      }
     </style>
     """
    
@@ -83,7 +81,7 @@ Feature: Minify CSS
     When I go to "/inline-css.html"
     Then I should see:
     """
-    <style type='text/css'>
+    <style>
       body {
         test: style;
         good: deal; }
@@ -108,7 +106,7 @@ Feature: Minify CSS
     When I go to "/inline-css.html"
     Then I should see:
     """
-    <style type='text/css'>
+    <style>
       Hello
     </style>
     """
@@ -123,9 +121,7 @@ Feature: Minify CSS
     When I go to "/inline-css.html"
     Then I should see:
     """
-    <style type='text/css'>
-      /*<![CDATA[*/
-     body{test:style;good:deal}
-      /*]]>*/
+    <style>
+      body{test:style;good:deal}
     </style>
     """

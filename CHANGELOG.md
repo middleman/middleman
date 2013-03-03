@@ -1,5 +1,26 @@
-Master
+3.0.12
 ===
+
+* Update to listen 0.7.x. No longer depend on rb-inotify. *nix users should add to Gemfile.
+* Support Haml 4
+* :debug_assets can no longer be turned on in the build environment.
+* Helpers now work with JS/CSS files with .erb processing.
+* Provide an informative exception when link_to is used improperly.
+* Force .svgz files to be treated as binary.
+* Add a url_for method that performs the link_to magic URL generation without a link. Make form_for use url_for. #739
+* Fix issues when combining relative assets and cache buster.
+* Support the .yaml extension for data files.
+* Handle non-english default languages in i18n. Fixes #584. #771
+* Allow frontmatter to be parsed on templates outside the project root
+* Improve detection of binary files. #763
+* Add before_render and after_render hooks that can be used by extensions to modify templates before they're rendered or modify the rendered output before it's returned. #761 & #774
+* Tightened up dependencies
+* Print the command for running middleman in verbose mode with quotes so Bundler doesn't swallow the verbose flag. #750
+
+3.0.11
+====
+
+* Mitigate major perf regression caused by the Middleman::Util#binary? method
 
 3.0.10
 ====
