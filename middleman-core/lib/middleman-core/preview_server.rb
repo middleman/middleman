@@ -30,6 +30,12 @@ module Middleman
           ::Middleman::Profiling.report("server_start")
 
           @webrick.start
+
+          # $mm_shutdown is set by the signal handler
+          if $mm_shutdown
+            shutdown
+            exit
+          end
         end
       end
 
@@ -117,8 +123,9 @@ module Middleman
         %w(INT HUP TERM QUIT).each do |sig|
           if Signal.list[sig]
             Signal.trap(sig) do
-              shutdown
-              exit
+              # Do as little work as possible in the signal context
+              $mm_shutdown = true
+              @webrick.stop
             end
           end
         end
