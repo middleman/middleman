@@ -30,7 +30,10 @@ module Middleman::Extensions
 
             if output_filename
               size_change_word = (old_size - new_size) > 0 ? 'smaller' : 'larger'
+              old_locale = I18n.locale
+              I18n.locale = :en # use the english localizations for printing out file sizes to make sure the localizations exist
               builder.say_status :gzip, "#{output_filename} (#{number_to_human_size((old_size - new_size).abs)} #{size_change_word})"
+              I18n.locale = old_locale
             end
           end
         end
