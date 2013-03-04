@@ -1,5 +1,9 @@
 require 'fileutils'
 
+Before do
+  @modification_times = Hash.new
+end
+
 Given /^app "([^\"]*)" is using config "([^\"]*)"$/ do |path, config_name|
   target = File.join(PROJECT_ROOT_PATH, "fixtures", path)
   config_path = File.join(current_dir, "config-#{config_name}.rb")
@@ -48,6 +52,16 @@ end
 Given /^a successfully built app at "([^\"]*)" with flags "([^\"]*)"$/ do |path, flags|
   step %Q{a built app at "#{path}" with flags "#{flags}"}
   step %Q{was successfully built}
+end
+
+Given /^a modification time for a file named "([^\"]*)"$/ do |file|
+  target = File.join(current_dir, file)
+  @modification_times[target] = File.mtime(target)
+end
+
+Then /^the file "([^\"]*)" should not have been updated$/ do |file|
+  target = File.join(current_dir, file)
+  File.mtime(target).should == @modification_times[target]
 end
 
 # Provide this Aruba overload in case we're matching something with quotes in it
