@@ -137,7 +137,7 @@ module Middleman::Cli
             response = self.class.shared_rack.get(URI.escape(resource.destination_path))
 
             if response.status == 200
-              create_file(output_file, response.body)
+              create_file(output_file, binary_encode(response.body))
             else
               handle_error(output_file, response.body)
             end
@@ -159,6 +159,13 @@ module Middleman::Cli
         elsif options["verbose"]
           self.shell.error(response)
         end
+      end
+
+      def binary_encode(string)
+        if string.respond_to?(:force_encoding)
+          string.force_encoding("ascii-8bit")
+        end
+        string
       end
     }
   end
