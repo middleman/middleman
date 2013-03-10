@@ -1,6 +1,5 @@
 # Use the Ruby/Rails logger
 require 'active_support/core_ext/logger'
-require "securerandom"
 
 module Middleman
 
