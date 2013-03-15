@@ -186,7 +186,17 @@ module Middleman
       # @return [String]
       def extensionless_path(file)
         path = file.dup
+        path = remove_templating_extensions(path)
 
+        # If there is no extension, look for one
+        path = find_extension(path, file) if File.extname(path).empty?
+        path
+      end
+
+      # Removes the templating extensions, while keeping the others
+      # @param [String] path
+      # @return [String]
+      def remove_templating_extensions(path)
         end_of_the_line = false
         while !end_of_the_line
           if !::Tilt[path].nil?
@@ -196,15 +206,19 @@ module Middleman
           end
         end
 
-        # If there is no extension, look for one
-        if File.extname(path).empty?
-          input_ext = File.extname(file)
+        path
+      end
 
-          if !input_ext.empty?
-            input_ext = input_ext.split(".").last.to_sym
-            if @app.template_extensions.has_key?(input_ext)
-              path << ".#{@app.template_extensions[input_ext]}"
-            end
+      # Finds an extension for path according to file's extension
+      # @param [String] path without extension
+      # @param [String] file path with original extensions
+      def find_extension(path, file)
+        input_ext = File.extname(file)
+
+        if !input_ext.empty?
+          input_ext = input_ext.split(".").last.to_sym
+          if @app.template_extensions.has_key?(input_ext)
+            path << ".#{@app.template_extensions[input_ext]}"
           end
         end
 
