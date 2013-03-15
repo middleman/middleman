@@ -254,8 +254,8 @@ module Middleman
           end
 
           # Read compiled template from disk or cache
-          template = cache.fetch(:compiled_template, options, body) do
-            ::Tilt.new(path, 1, options) { body }
+          template = cache.fetch(:compiled_template, extension, options, body) do
+           ::Tilt.new(path, 1, options) { body }
           end
 
           # Render using Tilt
