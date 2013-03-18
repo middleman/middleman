@@ -21,12 +21,12 @@ gem "less", "~> 2.2", :require => false
 gem "stylus", :require => false
 
 platforms :ruby do
-  gem "therubyracer", "0.10.2"
+  gem "therubyracer"#, "0.10.2"
   gem "redcarpet"
 end
 
 platforms :jruby do
-  gem "therubyrhino", "1.73.5"
+  gem "therubyrhino"
 end
 
 # Middleman itself
