@@ -22,6 +22,8 @@ module Middleman
           app.define_hook :before_render
           app.define_hook :after_render
 
+          ::Tilt.mappings.delete('html') # WTF, Tilt?
+
           # Activate custom renderers
           require "middleman-core/renderers/erb"
           app.register Middleman::Renderers::ERb
