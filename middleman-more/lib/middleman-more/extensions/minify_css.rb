@@ -17,8 +17,7 @@ module Middleman
 
           app.after_configuration do
             chosen_compressor = css_compressor || options[:compressor] || begin
-              require "middleman-more/extensions/minify_css/rainpress"
-              ::Rainpress
+              ::Middleman::Extensions::MinifyCss::SassCompressor
             end
 
             # Setup Rack middleware to minify CSS
@@ -28,6 +27,14 @@ module Middleman
           end
         end
         alias :included :registered
+      end
+
+      class SassCompressor
+        def self.compress(style, options = {})
+          root_node = ::Sass::SCSS::CssParser.new(style, 'jammit-combined-input').parse
+          root_node.options = { :style => :compressed }
+          root_node.render.strip
+        end
       end
 
       # Rack middleware to look for CSS and compress it
