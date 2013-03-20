@@ -2,6 +2,7 @@
 es:
   paths:
     hello: "hola"
+    morning: "manana"
   
   greetings: "Como Esta?"
   hi: "Hola"
