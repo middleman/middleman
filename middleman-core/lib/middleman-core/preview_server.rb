@@ -101,7 +101,7 @@ module Middleman
           added_and_modified = (modified + added)
 
           # See if the changed file is config.rb or lib/*.rb
-          if needs_to_reload?(added_and_modified) || needs_to_reload?(removed)
+          if needs_to_reload?(added_and_modified + removed)
             reload
           else
             added_and_modified.each do |path|
@@ -164,7 +164,7 @@ module Middleman
         @webrick ||= setup_webrick(@options[:debug] || false)
 
         start_file_watcher
-          
+
         rack_app = app.class.to_rack_app
 
         # Add in the meta pages application
