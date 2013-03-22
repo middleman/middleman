@@ -189,8 +189,8 @@ module Middleman
       def needs_to_reload?(paths)
         match_against = [
           %r{^config\.rb},
-          %r{^lib/^[^\.](.*)\.rb$},
-          %r{^helpers/^[^\.](.*)_helper\.rb$}
+          %r{^lib/[^\.](.*)\.rb$},
+          %r{^helpers/[^\.](.*)\.rb$}
         ]
 
         if @options[:reload_paths]
