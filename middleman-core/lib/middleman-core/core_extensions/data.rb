@@ -61,7 +61,7 @@ module Middleman
         #
         # @param [Symbol] name Name of the data, used for namespacing
         # @param [Hash] content The content for this data
-        # @return [void]
+        # @return [Hash]
         def store(name=nil, content=nil)
           @_local_sources ||= {}
           @_local_sources[name.to_s] = content unless name.nil? || content.nil?
@@ -72,7 +72,7 @@ module Middleman
         #
         # @param [Symbol] name Name of the data, used for namespacing
         # @param [Proc] proc The callback which will return data
-        # @return [void]
+        # @return [Hash]
         def callbacks(name=nil, proc=nil)
           @_callback_sources ||= {}
           @_callback_sources[name.to_s] = proc unless name.nil? || proc.nil?
@@ -117,7 +117,7 @@ module Middleman
           @local_data.delete(basename) if @local_data.has_key?(basename)
         end
 
-        # Get a hash hash from either internal static data or a callback
+        # Get a hash from either internal static data or a callback
         #
         # @param [String, Symbol] path The name of the data namespace
         # @return [Hash, nil]
