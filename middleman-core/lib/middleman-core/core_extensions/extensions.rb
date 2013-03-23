@@ -78,13 +78,17 @@ module Middleman
           @extensions ||= []
           @extensions += [extension]
 
-          extend extension
-          if extension.respond_to?(:registered)
-            if extension.method(:registered).arity === 1
-              extension.registered(self, &block)
-            else
-              extension.registered(self, options, &block)
+          if extension.instance_of? Module
+            extend extension
+            if extension.respond_to?(:registered)
+              if extension.method(:registered).arity === 1
+                extension.registered(self, &block)
+              else
+                extension.registered(self, options, &block)
+              end
             end
+          elsif extension.instance_of?(Class) && extension.ancestors.include?(::Middleman::Extension)
+            extension.new(self, options, &block)
           end
         end
       end

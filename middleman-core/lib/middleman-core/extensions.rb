@@ -100,4 +100,40 @@ module Middleman
       File.exists?(full_path)
     end
   end
+
+  class Extension
+    class << self
+      def config
+        @_config ||= ::Middleman::Configuration::ConfigurationManager.new
+      end
+
+      def option(key, default=nil, description=nil)
+        config.define_setting(key, default, description)
+      end
+    end
+
+    attr_accessor :app, :options
+
+    def initialize(klass, options_hash={}, &block)
+      @options = ::Middleman::Configuration::ConfigurationManager.new
+      @options.load_settings(self.class.config.all_settings)
+
+      options_hash.each do |k, v|
+        @options[k] = v
+      end
+
+      block.call(@options) if block_given?
+
+      ext = self
+      klass.after_configuration do
+        ext.app = self
+        ext.after_configuration
+      end
+    end
+
+    def after_configuration
+
+      nil
+    end
+  end
 end
