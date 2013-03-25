@@ -92,19 +92,30 @@ module Middleman
         # @param [String] file The file to be re-parsed
         # @return [void]
         def touch_file(file)
-          file = File.expand_path(file, @app.root)
+          root = Pathname(@app.root)
+          full_path = root + file
           extension = File.extname(file)
           basename  = File.basename(file, extension)
 
+          data_path = full_path.relative_path_from(root + @app.config[:data_dir])
+
           if %w(.yaml .yml).include?(extension)
-            data = YAML.load_file(file)
+            data = YAML.load_file(full_path)
           elsif extension == ".json"
-            data = ActiveSupport::JSON.decode(File.read(file))
+            data = ActiveSupport::JSON.decode(full_path.read)
           else
             return
           end
 
-          @local_data[basename] = ::Middleman::Util.recursively_enhance(data)
+          data_branch = @local_data
+
+          path = data_path.to_s.split(File::SEPARATOR)[0..-2]
+          path.each do |dir|
+            data_branch[dir] ||= ::Middleman::Util.recursively_enhance({})
+            data_branch = data_branch[dir]
+          end
+
+          data_branch[basename] = ::Middleman::Util.recursively_enhance(data)
         end
 
         # Remove a given file from the internal cache
@@ -112,9 +123,21 @@ module Middleman
         # @param [String] file The file to be cleared
         # @return [void]
         def remove_file(file)
+          root = Pathname(@app.root)
+          full_path = root + file
           extension = File.extname(file)
           basename  = File.basename(file, extension)
-          @local_data.delete(basename) if @local_data.has_key?(basename)
+
+          data_path = full_path.relative_path_from(root + @app.config[:data_dir])
+
+          data_branch = @local_data
+
+          path = data_path.to_s.split(File::SEPARATOR)[0..-2]
+          path.each do |dir|
+            data_branch = data_branch[dir]
+          end
+
+          data_branch.delete(basename) if data_branch.has_key?(basename)
         end
 
         # Get a hash from either internal static data or a callback
