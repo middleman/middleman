@@ -41,8 +41,7 @@
 # activate :automatic_image_sizes
 
 # Enable middleman-livereload
-# First: gem install middleman-livereload
-# Or add it to your Gemfile and run bundle install (preferred)
+# First: add it to your Gemfile and run bundle install
 # activate :livereload
 
 # Methods defined in the helpers block are available in templates
