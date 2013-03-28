@@ -126,8 +126,6 @@ module Middleman
 
       # Register a handler to provide metadata on a url path
       # @param [Regexp] matcher
-      # @param [Symbol] origin an indicator of where this metadata came from - only one
-      #                        block per [matcher, origin] pair may exist.
       # @return [Array<Array<Proc, Regexp>>]
       def provides_metadata_for_path(matcher=nil, &block)
         @_provides_metadata_for_path ||= []

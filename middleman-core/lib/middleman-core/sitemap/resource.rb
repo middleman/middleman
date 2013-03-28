@@ -143,7 +143,7 @@ module Middleman
 
       # Whether the source file is binary.
       #
-      # @retrun [Boolean]
+      # @return [Boolean]
       def binary?
         ::Middleman::Util.binary?(source_file)
       end
