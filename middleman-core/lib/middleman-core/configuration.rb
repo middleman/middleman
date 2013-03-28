@@ -19,7 +19,7 @@ module Middleman
         # @deprecated Prefer accessing settings through "config".
         #
         # @param [Symbol] key Name of the attribue
-        # @param value Attribute value
+        # @param default Attribute value
         # @return [void]
         def set(key, default=nil, &block)
           config.define_setting(key, default)

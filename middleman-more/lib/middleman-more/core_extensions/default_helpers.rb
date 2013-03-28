@@ -50,7 +50,6 @@ module Middleman
         # Output a stylesheet link tag based on the current path
         #
         # @param [Symbol] asset_ext The type of asset
-        # @param [String] separator How to break up path in parts
         # @param [String] asset_dir Where to look for assets
         # @return [void]
         def auto_tag(asset_ext, asset_dir=nil)
