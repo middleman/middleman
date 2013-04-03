@@ -128,6 +128,9 @@ module Middleman
 
           # Store last engine for later (could be inside nested renders)
           @current_engine, engine_was = engine, @current_engine
+          old_locale = ::I18n.locale
+
+          I18n.locale = opts[:lang] if opts[:lang]
 
           # Use a dup of self as a context so that instance variables set within
           # the template don't persist for other templates.
@@ -165,6 +168,7 @@ module Middleman
         ensure
           # Pop all the saved variables from earlier as we may be returning to a
           # previous render (layouts, partials, nested layouts).
+          ::I18n.locale = old_locale
           @current_engine = engine_was
           @content_blocks = nil
           @current_locs = nil
