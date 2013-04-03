@@ -185,6 +185,7 @@ module Middleman
     def to_s
       "#<Middleman::Application:0x#{object_id}>"
     end
+    alias :inspect :to_s # Ruby 2.0 calls inspect for NoMethodError instead of to_s
 
     # Expand a path to include the index file if it's a directory
     #
