@@ -60,13 +60,15 @@ module Middleman
             end
 
             instance_vars = Proc.new do
-              ::I18n.locale = lang
               @lang         = lang
               @page_id      = page_id
             end
 
-            locals = { :lang => lang, :page_id => page_id }
-            { :blocks => [instance_vars], :locals => locals }
+            locals = { :lang => lang,
+              :page_id => page_id }
+            { :blocks => [instance_vars],
+              :locals => locals,
+              :options => { :lang => lang } }
           end
 
           @app.sitemap.register_resource_list_manipulator(
@@ -111,6 +113,7 @@ module Middleman
 
             page_id = File.basename(resource.path, File.extname(resource.path))
 
+            old_locale = ::I18n.locale
             langs.map do |lang|
               ::I18n.locale = lang
 
@@ -139,6 +142,8 @@ module Middleman
 
               new_resources << p
             end
+            ::I18n.locale = old_locale
+
           end
 
           resources + new_resources
