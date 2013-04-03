@@ -11,12 +11,39 @@ module Middleman
         def registered(app, options={})
           app.config.define_setting :locales_dir, "locales", 'The directory holding your locale configurations'
 
+          # Ruby 2.0 beep beep
+          ::Middleman::Sitemap::Store.send :prepend, StoreInstanceMethods
+
           # Needed for helpers as well
           app.after_configuration do
             Localizer.new(self, options)
           end
         end
+
         alias :included :registered
+      end
+
+      module StoreInstanceMethods
+        def extensionless_path(file)
+          path = remove_templating_extensions(file)
+          path = find_extension(path, file) if File.extname(strip_away_locale(path)).empty?
+          
+          path
+        end
+
+        def localizer
+          @localizer ||= @resource_list_manipulators.select{ |m| m.first == :i18n }.first[1]
+        end
+
+        def strip_away_locale(path)
+          path.match(/([^.]*)\.([^.]{2})$/) do |m|
+            if localizer.langs.include?(m[2].to_sym)
+              return m[1]
+            end
+          end
+
+          path
+        end
       end
 
       # Central class for managing i18n extension
@@ -107,41 +134,70 @@ module Middleman
           new_resources = []
 
           resources.each do |resource|
-            next unless File.fnmatch(File.join(@templates_dir, "**"), resource.path)
+            if File.fnmatch?(File.join(@templates_dir, "**"), resource.path)
+              page_id = File.basename(resource.path, File.extname(resource.path))
 
-            page_id = File.basename(resource.path, File.extname(resource.path))
+              langs.map do |lang|
+                # Remove folder name
+                path = resource.path.sub(@templates_dir, "")
 
-            langs.map do |lang|
-              ::I18n.locale = lang
-
-              localized_page_id = ::I18n.t("paths.#{page_id}", :default => page_id)
-              path = resource.path.sub(@templates_dir, "")
-
-              # Build lang path
-              if @mount_at_root == lang
-                prefix = "/"
-              else
-                replacement = @lang_map.has_key?(lang) ? @lang_map[lang] : lang
-                prefix = @path.sub(":locale", replacement.to_s)
+                p = build_resource(path, resource.path, page_id, lang)
+                new_resources << p
               end
+            elsif parsed = parse_locale_extension(resource.path)
+              # Remove locale extension
+              page_id = parsed[:basename]
+              lang = parsed[:locale]
+              path = parsed[:path]
 
-              path = ::Middleman::Util.normalize_path(
-                File.join(prefix, path.sub(page_id, localized_page_id))
-              )
-
-              @_localization_data[path] = [lang, path, localized_page_id]
-
-              p = ::Middleman::Sitemap::Resource.new(
-                @app.sitemap,
-                path
-              )
-              p.proxy_to(resource.path)
-
+              p = build_resource(path, resource.path, page_id, lang)
               new_resources << p
             end
           end
 
           resources + new_resources
+        end
+
+        private
+
+        # Parse locale extension filename
+        # @return [Hash] with :basename, :locale, and :path
+        # will return +nil+ if no locale extension
+        def parse_locale_extension(path)
+          path.match(/([^.]*)\.([^.]*)/) do |m|
+            h = {}
+
+            h[:locale]    = m[2].to_sym
+            h[:path]      = path.sub("."+m[2], "")
+            h[:basename]  = File.basename(m[1])
+
+            langs.include?(h[:locale]) ? h : nil
+          end
+        end
+
+        def build_resource(path, source_path, page_id, lang)
+          # Build lang prefix
+          if @mount_at_root == lang
+            prefix = "/"
+          else
+            replacement = @lang_map.has_key?(lang) ? @lang_map[lang] : lang
+            prefix = @path.sub(":locale", replacement.to_s)
+          end
+
+          # Localize page id
+          ::I18n.locale = lang
+          localized_page_id = ::I18n.t("paths.#{page_id}", :default => page_id)
+
+          path = ::Middleman::Util.normalize_path(
+            File.join(prefix, path.sub(page_id, localized_page_id))
+          )
+
+          @_localization_data[path] = [lang, path, localized_page_id]
+
+          p = ::Middleman::Sitemap::Resource.new(@app.sitemap, path)
+          p.proxy_to(source_path)
+
+          p
         end
       end
     end

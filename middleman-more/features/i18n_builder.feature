@@ -12,14 +12,22 @@ Feature: i18n Builder
     Then the following files should exist:
       | index.html                                    |
       | hello.html                                    |
+      | morning.html                                  |
       | es/index.html                                 |
       | es/hola.html                                  |
+      | es/manana.html                                |
+      | CNAME                                         |
+      | password.txt                                  |
     Then the following files should not exist:
       | en/index.html                                 |
     And the file "index.html" should contain "Howdy"  
     And the file "hello.html" should contain "Hello World"
+    And the file "morning.html" should contain "Good morning"
     And the file "es/index.html" should contain "Como Esta?"
     And the file "es/hola.html" should contain "Hola World"
+    And the file "es/manana.html" should contain "Buenos días"
+    And the file "CNAME" should contain "test.github.com"
+    And the file "password.txt" should contain "hunter2"
     
   Scenario: Running localize with the alt path config
     Given a fixture app "i18n-test-app"
