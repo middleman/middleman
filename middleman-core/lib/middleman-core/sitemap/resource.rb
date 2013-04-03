@@ -76,6 +76,7 @@ module Middleman
       # Merge in new metadata specific to this resource.
       # @param [Hash] metadata A metadata block like provides_metadata_for_path takes
       def add_metadata(metadata={}, &block)
+        metadata = metadata.dup
         if metadata.has_key?(:blocks)
           @local_metadata[:blocks] << metadata.delete(:blocks)
         end

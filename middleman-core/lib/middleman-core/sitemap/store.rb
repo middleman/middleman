@@ -113,7 +113,7 @@ module Middleman
         provides_metadata.inject(blank_metadata) do |result, (callback, matcher)|
           next result if matcher && !source_file.match(matcher)
 
-          metadata = callback.call(source_file)
+          metadata = callback.call(source_file).dup
 
           if metadata.has_key?(:blocks)
             result[:blocks] << metadata[:blocks]
@@ -152,7 +152,7 @@ module Middleman
             next result unless File.fnmatch("/" + Util.strip_leading_slash(matcher), "/#{request_path}")
           end
 
-          metadata = callback.call(request_path)
+          metadata = callback.call(request_path).dup
 
           result[:blocks] += Array(metadata.delete(:blocks))
 
