@@ -138,3 +138,26 @@ Feature: i18n Builder
     And the file "hello.html" should contain '"stylesheets/site.css"'
     And the file "es/index.html" should contain '"../stylesheets/site.css"'
     And the file "es/hola.html" should contain '"../stylesheets/site.css"'
+
+  Scenario: Excluding a resource from localization using Frontmatter
+    Given a fixture app "i18n-test-app"
+    And a file named "config.rb" with:
+      """
+      activate :i18n
+      """
+    Given a successfully built app at "i18n-test-app"
+    When I cd to "build"
+    Then the following files should exist:
+      | index.html                                    |
+      | hello.html                                    |
+      | excluded.html                                 |
+      | es/index.html                                 |
+      | es/hola.html                                  |
+    Then the following files should not exist:
+      | en/index.html                                 |
+      | es/excluded.html                              |
+    And the file "index.html" should contain "Howdy"  
+    And the file "hello.html" should contain "Hello World"
+    And the file "excluded.html" should contain "Howdy"
+    And the file "es/index.html" should contain "Como Esta?"
+    And the file "es/hola.html" should contain "Hola World"
