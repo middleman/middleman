@@ -33,6 +33,9 @@ module Middleman
               compass_config.fonts_dir       = config[:fonts_dir]
               compass_config.images_dir      = config[:images_dir]
               compass_config.http_path       = config[:http_prefix]
+              if build?
+                compass_config.generated_images_path = root_path.join(config[:build_dir]).join(config[:images_dir])
+              end
 
               config[:sass_assets_paths].each do |path|
                 compass_config.add_import_path path
