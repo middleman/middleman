@@ -29,6 +29,7 @@ module Middleman
               if config[:markdown_engine] == :redcarpet
                 require "middleman-core/renderers/redcarpet"
                 ::Tilt.prefer(::Middleman::Renderers::RedcarpetTemplate)
+                MiddlemanRedcarpetHTML.middleman_app = self
               elsif !config[:markdown_engine].nil?
                 # Map symbols to classes
                 markdown_engine_klass = if config[:markdown_engine].is_a? Symbol
