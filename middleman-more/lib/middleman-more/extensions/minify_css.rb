@@ -31,7 +31,7 @@ module Middleman
 
       class SassCompressor
         def self.compress(style, options = {})
-          root_node = ::Sass::SCSS::CssParser.new(style, 'jammit-combined-input').parse
+          root_node = ::Sass::SCSS::CssParser.new(style, 'middleman-css-input', 1).parse
           root_node.options = { :style => :compressed }
           root_node.render.strip
         end
