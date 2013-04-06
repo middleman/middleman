@@ -150,7 +150,7 @@ module Middleman
               opts[:template_body] = content if content
               content = render_individual_file(path, locs, opts, context)
               path = File.basename(path, File.extname(path))
-            rescue LocalJumpError => e
+            rescue LocalJumpError
               raise "Tried to render a layout (calls yield) at #{path} like it was a template. Non-default layouts need to be in #{source}/layouts."
             end
           end
@@ -298,9 +298,9 @@ module Middleman
             # Find all the engines which handle this extension in tilt. Look for
             # config variables of that name and merge it
             extension_class = ::Tilt[ext]
-            ::Tilt.mappings.each do |ext, engines|
+            ::Tilt.mappings.each do |mapping_ext, engines|
               next unless engines.include? extension_class
-              engine_options = config[ext.to_sym] || {}
+              engine_options = config[mapping_ext.to_sym] || {}
               options.merge!(engine_options)
             end
 

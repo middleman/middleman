@@ -149,7 +149,7 @@ module Middleman
 
         begin
           ::WEBrick::HTTPServer.new(http_opts)
-        rescue Errno::EADDRINUSE => e
+        rescue Errno::EADDRINUSE
           logger.error "== Port #{port} is unavailable. Either close the instance of Middleman already running on #{port} or start this Middleman on a new port with: --port=#{port.to_i+1}"
           exit(1)
         end

@@ -149,7 +149,7 @@ module Middleman::CoreExtensions
             elsif result = parse_json_front_matter(content)
               data, content = result
             end
-          rescue => e
+          rescue
             # Probably a binary file, move on
           end
         end

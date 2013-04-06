@@ -288,7 +288,7 @@ module Middleman
 
         # Halt request and return 404
         def not_found(res, path)
-          res.status == 404
+          res.status = 404
           res.write "<html><body><h1>File Not Found</h1><p>#{path}</p></body>"
           res.finish
         end

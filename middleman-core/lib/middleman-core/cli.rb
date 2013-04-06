@@ -39,8 +39,8 @@ module Middleman
           klass.start(["-h", task].compact, :shell => self.shell)
         else
           list = []
-          Thor::Util.thor_classes_in(Middleman::Cli).each do |klass|
-            list += klass.printable_tasks(false)
+          Thor::Util.thor_classes_in(Middleman::Cli).each do |thor_class|
+            list += thor_class.printable_tasks(false)
           end
           list.sort!{ |a,b| a[0] <=> b[0] }
 

@@ -54,7 +54,7 @@ module Middleman
           if url.is_a?(Regexp) || url.include?("*")
 
             # Use the metadata loop for matching against paths at runtime
-            sitemap.provides_metadata_for_path url do |url|
+            sitemap.provides_metadata_for_path(url) do |_|
               { :options => opts, :blocks => blocks }
             end
 
@@ -77,7 +77,7 @@ module Middleman
           end
 
           # Setup a metadata matcher for rendering those options
-          sitemap.provides_metadata_for_path url do |url|
+          sitemap.provides_metadata_for_path(url) do |_|
             { :options => opts, :blocks => blocks }
           end
         end
