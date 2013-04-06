@@ -117,6 +117,9 @@ module Middleman
             langs.map do |lang|
               ::I18n.locale = lang
 
+              # Skip if the resource is explicitly not for the current lang
+              next unless resource.data.locales.nil? or Array(resource.data.locales).include?(lang.to_s)
+
               localized_page_id = ::I18n.t("paths.#{page_id}", :default => page_id)
               path = resource.path.sub(@templates_dir, "")
 
