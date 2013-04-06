@@ -36,15 +36,15 @@ Feature: link_to helper
     And a file named "source/link_to.html.erb" with:
     """
     <% menu_items.each do |item| %>
-        <%= link_to(item.metadata[:page]['title'], item.url) %>
-        <%= link_to(item.metadata[:page]['title'], item) %>
+        <%= link_to(item.data['title'], item.url) %>
+        <%= link_to(item.data['title'], item) %>
     <% end %>
     """
     And a file named "source/link_to/sub.html.erb" with:
     """
     <% menu_items.each do |item| %>
-        <%= link_to(item.metadata[:page]['title'], item.url) %>
-        <%= link_to(item.metadata[:page]['title'], item) %>
+        <%= link_to(item.data['title'], item.url) %>
+        <%= link_to(item.data['title'], item) %>
     <% end %>
     """
     And the Server is running at "indexable-app"
