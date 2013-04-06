@@ -246,12 +246,11 @@ module Middleman
           return not_found(res, request_path) unless resource && !resource.ignored?
 
           # If this path is a binary file, send it immediately
-          return send_file(resource.source_file, env, res) if resource.binary?
+          return send_file(resource, env) if resource.binary?
 
           current_path = resource.destination_path
 
-          # Set a HTTP content type based on the request's extensions
-          content_type(res, mime_type(resource.ext))
+          res['Content-Type'] = resource.content_type || 'text/plain'
 
           begin
             # Write out the contents of the page
@@ -278,11 +277,8 @@ module Middleman
         # @param [Symbol] type File extension
         # @param [String] value Mime type
         # @return [void]
-        def mime_type(type, value=nil)
-          return type if type.nil? || type.to_s.include?('/')
-          return ::Rack::Mime.mime_type('.txt') if type.empty?
+        def mime_type(type, value)
           type = ".#{type}" unless type.to_s[0] == ?.
-          return ::Rack::Mime.mime_type(type, nil) unless value
           ::Rack::Mime::MIME_TYPES[type] = value
         end
 
@@ -296,39 +292,13 @@ module Middleman
         # Immediately send static file
         #
         # @param [String] path File to send
-        def send_file(path, env, res)
-          extension = File.extname(path)
-          matched_mime = mime_type(extension)
-          matched_mime = "application/octet-stream" if matched_mime.nil?
-          content_type res, matched_mime
-
+        def send_file(resource, env)
           file      = ::Rack::File.new nil
-          file.path = path
+          file.path = resource.source_file
           response = file.serving(env)
-          response[1]['Content-Encoding'] = 'gzip' if %w(.svgz).include?(extension)
+          response[1]['Content-Encoding'] = 'gzip' if %w(.svgz .gz).include?(resource.ext)
+          response[1]['Content-Type'] = resource.content_type || "application/octet-stream"
           halt response
-        end
-
-        # Set the content type for the current request
-        #
-        # @param [String] type Content type
-        # @param [Hash] params
-        # @return [void]
-        def content_type(res, type, params={})
-          return unless type
-          default = params.delete :default
-          mime_type = mime_type(type) || default
-          throw "Unknown media type: %p" % type if mime_type.nil?
-          mime_type = mime_type.dup
-          unless params.include? :charset
-            params[:charset] = params.delete('charset') || "utf-8"
-          end
-          params.delete :charset if mime_type.include? 'charset'
-          unless params.empty?
-            mime_type << (mime_type.include?(';') ? ', ' : ';')
-            mime_type << params.map { |kv| kv.join('=') }.join(', ')
-          end
-          res['Content-Type'] = mime_type
         end
       end
     end

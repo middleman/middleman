@@ -185,6 +185,15 @@ module Middleman::CoreExtensions
       def data
         ::Middleman::Util.recursively_enhance(raw_data).freeze
       end
+
+      # Override Resource#content_type to take into account frontmatter
+      def content_type
+        # Allow setting content type in frontmatter too
+        fm_type = data[:content_type]
+        return fm_type if fm_type
+
+        super
+      end
     end
 
     module InstanceMethods
