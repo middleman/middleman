@@ -42,29 +42,39 @@ module Middleman
             @proxied_to
           end
 
-          # Whether this page has a template file
-          # @return [Boolean]
-          def template?
+          # The resource for the page this page is proxied to. Throws an exception
+          # if there is no resource.
+          # @return [Sitemap::Resource]
+          def proxied_to_resource
+            proxy_resource = store.find_resource_by_path(proxied_to)
+
+            unless proxy_resource
+              raise "Path #{path} proxies to unknown file #{proxied_to}:#{store.resources.map(&:path)}"
+            end
+
+            if proxy_resource.proxy?
+              raise "You can't proxy #{path} to #{proxied_to} which is itself a proxy."
+            end
+
+            proxy_resource
+          end
+
+          def get_source_file
             if proxy?
-              store.find_resource_by_path(proxied_to).template?
+              proxied_to_resource.source_file
             else
               super
             end
           end
 
-          def get_source_file
+          def content_type
+            mime_type = super
+            return mime_type if mime_type
+
             if proxy?
-              proxy_resource = store.find_resource_by_path(proxied_to)
-
-              unless proxy_resource
-                raise "Path #{path} proxies to unknown file #{proxied_to}:#{store.resources.map(&:path)}"
-              end
-
-              if proxy_resource.proxy?
-                raise "You can't proxy #{path} to #{proxied_to} which is itself a proxy."
-              end
-
-              proxy_resource.source_file
+              proxied_to_resource.content_type
+            else
+              nil
             end
           end
         end

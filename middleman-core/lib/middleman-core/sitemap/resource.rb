@@ -1,4 +1,5 @@
 require "middleman-core/sitemap/extensions/traversal"
+require "middleman-core/sitemap/extensions/content_type"
 
 module Middleman
 
@@ -8,6 +9,7 @@ module Middleman
     # Sitemap Resource class
     class Resource
       include Middleman::Sitemap::Extensions::Traversal
+      include Middleman::Sitemap::Extensions::ContentType
 
       # @return [Middleman::Application]
       attr_reader :app
