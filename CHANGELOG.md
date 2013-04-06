@@ -1,6 +1,7 @@
 master
 ===
 
+* Switched default Markdown engine to Kramdown. #852
 * Overhaul content-type handling, and add a `:content_type` parameter for `page`, `proxy`, and frontmatter that allows for overriding the default content type. #851
 * Fixes for upcoming Sass versions.
 * Fix markdown filters in Haml 4 so that they don't throw errors when generating links/images and so they use our magic image_tag/link_to methods. #662

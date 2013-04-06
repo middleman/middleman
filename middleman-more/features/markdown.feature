@@ -9,4 +9,4 @@ Feature: Markdown support
   Scenario: Markdown extensions (Maruku)
     Given the Server is running at "markdown-app"
     When I go to "/smarty_pants.html"
-    Then I should see "&"
+    Then I should see "“Hello”"
