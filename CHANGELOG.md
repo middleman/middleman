@@ -1,3 +1,13 @@
+3.0.13
+===
+
+* Require Tilt 1.3.6 (older versions have errant .csv template type)
+* Unregister Tilt HTML handler
+* Fix dynamic multi-byte utf-8 files rebuilding. #806
+* Force locale to english for number_to_human_size in the gzip extension. #804
+* Don't use the logger from a trap context. Ruby 2.0.0 support. #801.
+* Serve extensionless files or dotfiles with text/plain MIME type
+
 3.0.12
 ===
 
