@@ -1,3 +1,26 @@
+master
+===
+
+* Overhaul content-type handling, and add a `:content_type` parameter for `page`, `proxy`, and frontmatter that allows for overriding the default content type. #851
+* Fixes for upcoming Sass versions.
+* Fix markdown filters in Haml 4 so that they don't throw errors when generating links/images and so they use our magic image_tag/link_to methods. #662
+* Fix a number of bugs with i18n. Add a `:lang` option that can be used with `page` or `proxy` to set the I18n.locale of a page. #845
+* Directory names in the data folder are treated as part of the data key. #836
+* Properly reload the server when files change in "lib" or "helpers". #835
+* Replace Rainpress CSS minifier with the one built into Sass.
+* Changed 'default' and 'html5' templates to use 'current_page.data.title' instead of 'data.page.title'. #825
+* Include file extension in template cache. #798
+* Support for Ruby 2.0.0.
+* "middleman console" will give you a console where you can mess around inside your middleman context. #775
+* Add to Compass import paths instead of resetting them. #707
+* There are now metadata pages in the preview server at "/__middleman__/" that show information about the sitemap and site configuration. #374 and #776
+* The sitemap is now queryable with an ARel-like API. #650
+* Reorganize SMACSS template. #591
+* No longer bundle native file watchers - add an appropriate gem (rb-fsevent for OS X, rb-inotify for Linux, wdm for windows) to your Gemfile.
+* `activate :asset_host, :host => hostname` can be used to configure `:asset_host`.
+* Path matchers (for things like ignore and page) correctly work with string matchers. #689
+* Configuration has been moved to Middleman::Configuration::ConfigurationManager. This is backwards-compatible, but offers a nicer way of getting and setting configuration for extensions, including documenting those settings and their defaults. #620.
+
 3.0.13
 ===
 
