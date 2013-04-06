@@ -28,11 +28,6 @@ module Middleman::CoreExtensions
         app.after_configuration do
           ::Middleman::Sitemap::Resource.send :include, ResourceInstanceMethods
 
-          sitemap.register_resource_list_manipulator(
-            :frontmatter,
-            frontmatter_manager
-          )
-
           sitemap.provides_metadata do |path|
             fmdata = frontmatter_manager.data(path).first || {}
 
@@ -165,44 +160,28 @@ module Middleman::CoreExtensions
       def normalize_path(path)
         path.sub(%r{^#{@app.source_dir}\/}, "")
       end
-
-      # Update the main sitemap resource list
-      # @return [void]
-      def manipulate_resource_list(resources)
-        resources.each do |r|
-          if !r.proxy? && !r.data.nil? && r.data["ignored"] == true
-            r.frontmatter_ignored = true
-          end
-        end
-
-        resources
-      end
     end
 
     module ResourceInstanceMethods
 
-      def frontmatter_ignored?
-        @_frontmatter_ignored || false
-      end
-
-      def frontmatter_ignored=(v)
-        @_frontmatter_ignored = v
-      end
-
       def ignored?
-        if frontmatter_ignored?
+        if !proxy? && data["ignored"] == true
           true
         else
           super
         end
       end
 
-      # This page's frontmatter
+      # This page's frontmatter without being enhanced for access by either symbols or strings.
+      # Used internally
+      # @private
       # @return [Hash]
       def raw_data
         app.frontmatter_manager.data(source_file).first
       end
 
+      # This page's frontmatter
+      # @return [Hash]
       def data
         ::Middleman::Util.recursively_enhance(raw_data).freeze
       end
@@ -221,7 +200,6 @@ module Middleman::CoreExtensions
       def template_data_for_file(path)
         frontmatter_manager.data(path).last
       end
-
     end
   end
 end
