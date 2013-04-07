@@ -9,7 +9,7 @@ gem "yard",     "~> 0.8.0"
 
 # Test tools
 gem "cucumber", "~> 1.2.1"
-gem "fivemat",  "~> 1.1.0"
+gem "fivemat",  "~> 1.2.0"
 gem "aruba",    "~> 0.5.1"
 gem "rspec",    "~> 2.12"
 gem 'gherkin', '<= 2.11.6' # for annoying "eval" warnings
