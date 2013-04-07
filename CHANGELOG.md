@@ -1,6 +1,8 @@
 master
 ===
 
+* Added a "t" helper that delegates to I18n.t, just like Rails. #853.
+* I18n will fall back to the default locale if a translation in the current locale is not found. You can disable this behavior by passing `:no_fallbacks => true` when activating `:i18n`. More settings documented at https://github.com/svenfuchs/i18n/wiki/Fallbacks . #853
 * Switched default Markdown engine to Kramdown. #852
 * Overhaul content-type handling, and add a `:content_type` parameter for `page`, `proxy`, and frontmatter that allows for overriding the default content type. #851
 * Fixes for upcoming Sass versions.
