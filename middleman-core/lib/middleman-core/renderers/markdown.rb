@@ -10,7 +10,7 @@ module Middleman
         # Once registered
         def registered(app)
           # Set our preference for a markdown engine
-          app.config.define_setting :markdown_engine, :maruku, 'Preferred markdown engine'
+          app.config.define_setting :markdown_engine, :kramdown, 'Preferred markdown engine'
           app.config.define_setting :markdown_engine_prefix, ::Tilt, 'The parent module for markdown template engines'
 
           app.before_configuration do
