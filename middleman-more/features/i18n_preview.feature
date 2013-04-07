@@ -203,3 +203,16 @@ Feature: i18n Preview
     Then I should see '"../stylesheets/site.css"'
     When I go to "/es/hola.html"
     Then I should see '"../stylesheets/site.css"'
+
+  Scenario: Missing translations fall back to the default locale
+    Given a fixture app "i18n-default-app"
+    And a file named "config.rb" with:
+      """
+      activate :i18n, :mount_at_root => :es
+      """
+    Given the Server is running at "i18n-default-app"
+    When I go to "/en/"
+    Then I should see "Default locale: es"
+    Then I should see "Current locale: en"
+    Then I should see "Buenos días"
+    Then I should see "Howdy"

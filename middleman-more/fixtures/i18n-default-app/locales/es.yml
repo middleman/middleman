@@ -1,0 +1,8 @@
+---
+es:
+  paths:
+    hello: "hola"
+  
+  greetings: "Como Esta?"
+  hi: "Hola"
+  untranslated: "Buenos días"
