@@ -1,3 +1,6 @@
+require "i18n"
+require "i18n/backend/fallbacks"
+
 module Middleman
   module CoreExtensions
 
@@ -14,6 +17,17 @@ module Middleman
           # Needed for helpers as well
           app.after_configuration do
             Localizer.new(self, options)
+          end
+
+          app.helpers do
+            def t(*args)
+              ::I18n.t(*args)
+            end
+          end
+
+          # See https://github.com/svenfuchs/i18n/wiki/Fallbacks
+          unless options[:no_fallbacks]
+            ::I18n::Backend::Simple.send(:include, I18n::Backend::Fallbacks)
           end
         end
         alias :included :registered
@@ -42,6 +56,12 @@ module Middleman
           @path          = @options[:path]          || "/:locale/"
           @templates_dir = @options[:templates_dir] || "localizable"
           @mount_at_root = @options.has_key?(:mount_at_root) ? @options[:mount_at_root] : langs.first
+
+          ::I18n.default_locale = @mount_at_root
+          # Reset fallbacks to fall back to our new default
+          if ::I18n.respond_to? :fallbacks
+            ::I18n.fallbacks = ::I18n::Locale::Fallbacks.new
+          end
 
           if !@app.build?
             logger.info "== Locales: #{langs.join(", ")} (Default #{@mount_at_root})"
@@ -117,7 +137,7 @@ module Middleman
             langs.map do |lang|
               ::I18n.locale = lang
 
-              localized_page_id = ::I18n.t("paths.#{page_id}", :default => page_id)
+              localized_page_id = ::I18n.t("paths.#{page_id}", :default => page_id, :fallback => [])
               path = resource.path.sub(@templates_dir, "")
 
               # Build lang path
