@@ -128,19 +128,19 @@ module Middleman
           # Search the root of the project for required files
           $LOAD_PATH.unshift(root)
 
-          # Check for and evaluate local configuration
-          local_config = File.join(root, "config.rb")
-          if File.exists? local_config
-            logger.debug "== Reading:  Local config"
-            instance_eval File.read(local_config), local_config, 1
-          end
-
           if config[:autoload_sprockets]
             begin
               require "middleman-sprockets"
               activate(:sprockets)
             rescue LoadError
             end
+          end
+
+          # Check for and evaluate local configuration
+          local_config = File.join(root, "config.rb")
+          if File.exists? local_config
+            logger.debug "== Reading:  Local config"
+            instance_eval File.read(local_config), local_config, 1
           end
 
           run_hook :build_config if build?
