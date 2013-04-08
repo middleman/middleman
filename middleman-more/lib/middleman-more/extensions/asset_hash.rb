@@ -35,7 +35,18 @@ module Middleman
         # Update the main sitemap resource list
         # @return [void]
         def manipulate_resource_list(resources)
-          resources.each do |resource|
+          # Process resources in order: binary images and fonts, then SVG, then JS/CSS.
+          # This is so by the time we get around to the text files (which may reference
+          # images and fonts) the static assets' hashes are already calculated.
+          resources.sort_by do |a|
+            if %w(.svg).include? a.ext
+              0
+            elsif %w(.js .css).include? a.ext
+              1
+            else
+              -1
+            end
+          end.each do |resource|
             next unless @exts.include? resource.ext
             next if @ignore.any? { |ignore| Middleman::Util.path_match(ignore, resource.destination_path) }
 
