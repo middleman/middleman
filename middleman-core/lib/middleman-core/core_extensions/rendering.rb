@@ -196,27 +196,26 @@ module Middleman
             engine = File.extname(resource.source_file)[1..-1].to_sym
 
             # Look for partials relative to the current path
-            if current_dir != self.source_dir
-              relative_dir = File.join(current_dir.sub("#{self.source_dir}/", ""), data)
+            relative_dir = File.join(current_dir.sub(%r{^#{self.source_dir}/?}, ""), data)
 
-              # Try to use the current engine first
-              found_partial, found_engine = resolve_template(relative_dir, :preferred_engine => engine, :try_without_underscore => true)
+            # Try to use the current engine first
+            found_partial, found_engine = resolve_template(relative_dir, :preferred_engine => engine, :try_without_underscore => true)
 
-              # Fall back to any engine available
-              if !found_partial
-                found_partial, found_engine = resolve_template(relative_dir, :try_without_underscore => true)
-              end
+            # Fall back to any engine available
+            if !found_partial
+              found_partial, found_engine = resolve_template(relative_dir, :try_without_underscore => true)
             end
           end
 
-          # Look in the root for the partial with the current engine
+          # Look in the partials_dir for the partial with the current engine
+          partials_path = File.join(config[:partials_dir], data)
           if !found_partial && !engine.nil?
-            found_partial, found_engine = resolve_template(data, :preferred_engine => engine, :try_without_underscore => true)
+            found_partial, found_engine = resolve_template(partials_path, :preferred_engine => engine, :try_without_underscore => true)
           end
 
           # Look in the root with any engine
           if !found_partial
-            found_partial, found_engine = resolve_template(data, :try_without_underscore => true)
+            found_partial, found_engine = resolve_template(partials_path, :try_without_underscore => true)
           end
 
           # Render the partial if found, otherwide throw exception
