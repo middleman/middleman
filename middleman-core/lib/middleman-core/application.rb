@@ -87,6 +87,10 @@ module Middleman
     # @return [String]
     config.define_setting :fonts_dir,   "fonts", 'Location of fonts within source'
 
+    # Location of partials within source. Used by renderers.
+    # @return [String]
+    config.define_setting :partials_dir,   "", 'Location of partials within source'
+
     # Where to build output files
     # @return [String]
     config.define_setting :build_dir,   "build", 'Where to build output files'
