@@ -124,7 +124,7 @@ module Middleman
             app.data.store("page", md[:page])
           end
 
-          blocks = md[:blocks].dup rescue []
+          blocks = Array(md[:blocks]).dup
           blocks << block if block_given?
 
           app.current_path ||= self.destination_path

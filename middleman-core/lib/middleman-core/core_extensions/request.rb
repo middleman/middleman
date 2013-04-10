@@ -180,14 +180,6 @@ module Middleman
         delegate :use, :to => :"self.class" 
         delegate :map, :to => :"self.class" 
 
-        # Rack env
-        def env
-          Thread.current[:env]
-        end
-        def env=(value)
-          Thread.current[:env] = value
-        end
-
         # Rack request
         # @return [Rack::Request]
         def req
@@ -195,15 +187,6 @@ module Middleman
         end
         def req=(value)
           Thread.current[:req] = value
-        end
-
-        # Rack response
-        # @return [Rack::Response]
-        def res
-          Thread.current[:res]
-        end
-        def res=(value)
-          Thread.current[:res] = value
         end
 
         def call(env)
@@ -214,10 +197,9 @@ module Middleman
         #
         # @param env Rack environment
         def call!(env)
-          self.env = env
           # Store environment, request and response for later
           self.req = req = ::Rack::Request.new(env)
-          self.res = res = ::Rack::Response.new
+          res = ::Rack::Response.new
 
           logger.debug "== Request: #{env["PATH_INFO"]}"
 
