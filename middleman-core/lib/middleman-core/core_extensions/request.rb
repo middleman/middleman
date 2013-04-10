@@ -155,37 +155,56 @@ module Middleman
       # Methods to be mixed-in to Middleman::Application
       module InstanceMethods
         # Backwards-compatibility with old request.path signature
-        attr_reader :request
+        def request
+          Thread.current[:legacy_request]
+        end
 
         # Accessor for current path
         # @return [String]
-        attr_reader :current_path
+        def current_path
+          Thread.current[:current_path]
+        end
 
         # Set the current path
         #
         # @param [String] path The new current path
         # @return [void]
         def current_path=(path)
-          @current_path = path
-          @request = ::Thor::CoreExt::HashWithIndifferentAccess.new({
+          Thread.current[:current_path] = path
+          Thread.current[:legacy_request] = ::Thor::CoreExt::HashWithIndifferentAccess.new({
             :path   => path,
             :params => req ? ::Thor::CoreExt::HashWithIndifferentAccess.new(req.params) : {}
           })
         end
 
-        def use(*args, &block); self.class.use(*args, &block); end
-        def map(*args, &block); self.class.map(*args, &block); end
+        delegate :use, :to => :"self.class" 
+        delegate :map, :to => :"self.class" 
 
         # Rack env
-        attr_accessor :env
+        def env
+          Thread.current[:env]
+        end
+        def env=(value)
+          Thread.current[:env] = value
+        end
 
         # Rack request
         # @return [Rack::Request]
-        attr_accessor :req
+        def req
+          Thread.current[:req]
+        end
+        def req=(value)
+          Thread.current[:req] = value
+        end
 
         # Rack response
         # @return [Rack::Response]
-        attr_accessor :res
+        def res
+          Thread.current[:res]
+        end
+        def res=(value)
+          Thread.current[:res] = value
+        end
 
         def call(env)
           dup.call!(env)
@@ -228,7 +247,7 @@ module Middleman
         # @param [Rack::Response] res
         def process_request(env, req, res)
           start_time = Time.now
-          @current_path = nil
+          current_path = nil
 
           request_path = URI.decode(env["PATH_INFO"].dup)
           if request_path.respond_to? :force_encoding

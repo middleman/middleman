@@ -1,5 +1,6 @@
 # Use the Ruby/Rails logger
 require 'active_support/core_ext/logger'
+require 'thread'
 
 module Middleman
 
@@ -15,6 +16,14 @@ module Middleman
 
       if @instrumenting != false
         ::ActiveSupport::Notifications.subscribe(/\.middleman$/, self)
+      end
+
+      @mutex = Mutex.new
+    end
+
+    def add(*args)
+      @mutex.synchronize do
+        super
       end
     end
 
