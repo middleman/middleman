@@ -22,6 +22,9 @@ module Middleman
           app.helpers Helpers
 
           app.config.define_setting :relative_links, false, 'Whether to generate relative links instead of absolute ones'
+
+          # Disable Padrino cache buster
+          app.set :asset_stamp, false
         end
         alias :included :registered
       end
@@ -104,6 +107,25 @@ module Middleman
           asset_url(source, asset_folder)
         end
 
+        # Get the URL of an asset given a type/prefix
+        #
+        # @param [String] path The path (such as "photo.jpg")
+        # @param [String] prefix The type prefix (such as "images")
+        # @return [String] The fully qualified asset url
+        def asset_url(path, prefix="")
+          # Don't touch assets which already have a full path
+          if path.include?("//")
+            path
+          else # rewrite paths to use their destination path
+            path = File.join(prefix, path)
+            if resource = sitemap.find_resource_by_path(path)
+              resource.url
+            else
+              File.join(config[:http_prefix], path)
+            end
+          end
+        end
+
         # Given a source path (referenced either absolutely or relatively)
         # or a Resource, this will produce the nice URL configured for that
         # path, respecting :relative_links, directory indexes, etc.
@@ -121,7 +143,7 @@ module Middleman
           relative = options.delete(:relative)
           raise "Can't use the relative option with an external URL" if relative && uri.host
 
-          # Allow people to turn on relative paths for all links with 
+          # Allow people to turn on relative paths for all links with
           # set :relative_links, true
           # but still override on a case by case basis with the :relative parameter.
           effective_relative = relative || false
@@ -130,7 +152,7 @@ module Middleman
           # Try to find a sitemap resource corresponding to the desired path
           this_resource = current_resource # store in a local var to save work
           if path_or_resource.is_a?(Sitemap::Resource)
-            resource = path_or_resource 
+            resource = path_or_resource
             resource_url = url
           elsif this_resource && uri.path
             # Handle relative urls
@@ -162,7 +184,7 @@ module Middleman
             # If they explicitly asked for relative links but we can't find a resource...
             raise "No resource exists at #{url}" if relative
           end
-            
+
           # Support a :query option that can be a string or hash
           if query = options.delete(:query)
             uri.query = query.respond_to?(:to_param) ? query.to_param : query.to_s
@@ -171,7 +193,7 @@ module Middleman
           # Support a :fragment or :anchor option just like Padrino
           fragment = options.delete(:anchor) || options.delete(:fragment)
           uri.fragment = fragment.to_s if fragment
-          
+
           # Finally make the URL back into a string
           uri.to_s
         end
@@ -185,7 +207,7 @@ module Middleman
         # config[:relative_links] = true
         #
         # to config.rb to have all links default to relative.
-        # 
+        #
         # There is also a :query option that can be used to append a
         # query string, which can be expressed as either a String,
         # or a Hash which will be turned into URL parameters.
@@ -200,11 +222,11 @@ module Middleman
           if url = args[url_arg_index]
             options = args[options_index] || {}
             raise ArgumentError.new("Options must be a hash") unless options.is_a?(Hash)
-            
+
             # Transform the url through our magic url_for method
             args[url_arg_index] = url_for(url, options)
           end
-            
+
           super(*args, &block)
         end
 

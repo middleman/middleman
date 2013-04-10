@@ -23,10 +23,6 @@ module Middleman
         require "middleman-more/core_extensions/default_helpers"
         Middleman::Application.register Middleman::CoreExtensions::DefaultHelpers
 
-        # Setup asset path pipeline
-        require "middleman-more/core_extensions/assets"
-        Middleman::Application.register Middleman::CoreExtensions::Assets
-
         # i18n
         require "i18n"
         app.after_configuration do
