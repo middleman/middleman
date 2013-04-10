@@ -1,5 +1,7 @@
 require "middleman-core"
 require "fileutils"
+require "parallel"
+require "thread"
 
 # CLI Module
 module Middleman::Cli
@@ -9,6 +11,7 @@ module Middleman::Cli
     include Thor::Actions
 
     attr_reader :debugging
+    attr_accessor :had_errors
 
     check_unknown_options!
 
@@ -25,6 +28,11 @@ module Middleman::Cli
       :aliases => "-g",
       :default => nil,
       :desc    => 'Build a subset of the project'
+    method_option :parallel,
+      :type    => :boolean,
+      :aliases => "-p",
+      :default => false,
+      :desc    => 'Build in parallel'
     method_option :verbose,
       :type    => :boolean,
       :default => false,
@@ -61,6 +69,7 @@ module Middleman::Cli
       opts = {}
       opts[:glob]  = options["glob"]  if options.has_key?("glob")
       opts[:clean] = options["clean"] if options.has_key?("clean")
+      opts[:parallel] = options["parallel"] if options.has_key?("parallel")
 
       action GlobAction.new(self, opts)
 
@@ -117,6 +126,7 @@ module Middleman::Cli
       # @param [Middleman::Sitemap::Resource] resource
       # @return [String] The full path of the file that was written
       def render_to_file(resource)
+
         build_dir = self.class.shared_instance.config[:build_dir]
         output_file = File.join(build_dir, resource.destination_path)
 
@@ -150,15 +160,17 @@ module Middleman::Cli
       end
 
       def handle_error(file_name, response, e=Thor::Error.new(response))
-        @had_errors = true
 
         say_status :error, file_name, :red
-        if self.debugging
-          raise e
-          exit(1)
-        elsif options["verbose"]
+
+        if options["verbose"]
           self.shell.error(response)
         end
+
+        raise e
+
+        exit(1) if self.debugging
+
       end
 
       def binary_encode(string)
@@ -224,6 +236,19 @@ module Middleman::Cli
       @config.has_key?(:clean) && @config[:clean]
     end
 
+    # Whether we should build in parallel
+    # when we're in verbose mode, disable
+    # @return [Boolean]
+    def parallel?
+      @config.has_key?(:parallel) && @config[:parallel] || verbose?
+    end
+
+    # Whether we should print debug messages
+    # @return [Boolean]
+    def verbose?
+      @config.has_key?(:verbose) && @config[:verbose]
+    end
+
     # Whether the given directory is empty
     # @param [String] directory
     # @return [Boolean]
@@ -250,9 +275,9 @@ module Middleman::Cli
       # Sort order, images, fonts, js/css and finally everything else.
       sort_order = %w(.png .jpeg .jpg .gif .bmp .svg .svgz .ico .woff .otf .ttf .eot .js .css)
 
-      # Pre-request CSS to give Compass a chance to build sprites
       logger.debug "== Prerendering CSS"
 
+      # Pre-request CSS to give Compass a chance to build sprites
       @app.sitemap.resources.select do |resource|
         resource.ext == ".css"
       end.each do |resource|
@@ -265,29 +290,40 @@ module Middleman::Cli
       @app.files.find_new_files((Pathname(@app.source_dir) + @app.images_dir).relative_path_from(@app.root_path))
       @app.sitemap.ensure_resource_list_updated!
 
+      logger.debug "== Building files"
+
       # Sort paths to be built by the above order. This is primarily so Compass can
       # find files in the build folder when it needs to generate sprites for the
       # css files
-
-      logger.debug "== Building files"
-
       resources = @app.sitemap.resources.sort_by do |r|
         sort_order.index(r.ext) || 100
       end
 
-      # Loop over all the paths and build them.
-      resources.each do |resource|
-        next if @config[:glob] && !File.fnmatch(@config[:glob], resource.destination_path)
+      # Remove any resources which do not match the current glob ( if present )
+      resources.delete_if { |resource| @config[:glob] && !File.fnmatch(@config[:glob], resource.destination_path) }
 
-        output_path = base.render_to_file(resource)
+      # We catch any exception from the processes, then indicate on the main thread that errors have occured
+      begin
+        # Loop over all the paths and build them
+        # Build in 0 processes when we're not building in parallel ( eg disabled )
+        ::Parallel.map(resources, :in_processes => parallel? ? ::Parallel.processor_count : 0 ) do |resource|
+          base.render_to_file(resource)
+        end
+      rescue
+        base.had_errors = true
+      end
 
-        if cleaning?
+      if cleaning?
+        # Loop over all paths detemining which are 'dirty'
+        resources.select do |resource|
+          output_path = File.join(@destination, resource.destination_path)
           pn = Pathname(output_path)
           @cleaning_queue.delete(pn.realpath) if pn.exist?
         end
       end
 
       ::Middleman::Profiling.report("build")
+
     end
   end
 

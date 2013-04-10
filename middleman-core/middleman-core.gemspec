@@ -24,6 +24,7 @@ Gem::Specification.new do |s|
   
   # Builder
   s.add_dependency("rack-test", ["~> 0.6.1"])
+  s.add_dependency("parallel", ["~> 0.6.2"])
   
   # CLI
   s.add_dependency("thor", ["~> 0.15.4"])
