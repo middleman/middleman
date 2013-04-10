@@ -86,9 +86,7 @@ module Middleman
             Tilt.mappings.each do |key, klasses|
               begin
                 Tilt[".#{key}"]
-              rescue LoadError
-                Tilt.mappings.delete(key)
-              rescue NameError
+              rescue LoadError, NameError
                 Tilt.mappings.delete(key)
               end
             end

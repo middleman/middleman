@@ -4,9 +4,6 @@ require "middleman-core/core_extensions/request"
 # File Change Notifier
 require "middleman-core/core_extensions/file_watcher"
 
-# Add Builder callbacks
-require "middleman-core/core_extensions/builder"
-
 # Custom Feature API
 require "middleman-core/core_extensions/extensions"
 
@@ -28,6 +25,3 @@ require "middleman-core/core_extensions/routing"
 
 # Catch and show exceptions at the Rack level
 require "middleman-core/core_extensions/show_exceptions"
-
-# Manage Ruby string encodings
-require "middleman-core/core_extensions/ruby_encoding"

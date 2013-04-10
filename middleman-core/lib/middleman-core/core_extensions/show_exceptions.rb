@@ -19,17 +19,11 @@ module Middleman
           app.configure :development do
             # Include middlemare
             if config[:show_exceptions]
-              use ::Middleman::CoreExtensions::ShowExceptions::Middleware
+              use ::Rack::ShowExceptions
             end
           end
         end
       end
-
-      # Custom exception class
-      # TODO: Style this ourselves
-      class Middleware < ::Rack::ShowExceptions
-      end
-
     end
   end
 end

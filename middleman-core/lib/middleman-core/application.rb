@@ -29,6 +29,9 @@ module Middleman
     # Ready (all loading and parsing of extensions complete) hook
     define_hook :ready
 
+    # Runs after the build is finished
+    define_hook :after_build
+
     # Mix-in helper methods. Accepts either a list of Modules
     # and/or a block to be evaluated
     # @return [void]
@@ -103,20 +106,18 @@ module Middleman
     # @return [String, Symbold]
     config.define_setting :layout, :_auto_layout, 'Default layout name'
 
+    # Default string encoding for templates and output.
+    # @return [String]
+    config.define_setting :encoding, "utf-8", 'Default string encoding for templates and output'
+
     # Activate custom features and extensions
     include Middleman::CoreExtensions::Extensions
-
-    # Manage Ruby string encodings
-    include Middleman::CoreExtensions::RubyEncoding
 
     # Basic Rack Request Handling
     register Middleman::CoreExtensions::Request
 
     # Handle exceptions
     register Middleman::CoreExtensions::ShowExceptions
-
-    # Add Builder Callbacks
-    register Middleman::CoreExtensions::Builder
 
     # Add Watcher Callbacks
     register Middleman::CoreExtensions::FileWatcher
@@ -138,7 +139,7 @@ module Middleman
     register Middleman::CoreExtensions::ExternalHelpers
 
     # with_layout and page routing
-    register Middleman::CoreExtensions::Routing
+    include Middleman::CoreExtensions::Routing
 
     # Initialize the Middleman project
     def initialize(&block)
@@ -147,6 +148,11 @@ module Middleman
 
       # Setup the default values from calls to set before initialization
       self.class.config.load_settings(self.class.superclass.config.all_settings)
+
+      if Object.const_defined?(:Encoding)
+        Encoding.default_internal = config[:encoding]
+        Encoding.default_external = config[:encoding]
+      end
 
       # Evaluate a passed block if given
       instance_exec(&block) if block_given?

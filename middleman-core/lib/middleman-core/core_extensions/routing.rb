@@ -2,22 +2,6 @@
 module Middleman
   module CoreExtensions
     module Routing
-
-      # Setup extension
-      class << self
-
-        # Once registered
-        def registered(app)
-          # Include methods
-          app.send :include, InstanceMethods
-        end
-
-        alias :included :registered
-      end
-
-      # Routing instance methods
-      module InstanceMethods
-
         # Takes a block which allows many pages to have the same layout
         #
         #   with_layout :admin do
@@ -81,7 +65,6 @@ module Middleman
             { :options => opts, :blocks => blocks }
           end
         end
-      end
     end
   end
 end
