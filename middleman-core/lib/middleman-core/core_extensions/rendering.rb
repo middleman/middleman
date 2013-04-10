@@ -23,6 +23,7 @@ module Middleman
           app.define_hook :after_render
 
           ::Tilt.mappings.delete('html') # WTF, Tilt?
+          ::Tilt.mappings.delete('csv')
 
           # Activate custom renderers
           require "middleman-core/renderers/erb"
