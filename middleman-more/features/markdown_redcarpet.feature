@@ -42,6 +42,27 @@ Feature: Markdown support
     When I go to "/hard_wrap.html"
     Then I should see "br"
 
+  Scenario: Redcarpet per-page frontmatter options
+    Given a fixture app "markdown-frontmatter-options-app"
+    And a file named "config.rb" with:
+      """
+      set :markdown_engine, :redcarpet
+      set :markdown, :smartypants => true
+      """
+    Given the Server is running at "markdown-frontmatter-options-app"
+    When I go to "/smarty_pants-default.html"
+    Then I should see "&ldquo;"
+    When I go to "/smarty_pants-on.html"
+    Then I should see "&ldquo;"
+    When I go to "/smarty_pants-off.html"
+    Then I should not see "&ldquo;"
+    When I go to "/tables-default.html"
+    Then I should not see "<table>"
+    When I go to "/tables-on.html"
+    Then I should see "<table>"
+    When I go to "/tables-off.html"
+    Then I should not see "<table>"
+
   Scenario: Redcarpet uses our link_to and image_tag helpers
     Given a fixture app "markdown-app"
     And a file named "config.rb" with:

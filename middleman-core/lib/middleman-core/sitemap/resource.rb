@@ -117,6 +117,15 @@ module Middleman
         instrument "render.resource", :path => relative_source  do
           md   = metadata.dup
           opts = md[:options].deep_merge(opts)
+
+          # Pass "renderer_options" hash from frontmatter along to renderer
+          if md[:page]["renderer_options"]
+            opts[:renderer_options] = {}
+            md[:page]["renderer_options"].each do |k, v|
+              opts[:renderer_options][k.to_sym] = v
+            end
+          end
+
           locs = md[:locals].deep_merge(locs)
 
           # Forward remaining data to helpers

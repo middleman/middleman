@@ -250,6 +250,9 @@ module Middleman
           options = opts.merge(options_for_ext(extension))
           options[:outvar] ||= '@_out_buf'
 
+          # Overwrite with frontmatter options
+          options = options.deep_merge(options[:renderer_options]) if options[:renderer_options]
+
           template_class = Tilt[path]
           # Allow hooks to manipulate the template before render
           self.class.callbacks_for_hook(:before_render).each do |callback|
