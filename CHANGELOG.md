@@ -1,6 +1,7 @@
 master
 ===
 
+* Allow frontmatter to be side-loaded from a neighboring file with a .frontmatter extension: #855
 * Allow frontmatter "renderer_options" key to overwrite renderer options on a per-file basis. #859
 * Added a "t" helper that delegates to I18n.t, just like Rails. #853.
 * I18n will fall back to the default locale if a translation in the current locale is not found. You can disable this behavior by passing `:no_fallbacks => true` when activating `:i18n`. More settings documented at https://github.com/svenfuchs/i18n/wiki/Fallbacks . #853

@@ -21,6 +21,9 @@ gem "liquid", :require => false
 gem "less", :require => false
 gem "stylus", :require => false
 
+gem "pry"
+gem "pry-debugger"
+
 platforms :ruby do
   gem "therubyracer"
   gem "redcarpet"

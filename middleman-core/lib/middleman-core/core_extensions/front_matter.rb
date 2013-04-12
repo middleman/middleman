@@ -28,6 +28,8 @@ module Middleman::CoreExtensions
         app.after_configuration do
           ::Middleman::Sitemap::Resource.send :include, ResourceInstanceMethods
 
+          ignore %r{\.frontmatter$}
+
           sitemap.provides_metadata do |path|
             fmdata = frontmatter_manager.data(path).first || {}
 
@@ -54,7 +56,18 @@ module Middleman::CoreExtensions
 
       def data(path)
         p = normalize_path(path)
-        @cache[p] ||= frontmatter_and_content(p)
+        @cache[p] ||= begin
+          in_file = frontmatter_and_content(p)
+
+          external_file = frontmatter_and_content("#{p}.frontmatter")
+          
+          return in_file if external_file.nil?
+
+          [
+            external_file[0].deep_merge(in_file[0]),
+            in_file[1]
+          ]
+        end
       end
 
       def clear_data(file)
@@ -63,7 +76,7 @@ module Middleman::CoreExtensions
         file = File.join(@app.root, file)
         prefix = @app.source_dir.sub(/\/$/, "") + "/"
         return unless file.include?(prefix)
-        path = file.sub(prefix, "")
+        path = file.sub(prefix, "").sub(/\.frontmatter$/, "")
 
         @cache.delete(path)
       end
@@ -130,6 +143,8 @@ module Middleman::CoreExtensions
         else
           path
         end
+
+        return nil unless File.exists?(full_path)
         
         data = {}
         content = nil
