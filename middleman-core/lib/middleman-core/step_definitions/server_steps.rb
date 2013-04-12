@@ -67,6 +67,10 @@ When /^I go to "([^\"]*)"$/ do |url|
   @browser.get(URI.escape(url))
 end
 
+When /^the response code should be "([^\"]*)"$/ do |code|
+  @browser.last_response.status.should == code.to_i
+end
+
 Then /^going to "([^\"]*)" should not raise an exception$/ do |url|
   lambda { @browser.get(URI.escape(url)) }.should_not raise_exception
 end
