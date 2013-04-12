@@ -1,4 +1,4 @@
-source 'http://rubygems.org'
+source 'https://rubygems.org'
 
 # Make sure to use Haml 4 for tests
 gem "haml", "~> 4.0.0"
@@ -20,9 +20,6 @@ gem "slim", :require => false
 gem "liquid", :require => false
 gem "less", :require => false
 gem "stylus", :require => false
-
-gem "pry"
-gem "pry-debugger"
 
 platforms :ruby do
   gem "therubyracer"
