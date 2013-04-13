@@ -3,6 +3,12 @@ master
 
 * Allow frontmatter to be side-loaded from a neighboring file with a .frontmatter extension: #855
 * Allow frontmatter "renderer_options" key to overwrite renderer options on a per-file basis. #859
+* A custom :partials_dir may be configured, and partials will be looked up from it. #854
+* The sprockets environment is now available before config.rb is run, so you can mess with it.
+* :js_assets_paths configuration is deprecated in favor of just calling sprockets.append_path. middleman/sprockets#22
+* Sprockets integration, especially with regard to helper methods, is significantly improved. middleman/sprockets#22
+* Images and fonts from gems added to the Sprockets load path will now be copied to the build output. middleman/sprockets#22 
+>>>>>>> Add Sprockets changes to CHANGELOG
 * Added a "t" helper that delegates to I18n.t, just like Rails. #853.
 * I18n will fall back to the default locale if a translation in the current locale is not found. You can disable this behavior by passing `:no_fallbacks => true` when activating `:i18n`. More settings documented at https://github.com/svenfuchs/i18n/wiki/Fallbacks . #853
 * Switched default Markdown engine to Kramdown. #852
