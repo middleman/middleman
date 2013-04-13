@@ -66,7 +66,6 @@ module Middleman::Cli
 
       if @had_errors && !@debugging
         cmd = "middleman build --verbose"
-        cmd = "bundle exec '#{cmd}'" if defined?(Bundler)
         self.shell.say "There were errors during this build, re-run with `#{cmd}` to see the full exception."
       end
 

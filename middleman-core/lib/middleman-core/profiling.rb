@@ -34,7 +34,7 @@ module Middleman
         begin
           require 'ruby-prof'
         rescue LoadError
-          raise "To use the --profile option, you must 'gem install ruby-prof' (and include it in your Gemfile if running under bundle exec)"
+          raise "To use the --profile option, you must add the 'ruby-prof' gem to your Gemfile"
         end
       end
 
