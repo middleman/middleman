@@ -62,22 +62,12 @@ module Middleman
           send("#{env}_config", &block)
         end
 
-        # Alias `extensions` to access registered extensions
-        #
-        # @return [Array<Module>]
-        def extensions
-          @extensions ||= []
-        end
-
         # Register a new extension
         #
         # @param [Module] extension Extension modules to register
         # @param [Hash] options Per-extension options hash
         # @return [void]
         def register(extension, options={}, &block)
-          @extensions ||= []
-          @extensions += [extension]
-
           if extension.instance_of? Module
             extend extension
             if extension.respond_to?(:registered)
@@ -87,6 +77,7 @@ module Middleman
                 extension.registered(self, options, &block)
               end
             end
+            extension
           elsif extension.instance_of?(Class) && extension.ancestors.include?(::Middleman::Extension)
             extension.new(self, options, &block)
           end
@@ -107,15 +98,22 @@ module Middleman
           ext_module = if ext.is_a?(Module)
             ext
           else
-            ::Middleman::Extensions.load(ext.to_sym)
+            ::Middleman::Extensions.load(ext)
           end
 
           if ext_module.nil?
             logger.error "== Unknown Extension: #{ext}"
           else
             logger.debug "== Activating: #{ext}"
-            self.class.register(ext_module, options, &block)
+            extensions[ext] = self.class.register(ext_module, options, &block)
           end
+        end
+
+        # Access activated extensions
+        #
+        # @return [Hash<Symbol,Middleman::Extension|Module>]
+        def extensions
+          @extensions ||= {}
         end
 
         # Load features before starting server
@@ -149,7 +147,7 @@ module Middleman
           run_hook :after_configuration
 
           logger.debug "Loaded extensions:"
-          self.class.extensions.each do |ext|
+          self.extensions.each do |ext,_|
             logger.debug "== Extension: #{ext}"
           end
         end
