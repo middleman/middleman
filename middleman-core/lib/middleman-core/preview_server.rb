@@ -19,6 +19,7 @@ module Middleman
 
         mount_instance
         logger.info "== The Middleman is standing watch at http://#{host}:#{port}"
+        logger.info "== Inspect your site configuration at http://#{host}:#{port}/__middleman/"
 
         @initialized ||= false
         unless @initialized
