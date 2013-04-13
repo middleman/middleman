@@ -1,27 +1,29 @@
 module Middleman
   module Extensions
     module AssetHash
-      class << self
-        def registered(app, options={})
+      class Extension < ::Middleman::Extension
+        option :exts, %w(.jpg .jpeg .png .gif .js .css .otf .woff .eot .ttf .svg), "List of extensions that get asset hashes appended to them."
+        option :ignore, [], "Regexes of filenames to skip adding asset hashes to"
+
+        def initialize(app, options_hash={})
+          super
+
           require 'digest/sha1'
           require 'rack/test'
           require 'uri'
-
-          exts = options[:exts] || %w(.jpg .jpeg .png .gif .js .css .otf .woff .eot .ttf .svg)
-
-          # Allow specifying regexes to ignore, plus always ignore apple touch icons
-          ignore = Array(options[:ignore]) << /^apple-touch-icon/
-
-          app.ready do
-            sitemap.register_resource_list_manipulator(
-              :asset_hash,
-              AssetHashManager.new(self, exts, ignore)
-            )
-
-            use Middleware, :exts => exts, :middleman_app => self, :ignore => ignore
-          end
         end
-        alias :included :registered
+
+        def after_configuration
+          # Allow specifying regexes to ignore, plus always ignore apple touch icons
+          ignore = Array(options.ignore) + [/^apple-touch-icon/]
+
+          app.sitemap.register_resource_list_manipulator(
+            :asset_hash,
+            AssetHashManager.new(app, options.exts, ignore)
+          )
+
+          app.use Middleware, :exts => options.exts, :middleman_app => app, :ignore => ignore
+        end
       end
 
       # Central class for managing asset_hash extension
@@ -38,6 +40,7 @@ module Middleman
           # Process resources in order: binary images and fonts, then SVG, then JS/CSS.
           # This is so by the time we get around to the text files (which may reference
           # images and fonts) the static assets' hashes are already calculated.
+          rack_client = ::Rack::Test::Session.new(@app.class.to_rack_app)
           resources.sort_by do |a|
             if %w(.svg).include? a.ext
               0
@@ -51,7 +54,6 @@ module Middleman
             next if @ignore.any? { |ignore| Middleman::Util.path_match(ignore, resource.destination_path) }
 
             # Render through the Rack interface so middleware and mounted apps get a shot
-            rack_client = ::Rack::Test::Session.new(@app.class)
             response = rack_client.get(URI.escape(resource.destination_path), {}, { "bypass_asset_hash" => "true" })
             raise "#{resource.path} should be in the sitemap!" unless response.status == 200
 
