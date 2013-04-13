@@ -15,11 +15,10 @@ module Middleman::Cli
     namespace :build
 
     desc "build [options]", "Builds the static site for deployment"
-    method_option :clean,
+    method_option :no_clean,
       :type    => :boolean,
-      :aliases => "-c",
       :default => false,
-      :desc    => 'Removes orphaned files or directories from build'
+      :desc    => 'Do not remove orphaned files from build'
     method_option :glob,
       :type    => :string,
       :aliases => "-g",
@@ -60,7 +59,7 @@ module Middleman::Cli
 
       opts = {}
       opts[:glob]  = options["glob"]  if options.has_key?("glob")
-      opts[:clean] = options["clean"] if options.has_key?("clean")
+      opts[:clean] = !options["no_clean"] if options.has_key?("no_clean")
 
       action GlobAction.new(self, opts)
 
