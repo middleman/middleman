@@ -15,7 +15,7 @@ gem "rspec",    "~> 2.12"
 gem 'gherkin', '<= 2.11.6' # for annoying "eval" warnings
 
 # Optional middleman dependencies, included for tests
-gem "sinatra"
+gem "sinatra", :require => false
 gem "slim", :require => false
 gem "liquid", :require => false
 gem "less", :require => false
