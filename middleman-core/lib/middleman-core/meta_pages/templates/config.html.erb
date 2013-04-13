@@ -2,18 +2,19 @@
 <html>
   <head>
     <meta charset="utf-8">
-        
+
     <title>Middleman Config</title>
   </head>
-  
+
   <body>
     <h1>Middleman Config</h1>
     <a href="../">More meta pages</a>
 
+    <h2>Core Configuration</h2>
     <ul>
     <% config.all_settings.each do |setting| %>
       <li>
-        <b><%= setting.key %></b>: 
+        <b><%= setting.key.inspect %></b>:
         <%= setting.value.inspect %>
         <% if setting.value_set? %>
           <br>
@@ -26,6 +27,44 @@
       </li>
     <% end %>
     </ul>
+
+    <h2>Extensions</h2>
+    <ul>
+      <% extensions.each do |ext_name, extension| %>
+      <li>
+        <% registered_extensions.delete(ext_name) %>
+        
+        <b><%= ext_name.inspect %></b> (Active)
+        <% if extension.is_a?(::Middleman::Extension) && !extension.options.all_settings.empty? %>
+        <br>
+        <b>Options:</b>
+        <br>
+        <ul>
+          <% extension.options.all_settings.each do |setting| %>
+          <li>
+            <b><%= setting.key.inspect %></b>:
+            <%= setting.value.inspect %>
+            <% if setting.value_set? %>
+            <br>
+            Default: <%= setting.default.inspect %>
+            <% else %>
+            (Default)
+            <% end %>
+            <br>
+            <i><%= setting.description %></i>
+          </li>
+          <% end %>
+        </ul>
+        <% end %>
+      </li>
+
+      <% end %>
+
+      <% registered_extensions.keys.each do |ext_name| %>
+      <li><b><%= ext_name.inspect %></b> (Inactive)</li>
+      <% end %>
+    </ul>
+
   </body>
 </html>
 
