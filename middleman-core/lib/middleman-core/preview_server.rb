@@ -77,7 +77,15 @@ module Middleman
     private
       def new_app
         opts = @options
-        @app =::Middleman::Application.server.inst do
+        server = ::Middleman::Application.server
+
+        # Add in the meta pages application
+        meta_app = Middleman::MetaPages::Application.new(server)
+        server.map '/__middleman' do
+          run meta_app
+        end
+
+        @app = server.inst do
           if opts[:environment]
             config[:environment] = opts[:environment].to_sym
           end
@@ -166,13 +174,6 @@ module Middleman
         start_file_watcher
 
         rack_app = app.class.to_rack_app
-
-        # Add in the meta pages application
-        meta_app = Middleman::MetaPages::Application.new(app.class.inst)
-        rack_app.map '/__middleman' do
-          run meta_app
-        end
-
         @webrick.mount "/", ::Rack::Handler::WEBrick, rack_app
       end
 
