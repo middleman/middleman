@@ -165,16 +165,12 @@ module Middleman
       # mode and no new settings may be defined.
       def finalize!
         @finalized = true
+        self
       end
 
       # Deep duplicate of the configuration manager
       def dup
-        copy = ConfigurationManager.new
-        @settings.each do |key, setting|
-          copy_setting = copy.define_setting(setting.key, setting.default, setting.description)
-          copy_setting.value = setting.value if setting.value_set?
-        end
-        copy
+        ConfigurationManager.new.tap {|c| c.load_settings(self.all_settings) }
       end
 
       # Load in a list of settings

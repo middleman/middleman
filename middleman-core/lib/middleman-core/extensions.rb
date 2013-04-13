@@ -114,15 +114,15 @@ module Middleman
 
     attr_accessor :app, :options
 
-    def initialize(klass, options_hash={}, &block)
-      @options = ::Middleman::Configuration::ConfigurationManager.new
-      @options.load_settings(self.class.config.all_settings)
+    def initialize(klass, options_hash={})
+      @options = self.class.config.dup
+      @options.finalize!
 
       options_hash.each do |k, v|
         @options[k] = v
       end
 
-      block.call(@options) if block_given?
+      yield @options if block_given?
 
       ext = self
       klass.after_configuration do
@@ -132,7 +132,6 @@ module Middleman
     end
 
     def after_configuration
-
       nil
     end
   end

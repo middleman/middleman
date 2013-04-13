@@ -45,7 +45,7 @@ module Middleman
 
       # Inspect the sitemap
       def sitemap(env)
-        resources = @middleman.sitemap.resources(true)
+        resources = @middleman.inst.sitemap.resources(true)
 
         sitemap_tree = SitemapTree.new
 
@@ -58,7 +58,8 @@ module Middleman
 
       # Inspect configuration
       def config(env)
-        template('config.html.erb', :config => @middleman.config)
+
+        template('config.html.erb', :config => @middleman.inst.config, :extensions => @middleman.inst.extensions, :registered_extensions => Middleman::Extensions.registered.dup)
       end
 
       private

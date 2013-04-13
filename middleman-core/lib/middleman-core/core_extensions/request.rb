@@ -37,15 +37,7 @@ module Middleman
         #
         # @private
         def reset!
-          @app = nil
-        end
-
-        # The shared Rack instance being build
-        #
-        # @private
-        # @return [Rack::Builder]
-        def app
-          @app ||= ::Rack::Builder.new
+          @rack_app = nil
         end
 
         # Get the static instance
@@ -74,21 +66,23 @@ module Middleman
         # @private
         # @return [Rack::Builder]
         def to_rack_app(&block)
-          inner_app = inst(&block)
+          @rack_app ||= begin
+            app = ::Rack::Builder.new
+            app.use Rack::Lint
 
-          app.use Rack::Lint
+            Array(@middleware).each do |klass, options, blockm|
+              app.use(klass, *options, &block)
+            end
 
-          (@middleware || []).each do |m|
-            app.use(m[0], *m[1], &m[2])
+            inner_app = inst(&block)
+            app.map("/") { run inner_app }
+
+            Array(@mappings).each do |path, block|
+              app.map(path, &block)
+            end
+
+            app
           end
-
-          app.map("/") { run inner_app }
-
-          (@mappings || []).each do |m|
-            app.map(m[0], &m[1])
-          end
-
-          app
         end
 
         # Prototype app. Used in config.ru
