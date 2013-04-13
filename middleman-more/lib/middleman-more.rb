@@ -83,7 +83,7 @@ module Middleman
         # to avoid browser caches failing to update to your new content.
         Middleman::Extensions.register(:asset_hash) do
           require "middleman-more/extensions/asset_hash"
-          Middleman::Extensions::AssetHash
+          Middleman::Extensions::AssetHash::Extension
         end
 
         # AssetHost allows you to setup multiple domains to host your static
