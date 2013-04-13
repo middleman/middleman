@@ -2,42 +2,39 @@
 require "middleman-core"
 
 # Extension namespace
-module MyExtension
-  class << self
+module MyExtension < Middleman::Extension
+  option :my_option, "default", "An example option"
 
-    # Called when user `activate`s your extension
-    def registered(app, options={})
-      # Include class methods
-      # app.extend ClassMethods
+  def initialize(app, options_hash={})
+    # Call super to build options from the options_hash
+    super
 
-      # Include instance methods
-      # app.send :include, InstanceMethods
+    # Require libraries only when activated
+    # require 'necessary/library'
 
-      app.after_configuration do
-        # Do something
-      end
-    end
-    alias :included :registered
+    # Include helpers or instance methods for the Middleman app
+    # app.send :include, Helpers
+
+    # set up your extension
+    # puts options.my_option
   end
 
-  # module ClassMethods
-  #   def a_class_method
-  #   end
-  # end
+  def after_configuration
+    # Do something
+  end
 
-  # module InstanceMethods
-  #   def an_instance_method
+  # module Helpers
+  #   def a_helper
   #   end
   # end
 
 end
 
-
 # Register extensions which can be activated
 # Make sure we have the version of Middleman we expect
 # ::Middleman::Extensions.register(:extension_name) do
 #
-#   # Return the extension module
+#   # Return the extension class
 #   ::MyExtension
 #
 # end
