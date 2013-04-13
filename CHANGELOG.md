@@ -24,7 +24,7 @@ master
 * Support for Ruby 2.0.0.
 * "middleman console" will give you a console where you can mess around inside your middleman context. #775
 * Add to Compass import paths instead of resetting them. #707
-* There are now metadata pages in the preview server at "/__middleman__/" that show information about the sitemap and site configuration. #374 and #776
+* There are now metadata pages in the preview server at "/__middleman/" that show information about the sitemap and site configuration. #374 and #776
 * The sitemap is now queryable with an ARel-like API. #650
 * Reorganize SMACSS template. #591
 * No longer bundle native file watchers - add an appropriate gem (rb-fsevent for OS X, rb-inotify for Linux, wdm for windows) to your Gemfile.
