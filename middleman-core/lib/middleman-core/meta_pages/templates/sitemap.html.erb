@@ -5,6 +5,8 @@
         
     <title>Middleman Sitemap</title>
 
+    
+    <link type="text/css" rel="stylesheet" href="../assets/meta.css">
     <link type="text/css" rel="stylesheet" href="../assets/sitemap.css">
     <script src="../assets/jquery-1.8.2.min.js"></script>
     <script src="../assets/jquery.details-1.6.min.js"></script>
@@ -12,10 +14,18 @@
   </head>
   
   <body>
-    <h1>Middleman Sitemap</h1>
-    <a href="../">More meta pages</a>
+    <div class="container">
+      <article id="main">
+        <a href="../">&laquo; back</a>
+        <h1>Middleman Sitemap</h1>
 
-    <%= sitemap_tree.render %>
+        <p>This page shows all of the pages in
+        the <a href="http://middlemanapp.com/advanced/sitemap/">sitemap</a>,
+        Middleman's view of your site.</p>
+
+        <%= sitemap_tree.render %>
+      </article>
+    </div>
   </body>
 </html>
 

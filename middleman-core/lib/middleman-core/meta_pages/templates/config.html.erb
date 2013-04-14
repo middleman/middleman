@@ -2,57 +2,44 @@
 <html>
   <head>
     <meta charset="utf-8">
-
-    <title>Middleman Config</title>
+    <title>Middleman Configuration</title>
+    <link type="text/css" rel="stylesheet" href="../assets/meta.css">
+    <link type="text/css" rel="stylesheet" href="../assets/config.css">
   </head>
 
   <body>
-    <h1>Middleman Config</h1>
-    <a href="../">More meta pages</a>
+    <div class="container">
+      <article id="main">
+    <a href="../">&laquo; back</a>
+    <h1>Middleman Configuration</h1>
 
-    <h2>Core Configuration</h2>
-    <ul>
-    <% config.all_settings.each do |setting| %>
-      <li>
-        <b><%= setting.key.inspect %></b>:
-        <%= setting.value.inspect %>
-        <% if setting.value_set? %>
-          <br>
-          Default: <%= setting.default.inspect %>
-        <% else %>
-          (Default)
-        <% end %>
-        <br>
-        <i><%= setting.description %></i>
-      </li>
+    <p>This page shows the current configuration of your Middleman application.</p>
+    
+    <p>
+      <a href="#core">Core configuration</a>
+      | <a href="#extensions">Extensions</a>
+    </p>
+
+    <h2 id="core">Core Configuration</h2>
+    <ul class="settings">
+    <% global_config.each do |setting| %>
+      <li class="setting"><%= setting.render %></li>
     <% end %>
     </ul>
 
-    <h2>Extensions</h2>
-    <ul>
-      <% extensions.each do |ext_name, extension| %>
+    <h2 id="extensions">Extensions</h2>
+    <ul class="extensions">
+      <% extension_config.each do |ext_name, configs| %>
       <li>
         <% registered_extensions.delete(ext_name) %>
         
-        <b><%= ext_name.inspect %></b> (Active)
-        <% if extension.is_a?(::Middleman::Extension) && !extension.options.all_settings.empty? %>
-        <br>
-        <b>Options:</b>
-        <br>
-        <ul>
-          <% extension.options.all_settings.each do |setting| %>
-          <li>
-            <b><%= setting.key.inspect %></b>:
-            <%= setting.value.inspect %>
-            <% if setting.value_set? %>
-            <br>
-            Default: <%= setting.default.inspect %>
-            <% else %>
-            (Default)
-            <% end %>
-            <br>
-            <i><%= setting.description %></i>
-          </li>
+        <span class="extension active"><%= ext_name.inspect %></span>
+
+        
+        <% if configs && !configs.empty? %>
+        <ul class="settings">
+          <% configs.each do |setting| %>
+          <li class="setting"><%= setting.render %></li>
           <% end %>
         </ul>
         <% end %>
@@ -61,10 +48,11 @@
       <% end %>
 
       <% registered_extensions.keys.each do |ext_name| %>
-      <li><b><%= ext_name.inspect %></b> (Inactive)</li>
+      <li><span class="extension"><%= ext_name.inspect %></span> (Inactive)</li>
       <% end %>
     </ul>
-
+    </article>
+    </div>
   </body>
 </html>
 

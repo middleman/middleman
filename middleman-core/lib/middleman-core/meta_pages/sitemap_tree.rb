@@ -14,10 +14,30 @@ module Middleman
 
       def render
         content = ""
-        @children.keys.sort_by(&:downcase).each do |path_part|
+        @children.keys.sort do |a,b|
+          a_subtree = @children[a]
+          b_subtree = @children[b]
+          if a_subtree.is_a? SitemapResource
+            if b_subtree.is_a? SitemapResource
+              a.downcase <=> b.downcase
+            else
+              1
+            end
+          elsif b_subtree.is_a? SitemapResource
+            if a_subtree.is_a? SitemapResource
+              b.downcase <=> a.downcase
+            else
+              -1
+            end
+          else
+            a.downcase <=> b.downcase
+          end
+        end.each do |path_part|
           subtree = @children[path_part]
           content << "<details class='#{subtree.css_classes.join(' ')}'>"
-          content << "<summary>#{path_part}</summary>"
+          content << "<summary>"
+          content << "<i class='icon-folder-open'></i>" unless subtree.is_a? SitemapResource
+          content << "#{path_part}</summary>"
           content << subtree.render
           content << "</details>"
         end
