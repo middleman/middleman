@@ -97,7 +97,8 @@ module Middleman::CoreExtensions
           content = content.sub(yaml_regex, "")
 
           begin
-            data = YAML.load($1).symbolize_keys
+            data = YAML.load($1) || {}
+            data = data.symbolize_keys
           rescue *YAML_ERRORS => e
             logger.error "YAML Exception: #{e.message}"
             return false
