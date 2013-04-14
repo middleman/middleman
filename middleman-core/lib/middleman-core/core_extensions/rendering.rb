@@ -247,8 +247,9 @@ module Middleman
 
           # Merge per-extension options from config
           extension = File.extname(path)
-          options = opts.merge(options_for_ext(extension))
+          options = opts.dup.merge(options_for_ext(extension))
           options[:outvar] ||= '@_out_buf'
+          options.delete(:layout)
 
           # Overwrite with frontmatter options
           options = options.deep_merge(options[:renderer_options]) if options[:renderer_options]
