@@ -2,6 +2,7 @@ require 'rack/builder'
 require 'rack/static'
 require 'tilt'
 require 'middleman-core/meta_pages/sitemap_tree'
+require 'middleman-core/meta_pages/config_setting'
 
 module Middleman
   module MetaPages
@@ -58,8 +59,20 @@ module Middleman
 
       # Inspect configuration
       def config(env)
+        global_config = @middleman.inst.config.all_settings.map {|c| ConfigSetting.new(c) }
+        extension_config = Hash[@middleman.inst.extensions.map do |ext_name, extension|
+                                  opts = if extension.is_a?(::Middleman::Extension)
+                                           extension.options.all_settings.map {|c| ConfigSetting.new(c) }
+                                         else 
+                                           nil
+                                         end
+                                  [ext_name, opts]
+                                end]
 
-        template('config.html.erb', :config => @middleman.inst.config, :extensions => @middleman.inst.extensions, :registered_extensions => Middleman::Extensions.registered.dup)
+        template('config.html.erb', 
+                 :global_config => global_config,
+                 :extension_config => extension_config, 
+                 :registered_extensions => Middleman::Extensions.registered.dup)
       end
 
       private
