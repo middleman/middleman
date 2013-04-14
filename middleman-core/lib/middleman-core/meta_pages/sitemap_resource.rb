@@ -11,11 +11,15 @@ module Middleman
 
       def render
         content_tag :div, :class => 'resource-details' do
-          content_tag :dl do
+          content_tag :table do
             content = ""
             resource_properties.each do |label, value|
-              content << content_tag(:dt, label)
-              content << content_tag(:dd, value)
+              content << content_tag(:tr) do
+                row_content = ""
+                row_content << content_tag(:th, label)
+                row_content << content_tag(:td, value)
+                row_content
+              end
             end
             content
           end
@@ -24,13 +28,20 @@ module Middleman
 
       # A hash of label to value for all the properties we want to display
       def resource_properties
-        {
+        props = {
           'Path' => @resource.path,
-          'Output Path' => File.join(@resource.app.build_dir, @resource.destination_path),
-          'Url' => content_tag(:a, @resource.url, :href => @resource.url),
-          #'Metadata' => @resource.metadata,
-          'Source' => @resource.source_file
+          'Build Path' => @resource.destination_path,
+          'URL' => content_tag(:a, @resource.url, :href => @resource.url),
+          'Template' => @resource.source_file,
         }
+
+        data = @resource.data
+        props['Data'] = data unless data.empty?
+
+        options = @resource.metadata[:options]
+        props['Options'] = options unless options.empty?
+
+        props
       end
 
       def css_classes
