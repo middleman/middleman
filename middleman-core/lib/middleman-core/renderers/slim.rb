@@ -26,8 +26,11 @@ module Middleman
             context_hack = {
               :context => self
             }
+
+            slim_embedded = defined?(::Slim::Embedded) ? ::Slim::Embedded : ::Slim::EmbeddedEngine
+
             %w(sass scss markdown).each do |engine|
-              ::Slim::EmbeddedEngine.default_options[engine.to_sym] = context_hack
+              slim_embedded.default_options[engine.to_sym] = context_hack
             end
           end
         end
