@@ -15,34 +15,33 @@ module Middleman::Extensions
   # Pass the :exts options to customize which file extensions get zipped (defaults
   # to .html, .htm, .js and .css.
   #
-  module Gzip
-    class << self
-      def registered(app, options={})
-        exts = options[:exts] || %w(.js .css .html .htm)
+  class Gzip < ::Middleman::Extension
+    option :exts, %w(.js .css .html .htm), 'File extensions to Gzip when building.'
 
-        app.after_build do |builder|
+    def initialize(app, options_hash={})
+      super
 
-          paths = ::Middleman::Util.all_files_under(self.class.inst.build_dir)
-          paths.each do |path|
-            next unless exts.include? path.extname
+      gzip_ext = self
 
-            output_filename, old_size, new_size = Middleman::Extensions::Gzip.gzip_file(path.to_s)
+      app.after_build do |builder|
+        paths = ::Middleman::Util.all_files_under(self.class.inst.build_dir)
+        paths.each do |path|
+          next unless gzip_ext.options.exts.include? path.extname
 
-            if output_filename
-              size_change_word = (old_size - new_size) > 0 ? 'smaller' : 'larger'
-              old_locale = I18n.locale
-              I18n.locale = :en # use the english localizations for printing out file sizes to make sure the localizations exist
-              builder.say_status :gzip, "#{output_filename} (#{number_to_human_size((old_size - new_size).abs)} #{size_change_word})"
-              I18n.locale = old_locale
-            end
+          output_filename, old_size, new_size = gzip_ext.gzip_file(path.to_s)
+
+          if output_filename
+            size_change_word = (old_size - new_size) > 0 ? 'smaller' : 'larger'
+            old_locale = I18n.locale
+            I18n.locale = :en # use the english localizations for printing out file sizes to make sure the localizations exist
+            builder.say_status :gzip, "#{output_filename} (#{number_to_human_size((old_size - new_size).abs)} #{size_change_word})"
+            I18n.locale = old_locale
           end
         end
       end
-
-      alias :included :registered
     end
 
-    def self.gzip_file(path)
+    def gzip_file(path)
       input_file = File.open(path, 'rb').read
       output_filename = path + '.gz'
       input_file_time = File.mtime(path)
