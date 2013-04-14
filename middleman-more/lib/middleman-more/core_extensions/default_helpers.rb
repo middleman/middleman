@@ -22,15 +22,17 @@ module Middleman
           app.helpers Helpers
 
           app.config.define_setting :relative_links, false, 'Whether to generate relative links instead of absolute ones'
-
-          # Disable Padrino cache buster
-          app.set :asset_stamp, false
         end
         alias :included :registered
       end
 
       # The helpers
       module Helpers
+        # Disable Padrino cache buster
+        def asset_stamp
+          false
+        end
+
         # Output a stylesheet link tag based on the current path
         #
         # @return [String]
