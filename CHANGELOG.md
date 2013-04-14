@@ -1,6 +1,7 @@
 master
 ===
 
+* "middleman build" will clean out old files from the build directory by default now, without needing to pass "--clean". Pass "--no-clean" to disable. #862
 * Allow frontmatter to be side-loaded from a neighboring file with a .frontmatter extension: #855
 * Allow frontmatter "renderer_options" key to overwrite renderer options on a per-file basis. #859
 * A custom :partials_dir may be configured, and partials will be looked up from it. #854
