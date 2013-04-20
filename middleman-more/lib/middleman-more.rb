@@ -59,10 +59,8 @@ module Middleman
         Middleman::Extensions::MinifyCss.register
 
         # MinifyJavascript compresses JS
-        Middleman::Extensions.register(:minify_javascript) do
-          require "middleman-more/extensions/minify_javascript"
-          Middleman::Extensions::MinifyJavascript
-        end
+        require "middleman-more/extensions/minify_javascript"
+        Middleman::Extensions::MinifyJavascript.register
 
         # RelativeAssets allow any asset path in dynamic templates to be either
         # relative to the root of the project or use an absolute URL.
