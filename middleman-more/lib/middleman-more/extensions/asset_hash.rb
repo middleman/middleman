@@ -1,108 +1,104 @@
-module Middleman
-  module Extensions
-    class AssetHash < ::Middleman::Extension
-      option :exts, %w(.jpg .jpeg .png .gif .js .css .otf .woff .eot .ttf .svg), "List of extensions that get asset hashes appended to them."
-      option :ignore, [], "Regexes of filenames to skip adding asset hashes to"
+class Middleman::Extensions::AssetHash < ::Middleman::Extension
+  option :exts, %w(.jpg .jpeg .png .gif .js .css .otf .woff .eot .ttf .svg), "List of extensions that get asset hashes appended to them."
+  option :ignore, [], "Regexes of filenames to skip adding asset hashes to"
 
-      def initialize(app, options_hash={})
-        super
+  def initialize(app, options_hash={}, &block)
+    super
 
-        require 'digest/sha1'
-        require 'rack/test'
-        require 'uri'
+    require 'digest/sha1'
+    require 'rack/test'
+    require 'uri'
+  end
+
+  def after_configuration
+    # Allow specifying regexes to ignore, plus always ignore apple touch icons
+    @ignore = Array(options.ignore) + [/^apple-touch-icon/]
+
+    app.use Middleware, :exts => options.exts, :middleman_app => app, :ignore => @ignore
+  end
+
+  # Update the main sitemap resource list
+  # @return [void]
+  def manipulate_resource_list(resources)
+    # Process resources in order: binary images and fonts, then SVG, then JS/CSS.
+    # This is so by the time we get around to the text files (which may reference
+    # images and fonts) the static assets' hashes are already calculated.
+    rack_client = ::Rack::Test::Session.new(app.class.to_rack_app)
+    resources.sort_by do |a|
+      if %w(.svg).include? a.ext
+        0
+      elsif %w(.js .css).include? a.ext
+        1
+      else
+        -1
       end
+    end.each do |resource|
+      next unless options.exts.include? resource.ext
+      next if @ignore.any? { |ignore| Middleman::Util.path_match(ignore, resource.destination_path) }
 
-      def after_configuration
-        # Allow specifying regexes to ignore, plus always ignore apple touch icons
-        @ignore = Array(options.ignore) + [/^apple-touch-icon/]
+      # Render through the Rack interface so middleware and mounted apps get a shot
+      response = rack_client.get(URI.escape(resource.destination_path), {}, { "bypass_asset_hash" => "true" })
+      raise "#{resource.path} should be in the sitemap!" unless response.status == 200
 
-        app.use Middleware, :exts => options.exts, :middleman_app => app, :ignore => @ignore
-      end
+      digest = Digest::SHA1.hexdigest(response.body)[0..7]
 
-      # Update the main sitemap resource list
-      # @return [void]
-      def manipulate_resource_list(resources)
-        # Process resources in order: binary images and fonts, then SVG, then JS/CSS.
-        # This is so by the time we get around to the text files (which may reference
-        # images and fonts) the static assets' hashes are already calculated.
-        rack_client = ::Rack::Test::Session.new(app.class.to_rack_app)
-        resources.sort_by do |a|
-          if %w(.svg).include? a.ext
-            0
-          elsif %w(.js .css).include? a.ext
-            1
-          else
-            -1
-          end
-        end.each do |resource|
-          next unless options.exts.include? resource.ext
-          next if @ignore.any? { |ignore| Middleman::Util.path_match(ignore, resource.destination_path) }
-
-          # Render through the Rack interface so middleware and mounted apps get a shot
-          response = rack_client.get(URI.escape(resource.destination_path), {}, { "bypass_asset_hash" => "true" })
-          raise "#{resource.path} should be in the sitemap!" unless response.status == 200
-
-          digest = Digest::SHA1.hexdigest(response.body)[0..7]
-
-          resource.destination_path = resource.destination_path.sub(/\.(\w+)$/) { |ext| "-#{digest}#{ext}" }
-        end
-      end
-    end
-
-    # The asset hash middleware is responsible for rewriting references to
-    # assets to include their new, hashed name.
-    class Middleware
-      def initialize(app, options={})
-        @rack_app        = app
-        @exts            = options[:exts]
-        @ignore          = options[:ignore]
-        @exts_regex_text = @exts.map {|e| Regexp.escape(e) }.join('|')
-        @middleman_app   = options[:middleman_app]
-      end
-
-      def call(env)
-        status, headers, response = @rack_app.call(env)
-
-        # We don't want to use this middleware when rendering files to figure out their hash!
-        return [status, headers, response] if env["bypass_asset_hash"] == 'true'
-
-        path = @middleman_app.full_path(env["PATH_INFO"])
-        dirpath = Pathname.new(File.dirname(path))
-
-        if path =~ /(^\/$)|(\.(htm|html|php|css|js)$)/
-          body = ::Middleman::Util.extract_response_text(response)
-
-          if body
-            # TODO: This regex will change some paths in plan HTML (not in a tag) - is that OK?
-            body.gsub!(/([=\'\"\(]\s*)([^\s\'\"\)]+(#{@exts_regex_text}))/) do |match|
-              opening_character = $1
-              asset_path = $2
-
-              relative_path = Pathname.new(asset_path).relative?
-
-              asset_path = dirpath.join(asset_path).to_s if relative_path
-
-              if @ignore.any? { |r| asset_path.match(r) }
-                match
-              elsif asset_page = @middleman_app.sitemap.find_resource_by_path(asset_path)
-                replacement_path = "/#{asset_page.destination_path}"
-                replacement_path = Pathname.new(replacement_path).relative_path_from(dirpath).to_s if relative_path
-
-                "#{opening_character}#{replacement_path}"
-              else
-                match
-              end
-            end
-
-            status, headers, response = Rack::Response.new(body, status, headers).finish
-          end
-        end
-        [status, headers, response]
-      end
+      resource.destination_path = resource.destination_path.sub(/\.(\w+)$/) { |ext| "-#{digest}#{ext}" }
     end
   end
-end
 
+  # The asset hash middleware is responsible for rewriting references to
+  # assets to include their new, hashed name.
+  class Middleware
+    def initialize(app, options={})
+      @rack_app        = app
+      @exts            = options[:exts]
+      @ignore          = options[:ignore]
+      @exts_regex_text = @exts.map {|e| Regexp.escape(e) }.join('|')
+      @middleman_app   = options[:middleman_app]
+    end
+
+    def call(env)
+      status, headers, response = @rack_app.call(env)
+
+      # We don't want to use this middleware when rendering files to figure out their hash!
+      return [status, headers, response] if env["bypass_asset_hash"] == 'true'
+
+      path = @middleman_app.full_path(env["PATH_INFO"])
+      dirpath = Pathname.new(File.dirname(path))
+
+      if path =~ /(^\/$)|(\.(htm|html|php|css|js)$)/
+        body = ::Middleman::Util.extract_response_text(response)
+
+        if body
+          # TODO: This regex will change some paths in plan HTML (not in a tag) - is that OK?
+          body.gsub!(/([=\'\"\(]\s*)([^\s\'\"\)]+(#{@exts_regex_text}))/) do |match|
+            opening_character = $1
+            asset_path = $2
+
+            relative_path = Pathname.new(asset_path).relative?
+
+            asset_path = dirpath.join(asset_path).to_s if relative_path
+
+            if @ignore.any? { |r| asset_path.match(r) }
+              match
+            elsif asset_page = @middleman_app.sitemap.find_resource_by_path(asset_path)
+              replacement_path = "/#{asset_page.destination_path}"
+              replacement_path = Pathname.new(replacement_path).relative_path_from(dirpath).to_s if relative_path
+
+              "#{opening_character}#{replacement_path}"
+            else
+              match
+            end
+          end
+
+          status, headers, response = Rack::Response.new(body, status, headers).finish
+        end
+      end
+      [status, headers, response]
+    end
+  end
+
+end
 
 # =================Temp Generate Test data==============================
 #   ["jpg", "png", "gif"].each do |ext|

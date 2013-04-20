@@ -55,10 +55,8 @@ module Middleman
         end
 
         # MinifyCss compresses CSS
-        Middleman::Extensions.register(:minify_css) do
-          require "middleman-more/extensions/minify_css"
-          Middleman::Extensions::MinifyCss
-        end
+        require "middleman-more/extensions/minify_css"
+        Middleman::Extensions::MinifyCss.register
 
         # MinifyJavascript compresses JS
         Middleman::Extensions.register(:minify_javascript) do
