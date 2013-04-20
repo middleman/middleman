@@ -57,13 +57,13 @@ Feature: Assets get a file hash appended to their and references to them are upd
   Scenario: Enabling an asset host still produces hashed files and references  
     Given the Server is running at "asset-hash-host-app"
     When I go to "/"
-    Then I should see 'href="http://middlemanapp.com/stylesheets/site-171eb3c0.css"'
+    Then I should see 'href="http://middlemanapp.com/stylesheets/site-54baaf3a.css"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg"'
     When I go to "/subdir/"
-    Then I should see 'href="http://middlemanapp.com/stylesheets/site-171eb3c0.css"'
+    Then I should see 'href="http://middlemanapp.com/stylesheets/site-54baaf3a.css"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg"'
     When I go to "/other/"
-    Then I should see 'href="http://middlemanapp.com/stylesheets/site-171eb3c0.css"'
+    Then I should see 'href="http://middlemanapp.com/stylesheets/site-54baaf3a.css"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg"'
     # Asset helpers don't appear to work from Compass right now
     # When I go to "/stylesheets/site-e5a31a3e.css"
