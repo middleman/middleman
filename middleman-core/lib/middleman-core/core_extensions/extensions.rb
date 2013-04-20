@@ -112,10 +112,10 @@ module Middleman
                 extensions[ext][key] = ext_module.new(self.class, options, &block)
               else
                 if extensions[ext]
-                  logger.error "== #{ext} already activated. Overwriting."
+                  logger.error "== #{ext} already activated."
+                else
+                  extensions[ext] = ext_module.new(self.class, options, &block)
                 end
-
-                extensions[ext] = ext_module.new(self.class, options, &block)
               end
             end
           end

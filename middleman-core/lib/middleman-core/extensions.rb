@@ -158,12 +158,12 @@ module Middleman
       end
 
       klass.after_configuration do
-        if ext.respond_to?(:manipulate_resource_list)
-          ext.app.sitemap.register_resource_list_manipulator(ext.class.extension_name, ext)
-        end
-
         if ext.respond_to?(:after_configuration)
           ext.after_configuration
+        end
+
+        if ext.respond_to?(:manipulate_resource_list)
+          ext.app.sitemap.register_resource_list_manipulator(ext.class.extension_name, ext)
         end
       end
     end

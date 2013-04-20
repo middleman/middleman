@@ -23,7 +23,6 @@ module Middleman
         require "middleman-more/core_extensions/default_helpers"
         Middleman::CoreExtensions::DefaultHelpers.new(app)
 
-        # i18n
         require "i18n"
         app.after_configuration do
           # This is for making the tests work - since the tests
@@ -34,10 +33,8 @@ module Middleman
           ::I18n.reload!
         end
 
-        Middleman::Extensions.register(:i18n) do
-          require "middleman-more/core_extensions/i18n"
-          Middleman::CoreExtensions::Internationalization
-        end
+        require "middleman-more/core_extensions/i18n"
+        Middleman::CoreExtensions::Internationalization.register(:i18n)
 
         # Compass framework
         require "middleman-more/core_extensions/compass"
@@ -49,10 +46,8 @@ module Middleman
 
         # CacheBuster adds a query string to assets in dynamic templates to
         # avoid browser caches failing to update to your new content.
-        Middleman::Extensions.register(:cache_buster) do
-          require "middleman-more/extensions/cache_buster"
-          Middleman::Extensions::CacheBuster
-        end
+        require "middleman-more/extensions/cache_buster"
+        Middleman::Extensions::CacheBuster.register
 
         # MinifyCss compresses CSS
         require "middleman-more/extensions/minify_css"
