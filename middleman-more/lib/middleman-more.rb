@@ -31,14 +31,14 @@ module Middleman
           # exist anymore.
           ::I18n.load_path.delete_if {|path| path =~ %r{tmp/aruba}}
           ::I18n.reload!
-        end
+        end if ENV["TEST"]
 
         require "middleman-more/core_extensions/i18n"
         Middleman::CoreExtensions::Internationalization.register(:i18n)
 
         # Compass framework
         require "middleman-more/core_extensions/compass"
-        Middleman::Application.register Middleman::CoreExtensions::Compass
+        Middleman::CoreExtensions::Compass.new(app)
 
         ###
         # Setup Optional Extensions
