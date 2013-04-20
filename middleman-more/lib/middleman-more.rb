@@ -21,7 +21,7 @@ module Middleman
 
         # Setup default helpers
         require "middleman-more/core_extensions/default_helpers"
-        Middleman::Application.register Middleman::CoreExtensions::DefaultHelpers
+        Middleman::CoreExtensions::DefaultHelpers.new(app)
 
         # i18n
         require "i18n"
