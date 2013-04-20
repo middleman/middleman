@@ -11,16 +11,25 @@ module Middleman
 
         # Backwards compatible API
         app.config.define_setting :asset_host, nil, 'The asset host to use, or false for no asset host, or a Proc to determine asset host'
-        app.send :include, InstanceMethods
+
+        app.compass_config do |config|
+          if asset_host = extensions[:asset_host].host
+            if asset_host.is_a?(Proc)
+              config.asset_host(&asset_host)
+            else
+              config.asset_host do |asset|
+                asset_host
+              end
+            end
+          end
+        end
       end
 
       def host
         app.config[:asset_host] || options[:host]
       end
-
-      # Asset Host Instance Methods
-      module InstanceMethods
-
+    
+      helpers do 
         # Override default asset url helper to include asset hosts
         #
         # @param [String] path

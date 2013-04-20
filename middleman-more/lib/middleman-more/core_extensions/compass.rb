@@ -51,16 +51,6 @@ module Middleman
 
               # No line-comments in test mode (changing paths mess with sha1)
               compass_config.line_comments = false if ENV["TEST"]
-
-              if extensions[:asset_host] && asset_host = extensions[:asset_host].host
-                if asset_host.is_a?(Proc)
-                  compass_config.asset_host(&asset_host)
-                else
-                  compass_config.asset_host do |asset|
-                    asset_host
-                  end
-                end
-              end
             end
 
             # Call hook

@@ -105,6 +105,7 @@ module Middleman
 
   class Extension
     class_attribute :supports_multiple_instances, :instance_reader => false, :instance_writer => false
+    class_attribute :defined_helpers, :instance_reader => false, :instance_writer => false
 
     class << self
       def config
@@ -114,11 +115,21 @@ module Middleman
       def option(key, default=nil, description=nil)
         config.define_setting(key, default, description)
       end
+
+      def helpers(&block)
+        self.defined_helpers ||= []
+
+        m = Module.new
+        m.module_eval(&block)
+        self.defined_helpers << m
+      end
     end
 
     attr_accessor :app, :options
 
     def initialize(klass, options_hash={})
+      @_helpers = []
+
       @options = self.class.config.dup
       @options.finalize!
 
@@ -131,6 +142,10 @@ module Middleman
       ext = self
       klass.initialized do
         ext.app = self
+        
+        (ext.class.defined_helpers || []).each do |m|
+          ext.app.class.send(:include, m)
+        end
       end
 
       klass.after_configuration(&method(:after_configuration))
