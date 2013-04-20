@@ -74,10 +74,8 @@ module Middleman
         end
 
         # GZIP assets and pages during build
-        Middleman::Extensions.register(:gzip) do
-          require "middleman-more/extensions/gzip"
-          Middleman::Extensions::Gzip
-        end
+        require "middleman-more/extensions/gzip"
+        Middleman::Extensions::Gzip.register
 
         # AssetHash appends a hash of the file contents to the assets filename
         # to avoid browser caches failing to update to your new content.
@@ -97,7 +95,7 @@ module Middleman
         # Lorem provides a handful of helpful prototyping methods to generate
         # words, paragraphs, fake images, names and email addresses.
         require "middleman-more/extensions/lorem"
-        Middleman::Application.register Middleman::Extensions::Lorem
+        Middleman::Extensions::Lorem.new(app)
 
         # AutomaticImageSizes inspects the images used in your dynamic templates
         # and automatically adds width and height attributes to their HTML

@@ -1,7 +1,3 @@
-require 'zlib'
-require 'stringio'
-require 'find'
-
 module Middleman::Extensions
 
   # This extension Gzips assets and pages when building.
@@ -20,6 +16,10 @@ module Middleman::Extensions
 
     def initialize(app, options_hash={})
       super
+      
+      require 'zlib'
+      require 'stringio'
+      require 'find'
 
       gzip_ext = self
 

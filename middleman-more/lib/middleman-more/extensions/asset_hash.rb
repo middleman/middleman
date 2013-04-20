@@ -25,7 +25,7 @@ module Middleman
         # Process resources in order: binary images and fonts, then SVG, then JS/CSS.
         # This is so by the time we get around to the text files (which may reference
         # images and fonts) the static assets' hashes are already calculated.
-        rack_client = ::Rack::Test::Session.new(@app.class.to_rack_app)
+        rack_client = ::Rack::Test::Session.new(app.class.to_rack_app)
         resources.sort_by do |a|
           if %w(.svg).include? a.ext
             0
