@@ -64,10 +64,8 @@ module Middleman
 
         # RelativeAssets allow any asset path in dynamic templates to be either
         # relative to the root of the project or use an absolute URL.
-        Middleman::Extensions.register(:relative_assets) do
-          require "middleman-more/extensions/relative_assets"
-          Middleman::Extensions::RelativeAssets
-        end
+        require "middleman-more/extensions/relative_assets"
+        Middleman::Extensions::RelativeAssets.register
 
         # GZIP assets and pages during build
         require "middleman-more/extensions/gzip"
