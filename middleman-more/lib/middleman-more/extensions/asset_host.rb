@@ -3,24 +3,19 @@ module Middleman
   module Extensions
 
     # Asset Host module
-    module AssetHost
+    class AssetHost < ::Middleman::Extension
+      option :host, nil, 'The asset host to use, or false for no asset host, or a Proc to determine asset host'
 
-      # Setup extension
-      class << self
+      def initialize(app, options_hash={}, &block)
+        super
 
-        # Once registered
-        def registered(app, options={})
-          app.config.define_setting :asset_host, false, 'The asset host to use, or false for no asset host, or a Proc to determine asset host'
+        # Backwards compatible API
+        app.config.define_setting :asset_host, nil, 'The asset host to use, or false for no asset host, or a Proc to determine asset host'
+        app.send :include, InstanceMethods
+      end
 
-          if options[:host]
-            config[:asset_host] = options[:host]
-          end
-
-          # Include methods
-          app.send :include, InstanceMethods
-        end
-
-        alias :included :registered
+      def host
+        app.config[:asset_host] || options[:host]
       end
 
       # Asset Host Instance Methods
@@ -32,13 +27,15 @@ module Middleman
         # @param [String] prefix
         # @return [String]
         def asset_url(path, prefix="")
-          original_output = super
-          return original_output unless config[:asset_host]
+          controller = extensions[:asset_host]
 
-          asset_prefix = if config[:asset_host].is_a?(Proc)
-            config[:asset_host].call(original_output)
-          elsif config[:asset_host].is_a?(String)
-            config[:asset_host]
+          original_output = super
+          return original_output unless controller.host
+
+          asset_prefix = if controller.host.is_a?(Proc)
+            controller.host.call(original_output)
+          elsif controller.host.is_a?(String)
+            controller.host
           end
 
           File.join(asset_prefix, original_output)

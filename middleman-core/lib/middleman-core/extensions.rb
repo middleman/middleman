@@ -1,3 +1,5 @@
+require "active_support/core_ext/class/attribute"
+
 module Middleman
 
   module Extensions
@@ -102,6 +104,8 @@ module Middleman
   end
 
   class Extension
+    class_attribute :supports_multiple_instances, :instance_reader => false, :instance_writer => false
+
     class << self
       def config
         @_config ||= ::Middleman::Configuration::ConfigurationManager.new
@@ -125,10 +129,11 @@ module Middleman
       yield @options if block_given?
 
       ext = self
-      klass.after_configuration do
+      klass.initialized do
         ext.app = self
-        ext.after_configuration
       end
+
+      klass.after_configuration(&method(:after_configuration))
     end
 
     def after_configuration

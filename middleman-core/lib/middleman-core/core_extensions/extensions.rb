@@ -37,6 +37,7 @@ module Middleman
       class << self
         # @private
         def registered(app)
+          app.define_hook :initialized
           app.define_hook :after_configuration
           app.define_hook :before_configuration
           app.define_hook :build_config
@@ -68,19 +69,15 @@ module Middleman
         # @param [Hash] options Per-extension options hash
         # @return [void]
         def register(extension, options={}, &block)
-          if extension.instance_of? Module
-            extend extension
-            if extension.respond_to?(:registered)
-              if extension.method(:registered).arity === 1
-                extension.registered(self, &block)
-              else
-                extension.registered(self, options, &block)
-              end
+          extend extension
+          if extension.respond_to?(:registered)
+            if extension.method(:registered).arity === 1
+              extension.registered(self, &block)
+            else
+              extension.registered(self, options, &block)
             end
-            extension
-          elsif extension.instance_of?(Class) && extension.ancestors.include?(::Middleman::Extension)
-            extension.new(self, options, &block)
           end
+          extension
         end
       end
 
@@ -105,7 +102,22 @@ module Middleman
             logger.error "== Unknown Extension: #{ext}"
           else
             logger.debug "== Activating: #{ext}"
-            extensions[ext] = self.class.register(ext_module, options, &block)
+
+            if ext_module.instance_of? Module
+              extensions[ext] = self.class.register(ext_module, options, &block)
+            elsif ext_module.instance_of?(Class) && ext_module.ancestors.include?(::Middleman::Extension)
+              if ext_module.supports_multiple_instances?
+                extensions[ext] ||= {}
+                key = "instance_#{extensions[ext].keys.length}"
+                extensions[ext][key] = ext_module.new(self.class, options, &block)
+              else
+                if extensions[ext]
+                  logger.error "== #{ext} already activated. Overwriting."
+                end
+
+                extensions[ext] = ext_module.new(self.class, options, &block)
+              end
+            end
           end
         end
 
@@ -141,6 +153,8 @@ module Middleman
             instance_eval File.read(local_config), local_config, 1
           end
 
+          run_hook :initialized
+
           run_hook :build_config if build?
           run_hook :development_config if development?
 
@@ -148,7 +162,13 @@ module Middleman
 
           logger.debug "Loaded extensions:"
           self.extensions.each do |ext,_|
-            logger.debug "== Extension: #{ext}"
+            if ext.is_a?(Hash)
+              ext.each do |k,_|
+                logger.debug "== Extension: #{k}"
+              end
+            else
+              logger.debug "== Extension: #{ext}"
+            end
           end
         end
       end
