@@ -3,50 +3,26 @@ module Middleman
   module Extensions
 
     # Directory Indexes extension
-    module DirectoryIndexes
+    class DirectoryIndexes < ::Middleman::Extension
+      # Update the main sitemap resource list
+      # @return [void]
+      def manipulate_resource_list(resources)
+        index_file = app.index_file
+        new_index_path = "/#{index_file}"
 
-      # Setup extension
-      class << self
+        resources.each do |resource|
+          # Check if it would be pointless to reroute
+          next if resource.destination_path == index_file ||
+                  resource.destination_path.end_with?(new_index_path) ||
+                  File.extname(index_file) != resource.ext
 
-        # Once registered
-        def registered(app)
-          app.after_configuration do
-            sitemap.register_resource_list_manipulator(
-              :directory_indexes,
-              DirectoryIndexManager.new(self)
-            )
-          end
-        end
+          # Check if frontmatter turns directory_index off
+          next if resource.data[:directory_index] == false
 
-        alias :included :registered
-      end
+          # Check if file metadata (options set by "page" in config.rb) turns directory_index off
+          next if resource.metadata[:options][:directory_index] == false
 
-      # Central class for managing the directory indexes extension
-      class DirectoryIndexManager
-        def initialize(app)
-          @app = app
-        end
-
-        # Update the main sitemap resource list
-        # @return [void]
-        def manipulate_resource_list(resources)
-          index_file = @app.index_file
-          new_index_path = "/#{index_file}"
-
-          resources.each do |resource|
-            # Check if it would be pointless to reroute
-            next if resource.destination_path == index_file ||
-                    resource.destination_path.end_with?(new_index_path) ||
-                    File.extname(index_file) != resource.ext
-
-            # Check if frontmatter turns directory_index off
-            next if resource.data[:directory_index] == false
-
-            # Check if file metadata (options set by "page" in config.rb) turns directory_index off
-            next if resource.metadata[:options][:directory_index] == false
-
-            resource.destination_path = resource.destination_path.chomp(File.extname(index_file)) + new_index_path
-          end
+          resource.destination_path = resource.destination_path.chomp(File.extname(index_file)) + new_index_path
         end
       end
     end

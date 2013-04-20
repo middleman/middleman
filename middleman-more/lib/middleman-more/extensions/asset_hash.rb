@@ -16,8 +16,6 @@ module Middleman
         # Allow specifying regexes to ignore, plus always ignore apple touch icons
         @ignore = Array(options.ignore) + [/^apple-touch-icon/]
 
-        app.sitemap.register_resource_list_manipulator(:asset_hash, self)
-
         app.use Middleware, :exts => options.exts, :middleman_app => app, :ignore => @ignore
       end
 

@@ -81,24 +81,18 @@ module Middleman
 
         # AssetHash appends a hash of the file contents to the assets filename
         # to avoid browser caches failing to update to your new content.
-        Middleman::Extensions.register(:asset_hash) do
-          require "middleman-more/extensions/asset_hash"
-          Middleman::Extensions::AssetHash
-        end
+        require "middleman-more/extensions/asset_hash"
+        Middleman::Extensions::AssetHash.register
 
         # AssetHost allows you to setup multiple domains to host your static
         # assets. Calls to asset paths in dynamic templates will then rotate
         # through each of the asset servers to better spread the load.
-        Middleman::Extensions.register(:asset_host) do
-          require "middleman-more/extensions/asset_host"
-          Middleman::Extensions::AssetHost
-        end
+        require "middleman-more/extensions/asset_host"
+        Middleman::Extensions::AssetHost.register
 
         # Provide Apache-style index.html files for directories
-        Middleman::Extensions.register(:directory_indexes) do
-          require "middleman-more/extensions/directory_indexes"
-          Middleman::Extensions::DirectoryIndexes
-        end
+        require "middleman-more/extensions/directory_indexes"
+        Middleman::Extensions::DirectoryIndexes.register
 
         # Lorem provides a handful of helpful prototyping methods to generate
         # words, paragraphs, fake images, names and email addresses.
@@ -108,10 +102,8 @@ module Middleman
         # AutomaticImageSizes inspects the images used in your dynamic templates
         # and automatically adds width and height attributes to their HTML
         # elements.
-        Middleman::Extensions.register(:automatic_image_sizes) do
-          require "middleman-more/extensions/automatic_image_sizes"
-          Middleman::Extensions::AutomaticImageSizes
-        end
+        require "middleman-more/extensions/automatic_image_sizes"
+        Middleman::Extensions::AutomaticImageSizes.register
       end
     end
   end

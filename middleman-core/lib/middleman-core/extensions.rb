@@ -106,6 +106,7 @@ module Middleman
   class Extension
     class_attribute :supports_multiple_instances, :instance_reader => false, :instance_writer => false
     class_attribute :defined_helpers, :instance_reader => false, :instance_writer => false
+    class_attribute :ext_name, :instance_reader => false, :instance_writer => false
 
     class << self
       def config
@@ -122,6 +123,14 @@ module Middleman
         m = Module.new
         m.module_eval(&block)
         self.defined_helpers << m
+      end
+
+      def extension_name
+        self.ext_name || self.name.underscore.split("/").last.to_sym
+      end
+
+      def register(n=self.extension_name)
+        ::Middleman::Extensions.register(n, self)
       end
     end
 
@@ -148,11 +157,15 @@ module Middleman
         end
       end
 
-      klass.after_configuration(&method(:after_configuration))
-    end
+      klass.after_configuration do
+        if ext.respond_to?(:manipulate_resource_list)
+          ext.app.sitemap.register_resource_list_manipulator(ext.class.extension_name, ext)
+        end
 
-    def after_configuration
-      nil
+        if ext.respond_to?(:after_configuration)
+          ext.after_configuration
+        end
+      end
     end
   end
 end
