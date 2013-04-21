@@ -28,6 +28,9 @@ platforms :jruby do
   gem "therubyrhino"
 end
 
+gem "pry"
+gem "pry-debugger"
+
 # Middleman itself
 gem "middleman-core", :path => "middleman-core"
 gem "middleman-more", :path => "middleman-more"

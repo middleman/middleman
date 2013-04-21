@@ -37,8 +37,8 @@ module Middleman
       cattr_accessor :middleman_app
 
       def image(link, title, alt_text)
-        if middleman_app && middleman_app.respond_to?(:image_tag)
-          middleman_app.image_tag(link, :title => title, :alt => alt_text)
+        if middleman_app && middleman_app.context.respond_to?(:image_tag)
+          middleman_app.context.image_tag(link, :title => title, :alt => alt_text)
         else
           img = "<img src=\"#{link}\""
           img << " title=\"#{title}\"" if title
@@ -48,8 +48,8 @@ module Middleman
       end
 
       def link(link, title, content)
-        if middleman_app && middleman_app.respond_to?(:link_to)
-          middleman_app.link_to(content, link, :title => title)
+        if middleman_app && middleman_app.context.respond_to?(:link_to)
+          middleman_app.context.link_to(content, link, :title => title)
         else
           a = "<a href=\"#{link}\""
           a << " title=\"#{title}\"" if title

@@ -32,14 +32,28 @@ module Middleman
     # Runs after the build is finished
     define_hook :after_build
 
+    class_attribute :helper_modules
+
     # Mix-in helper methods. Accepts either a list of Modules
     # and/or a block to be evaluated
     # @return [void]
     def self.helpers(*extensions, &block)
-      class_eval(&block)   if block_given?
-      include(*extensions) if extensions.any?
+      self.helper_modules ||= []
+      if block_given?
+        self.helper_modules << block
+      elsif extensions && extensions.length
+        self.helper_modules += extensions
+      end
     end
-    delegate :helpers, :to => :"self.class"
+
+    def helpers(*extensions, &block)
+      self.helper_modules ||= []
+      if block_given?
+        self.helper_modules << block
+      elsif extensions && extensions.length
+        self.helper_modules += extensions
+      end
+    end
 
     # Root project directory (overwritten in middleman build/server)
     # @return [String]
