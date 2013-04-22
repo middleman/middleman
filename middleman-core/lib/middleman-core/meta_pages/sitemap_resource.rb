@@ -32,7 +32,7 @@ module Middleman
           'Path' => @resource.path,
           'Build Path' => @resource.destination_path,
           'URL' => content_tag(:a, @resource.url, :href => @resource.url),
-          'Template' => @resource.source_file,
+          'Source File' => @resource.source_file,
         }
 
         data = @resource.data
