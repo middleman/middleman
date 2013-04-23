@@ -5,6 +5,8 @@ master
 * Update Rack dependency to 1.5.x
 * Update to Listen 1.0.x
 * Update to padrino-helpers 0.11.x
+* Update to Thor 0.17.x
+* Update uglifier to 2.0.x
 
 3.1.0.beta.1
 ===

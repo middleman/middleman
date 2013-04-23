@@ -1,20 +1,18 @@
 source 'https://rubygems.org'
 
-# Make sure to use Haml 4 for tests
-gem "haml", "~> 4.0.0"
 
 # Build and doc tools
 gem "rake",     "~> 10.0.3"
 gem "yard",     "~> 0.8.0"
 
 # Test tools
-gem "cucumber", "~> 1.2.1"
+gem "cucumber", "~> 1.3.1"
 gem "fivemat"
 gem "aruba",    "~> 0.5.1"
 gem "rspec",    "~> 2.12"
-gem 'gherkin', '<= 2.11.6' # for annoying "eval" warnings
 
 # Optional middleman dependencies, included for tests
+gem "haml", "~> 4.0.0" # Make sure to use Haml 4 for tests
 gem "sinatra", :require => false
 gem "slim", :require => false
 gem "liquid", :require => false

@@ -133,14 +133,14 @@ Feature: Minify Javascript
     Then I should see:
     """
     <script>
-      (function(){this,should(),all.be(),on={one:line}})();
+      (function(){should(),all.be(),on={one:line}})();
     </script>
     <script>
-      (function(){this,should(),too()})();
+      (function(){should(),too()})();
     </script>
     <script type='text/javascript'>
       //<!--
-    (function(){one,line(),here()})();
+    (function(){line(),here()})();
       //-->
     </script>
     <script type='text/html'>
