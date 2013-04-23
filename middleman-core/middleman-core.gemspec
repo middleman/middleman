@@ -32,5 +32,5 @@ Gem::Specification.new do |s|
   s.add_dependency("activesupport", ["~> 3.2.6"])
   
   # Watcher
-  s.add_dependency("listen", ["~> 0.7.3"])
+  s.add_dependency("listen", ["~> 1.0.2"])
 end
