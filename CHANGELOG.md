@@ -4,6 +4,7 @@ master
 * Include middleman-livereload in default Gemfile
 * Update Rack dependency to 1.5.x
 * Update to Listen 1.0.x
+* Update to padrino-helpers 0.11.x
 
 3.1.0.beta.1
 ===

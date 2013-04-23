@@ -25,6 +25,8 @@ module Middleman
           ::Tilt.mappings.delete('html') # WTF, Tilt?
           ::Tilt.mappings.delete('csv')
 
+          require 'active_support/core_ext/string/output_safety'
+
           # Activate custom renderers
           require "middleman-core/renderers/erb"
           app.register Middleman::Renderers::ERb
@@ -274,7 +276,9 @@ module Middleman
             content = callback.call(content, path, locs, template_class)
           end
 
-          return content
+          output = ::ActiveSupport::SafeBuffer.new
+          output.safe_concat content
+          output
         ensure
           # Reset stored buffer
           @_out_buf = _buf_was
@@ -408,7 +412,7 @@ module Middleman
             @_out_buf = _buf_was
           end
 
-          concat_content render_individual_file(layout_path, @current_locs || {}, @current_opts || {}, self) { content }
+          concat_safe_content render_individual_file(layout_path, @current_locs || {}, @current_opts || {}, self) { content }
         ensure
           @current_engine = engine_was
         end
