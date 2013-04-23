@@ -1,7 +1,8 @@
 master
 ===
 
-* Bundle middleman-livereload
+* Include middleman-livereload in default Gemfile
+* Update Rack dependency to 1.5.x
 
 3.1.0.beta.1
 ===
