@@ -20,6 +20,5 @@ Gem::Specification.new do |s|
   s.add_dependency("middleman-core", Middleman::VERSION)
   s.add_dependency("middleman-more", Middleman::VERSION)
   s.add_dependency("middleman-sprockets", ">= 3.0.10")
-  s.add_dependency("middleman-livereload")
 end
 

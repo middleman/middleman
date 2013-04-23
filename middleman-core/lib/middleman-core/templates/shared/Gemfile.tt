@@ -4,6 +4,9 @@ source 'http://rubygems.org'
 
 gem "middleman", "~><%= Middleman::VERSION %>"
 
+# Live-reloading plugin
+gem "middleman-livereload"
+
 # For faster file watcher updates:
 # gem "rb-fsevent", "~> 0.9.3") # OS X
 # gem "rb-inotify", "~> 0.9.0") # Linux
