@@ -42,15 +42,6 @@ module Middleman
           @current_engine ||= nil
         end
 
-        def save_buffer
-          @_out_buf, @_buf_was = "", @_out_buf
-        end
-
-        def restore_buffer
-          @_out_buf = @_buf_was
-          @_buf_was = ""
-        end
-
         def save_engine(engine)
           @current_engine, @engine_was = engine, @current_engine
         end
@@ -187,9 +178,6 @@ module Middleman
         # @param [String, Symbol] layout_name
         # @return [void]
         def wrap_layout(layout_name, &block)
-          # Save current buffer for later
-          self.save_buffer
-
           layout_path = @app.locate_layout(layout_name, current_engine)
 
           extension = File.extname(layout_path)
@@ -204,9 +192,6 @@ module Middleman
             else
               ""
             end
-          ensure
-            # Reset stored buffer
-            self.restore_buffer
           end
           concat_content @app.render_individual_file(layout_path, @current_locs || {}, @current_opts || {}, self) { content }
         ensure
@@ -350,8 +335,6 @@ module Middleman
         def render_individual_file(path, locs = {}, opts = {}, local_context = nil, &block)
           path = path.to_s
 
-          local_context.save_buffer
-
           # Read from disk or cache the contents of the file
           body = if opts[:template_body]
             opts.delete(:template_body)
@@ -391,8 +374,6 @@ module Middleman
           output = ::ActiveSupport::SafeBuffer.new
           output.safe_concat content
           output
-        ensure
-          local_context.restore_buffer
         end
 
         # Get the template data from a path
