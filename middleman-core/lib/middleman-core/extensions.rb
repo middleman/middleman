@@ -84,7 +84,7 @@ module Middleman
     def rubygems_latest_specs
       # If newer Rubygems
       if ::Gem::Specification.respond_to? :latest_specs
-        ::Gem::Specification.latest_specs
+        ::Gem::Specification.latest_specs(true)
       else
         ::Gem.source_index.latest_specs
       end
