@@ -181,6 +181,14 @@ module Middleman
         def respond_to?(method, include_private = false)
           super || @local_data.has_key?(method.to_s) || !!(data_for_path(method))
         end
+        
+        # Return requested data, or nil if data does not exist
+        #
+        # @param [String, Symbol] path The name of the data namespace
+        # @return [Hash, nil]
+        def try(path)
+          __send__(path) if respond_to?(path)
+        end
 
         # Convert all the data into a static hash
         #
