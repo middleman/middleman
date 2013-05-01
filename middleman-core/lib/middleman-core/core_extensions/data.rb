@@ -177,6 +177,11 @@ module Middleman
           super
         end
 
+        # Needed so that method_missing makes sense
+        def respond_to?(method, include_private = false)
+          super || @local_data.has_key?(method.to_s) || !!(data_for_path(method))
+        end
+
         # Convert all the data into a static hash
         #
         # @return [Hash]
