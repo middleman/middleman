@@ -1,2 +1,5 @@
 # Ignore bundler lock file
-Gemfile.lock
+/Gemfile.lock
+
+# Ignore pkg folder
+/pkg

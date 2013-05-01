@@ -2,18 +2,15 @@
 require "middleman-core"
 
 # Extension namespace
-module MyExtension < Middleman::Extension
+class MyExtension < ::Middleman::Extension
   option :my_option, "default", "An example option"
 
-  def initialize(app, options_hash={})
+  def initialize(app, options_hash={}, &block)
     # Call super to build options from the options_hash
     super
 
     # Require libraries only when activated
     # require 'necessary/library'
-
-    # Include helpers or instance methods for the Middleman app
-    # app.send :include, Helpers
 
     # set up your extension
     # puts options.my_option
@@ -23,7 +20,11 @@ module MyExtension < Middleman::Extension
     # Do something
   end
 
-  # module Helpers
+  # A Sitemap Manipulator
+  # def manipulate_resource_list(resources)
+  # end
+
+  # module do
   #   def a_helper
   #   end
   # end
@@ -32,9 +33,7 @@ end
 
 # Register extensions which can be activated
 # Make sure we have the version of Middleman we expect
-# ::Middleman::Extensions.register(:extension_name) do
-#
-#   # Return the extension class
-#   ::MyExtension
-#
-# end
+# Name param may be omited, it will default to underscored
+# version of class name
+
+# MyExtension.register(:my_extension)
