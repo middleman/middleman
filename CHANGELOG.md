@@ -1,12 +1,20 @@
 master
 ===
 
+3.1.0.beta.2
+===
+
+* Extension template uses new class-based Extension
+* Fix missing children in some sitemap traversal operations. #837
+* Add respond_to? to DataStore. #872
+* Allow discovery of prerelease gems.  #873
 * Include middleman-livereload in default Gemfile
 * Update Rack dependency to 1.5.x
 * Update to Listen 1.0.x
 * Update to padrino-helpers 0.11.x
 * Update to Thor 0.17.x
 * Update uglifier to 2.0.x
+* Convert all of middleman-more to new class-based Extensions
 
 3.1.0.beta.1
 ===
