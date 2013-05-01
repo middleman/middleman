@@ -153,10 +153,10 @@ module Middleman
             instance_eval File.read(local_config), local_config, 1
           end
 
-          run_hook :initialized
-
           run_hook :build_config if build?
           run_hook :development_config if development?
+
+          run_hook :initialized
 
           run_hook :after_configuration
 
