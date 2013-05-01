@@ -2,14 +2,13 @@ require 'rubygems' unless defined?(Gem)
 require 'rake'
 require 'yard'
 
-require 'bundler'
-Bundler::GemHelper.install_tasks :name => GEM_NAME
+require 'bundler/gem_tasks'
 
 # Skip the releasing tag
 class Bundler::GemHelper
-  def release_gem
+  def release_gem(*args)
+    p args
     guard_clean
-    # guard_already_tagged
     built_gem_path = build_gem
     rubygem_push(built_gem_path)
   end
