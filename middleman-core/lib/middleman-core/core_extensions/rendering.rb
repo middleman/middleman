@@ -11,6 +11,75 @@ module Middleman
   module CoreExtensions
     module Rendering
 
+      class Context
+        def self.generate(app)
+          base = Class.new(self)
+          base.new(app)
+        end
+
+        def initialize(app)
+          @app = app
+
+          (@app.helper_modules || []).each do |h|
+            if h.is_a? Module
+              self.class.send(:include, h)
+            else
+              self.class.class_eval(&h)
+            end
+          end
+
+          @_out_buf = ""
+        end
+
+        def to_s
+        "#<Middleman::CoreExtensions::Rendering::Context:0x#{object_id}>"
+        end
+        alias :inspect :to_s
+
+        # The currently rendering engine
+        # @return [Symbol, nil]
+        def current_engine
+          @current_engine ||= nil
+        end
+
+        def save_engine(engine)
+          @current_engine, @engine_was = engine, @current_engine
+        end
+
+        def restore_engine
+          @current_engine = @engine_was
+          @engine_was = nil
+        end
+
+        def save_locs_and_opts(locs, opts)
+          @current_locs = locs
+          @current_opts = opts
+        end
+
+        def restore_locs_and_opts
+          @current_locs = nil
+          @current_opts = nil
+          @content_blocks = nil
+        end
+
+        # Know accessors from code and tests:
+        # [:req=, :current_path=, :data, :current_path, :a_options, :request, :sitemap, :root, :extensions, :build?, :source_dir, :config, :render]
+
+        def method_missing(method, *args)
+          if @app.config.respond_to?(method)
+            @app.config.send(method, *args)
+          elsif @app.respond_to?(method)
+            @app.send(method, *args)
+          else
+            super
+          end
+        end
+
+        def respond_to?(method, include_private = false)
+          super || @app.config.respond_to?(method) || @app.respond_to?(method)
+        end
+      end
+
       # Setup extension
       class << self
 
@@ -18,6 +87,7 @@ module Middleman
         def registered(app)
           # Include methods
           app.send :include, InstanceMethods
+          app.helpers HelperMethods
 
           app.define_hook :before_render
           app.define_hook :after_render
@@ -103,78 +173,29 @@ module Middleman
       class TemplateNotFound < RuntimeError
       end
 
-      # Rendering instance methods
-      module InstanceMethods
+      module HelperMethods
+        # Allow layouts to be wrapped in the contents of other layouts
+        # @param [String, Symbol] layout_name
+        # @return [void]
+        def wrap_layout(layout_name, &block)
+          layout_path = @app.locate_layout(layout_name, current_engine)
 
-        # Add or overwrite a default template extension
-        #
-        # @param [Hash] extension_map
-        # @return [Hash]
-        def template_extensions(extension_map=nil)
-          @_template_extensions ||= {}
-          @_template_extensions.merge!(extension_map) if extension_map
-          @_template_extensions
-        end
-
-        # Render a template, with layout, given a path
-        #
-        # @param [String] path
-        # @param [Hash] locs
-        # @param [Hash] opts
-        # @return [String]
-        def render_template(path, locs={}, opts={}, blocks=[])
-          # Detect the remdering engine from the extension
-          extension = File.extname(path)
+          extension = File.extname(layout_path)
           engine = extension[1..-1].to_sym
 
           # Store last engine for later (could be inside nested renders)
-          @current_engine, engine_was = engine, @current_engine
-          if defined?(::I18n)
-            old_locale = ::I18n.locale
-            ::I18n.locale = opts[:lang] if opts[:lang]
-          end
+          self.save_engine(engine)
 
-          # Use a dup of self as a context so that instance variables set within
-          # the template don't persist for other templates.
-          context = self.dup
-          blocks.each do |block|
-            context.instance_eval(&block)
-          end
-
-          # Store current locs/opts for later
-          @current_locs = locs, @current_opts = opts
-
-          # Keep rendering template until we've used up all extensions. This
-          # handles cases like `style.css.sass.erb`
-          content = nil
-          while ::Tilt[path]
-            begin
-              opts[:template_body] = content if content
-              content = render_individual_file(path, locs, opts, context)
-              path = File.basename(path, File.extname(path))
-            rescue LocalJumpError
-              raise "Tried to render a layout (calls yield) at #{path} like it was a template. Non-default layouts need to be in #{source}/layouts."
+          begin
+            content = if block_given?
+              capture_html(&block)
+            else
+              ""
             end
           end
-
-          # Certain output file types don't use layouts
-          needs_layout = !%w(.js .json .css .txt).include?(File.extname(path))
-
-          # If we need a layout and have a layout, use it
-          if needs_layout && layout_path = fetch_layout(engine, opts)
-            content = render_individual_file(layout_path, locs, opts, context) { content }
-          end
-
-          # Return result
-          content
+          concat_content @app.render_individual_file(layout_path, @current_locs || {}, @current_opts || {}, self) { content }
         ensure
-          # Pop all the saved variables from earlier as we may be returning to a
-          # previous render (layouts, partials, nested layouts).
-          ::I18n.locale = old_locale if defined?(::I18n)
-          @current_engine = engine_was
-          @content_blocks = nil
-          @current_locs = nil
-          @current_opts = nil
+          self.restore_engine
         end
 
         # Sinatra/Padrino compatible render method signature referenced by some view
@@ -193,7 +214,7 @@ module Middleman
           engine        = nil
 
           # If the path is known to the sitemap
-          if resource = sitemap.find_resource_by_path(current_path)
+          if resource = @app.sitemap.find_resource_by_path(current_path)
             current_dir = File.dirname(resource.source_file)
             engine = File.extname(resource.source_file)[1..-1].to_sym
 
@@ -201,31 +222,107 @@ module Middleman
             relative_dir = File.join(current_dir.sub(%r{^#{self.source_dir}/?}, ""), data)
 
             # Try to use the current engine first
-            found_partial, found_engine = resolve_template(relative_dir, :preferred_engine => engine, :try_without_underscore => true)
+            found_partial, found_engine = @app.resolve_template(relative_dir, :preferred_engine => engine, :try_without_underscore => true)
 
             # Fall back to any engine available
             if !found_partial
-              found_partial, found_engine = resolve_template(relative_dir, :try_without_underscore => true)
+              found_partial, found_engine = @app.resolve_template(relative_dir, :try_without_underscore => true)
             end
           end
 
           # Look in the partials_dir for the partial with the current engine
-          partials_path = File.join(config[:partials_dir], data)
+          partials_path = File.join(@app.config[:partials_dir], data)
           if !found_partial && !engine.nil?
-            found_partial, found_engine = resolve_template(partials_path, :preferred_engine => engine, :try_without_underscore => true)
+            found_partial, found_engine = @app.resolve_template(partials_path, :preferred_engine => engine, :try_without_underscore => true)
           end
 
           # Look in the root with any engine
           if !found_partial
-            found_partial, found_engine = resolve_template(partials_path, :try_without_underscore => true)
+            found_partial, found_engine = @app.resolve_template(partials_path, :try_without_underscore => true)
           end
 
           # Render the partial if found, otherwide throw exception
           if found_partial
-            render_individual_file(found_partial, locals, options, self, &block)
+            @app.render_individual_file(found_partial, locals, options, self, &block)
           else
             raise ::Middleman::CoreExtensions::Rendering::TemplateNotFound, "Could not locate partial: #{data}"
           end
+        end
+      end
+
+      # Rendering instance methods
+      module InstanceMethods
+
+        # Add or overwrite a default template extension
+        #
+        # @param [Hash] extension_map
+        # @return [Hash]
+        def template_extensions(extension_map=nil)
+          @_template_extensions ||= {}
+          @_template_extensions.merge!(extension_map) if extension_map
+          @_template_extensions
+        end
+
+        def context
+          # Use a dup of self as a context so that instance variables set within
+          # the template don't persist for other templates.
+          @_template_context ||= Context.generate(self)
+        end
+
+        # Render a template, with layout, given a path
+        #
+        # @param [String] path
+        # @param [Hash] locs
+        # @param [Hash] opts
+        # @return [String]
+        def render_template(path, locs={}, opts={}, blocks=[])
+          # Detect the remdering engine from the extension
+          extension = File.extname(path)
+          engine = extension[1..-1].to_sym
+
+          old_locale = ::I18n.locale
+          I18n.locale = opts[:lang] if opts[:lang]
+
+          this_context = context.dup
+          blocks.each do |block|
+            this_context.instance_eval(&block)
+          end
+
+          # Store last engine for later (could be inside nested renders)
+          this_context.save_engine(engine)
+
+          # Store current locs/opts for later
+          this_context.save_locs_and_opts(locs, opts)
+
+          # Keep rendering template until we've used up all extensions. This
+          # handles cases like `style.css.sass.erb`
+          content = nil
+          while ::Tilt[path]
+            begin
+              opts[:template_body] = content if content
+              content = render_individual_file(path, locs, opts, this_context)
+              path = File.basename(path, File.extname(path))
+            rescue LocalJumpError
+              raise "Tried to render a layout (calls yield) at #{path} like it was a template. Non-default layouts need to be in #{source}/layouts."
+            end
+          end
+
+          # Certain output file types don't use layouts
+          needs_layout = !%w(.js .json .css .txt).include?(File.extname(path))
+
+          # If we need a layout and have a layout, use it
+          if needs_layout && layout_path = fetch_layout(engine, opts)
+            content = render_individual_file(layout_path, locs, opts, this_context) { content }
+          end
+
+          # Return result
+          content
+        ensure
+          # Pop all the saved variables from earlier as we may be returning to a
+          # previous render (layouts, partials, nested layouts).
+          ::I18n.locale = old_locale
+          this_context.restore_engine
+          this_context.restore_locs_and_opts
         end
 
         # Render an on-disk file. Used for everything, including layouts.
@@ -233,13 +330,10 @@ module Middleman
         # @param [String, Symbol] path
         # @param [Hash] locs
         # @param [Hash] opts
-        # @param [Class] context
+        # @param [Class] local_context
         # @return [String]
-        def render_individual_file(path, locs = {}, opts = {}, context = self, &block)
+        def render_individual_file(path, locs = {}, opts = {}, local_context = nil, &block)
           path = path.to_s
-
-          # Save current buffer for later
-          @_out_buf, _buf_was = "", @_out_buf
 
           # Read from disk or cache the contents of the file
           body = if opts[:template_body]
@@ -270,7 +364,7 @@ module Middleman
           end
 
           # Render using Tilt
-          content = template.render(context, locs, &block)
+          content = template.render(local_context, locs, &block)
 
           # Allow hooks to manipulate the result after render
           self.class.callbacks_for_hook(:after_render).each do |callback|
@@ -280,9 +374,6 @@ module Middleman
           output = ::ActiveSupport::SafeBuffer.new
           output.safe_concat content
           output
-        ensure
-          # Reset stored buffer
-          @_out_buf = _buf_was
         end
 
         # Get the template data from a path
@@ -385,43 +476,6 @@ module Middleman
 
           # Return the path
           layout_path
-        end
-
-        # Allow layouts to be wrapped in the contents of other layouts
-        # @param [String, Symbol] layout_name
-        # @return [void]
-        def wrap_layout(layout_name, &block)
-          # Save current buffer for later
-          @_out_buf, _buf_was = "", @_out_buf
-
-          layout_path = locate_layout(layout_name, current_engine)
-
-          extension = File.extname(layout_path)
-          engine = extension[1..-1].to_sym
-
-          # Store last engine for later (could be inside nested renders)
-          @current_engine, engine_was = engine, @current_engine
-
-          begin
-            content = if block_given?
-              capture_html(&block)
-            else
-              ""
-            end
-          ensure
-            # Reset stored buffer
-            @_out_buf = _buf_was
-          end
-
-          concat_safe_content render_individual_file(layout_path, @current_locs || {}, @current_opts || {}, self) { content }
-        ensure
-          @current_engine = engine_was
-        end
-
-        # The currently rendering engine
-        # @return [Symbol, nil]
-        def current_engine
-          @current_engine ||= nil
         end
 
         # Find a template on disk given a output path

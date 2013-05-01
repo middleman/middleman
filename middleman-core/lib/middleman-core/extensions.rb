@@ -153,7 +153,11 @@ module Middleman
         ext.app = self
         
         (ext.class.defined_helpers || []).each do |m|
-          ext.app.class.send(:include, m)
+          ext.app.helpers(m)
+        end
+        
+        if ext.respond_to?(:initialized)
+          ext.initialized
         end
       end
 

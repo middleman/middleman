@@ -19,6 +19,9 @@ class Middleman::Extensions::Gzip < ::Middleman::Extension
     require 'stringio'
     require 'find'
 
+    # Load number_to_human_size helper
+    self.extend ::Padrino::Helpers::NumberHelpers
+
     gzip_ext = self
 
     app.after_build do |builder|
@@ -32,7 +35,7 @@ class Middleman::Extensions::Gzip < ::Middleman::Extension
           size_change_word = (old_size - new_size) > 0 ? 'smaller' : 'larger'
           old_locale = I18n.locale
           I18n.locale = :en # use the english localizations for printing out file sizes to make sure the localizations exist
-          builder.say_status :gzip, "#{output_filename} (#{number_to_human_size((old_size - new_size).abs)} #{size_change_word})"
+          builder.say_status :gzip, "#{output_filename} (#{gzip_ext.number_to_human_size((old_size - new_size).abs)} #{size_change_word})"
           I18n.locale = old_locale
         end
       end
