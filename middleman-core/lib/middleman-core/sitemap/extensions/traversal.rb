@@ -68,6 +68,9 @@ module Middleman
         # (e.g., if the resource is named 'gallery.html' and a path exists named 'gallery/', this would return true)
         # @return [Boolean]
         def eponymous_directory?
+          if !path.end_with?("/#{app.index_file}") && destination_path.end_with?("/#{app.index_file}")
+            return true
+          end
           full_path = File.join(app.source_dir, eponymous_directory_path)
           !!(File.exists?(full_path) && File.directory?(full_path))
         end
