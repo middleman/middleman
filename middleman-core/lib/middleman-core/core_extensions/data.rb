@@ -179,7 +179,20 @@ module Middleman
 
         # Needed so that method_missing makes sense
         def respond_to?(method, include_private = false)
-          super || @local_data.has_key?(method.to_s) || !!(data_for_path(method))
+          super || has_key?(method)
+        end
+        
+        # Make DataStore act like a hash. Return requested data, or
+        # nil if data does not exist
+        #
+        # @param [String, Symbol] key The name of the data namespace
+        # @return [Hash, nil]
+        def [](key)
+          __send__(key) if has_key?(key)
+        end
+
+        def has_key?(key)
+          @local_data.has_key?(key.to_s) || !!(data_for_path(key))
         end
 
         # Convert all the data into a static hash
