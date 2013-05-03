@@ -148,7 +148,7 @@ module Middleman
         # @return [Boolean]
         def ignored?(path)
           path = path.to_s
-          config[:file_watcher_ignore].any? { |r| path =~ r }
+          app.config[:file_watcher_ignore].any? { |r| path =~ r }
         end
 
         # Notify callbacks for a file given an array of callbacks
