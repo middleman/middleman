@@ -1,6 +1,8 @@
 master
 ===
 
+* DataStore may now be accessed like a hash with #[] and #has_key?. #880
+
 3.1.0.beta.2
 ===
 
