@@ -124,7 +124,7 @@ module Middleman
         end
 
         # Don't block this thread
-        @listener.start(false) if first_run
+        @listener.start if first_run
       end
 
       # Trap some interupt signals and shut down smoothly
