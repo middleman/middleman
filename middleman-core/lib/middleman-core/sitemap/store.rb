@@ -229,15 +229,8 @@ module Middleman
       # @param [String] path
       # @return [String]
       def remove_templating_extensions(path)
-        end_of_the_line = false
-        while !end_of_the_line
-          if !::Tilt[path].nil?
-            path = path.sub(File.extname(path), "")
-          else
-            end_of_the_line = true
-          end
-        end
-
+        # Strip templating extensions as long as Tilt knows them
+        path = path.sub(File.extname(path), "") while ::Tilt[path]
         path
       end
 
@@ -246,10 +239,10 @@ module Middleman
       # @return [String]
       def strip_away_locale(path)
         if app.respond_to? :langs
-          path.match(/([^.\/]+)\.([^.]+)$/) do |m|
-            if app.langs.include?(m[2].to_sym)
-              return m[1]
-            end
+          path_bits = path.split('.')
+          lang = path_bits.last
+          if app.langs.include?(lang.to_sym)
+            return path_bits[0..-1].join('.')
           end
         end
 

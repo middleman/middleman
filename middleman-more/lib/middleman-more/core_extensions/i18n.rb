@@ -118,7 +118,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
           path = resource.path.sub(options[:templates_dir], "")
           new_resources << build_resource(path, resource.path, page_id, lang)
         end
-      elsif m = result = parse_locale_extension(resource.path)
+      elsif result = parse_locale_extension(resource.path)
         lang, path, page_id = result
         new_resources << build_resource(path, resource.path, page_id, lang)
       end
@@ -130,15 +130,19 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
   private
 
   # Parse locale extension filename
-  # @return [locale, path, basename]
+  # @return [lang, path, basename]
   # will return +nil+ if no locale extension
   def parse_locale_extension(path)
-    path.match(/([^.\/]+)\.([^.]+)$/) do |m|
-      locale   = m[2].to_sym
-      path     = m[1]
-      basename = File.basename(path)
-      langs.include?(locale) ? [locale, path, basename] : nil
-    end
+    path_bits = path.split('.')
+    return nil if path_bits.size < 3
+
+    lang = path_bits.delete_at(-2).to_sym
+    return nil unless langs.include?(lang)
+
+    path = path_bits.join('.')
+    basename = File.basename(path_bits[0..-2].join('.'))
+
+    [lang, path, basename]
   end
 
   def build_resource(path, source_path, page_id, lang)
