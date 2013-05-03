@@ -18,8 +18,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
 
     app.config.define_setting :locales_dir, "locales", 'The directory holding your locale configurations'
 
-    # Ruby 2.0 beep beep
-    ::Middleman::Sitemap::Store.send :prepend, StoreInstanceMethods
+    app.send :include, LocaleHelpers
   end
 
   def after_configuration
@@ -74,7 +73,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
     app.files.deleted(&method(:on_file_changed))
   end
 
-  helpers do 
+  helpers do
     def t(*args)
       ::I18n.t(*args)
     end
@@ -111,14 +110,16 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
     new_resources = []
 
     resources.each do |resource|
+      # If it's a "localizable template"
       if File.fnmatch?(File.join(options[:templates_dir], "**"), resource.path)
-        page_id = File.basename(resource.path, File.extname(resource.path)) 
-
-        old_locale = ::I18n.locale
+        page_id = File.basename(resource.path, File.extname(resource.path))
         langs.each do |lang|
-          new_resources << build_resource(path, resource.path, page_id, lang) 
+          # Remove folder name
+          path = resource.path.sub(options[:templates_dir], "")
+          new_resources << build_resource(path, resource.path, page_id, lang)
         end
-      elsif lang, path, basename = parse_locale_extension(resource.path)
+      elsif m = result = parse_locale_extension(resource.path)
+        lang, path, page_id = result
         new_resources << build_resource(path, resource.path, page_id, lang)
       end
     end
@@ -129,32 +130,29 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
   private
 
   # Parse locale extension filename
-  # @return [Hash] with :basename, :locale, and :path
+  # @return [locale, path, basename]
   # will return +nil+ if no locale extension
   def parse_locale_extension(path)
-    path.match(/([^.]*)\.([^.]*)/) do |m|
+    path.match(/([^.\/]+)\.([^.]+)$/) do |m|
       locale   = m[2].to_sym
-      path     = path.sub("."+m[2], "")
-      basename = File.basename(m[1]) 
+      path     = m[1]
+      basename = File.basename(path)
       langs.include?(locale) ? [locale, path, basename] : nil
     end
   end
 
   def build_resource(path, source_path, page_id, lang)
-    localized_page_id = ::I18n.t("paths.#{page_id}", :default => page_id, :fallback => [])
-    path = resource.path.sub(options[:templates_dir], "")
+    old_locale = ::I18n.locale
+    ::I18n.locale = lang
 
-    # Build lang path
+    localized_page_id = ::I18n.t("paths.#{page_id}", :default => page_id, :fallback => [])
+
     if @mount_at_root == lang
       prefix = "/"
     else
       replacement = options[:lang_map].fetch(lang, lang)
       prefix = options[:path].sub(":locale", replacement.to_s)
     end
-
-    # Localize page id
-    old_locale = ::I18n.locale
-    ::I18n.locale = lang
 
     path = ::Middleman::Util.normalize_path(
        File.join(prefix, path.sub(page_id, localized_page_id))
@@ -163,10 +161,18 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
     @_localization_data[path] = [lang, path, localized_page_id]
 
     p = ::Middleman::Sitemap::Resource.new(app.sitemap, path)
-    p.proxy_to(resource.path)
+    p.proxy_to(source_path)
 
     ::I18n.locale = old_locale
 
     p
+  end
+
+  module LocaleHelpers
+    # Access the list of languages supported by this Middleman application
+    # @return [Array<Symbol>]
+    def langs
+      extensions[:i18n].langs
+    end
   end
 end
