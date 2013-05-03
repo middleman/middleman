@@ -24,6 +24,6 @@ Gem::Specification.new do |s|
   s.add_dependency("coffee-script", ["~> 2.2.0"])
   s.add_dependency("execjs", ["~> 1.4.0"])
   s.add_dependency("kramdown", ["~> 1.0.0"])
-  s.add_dependency("i18n", ["~> 0.6.4"])
-  s.add_dependency("padrino-helpers", ["0.11.1"])
+  s.add_dependency("i18n", ["~> 0.6.1"])
+  s.add_dependency("padrino-helpers", ["0.10.7"])
 end

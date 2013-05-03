@@ -4,6 +4,9 @@ master
 * DataStore may now be accessed like a hash with #[] and #has_key?. #880
 * The i18n extension now supports providing localized templates as separate files, like index.es.html.haml. #816, #823
 * The list of regular expressions for which files are ignored by the file watcher are now configurable.
+* Revert to Thor 0.15.x
+* Revert to padrino-helpers 0.10.x (dependency hell)
+* Drop i18n dep to match activesupport at 0.6.1
 
 3.1.0.beta.2
 ===
@@ -16,7 +19,6 @@ master
 * Update Rack dependency to 1.5.x
 * Update to Listen 1.0.x
 * Update to padrino-helpers 0.11.x
-* Update to Thor 0.17.x
 * Update uglifier to 2.0.x
 * Convert all of middleman-more to new class-based Extensions
 

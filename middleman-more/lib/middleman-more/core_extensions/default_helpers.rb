@@ -14,7 +14,7 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
     app.helpers ::Padrino::Helpers::RenderHelpers
     app.helpers ::Padrino::Helpers::NumberHelpers
     # app.helpers ::Padrino::Helpers::TranslationHelpers
-    app.helpers ::Padrino::Helpers::Breadcrumbs
+    # app.helpers ::Padrino::Helpers::Breadcrumbs
 
     app.config.define_setting :relative_links, false, 'Whether to generate relative links instead of absolute ones'
   end
