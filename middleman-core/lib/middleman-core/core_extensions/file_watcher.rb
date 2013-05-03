@@ -27,6 +27,8 @@ module Middleman
         def registered(app)
           app.send :include, InstanceMethods
 
+          app.config.define_setting :file_watcher_ignore, IGNORE_LIST, 'Regexes for paths that should be ignored when they change.'
+
           # Before parsing config, load the data/ directory
           app.before_configuration do
             files.reload_path(config[:data_dir])
@@ -146,7 +148,7 @@ module Middleman
         # @return [Boolean]
         def ignored?(path)
           path = path.to_s
-          IGNORE_LIST.any? { |r| path =~ r }
+          config[:file_watcher_ignore].any? { |r| path =~ r }
         end
 
         # Notify callbacks for a file given an array of callbacks

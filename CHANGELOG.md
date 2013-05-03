@@ -3,6 +3,7 @@ master
 
 * DataStore may now be accessed like a hash with #[] and #has_key?. #880
 * The i18n extension now supports providing localized templates as separate files, like index.es.html.haml. #816, #823
+* The list of regular expressions for which files are ignored by the file watcher are now configurable.
 
 3.1.0.beta.2
 ===
