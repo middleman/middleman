@@ -63,14 +63,17 @@ module Middleman::Cli
 
       action GlobAction.new(self, opts)
 
+      self.class.shared_instance.run_hook :after_build, self
+
       if @had_errors && !@debugging
-        cmd = "middleman build --verbose"
-        self.shell.say "There were errors during this build, re-run with `#{cmd}` to see the full exception."
+        msg = "There were errors during this build"
+        unless options["verbose"]
+          msg << ", re-run with `middleman build --verbose` to see the full exception."
+        end
+        self.shell.say msg, :red
       end
 
       exit(1) if @had_errors
-
-      self.class.shared_instance.run_hook :after_build, self
     end
 
     # Static methods
@@ -155,7 +158,7 @@ module Middleman::Cli
           raise e
           exit(1)
         elsif options["verbose"]
-          self.shell.error(response)
+          self.shell.say response, :red
         end
       end
 
