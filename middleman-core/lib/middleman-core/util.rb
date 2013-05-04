@@ -136,13 +136,15 @@ module Middleman
     # @param paths Some paths string or Pathname
     # @return [Array] An array of filenames
     def self.all_files_under(*paths)
-      paths.flatten!
-      paths.map! { |p| Pathname(p) }
-      files = paths.select { |p| p.file? }
-      paths.select {|p| p.directory? }.each do |dir|
-        files << all_files_under(dir.children)
-      end
-      files.flatten
+      # when we drop 1.8, replace this with flat_map
+      paths.map do |p|
+        path = Pathname(p)
+        if path.directory?
+          all_files_under(*path.children)
+        elsif path.file?
+          path
+        end
+      end.flatten.compact
     end
 
     # Simple shared cache implementation
