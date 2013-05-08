@@ -7,7 +7,7 @@ class Middleman::Extensions::RelativeAssets < ::Middleman::Extension
     # After compass is setup, make it use the registered cache buster
     app.compass_config do |config|
       config.relative_assets = true
-    end
+    end if app.respond_to?(:compass_config)
   end
 
   helpers do

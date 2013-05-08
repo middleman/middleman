@@ -18,7 +18,13 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   s.add_dependency("middleman-core", Middleman::VERSION)
-  s.add_dependency("middleman-more", Middleman::VERSION)
   s.add_dependency("middleman-sprockets", ">= 3.0.10")
+  s.add_dependency("haml", [">= 3.1.6"])
+  s.add_dependency("sass", [">= 3.1.20"])
+  s.add_dependency("compass", [">= 0.12.2"])
+  s.add_dependency("uglifier", ["~> 2.0.1"])
+  s.add_dependency("coffee-script", ["~> 2.2.0"])
+  s.add_dependency("execjs", ["~> 1.4.0"])
+  s.add_dependency("kramdown", ["~> 1.0.0"])
+  s.add_dependency("padrino-helpers", ["0.10.7"])
 end
-

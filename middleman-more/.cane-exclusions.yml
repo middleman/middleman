@@ -1,3 +1,0 @@
-style:
-  - lib/middleman-more/extensions/minify_css/rainpress.rb
-  - lib/middleman-more/extensions/automatic_image_sizes/fastimage.rb
