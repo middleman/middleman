@@ -1,7 +1,7 @@
 Feature: Text Files Without Extensions Should Build and Preview
 
   Scenario: Building Text Files with directory indexes
-    Given a successfully built app at "extensionless-text-files-app"
+    Given a successfully built app at "more-extensionless-text-files-app"
     When I cd to "build"
     Then the following files should exist:
       | CNAME   |
@@ -13,7 +13,7 @@ Feature: Text Files Without Extensions Should Build and Preview
       | README/index.html  |
   
   Scenario: Previewing Text Files
-    Given the Server is running at "extensionless-text-files-app"
+    Given the Server is running at "more-extensionless-text-files-app"
     When I go to "/CNAME"
     Then I should see "test.github.com"
     When I go to "/LICENSE"

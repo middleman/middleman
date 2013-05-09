@@ -19,4 +19,4 @@ Feature: SASS .sass-cache custom location
     When I go to "/stylesheets/plain.css"
     Then I should see "html, body, div, span, applet, object, iframe,"
 
-    Then a directory named "/tmp/middleman-more-custom-sass_cache_path" should exist
+    Then a directory named "/tmp/middleman-core-custom-sass_cache_path" should exist

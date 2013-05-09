@@ -1,5 +1,0 @@
-style:
-  - lib/middleman-core/vendor/hooks-0.2.0/lib/hooks/inheritable_attribute.rb
-  - lib/middleman-core/vendor/hooks-0.2.0/test/hooks_test.rb
-  - lib/middleman-core/vendor/hooks-0.2.0/test/inheritable_attribute_test.rb
-  - lib/middleman-core/vendor/hooks-0.2.0/lib/hooks.rb

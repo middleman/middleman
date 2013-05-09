@@ -15,7 +15,7 @@ class Middleman::Extensions::CacheBuster < ::Middleman::Extension
           logger.warn "WARNING: '#{File.basename(path)}' was not found (or cannot be read) in #{File.dirname(real_path)}"
         end
       end
-    end
+    end if app.respond_to?(:compass_config)
   end
 
   helpers do 
