@@ -1,7 +1,7 @@
 Feature: More default extensions
 
   Scenario: Default extensions preview
-    Given the Server is running at "implied-extensions-app"
+    Given the Server is running at "more-implied-extensions-app"
     When I go to "/test.html"
     Then I should see "Hello"
     When I go to "/test2.html"
@@ -20,8 +20,8 @@ Feature: More default extensions
     Then I should see "color"
   
   Scenario: Default extensions build
-    Given a fixture app "implied-extensions-app"
-    And a successfully built app at "implied-extensions-app"
+    Given a fixture app "more-implied-extensions-app"
+    And a successfully built app at "more-implied-extensions-app"
     When I cd to "build"
     Then the following files should exist:
       | test.html              |

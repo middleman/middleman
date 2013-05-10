@@ -19,7 +19,7 @@ class Middleman::Extensions::AssetHost < ::Middleman::Extension
           end
         end
       end
-    end
+    end if app.respond_to?(:compass_config)
   end
 
   def host

@@ -1,7 +1,6 @@
 middleman-*/lib/**/*.rb 
 --exclude middleman-core/lib/middleman-core/vendor/
 --exclude middleman-core/lib/middleman-core/extensions/automatic_image_sizes/fastimage.rb 
---exclude middleman-more/lib/middleman-more/extensions/minify_css/cssmin.rb 
 --exclude middleman-core/lib/middleman-core/step_definitions
 --exclude middleman-core/lib/middleman-core/templates/default/
 --exclude middleman-core/lib/middleman-core/templates/html5/

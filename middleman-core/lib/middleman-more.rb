@@ -1,9 +1,3 @@
-require "middleman-core"
-
-# Setup our load paths
-libdir = File.expand_path(File.dirname(__FILE__))
-$LOAD_PATH.unshift(libdir) unless $LOAD_PATH.include?(libdir)
-
 module Middleman
   module More
 
@@ -19,9 +13,13 @@ module Middleman
         require "middleman-core/templates"
         require "middleman-more/templates/smacss"
 
-        # Setup default helpers
-        require "middleman-more/core_extensions/default_helpers"
-        Middleman::CoreExtensions::DefaultHelpers.new(app)
+        begin
+          # Setup default helpers
+          require 'padrino-helpers'
+          require "middleman-more/core_extensions/default_helpers"
+          Middleman::CoreExtensions::DefaultHelpers.new(app)
+        rescue LoadError
+        end
 
         require "i18n"
         app.after_configuration do
@@ -37,8 +35,12 @@ module Middleman
         Middleman::CoreExtensions::Internationalization.register(:i18n)
 
         # Compass framework
-        require "middleman-more/core_extensions/compass"
-        Middleman::CoreExtensions::Compass.new(app)
+        begin
+          require "compass"
+          require "middleman-more/core_extensions/compass"
+          Middleman::CoreExtensions::Compass.new(app)
+        rescue LoadError
+        end
 
         ###
         # Setup Optional Extensions
@@ -49,6 +51,17 @@ module Middleman
         require "middleman-more/extensions/cache_buster"
         Middleman::Extensions::CacheBuster.register
 
+        # RelativeAssets allow any asset path in dynamic templates to be either
+        # relative to the root of the project or use an absolute URL.
+        require "middleman-more/extensions/relative_assets"
+        Middleman::Extensions::RelativeAssets.register
+
+        # AssetHost allows you to setup multiple domains to host your static
+        # assets. Calls to asset paths in dynamic templates will then rotate
+        # through each of the asset servers to better spread the load.
+        require "middleman-more/extensions/asset_host"
+        Middleman::Extensions::AssetHost.register
+
         # MinifyCss compresses CSS
         require "middleman-more/extensions/minify_css"
         Middleman::Extensions::MinifyCss.register
@@ -56,11 +69,6 @@ module Middleman
         # MinifyJavascript compresses JS
         require "middleman-more/extensions/minify_javascript"
         Middleman::Extensions::MinifyJavascript.register
-
-        # RelativeAssets allow any asset path in dynamic templates to be either
-        # relative to the root of the project or use an absolute URL.
-        require "middleman-more/extensions/relative_assets"
-        Middleman::Extensions::RelativeAssets.register
 
         # GZIP assets and pages during build
         require "middleman-more/extensions/gzip"
@@ -70,12 +78,6 @@ module Middleman
         # to avoid browser caches failing to update to your new content.
         require "middleman-more/extensions/asset_hash"
         Middleman::Extensions::AssetHash.register
-
-        # AssetHost allows you to setup multiple domains to host your static
-        # assets. Calls to asset paths in dynamic templates will then rotate
-        # through each of the asset servers to better spread the load.
-        require "middleman-more/extensions/asset_host"
-        Middleman::Extensions::AssetHost.register
 
         # Provide Apache-style index.html files for directories
         require "middleman-more/extensions/directory_indexes"
