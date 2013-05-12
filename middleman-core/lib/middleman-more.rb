@@ -15,10 +15,10 @@ module Middleman
 
         begin
           # Setup default helpers
-          require 'padrino-helpers'
           require "middleman-more/core_extensions/default_helpers"
           Middleman::CoreExtensions::DefaultHelpers.new(app)
         rescue LoadError
+          $stderr.puts "Default helpers not installed: #{$!}"
         end
 
         require "i18n"
@@ -40,6 +40,7 @@ module Middleman
           require "middleman-more/core_extensions/compass"
           Middleman::CoreExtensions::Compass.new(app)
         rescue LoadError
+          $stderr.puts "Compass not installed: #{$!}"
         end
 
         ###
