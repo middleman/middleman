@@ -1,3 +1,5 @@
+require 'padrino-helpers'
+
 module Middleman
   module MetaPages
     # View class for a sitemap resource

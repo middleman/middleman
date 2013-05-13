@@ -23,12 +23,15 @@ class Middleman::Extensions::Gzip < ::Middleman::Extension
 
     app.after_build do |builder|
       paths = ::Middleman::Util.all_files_under(self.class.inst.build_dir)
+      total_savings = 0
+
       paths.each do |path|
         next unless gzip_ext.options.exts.include? path.extname
 
         output_filename, old_size, new_size = gzip_ext.gzip_file(path.to_s)
 
         if output_filename
+          total_savings += (old_size - new_size)
           size_change_word = (old_size - new_size) > 0 ? 'smaller' : 'larger'
           old_locale = I18n.locale
           I18n.locale = :en # use the english localizations for printing out file sizes to make sure the localizations exist
@@ -36,6 +39,8 @@ class Middleman::Extensions::Gzip < ::Middleman::Extension
           I18n.locale = old_locale
         end
       end
+
+      builder.say_status :gzip, "Total gzip savings: #{number_to_human_size(total_savings)}", :blue
     end
   end
 
