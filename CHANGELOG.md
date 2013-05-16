@@ -1,3 +1,13 @@
+3.1.0 Highlights
+===
+
+* Autoload support (moving away from middleman-more)
+* New Configuration System
+* New v4 Extension API
+* `/__middleman' inspector
+* Added Ruby 2.0, dropped Ruby 1.9.2
+* Build defaults to --clean
+
 master
 ===
 
