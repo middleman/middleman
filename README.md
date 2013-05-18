@@ -1,6 +1,6 @@
 # Middleman
 
-Middleman makes developing stand-alone websites simple. The last few years has seen an explosion in the amount and variety of tools developers can use to build web applications. Ruby on Rails selects a handful of these tools:
+[Middleman] makes developing stand-alone websites simple. The last few years has seen an explosion in the amount and variety of tools developers can use to build web applications. Ruby on Rails selects a handful of these tools:
 
 * Sass for DRY stylesheets
 * CoffeeScript for safer and less verbose javascript
@@ -11,24 +11,30 @@ Middleman gives the stand-alone developer access to all these tool and many, man
 
 These days, many websites are built with an API in mind. Rather than package the frontend and the backend together, both can be built and deployed independently using the public API to pull data from the backend and display it on the frontend. Static websites are incredibly fast and require very little RAM. A front-end built to stand-alone can be deployed directly to the cloud or a CDN. Many designers and developers simply deliver static HTML/JS/CSS to their clients.
 
-# Install
+## Install
 
 Middleman is built on Ruby and uses the RubyGems package manager for installation. These are usually pre-installed on Mac OS X and Linux. Windows users can install both using [RubyInstaller].
 
-    gem install middleman
+```
+gem install middleman
+```
 
-# Getting Started
+## Getting Started
 
 Once Middleman is installed, you will have access to the `middleman` command. First, let's create a new project. From the terminal:
 
-    middleman init MY_PROJECT
+```
+middleman init MY_PROJECT
+```
 
 This will create a new Middleman project located in the "MY_PROJECT" directory. This project contains a `config.rb` file for configuring Middleman and a `source` directory for storing your pages, stylesheets, javascripts and images.
 
 Change directories into your new project and start the preview server:
 
-    cd MY_PROJECT
-    middleman server
+```
+cd MY_PROJECT
+middleman server
+```
 
 The preview server allows you to build your site, by modifying the contents of the `source` directory, and see your changes reflected in the browser at: `http://localhost:4567/`
 
@@ -38,52 +44,55 @@ For example, say I am working on a stylesheet at `source/stylesheets/site.css` a
 
 Finally, you will want to build your project into a stand-alone site. From the project directory:
 
-    middleman build
+```
+middleman build
+```
 
 This will compile your templates and output a stand-alone site which can be easily hosted or delivered to your client. The build step can also compress images, employ Javascript & CSS dependency management, minify Javascript & CSS and run additional code of your choice. Take a look at the `config.rb` file to see some of the most common extensions which can be activated.
 
-# Learn More
+## Learn More
 
-A full set of in-depth instructional guides are available on the official website at:
+A full set of in-depth instructional guides are available on the official website at: http://middlemanapp.com.
 
-  http://middlemanapp.com/
+Additionally, up-to-date generated code documentation is available on [RubyDoc].
 
-Additionally, up-to-date generated code documentation is available on RubyDoc: 
-http://rubydoc.info/github/middleman/middleman
+## Build & Dependency Status
 
-# Community
+[![Gem Version](https://badge.fury.io/rb/middleman.png)][gem]
+[![Build Status](https://travis-ci.org/middleman/middleman.png)][travis]
+[![Dependency Status](https://gemnasium.com/middleman/middleman.png?travis)][gemnasium]
+[![Code Quality](https://codeclimate.com/github/middleman/middleman.png)][codeclimate]
 
-The official community forum is available at:
+## Community
 
-  http://forum.middlemanapp.com/
+The official community forum is available at: http://forum.middlemanapp.com
 
-# Bug Reports
+## Bug Reports
 
-GitHub Issues are used for managing bug reports and feature requests. If you run into issues, please search the issues and submit new problems:
+Github Issues are used for managing bug reports and feature requests. If you run into issues, please search the issues and submit new problems: https://github.com/middleman/middleman/issues
 
-https://github.com/middleman/middleman/issues
+The best way to get quick responses to your issues and swift fixes to your bugs is to submit detailed bug reports, include test cases and respond to developer questions in a timely manner. Even better, if you know Ruby, you can submit [Pull Requests](https://help.github.com/articles/using-pull-requests) containing Cucumber Features which describe how your feature should work or exploit the bug you are submitting.
 
-The best way to get quick responses to your issues and swift fixes to your bugs is to submit detailed bug reports, include test cases and respond to developer questions in a timely manner. Even better, if you know Ruby, you can submit Pull Requests containing Cucumber Features which describe how your feature should work or exploit the bug you are submitting.
-
-# Build & Dependency Status
-
-[![Build Status](https://travis-ci.org/middleman/middleman.png)](https://travis-ci.org/middleman/middleman)
-[![Dependency Status](https://gemnasium.com/middleman/middleman.png?travis)](https://gemnasium.com/middleman/middleman)
-
-# How to Run Cucumber Tests
+## How to Run Cucumber Tests
 
 1. Checkout Repository: `git clone https://github.com/middleman/middleman.git`
 2. Install Bundler: `gem install bundler`
 3. Run `bundle install` inside the project root to install the gem dependencies.
 4. Run test cases: `bundle exec rake test`
 
-# Donate
+## Donate
 
 [Click here to lend your support to Middleman](https://spacebox.io/s/4dXbHBorC3)
 
-# License
+## License
 
-Copyright (c) 2010 Thomas Reynolds. MIT Licensed, see [LICENSE] for details.
+Copyright (c) 2010-2013 Thomas Reynolds. MIT Licensed, see [LICENSE] for details.
 
-[RubyInstaller]: http://rubyinstaller.org/
-[LICENSE]: https://github.com/middleman/middleman/blob/master/LICENSE
+[middleman]: http://middlemanapp.com
+[gem]: https://rubygems.org/gems/middleman
+[travis]: http://travis-ci.org/middleman/middleman
+[gemnasium]: https://gemnasium.com/middleman/middleman
+[codeclimate]: https://codeclimate.com/github/middleman/middleman
+[rubyinstaller]: http://rubyinstaller.org/
+[rubydoc]: http://rubydoc.info/github/middleman/middleman
+[LICENSE]: https://github.com/middleman/middleman/blob/master/LICENSE.md

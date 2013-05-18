@@ -12,6 +12,7 @@ Gem::Specification.new do |s|
   s.homepage    = "http://middlemanapp.com"
   s.summary     = "Hand-crafted frontend development"
   s.description = "A static site generator. Provides dozens of templating languages (Haml, Sass, Compass, Slim, CoffeeScript, and more). Makes minification, compression, cache busting, Yaml data (and more) an easy part of your development cycle."
+  s.license     = "MIT"
 
   s.files         = `git ls-files -z`.split("\0")
   s.test_files    = `git ls-files -z -- {fixtures,features}/*`.split("\0")
