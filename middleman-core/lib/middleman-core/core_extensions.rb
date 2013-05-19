@@ -26,12 +26,8 @@ require "middleman-core/core_extensions/routing"
 # Catch and show exceptions at the Rack level
 require "middleman-core/core_extensions/show_exceptions"
 
-begin
-  # Setup default helpers
-  require "middleman-more/core_extensions/default_helpers"
-rescue LoadError
-  $stderr.puts "Default helpers not installed: #{$!}"
-end
+# Setup default helpers
+require "middleman-more/core_extensions/default_helpers"
 
 require "middleman-more/core_extensions/i18n"
 

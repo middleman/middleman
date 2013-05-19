@@ -1,0 +1,13 @@
+- @content = captured_content do
+  span Captured Line 1
+  span Captured Line 2
+
+== @content
+
+- determine_block_is_template('slim') do
+  span This is slim
+  span This is slim
+
+== concat_in_p('Concat Line 3')
+
+== ruby_not_template_block

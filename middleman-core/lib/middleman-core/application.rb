@@ -224,9 +224,7 @@ module Middleman
   end
 end
 
-if defined?(Middleman::CoreExtensions::DefaultHelpers)
-  Middleman::CoreExtensions::DefaultHelpers.activate
-end
+Middleman::CoreExtensions::DefaultHelpers.activate
 
 Middleman::CoreExtensions::Internationalization.register(:i18n)
 
