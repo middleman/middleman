@@ -127,6 +127,10 @@ module Middleman
       def register(n=self.extension_name)
         ::Middleman::Extensions.register(n, self)
       end
+
+      def activate
+        new(::Middleman::Application)
+      end
     end
 
     attr_accessor :app, :options

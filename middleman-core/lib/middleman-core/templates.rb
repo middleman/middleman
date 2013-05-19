@@ -86,5 +86,8 @@ require "middleman-core/templates/html5"
 # HTML5 Mobile template
 require "middleman-core/templates/mobile"
 
+# SMACSS templates
+require "middleman-more/templates/smacss"
+
 # Local templates
 require "middleman-core/templates/local"

@@ -1,6 +1,9 @@
 # Using Tilt for templating
 require "tilt"
 
+# i18n Built-in
+require "i18n"
+
 # Use ActiveSupport JSON
 require "active_support/json"
 require "active_support/core_ext/integer/inflections"
@@ -11,8 +14,8 @@ require "middleman-core/vendor/hooks-0.2.0/lib/hooks"
 
 require "middleman-core/sitemap"
 
-require "middleman-core/core_extensions"
 require "middleman-core/configuration"
+require "middleman-core/core_extensions"
 
 # Core Middleman Class
 module Middleman
@@ -220,3 +223,15 @@ module Middleman
 
   end
 end
+
+if defined?(Middleman::CoreExtensions::DefaultHelpers)
+  Middleman::CoreExtensions::DefaultHelpers.activate
+end
+
+Middleman::CoreExtensions::Internationalization.register(:i18n)
+
+if defined?(Middleman::CoreExtensions::Compass)
+  Middleman::CoreExtensions::Compass.activate
+end
+
+Middleman::Extensions::Lorem.activate
