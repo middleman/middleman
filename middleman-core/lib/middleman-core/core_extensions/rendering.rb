@@ -476,7 +476,7 @@ module Middleman
             end
 
             # If we found one, return it and the found engine
-            if found_path || (File.exists?(on_disk_path) && !File.directory?(on_disk_path))
+            if found_path || files.exists?(on_disk_path)
               engine = found_path ? File.extname(found_path)[1..-1].to_sym : nil
               [ found_path || on_disk_path, engine ]
             else

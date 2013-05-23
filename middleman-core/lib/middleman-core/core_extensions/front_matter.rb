@@ -59,9 +59,9 @@ module Middleman::CoreExtensions
         @cache[p] ||= begin
           in_file = frontmatter_and_content(p)
 
+          return in_file unless @app.files.exists?("#{path}.frontmatter")
+
           external_file = frontmatter_and_content("#{p}.frontmatter")
-          
-          return in_file if external_file.nil?
 
           [
             external_file[0].deep_merge(in_file[0]),
@@ -145,8 +145,8 @@ module Middleman::CoreExtensions
           path
         end
 
-        return nil unless File.exists?(full_path)
-        
+        return nil unless @app.files.exists?(full_path)
+
         data = {}
         content = nil
 

@@ -56,6 +56,7 @@ module Middleman
       class API
 
         attr_reader :app
+        attr_reader :known_paths
         delegate :logger, :to => :app
 
         # Initialize api and internal path cache
@@ -140,6 +141,12 @@ module Middleman
         # @return [void]
         def find_new_files(path)
           reload_path(path, true)
+        end
+
+        def exists?(path)
+          p = Pathname(path)
+          p = p.relative_path_from(Pathname(@app.root)) if !p.relative?
+          @known_paths.include?(p)
         end
 
       protected
