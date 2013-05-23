@@ -127,7 +127,7 @@ module Middleman
       def method_missing(method, *args)
         if defines_setting?(method) && args.size == 0
           self[method]
-        elsif method =~ /^(\w+)=$/ && args.size == 1
+        elsif method.to_s =~ /^(\w+)=$/ && args.size == 1
           self[$1.to_sym] = args[0]
         else
           super
