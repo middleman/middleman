@@ -7,7 +7,7 @@ require File.expand_path("../middleman-core/lib/middleman-core/version.rb", __FI
 ROOT = File.expand_path(File.dirname(__FILE__))
 GEM_NAME = 'middleman'
 
-middleman_gems = %w(middleman-core middleman)
+middleman_gems = %w(middleman-more middleman-core middleman)
 GEM_PATHS = middleman_gems.freeze
 
 def sh_rake(command)
