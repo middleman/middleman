@@ -59,14 +59,16 @@ module Middleman::CoreExtensions
         @cache[p] ||= begin
           file_data, content = frontmatter_and_content(p)
 
-          return [file_data, content] unless @app.files.exists?("#{path}.frontmatter")
+          if @app.files.exists?("#{path}.frontmatter")
+            external_data, _ = frontmatter_and_content("#{p}.frontmatter")
 
-          external_data, _ = frontmatter_and_content("#{p}.frontmatter")
-
-          [
-            external_data.deep_merge(file_data),
-            content
-          ]
+            [
+              external_data.deep_merge(file_data),
+              content
+            ]
+          else
+            [file_data, content]
+          end
         end
       end
 
