@@ -181,7 +181,7 @@ module Middleman::CoreExtensions
     module ResourceInstanceMethods
 
       def ignored?
-        if !proxy? && data["ignored"] == true
+        if !proxy? && raw_data[:ignored] == true
           true
         else
           super
@@ -199,13 +199,16 @@ module Middleman::CoreExtensions
       # This page's frontmatter
       # @return [Hash]
       def data
-        ::Middleman::Util.recursively_enhance(raw_data).freeze
+        @enhanced_data ||= {}
+        @enhanced_data[raw_data] ||= begin
+          ::Middleman::Util.recursively_enhance(raw_data).freeze
+        end
       end
 
       # Override Resource#content_type to take into account frontmatter
       def content_type
         # Allow setting content type in frontmatter too
-        fm_type = data[:content_type]
+        fm_type = raw_data[:content_type]
         return fm_type if fm_type
 
         super
