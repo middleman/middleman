@@ -27,13 +27,13 @@ Gem::Specification.new do |s|
   s.add_dependency("rack-test", ["~> 0.6.1"])
   
   # CLI
-  s.add_dependency("thor", ["~> 0.15.2"])
+  s.add_dependency("thor", [">= 0.15.2", "< 2.0"])
   
   # Helpers
   s.add_dependency("activesupport", ["~> 3.2.6"])
   
   # Watcher
-  s.add_dependency("listen", ["~> 1.1.1"])
+  s.add_dependency("listen", ["~> 1.1.3"])
 
   # i18n
   s.add_dependency("i18n", ["~> 0.6.1"])
