@@ -94,12 +94,18 @@ task :spec do
   end
 end
 
-# desc "Rune cane for all middleman gems"
-# task :cane do
-#   GEM_PATHS.each do |g|
-#     sh "cd #{File.join(ROOT, g)} && #{Gem.ruby} -S cane"
-#   end
-# end
+begin
+  require 'cane/rake_task'
+
+  desc "Run cane to check quality metrics"
+  Cane::RakeTask.new(:quality) do |cane|
+    cane.no_style = true
+    cane.no_doc = true
+    cane.abc_glob = "middleman*/lib/middleman*/**/*.rb"
+  end
+rescue LoadError
+  # warn "cane not available, quality task not provided."
+end
 
 desc "Run tests for all middleman gems"
 task :default => :test

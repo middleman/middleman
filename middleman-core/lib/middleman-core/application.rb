@@ -10,7 +10,7 @@ require "active_support/core_ext/integer/inflections"
 require "active_support/core_ext/float/rounding"
 
 # Simple callback library
-require "middleman-core/vendor/hooks-0.2.0/lib/hooks"
+require "vendored-middleman-deps/hooks-0.2.0/lib/hooks"
 
 require "middleman-core/sitemap"
 

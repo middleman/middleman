@@ -27,6 +27,9 @@ platforms :jruby do
   gem "therubyrhino"
 end
 
+# Code Quality
+gem "cane", :platforms => [:mri_19, :mri_20], :require => false
+
 # Middleman itself
 gem "middleman-core", :path => "middleman-core"
 gem "middleman-more", :path => "middleman-more"

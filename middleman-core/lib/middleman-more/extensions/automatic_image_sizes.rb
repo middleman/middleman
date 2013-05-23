@@ -5,7 +5,7 @@ class Middleman::Extensions::AutomaticImageSizes < ::Middleman::Extension
     super
 
     # Include 3rd-party fastimage library
-    require "middleman-more/extensions/automatic_image_sizes/fastimage"
+    require "vendored-middleman-deps/fastimage"
   end
 
   helpers do
