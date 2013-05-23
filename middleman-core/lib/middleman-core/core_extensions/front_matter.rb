@@ -57,15 +57,15 @@ module Middleman::CoreExtensions
       def data(path)
         p = normalize_path(path)
         @cache[p] ||= begin
-          in_file = frontmatter_and_content(p)
+          file_data, content = frontmatter_and_content(p)
 
-          return in_file unless @app.files.exists?("#{path}.frontmatter")
+          return [file_data, content] unless @app.files.exists?("#{path}.frontmatter")
 
-          external_file = frontmatter_and_content("#{p}.frontmatter")
+          external_data, _ = frontmatter_and_content("#{p}.frontmatter")
 
           [
-            external_file[0].deep_merge(in_file[0]),
-            in_file[1]
+            external_data.deep_merge(file_data),
+            content
           ]
         end
       end
@@ -145,10 +145,10 @@ module Middleman::CoreExtensions
           path
         end
 
-        return nil unless @app.files.exists?(full_path)
-
         data = {}
         content = nil
+
+        return [data, content] unless @app.files.exists?(full_path)
 
         if !::Middleman::Util.binary?(full_path)
           content = File.read(full_path)
