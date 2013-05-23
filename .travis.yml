@@ -11,9 +11,3 @@ before_install:
   - git submodule update --init --recursive
   
 env: TEST=true TRAVIS=true
-
-matrix:
-  allow_failures:
-    - rvm: jruby-18mode
-    - rvm: jruby-19mode
-
