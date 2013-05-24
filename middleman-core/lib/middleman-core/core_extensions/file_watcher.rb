@@ -17,7 +17,8 @@ module Middleman
         /^Gemfile$/,
         /^Gemfile\.lock$/,
         /~$/,
-        /(^|\/)\.?#/
+        /(^|\/)\.?#/,
+        /^tmp\//
       ]
 
       # Setup extension
