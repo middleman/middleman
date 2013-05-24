@@ -165,6 +165,16 @@ module Middleman
           ext.app.sitemap.register_resource_list_manipulator(ext.class.extension_name, ext)
         end
       end
+
+      if ext.respond_to?(:after_build)
+        klass.after_build do |builder|
+          if ext.method(:after_build).arity === 1
+            ext.after_build(builder)
+          else
+            ext.after_build
+          end
+        end
+      end
     end
   end
 end
