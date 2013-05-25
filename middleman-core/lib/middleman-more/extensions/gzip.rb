@@ -14,7 +14,7 @@ class Middleman::Extensions::Gzip < ::Middleman::Extension
 
   def initialize(app, options_hash={})
     super
-    
+
     require 'zlib'
     require 'stringio'
     require 'find'

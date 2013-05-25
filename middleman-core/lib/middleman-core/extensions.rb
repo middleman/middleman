@@ -133,7 +133,8 @@ module Middleman
       end
     end
 
-    attr_accessor :app, :options
+    attr_accessor :options
+    attr_reader :app
 
     def initialize(klass, options_hash={})
       @_helpers = []
@@ -148,12 +149,19 @@ module Middleman
       yield @options if block_given?
 
       ext = self
+
       klass.initialized do
         ext.app = self
-        
-        (ext.class.defined_helpers || []).each do |m|
-          ext.app.class.send(:include, m)
+      end
+
+      if ext.respond_to?(:before_configuration)
+        klass.before_configuration do
+          ext.before_configuration
         end
+      end
+
+      klass.instance_available do
+        ext.app ||= self
       end
 
       klass.after_configuration do
@@ -174,6 +182,14 @@ module Middleman
             ext.after_build
           end
         end
+      end
+    end
+
+    def app=(app)
+      @app = app
+      
+      (self.class.defined_helpers || []).each do |m|
+        app.class.send(:include, m)
       end
     end
   end

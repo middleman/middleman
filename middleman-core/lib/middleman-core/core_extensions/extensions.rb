@@ -38,6 +38,7 @@ module Middleman
         # @private
         def registered(app)
           app.define_hook :initialized
+          app.define_hook :instance_available
           app.define_hook :after_configuration
           app.define_hook :before_configuration
           app.define_hook :build_config
@@ -69,15 +70,19 @@ module Middleman
         # @param [Hash] options Per-extension options hash
         # @return [void]
         def register(extension, options={}, &block)
-          extend extension
-          if extension.respond_to?(:registered)
-            if extension.method(:registered).arity === 1
-              extension.registered(self, &block)
-            else
-              extension.registered(self, options, &block)
+          if extension.instance_of?(Class) && extension.ancestors.include?(::Middleman::Extension)
+            extension.new(self, options, &block)
+          else
+            extend extension
+            if extension.respond_to?(:registered)
+              if extension.method(:registered).arity === 1
+                extension.registered(self, &block)
+              else
+                extension.registered(self, options, &block)
+              end
             end
+            extension
           end
-          extension
         end
       end
 
@@ -133,10 +138,11 @@ module Middleman
           super
 
           self.class.inst = self
-          run_hook :before_configuration
 
           # Search the root of the project for required files
           $LOAD_PATH.unshift(root)
+
+          run_hook :initialized
 
           if config[:autoload_sprockets]
             begin
@@ -145,6 +151,8 @@ module Middleman
             rescue LoadError
             end
           end
+
+          run_hook :before_configuration
 
           # Check for and evaluate local configuration
           local_config = File.join(root, "config.rb")
@@ -156,7 +164,7 @@ module Middleman
           run_hook :build_config if build?
           run_hook :development_config if development?
 
-          run_hook :initialized
+          run_hook :instance_available
 
           # This is for making the tests work - since the tests
           # don't completely reload middleman, I18n.load_path can get
