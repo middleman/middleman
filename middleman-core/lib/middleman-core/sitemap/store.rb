@@ -90,9 +90,15 @@ module Middleman
           if include_ignored
             @resources
           else
-            @resources.reject(&:ignored?)
+            @resources_not_ignored ||= @resources.reject(&:ignored?)
           end
         end
+      end
+
+      # Invalidate our cached view of resource that are not ingnored. If your extension
+      # adds ways to ignore files, you should call this to make sure #resources works right.
+      def invalidate_resources_not_ignored_cache!
+        @resources_not_ignored = nil
       end
 
       # Register a handler to provide metadata on a file path
@@ -213,6 +219,8 @@ module Middleman
 
             newres
           end
+
+          invalidate_resources_not_ignored_cache!
         end
       end
 
