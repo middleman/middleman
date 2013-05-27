@@ -68,11 +68,14 @@ module Middleman
                 @ignored_callbacks << Proc.new {|p| File.fnmatch(path_clean, p) }
               else
                 # Add a specific-path ignore unless that path is already covered
-                @ignored_callbacks << Proc.new {|p| p == path_clean } unless ignored?(path_clean)
+                return if ignored?(path_clean)
+                @ignored_callbacks << Proc.new {|p| p == path_clean }
               end
             elsif block_given?
               @ignored_callbacks << block
             end
+
+            @app.sitemap.invalidate_resources_not_ignored_cache!
           end
 
           # Whether a path is ignored
