@@ -17,7 +17,7 @@ Feature: Neighboring YAML Front Matter
   Scenario: Rendering raw (template-less) (yaml)
     Given the Server is running at "frontmatter-neighbor-app"
     When I go to "/raw-front-matter.html"
-    Then I should see "<h1><%= data.page.title %></h1>"
+    Then I should see "<h1><%= current_page.data.title %></h1>"
     Then I should not see "---"
     When I go to "/raw-front-matter.html.frontmatter"
     Then I should see "File Not Found"
@@ -59,7 +59,7 @@ Feature: Neighboring YAML Front Matter
     Given the Server is running at "frontmatter-neighbor-app"
     And the file "source/front-matter-change.html.erb" has the contents
       """
-      <%= data.page.title %>
+      <%= current_page.data.title %>
       """
     And the file "source/front-matter-change.html.erb.frontmatter" has the contents
       """
