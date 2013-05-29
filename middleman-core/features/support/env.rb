@@ -1,7 +1,7 @@
 ENV["TEST"] = "true"
 ENV["AUTOLOAD_SPROCKETS"] = "false"
 
-if ENV["COVERAGE"] && (RUBY_VERSION =~ /1\.9/ || RUBY_VERSION =~ /2\.0/))
+if ENV["COVERAGE"] && (RUBY_VERSION =~ /1\.9/ || RUBY_VERSION =~ /2\.0/)
   require 'simplecov'
   SimpleCov.root(File.expand_path(File.dirname(__FILE__) + '/../..'))
   SimpleCov.start do
