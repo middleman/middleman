@@ -24,4 +24,6 @@ Feature: Local Data API
   Scenario: Using nested data
     Given the Server is running at "nested-data-app"
     When I go to "/test.html"
-    Then I should see "test:Hello"
+    Then I should see "title1:Hello"
+    Then I should see "title2:More"
+    Then I should see "title3:Stuff"
