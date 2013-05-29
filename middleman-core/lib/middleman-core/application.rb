@@ -170,7 +170,7 @@ module Middleman
     # @private
     # @return [Middleman::Util::Cache] The cache
     def self.cache
-      @_cache ||= ::Middleman::Util::Cache.new
+      @_cache ||= ::Tilt::Cache.new
     end
     delegate :cache, :to => :"self.class"
 

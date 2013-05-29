@@ -1,0 +1,16 @@
+{
+  "folders":
+  [
+    {
+      "path": ".",
+      "folder_exclude_patterns": [".sass-cache", ".bundle", "tmp", "coverage"],
+      "file_exclude_patterns": ["*.sublime-workspace"]
+    }
+  ],
+
+  "settings":
+  {
+    "tab_size": 2,
+    "translate_tabs_to_spaces": true
+  }
+}

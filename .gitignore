@@ -17,3 +17,4 @@ tmp
 Makefile
 .mm-pid-*
 .idea
+*.sublime-workspace
