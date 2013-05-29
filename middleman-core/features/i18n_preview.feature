@@ -228,3 +228,17 @@ Feature: i18n Preview
     Then I should see "Current locale: en"
     Then I should see "Buenos días"
     Then I should see "Howdy"
+
+  Scenario: Nested i18n yaml
+    Given a fixture app "i18n-nested-app"
+    And a file named "config.rb" with:
+      """
+      activate :i18n
+      """
+    Given the Server is running at "i18n-nested-app"
+    When I go to "/"
+    Then I should see "Howdy"
+    Then I should see "More"
+    When I go to "/es/"
+    Then I should see "Como Esta?"
+    Then I should see "Mucho"

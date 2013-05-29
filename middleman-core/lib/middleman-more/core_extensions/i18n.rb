@@ -22,24 +22,15 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
   end
 
   def after_configuration
-    @locales_glob = File.join(app.config[:locals_dir] || options[:data], "**", "*.{rb,yml,yaml}")
+    app.files.reload_path(app.config[:locals_dir] || options[:data])
 
-    # File.fnmatch doesn't support brackets: {rb,yml,yaml}
-    regex = @locales_glob.sub(/\./, '\.').sub(File.join("**", "*"), ".*").sub(/\//, '\/').sub("{rb,yml,yaml}", "rb|ya?ml")
-    @locales_regex = %r{^#{regex}}
+    @locales_glob = File.join(app.config[:locals_dir] || options[:data], "**", "*.{rb,yml,yaml}")
+    @locales_regex = convert_glob_to_regex(@locales_glob)
 
     @maps = {}
-
-    ::I18n.load_path += Dir[File.join(app.root, @locales_glob)]
-    ::I18n.reload!
-
     @mount_at_root = options[:mount_at_root].nil? ? langs.first : options[:mount_at_root]
 
-    ::I18n.default_locale = @mount_at_root
-    # Reset fallbacks to fall back to our new default
-    if ::I18n.respond_to? :fallbacks
-      ::I18n.fallbacks = ::I18n::Locale::Fallbacks.new
-    end
+    configure_i18n
 
     if !app.build?
       logger.info "== Locales: #{langs.join(", ")} (Default #{@mount_at_root})"
@@ -48,27 +39,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
     # Don't output localizable files
     app.ignore File.join(options[:templates_dir], "**")
 
-    app.sitemap.provides_metadata_for_path do |url|
-      if d = get_localization_data(url)
-        lang, page_id = d
-      else
-        # Default to the @mount_at_root lang
-        page_id = nil
-        lang = @mount_at_root
-      end
-
-      instance_vars = Proc.new do
-        @lang         = lang
-        @page_id      = page_id
-      end
-
-      locals = { :lang => lang,
-        :page_id => page_id }
-      { :blocks => [instance_vars],
-        :locals => locals,
-        :options => { :lang => lang } }
-    end
-
+    app.sitemap.provides_metadata_for_path(&method(:metadata_for_path))
     app.files.changed(&method(:on_file_changed))
     app.files.deleted(&method(:on_file_changed))
   end
@@ -81,27 +52,10 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
 
   delegate :logger, :to => :app
 
-  def on_file_changed(file)
-    if @locales_regex =~ file
-      ::I18n.reload!
-    end
-  end
-
   def langs
-    if options[:langs]
-      Array(options[:langs]).map(&:to_sym)
-    else
-      Dir[File.join(app.root, @locales_glob)].map { |file|
-        File.basename(file).sub(/\.ya?ml$/, "").sub(/\.rb$/, "")
-      }.sort.map(&:to_sym)
-    end
+    @_langs ||= get_known_languages
   end
-
-  def get_localization_data(path)
-    @_localization_data ||= {}
-    @_localization_data[path]
-  end
-
+  
   # Update the main sitemap resource list
   # @return [void]
   def manipulate_resource_list(resources)
@@ -128,6 +82,74 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
   end
 
   private
+
+
+  def on_file_changed(file)
+    if @locales_regex =~ file
+      @_langs = nil # Clear langs cache
+      ::I18n.reload!
+    end
+  end
+  
+  def convert_glob_to_regex(glob)
+    # File.fnmatch doesn't support brackets: {rb,yml,yaml}
+    regex = @locales_glob.sub(/\./, '\.').sub(File.join("**", "*"), ".*").sub(/\//, '\/').sub("{rb,yml,yaml}", "rb|ya?ml")
+    %r{^#{regex}}
+  end
+
+  def configure_i18n
+    ::I18n.load_path += Dir[File.join(app.root, @locales_glob)]
+    ::I18n.reload!
+
+    ::I18n.default_locale = @mount_at_root
+    # Reset fallbacks to fall back to our new default
+    if ::I18n.respond_to? :fallbacks
+      ::I18n.fallbacks = ::I18n::Locale::Fallbacks.new
+    end
+  end
+
+  def metadata_for_path(url)
+    if d = get_localization_data(url)
+      lang, page_id = d
+    else
+      # Default to the @mount_at_root lang
+      page_id = nil
+      lang = @mount_at_root
+    end
+
+    instance_vars = Proc.new do
+      @lang         = lang
+      @page_id      = page_id
+    end
+
+    locals = {
+      :lang => lang,
+      :page_id => page_id
+    }
+
+    {
+      :blocks => [instance_vars],
+      :locals => locals,
+      :options => { :lang => lang }
+    }
+  end
+
+  def get_known_languages
+    if options[:langs]
+      Array(options[:langs]).map(&:to_sym)
+    else
+      known_langs = app.files.known_paths.select do |p|
+        p.to_s.match(@locales_regex) && (p.to_s.split(File::SEPARATOR).length === 2)
+      end.map { |p|
+        File.basename(p.to_s).sub(/\.ya?ml$/, "").sub(/\.rb$/, "")
+      }.sort.map(&:to_sym)
+    end
+  end
+
+  def get_localization_data(path)
+    @_localization_data ||= {}
+    @_localization_data[path]
+  end
 
   # Parse locale extension filename
   # @return [lang, path, basename]
