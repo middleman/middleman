@@ -14,7 +14,7 @@ Feature: YAML Front Matter
   Scenario: Rendering raw (template-less) (yaml)
     Given the Server is running at "frontmatter-app"
     When I go to "/raw-front-matter.html"
-    Then I should see "<h1><%= data.page.title %></h1>"
+    Then I should see "<h1><%= current_page.data.title %></h1>"
     Then I should not see "---"
     When I go to "/raw-front-matter.php"
     Then I should see '<?php echo "sup"; ?>'
@@ -66,7 +66,7 @@ Feature: YAML Front Matter
       title: Hello World
       layout: false
       ---
-      <%= data.page.title %>
+      <%= current_page.data.title %>
       """
     When I go to "/front-matter-change.html"
     Then I should see "Hello World"
@@ -76,7 +76,7 @@ Feature: YAML Front Matter
       title: Hola Mundo
       layout: false
       ---
-      <%= data.page.title %>
+      <%= current_page.data.title %>
       """
     When I go to "/front-matter-change.html"
     Then I should see "Hola Mundo"
