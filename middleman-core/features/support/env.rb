@@ -1,3 +1,5 @@
+require 'simplecov'
+
 ENV["TEST"] = "true"
 ENV["AUTOLOAD_SPROCKETS"] = "false"
 
