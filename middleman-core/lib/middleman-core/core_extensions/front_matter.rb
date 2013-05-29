@@ -38,7 +38,7 @@ module Middleman::CoreExtensions
       ::Middleman::Sitemap::Resource.send :include, ResourceInstanceMethods
 
       app.sitemap.provides_metadata do |path|
-        fmdata = data(path).first || {}
+        fmdata = data(path).first
 
         data = {}
         [:layout, :layout_engine].each do |opt|
@@ -69,19 +69,15 @@ module Middleman::CoreExtensions
       # This page's frontmatter
       # @return [Hash]
       def data
-        @enhanced_data ||= {}
-        @enhanced_data[raw_data] ||= begin
-          ::Middleman::Util.recursively_enhance(raw_data).freeze
-        end
+        @enhanced_data ||= ::Middleman::Util.recursively_enhance(raw_data).freeze
       end
 
       # Override Resource#content_type to take into account frontmatter
       def content_type
         # Allow setting content type in frontmatter too
-        fm_type = raw_data[:content_type]
-        return fm_type if fm_type
-
-        super
+        raw_data.fetch :content_type do
+          super
+        end
       end
     end
 
@@ -97,18 +93,14 @@ module Middleman::CoreExtensions
     def data(path)
       p = normalize_path(path)
       @cache[p] ||= begin
-        file_data, content = frontmatter_and_content(p)
+        data, content = frontmatter_and_content(p)
 
         if app.files.exists?("#{path}.frontmatter")
           external_data, _ = frontmatter_and_content("#{p}.frontmatter")
-
-          [
-            external_data.deep_merge(file_data),
-            content
-          ]
-        else
-          [file_data, content]
+          data = external_data.deep_merge(data)
         end
+
+        [data, content]
       end
     end
 
