@@ -6,9 +6,20 @@
 * New v4 Extension API
 * `/__middleman' inspector
 * Added Ruby 2.0, dropped Ruby 1.9.2
+* Fully tested on JRuby
 * Build defaults to --clean
 
-master
+3.1.0.rc.2
+===
+
+* Track test coverage with simplecov
+* i18n only autodetects languages in the `locales` root
+* Frontmatter cache fixes solve performance regressions found in 3.1.x
+* Vendor padrino-* to avoid dep hell
+* `middleman-more` gem returns, but it's empty for backwards compat
+* Prefer internal files.exists? over ruby's slow File.exists?
+
+3.1.0.rc.1
 ===
 
 * Move more into core, autoloaded if gems are available.
