@@ -14,6 +14,8 @@ Feature: i18n Preview
     Then I should see "Hello World"
     When I go to "/morning.html"
     Then I should see "Good morning"
+    When I go to "/one.html"
+    Then I should see "Only one"
     When I go to "/en/index.html"
     Then I should see "File Not Found"
     When I go to "/en/morning.html"
@@ -24,6 +26,8 @@ Feature: i18n Preview
     Then I should see "Hola World"
     When I go to "/es/manana.html"
     Then I should see "Buenos días"
+    When I go to "/es/una.html"
+    Then I should see "Solamente una"
 
   Scenario: A template changes i18n during preview
     Given a fixture app "i18n-test-app"

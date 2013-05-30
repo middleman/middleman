@@ -13,9 +13,11 @@ Feature: i18n Builder
       | index.html                                    |
       | hello.html                                    |
       | morning.html                                  |
+      | one.html                                      |
       | es/index.html                                 |
       | es/hola.html                                  |
       | es/manana.html                                |
+      | es/una.html                                   |
       | CNAME                                         |
       | password.txt                                  |
     Then the following files should not exist:
@@ -23,9 +25,11 @@ Feature: i18n Builder
     And the file "index.html" should contain "Howdy"  
     And the file "hello.html" should contain "Hello World"
     And the file "morning.html" should contain "Good morning"
+    And the file "one.html" should contain "Only one"
     And the file "es/index.html" should contain "Como Esta?"
     And the file "es/hola.html" should contain "Hola World"
     And the file "es/manana.html" should contain "Buenos días"
+    And the file "es/una.html" should contain "Solamente una"
     And the file "CNAME" should contain "test.github.com"
     And the file "password.txt" should contain "hunter2"
     

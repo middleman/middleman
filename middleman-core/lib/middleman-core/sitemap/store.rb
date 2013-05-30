@@ -250,7 +250,7 @@ module Middleman
           path_bits = path.split('.')
           lang = path_bits.last
           if app.langs.include?(lang.to_sym)
-            return path_bits[0..-1].join('.')
+            return path_bits[0..-2].join('.')
           end
         end
 
