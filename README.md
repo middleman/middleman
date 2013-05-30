@@ -60,6 +60,7 @@ Additionally, up-to-date generated code documentation is available on [RubyDoc].
 
 [![Gem Version](https://badge.fury.io/rb/middleman.png)][gem]
 [![Build Status](https://travis-ci.org/middleman/middleman.png)][travis]
+[![Code Coverage](https://coveralls.io/repos/middleman/middleman/badge.png)][coveralls]
 [![Dependency Status](https://gemnasium.com/middleman/middleman.png?travis)][gemnasium]
 [![Code Quality](https://codeclimate.com/github/middleman/middleman.png)][codeclimate]
 
@@ -91,6 +92,7 @@ Copyright (c) 2010-2013 Thomas Reynolds. MIT Licensed, see [LICENSE] for details
 [middleman]: http://middlemanapp.com
 [gem]: https://rubygems.org/gems/middleman
 [travis]: http://travis-ci.org/middleman/middleman
+[coveralls]: https://coveralls.io/r/middleman/middleman
 [gemnasium]: https://gemnasium.com/middleman/middleman
 [codeclimate]: https://codeclimate.com/github/middleman/middleman
 [rubyinstaller]: http://rubyinstaller.org/
