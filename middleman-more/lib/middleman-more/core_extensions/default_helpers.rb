@@ -95,10 +95,11 @@ module Middleman
             when :css    then css_dir
             when :js     then js_dir
             when :images then images_dir
+            when :fonts then fonts_dir
             else kind.to_s
           end
           source = source.to_s.tr(' ', '')
-          ignore_extension = (kind == :images) # don't append extension
+          ignore_extension = (kind == :images || kind == :fonts) # don't append extension
           source << ".#{kind}" unless ignore_extension || source.end_with?(".#{kind}")
           asset_folder = "" if source.start_with?('/') # absolute path
 

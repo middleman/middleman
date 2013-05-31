@@ -11,3 +11,8 @@ Feature: Web Fonts
     Given the Server is running at "fonts-app"
     When I go to "/stylesheets/fonts.css"
     Then I should see "/fonts/StMarie-Thin.otf"
+
+  Scenario: :fonts_dir updated fonts path with sass helpers
+    Given the Server is running with sprockets at "fonts-dir-app"
+    When I go to "/stylesheets/fonts.css"
+    Then I should see "/webfonts/StMarie-Thin.otf"
