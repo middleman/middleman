@@ -1,0 +1,1 @@
+set :fonts_dir, "webfonts"
