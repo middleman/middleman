@@ -32,6 +32,8 @@ Given /^current environment is "([^\"]*)"$/ do |env|
 end
 
 Given /^the Server is running$/ do
+  ENV["AUTOLOAD_SPROCKETS"] ||= "false" # allow for this to be set
+
   root_dir = File.expand_path(current_dir)
 
   if File.exists?(File.join(root_dir, "source"))
@@ -58,6 +60,12 @@ Given /^the Server is running$/ do
 end
 
 Given /^the Server is running at "([^\"]*)"$/ do |app_path|
+  step %Q{a fixture app "#{app_path}"}
+  step %Q{the Server is running}
+end
+
+Given /^the Server is running with sprockets at "([^\"]*)"$/ do |app_path|
+  ENV["AUTOLOAD_SPROCKETS"] = "true"
   step %Q{a fixture app "#{app_path}"}
   step %Q{the Server is running}
 end
