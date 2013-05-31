@@ -46,7 +46,11 @@ module Middleman
           return false unless path
 
           ignored = @app.config[:ignored_sitemap_matchers].any? do |name, callback|
-            callback.call(file)
+            if callback.arity == 1
+              callback.call(file)
+            else
+              callback.call(file, @app)
+            end
           end
 
           @file_paths_on_disk << file unless ignored
