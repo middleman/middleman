@@ -35,8 +35,8 @@ module Middleman
           # Files starting with an underscore, but not a double-underscore
           :partials => proc { |file| file =~ %r{/_} && file !~ %r{/__} },
 
-          :layout => proc { |file|
-            file.start_with?('source/layout.') || file.start_with?('source/layouts/')
+          :layout => proc { |file, app|
+            file.start_with?(File.join(app.config[:source], 'layout.')) || file.start_with?(File.join(app.config[:source], 'layouts/'))
           }
         }, 'Callbacks that can exclude paths from the sitemap'
 

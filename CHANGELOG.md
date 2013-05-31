@@ -11,6 +11,7 @@
 master
 ===
 
+* Fix ignoring layouts from the sitemap when the source directory has been set to something other than 'source'. #896
 * Move more into core, autoloaded if gems are available.
 * DataStore may now be accessed like a hash with #[] and #has_key?. #880
 * The i18n extension now supports providing localized templates as separate files, like index.es.html.haml. #816, #823
