@@ -22,6 +22,8 @@
 3.1.0.rc.1
 ===
 
+* Custom template classes can now override the file used for creating the project Gemfile.
+* Add an "empty" template that produces the minimum necessary structure for a Middleman project.
 * Fix ignoring layouts from the sitemap when the source directory has been set to something other than 'source'. #896
 * Move more into core, autoloaded if gems are available.
 * DataStore may now be accessed like a hash with #[] and #has_key?. #880
