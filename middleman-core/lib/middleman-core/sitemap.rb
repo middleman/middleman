@@ -29,11 +29,11 @@ module Middleman
 
           # Files starting with an dot, but not .htaccess
           :source_dotfiles => proc { |file|
-            file =~ %r{/\.} && file !~ %r{/\.(htaccess|htpasswd)}
+            file =~ %r{/\.} && file !~ %r{/\.ht(access|passwd)}
           },
 
           # Files starting with an underscore, but not a double-underscore
-          :partials => proc { |file| file =~ %r{/_} && file !~ %r{/__} },
+          :partials => proc { |file| file =~ %r{/_[^_]} },
 
           :layout => proc { |file, app|
             file.start_with?(File.join(app.config[:source], 'layout.')) || file.start_with?(File.join(app.config[:source], 'layouts/'))
