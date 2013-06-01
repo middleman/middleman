@@ -205,17 +205,14 @@ module Middleman::Cli
     # Remove files which were not built in this cycle
     # @return [void]
     def clean!
-      files       = @cleaning_queue.select { |q| q.file? }
-      directories = @cleaning_queue.select { |q| q.directory? }
-
-      files.each do |f|
+      @cleaning_queue.select { |q| q.file? }.each do |f|
         base.remove_file f, :force => true
       end
 
-      directories = directories.sort_by {|d| d.to_s.length }.reverse!
-
-      directories.each do |d|
-        base.remove_file d, :force => true if directory_empty? d
+      Dir[File.join(@destination, "**", "*")].select { |d|
+        File.directory?(d)
+      }.each do |d|
+        base.remove_file d, :force => true if directory_empty? Pathname(d)
       end
     end
 

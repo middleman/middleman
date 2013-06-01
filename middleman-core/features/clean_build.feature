@@ -17,11 +17,28 @@ Feature: Build Clean
     And the file "build/index.html" should contain "Comment in layout"
 
   Scenario: Clean build an app with newly ignored files and a nested output directory
+    Given a fixture app "clean-nested-app"
+    When a file named "config.rb" with:
+      """
+      set :build_dir, "sub/dir"
+      """
     Given a built app at "clean-nested-app" with flags "--no-clean"
     Then a directory named "sub/dir" should exist
+    Then the following directories should exist:
+      | sub/dir                    |
+      | sub/dir/nested             |
     Then the following files should exist:
-      | sub/dir/about.html        |
-    When I append to "config.rb" with "ignore 'about.html'"
+      | sub/dir/about.html         |
+      | sub/dir/nested/nested.html |
+    When a file named "config.rb" with:
+      """
+      set :build_dir, "sub/dir"
+      ignore 'about.html'
+      ignore 'nested/*'
+      """
     Given a built app at "clean-nested-app"
+    Then the following directories should not exist:
+      | sub/dir/nested             |
     Then the following files should not exist:
-      | sub/dir/about.html        |
+      | sub/dir/about.html         |
+      | sub/dir/nested/nested.html |
