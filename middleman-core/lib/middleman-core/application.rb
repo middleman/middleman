@@ -97,6 +97,10 @@ module Middleman
     # @return [String]
     config.define_setting :partials_dir,   "", 'Location of partials within source'
 
+    # Location of layouts within source. Used by renderers.
+    # @return [String]
+    config.define_setting :layouts_dir, "layouts", 'Location of layouts within source'
+
     # Where to build output files
     # @return [String]
     config.define_setting :build_dir,   "build", 'Where to build output files'

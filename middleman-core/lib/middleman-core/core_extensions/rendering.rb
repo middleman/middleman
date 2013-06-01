@@ -153,7 +153,7 @@ module Middleman
               content = render_individual_file(path, locs, opts, context)
               path = File.basename(path, File.extname(path))
             rescue LocalJumpError
-              raise "Tried to render a layout (calls yield) at #{path} like it was a template. Non-default layouts need to be in #{source}/layouts."
+              raise "Tried to render a layout (calls yield) at #{path} like it was a template. Non-default layouts need to be in #{source}/#{layout_dir}."
             end
           end
 
@@ -369,7 +369,7 @@ module Middleman
 
             # Check layouts folder
             if !layout_path
-              layout_path, layout_engine = resolve_template(File.join("layouts", name.to_s), :preferred_engine => preferred_engine)
+              layout_path, layout_engine = resolve_template(File.join(config[:layouts_dir], name.to_s), :preferred_engine => preferred_engine)
             end
           end
 
@@ -380,7 +380,7 @@ module Middleman
 
           # Check layouts folder, no preference
           if !layout_path
-            layout_path, layout_engine = resolve_template(File.join("layouts", name.to_s))
+            layout_path, layout_engine = resolve_template(File.join(config[:layouts_dir], name.to_s))
           end
 
           # Return the path

@@ -12,6 +12,7 @@
 3.1.0.rc.2
 ===
 
+* `layouts_dir` is now configurable
 * Custom template classes can now override the file used for creating the project Gemfile.
 * Add an "empty" template that produces the minimum necessary structure for a Middleman project.
 * Fix ignoring layouts from the sitemap when the source directory has been set to something other than 'source'. #896
