@@ -173,15 +173,15 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
 
     localized_page_id = ::I18n.t("paths.#{page_id}", :default => page_id, :fallback => [])
 
-    if @mount_at_root == lang
-      prefix = "/"
+    prefix = if @mount_at_root == lang
+      "/"
     else
       replacement = options[:lang_map].fetch(lang, lang)
-      prefix = options[:path].sub(":locale", replacement.to_s)
+      options[:path].sub(":locale", replacement.to_s)
     end
 
     path = ::Middleman::Util.normalize_path(
-       File.join(prefix, path.sub(page_id, localized_page_id))
+      File.join(prefix, path.sub(page_id, localized_page_id))
     )
 
     @_localization_data[path] = [lang, path, localized_page_id]

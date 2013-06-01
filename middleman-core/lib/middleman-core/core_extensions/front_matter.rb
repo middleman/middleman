@@ -174,28 +174,22 @@ module Middleman::CoreExtensions
       end
 
       data = {}
-      content = nil
 
-      return [data, content] unless app.files.exists?(full_path)
+      return [data, nil] if !app.files.exists?(full_path) || ::Middleman::Util.binary?(full_path)
 
-      if !::Middleman::Util.binary?(full_path)
-        content = File.read(full_path)
-        
-        begin
-          if content =~ /\A.*coding:/
-            lines = content.split(/\n/)
-            lines.shift
-            content = lines.join("\n")
-          end
-
-          if result = parse_yaml_front_matter(content)
-            data, content = result
-          elsif result = parse_json_front_matter(content)
-            data, content = result
-          end
-        rescue
-          # Probably a binary file, move on
+      content = File.read(full_path)
+      
+      begin
+        if content =~ /\A.*coding:/
+          lines = content.split(/\n/)
+          lines.shift
+          content = lines.join("\n")
         end
+
+        result = parse_yaml_front_matter(content) || parse_json_front_matter(content)
+        return result if result
+      rescue
+        # Probably a binary file, move on
       end
 
       [data, content]

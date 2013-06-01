@@ -20,10 +20,11 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
   # Update the main sitemap resource list
   # @return [void]
   def manipulate_resource_list(resources)
+    @rack_client ||= ::Rack::Test::Session.new(app.class.to_rack_app)
+
     # Process resources in order: binary images and fonts, then SVG, then JS/CSS.
     # This is so by the time we get around to the text files (which may reference
     # images and fonts) the static assets' hashes are already calculated.
-    rack_client = ::Rack::Test::Session.new(app.class.to_rack_app)
     resources.sort_by do |a|
       if %w(.svg).include? a.ext
         0
@@ -32,18 +33,24 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
       else
         -1
       end
-    end.each do |resource|
-      next unless options.exts.include? resource.ext
-      next if @ignore.any? { |ignore| Middleman::Util.path_match(ignore, resource.destination_path) }
+    end.each(&method(:manipulate_single_resource))
+  end
 
-      # Render through the Rack interface so middleware and mounted apps get a shot
-      response = rack_client.get(URI.escape(resource.destination_path), {}, { "bypass_asset_hash" => "true" })
-      raise "#{resource.path} should be in the sitemap!" unless response.status == 200
+  def manipulate_single_resource(resource)
+    return unless options.exts.include?(resource.ext)
+    return if ignored_resource?(resource)
 
-      digest = Digest::SHA1.hexdigest(response.body)[0..7]
+    # Render through the Rack interface so middleware and mounted apps get a shot
+    response = @rack_client.get(URI.escape(resource.destination_path), {}, { "bypass_asset_hash" => "true" })
+    raise "#{resource.path} should be in the sitemap!" unless response.status == 200
 
-      resource.destination_path = resource.destination_path.sub(/\.(\w+)$/) { |ext| "-#{digest}#{ext}" }
-    end
+    digest = Digest::SHA1.hexdigest(response.body)[0..7]
+
+    resource.destination_path = resource.destination_path.sub(/\.(\w+)$/) { |ext| "-#{digest}#{ext}" }
+  end
+
+  def ignored_resource?(resource)
+    @ignore.any? { |ignore| Middleman::Util.path_match(ignore, resource.destination_path) }
   end
 
   # The asset hash middleware is responsible for rewriting references to
@@ -64,38 +71,44 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
       return [status, headers, response] if env["bypass_asset_hash"] == 'true'
 
       path = @middleman_app.full_path(env["PATH_INFO"])
-      dirpath = Pathname.new(File.dirname(path))
 
       if path =~ /(^\/$)|(\.(htm|html|php|css|js)$)/
         body = ::Middleman::Util.extract_response_text(response)
-
         if body
-          # TODO: This regex will change some paths in plan HTML (not in a tag) - is that OK?
-          body.gsub!(/([=\'\"\(]\s*)([^\s\'\"\)]+(#{@exts_regex_text}))/) do |match|
-            opening_character = $1
-            asset_path = $2
-
-            relative_path = Pathname.new(asset_path).relative?
-
-            asset_path = dirpath.join(asset_path).to_s if relative_path
-
-            if @ignore.any? { |r| asset_path.match(r) }
-              match
-            elsif asset_page = @middleman_app.sitemap.find_resource_by_path(asset_path)
-              replacement_path = "/#{asset_page.destination_path}"
-              replacement_path = Pathname.new(replacement_path).relative_path_from(dirpath).to_s if relative_path
-
-              "#{opening_character}#{replacement_path}"
-            else
-              match
-            end
-          end
-
-          status, headers, response = Rack::Response.new(body, status, headers).finish
+          status, headers, response = Rack::Response.new(rewrite_paths(body, path), status, headers).finish
         end
       end
+
       [status, headers, response]
     end
+
+  private
+
+    def rewrite_paths(body, path)
+      dirpath = Pathname.new(File.dirname(path))
+
+      # TODO: This regex will change some paths in plan HTML (not in a tag) - is that OK?
+      body.gsub(/([=\'\"\(]\s*)([^\s\'\"\)]+(#{@exts_regex_text}))/) do |match|
+        opening_character = $1
+        asset_path = $2
+
+        relative_path = Pathname.new(asset_path).relative?
+
+        asset_path = dirpath.join(asset_path).to_s if relative_path
+
+        if @ignore.any? { |r| asset_path.match(r) }
+          match
+        elsif asset_page = @middleman_app.sitemap.find_resource_by_path(asset_path)
+          replacement_path = "/#{asset_page.destination_path}"
+          replacement_path = Pathname.new(replacement_path).relative_path_from(dirpath).to_s if relative_path
+
+          "#{opening_character}#{replacement_path}"
+        else
+          match
+        end
+      end
+    end
+
   end
 
 end

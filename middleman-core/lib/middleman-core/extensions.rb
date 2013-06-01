@@ -136,9 +136,30 @@ module Middleman
     attr_accessor :options
     attr_reader :app
 
-    def initialize(klass, options_hash={})
+    def initialize(klass, options_hash={}, &block)
       @_helpers = []
+      @klass = klass
 
+      setup_options(options_hash, &block)
+      setup_app_reference_when_available
+
+      # Bind app hooks to local methods
+      bind_before_configuration
+      bind_after_configuration
+      bind_after_build
+    end
+
+    def app=(app)
+      @app = app
+      
+      (self.class.defined_helpers || []).each do |m|
+        app.class.send(:include, m)
+      end
+    end
+
+  protected
+
+    def setup_options(options_hash, &block)
       @options = self.class.config.dup
       @options.finalize!
 
@@ -147,24 +168,32 @@ module Middleman
       end
 
       yield @options if block_given?
+    end
 
+    def setup_app_reference_when_available
       ext = self
 
-      klass.initialized do
+      @klass.initialized do
         ext.app = self
       end
 
+      @klass.instance_available do
+        ext.app ||= self
+      end
+    end
+
+    def bind_before_configuration
+      ext = self
       if ext.respond_to?(:before_configuration)
-        klass.before_configuration do
+        @klass.before_configuration do
           ext.before_configuration
         end
       end
+    end
 
-      klass.instance_available do
-        ext.app ||= self
-      end
-
-      klass.after_configuration do
+    def bind_after_configuration
+      ext = self
+      @klass.after_configuration do
         if ext.respond_to?(:after_configuration)
           ext.after_configuration
         end
@@ -173,23 +202,18 @@ module Middleman
           ext.app.sitemap.register_resource_list_manipulator(ext.class.extension_name, ext)
         end
       end
+    end
 
+    def bind_after_build
+      ext = self
       if ext.respond_to?(:after_build)
-        klass.after_build do |builder|
+        @klass.after_build do |builder|
           if ext.method(:after_build).arity === 1
             ext.after_build(builder)
           else
             ext.after_build
           end
         end
-      end
-    end
-
-    def app=(app)
-      @app = app
-      
-      (self.class.defined_helpers || []).each do |m|
-        app.class.send(:include, m)
       end
     end
   end
