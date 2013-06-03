@@ -8,6 +8,7 @@ module Middleman
 
       IGNORE_LIST = [
         /^\.bundle\//,
+        /^vendor\//,
         /^\.sass-cache\//,
         /^\.git\//,
         /^\.gitignore$/,
