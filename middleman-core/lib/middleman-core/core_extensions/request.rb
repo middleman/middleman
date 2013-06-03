@@ -136,7 +136,7 @@ module Middleman
         def server(&block)
           @@servercounter ||= 0
           @@servercounter += 1
-          const_set("MiddlemanApplication#{@@servercounter}", Class.new(Middleman::Application))
+          const_set("MiddlemanApplication#{@@servercounter}", Class.new(Middleman::Application, &block))
         end
       end
 
@@ -148,7 +148,7 @@ module Middleman
         #
         # @return [Class]
         def server(&block)
-          ::Middleman::Application.server
+          ::Middleman::Application.server(&block)
         end
       end
 
