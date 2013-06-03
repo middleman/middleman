@@ -1,4 +1,5 @@
-require 'padrino-helpers'
+require 'vendored-middleman-deps/padrino-core-0.10.7/lib/padrino-core/support_lite'
+require 'vendored-middleman-deps/padrino-helpers-0.10.7/lib/padrino-helpers'
 
 module Middleman
   module MetaPages
