@@ -5,9 +5,9 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
 
     require 'active_support/core_ext/object/to_query'
 
-    if defined?(::Padrino::Helpers)
-      require 'vendored-middleman-deps/padrino-core-0.10.7/lib/padrino-core/support_lite'
-      require 'vendored-middleman-deps/padrino-helpers-0.10.7/lib/padrino-helpers'
+    if !defined?(::Padrino::Helpers)
+      require 'vendored-middleman-deps/padrino-core-0.11.2/lib/padrino-core/support_lite'
+      require 'vendored-middleman-deps/padrino-helpers-0.11.2/lib/padrino-helpers'
     end
 
     app.helpers ::Padrino::Helpers::OutputHelpers
@@ -18,7 +18,7 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
     app.helpers ::Padrino::Helpers::RenderHelpers
     app.helpers ::Padrino::Helpers::NumberHelpers
     # app.helpers ::Padrino::Helpers::TranslationHelpers
-    # app.helpers ::Padrino::Helpers::Breadcrumbs
+    app.helpers ::Padrino::Helpers::Breadcrumbs
 
     app.config.define_setting :relative_links, false, 'Whether to generate relative links instead of absolute ones'
   end

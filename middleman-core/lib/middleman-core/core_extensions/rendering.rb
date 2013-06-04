@@ -413,8 +413,7 @@ module Middleman
             @_out_buf = _buf_was
           end
 
-          # concat_safe_content
-          concat_content render_individual_file(layout_path, @current_locs || {}, @current_opts || {}, self) { content }
+          concat_safe_content render_individual_file(layout_path, @current_locs || {}, @current_opts || {}, self) { content }
         ensure
           @current_engine = engine_was
         end
