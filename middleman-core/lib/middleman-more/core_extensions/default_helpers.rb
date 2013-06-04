@@ -4,8 +4,11 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
     super
 
     require 'active_support/core_ext/object/to_query'
-    require 'vendored-middleman-deps/padrino-core-0.10.7/lib/padrino-core/support_lite'
-    require 'vendored-middleman-deps/padrino-helpers-0.10.7/lib/padrino-helpers'
+
+    if defined?(::Padrino::Helpers)
+      require 'vendored-middleman-deps/padrino-core-0.10.7/lib/padrino-core/support_lite'
+      require 'vendored-middleman-deps/padrino-helpers-0.10.7/lib/padrino-helpers'
+    end
 
     app.helpers ::Padrino::Helpers::OutputHelpers
     app.helpers ::Padrino::Helpers::TagHelpers
