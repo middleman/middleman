@@ -1,4 +1,5 @@
 require "active_support/core_ext/class/attribute"
+require "active_support/core_ext/module/delegation"
 
 module Middleman
 
@@ -131,10 +132,30 @@ module Middleman
       def activate
         new(::Middleman::Application)
       end
+
+      def clear_after_extension_callbacks
+        @_extension_activation_callbacks = {}
+      end
+
+      def after_extension_activated(name, &block)
+        @_extension_activation_callbacks ||= {}
+        @_extension_activation_callbacks[name] ||= []
+        @_extension_activation_callbacks[name] << block if block_given?
+      end
+
+      def activated_extension(instance)
+        name = instance.class.extension_name
+        return unless @_extension_activation_callbacks && @_extension_activation_callbacks[name]
+        @_extension_activation_callbacks[name].each do |block|
+          block.arity == 1 ? block.call(instance) : block.call()
+        end
+      end
     end
 
     attr_accessor :options
     attr_reader :app
+
+    delegate :after_extension_activated, :to => :"::Middleman::Extension"
 
     def initialize(klass, options_hash={}, &block)
       @_helpers = []

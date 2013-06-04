@@ -142,6 +142,7 @@ module Middleman
           # Search the root of the project for required files
           $LOAD_PATH.unshift(root)
 
+          ::Middleman::Extension.clear_after_extension_callbacks
           run_hook :initialized
 
           if config[:autoload_sprockets]
@@ -178,13 +179,17 @@ module Middleman
           run_hook :after_configuration
 
           logger.debug "Loaded extensions:"
-          self.extensions.each do |ext,_|
+          self.extensions.each do |ext, klass|
             if ext.is_a?(Hash)
               ext.each do |k,_|
                 logger.debug "== Extension: #{k}"
               end
             else
               logger.debug "== Extension: #{ext}"
+            end
+
+            if klass.is_a?(::Middleman::Extension)
+              ::Middleman::Extension.activated_extension(klass)
             end
           end
         end
