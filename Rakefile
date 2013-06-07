@@ -76,21 +76,21 @@ end
 desc "Generate documentation for all middleman gems"
 task :doc do
   GEM_PATHS.each do |g|
-    sh "cd #{File.join(ROOT, g)} && #{Gem.ruby} -S rake yard"
+    Dir.chdir("#{File.join(ROOT, g)}") { sh "#{Gem.ruby} -S rake yard" }
   end
 end
 
 desc "Run tests for all middleman gems"
 task :test do
   GEM_PATHS.each do |g|
-    sh "cd #{File.join(ROOT, g)} && #{Gem.ruby} -S rake test"
+    Dir.chdir("#{File.join(ROOT, g)}") { sh "#{Gem.ruby} -S rake test" }
   end
 end
 
 desc "Run specs for all middleman gems"
 task :spec do
   GEM_PATHS.each do |g|
-    sh "cd #{File.join(ROOT, g)} && #{Gem.ruby} -S rake spec"
+    Dir.chdir("#{File.join(ROOT, g)}") { sh "#{Gem.ruby} -S rake spec" }
   end
 end
 
