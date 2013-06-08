@@ -1,14 +1,25 @@
+if !defined?(::Padrino::Helpers)
+  require 'vendored-middleman-deps/padrino-core-0.11.2/lib/padrino-core/support_lite'
+  require 'vendored-middleman-deps/padrino-helpers-0.11.2/lib/padrino-helpers'
+end
+    
+class Padrino::Helpers::OutputHelpers::ErbHandler
+  # Force Erb capture not to use safebuffer
+  def capture_from_template(*args, &block)
+    self.output_buffer, _buf_was = "", self.output_buffer
+    captured_block = block.call(*args)
+    ret = eval("@_out_buf", block.binding)
+    self.output_buffer = _buf_was
+    [ ret, captured_block ]
+  end
+end
+
 class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
 
   def initialize(app, options_hash={}, &block)
     super
 
     require 'active_support/core_ext/object/to_query'
-
-    if !defined?(::Padrino::Helpers)
-      require 'vendored-middleman-deps/padrino-core-0.11.2/lib/padrino-core/support_lite'
-      require 'vendored-middleman-deps/padrino-helpers-0.11.2/lib/padrino-helpers'
-    end
 
     app.helpers ::Padrino::Helpers::OutputHelpers
     app.helpers ::Padrino::Helpers::TagHelpers

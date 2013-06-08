@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency("middleman-core", Middleman::VERSION)
   s.add_dependency("middleman-more", Middleman::VERSION)
-  s.add_dependency("middleman-sprockets", ">= 3.0.10")
+  s.add_dependency("middleman-sprockets", ">= 3.1.2")
   s.add_dependency("haml", [">= 3.1.6"])
   s.add_dependency("sass", [">= 3.1.20"])
   s.add_dependency("compass", [">= 0.12.2"])

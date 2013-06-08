@@ -1,3 +1,4 @@
+/.bundle
 .DS_Store
 coverage
 rdoc

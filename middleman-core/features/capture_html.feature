@@ -1,3 +1,5 @@
+@wip
+
 Feature: Support capture_html and yield_content helpers
 
   Scenario: content_for works as expected in erb
