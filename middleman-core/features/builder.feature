@@ -49,3 +49,10 @@ Feature: Builder
     Given a fixture app "large-build-app"
     When I run `middleman b`
     Then was successfully built
+    
+  Scenario: Resources on demand
+    Given a successfully built app at "resources-on-demand"
+    When I cd to "build"
+    Then the following files should exist:
+      | index.html               |
+      | generated-on-demand.html |
