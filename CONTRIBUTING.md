@@ -11,8 +11,7 @@ Here are some ways *you* can contribute:
 * by suggesting new features
 * by writing or editing documentation
 * by writing specifications
-* by writing code (**no patch is too small**: fix typos, add comments, clean up
-  inconsistent whitespace)
+* by writing code ( **no patch is too small** : fix typos, add comments, clean up inconsistent whitespace )
 * by refactoring code
 * by closing [issues][]
 * by reviewing patches
