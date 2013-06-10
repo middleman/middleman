@@ -19,8 +19,8 @@ gem "liquid", :require => false
 gem "less", :require => false
 gem "stylus", :require => false
 
-gem "pry", :require => false
-gem "pry-debugger", :require => false
+# gem "pry", :require => false
+# gem "pry-debugger", :require => false
 
 platforms :ruby do
   gem "therubyracer"
