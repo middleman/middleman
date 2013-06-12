@@ -1,5 +1,20 @@
 Feature: link_to helper
 
+  Scenario: link_to works with blocks (erb)
+    Given the Server is running at "link-to-app"
+    When I go to "/link_to_erb.html"
+    Then I should see "erb <s>with html tags</s>"
+
+  Scenario: link_to works with blocks (slim)
+    Given the Server is running at "link-to-app"
+    When I go to "/link_to_slim.html"
+    Then I should see "<s>slim with html tags</s>"
+
+  Scenario: link_to works with blocks (haml)
+    Given the Server is running at "link-to-app"
+    When I go to "/link_to_haml.html"
+    Then I should see "<s>haml with html tags</s>"
+
   Scenario: link_to produces relative links
     Given a fixture app "indexable-app"
     And an empty file named "config.rb"

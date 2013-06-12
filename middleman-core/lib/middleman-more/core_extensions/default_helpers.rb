@@ -36,6 +36,12 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
 
   # The helpers
   helpers do
+
+    # Make all block content html_safe
+    def content_tag(name, content = nil, options = nil, &block)
+      mark_safe(super(name, mark_safe(content), options, &block))
+    end
+
     # Disable Padrino cache buster
     def asset_stamp
       false
