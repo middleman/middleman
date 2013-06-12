@@ -42,6 +42,22 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
       mark_safe(super(name, mark_safe(content), options, &block))
     end
 
+    def capture_html(*args, &block)
+      handler = auto_find_proper_handler(&block)
+      captured_block, captured_html = nil, ""
+      if handler && handler.is_type? && handler.block_is_type?(block)
+        captured_html, captured_block = handler.capture_from_template(*args, &block)
+      end
+      # invoking the block directly if there was no template
+      captured_html = block_given? && ( captured_block || block.call(*args) )  if captured_html.blank?
+      captured_html
+    end
+
+    def auto_find_proper_handler(&block)
+      engine = block_given? ? File.extname(block.source_location[0])[1..-1].to_sym : current_engine
+      ::Padrino::Helpers::OutputHelpers.handlers.map { |h| h.new(self) }.find { |h| h.engines.include?(engine) && h.is_type? }
+    end
+
     # Disable Padrino cache buster
     def asset_stamp
       false

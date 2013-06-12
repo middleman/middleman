@@ -123,12 +123,9 @@ module Middleman
         # @param [Hash] opts
         # @return [String]
         def render_template(path, locs={}, opts={}, blocks=[])
-          # Detect the remdering engine from the extension
           extension = File.extname(path)
           engine = extension[1..-1].to_sym
 
-          # Store last engine for later (could be inside nested renders)
-          @current_engine, engine_was = engine, @current_engine
           if defined?(::I18n)
             old_locale = ::I18n.locale
             ::I18n.locale = opts[:lang] if opts[:lang]
@@ -171,7 +168,6 @@ module Middleman
           # Pop all the saved variables from earlier as we may be returning to a
           # previous render (layouts, partials, nested layouts).
           ::I18n.locale = old_locale if defined?(::I18n)
-          @current_engine = engine_was
           @content_blocks = nil
           @current_locs = nil
           @current_opts = nil
@@ -238,6 +234,13 @@ module Middleman
         def render_individual_file(path, locs = {}, opts = {}, context = self, &block)
           path = path.to_s
 
+          # Detect the remdering engine from the extension
+          extension = File.extname(path)
+          engine = extension[1..-1].to_sym
+
+          # Store last engine for later (could be inside nested renders)
+          context.current_engine, engine_was = engine, context.current_engine
+          
           # Save current buffer for later
           @_out_buf, _buf_was = "", @_out_buf
 
@@ -283,6 +286,7 @@ module Middleman
         ensure
           # Reset stored buffer
           @_out_buf = _buf_was
+          context.current_engine = engine_was
         end
 
         # Get the template data from a path
@@ -394,13 +398,13 @@ module Middleman
           # Save current buffer for later
           @_out_buf, _buf_was = "", @_out_buf
 
-          layout_path = locate_layout(layout_name, current_engine)
+          layout_path = locate_layout(layout_name, self.current_engine)
 
           extension = File.extname(layout_path)
           engine = extension[1..-1].to_sym
 
           # Store last engine for later (could be inside nested renders)
-          @current_engine, engine_was = engine, @current_engine
+          self.current_engine, engine_was = engine, self.current_engine
 
           begin
             content = if block_given?
@@ -415,13 +419,19 @@ module Middleman
 
           concat_safe_content render_individual_file(layout_path, @current_locs || {}, @current_opts || {}, self) { content }
         ensure
-          @current_engine = engine_was
+          self.current_engine = engine_was
         end
 
         # The currently rendering engine
         # @return [Symbol, nil]
         def current_engine
-          @current_engine ||= nil
+          @_current_engine ||= nil
+        end
+
+        # The currently rendering engine
+        # @return [Symbol, nil]
+        def current_engine=(v)
+          @_current_engine = v
         end
 
         # Find a template on disk given a output path

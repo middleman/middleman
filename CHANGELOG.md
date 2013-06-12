@@ -9,6 +9,13 @@
 * Fully tested on JRuby
 * Build defaults to --clean
 
+
+
+3.1.0.rc.4
+===
+
+* Blocks with different templating languages than their layout now work as expected. #860
+
 3.1.0.rc.2
 ===
 
