@@ -15,6 +15,7 @@
 ===
 
 * Blocks with different templating languages than their layout now work as expected. #860
+* The `endpoint` method allows the building of Rack-based files or arbitrary content.
 
 3.1.0.rc.2
 ===

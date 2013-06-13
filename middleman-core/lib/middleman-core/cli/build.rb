@@ -135,7 +135,7 @@ module Middleman::Cli
           FileUtils.cp(resource.source_file, output_file)
         else
           begin
-            response = self.class.shared_rack.get(URI.escape(resource.destination_path))
+            response = self.class.shared_rack.get(URI.escape(resource.request_path))
 
             if response.status == 200
               create_file(output_file, binary_encode(response.body))

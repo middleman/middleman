@@ -105,6 +105,10 @@ module Middleman
         File.extname(path)
       end
 
+      def request_path
+        self.destination_path
+      end
+
       # Render this resource
       # @return [String]
       def render(opts={}, locs={}, &block)

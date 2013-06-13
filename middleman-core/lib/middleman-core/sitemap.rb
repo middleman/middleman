@@ -2,6 +2,7 @@ require "middleman-core/sitemap/store"
 require "middleman-core/sitemap/resource"
 
 require "middleman-core/sitemap/extensions/on_disk"
+require "middleman-core/sitemap/extensions/request_endpoints"
 require "middleman-core/sitemap/extensions/proxies"
 require "middleman-core/sitemap/extensions/ignores"
 
@@ -16,6 +17,7 @@ module Middleman
       # Once registered
       def registered(app)
 
+        app.register Middleman::Sitemap::Extensions::RequestEndpoints
         app.register Middleman::Sitemap::Extensions::Proxies
         app.register Middleman::Sitemap::Extensions::Ignores
 

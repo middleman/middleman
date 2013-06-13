@@ -36,6 +36,9 @@ module Middleman
         # Register classes which can manipulate the main site map list
         register_resource_list_manipulator(:on_disk, Middleman::Sitemap::Extensions::OnDisk.new(self))
 
+        # Request Endpoints
+        register_resource_list_manipulator(:request_endpoints, @app.endpoint_manager)
+
         # Proxies
         register_resource_list_manipulator(:proxies, @app.proxy_manager)
       end
