@@ -15,6 +15,10 @@
 ===
 
 * Blocks with different templating languages than their layout now work as expected. #860
+* Ruby 1.8 users will need to add the following to their Gemfiles:
+  platforms :mri_18 do
+    gem "ruby18_source_location"
+  end
 * The `endpoint` method allows the building of Rack-based files or arbitrary content.
 
 3.1.0.rc.2
