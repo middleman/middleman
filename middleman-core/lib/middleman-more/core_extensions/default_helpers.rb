@@ -1,5 +1,6 @@
 # Required to hack around Padrino blocks within different template types.
-if RUBY_VERSION < "1.9.0"
+require 'rbconfig'
+if RUBY_VERSION =~ /1.8/ && RbConfig::CONFIG['ruby_install_name'] == 'ruby'
   begin
     require 'ruby18_source_location'
   rescue LoadError

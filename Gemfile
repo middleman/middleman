@@ -28,7 +28,7 @@ platforms :ruby do
 end
 
 # Cross-templating language block fix for Ruby 1.8
-platforms :ruby_18 do
+platforms :mri_18 do
   gem "ruby18_source_location"
 end
 
