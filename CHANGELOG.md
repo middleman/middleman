@@ -6,7 +6,7 @@
 * New v4 Extension API
 * `/__middleman' inspector
 * Added Ruby 2.0, dropped Ruby 1.9.2
-* Fully tested on JRuby
+* Fully tested on JRuby 1.9
 * Build defaults to --clean
 
 
