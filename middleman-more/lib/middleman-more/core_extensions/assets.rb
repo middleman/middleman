@@ -26,7 +26,8 @@ module Middleman
         # @return [String] The fully qualified asset url
         def asset_url(path, prefix="")
           # Don't touch assets which already have a full path
-          if path.include?("//")
+          # or are inline data URIs
+          if path.include?('//') or path.start_with?('data:')
             path
           else # rewrite paths to use their destination path
             path = File.join(prefix, path)

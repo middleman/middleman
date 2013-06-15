@@ -89,7 +89,7 @@ module Middleman
         # @param [String] source The path to the file
         # @return [String]
         def asset_path(kind, source)
-          return source if source.to_s.include?('//')
+          return source if source.to_s.include?('//') || source.to_s.start_with?('data:')
           asset_folder  = case kind
             when :css    then css_dir
             when :js     then js_dir
