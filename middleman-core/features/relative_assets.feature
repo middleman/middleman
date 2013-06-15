@@ -134,3 +134,14 @@ Feature: Relative Assets
     And the Server is running at "relative-assets-app"
     When I go to "/sub/image_tag.html"
     Then I should see '<img src="../img/blank.gif" />'
+
+  Scenario: Relative assets should not break data URIs in image_tag
+    Given a fixture app "relative-assets-app"
+    Given "relative_assets" feature is "enabled"
+    And a file named "source/sub/image_tag.html.erb" with:
+      """
+      <%= image_tag "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" %>
+      """
+    And the Server is running at "relative-assets-app"
+    When I go to "/sub/image_tag.html"
+    Then I should see '<img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />'

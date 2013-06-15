@@ -18,7 +18,7 @@ class Middleman::Extensions::RelativeAssets < ::Middleman::Extension
     def asset_url(path, prefix="")
       path = super(path, prefix)
 
-      if path.include?("//") || !current_resource
+      if path.include?('//') || path.start_with?('data:') || !current_resource
         path
       else
         current_dir = Pathname('/' + current_resource.destination_path)

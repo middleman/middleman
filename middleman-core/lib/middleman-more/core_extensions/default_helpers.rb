@@ -134,7 +134,7 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
     # @param [String] source The path to the file
     # @return [String]
     def asset_path(kind, source)
-      return source if source.to_s.include?('//')
+      return source if source.to_s.include?('//') || source.to_s.start_with?('data:')
       asset_folder  = case kind
         when :css    then css_dir
         when :js     then js_dir
@@ -157,7 +157,7 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
     # @return [String] The fully qualified asset url
     def asset_url(path, prefix="")
       # Don't touch assets which already have a full path
-      if path.include?("//")
+      if path.include?('//') or path.start_with?('data:')
         path
       else # rewrite paths to use their destination path
         path = File.join(prefix, path)
