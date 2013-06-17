@@ -22,7 +22,7 @@ module Middleman
         # @param default Attribute value
         # @return [void]
         def set(key, default=nil, &block)
-          config.define_setting(key, default)
+          config.define_setting(key, default) unless config.defines_setting?(key)
           @inst.set(key, default, &block) if @inst
         end
 
