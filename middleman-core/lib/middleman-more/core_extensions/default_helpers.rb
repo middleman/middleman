@@ -50,7 +50,8 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
 
     # Make all block content html_safe
     def content_tag(name, content = nil, options = nil, &block)
-      mark_safe(super(name, mark_safe(content), options, &block))
+      content = mark_safe(content) unless content.is_a?(Hash)
+      mark_safe(super(name, content, options, &block))
     end
 
     def capture_html(*args, &block)
