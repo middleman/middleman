@@ -1,3 +1,9 @@
+3.1.1
+===
+
+* Check if set is redefining a param at the class level. Fixes #939
+* Correctly escape `content_tag` when using a block. Fixes #941
+
 3.1.0 Highlights
 ===
 
@@ -8,8 +14,6 @@
 * Added Ruby 2.0, dropped Ruby 1.9.2
 * Fully tested on JRuby 1.9
 * Build defaults to --clean
-
-
 
 3.1.0.rc.4
 ===

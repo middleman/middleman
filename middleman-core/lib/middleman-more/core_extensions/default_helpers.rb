@@ -50,8 +50,23 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
 
     # Make all block content html_safe
     def content_tag(name, content = nil, options = nil, &block)
-      content = mark_safe(content) unless content.is_a?(Hash)
-      mark_safe(super(name, content, options, &block))
+      if block_given?
+        options = content if content.is_a?(Hash)
+        content = capture_html(&block)
+      end
+
+      options    = parse_data_options(name, options)
+      attributes = tag_attributes(options)
+      output = ActiveSupport::SafeBuffer.new
+      output.safe_concat "<#{name}#{attributes}>"
+      if content.respond_to?(:each) && !content.is_a?(String)
+        content.each { |c| output.safe_concat c; output.safe_concat NEWLINE }
+      else
+        output.safe_concat "#{content}"
+      end
+      output.safe_concat "</#{name}>"
+
+      block_is_template?(block) ? concat_content(output) : output
     end
 
     def capture_html(*args, &block)
