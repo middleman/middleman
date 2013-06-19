@@ -1,3 +1,8 @@
+3.1.2
+===
+
+* Added `redirect` command for generating meta refreshes
+
 3.1.1
 ===
 

@@ -11,73 +11,12 @@ module Middleman
 
           # Once registered
           def registered(app)
-            # ::Middleman::Sitemap::Resource.send :include, ResourceInstanceMethods
-
             # Include methods
             app.send :include, InstanceMethods
           end
 
           alias :included :registered
         end
-
-        # module ResourceInstanceMethods
-        #   # Whether this page is a proxy
-        #   # @return [Boolean]
-        #   def proxy?
-        #     !!@proxied_to
-        #   end
-
-        #   # Set this page to proxy to a target path
-        #   # @param [String] target
-        #   # @return [void]
-        #   def proxy_to(target)
-        #     target = ::Middleman::Util.normalize_path(target)
-        #     raise "You can't proxy #{path} to itself!" if target == path
-        #     @proxied_to = target
-        #   end
-
-        #   # The path of the page this page is proxied to, or nil if it's not proxied.
-        #   # @return [String]
-        #   def proxied_to
-        #     @proxied_to
-        #   end
-
-        #   # The resource for the page this page is proxied to. Throws an exception
-        #   # if there is no resource.
-        #   # @return [Sitemap::Resource]
-        #   def proxied_to_resource
-        #     proxy_resource = store.find_resource_by_path(proxied_to)
-
-        #     unless proxy_resource
-        #       raise "Path #{path} proxies to unknown file #{proxied_to}:#{store.resources.map(&:path)}"
-        #     end
-
-        #     if proxy_resource.proxy?
-        #       raise "You can't proxy #{path} to #{proxied_to} which is itself a proxy."
-        #     end
-
-        #     proxy_resource
-        #   end
-
-        #   def get_source_file
-        #     if proxy?
-        #       proxied_to_resource.source_file
-        #     else
-        #       super
-        #     end
-        #   end
-
-        #   def content_type
-        #     mime_type = super
-        #     return mime_type if mime_type
-
-        #     if proxy?
-        #       proxied_to_resource.content_type
-        #     else
-        #       nil
-        #     end
-        #   end
-        # end
 
         module InstanceMethods
           def endpoint_manager

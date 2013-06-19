@@ -2,6 +2,7 @@ require "middleman-core/sitemap/store"
 require "middleman-core/sitemap/resource"
 
 require "middleman-core/sitemap/extensions/on_disk"
+require "middleman-core/sitemap/extensions/redirects"
 require "middleman-core/sitemap/extensions/request_endpoints"
 require "middleman-core/sitemap/extensions/proxies"
 require "middleman-core/sitemap/extensions/ignores"
@@ -20,6 +21,7 @@ module Middleman
         app.register Middleman::Sitemap::Extensions::RequestEndpoints
         app.register Middleman::Sitemap::Extensions::Proxies
         app.register Middleman::Sitemap::Extensions::Ignores
+        app.register Middleman::Sitemap::Extensions::Redirects
 
         # Set to automatically convert some characters into a directory
         app.config.define_setting :automatic_directory_matcher, nil, 'Set to automatically convert some characters into a directory'

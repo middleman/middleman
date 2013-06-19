@@ -41,6 +41,9 @@ module Middleman
 
         # Proxies
         register_resource_list_manipulator(:proxies, @app.proxy_manager)
+
+        # Redirects
+        register_resource_list_manipulator(:redirects, @app.redirect_manager)
       end
 
       # Register a klass which can manipulate the main site map list. Best to register
