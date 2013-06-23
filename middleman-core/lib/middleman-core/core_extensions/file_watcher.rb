@@ -7,13 +7,13 @@ module Middleman
     module FileWatcher
 
       IGNORE_LIST = [
+        /^bin\//,
         /^\.bundle\//,
         /^vendor\//,
         /^\.sass-cache\//,
         /^\.git\//,
         /^\.gitignore$/,
         /\.DS_Store/,
-        /^build\//,
         /^\.rbenv-.*$/,
         /^Gemfile$/,
         /^Gemfile\.lock$/,
@@ -34,6 +34,10 @@ module Middleman
           # Before parsing config, load the data/ directory
           app.before_configuration do
             files.reload_path(config[:data_dir])
+          end
+
+          app.after_configuration do
+            config[:file_watcher_ignore] << %r{^#{config[:build_dir]}\/}
           end
 
           # After config, load everything else
