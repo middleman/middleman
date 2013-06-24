@@ -1,4 +1,4 @@
-3.1.x
+3.1.2
 ===
 
 * Locales regex was broken, selecting .yml files from data folder.
