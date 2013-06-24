@@ -141,6 +141,12 @@ module Middleman
           blocks << block if block_given?
 
           app.current_path ||= self.destination_path
+
+          # Certain output file types don't use layouts
+          if !opts.has_key?(:layout)
+            opts[:layout] = false if %w(.js .json .css .txt).include?(self.ext)
+          end
+
           app.render_template(source_file, locs, opts, blocks)
         end
       end

@@ -154,11 +154,8 @@ module Middleman
             end
           end
 
-          # Certain output file types don't use layouts
-          needs_layout = !%w(.js .json .css .txt).include?(File.extname(path))
-
           # If we need a layout and have a layout, use it
-          if needs_layout && layout_path = fetch_layout(engine, opts)
+          if layout_path = fetch_layout(engine, opts)
             content = render_individual_file(layout_path, locs, opts, context) { content }
           end
 

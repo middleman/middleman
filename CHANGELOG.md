@@ -1,3 +1,8 @@
+3.1.x
+===
+
+* Fix for implied extensions getting a layout. (Mentioned in #901)
+
 3.1.2
 ===
 
