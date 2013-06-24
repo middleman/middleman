@@ -1,6 +1,7 @@
 3.1.x
 ===
 
+* Locales regex was broken, selecting .yml files from data folder.
 * Fix for implied extensions getting a layout. (Mentioned in #901)
 
 3.1.2

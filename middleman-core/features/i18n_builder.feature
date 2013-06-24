@@ -22,6 +22,8 @@ Feature: i18n Builder
       | password.txt                                  |
     Then the following files should not exist:
       | en/index.html                                 |
+      | defaults_en/index.html                        |
+      | en_defaults/index.html                        |
     And the file "index.html" should contain "Howdy"  
     And the file "hello.html" should contain "Hello World"
     And the file "morning.html" should contain "Good morning"
