@@ -33,7 +33,7 @@ module Middleman
 
           # Files starting with an dot, but not .htaccess
           :source_dotfiles => proc { |file|
-            file =~ %r{/\.} && file !~ %r{/\.ht(access|passwd)}
+            file =~ %r{/\.} && file !~ %r{/\.(htaccess|htpasswd|nojekyll)}
           },
 
           # Files starting with an underscore, but not a double-underscore
