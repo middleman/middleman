@@ -12,6 +12,7 @@ Feature: Directory Index
       | regular/index.html                            |
       | .htaccess                                     |
       | .htpasswd                                     |
+      | .nojekyll                                     |
     Then the following files should not exist:
       | egular/index/index.html                       |
       | needs_index.html                              |
