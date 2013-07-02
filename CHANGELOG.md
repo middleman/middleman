@@ -2,12 +2,13 @@
 ===
 
 * Fixed typo in rack extensions block
+* Add support for nojekyll dotfile
 
 3.1.2
 ===
 
 * Locales regex was broken, selecting .yml files from data folder.
-* Fix for implied extensions getting a layout. (Mentioned in #901)
+* Fix for implied extensions getting a layout. (Mentioned in #901)git pu
 * Added `redirect` command for generating meta refreshes
 
 3.1.1
