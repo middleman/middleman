@@ -1,12 +1,13 @@
+3.1.3
+===
+
+* Fixed typo in rack extensions block
+
 3.1.2
 ===
 
 * Locales regex was broken, selecting .yml files from data folder.
 * Fix for implied extensions getting a layout. (Mentioned in #901)
-
-3.1.2
-===
-
 * Added `redirect` command for generating meta refreshes
 
 3.1.1
