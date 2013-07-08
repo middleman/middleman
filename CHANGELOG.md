@@ -1,3 +1,8 @@
+master
+===
+
+* Support redcarpet's :no_links & :no_images. #951
+
 3.1.3
 ===
 

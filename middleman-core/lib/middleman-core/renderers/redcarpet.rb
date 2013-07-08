@@ -21,7 +21,7 @@ module Middleman
         end
 
         # Renderer Options
-        possible_render_opts = [:filter_html, :no_images, :no_links, :no_styles, :safe_links_only, :with_toc_data, :hard_wrap, :xhtml]
+        possible_render_opts = [:filter_html, :no_images, :no_links, :no_styles, :safe_links_only, :with_toc_data, :hard_wrap, :xhtml, :prettify, :link_attributes]
 
         render_options = possible_render_opts.inject({}) do |sum, opt|
           sum[opt] = options.delete(opt) if options.has_key?(opt)
@@ -36,12 +36,30 @@ module Middleman
     class MiddlemanRedcarpetHTML < ::Redcarpet::Render::HTML
       cattr_accessor :middleman_app
 
+      def initialize(options={})
+        @local_options = options.dup
+
+        super
+      end
+
       def image(link, title, alt_text)
-        middleman_app.image_tag(link, :title => title, :alt => alt_text)
+        if !@local_options[:no_images]
+          middleman_app.image_tag(link, :title => title, :alt => alt_text)
+        else
+          link_string = link.dup
+          link_string << %Q{"#{title}"} if title && title.length > 0 && title != alt_text
+          %Q{![#{alt_text}](#{link_string})}
+        end
       end
 
       def link(link, title, content)
-        middleman_app.link_to(content, link, :title => title)
+        if !@local_options[:no_links]
+          middleman_app.link_to(content, link, :title => title)
+        else
+          link_string = link.dup
+          link_string << %Q{"#{title}"} if title && title.length > 0 && title != alt_text
+          %Q{[#{content}](#{link_string})}
+        end
       end
     end
 

@@ -42,6 +42,32 @@ Feature: Markdown support
     When I go to "/hard_wrap.html"
     Then I should see "br"
 
+  Scenario: Redcarpet 2 no_images extension (with overrides)
+    Given a fixture app "markdown-app"
+    And a file named "config.rb" with:
+      """
+      set :markdown_engine, :redcarpet
+      set :markdown, :no_images => true
+                     
+      """
+    Given the Server is running at "markdown-app"
+    When I go to "/img.html"
+    Then I should see "![dust mite](http://dust.mite/image.png)"
+    And I should not see "<img"
+
+  Scenario: Redcarpet 2 no_links extension (with overrides)
+    Given a fixture app "markdown-app"
+    And a file named "config.rb" with:
+      """
+      set :markdown_engine, :redcarpet
+      set :markdown, :no_links => true
+                     
+      """
+    Given the Server is running at "markdown-app"
+    When I go to "/link.html"
+    Then I should see "[This link](http://example.net/) links"
+    And I should not see "<a"
+
   Scenario: Redcarpet per-page frontmatter options
     Given a fixture app "markdown-frontmatter-options-app"
     And a file named "config.rb" with:
