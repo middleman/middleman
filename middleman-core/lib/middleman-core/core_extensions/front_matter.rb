@@ -119,7 +119,7 @@ module Middleman::CoreExtensions
     # Parse YAML frontmatter out of a string
     # @param [String] content
     # @return [Array<Hash, String>]
-    def parse_yaml_front_matter(content)
+    def parse_yaml_front_matter(content, full_path)
       yaml_regex = /\A(---\s*\n.*?\n?)^(---\s*$\n?)/m
       if content =~ yaml_regex
         content = content.sub(yaml_regex, "")
@@ -128,7 +128,7 @@ module Middleman::CoreExtensions
           data = YAML.load($1) || {}
           data = data.symbolize_keys
         rescue *YAML_ERRORS => e
-          app.logger.error "YAML Exception: #{e.message}"
+          app.logger.error "YAML Exception parsing #{full_path}: #{e.message}"
           return false
         end
       else
@@ -140,7 +140,7 @@ module Middleman::CoreExtensions
       [{}, content]
     end
 
-    def parse_json_front_matter(content)
+    def parse_json_front_matter(content, full_path)
       json_regex = /\A(;;;\s*\n.*?\n?)^(;;;\s*$\n?)/m
 
       if content =~ json_regex
@@ -150,7 +150,7 @@ module Middleman::CoreExtensions
           json = ($1+$2).sub(";;;", "{").sub(";;;", "}")
           data = ActiveSupport::JSON.decode(json).symbolize_keys
         rescue => e
-          app.logger.error "JSON Exception: #{e.message}"
+          app.logger.error "JSON Exception parsing #{full_path}: #{e.message}"
           return false
         end
 
@@ -186,7 +186,7 @@ module Middleman::CoreExtensions
           content = lines.join("\n")
         end
 
-        result = parse_yaml_front_matter(content) || parse_json_front_matter(content)
+        result = parse_yaml_front_matter(content, full_path) || parse_json_front_matter(content, full_path)
         return result if result
       rescue
         # Probably a binary file, move on
