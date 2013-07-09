@@ -70,8 +70,8 @@ module Middleman
             app = ::Rack::Builder.new
             app.use Rack::Lint
 
-            Array(@middleware).each do |klass, options, blockm|
-              app.use(klass, *options, &blockm)
+            Array(@middleware).each do |klass, options, block|
+              app.use(klass, *options, &block)
             end
 
             inner_app = inst(&block)
