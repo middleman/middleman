@@ -15,11 +15,11 @@ module Middleman
         key_classes << 'modified' if @setting.value_set?
         content << content_tag(:span, @setting.key.inspect, :class => key_classes.join(' '))
         content << " = "
-        content << content_tag(:span, CGI::escapeHTML(@setting.value.inspect), :class => 'value')
+        content << content_tag(:span, @setting.value.inspect, :class => 'value')
         if @setting.default
           content << content_tag(:span, :class => 'default') do
             if @setting.value_set?
-              "Default: #{CGI::escapeHTML(@setting.default.inspect)}"
+              "Default: #{@setting.default.inspect}"
             else
               "(Default)"
             end
