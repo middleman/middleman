@@ -23,10 +23,10 @@ module Middleman
                 row_content = ""
                 row_content << content_tag(:th, label)
                 row_content << content_tag(:td, value)
-                row_content
+                row_content.html_safe
               end
             end
-            content
+            content.html_safe
           end
         end
       end
