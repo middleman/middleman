@@ -291,8 +291,13 @@ module Middleman
           file      = ::Rack::File.new nil
           file.path = resource.source_file
           response = file.serving(env)
+          status = response[0]
           response[1]['Content-Encoding'] = 'gzip' if %w(.svgz .gz).include?(resource.ext)
-          response[1]['Content-Type'] = resource.content_type || "application/octet-stream"
+          # Do not set Content-Type if status is 1xx, 204, 205 or 304, otherwise
+          # Rack will throw an error (500)
+          if !(100..199).include?(status) && ![204, 205, 304].include?(status)
+            response[1]['Content-Type'] = resource.content_type || "application/octet-stream"
+          end
           halt response
         end
       end
