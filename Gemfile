@@ -24,7 +24,7 @@ gem "stylus", :require => false
 
 platforms :ruby do
   gem "therubyracer"
-  gem "redcarpet"
+  gem "redcarpet", /^1\.8/.match(RUBY_VERSION) ? "~> 2.0" : "~> 3.0"
 end
 
 # Cross-templating language block fix for Ruby 1.8
