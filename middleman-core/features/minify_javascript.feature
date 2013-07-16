@@ -203,7 +203,7 @@ Feature: Minify Javascript
       """
     And the Server is running at "passthrough-app"
     When I go to "/inline-coffeescript.html"
-    Then I should see "14" lines
+    Then I should see "13" lines
     
   Scenario: Rendering external js (coffeescript) with a passthrough minifier
     Given a fixture app "passthrough-app"
@@ -221,5 +221,5 @@ Feature: Minify Javascript
       """
     And the Server is running at "passthrough-app"
     When I go to "/javascripts/coffee_test.js"
-    Then I should see "12" lines
+    Then I should see "11" lines
     
