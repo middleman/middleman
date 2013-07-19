@@ -44,3 +44,8 @@ Feature: Provide Sane Defaults for Partial Behavior
     When I go to "/index.html"
     Then I should see "ERb Header"
     And I should see "Str Footer"
+    
+  Scenario: Partial can use multiple engines chained together
+    Given the Server is running at "partials-app"
+    When I go to "/chain_master.html"
+    Then I should see "function"
