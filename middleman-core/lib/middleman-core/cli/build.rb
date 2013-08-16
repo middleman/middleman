@@ -119,7 +119,7 @@ module Middleman::Cli
       # @return [String] The full path of the file that was written
       def render_to_file(resource)
         build_dir = self.class.shared_instance.config[:build_dir]
-        output_file = File.join(build_dir, resource.destination_path)
+        output_file = File.join(build_dir, resource.destination_path.gsub('%20', ' '))
 
         if resource.binary?
           if !File.exists?(output_file)

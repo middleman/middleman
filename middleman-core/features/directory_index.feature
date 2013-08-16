@@ -35,7 +35,7 @@ Feature: Directory Index
     
   Scenario: Preview normal file with spaces in filename
     Given the Server is running at "indexable-app"
-    When I go to "/evil spaces/"
+    When I go to "/evil%20spaces/"
     Then I should see "Spaces"
 
   Scenario: Preview normal file subdirectory
