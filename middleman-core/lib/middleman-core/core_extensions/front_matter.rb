@@ -196,7 +196,7 @@ module Middleman::CoreExtensions
     end
 
     def normalize_path(path)
-      path.sub(%r{^#{app.source_dir}\/}, "")
+      path.sub(%r{^#{Regexp.escape(app.source_dir)}\/}, "")
     end
   end
 end

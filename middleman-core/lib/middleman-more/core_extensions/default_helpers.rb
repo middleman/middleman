@@ -124,7 +124,7 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
       # If the basename of the request as no extension, assume we are serving a
       # directory and join index_file to the path.
       path = File.join(asset_dir, current_path)
-      path = path.sub(/#{File.extname(path)}$/, ".#{asset_ext}")
+      path = path.sub(/#{Regexp.escape(File.extname(path))}$/, ".#{asset_ext}")
 
       yield path if sitemap.find_resource_by_path(path)
     end

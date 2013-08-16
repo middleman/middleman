@@ -191,7 +191,7 @@ module Middleman
             engine = File.extname(resource.source_file)[1..-1].to_sym
 
             # Look for partials relative to the current path
-            relative_dir = File.join(current_dir.sub(%r{^#{self.source_dir}/?}, ""), data)
+            relative_dir = File.join(current_dir.sub(%r{^#{Regexp.escape(self.source_dir)}/?}, ""), data)
 
             # Try to use the current engine first
             found_partial, found_engine = resolve_template(relative_dir, :preferred_engine => engine, :try_without_underscore => true)
