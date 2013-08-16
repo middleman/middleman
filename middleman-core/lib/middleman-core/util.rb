@@ -153,6 +153,7 @@ module Middleman
     def self.url_for(app, path_or_resource, options={})
       # Handle Resources and other things which define their own url method
       url = path_or_resource.respond_to?(:url) ? path_or_resource.url : path_or_resource
+      url = url.gsub(' ', '%20')
 
       begin
         uri = URI(url)
