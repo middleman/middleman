@@ -277,7 +277,7 @@ module Middleman
             content = callback.call(content, path, locs, template_class)
           end
 
-          output = ::ActiveSupport::SafeBuffer.new
+          output = ::ActiveSupport::SafeBuffer.new ""
           output.safe_concat content
           output
         ensure
