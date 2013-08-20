@@ -71,7 +71,7 @@ module Middleman::Cli
         :instrumenting     => options["instrument"],
         :disable_watcher   => options["disable_watcher"],
         :reload_paths      => options["reload_paths"],
-        :force_polling     => options["force_polling"]
+        :force_polling     => options["force_polling"],
         :latency           => options["latency"]
       }
 
