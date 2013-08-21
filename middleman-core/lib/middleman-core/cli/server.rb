@@ -46,9 +46,9 @@ module Middleman::Cli
       :default => false,
       :desc    => 'Force file watcher into polling mode'
     method_option :latency,
-      :type    => :string,
+      :type    => :numeric,
       :aliases => "-l",
-      :default => "0.25",
+      :default => 0.25,
       :desc    => 'Set file watcher latency, in seconds'
 
     # Start the server
