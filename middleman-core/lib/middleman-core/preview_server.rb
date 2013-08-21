@@ -104,6 +104,7 @@ module Middleman
           # Watcher Library
           require "listen"
           @listener = Listen.to(Dir.pwd, :relative_paths => true, :force_polling => @options[:force_polling])
+          @listener.latency(@options[:latency])
         end
 
         @listener.change do |modified, added, removed|
