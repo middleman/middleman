@@ -4,11 +4,20 @@ module Middleman
   module Renderers
 
     class RedcarpetTemplate < ::Tilt::RedcarpetTemplate::Redcarpet2
+
+      # because tilt has decided to convert these
+      # in the wrong direction
+      ALIASES = {
+        :escape_html => :filter_html
+      }
+
       # Overwrite built-in Tilt version.
       # Don't overload :renderer option with smartypants
       # Support renderer-level options
       def generate_renderer
         return options.delete(:renderer) if options.has_key?(:renderer)
+
+        covert_options_to_aliases!
 
         # Pick a renderer
         renderer = MiddlemanRedcarpetHTML
@@ -30,6 +39,14 @@ module Middleman
 
         renderer.new(render_options)
       end
+
+      private
+
+        def covert_options_to_aliases!
+          ALIASES.each do |aka, actual|
+            options[actual] = options.delete(aka) if options.has_key? aka
+          end
+        end
     end
 
     # Custom Redcarpet renderer that uses our helpers for images and links
@@ -54,7 +71,10 @@ module Middleman
 
       def link(link, title, content)
         if !@local_options[:no_links]
-          middleman_app.link_to(content, link, :title => title)
+          attributes = { :title => title }
+          attributes.merge!( @local_options[:link_attributes] ) if @local_options[:link_attributes]
+
+          middleman_app.link_to(content, link, attributes )
         else
           link_string = link.dup
           link_string << %Q{"#{title}"} if title && title.length > 0 && title != alt_text
