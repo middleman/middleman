@@ -1,6 +1,24 @@
 master
 ===
 
+3.1.5
+===
+
+* Escape filenames in regexes. Fixes #942.
+* Create automated alt tag addition, based on image name.
+* Add listener latency option. (Aliased to -l)
+* Add support/tests for Redcarpet 3.0.0 features
+  - :underline
+  - :highlight
+  - :disable_indented_code_blocks
+*  Fix support for
+  - :link_attributes
+  - :filter_html
+
+3.1.4
+===
+
+* Support kramdown 1.1
 * Support redcarpet's :no_links & :no_images. #951
 
 3.1.3

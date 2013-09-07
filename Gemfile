@@ -16,7 +16,7 @@ gem "haml", "~> 4.0.0", :require => false # Make sure to use Haml 4 for tests
 gem "sinatra", :require => false
 gem "slim", :require => false
 gem "liquid", :require => false
-gem "less", :require => false
+gem "less", "~> 2.3.0", :require => false
 gem "stylus", :require => false
 
 # gem "pry", :require => false
