@@ -1,6 +1,6 @@
 @nojava
-Feature: Markdown support
-  In order to test included Maruku support
+Feature: Markdown (Redcarpet) support
+  In order to test included Redcarpet support
 
   Scenario: Redcarpet 2 extensions
     Given a fixture app "markdown-app"

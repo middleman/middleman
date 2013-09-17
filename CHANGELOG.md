@@ -1,6 +1,11 @@
 master
 ===
 
+* Magic sitemap-aware links and image references now work when your markdown engine is Kramdown (the default for Middleman).
+* Having the build directory be a symlink no longer causes the --clean (default) option to wipe out your build.
+* Fix handling paths and URLs with spaces in them. #961
+* Loosen up Kramdown dependency to allow for using version 1.2.
+
 3.1.5
 ===
 
@@ -253,7 +258,7 @@ master
 3.0.0.rc.2
 ====
 * Doing a build now shows identical files (#475)
-* asset_hash, minify_javascript, and minify_css can now accept regexes, globs, 
+* asset_hash, minify_javascript, and minify_css can now accept regexes, globs,
   and procs (#489, #480)
 * The `link_to` helper can now accept a sitemap Resource as a URL (#474)
 * The preview server now correctly listens for changes (#487, #464)
