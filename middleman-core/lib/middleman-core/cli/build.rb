@@ -236,7 +236,7 @@ module Middleman::Cli
       @cleaning_queue = []
       return unless File.exist?(@destination)
 
-      paths = ::Middleman::Util.all_files_under(@destination)
+      paths = ::Middleman::Util.all_files_under(@destination).map(&:realpath)
       @cleaning_queue += paths.select do |path|
         path.to_s !~ /\/\./ || path.to_s =~ /\.(htaccess|htpasswd)/
       end
