@@ -13,7 +13,7 @@ if !defined?(::Padrino::Helpers)
   require 'vendored-middleman-deps/padrino-core-0.11.2/lib/padrino-core/support_lite'
   require 'vendored-middleman-deps/padrino-helpers-0.11.2/lib/padrino-helpers'
 end
-    
+
 class Padrino::Helpers::OutputHelpers::ErbHandler
   # Force Erb capture not to use safebuffer
   def capture_from_template(*args, &block)
@@ -176,11 +176,15 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
       if path.include?('//') or path.start_with?('data:')
         path
       else # rewrite paths to use their destination path
-        path = File.join(prefix, path)
-        if resource = sitemap.find_resource_by_path(path)
+        if resource = sitemap.find_resource_by_destination_path(url_for(path))
           resource.url
         else
-          File.join(config[:http_prefix], path)
+          path = File.join(prefix, path)
+          if resource = sitemap.find_resource_by_path(path)
+            resource.url
+          else
+            File.join(config[:http_prefix], path)
+          end
         end
       end
     end
