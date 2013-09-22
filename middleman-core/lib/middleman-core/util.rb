@@ -247,7 +247,16 @@ module Middleman
         current_source_dir = Pathname('/' + this_resource.path).dirname
         url_path = current_source_dir.join(url_path) if url_path.relative?
         resource = app.sitemap.find_resource_by_path(url_path.to_s)
-        resource_url = resource.url if resource
+        if resource
+          resource_url = resource.url
+        else
+          # Try to find a resource relative to destination paths
+          url_path = Pathname(uri.path)
+          current_source_dir = Pathname('/' + this_resource.destination_path).dirname
+          url_path = current_source_dir.join(url_path) if url_path.relative?
+          resource = app.sitemap.find_resource_by_destination_path(url_path.to_s)
+          resource_url = resource.url if resource
+        end
       elsif options[:find_resource] && uri.path
         resource = app.sitemap.find_resource_by_path(uri.path)
         resource_url = resource.url if resource
