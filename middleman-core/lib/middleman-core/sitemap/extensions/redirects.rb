@@ -77,7 +77,7 @@ module Middleman
           def template?
             true
           end
-      
+
           def render(*args, &block)
             url = ::Middleman::Util.url_for(store.app, @request_path, :relative => false, :find_resource => true)
 
@@ -89,6 +89,7 @@ module Middleman
                   <head>
                     <meta http-equiv=refresh content="0; url=#{url}" />
                     <meta name="robots" content="noindex,follow" />
+                    <meta http-equiv="cache-control" content="no-cache" />
                   </head>
                   <body>
                   </body>
