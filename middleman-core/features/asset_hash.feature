@@ -20,7 +20,7 @@ Feature: Assets get a file hash appended to their and references to them are upd
       | images/100px.gif |
       | javascripts/application.js |
       | stylesheets/site.css |
-      
+
     And the file "javascripts/application-1d8d5276.js" should contain "img.src = '/images/100px-5fd6fb90.jpg'"
     And the file "stylesheets/site-50eaa978.css" should contain "background-image: url('../images/100px-5fd6fb90.jpg')"
     And the file "index.html" should contain 'href="apple-touch-icon.png"'
@@ -33,7 +33,7 @@ Feature: Assets get a file hash appended to their and references to them are upd
     And the file "other/index.html" should contain 'href="../stylesheets/site-50eaa978.css"'
     And the file "other/index.html" should contain 'src="../javascripts/application-1d8d5276.js"'
     And the file "other/index.html" should contain 'src="../images/100px-5fd6fb90.jpg"'
-    
+
   Scenario: Hashed assets work in preview server
     Given the Server is running at "asset-hash-app"
     When I go to "/"
@@ -54,7 +54,7 @@ Feature: Assets get a file hash appended to their and references to them are upd
     When I go to "/stylesheets/site-50eaa978.css"
     Then I should see "background-image: url('../images/100px-5fd6fb90.jpg')"
 
-  Scenario: Enabling an asset host still produces hashed files and references  
+  Scenario: Enabling an asset host still produces hashed files and references
     Given the Server is running at "asset-hash-host-app"
     When I go to "/"
     Then I should see 'href="http://middlemanapp.com/stylesheets/site-54baaf3a.css"'
@@ -133,3 +133,15 @@ Feature: Assets get a file hash appended to their and references to them are upd
       | images/100px-5fd6fb90.gif |
       | javascripts/application-1d8d5276.js |
       | stylesheets/site.css |
+
+  Scenario: Enabling an asset host and referencing assets in CSS with URL fragments are rewritten correctly
+    Given a successfully built app at "asset-hash-host-app"
+    When I cd to "build"
+
+    Then the following files should exist:
+      | images/100px-5fd6fb90.jpg |
+    And the following files should not exist:
+      | images/100px.jpg |
+
+    And the file "stylesheets/fragment-c058ecb2.css" should contain "http://middlemanapp.com/images/100px-5fd6fb90.jpg#test"
+    And the file "stylesheets/fragment-c058ecb2.css" should not contain "http://middlemanapp.com/images/100px.jpg#test"
