@@ -17,7 +17,7 @@ Feature: Markdown support in Haml (Kramdown)
       """
     Given the Server is running at "markdown-in-haml-app"
     When I go to "/markdown_filter/"
-    Then I should see "<h1 id="h1">H1</h1>"
+    Then I should see ">H1</h1>"
     Then I should see "<p>paragraph</p>"
 
 
