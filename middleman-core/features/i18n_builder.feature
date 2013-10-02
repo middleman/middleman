@@ -23,7 +23,7 @@ Feature: i18n Builder
     Then the following files should not exist:
       | en/index.html                                 |
       | en/one.html                                   |
-      | en/morning.html                               |
+      | en/manana.html                                |
       | en/morning.en.html                            |
       | en/morning.es.html                            |
       | morning.en.html                               |
