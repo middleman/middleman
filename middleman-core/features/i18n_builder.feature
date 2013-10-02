@@ -22,8 +22,12 @@ Feature: i18n Builder
       | password.txt                                  |
     Then the following files should not exist:
       | en/index.html                                 |
-      | en/one.html                                   |
       | en/manana.html                                |
+      | en/hola.html                                  |
+      | en/una.html                                   |
+      | es/morning.html                               |
+      | es/one.html                                   |
+      | es/hello.html                                 |
       | en/morning.en.html                            |
       | en/morning.es.html                            |
       | morning.en.html                               |
