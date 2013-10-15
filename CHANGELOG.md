@@ -1,10 +1,14 @@
 master
 ===
 
+3.1.6
+===
+
 * Magic sitemap-aware links and image references now work when your markdown engine is Kramdown (the default for Middleman).
 * Having the build directory be a symlink no longer causes the --clean (default) option to wipe out your build.
 * Fix handling paths and URLs with spaces in them. #961
 * Loosen up Kramdown dependency to allow for using version 1.2.
+* Loosen up Listen dependency so it works with sass betas.
 
 3.1.5
 ===
