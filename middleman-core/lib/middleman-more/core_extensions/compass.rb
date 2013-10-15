@@ -34,7 +34,7 @@ class Middleman::CoreExtensions::Compass < ::Middleman::Extension
 
       # Disable this initially, the cache_buster extension will
       # re-enable it if requested.
-      compass_config.asset_cache_buster :none
+      compass_config.asset_cache_buster { |_| nil }
 
       # Disable this initially, the relative_assets extension will
 
