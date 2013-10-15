@@ -9,6 +9,9 @@ master
 * Fix handling paths and URLs with spaces in them. #961
 * Loosen up Kramdown dependency to allow for using version 1.2.
 * Loosen up Listen dependency so it works with sass betas.
+* Look for assets using url_for before falling back to the "images" directory. #1017
+* Do not cache generated redirect index file. #1019
+* Make an effort to handle spaces in filenames in a way that url_for can handle. #961
 
 3.1.5
 ===
