@@ -30,14 +30,14 @@ Ideally, a bug report should include a pull request with failing specs.
 
 ## Submitting a Pull Request
 1. [Fork the repository.][fork]
-2. [Create a topic branch.][branch]
+2. Create a topic [branch]. `git checkout -b local_topic_branch`
 3. Add specs for your unimplemented feature or bug fix.
 4. Run `bundle exec rake test`. If your specs pass, return to step 3.
 5. Implement your feature or bug fix.
 6. Run `bundle exec rake test`. If your specs fail, return to step 5.
-7. Add, commit, and push your changes.
+7. Add, commit, and push your changes. To push your topic branch use `git push -u origin local_topic_branch`.
 8. [Submit a pull request.][pr]
 
 [fork]: http://help.github.com/fork-a-repo/
-[branch]: http://learn.github.com/p/branching.html
+[branch]: https://help.github.com/articles/fork-a-repo#create-branches
 [pr]: http://help.github.com/send-pull-requests/
