@@ -18,16 +18,23 @@ module Middleman
 
           app.after_configuration do
             # QUESTION should base_dir be equal to docdir instead?
-            config[:asciidoc][:base_dir] = File.expand_path config[:source]
-            config[:asciidoc][:attributes].concat (config[:asciidoc_attributes] || [])
-            config[:asciidoc][:attributes] << %(imagesdir=#{File.join (config[:http_prefix] || '/').chomp('/'), config[:images_dir]})
+            config[:asciidoc][:base_dir] = source_dir
+            config[:asciidoc][:attributes].concat(config[:asciidoc_attributes] || [])
+            config[:asciidoc][:attributes] << %(imagesdir=#{File.join((config[:http_prefix] || '/').chomp('/'), config[:images_dir])})
             sitemap.provides_metadata(/\.adoc$/) do |path|
               # read the AsciiDoc header only to set page options and data
               # header values can be accessed via app.data.page.<name> in the layout
               doc = Asciidoctor.load_file path, :safe => :safe, :parse_header_only => true
 
               opts = {}
-              opts[:layout] = (doc.attr 'page-layout') if (doc.attr? 'page-layout')
+              if doc.attr? 'page-layout'
+                case (layout = (doc.attr 'page-layout'))
+                when '', 'false'
+                  opts[:layout] = false
+                else
+                  opts[:layout] = layout
+                end
+              end
               opts[:layout_engine] = (doc.attr 'page-layout-engine') if (doc.attr? 'page-layout-engine')
               # TODO override attributes to set docfile, docdir, docname, etc
               # alternative is to set :renderer_options, which get merged into options by the rendering extension

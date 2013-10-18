@@ -1,0 +1,4 @@
+Hello, AsciiDoc!
+ifdef::env-middleman[]
+Middleman, I am in you.
+endif::env-middleman[]
