@@ -2,6 +2,7 @@
 require "rack"
 require "rack/file"
 require "rack/lint"
+require "rack/head"
 
 module Middleman
   module CoreExtensions
@@ -69,6 +70,7 @@ module Middleman
           @rack_app ||= begin
             app = ::Rack::Builder.new
             app.use Rack::Lint
+            app.use Rack::Head
 
             Array(@middleware).each do |klass, options, block|
               app.use(klass, *options, &block)
