@@ -57,6 +57,7 @@ module Middleman
       # @return [Hash]
       def metadata
         result = store.metadata_for_path(path).dup
+        result[:blocks] = result[:blocks].dup
 
         file_meta = store.metadata_for_file(source_file).dup
         if file_meta.has_key?(:blocks)
