@@ -42,6 +42,5 @@ gem 'coveralls', :require => false
 
 # Middleman itself
 gem "middleman-core", :path => "middleman-core"
-gem "middleman-more", :path => "middleman-more"
 gem "middleman-sprockets", :github => "middleman/middleman-sprockets"
 gem "middleman", :path => "middleman"

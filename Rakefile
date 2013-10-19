@@ -7,7 +7,7 @@ require File.expand_path("../middleman-core/lib/middleman-core/version.rb", __FI
 ROOT = File.expand_path(File.dirname(__FILE__))
 GEM_NAME = 'middleman'
 
-middleman_gems = %w(middleman-more middleman-core middleman)
+middleman_gems = %w(middleman-core middleman)
 GEM_PATHS = middleman_gems.freeze
 
 def sh_rake(command)
@@ -18,7 +18,7 @@ def say(text, color=:magenta)
   n = { :bold => 1, :red => 31, :green => 32, :yellow => 33, :blue => 34, :magenta => 35 }.fetch(color, 0)
   puts "\e[%dm%s\e[0m" % [n, text]
 end
-  
+
 desc "Run 'install' for all projects"
 task :install do
   GEM_PATHS.each do |dir|
