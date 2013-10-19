@@ -60,18 +60,17 @@ module Middleman
 
         file_meta = store.metadata_for_file(source_file).dup
         if file_meta.has_key?(:blocks)
-          result[:blocks] << file_meta.delete(:blocks)
+          result[:blocks] += file_meta.delete(:blocks)
         end
         result.deep_merge!(file_meta)
 
         local_meta = @local_metadata.dup
         if local_meta.has_key?(:blocks)
-          result[:blocks] << local_meta.delete(:blocks)
+          result[:blocks] += local_meta.delete(:blocks)
         end
         result.deep_merge!(local_meta)
 
         result[:blocks] = result[:blocks].flatten.compact
-
         result
       end
 
@@ -80,10 +79,10 @@ module Middleman
       def add_metadata(metadata={}, &block)
         metadata = metadata.dup
         if metadata.has_key?(:blocks)
-          @local_metadata[:blocks] << metadata.delete(:blocks)
+          @local_metadata[:blocks] += metadata.delete(:blocks)
         end
         @local_metadata.deep_merge!(metadata)
-        @local_metadata[:blocks] << block if block_given?
+        @local_metadata[:blocks] += [ block ] if block_given?
       end
 
       # Get the output/preview URL for this resource
