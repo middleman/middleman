@@ -48,6 +48,9 @@ module Middleman
     # @return [Middleman::Logger] The logger
     def self.logger(*args)
       if !@_logger || args.length > 0
+        if args.length == 1 && (args.first.is_a?(::String) || args.first.respond_to?(:write))
+          args = [0, false, args.first]
+        end
         @_logger = ::Middleman::Logger.new(*args)
       end
 
