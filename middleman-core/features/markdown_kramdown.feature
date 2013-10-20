@@ -1,6 +1,7 @@
 Feature: Markdown (Kramdown) support
   In order to test included Kramdown support
 
+  @no18
   Scenario: Kramdown smartypants extension
     Given a fixture app "markdown-app"
     And a file named "config.rb" with:
