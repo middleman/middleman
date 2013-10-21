@@ -17,7 +17,7 @@ module Middleman
         @host = @options[:host] || Socket.gethostname
         @port = @options[:port] || DEFAULT_PORT
 
-        mount_instance
+        mount_instance(new_app)
         logger.info "== The Middleman is standing watch at http://#{host}:#{port}"
         logger.info "== Inspect your site configuration at http://#{host}:#{port}/__middleman/"
 
@@ -31,12 +31,17 @@ module Middleman
           # reloading later on.
           ::Middleman::Profiling.report("server_start")
 
-          @webrick.start
+          loop do
+            @webrick.start
 
-          # $mm_shutdown is set by the signal handler
-          if $mm_shutdown
-            shutdown
-            exit
+            # $mm_shutdown is set by the signal handler
+            if $mm_shutdown
+              shutdown
+              exit
+            elsif $mm_reload
+              $mm_reload = false
+              reload
+            end
           end
         end
       end
@@ -62,10 +67,18 @@ module Middleman
       def reload
         logger.info "== The Middleman is reloading"
 
-        unmount_instance
-        mount_instance
+        begin
+          app = new_app
+        rescue Exception => e
+          logger.error "Error reloading Middleman: #{e}\n#{e.backtrace.join("\n")}"
+          logger.info "== The Middleman is still running the application from before the error"
+          return
+        end
 
-        logger.info "== The Middleman is standing watch at http://#{host}:#{port}"
+        unmount_instance
+        mount_instance(app)
+
+        logger.info "== The Middleman has reloaded"
       end
 
       # Stop the current instance, exit Webrick
@@ -112,7 +125,8 @@ module Middleman
 
           # See if the changed file is config.rb or lib/*.rb
           if needs_to_reload?(added_and_modified + removed)
-            reload
+            $mm_reload = true
+            @webrick.stop
           else
             added_and_modified.each do |path|
               app.files.did_change(path)
@@ -168,8 +182,8 @@ module Middleman
       # Attach a new Middleman::Application instance
       # @param [Middleman::Application] app
       # @return [void]
-      def mount_instance
-        @app = new_app
+      def mount_instance(app)
+        @app = app
 
         @webrick ||= setup_webrick(@options[:debug] || false)
 
