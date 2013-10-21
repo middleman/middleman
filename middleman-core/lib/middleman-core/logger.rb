@@ -1,15 +1,14 @@
 # Use the Ruby/Rails logger
-require 'active_support/core_ext/logger'
+require 'active_support/notifications'
+require 'active_support/buffered_logger'
 require 'thread'
 
 module Middleman
 
   # The Middleman Logger
-  class Logger < ::Logger
-
-    # Force output to STDOUT
-    def initialize(log_level=1, is_instrumenting=false, target=STDOUT)
-      super(STDOUT)
+  class Logger < ActiveSupport::BufferedLogger
+    def initialize(log_level=1, is_instrumenting=false, target=$stdout)
+      super(target)
 
       self.level = log_level
       @instrumenting = is_instrumenting
