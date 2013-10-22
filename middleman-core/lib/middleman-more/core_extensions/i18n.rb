@@ -64,18 +64,15 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
     new_resources = []
 
     resources.each do |resource|
+      # if it uses file extension localization
       if !parse_locale_extension(resource.path).nil?
         result = parse_locale_extension(resource.path)
         lang, path, page_id = result
         new_resources << build_resource(path, resource.path, page_id, lang)
       elsif File.fnmatch?(File.join(options[:templates_dir], "**"), resource.path)
-        # get files in localizable (or configured directory)
         page_id = File.basename(resource.path, File.extname(resource.path))
-        # page id = index, test.en, test.es
         langs.each do |lang|
-          # Remove folder name
           path = resource.path.sub(options[:templates_dir], "")
-          # path is every file twice, problem?
           new_resources << build_resource(path, resource.path, page_id, lang)
         end
       end
@@ -175,12 +172,8 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
     ::I18n.locale = lang
     localized_page_id = ::I18n.t("paths.#{page_id}", :default => page_id, :fallback => [])
 
-    prefix = if @mount_at_root == lang
-      if options[:mount_at_root].nil?
-        lang.to_s + "/"
-      else
-        "/"
-      end
+    prefix = if options[:mount_at_root] == lang
+      "/"
     else
       replacement = options[:lang_map].fetch(lang, lang)
       options[:path].sub(":locale", replacement.to_s)
@@ -191,13 +184,9 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
       File.join(prefix, path.sub(page_id, localized_page_id))
     )
 
-    @_localization_data[path] = [lang, path, localized_page_id]
-
-    if @mount_at_root.nil?
-      puts "NOthing should be at root"
-    end
-
     path.gsub!(options[:templates_dir]+"/", "")
+
+    @_localization_data[path] = [lang, path, localized_page_id]
 
     p = ::Middleman::Sitemap::Resource.new(app.sitemap, path)
     p.proxy_to(source_path)
