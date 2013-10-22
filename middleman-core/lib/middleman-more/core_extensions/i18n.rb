@@ -55,7 +55,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
   def langs
     @_langs ||= get_known_languages
   end
-  
+
   # Update the main sitemap resource list
   # @return [void]
   def manipulate_resource_list(resources)
@@ -64,17 +64,17 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
     new_resources = []
 
     resources.each do |resource|
-      # If it's a "localizable template"
-      if File.fnmatch?(File.join(options[:templates_dir], "**"), resource.path)
+      # if it uses file extension localization
+      if !parse_locale_extension(resource.path).nil?
+        result = parse_locale_extension(resource.path)
+        lang, path, page_id = result
+        new_resources << build_resource(path, resource.path, page_id, lang)
+      elsif File.fnmatch?(File.join(options[:templates_dir], "**"), resource.path)
         page_id = File.basename(resource.path, File.extname(resource.path))
         langs.each do |lang|
-          # Remove folder name
           path = resource.path.sub(options[:templates_dir], "")
           new_resources << build_resource(path, resource.path, page_id, lang)
         end
-      elsif result = parse_locale_extension(resource.path)
-        lang, path, page_id = result
-        new_resources << build_resource(path, resource.path, page_id, lang)
       end
     end
 
@@ -90,7 +90,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
       ::I18n.reload!
     end
   end
-  
+
   def convert_glob_to_regex(glob)
     # File.fnmatch doesn't support brackets: {rb,yml,yaml}
     regex = @locales_glob.sub(/\./, '\.').sub(File.join("**", "*"), ".*").sub(/\//, '\/').sub("{rb,yml,yaml}", "(rb|ya?ml)")
@@ -163,26 +163,28 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
 
     path = path_bits.join('.')
     basename = File.basename(path_bits[0..-2].join('.'))
-
     [lang, path, basename]
   end
 
+  # called for every file in localizable
   def build_resource(path, source_path, page_id, lang)
     old_locale = ::I18n.locale
     ::I18n.locale = lang
-
     localized_page_id = ::I18n.t("paths.#{page_id}", :default => page_id, :fallback => [])
 
-    prefix = if @mount_at_root == lang
+    prefix = if options[:mount_at_root] == lang
       "/"
     else
       replacement = options[:lang_map].fetch(lang, lang)
       options[:path].sub(":locale", replacement.to_s)
     end
 
+    # path needs to be changed if file has a localizable extension.
     path = ::Middleman::Util.normalize_path(
       File.join(prefix, path.sub(page_id, localized_page_id))
     )
+
+    path.gsub!(options[:templates_dir]+"/", "")
 
     @_localization_data[path] = [lang, path, localized_page_id]
 
@@ -190,7 +192,6 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
     p.proxy_to(source_path)
 
     ::I18n.locale = old_locale
-
     p
   end
 
