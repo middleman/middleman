@@ -65,9 +65,12 @@ module Middleman
       end
 
       class Query
-        def initialize(model)
+        def initialize(model, opts={})
           @model = model
-          @where = {}
+          @where = opts[:where] || {}
+          @order_by = opts[:order_by]
+          @offset = opts[:offset]
+          @limit = opts[:limit]
         end
 
         def where(constraints_hash)
@@ -78,22 +81,30 @@ module Middleman
             selector_hash.update({ selector => value })
           end
           @where.merge! selector_hash
-          self
+          Query.new @model, opts
+        end
+
+        def opts
+          { :where => @where,
+            :order_by => @order_by,
+            :offset => @offset,
+            :limit => @limit
+          }
         end
 
         def order_by(field)
           @order_by = field.is_a?(Symbol) ? {field => :asc} : field
-          self
+          Query.new @model, opts
         end
 
         def offset(number)
           @offset = number
-          self
+          Query.new @model, opts
         end
 
         def limit(number)
           @limit = number
-          self
+          Query.new @model, opts
         end
 
         def first
