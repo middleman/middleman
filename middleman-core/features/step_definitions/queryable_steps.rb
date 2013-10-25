@@ -7,7 +7,7 @@ When /^I chain a where clause onto that query$/ do
 end
 
 Then /^the original query should remain unchanged$/ do
-  @query.should_not eql @new_query
+  @query.opts({}).should_not eql @new_query.opts({})
 end
 
 Then /^should initialize with an attribute and an operator$/ do

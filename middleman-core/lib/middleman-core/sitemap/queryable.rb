@@ -80,31 +80,27 @@ module Middleman
             selector = Selector.new(:attribute => attribute, :operator => 'equal')
             selector_hash.update({ selector => value })
           end
-          @where.merge! selector_hash
-          Query.new @model, opts
+          Query.new @model, opts(:where => @where.merge(selector_hash))
         end
 
-        def opts
-          { :where => @where,
+        def opts new_opts
+          { :where => {}.merge(@where),
             :order_by => @order_by,
             :offset => @offset,
             :limit => @limit
-          }
+          }.merge(new_opts)
         end
 
         def order_by(field)
-          @order_by = field.is_a?(Symbol) ? {field => :asc} : field
-          Query.new @model, opts
+          Query.new @model, opts(:order_by => field.is_a?(Symbol) ? {field => :asc} : field)
         end
 
         def offset(number)
-          @offset = number
-          Query.new @model, opts
+          Query.new @model, opts(:offset => number)
         end
 
         def limit(number)
-          @limit = number
-          Query.new @model, opts
+          Query.new @model, opts(:limit => number)
         end
 
         def first
