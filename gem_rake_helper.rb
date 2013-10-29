@@ -19,7 +19,6 @@ require 'cucumber/rake/task'
 Cucumber::Rake::Task.new do |t|
   exempt_tags = ["--tags ~@wip"]
   exempt_tags << "--tags ~@nojava" if RUBY_PLATFORM == "java"
-  exempt_tags << "--tags ~@no18" if RUBY_VERSION < "1.9"
   exempt_tags << "--tags ~@encoding" unless Object.const_defined?(:Encoding)
   exempt_tags << "--tags ~@travishatesme" if ENV["TRAVIS"] == "true"
 

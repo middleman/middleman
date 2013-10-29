@@ -34,8 +34,9 @@ Feature: Markdown (Redcarpet) support
     Then I should see "<sup>"
     When I go to "/lax_spacing.html"
     Then I should see "<p>hello</p>"
+    When I go to "/mailto.html"
+    Then I should see '<h1>✉ <a href="mailto:mail@mail.com">Mail</a></h1>'
 
-  @no18
   Scenario: Redcarpet 3 extensions
     Given a fixture app "markdown-app"
     And a file named "config.rb" with:
