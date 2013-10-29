@@ -1,6 +1,19 @@
 master
 ===
 
+3.2.0
+===
+
+* Dropped support for Ruby 1.8
+* Dropped empty "middleman-more" gem
+* Support the AsciiDoc format
+* `page_classes` now prefixes class names starting with numbers with an alpha character. "x" by default.
+* AREL-style sitemap query language no longer mutates on filter
+* Logging can now be forwarded to a file
+* Syntax errors in config.rb no longer hang the server
+* Fixed memory leak when adding blocks to resources. #1020
+* Support HEAD requests in the server
+
 3.1.6
 ===
 
