@@ -141,7 +141,14 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
       parts = path.split('.').first.split('/')
       parts.each_with_index { |path, i| classes << parts.first(i+1).join('_') }
 
-      classes.join(' ')
+      classes.map do |c|
+        # Replace weird class name characters
+        c = c.gsub(/[^a-zA-Z0-9\-_]/, '-')
+
+        # Class names can't start with a digit
+        c = "x#{c}" if c =~ /\A\d/
+        c
+      end.join(' ')
     end
 
     # Get the path of a file of a given type
