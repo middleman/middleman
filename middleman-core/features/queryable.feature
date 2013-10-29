@@ -29,3 +29,7 @@ Feature: Queryable Selector
     Then should support ordering by attribute descending
     Then should order by attribute ascending by default
     Then should exclude documents that do not own the attribute
+  Scenario: Passing queries around
+    Given a simple 'where' query
+    When I chain a where clause onto that query
+    Then the original query should remain unchanged

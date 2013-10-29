@@ -1,3 +1,15 @@
+Given /^a simple 'where' query$/ do
+  @query = Middleman::Sitemap::Queryable::Query.new({}).where(:foo => 'bar')
+end
+
+When /^I chain a where clause onto that query$/ do
+  @new_query = @query.where(:baz => 'foo')
+end
+
+Then /^the original query should remain unchanged$/ do
+  @query.opts({}).should_not eql @new_query.opts({})
+end
+
 Then /^should initialize with an attribute and an operator$/ do
   selector = ::Middleman::Sitemap::Queryable::Selector.new :attribute => :author, :operator => 'equal'
   :author.should == selector.attribute
