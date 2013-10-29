@@ -132,7 +132,7 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
     # Generate body css classes based on the current path
     #
     # @return [String]
-    def page_classes
+    def page_classes(options={})
       path = current_path.dup
       path << index_file if path.end_with?('/')
       path = ::Middleman::Util.strip_leading_slash(path)
@@ -141,12 +141,13 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
       parts = path.split('.').first.split('/')
       parts.each_with_index { |path, i| classes << parts.first(i+1).join('_') }
 
+      prefix = options[:numeric_prefix] || "x"
       classes.map do |c|
         # Replace weird class name characters
         c = c.gsub(/[^a-zA-Z0-9\-_]/, '-')
 
         # Class names can't start with a digit
-        c = "x#{c}" if c =~ /\A\d/
+        c = "#{prefix}#{c}" if c =~ /\A\d/
         c
       end.join(' ')
     end
