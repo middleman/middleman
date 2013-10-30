@@ -26,7 +26,7 @@ Feature: Markdown (Kramdown) support
 
       ![image](blank.gif)
 
-      [Mail me](mailto:ben@benhollis.net)
+      (mailto:mail@mail.com)
       """
     Given the Server is running at "markdown-app"
     When I go to "/link_and_image/"
@@ -34,3 +34,5 @@ Feature: Markdown (Kramdown) support
     Then I should see 'width="1"'
     And I should see 'height="1"'
     And I should see 'src="/images/blank.gif"'
+    And I should see 'src="/images/blank.gif"'
+    And I should see "&#109;&#097;&#105;&#108;&#064;&#109;&#097;&#105;&#108;&#046;&#099;&#111;&#109;"

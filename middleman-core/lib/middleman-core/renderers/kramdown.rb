@@ -19,8 +19,7 @@ module Middleman
       cattr_accessor :middleman_app
 
       def convert_img(el, indent)
-        # Constructing a new hash is required because Kramdown uses a crazy non-hash in 1.8
-        attrs = Hash[el.attr.dup.to_a]
+        attrs = el.attr.dup
 
         link = attrs.delete('src')
         middleman_app.image_tag(link, attrs)
@@ -28,16 +27,16 @@ module Middleman
 
       def convert_a(el, indent)
         content = inner(el, indent)
-        # Constructing a new hash is required because Kramdown uses a crazy non-hash in 1.8
-        attr = Hash[el.attr.dup.to_a]
-        if attr['href'] =~ /\Amailto:/
-          mail_addr = attr['href'].sub(/\Amailto:/, '')
-          attr['href'] = obfuscate('mailto') << ":" << obfuscate(mail_addr)
+
+        if el.attr['href'] =~ /\Amailto:/
+          mail_addr = el.attr['href'].sub(/\Amailto:/, '')
+          href = obfuscate('mailto') << ":" << obfuscate(mail_addr)
           content = obfuscate(content) if content == mail_addr
+          return %Q{<a href="#{href}">#{content}</a>}
         end
 
+        attr = el.attr.dup
         link = attr.delete('href')
-
         middleman_app.link_to(content, link, attr)
       end
     end
