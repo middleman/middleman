@@ -34,6 +34,7 @@ module Middleman::Cli
       :desc    => "Don't create a Gemfile"
     method_option "skip-bundle",
       :type    => :boolean,
+      :aliases => "-B",
       :default => false,
       :desc    => "Don't run bundle install"
     method_option "skip-git",
