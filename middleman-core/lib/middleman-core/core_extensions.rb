@@ -88,3 +88,8 @@ require "middleman-more/extensions/lorem"
 # elements.
 require "middleman-more/extensions/automatic_image_sizes"
 Middleman::Extensions::AutomaticImageSizes.register
+
+# AutomaticAltTags uses the file name of the `image_tag` to generate
+# a default `:alt` value.
+require "middleman-more/extensions/automatic_alt_tags"
+Middleman::Extensions::AutomaticAltTags.register
