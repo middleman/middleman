@@ -26,7 +26,7 @@ Feature: Markdown (Kramdown) support
 
       ![image](blank.gif)
 
-      (mailto:mail@mail.com)
+      [mail@mail.com](mailto:mail@mail.com)
       """
     Given the Server is running at "markdown-app"
     When I go to "/link_and_image/"
