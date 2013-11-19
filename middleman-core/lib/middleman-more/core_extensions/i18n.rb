@@ -69,7 +69,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
     new_resources = []
 
     resources.each do |resource|
-      # Ff it uses file extension localization
+      # If it uses file extension localization
       if !parse_locale_extension(resource.path).nil?
         result = parse_locale_extension(resource.path)
         lang, path, page_id = result
