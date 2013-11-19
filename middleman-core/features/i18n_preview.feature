@@ -1,6 +1,6 @@
 Feature: i18n Preview
   In order to preview localized html
-  
+
   Scenario: Running localize with the default config
     Given a fixture app "i18n-test-app"
     And a file named "config.rb" with:
@@ -80,8 +80,8 @@ Feature: i18n Preview
     Then I should see "Como Esta?"
     When I go to "/lang_es/hola.html"
     Then I should see "Hola World"
-    
-    
+
+
   Scenario: Running localize with the alt root config
     Given a fixture app "i18n-alt-root-app"
     And a file named "config.rb" with:
@@ -99,7 +99,7 @@ Feature: i18n Preview
     Then I should see "Como Esta?"
     When I go to "/es/hola.html"
     Then I should see "Hola World"
-    
+
   Scenario: Running localize with the lang map config
     Given a fixture app "i18n-test-app"
     And a file named "config.rb" with:
@@ -167,8 +167,8 @@ Feature: i18n Preview
     Then I should see "File Not Found"
     When I go to "/es/hola.html"
     Then I should see "File Not Found"
-    
-    
+
+
   Scenario: Running localize with the no mount config
     Given a fixture app "i18n-test-app"
     And a file named "config.rb" with:
@@ -188,7 +188,7 @@ Feature: i18n Preview
     Then I should see "Como Esta?"
     When I go to "/es/hola.html"
     Then I should see "Hola World"
-    
+
   Scenario: Running localize with the subset config
     Given a fixture app "i18n-test-app"
     And a file named "config.rb" with:
@@ -206,7 +206,7 @@ Feature: i18n Preview
     Then I should see "File Not Found"
     When I go to "/es/hola.html"
     Then I should see "File Not Found"
-    
+
   Scenario: Running localize with relative_assets
     Given a fixture app "i18n-test-app"
     And a file named "config.rb" with:
