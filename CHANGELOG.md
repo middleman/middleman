@@ -1,6 +1,8 @@
 master
 ===
 
+* Update Padrino to 0.11.4 and Tilt to 1.4.1
+
 3.2.0
 ===
 

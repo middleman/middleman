@@ -21,7 +21,7 @@ Gem::Specification.new do |s|
   # Core
   s.add_dependency("bundler", ["~> 1.1"])
   s.add_dependency("rack", [">= 1.4.5"])
-  s.add_dependency("tilt", ["~> 1.3.6"])
+  s.add_dependency("tilt", ["~> 1.4.1"])
 
   # Builder
   s.add_dependency("rack-test", ["~> 0.6.1"])

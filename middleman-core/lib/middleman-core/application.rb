@@ -117,6 +117,10 @@ module Middleman
     # @return [String]
     config.define_setting :encoding, "utf-8", 'Default string encoding for templates and output'
 
+    # Should Padrino include CRSF tag
+    # @return [Boolean]
+    config.define_setting :protect_from_csrf, false, 'Should Padrino include CRSF tag'
+
     # Activate custom features and extensions
     include Middleman::CoreExtensions::Extensions
 
