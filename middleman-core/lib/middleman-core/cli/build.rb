@@ -205,8 +205,13 @@ module Middleman::Cli
 
         output_path = render_to_file(resource)
 
-        if should_clean?
-          @to_clean.delete(output_path.realpath) if output_path.exist?
+        if should_clean? && output_path.exist?
+          if RUBY_PLATFORM =~ /darwin/
+            # handle UTF-8-MAC filename on MacOS
+            @to_clean.delete_if { |path| path.to_s.encode('UTF-8', 'UTF-8-MAC')  == output_path.realpath.to_s }
+          else
+            @to_clean.delete(output_path.realpath)
+          end
         end
       end
 
