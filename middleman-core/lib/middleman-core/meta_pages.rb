@@ -60,18 +60,28 @@ module Middleman
       # Inspect configuration
       def config(env)
         global_config = @middleman.inst.config.all_settings.map {|c| ConfigSetting.new(c) }
-        extension_config = Hash[@middleman.inst.extensions.map do |ext_name, extension|
-                                  opts = if extension.is_a?(::Middleman::Extension)
-                                           extension.options.all_settings.map {|c| ConfigSetting.new(c) }
-                                         else 
-                                           nil
-                                         end
-                                  [ext_name, opts]
-                                end]
+        extension_config = {}
 
-        template('config.html.erb', 
+        @middleman.inst.extensions.each do |ext_name, extension|
+          if extension.is_a?(Hash)
+            # Multiple instance extension
+            if extension.size == 1
+              extension_config[ext_name] = extension_options(extension.values.first)
+            else
+              extension.each do |inst, ext|
+                extension_config["#{ext_name} (#{inst})"] = extension_options(ext)
+              end
+            end
+          elsif extension.is_a?(::Middleman::Extension)
+            extension_config[ext_name] = extension_options(extension)
+          else
+            extension_config[ext_name] = nil
+          end
+        end
+
+        template('config.html.erb',
                  :global_config => global_config,
-                 :extension_config => extension_config, 
+                 :extension_config => extension_config,
                  :registered_extensions => Middleman::Extensions.registered.dup)
       end
 
@@ -87,6 +97,10 @@ module Middleman
       # Respond to an HTML request
       def response(content)
         [ 200, {"Content-Type" => "text/html"}, Array(content) ]
+      end
+
+      def extension_options(extension)
+        extension.options.all_settings.map {|c| ConfigSetting.new(c) }
       end
     end
   end
