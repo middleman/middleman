@@ -121,9 +121,9 @@ module Middleman
         self.defined_helpers ||= []
 
         if block
-          m = Module.new
-          m.module_eval(&block)
-          mod = [m]
+          mod = Module.new
+          mod.module_eval(&block)
+          m = [mod]
         end
 
         self.defined_helpers += m
