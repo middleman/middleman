@@ -173,8 +173,8 @@ module Middleman
           })
         end
 
-        delegate :use, :to => :"self.class" 
-        delegate :map, :to => :"self.class" 
+        delegate :use, :to => :"self.class"
+        delegate :map, :to => :"self.class"
 
         # Rack request
         # @return [Rack::Request]
@@ -287,8 +287,6 @@ module Middleman
         end
 
         # Immediately send static file
-        #
-        # @param [String] path File to send
         def send_file(resource, env)
           file      = ::Rack::File.new nil
           file.path = resource.source_file

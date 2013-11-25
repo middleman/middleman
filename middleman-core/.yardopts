@@ -1,0 +1,10 @@
+lib/**/*.rb
+--exclude lib/vendored-middleman-deps/
+--exclude lib/middleman-core/step_definitions
+--exclude lib/middleman-core/templates/default/
+--exclude lib/middleman-core/templates/html5/
+--exclude lib/middleman-core/templates/mobile/
+--exclude lib/middleman-core/templates/shared/
+--exclude lib/middleman-core/templates/extension/
+--no-private
+--hide-void-return

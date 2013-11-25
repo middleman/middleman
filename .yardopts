@@ -1,9 +1,10 @@
-middleman-*/lib/**/*.rb 
+middleman-*/lib/**/*.rb
 --exclude middleman-core/lib/vendored-middleman-deps/
 --exclude middleman-core/lib/middleman-core/step_definitions
 --exclude middleman-core/lib/middleman-core/templates/default/
 --exclude middleman-core/lib/middleman-core/templates/html5/
 --exclude middleman-core/lib/middleman-core/templates/mobile/
 --exclude middleman-core/lib/middleman-core/templates/shared/
+--exclude middleman-core/lib/middleman-core/templates/extension/
 --no-private
 --hide-void-return

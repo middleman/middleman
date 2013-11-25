@@ -38,9 +38,8 @@ module Middleman
 
           # Setup a proxy from a path to a target
           # @param [String] path
-          # @param [Hash] The :path value gives a request path if it
+          # @param [Hash] opts The :path value gives a request path if it
           # differs from the output path
-          # @return [void]
           def create_endpoint(path, opts={}, &block)
             endpoint = {
               :request_path => path
@@ -84,7 +83,7 @@ module Middleman
           def template?
             true
           end
-      
+
           def render(*args, &block)
             return self.output.call if self.output
           end

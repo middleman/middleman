@@ -113,12 +113,20 @@ module Middleman
         config.define_setting(key, default, description)
       end
 
-      def helpers(&block)
+      # Add helpers to the global Middleman application.
+      # This accepts either a list of modules to add on behalf
+      # of this extension, or a block whose contents will all
+      # be used as helpers in a new module.
+      def helpers(*m, &block)
         self.defined_helpers ||= []
 
-        m = Module.new
-        m.module_eval(&block)
-        self.defined_helpers << m
+        if block
+          m = Module.new
+          m.module_eval(&block)
+          mod = [m]
+        end
+
+        self.defined_helpers += m
       end
 
       def extension_name
@@ -172,7 +180,7 @@ module Middleman
 
     def app=(app)
       @app = app
-      
+
       (self.class.defined_helpers || []).each do |m|
         app.class.send(:include, m)
       end

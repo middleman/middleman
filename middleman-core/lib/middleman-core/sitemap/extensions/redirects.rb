@@ -38,8 +38,7 @@ module Middleman
 
           # Setup a redirect from a path to a target
           # @param [String] path
-          # @param [Hash] The :to value gives a target path
-          # @return [void]
+          # @param [Hash] opts The :to value gives a target path
           def create_redirect(path, opts={}, &block)
             if block_given?
               opts[:template] = block
