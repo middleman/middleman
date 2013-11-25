@@ -11,6 +11,7 @@ module Middleman
         /^\.bundle\//,
         /^vendor\//,
         /^\.sass-cache\//,
+        /^\.cache\//,
         /^\.git\//,
         /^\.gitignore$/,
         /\.DS_Store/,
