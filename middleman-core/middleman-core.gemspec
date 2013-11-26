@@ -37,6 +37,4 @@ Gem::Specification.new do |s|
 
   # i18n
   s.add_dependency("i18n", ["~> 0.6.1"])
-
-  s.post_install_message = "NOTICE: Middleman v3.2.x and greater no longer support Ruby 1.8"
 end
