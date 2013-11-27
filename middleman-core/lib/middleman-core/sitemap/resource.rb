@@ -23,6 +23,10 @@ module Middleman
       # @return [String]
       attr_reader :path
 
+      # The output path for this resource
+      # @return [String]
+      attr_accessor :destination_path
+
       # Set the on-disk source file for this resource
       # @return [String]
       # attr_reader :source_file
@@ -40,8 +44,7 @@ module Middleman
         @app         = @store.app
         @path        = path.gsub(' ', '%20') # handle spaces in filenames
         @source_file = source_file
-
-        @destination_paths = [@path]
+        @destination_path = @path
 
         @local_metadata = { :options => {}, :locals => {}, :page => {}, :blocks => [] }
       end
@@ -85,18 +88,9 @@ module Middleman
         @local_metadata[:blocks] += [ block ] if block_given?
       end
 
-      # Get the output/preview URL for this resource
+      # The output/preview URL for this resource
       # @return [String]
-      def destination_path
-        @destination_paths.last
-      end
-
-      # Set the output/preview URL for this resource
-      # @param [String] path
-      # @return [void]
-      def destination_path=(path)
-        @destination_paths << path
-      end
+      attr_accessor :destination_path
 
       # Extension of the path (i.e. '.js')
       # @return [String]
