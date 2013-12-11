@@ -18,19 +18,41 @@ class Middleman::Extensions::Gzip < ::Middleman::Extension
     require 'zlib'
     require 'stringio'
     require 'find'
+    require 'thread'
   end
 
   def after_build(builder)
+    num_threads = 4
     paths = ::Middleman::Util.all_files_under(app.build_dir)
     total_savings = 0
+
+    # Fill a queue with inputs
+    in_queue = Queue.new
+    paths.each do |path|
+      in_queue << path if options.exts.include?(path.extname)
+    end
+    num_paths = in_queue.size
+
+    # Farm out gzip tasks to threads and put the results in in_queue
+    out_queue = Queue.new
+    threads = num_threads.times.map do
+      Thread.new do
+        while path = in_queue.pop
+          out_queue << gzip_file(path.to_s)
+        end
+      end
+    end
+
+    # Insert a nil for each thread to stop it
+    num_threads.times do
+      in_queue << nil
+    end
 
     old_locale = I18n.locale
     I18n.locale = :en # use the english localizations for printing out file sizes to make sure the localizations exist
 
-    paths.each do |path|
-      next unless options.exts.include? path.extname
-
-      output_filename, old_size, new_size = gzip_file(path.to_s)
+    num_paths.times do
+      output_filename, old_size, new_size = out_queue.pop
 
       if output_filename
         total_savings += (old_size - new_size)
@@ -50,7 +72,7 @@ class Middleman::Extensions::Gzip < ::Middleman::Extension
 
     # Check if the right file's already there
     if File.exist?(output_filename) && File.mtime(output_filename) == input_file_time
-      return
+      return [nil, nil, nil]
     end
 
     File.open(output_filename, 'wb') do |f|
