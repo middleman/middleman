@@ -125,12 +125,14 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
       if path.is_a? Hash
         options = path
         path = current_path.dup
+      end
+
       path << index_file if path.end_with?('/')
       path = ::Middleman::Util.strip_leading_slash(path)
 
       classes = []
       parts = path.split('.').first.split('/')
-      parts.each_with_index { |path, i| classes << parts.first(i+1).join('_') }
+      parts.each_with_index { |_, i| classes << parts.first(i+1).join('_') }
 
       prefix = options[:numeric_prefix] || "x"
       classes.map do |c|
