@@ -121,8 +121,10 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
     # Generate body css classes based on the current path
     #
     # @return [String]
-    def page_classes(options={})
-      path = current_path.dup
+    def page_classes(path = current_path.dup, options={})
+      if path.is_a? Hash
+        options = path
+        path = current_path.dup
       path << index_file if path.end_with?('/')
       path = ::Middleman::Util.strip_leading_slash(path)
 
