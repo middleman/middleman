@@ -165,7 +165,7 @@ module Middleman::Cli
 
       if RUBY_PLATFORM =~ /darwin/
         # handle UTF-8-MAC filename on MacOS
-        @to_clean.map { |path| path.to_s.encode('UTF-8', 'UTF-8-MAC') }
+        @to_clean = @to_clean.map { |path| path.to_s.encode('UTF-8', 'UTF-8-MAC') }
       end
     end
 
