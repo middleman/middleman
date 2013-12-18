@@ -1,6 +1,13 @@
 master
 ===
 
+3.2.1
+===
+
+* Allow path to be passed to page_classes. #1120
+* Parallelize gzip extension using four threads. #1116
+* Fix locale issue when using gzip extension
+* Better handle UTF-8 filenames
 * Update Padrino to 0.11.4 and Tilt to 1.4.1
 
 3.2.0
