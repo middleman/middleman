@@ -159,6 +159,7 @@ module Middleman::Cli
       return unless File.exist?(@build_dir)
 
       paths = ::Middleman::Util.all_files_under(@build_dir).map(&:realpath).select(&:file?)
+
       @to_clean += paths.select do |path|
         path.to_s !~ /\/\./ || path.to_s =~ /\.(htaccess|htpasswd)/
       end
@@ -211,7 +212,13 @@ module Middleman::Cli
         output_path = render_to_file(resource)
 
         if should_clean? && output_path.exist?
-          @to_clean.delete(output_path.realpath)
+          if RUBY_PLATFORM =~ /darwin/
+            # handle UTF-8-MAC filename on MacOS
+
+            @to_clean.delete(output_path.realpath.to_s.encode('UTF-8', 'UTF-8-MAC'))
+          else
+            @to_clean.delete(output_path.realpath)
+          end
         end
       end
 
