@@ -4,6 +4,10 @@ require "tilt"
 # i18n Built-in
 require "i18n"
 
+# Don't fail on invalid locale, that's not what our current
+# users expect.
+::I18n.config.enforce_available_locales = false
+
 # Use ActiveSupport JSON
 require "active_support/json"
 require "active_support/core_ext/integer/inflections"
