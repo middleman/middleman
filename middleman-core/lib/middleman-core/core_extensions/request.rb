@@ -1,8 +1,8 @@
 # Built on Rack
-require "rack"
-require "rack/file"
-require "rack/lint"
-require "rack/head"
+require 'rack'
+require 'rack/file'
+require 'rack/lint'
+require 'rack/head'
 
 module Middleman
   module CoreExtensions
@@ -77,7 +77,7 @@ module Middleman
             end
 
             inner_app = inst(&block)
-            app.map("/") { run inner_app }
+            app.map('/') { run inner_app }
 
             Array(@mappings).each do |path, block|
               app.map(path, &block)
@@ -227,7 +227,7 @@ module Middleman
           start_time = Time.now
           current_path = nil
 
-          request_path = URI.decode(env["PATH_INFO"].dup)
+          request_path = URI.decode(env['PATH_INFO'].dup)
           if request_path.respond_to? :force_encoding
             request_path.force_encoding('UTF-8')
           end
@@ -296,7 +296,7 @@ module Middleman
           # Do not set Content-Type if status is 1xx, 204, 205 or 304, otherwise
           # Rack will throw an error (500)
           if !(100..199).include?(status) && ![204, 205, 304].include?(status)
-            response[1]['Content-Type'] = resource.content_type || "application/octet-stream"
+            response[1]['Content-Type'] = resource.content_type || 'application/octet-stream'
           end
           halt response
         end

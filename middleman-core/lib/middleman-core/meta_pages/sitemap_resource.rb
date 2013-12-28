@@ -17,10 +17,10 @@ module Middleman
       def render
         content_tag :div, :class => 'resource-details' do
           content_tag :table do
-            content = ""
+            content = ''
             resource_properties.each do |label, value|
               content << content_tag(:tr) do
-                row_content = ""
+                row_content = ''
                 row_content << content_tag(:th, label)
                 row_content << content_tag(:td, value)
                 row_content.html_safe

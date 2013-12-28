@@ -1,25 +1,25 @@
 # Using Tilt for templating
-require "tilt"
+require 'tilt'
 
 # i18n Built-in
-require "i18n"
+require 'i18n'
 
 # Don't fail on invalid locale, that's not what our current
 # users expect.
 ::I18n.config.enforce_available_locales = false
 
 # Use ActiveSupport JSON
-require "active_support/json"
-require "active_support/core_ext/integer/inflections"
-require "active_support/core_ext/float/rounding"
+require 'active_support/json'
+require 'active_support/core_ext/integer/inflections'
+require 'active_support/core_ext/float/rounding'
 
 # Simple callback library
-require "vendored-middleman-deps/hooks-0.2.0/lib/hooks"
+require 'vendored-middleman-deps/hooks-0.2.0/lib/hooks'
 
-require "middleman-core/sitemap"
+require 'middleman-core/sitemap'
 
-require "middleman-core/configuration"
-require "middleman-core/core_extensions"
+require 'middleman-core/configuration'
+require 'middleman-core/core_extensions'
 
 # Core Middleman Class
 module Middleman
@@ -51,7 +51,7 @@ module Middleman
     # Root project directory (overwritten in middleman build/server)
     # @return [String]
     def self.root
-      ENV["MM_ROOT"] || Dir.pwd
+      ENV['MM_ROOT'] || Dir.pwd
     end
     delegate :root, :to => :"self.class"
 
@@ -63,7 +63,7 @@ module Middleman
 
     # Name of the source directory
     # @return [String]
-    config.define_setting :source,      "source", 'Name of the source directory'
+    config.define_setting :source,      'source', 'Name of the source directory'
 
     # Middleman environment. Defaults to :development, set to :build by the build process
     # @return [String]
@@ -71,7 +71,7 @@ module Middleman
 
     # Which file should be used for directory indexes
     # @return [String]
-    config.define_setting :index_file,  "index.html", 'Which file should be used for directory indexes'
+    config.define_setting :index_file,  'index.html', 'Which file should be used for directory indexes'
 
     # Whether to strip the index file name off links to directory indexes
     # @return [Boolean]
@@ -83,35 +83,35 @@ module Middleman
 
     # Location of javascripts within source.
     # @return [String]
-    config.define_setting :js_dir,      "javascripts", 'Location of javascripts within source'
+    config.define_setting :js_dir,      'javascripts', 'Location of javascripts within source'
 
     # Location of stylesheets within source. Used by Compass.
     # @return [String]
-    config.define_setting :css_dir,     "stylesheets", 'Location of stylesheets within source'
+    config.define_setting :css_dir,     'stylesheets', 'Location of stylesheets within source'
 
     # Location of images within source. Used by HTML helpers and Compass.
     # @return [String]
-    config.define_setting :images_dir,  "images", 'Location of images within source'
+    config.define_setting :images_dir,  'images', 'Location of images within source'
 
     # Location of fonts within source. Used by Compass.
     # @return [String]
-    config.define_setting :fonts_dir,   "fonts", 'Location of fonts within source'
+    config.define_setting :fonts_dir,   'fonts', 'Location of fonts within source'
 
     # Location of partials within source. Used by renderers.
     # @return [String]
-    config.define_setting :partials_dir,   "", 'Location of partials within source'
+    config.define_setting :partials_dir,   '', 'Location of partials within source'
 
     # Location of layouts within source. Used by renderers.
     # @return [String]
-    config.define_setting :layouts_dir, "layouts", 'Location of layouts within source'
+    config.define_setting :layouts_dir, 'layouts', 'Location of layouts within source'
 
     # Where to build output files
     # @return [String]
-    config.define_setting :build_dir,   "build", 'Where to build output files'
+    config.define_setting :build_dir,   'build', 'Where to build output files'
 
     # Default prefix for building paths. Used by HTML helpers and Compass.
     # @return [String]
-    config.define_setting :http_prefix, "/", 'Default prefix for building paths'
+    config.define_setting :http_prefix, '/', 'Default prefix for building paths'
 
     # Default layout name
     # @return [String, Symbold]
@@ -119,7 +119,7 @@ module Middleman
 
     # Default string encoding for templates and output.
     # @return [String]
-    config.define_setting :encoding, "utf-8", 'Default string encoding for templates and output'
+    config.define_setting :encoding, 'utf-8', 'Default string encoding for templates and output'
 
     # Should Padrino include CRSF tag
     # @return [Boolean]
@@ -172,7 +172,7 @@ module Middleman
       # Evaluate a passed block if given
       instance_exec(&block) if block_given?
 
-      config[:source] = ENV["MM_SOURCE"] if ENV["MM_SOURCE"]
+      config[:source] = ENV['MM_SOURCE'] if ENV['MM_SOURCE']
 
       super
     end

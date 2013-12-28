@@ -1,4 +1,4 @@
-require "sass"
+require 'sass'
 
 module Middleman
   module Renderers
@@ -79,7 +79,7 @@ module Middleman
           
             parts = basename.split('.')
             parts.pop
-            more_opts[:css_filename] = File.join(location_of_sass_file, @context.config[:css_dir], parts.join("."))
+            more_opts[:css_filename] = File.join(location_of_sass_file, @context.config[:css_dir], parts.join('.'))
           end
           
           options.merge(more_opts)

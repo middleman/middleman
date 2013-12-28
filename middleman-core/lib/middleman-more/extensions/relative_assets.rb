@@ -15,7 +15,7 @@ class Middleman::Extensions::RelativeAssets < ::Middleman::Extension
     # @param [String] path
     # @param [String] prefix
     # @return [String]
-    def asset_url(path, prefix="")
+    def asset_url(path, prefix='')
       path = super(path, prefix)
 
       if path.include?('//') || path.start_with?('data:') || !current_resource

@@ -28,18 +28,18 @@ module Middleman
             begin
               # Look for the user's preferred engine
               if config[:markdown_engine] == :redcarpet
-                require "middleman-core/renderers/redcarpet"
+                require 'middleman-core/renderers/redcarpet'
                 ::Tilt.prefer(::Middleman::Renderers::RedcarpetTemplate, *markdown_exts)
                 MiddlemanRedcarpetHTML.middleman_app = self
               elsif config[:markdown_engine] == :kramdown
-                require "middleman-core/renderers/kramdown"
+                require 'middleman-core/renderers/kramdown'
                 ::Tilt.prefer(::Middleman::Renderers::KramdownTemplate, *markdown_exts)
                 MiddlemanKramdownHTML.middleman_app = self
               elsif !config[:markdown_engine].nil?
                 # Map symbols to classes
                 markdown_engine_klass = if config[:markdown_engine].is_a? Symbol
                   engine = config[:markdown_engine].to_s
-                  engine = engine == "rdiscount" ? "RDiscount" : engine.camelize
+                  engine = engine == 'rdiscount' ? 'RDiscount' : engine.camelize
                   config[:markdown_engine_prefix].const_get("#{engine}Template")
                 else
                   config[:markdown_engine_prefix]

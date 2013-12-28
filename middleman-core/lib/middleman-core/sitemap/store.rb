@@ -1,7 +1,7 @@
 # Used for merging results of metadata callbacks
-require "active_support/core_ext/hash/deep_merge"
+require 'active_support/core_ext/hash/deep_merge'
 require 'monitor'
-require "middleman-core/sitemap/queryable"
+require 'middleman-core/sitemap/queryable'
 
 module Middleman
 
@@ -161,7 +161,7 @@ module Middleman
           when Regexp
             next result unless request_path =~ matcher
           when String
-            next result unless File.fnmatch("/" + Util.strip_leading_slash(matcher), "/#{request_path}")
+            next result unless File.fnmatch('/' + Util.strip_leading_slash(matcher), "/#{request_path}")
           end
 
           metadata = callback.call(request_path).dup
@@ -178,14 +178,14 @@ module Middleman
       def file_to_path(file)
         file = File.join(@app.root, file)
 
-        prefix = @app.source_dir.sub(/\/$/, "") + "/"
+        prefix = @app.source_dir.sub(/\/$/, '') + '/'
         return false unless file.start_with?(prefix)
 
-        path = file.sub(prefix, "")
+        path = file.sub(prefix, '')
 
         # Replace a file name containing automatic_directory_matcher with a folder
         unless @app.config[:automatic_directory_matcher].nil?
-          path = path.gsub(@app.config[:automatic_directory_matcher], "/")
+          path = path.gsub(@app.config[:automatic_directory_matcher], '/')
         end
 
         extensionless_path(path)
@@ -211,7 +211,7 @@ module Middleman
           return unless @needs_sitemap_rebuild
           @needs_sitemap_rebuild = false
 
-          @app.logger.debug "== Rebuilding resource list"
+          @app.logger.debug '== Rebuilding resource list'
 
           @resources = @resource_list_manipulators.inject([]) do |result, (_, inst)|
             newres = inst.manipulate_resource_list(result)
@@ -244,7 +244,7 @@ module Middleman
       # @return [String]
       def remove_templating_extensions(path)
         # Strip templating extensions as long as Tilt knows them
-        path = path.sub(File.extname(path), "") while ::Tilt[path]
+        path = path.sub(File.extname(path), '') while ::Tilt[path]
         path
       end
 
@@ -270,7 +270,7 @@ module Middleman
         input_ext = File.extname(file)
 
         if !input_ext.empty?
-          input_ext = input_ext.split(".").last.to_sym
+          input_ext = input_ext.split('.').last.to_sym
           if @app.template_extensions.has_key?(input_ext)
             path << ".#{@app.template_extensions[input_ext]}"
           end

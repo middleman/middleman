@@ -1,6 +1,6 @@
 # encoding: UTF-8
 
-require "rack/test"
+require 'rack/test'
 
 Given /^a clean server$/ do
   @initialize_commands = []
@@ -9,7 +9,7 @@ end
 Given /^"([^\"]*)" feature is "([^\"]*)"$/ do |feature, state|
   @initialize_commands ||= []
 
-  if state == "enabled"
+  if state == 'enabled'
     @initialize_commands << lambda { activate(feature.to_sym) }
   end
 end
@@ -34,13 +34,13 @@ end
 Given /^the Server is running$/ do
   root_dir = File.expand_path(current_dir)
 
-  if File.exists?(File.join(root_dir, "source"))
-    ENV["MM_SOURCE"] = "source"
+  if File.exists?(File.join(root_dir, 'source'))
+    ENV['MM_SOURCE'] = 'source'
   else
-    ENV["MM_SOURCE"] = ""
+    ENV['MM_SOURCE'] = ''
   end
 
-  ENV["MM_ROOT"] = root_dir
+  ENV['MM_ROOT'] = root_dir
 
   initialize_commands = @initialize_commands || []
   initialize_commands.unshift lambda {

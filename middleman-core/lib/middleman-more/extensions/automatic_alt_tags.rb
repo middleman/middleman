@@ -10,8 +10,8 @@ class Middleman::Extensions::AutomaticAltTags < ::Middleman::Extension
     # containing image name.
     
     def image_tag(path)
-      if !path.include?("://")
-        params[:alt] ||= ""
+      if !path.include?('://')
+        params[:alt] ||= ''
 
         real_path = path
         real_path = File.join(images_dir, real_path) unless real_path.start_with?('/')
@@ -19,7 +19,7 @@ class Middleman::Extensions::AutomaticAltTags < ::Middleman::Extension
 
         if File.exists?(full_path)
           begin
-            alt_text = File.basename(full_path, ".*")
+            alt_text = File.basename(full_path, '.*')
             alt_text.capitalize!
             params[:alt] = alt_text
           end

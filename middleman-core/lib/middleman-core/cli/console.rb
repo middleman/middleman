@@ -9,18 +9,18 @@ module Middleman::Cli
 
     namespace :console
     
-    desc "console [options]", "Start an interactive console in the context of your Middleman application"
+    desc 'console [options]', 'Start an interactive console in the context of your Middleman application'
     method_option :environment,
-      :aliases => "-e",
+      :aliases => '-e',
       :default => ENV['MM_ENV'] || ENV['RACK_ENV'] || 'development',
-      :desc    => "The environment Middleman will run under"
+      :desc    => 'The environment Middleman will run under'
     method_option :verbose,
       :type    => :boolean,
       :default => false,
       :desc    => 'Print debug messages'
     def console
-      require "middleman-core"
-      require "irb"
+      require 'middleman-core'
+      require 'irb'
 
       opts = {
         :environment => options['environment'],

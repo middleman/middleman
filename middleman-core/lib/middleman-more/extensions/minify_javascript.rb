@@ -41,7 +41,7 @@ class Middleman::Extensions::MinifyJavascript < ::Middleman::Extension
     def call(env)
       status, headers, response = @app.call(env)
 
-      path = env["PATH_INFO"]
+      path = env['PATH_INFO']
 
       begin
         if @inline && (path.end_with?('.html') || path.end_with?('.php'))
@@ -49,13 +49,13 @@ class Middleman::Extensions::MinifyJavascript < ::Middleman::Extension
 
           minified = minify_inline_content(uncompressed_source)
 
-          headers["Content-Length"] = ::Rack::Utils.bytesize(minified).to_s
+          headers['Content-Length'] = ::Rack::Utils.bytesize(minified).to_s
           response = [minified]
         elsif path.end_with?('.js') && @ignore.none? {|ignore| Middleman::Util.path_match(ignore, path) }
           uncompressed_source = ::Middleman::Util.extract_response_text(response)
           minified = @compressor.compress(uncompressed_source)
 
-          headers["Content-Length"] = ::Rack::Utils.bytesize(minified).to_s
+          headers['Content-Length'] = ::Rack::Utils.bytesize(minified).to_s
           response = [minified]
         end
       rescue ExecJS::ProgramError => e

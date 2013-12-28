@@ -1,5 +1,5 @@
 # Core Pathname library used for traversal
-require "pathname"
+require 'pathname'
 
 module Middleman
 
@@ -8,20 +8,20 @@ module Middleman
       @_is_setup ||= begin
 
         # Only look for config.rb if MM_ROOT isn't set
-        if !ENV["MM_ROOT"] && found_path = locate_root
-          ENV["MM_ROOT"] = found_path
+        if !ENV['MM_ROOT'] && found_path = locate_root
+          ENV['MM_ROOT'] = found_path
         end
 
         is_bundler_setup = false
 
         # If we've found the root, try to setup Bundler
-        if ENV["MM_ROOT"]
+        if ENV['MM_ROOT']
 
-          root_gemfile = File.expand_path('Gemfile', ENV["MM_ROOT"])
+          root_gemfile = File.expand_path('Gemfile', ENV['MM_ROOT'])
           ENV['BUNDLE_GEMFILE'] ||= root_gemfile
 
           if !File.exists?(ENV['BUNDLE_GEMFILE'])
-            git_gemfile = Pathname.new(__FILE__).expand_path.parent.parent.parent + "Gemfile"
+            git_gemfile = Pathname.new(__FILE__).expand_path.parent.parent.parent + 'Gemfile'
             ENV['BUNDLE_GEMFILE'] = git_gemfile.to_s
           end
 
@@ -32,7 +32,7 @@ module Middleman
         end
 
         # Automatically discover extensions in RubyGems
-        require "middleman-core/extensions"
+        require 'middleman-core/extensions'
 
         if is_bundler_setup
           Bundler.require

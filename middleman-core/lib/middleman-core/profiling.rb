@@ -46,7 +46,7 @@ module Middleman
         result = RubyProf.stop
 
         printer = RubyProf::GraphHtmlPrinter.new(result)
-        outfile = File.join("profile", report_name)
+        outfile = File.join('profile', report_name)
         outfile = (outfile + '.html') unless outfile.end_with? '.html'
         FileUtils.mkdir_p(File.dirname(outfile))
         File.open(outfile, 'w') do |f|

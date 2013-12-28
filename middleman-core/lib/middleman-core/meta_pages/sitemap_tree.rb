@@ -13,7 +13,7 @@ module Middleman
       end
 
       def render
-        content = ""
+        content = ''
         @children.keys.sort do |a,b|
           a_subtree = @children[a]
           b_subtree = @children[b]
@@ -35,11 +35,11 @@ module Middleman
         end.each do |path_part|
           subtree = @children[path_part]
           content << "<details class='#{subtree.css_classes.join(' ')}'>"
-          content << "<summary>"
+          content << '<summary>'
           content << "<i class='icon-folder-open'></i>" unless subtree.is_a? SitemapResource
           content << "#{path_part}</summary>"
           content << subtree.render
-          content << "</details>"
+          content << '</details>'
         end
         content
       end
@@ -66,7 +66,7 @@ module Middleman
       end
 
       def to_s
-        "Sitemap Tree"
+        'Sitemap Tree'
       end
     end
   end

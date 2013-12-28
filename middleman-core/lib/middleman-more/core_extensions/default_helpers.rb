@@ -6,9 +6,9 @@ end
 class Padrino::Helpers::OutputHelpers::ErbHandler
   # Force Erb capture not to use safebuffer
   def capture_from_template(*args, &block)
-    self.output_buffer, _buf_was = "", self.output_buffer
+    self.output_buffer, _buf_was = '', self.output_buffer
     captured_block = block.call(*args)
-    ret = eval("@_out_buf", block.binding)
+    ret = eval('@_out_buf', block.binding)
     self.output_buffer = _buf_was
     [ ret, captured_block ]
   end
@@ -60,7 +60,7 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
 
     def capture_html(*args, &block)
       handler = auto_find_proper_handler(&block)
-      captured_block, captured_html = nil, ""
+      captured_block, captured_html = nil, ''
       if handler && handler.is_type? && handler.block_is_type?(block)
         captured_html, captured_block = handler.capture_from_template(*args, &block)
       end
@@ -134,7 +134,7 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
       parts = path.split('.').first.split('/')
       parts.each_with_index { |_, i| classes << parts.first(i+1).join('_') }
 
-      prefix = options[:numeric_prefix] || "x"
+      prefix = options[:numeric_prefix] || 'x'
       classes.map do |c|
         # Replace weird class name characters
         c = c.gsub(/[^a-zA-Z0-9\-_]/, '-')
@@ -162,7 +162,7 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
       source = source.to_s.tr(' ', '')
       ignore_extension = (kind == :images || kind == :fonts) # don't append extension
       source << ".#{kind}" unless ignore_extension || source.end_with?(".#{kind}")
-      asset_folder = "" if source.start_with?('/') # absolute path
+      asset_folder = '' if source.start_with?('/') # absolute path
 
       asset_url(source, asset_folder)
     end
@@ -172,7 +172,7 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
     # @param [String] path The path (such as "photo.jpg")
     # @param [String] prefix The type prefix (such as "images")
     # @return [String] The fully qualified asset url
-    def asset_url(path, prefix="")
+    def asset_url(path, prefix='')
       # Don't touch assets which already have a full path
       if path.include?('//') or path.start_with?('data:')
         path
@@ -215,12 +215,12 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
       options_index = block_given? ? 1 : 2
 
       if block_given? && args.size > 2
-        raise ArgumentError.new("Too many arguments to link_to(url, options={}, &block)")
+        raise ArgumentError.new('Too many arguments to link_to(url, options={}, &block)')
       end
 
       if url = args[url_arg_index]
         options = args[options_index] || {}
-        raise ArgumentError.new("Options must be a hash") unless options.is_a?(Hash)
+        raise ArgumentError.new('Options must be a hash') unless options.is_a?(Hash)
 
         # Transform the url through our magic url_for method
         args[url_arg_index] = url_for(url, options)

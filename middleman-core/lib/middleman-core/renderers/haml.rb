@@ -1,5 +1,5 @@
 # Require gem
-require "haml"
+require 'haml'
 
 module Middleman
   module Renderers

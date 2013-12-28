@@ -45,7 +45,7 @@ module Middleman
           app.define_hook :development_config
 
           app.config.define_setting :autoload_sprockets, true, 'Automatically load sprockets at startup?'
-          app.config[:autoload_sprockets] = (ENV["AUTOLOAD_SPROCKETS"] == "true") if ENV["AUTOLOAD_SPROCKETS"]
+          app.config[:autoload_sprockets] = (ENV['AUTOLOAD_SPROCKETS'] == 'true') if ENV['AUTOLOAD_SPROCKETS']
 
           app.extend ClassMethods
           app.send :include, InstanceMethods
@@ -147,7 +147,7 @@ module Middleman
 
           if config[:autoload_sprockets]
             begin
-              require "middleman-sprockets"
+              require 'middleman-sprockets'
               activate(:sprockets)
             rescue LoadError
             end
@@ -156,9 +156,9 @@ module Middleman
           run_hook :before_configuration
 
           # Check for and evaluate local configuration
-          local_config = File.join(root, "config.rb")
+          local_config = File.join(root, 'config.rb')
           if File.exists? local_config
-            logger.debug "== Reading:  Local config"
+            logger.debug '== Reading:  Local config'
             instance_eval File.read(local_config), local_config, 1
           end
 
@@ -171,14 +171,14 @@ module Middleman
           # don't completely reload middleman, I18n.load_path can get
           # polluted with paths from other test app directories that don't
           # exist anymore.
-          if ENV["TEST"]
+          if ENV['TEST']
             ::I18n.load_path.delete_if {|path| path =~ %r{tmp/aruba}}
             ::I18n.reload!
           end
 
           run_hook :after_configuration
 
-          logger.debug "Loaded extensions:"
+          logger.debug 'Loaded extensions:'
           self.extensions.each do |ext, klass|
             if ext.is_a?(Hash)
               ext.each do |k,_|

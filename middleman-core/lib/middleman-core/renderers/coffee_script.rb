@@ -1,5 +1,5 @@
 # Require gem
-require "coffee_script"
+require 'coffee_script'
 
 module Middleman
   module Renderers

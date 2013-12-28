@@ -21,7 +21,7 @@ module Middleman
             # Convert symbols to classes
             if config[:erb_engine].is_a? Symbol
               engine = engine.to_s
-              engine = engine == "erb" ? "ERB" : engine.camelize
+              engine = engine == 'erb' ? 'ERB' : engine.camelize
               config[:erb_engine] = config[:erb_engine_prefix].const_get("#{engine}Template")
             end
 

@@ -1,11 +1,11 @@
-require "middleman-core/sitemap/store"
-require "middleman-core/sitemap/resource"
+require 'middleman-core/sitemap/store'
+require 'middleman-core/sitemap/resource'
 
-require "middleman-core/sitemap/extensions/on_disk"
-require "middleman-core/sitemap/extensions/redirects"
-require "middleman-core/sitemap/extensions/request_endpoints"
-require "middleman-core/sitemap/extensions/proxies"
-require "middleman-core/sitemap/extensions/ignores"
+require 'middleman-core/sitemap/extensions/on_disk'
+require 'middleman-core/sitemap/extensions/redirects'
+require 'middleman-core/sitemap/extensions/request_endpoints'
+require 'middleman-core/sitemap/extensions/proxies'
+require 'middleman-core/sitemap/extensions/ignores'
 
 # Core Sitemap Extensions
 module Middleman

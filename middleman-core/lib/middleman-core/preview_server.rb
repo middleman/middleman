@@ -1,4 +1,4 @@
-require "webrick"
+require 'webrick'
 require 'middleman-core/meta_pages'
 
 module Middleman
@@ -29,7 +29,7 @@ module Middleman
 
           # Save the last-used @options so it may be re-used when
           # reloading later on.
-          ::Middleman::Profiling.report("server_start")
+          ::Middleman::Profiling.report('server_start')
 
           loop do
             @webrick.start
@@ -50,7 +50,7 @@ module Middleman
       # @return [void]
       def stop
         begin
-          logger.info "== The Middleman is shutting down"
+          logger.info '== The Middleman is shutting down'
         rescue
           # if the user closed their terminal STDOUT/STDERR won't exist
         end
@@ -65,20 +65,20 @@ module Middleman
       # Simply stop, then start the server
       # @return [void]
       def reload
-        logger.info "== The Middleman is reloading"
+        logger.info '== The Middleman is reloading'
 
         begin
           app = new_app
         rescue Exception => e
           logger.error "Error reloading Middleman: #{e}\n#{e.backtrace.join("\n")}"
-          logger.info "== The Middleman is still running the application from before the error"
+          logger.info '== The Middleman is still running the application from before the error'
           return
         end
 
         unmount_instance
         mount_instance(app)
 
-        logger.info "== The Middleman has reloaded"
+        logger.info '== The Middleman has reloaded'
       end
 
       # Stop the current instance, exit Webrick
@@ -115,7 +115,7 @@ module Middleman
 
         if first_run
           # Watcher Library
-          require "listen"
+          require 'listen'
           @listener = Listen.to(Dir.pwd, :relative_paths => true, :force_polling => @options[:force_polling])
           @listener.latency(@options[:latency])
         end
@@ -190,13 +190,13 @@ module Middleman
         start_file_watcher
 
         rack_app = app.class.to_rack_app
-        @webrick.mount "/", ::Rack::Handler::WEBrick, rack_app
+        @webrick.mount '/', ::Rack::Handler::WEBrick, rack_app
       end
 
       # Detach the current Middleman::Application instance
       # @return [void]
       def unmount_instance
-        @webrick.unmount "/"
+        @webrick.unmount '/'
         @app = nil
       end
 

@@ -10,18 +10,18 @@ module Middleman
       end
 
       def render
-        content = ""
+        content = ''
         key_classes = ['key']
         key_classes << 'modified' if @setting.value_set?
         content << content_tag(:span, @setting.key.inspect, :class => key_classes.join(' '))
-        content << " = "
+        content << ' = '
         content << content_tag(:span, @setting.value.inspect, :class => 'value')
         if @setting.default
           content << content_tag(:span, :class => 'default') do
             if @setting.value_set?
               "Default: #{@setting.default.inspect}"
             else
-              "(Default)"
+              '(Default)'
             end
           end
         end

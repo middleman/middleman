@@ -2,9 +2,9 @@
 class Middleman::Templates::Mobile < Middleman::Templates::Base
 
   # Slightly different paths
-  class_option :css_dir, :default => "css"
-  class_option :js_dir, :default => "js"
-  class_option :images_dir, :default => "img"
+  class_option :css_dir, :default => 'css'
+  class_option :js_dir, :default => 'js'
+  class_option :images_dir, :default => 'img'
 
   # Template files are relative to this file
   # @return [String]
@@ -15,9 +15,9 @@ class Middleman::Templates::Mobile < Middleman::Templates::Base
   # Output the files
   # @return [void]
   def build_scaffold!
-    template "shared/config.tt", File.join(location, "config.rb")
-    directory "mobile/source", File.join(location, "source")
-    empty_directory File.join(location, "source")
+    template 'shared/config.tt', File.join(location, 'config.rb')
+    directory 'mobile/source', File.join(location, 'source')
+    empty_directory File.join(location, 'source')
   end
 end
 
