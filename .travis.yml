@@ -1,15 +1,16 @@
+language: ruby
 rvm:
-  - 1.9.3
+  - ruby-head
+  - 2.1.0
   - 2.0.0
+  - 1.9.3
   - jruby-19mode
-
 matrix:
+  fast_finish: true
   allow_failures:
+    - rvm: ruby-head
+    - rvm: 2.1.0
     - rvm: jruby-19mode
-  
-script: "bundle exec rake test"
-
-before_install:
-  - git submodule update --init --recursive
-  
 env: TEST=true TRAVIS=true
+before_install: git submodule update --init --recursive
+script: bundle exec rake test
