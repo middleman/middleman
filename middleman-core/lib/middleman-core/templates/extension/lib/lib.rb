@@ -1,9 +1,9 @@
 # Require core library
-require "middleman-core"
+require 'middleman-core'
 
 # Extension namespace
 class MyExtension < ::Middleman::Extension
-  option :my_option, "default", "An example option"
+  option :my_option, 'default', 'An example option'
 
   def initialize(app, options_hash={}, &block)
     # Call super to build options from the options_hash

@@ -10,7 +10,7 @@ class Middleman::Extensions::CacheBuster < ::Middleman::Extension
         real_path = real_path.path if real_path.is_a? File
         real_path = real_path.gsub(File.join(root, build_dir), source)
         if File.readable?(real_path)
-          File.mtime(real_path).strftime("%s")
+          File.mtime(real_path).strftime('%s')
         else
           logger.warn "WARNING: '#{File.basename(path)}' was not found (or cannot be read) in #{File.dirname(real_path)}"
         end
@@ -22,10 +22,10 @@ class Middleman::Extensions::CacheBuster < ::Middleman::Extension
     # asset_url override if we're using cache busting
     # @param [String] path
     # @param [String] prefix
-    def asset_url(path, prefix="")
+    def asset_url(path, prefix='')
       http_path = super
 
-      if http_path.include?("://") || !%w(.css .png .jpg .jpeg .svg .svgz .js .gif).include?(File.extname(http_path))
+      if http_path.include?('://') || !%w(.css .png .jpg .jpeg .svg .svgz .js .gif).include?(File.extname(http_path))
         http_path
       else
         if respond_to?(:http_images_path) && prefix == http_images_path
@@ -37,15 +37,15 @@ class Middleman::Extensions::CacheBuster < ::Middleman::Extension
         if build?
           real_path_dynamic = File.join(build_dir, prefix, path)
           real_path_dynamic = File.expand_path(real_path_dynamic, root)
-          http_path << "?" + File.mtime(real_path_dynamic).strftime("%s") if File.readable?(real_path_dynamic)
+          http_path << '?' + File.mtime(real_path_dynamic).strftime('%s') if File.readable?(real_path_dynamic)
         elsif resource = sitemap.find_resource_by_path(real_path_static)
           if !resource.template?
-            http_path << "?" + File.mtime(resource.source_file).strftime("%s")
+            http_path << '?' + File.mtime(resource.source_file).strftime('%s')
           else
             # It's a template, possible with partials. We can't really
             # know when it's updated, so generate fresh cache buster every
             # time during developement
-            http_path << "?" + Time.now.strftime("%s")
+            http_path << '?' + Time.now.strftime('%s')
           end
         end
 

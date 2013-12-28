@@ -1,5 +1,5 @@
 # Load gem
-require "slim"
+require 'slim'
 
 module Middleman
   module Renderers

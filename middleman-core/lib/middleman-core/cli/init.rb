@@ -1,4 +1,4 @@
-require "middleman-core/templates"
+require 'middleman-core/templates'
 
 # CLI Module
 module Middleman::Cli
@@ -9,35 +9,35 @@ module Middleman::Cli
 
     namespace :init
 
-    desc "init NAME [options]", "Create new project NAME"
-    available_templates = ::Middleman::Templates.registered.keys.join(", ")
-    method_option "template",
-      :aliases => "-T",
-      :default => "default",
+    desc 'init NAME [options]', 'Create new project NAME'
+    available_templates = ::Middleman::Templates.registered.keys.join(', ')
+    method_option 'template',
+      :aliases => '-T',
+      :default => 'default',
       :desc    => "Use a project template: #{available_templates}"
-    method_option "css_dir",
+    method_option 'css_dir',
       # :default => "stylesheets",
       :desc    => 'The path to the css files'
-    method_option "js_dir",
+    method_option 'js_dir',
       # :default => "javascripts",
       :desc    => 'The path to the javascript files'
-    method_option "images_dir",
+    method_option 'images_dir',
       # :default => "images",
       :desc    => 'The path to the image files'
-    method_option "rack",
+    method_option 'rack',
       :type    => :boolean,
       :default => false,
       :desc    => 'Include a config.ru file'
-    method_option "skip-gemfile",
+    method_option 'skip-gemfile',
       :type    => :boolean,
       :default => false,
       :desc    => "Don't create a Gemfile"
-    method_option "skip-bundle",
+    method_option 'skip-bundle',
       :type    => :boolean,
-      :aliases => "-B",
+      :aliases => '-B',
       :default => false,
       :desc    => "Don't run bundle install"
-    method_option "skip-git",
+    method_option 'skip-git',
       :type    => :boolean,
       :default => false,
       :desc    => 'Skip Git ignores and keeps'
@@ -60,8 +60,8 @@ module Middleman::Cli
 
   # Map "i", "new" and "n" to "init"
   Base.map({
-    "i"   => "init",
-    "new" => "init",
-    "n"   => "init"
+    'i'   => 'init',
+    'new' => 'init',
+    'n'   => 'init'
   })
 end

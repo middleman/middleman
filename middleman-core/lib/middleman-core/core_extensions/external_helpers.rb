@@ -9,8 +9,8 @@ module Middleman
         # once registered
         def registered(app)
           # Setup a default helpers paths
-          app.config.define_setting :helpers_dir, "helpers", 'Directory to autoload helper modules from'
-          app.config.define_setting :helpers_filename_glob, "**.rb", 'Glob pattern for matching helper ruby files'
+          app.config.define_setting :helpers_dir, 'helpers', 'Directory to autoload helper modules from'
+          app.config.define_setting :helpers_filename_glob, '**.rb', 'Glob pattern for matching helper ruby files'
           app.config.define_setting :helpers_filename_to_module_name_proc, Proc.new { |filename|
             basename = File.basename(filename, File.extname(filename))
             basename.camelcase

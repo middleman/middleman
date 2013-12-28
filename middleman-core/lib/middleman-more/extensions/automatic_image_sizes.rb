@@ -5,7 +5,7 @@ class Middleman::Extensions::AutomaticImageSizes < ::Middleman::Extension
     super
 
     # Include 3rd-party fastimage library
-    require "vendored-middleman-deps/fastimage"
+    require 'vendored-middleman-deps/fastimage'
   end
 
   helpers do
@@ -16,8 +16,8 @@ class Middleman::Extensions::AutomaticImageSizes < ::Middleman::Extension
     # @param [Hash] params
     # @return [String]
     def image_tag(path, params={})
-      if !params.has_key?(:width) && !params.has_key?(:height) && !path.include?("://")
-        params[:alt] ||= ""
+      if !params.has_key?(:width) && !params.has_key?(:height) && !path.include?('://')
+        params[:alt] ||= ''
 
         real_path = path
         real_path = File.join(images_dir, real_path) unless real_path.start_with?('/')

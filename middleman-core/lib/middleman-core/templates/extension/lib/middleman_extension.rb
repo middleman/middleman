@@ -1,1 +1,1 @@
-require "<%= name %>"
+require '<%= name %>'

@@ -1,11 +1,11 @@
 class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
-  option :no_fallbacks, false, "Disable I18n fallbacks"
-  option :langs, nil, "List of langs, will autodiscover by default"
-  option :lang_map, {}, "Language shortname map"
-  option :path, "/:locale/", "URL prefix path"
-  option :templates_dir, "localizable", "Location of templates to be localized"
-  option :mount_at_root, nil, "Mount a specific language at the root of the site"
-  option :data, "locales", "The directory holding your locale configurations"
+  option :no_fallbacks, false, 'Disable I18n fallbacks'
+  option :langs, nil, 'List of langs, will autodiscover by default'
+  option :lang_map, {}, 'Language shortname map'
+  option :path, '/:locale/', 'URL prefix path'
+  option :templates_dir, 'localizable', 'Location of templates to be localized'
+  option :mount_at_root, nil, 'Mount a specific language at the root of the site'
+  option :data, 'locales', 'The directory holding your locale configurations'
 
   def initialize(app, options_hash={}, &block)
     super
@@ -17,11 +17,11 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
 
     # See https://github.com/svenfuchs/i18n/wiki/Fallbacks
     unless options[:no_fallbacks]
-      require "i18n/backend/fallbacks"
+      require 'i18n/backend/fallbacks'
       ::I18n::Backend::Simple.send(:include, ::I18n::Backend::Fallbacks)
     end
 
-    app.config.define_setting :locales_dir, "locales", 'The directory holding your locale configurations'
+    app.config.define_setting :locales_dir, 'locales', 'The directory holding your locale configurations'
 
     app.send :include, LocaleHelpers
   end
@@ -29,7 +29,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
   def after_configuration
     app.files.reload_path(app.config[:locals_dir] || options[:data])
 
-    @locales_glob = File.join(app.config[:locals_dir] || options[:data], "**", "*.{rb,yml,yaml}")
+    @locales_glob = File.join(app.config[:locals_dir] || options[:data], '**', '*.{rb,yml,yaml}')
     @locales_regex = convert_glob_to_regex(@locales_glob)
 
     @maps = {}
@@ -42,7 +42,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
     end
 
     # Don't output localizable files
-    app.ignore File.join(options[:templates_dir], "**")
+    app.ignore File.join(options[:templates_dir], '**')
 
     app.sitemap.provides_metadata_for_path(&method(:metadata_for_path))
     app.files.changed(&method(:on_file_changed))
@@ -75,11 +75,11 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
         lang, path, page_id = result
         new_resources << build_resource(path, resource.path, page_id, lang)
       # If it's a "localizable template"
-      elsif File.fnmatch?(File.join(options[:templates_dir], "**"), resource.path)
+      elsif File.fnmatch?(File.join(options[:templates_dir], '**'), resource.path)
         page_id = File.basename(resource.path, File.extname(resource.path))
         langs.each do |lang|
           # Remove folder name
-          path = resource.path.sub(options[:templates_dir], "")
+          path = resource.path.sub(options[:templates_dir], '')
           new_resources << build_resource(path, resource.path, page_id, lang)
         end
       end
@@ -100,7 +100,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
 
   def convert_glob_to_regex(glob)
     # File.fnmatch doesn't support brackets: {rb,yml,yaml}
-    regex = @locales_glob.sub(/\./, '\.').sub(File.join("**", "*"), ".*").sub(/\//, '\/').sub("{rb,yml,yaml}", "(rb|ya?ml)")
+    regex = @locales_glob.sub(/\./, '\.').sub(File.join('**', '*'), '.*').sub(/\//, '\/').sub('{rb,yml,yaml}', '(rb|ya?ml)')
     %r{^#{regex}}
   end
 
@@ -148,7 +148,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
       known_langs = app.files.known_paths.select do |p|
         p.to_s.match(@locales_regex) && (p.to_s.split(File::SEPARATOR).length === 2)
       end.map { |p|
-        File.basename(p.to_s).sub(/\.ya?ml$/, "").sub(/\.rb$/, "")
+        File.basename(p.to_s).sub(/\.ya?ml$/, '').sub(/\.rb$/, '')
       }.sort.map(&:to_sym)
     end
   end
@@ -179,10 +179,10 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
     localized_page_id = ::I18n.t("paths.#{page_id}", :default => page_id, :fallback => [])
 
     prefix = if (options[:mount_at_root] == lang) || (options[:mount_at_root] == nil && langs[0] == lang)
-      "/"
+      '/'
     else
       replacement = options[:lang_map].fetch(lang, lang)
-      options[:path].sub(":locale", replacement.to_s)
+      options[:path].sub(':locale', replacement.to_s)
     end
 
     # path needs to be changed if file has a localizable extension. (options[mount_at_root] == lang)
@@ -190,7 +190,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
       File.join(prefix, path.sub(page_id, localized_page_id))
     )
 
-    path.gsub!(options[:templates_dir]+"/", "")
+    path.gsub!(options[:templates_dir]+'/', '')
 
     @_localization_data[path] = [lang, path, localized_page_id]
 

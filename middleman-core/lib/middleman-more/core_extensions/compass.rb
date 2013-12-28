@@ -1,5 +1,5 @@
-require "middleman-core/renderers/sass"
-require "compass"
+require 'middleman-core/renderers/sass'
+require 'compass'
 
 class Middleman::CoreExtensions::Compass < ::Middleman::Extension
 
@@ -44,7 +44,7 @@ class Middleman::CoreExtensions::Compass < ::Middleman::Extension
       compass_config.output_style = :nested
 
       # No line-comments in test mode (changing paths mess with sha1)
-      compass_config.line_comments = false if ENV["TEST"]
+      compass_config.line_comments = false if ENV['TEST']
     end
 
     # Call hook

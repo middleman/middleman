@@ -1,6 +1,6 @@
 class Middleman::Extensions::AssetHash < ::Middleman::Extension
-  option :exts, %w(.jpg .jpeg .png .gif .js .css .otf .woff .eot .ttf .svg), "List of extensions that get asset hashes appended to them."
-  option :ignore, [], "Regexes of filenames to skip adding asset hashes to"
+  option :exts, %w(.jpg .jpeg .png .gif .js .css .otf .woff .eot .ttf .svg), 'List of extensions that get asset hashes appended to them.'
+  option :ignore, [], 'Regexes of filenames to skip adding asset hashes to'
 
   def initialize(app, options_hash={}, &block)
     super
@@ -41,7 +41,7 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
     return if ignored_resource?(resource)
 
     # Render through the Rack interface so middleware and mounted apps get a shot
-    response = @rack_client.get(URI.escape(resource.destination_path), {}, { "bypass_asset_hash" => "true" })
+    response = @rack_client.get(URI.escape(resource.destination_path), {}, { 'bypass_asset_hash' => 'true' })
     raise "#{resource.path} should be in the sitemap!" unless response.status == 200
 
     digest = Digest::SHA1.hexdigest(response.body)[0..7]
@@ -68,9 +68,9 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
       status, headers, response = @rack_app.call(env)
 
       # We don't want to use this middleware when rendering files to figure out their hash!
-      return [status, headers, response] if env["bypass_asset_hash"] == 'true'
+      return [status, headers, response] if env['bypass_asset_hash'] == 'true'
 
-      path = @middleman_app.full_path(env["PATH_INFO"])
+      path = @middleman_app.full_path(env['PATH_INFO'])
 
       if path =~ /(^\/$)|(\.(htm|html|php|css|js)$)/
         body = ::Middleman::Util.extract_response_text(response)

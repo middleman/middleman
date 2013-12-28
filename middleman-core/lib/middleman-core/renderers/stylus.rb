@@ -1,5 +1,5 @@
-require "stylus"
-require "stylus/tilt"
+require 'stylus'
+require 'stylus/tilt'
 
 module Middleman
   module Renderers

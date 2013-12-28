@@ -8,7 +8,7 @@ module Middleman
         # This resource's parent resource
         # @return [Middleman::Sitemap::Resource, nil]
         def parent
-          parts = path.split("/")
+          parts = path.split('/')
           parts.pop if path.include?(app.index_file)
 
           return nil if parts.length < 1
@@ -16,7 +16,7 @@ module Middleman
           parts.pop
           parts << app.index_file
 
-          parent_path = "/" + parts.join("/")
+          parent_path = '/' + parts.join('/')
 
           store.find_resource_by_destination_path(parent_path)
         end
@@ -30,7 +30,7 @@ module Middleman
             base_path = eponymous_directory_path
             prefix    = %r|^#{base_path.sub("/", "\\/")}|
           else
-            base_path = path.sub("#{app.index_file}", "")
+            base_path = path.sub("#{app.index_file}", '')
             prefix    = %r|^#{base_path.sub("/", "\\/")}|
           end
 
@@ -38,8 +38,8 @@ module Middleman
             if sub_resource.path == self.path || sub_resource.path !~ prefix
               false
             else
-              inner_path = sub_resource.path.sub(prefix, "")
-              parts = inner_path.split("/")
+              inner_path = sub_resource.path.sub(prefix, '')
+              parts = inner_path.split('/')
               if parts.length == 1
                 true
               elsif parts.length == 2
@@ -79,7 +79,7 @@ module Middleman
         # (e.g., for 'gallery.html' this would return 'gallery/')
         # @return [String]
         def eponymous_directory_path
-          path.sub(ext, '/').sub(/\/$/, "") + "/"
+          path.sub(ext, '/').sub(/\/$/, '') + '/'
         end
       end
     end

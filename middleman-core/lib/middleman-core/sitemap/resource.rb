@@ -1,5 +1,5 @@
-require "middleman-core/sitemap/extensions/traversal"
-require "middleman-core/sitemap/extensions/content_type"
+require 'middleman-core/sitemap/extensions/traversal'
+require 'middleman-core/sitemap/extensions/content_type'
 
 module Middleman
 
@@ -111,14 +111,14 @@ module Middleman
 
         relative_source = Pathname(source_file).relative_path_from(Pathname(app.root))
 
-        instrument "render.resource", :path => relative_source  do
+        instrument 'render.resource', :path => relative_source  do
           md   = metadata.dup
           opts = md[:options].deep_merge(opts)
 
           # Pass "renderer_options" hash from frontmatter along to renderer
-          if md[:page]["renderer_options"]
+          if md[:page]['renderer_options']
             opts[:renderer_options] = {}
-            md[:page]["renderer_options"].each do |k, v|
+            md[:page]['renderer_options'].each do |k, v|
               opts[:renderer_options][k.to_sym] = v
             end
           end
@@ -127,7 +127,7 @@ module Middleman
 
           # Forward remaining data to helpers
           if md.has_key?(:page)
-            app.data.store("page", md[:page])
+            app.data.store('page', md[:page])
           end
 
           blocks = Array(md[:blocks]).dup

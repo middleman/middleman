@@ -28,7 +28,7 @@ module Middleman
           def ignored?
             @app.ignore_manager.ignored?(path) ||
             (!proxy? &&
-              @app.ignore_manager.ignored?(source_file.sub("#{@app.source_dir}/", ""))
+              @app.ignore_manager.ignored?(source_file.sub("#{@app.source_dir}/", ''))
             )
           end
         end
@@ -64,7 +64,7 @@ module Middleman
               @ignored_callbacks << Proc.new {|p| p =~ path }
             elsif path.is_a? String
               path_clean = ::Middleman::Util.normalize_path(path)
-              if path_clean.include?("*") # It's a glob
+              if path_clean.include?('*') # It's a glob
                 @ignored_callbacks << Proc.new {|p| File.fnmatch(path_clean, p) }
               else
                 # Add a specific-path ignore unless that path is already covered

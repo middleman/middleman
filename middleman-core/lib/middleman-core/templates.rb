@@ -1,6 +1,6 @@
 # Use thor for template generation
-require "thor"
-require "thor/group"
+require 'thor'
+require 'thor/group'
 
 # Templates namespace
 module Middleman::Templates
@@ -37,14 +37,14 @@ module Middleman::Templates
     # The gemfile template to use. Individual templates can define this class
     # method to override the template path.
     def self.gemfile_template
-      "shared/Gemfile.tt"
+      'shared/Gemfile.tt'
     end
 
     # Required path for the new project to be generated
     argument :location, :type => :string
 
     # Name of the template being used to generate the project.
-    class_option :template, :default => "default"
+    class_option :template, :default => 'default'
 
     # Output a config.ru file for Rack if --rack is passed
     class_option :rack, :type => :boolean, :default => false
@@ -53,7 +53,7 @@ module Middleman::Templates
     # @return [void]
     def generate_rack!
       return unless options[:rack]
-      template "shared/config.ru", File.join(location, "config.ru")
+      template 'shared/config.ru', File.join(location, 'config.ru')
     end
 
     class_option :'skip-bundle', :type => :boolean, :default => false
@@ -63,12 +63,12 @@ module Middleman::Templates
     # @return [void]
     def generate_bundler!
       return if options[:'skip-gemfile']
-      template self.class.gemfile_template, File.join(location, "Gemfile")
+      template self.class.gemfile_template, File.join(location, 'Gemfile')
 
       return if options[:'skip-bundle']
       inside(location) do
         ::Middleman::Cli::Bundle.new.invoke(:bundle)
-      end unless ENV["TEST"]
+      end unless ENV['TEST']
     end
 
     # Output a .gitignore file
@@ -78,25 +78,25 @@ module Middleman::Templates
     # @return [void]
     def generate_gitignore!
       return if options[:'skip-git']
-      copy_file "shared/gitignore", File.join(location, ".gitignore")
+      copy_file 'shared/gitignore', File.join(location, '.gitignore')
     end
   end
 end
 
 # Default template
-require "middleman-core/templates/default"
+require 'middleman-core/templates/default'
 
 # HTML5 template
-require "middleman-core/templates/html5"
+require 'middleman-core/templates/html5'
 
 # HTML5 Mobile template
-require "middleman-core/templates/mobile"
+require 'middleman-core/templates/mobile'
 
 # SMACSS templates
-require "middleman-more/templates/smacss"
+require 'middleman-more/templates/smacss'
 
 # Local templates
-require "middleman-core/templates/local"
+require 'middleman-core/templates/local'
 
 # Barebones template
-require "middleman-core/templates/empty"
+require 'middleman-core/templates/empty'

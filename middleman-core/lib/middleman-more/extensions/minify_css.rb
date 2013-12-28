@@ -47,18 +47,18 @@ class Middleman::Extensions::MinifyCss < ::Middleman::Extension
     def call(env)
       status, headers, response = @app.call(env)
 
-      if inline_html_content?(env["PATH_INFO"])
+      if inline_html_content?(env['PATH_INFO'])
         minified = ::Middleman::Util.extract_response_text(response)
         minified.gsub!(INLINE_CSS_REGEX) do |match|
           $1 << @compressor.compress($2) << $3
         end
 
-        headers["Content-Length"] = ::Rack::Utils.bytesize(minified).to_s
+        headers['Content-Length'] = ::Rack::Utils.bytesize(minified).to_s
         response = [minified]
-      elsif standalone_css_content?(env["PATH_INFO"])
+      elsif standalone_css_content?(env['PATH_INFO'])
         minified_css = @compressor.compress(::Middleman::Util.extract_response_text(response))
 
-        headers["Content-Length"] = ::Rack::Utils.bytesize(minified_css).to_s
+        headers['Content-Length'] = ::Rack::Utils.bytesize(minified_css).to_s
         response = [minified_css]
       end
 

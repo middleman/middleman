@@ -1,17 +1,17 @@
 # Our custom logger
-require "middleman-core/logger"
+require 'middleman-core/logger'
 
 # For instrumenting
-require "active_support/notifications"
+require 'active_support/notifications'
 
 # Using Thor's indifferent hash access
-require "thor"
+require 'thor'
 
 # Core Pathname library used for traversal
-require "pathname"
+require 'pathname'
 
-require "tilt"
-require "rack/mime"
+require 'tilt'
+require 'rack/mime'
 
 module Middleman
 
@@ -59,7 +59,7 @@ module Middleman
 
     # Facade for ActiveSupport/Notification
     def self.instrument(name, payload={}, &block)
-      name << ".middleman" unless name =~ /\.middleman$/
+      name << '.middleman' unless name =~ /\.middleman$/
       ::ActiveSupport::Notifications.instrument(name, payload, &block)
     end
 
@@ -90,13 +90,13 @@ module Middleman
     # @return [String]
     def self.normalize_path(path)
       # The tr call works around a bug in Ruby's Unicode handling
-      path.sub(%r{^/}, "").tr('','')
+      path.sub(%r{^/}, '').tr('','')
     end
 
     # This is a separate method from normalize_path in case we
     # change how we normalize paths
     def self.strip_leading_slash(path)
-      path.sub(%r{^/}, "")
+      path.sub(%r{^/}, '')
     end
 
     # Extract the text of a Rack response as a string.

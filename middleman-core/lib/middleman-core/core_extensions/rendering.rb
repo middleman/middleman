@@ -28,65 +28,65 @@ module Middleman
           require 'active_support/core_ext/string/output_safety'
 
           # Activate custom renderers
-          require "middleman-core/renderers/erb"
+          require 'middleman-core/renderers/erb'
           app.register Middleman::Renderers::ERb
 
           # CoffeeScript Support
           begin
-            require "middleman-core/renderers/coffee_script"
+            require 'middleman-core/renderers/coffee_script'
             app.register Middleman::Renderers::CoffeeScript
           rescue LoadError
           end
 
           # Haml Support
           begin
-            require "middleman-core/renderers/haml"
+            require 'middleman-core/renderers/haml'
             app.register Middleman::Renderers::Haml
           rescue LoadError
           end
 
           # Sass Support
           begin
-            require "middleman-core/renderers/sass"
+            require 'middleman-core/renderers/sass'
             app.register Middleman::Renderers::Sass
           rescue LoadError
           end
 
           # Markdown Support
-          require "middleman-core/renderers/markdown"
+          require 'middleman-core/renderers/markdown'
           app.register Middleman::Renderers::Markdown
 
           # AsciiDoc Support
           begin
-            require "middleman-core/renderers/asciidoc"
+            require 'middleman-core/renderers/asciidoc'
             app.register Middleman::Renderers::AsciiDoc
           rescue LoadError
           end
 
           # Liquid Support
           begin
-            require "middleman-core/renderers/liquid"
+            require 'middleman-core/renderers/liquid'
             app.register Middleman::Renderers::Liquid
           rescue LoadError
           end
 
           # Slim Support
           begin
-            require "middleman-core/renderers/slim"
+            require 'middleman-core/renderers/slim'
             app.register Middleman::Renderers::Slim
           rescue LoadError
           end
 
           # Less Support
           begin
-            require "middleman-core/renderers/less"
+            require 'middleman-core/renderers/less'
             app.register Middleman::Renderers::Less
           rescue LoadError
           end
 
           # Stylus Support
           begin
-            require "middleman-core/renderers/stylus"
+            require 'middleman-core/renderers/stylus'
             app.register Middleman::Renderers::Stylus
           rescue LoadError
           end
@@ -198,7 +198,7 @@ module Middleman
             engine = File.extname(resource.source_file)[1..-1].to_sym
 
             # Look for partials relative to the current path
-            relative_dir = File.join(current_dir.sub(%r{^#{Regexp.escape(self.source_dir)}/?}, ""), data)
+            relative_dir = File.join(current_dir.sub(%r{^#{Regexp.escape(self.source_dir)}/?}, ''), data)
 
             # Try to use the current engine first
             found_partial, found_engine = resolve_template(relative_dir, :preferred_engine => engine, :try_without_underscore => true)
@@ -246,7 +246,7 @@ module Middleman
           context.current_engine, engine_was = engine, context.current_engine
           
           # Save current buffer for later
-          @_out_buf, _buf_was = "", @_out_buf
+          @_out_buf, _buf_was = '', @_out_buf
 
           # Read from disk or cache the contents of the file
           body = if opts[:template_body]
@@ -284,7 +284,7 @@ module Middleman
             content = callback.call(content, path, locs, template_class)
           end
 
-          output = ::ActiveSupport::SafeBuffer.new ""
+          output = ::ActiveSupport::SafeBuffer.new ''
           output.safe_concat content
           output
         ensure
@@ -400,7 +400,7 @@ module Middleman
         # @return [void]
         def wrap_layout(layout_name, &block)
           # Save current buffer for later
-          @_out_buf, _buf_was = "", @_out_buf
+          @_out_buf, _buf_was = '', @_out_buf
 
           layout_path = locate_layout(layout_name, self.current_engine)
 
@@ -414,7 +414,7 @@ module Middleman
             content = if block_given?
               capture_html(&block)
             else
-              ""
+              ''
             end
           ensure
             # Reset stored buffer
@@ -450,7 +450,7 @@ module Middleman
             on_disk_path  = File.expand_path(relative_path, self.source_dir)
 
             # By default, any engine will do
-            preferred_engine = "*"
+            preferred_engine = '*'
 
             # Unless we're specifically looking for a preferred engine
             if options.has_key?(:preferred_engine)
@@ -466,14 +466,14 @@ module Middleman
 
               # Change the glob to only look for the matched extensions
               if matched_exts.length > 0
-                preferred_engine = "{" + matched_exts.join(",") + "}"
+                preferred_engine = '{' + matched_exts.join(',') + '}'
               else
                 return false
               end
             end
 
             # Look for files that match
-            path_with_ext = on_disk_path + "." + preferred_engine
+            path_with_ext = on_disk_path + '.' + preferred_engine
 
             found_path = Dir[path_with_ext].find do |path|
               ::Tilt[path]
@@ -481,8 +481,8 @@ module Middleman
 
             if !found_path && options[:try_without_underscore] &&
               path_no_underscore = path_with_ext.
-                sub(relative_path, relative_path.sub(/^_/, "").
-                sub(/\/_/, "/"))
+                sub(relative_path, relative_path.sub(/^_/, '').
+                sub(/\/_/, '/'))
               found_path = Dir[path_no_underscore].find do |path|
                 ::Tilt[path]
               end

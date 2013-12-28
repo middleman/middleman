@@ -1,5 +1,5 @@
-require "active_support/core_ext/class/attribute"
-require "active_support/core_ext/module/delegation"
+require 'active_support/core_ext/class/attribute'
+require 'active_support/core_ext/module/delegation'
 
 module Middleman
 
@@ -53,7 +53,7 @@ module Middleman
   end
 
   # Where to look in gems for extensions to auto-register
-  EXTENSION_FILE = File.join("lib", "middleman_extension.rb") unless const_defined?(:EXTENSION_FILE)
+  EXTENSION_FILE = File.join('lib', 'middleman_extension.rb') unless const_defined?(:EXTENSION_FILE)
 
   class << self
     # Automatically load extensions from available RubyGems
@@ -61,7 +61,7 @@ module Middleman
     #
     # @private
     def load_extensions_in_path
-      require "rubygems"
+      require 'rubygems'
 
       extensions = rubygems_latest_specs.select do |spec|
         spec_has_file?(spec, EXTENSION_FILE)
@@ -130,7 +130,7 @@ module Middleman
       end
 
       def extension_name
-        self.ext_name || self.name.underscore.split("/").last.to_sym
+        self.ext_name || self.name.underscore.split('/').last.to_sym
       end
 
       def register(n=self.extension_name)

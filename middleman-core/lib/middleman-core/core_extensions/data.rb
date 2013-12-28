@@ -10,10 +10,10 @@ module Middleman
         # @private
         def registered(app)
           # Data formats
-          require "yaml"
-          require "active_support/json"
+          require 'yaml'
+          require 'active_support/json'
 
-          app.config.define_setting :data_dir, "data", "The directory data files are stored in"
+          app.config.define_setting :data_dir, 'data', 'The directory data files are stored in'
           app.send :include, InstanceMethods
         end
         alias :included :registered
@@ -101,7 +101,7 @@ module Middleman
 
           if %w(.yaml .yml).include?(extension)
             data = YAML.load_file(full_path)
-          elsif extension == ".json"
+          elsif extension == '.json'
             data = ActiveSupport::JSON.decode(full_path.read)
           else
             return

@@ -19,7 +19,7 @@ module Middleman
         meta_pages = self
         @rack_app = Rack::Builder.new do
           # Serve assets from metadata/assets
-          use Rack::Static, :urls => ["/assets"], :root => File.join(File.dirname(__FILE__), 'meta_pages')
+          use Rack::Static, :urls => ['/assets'], :root => File.join(File.dirname(__FILE__), 'meta_pages')
 
           map '/' do
             run meta_pages.method(:index)
@@ -96,7 +96,7 @@ module Middleman
 
       # Respond to an HTML request
       def response(content)
-        [ 200, {"Content-Type" => "text/html"}, Array(content) ]
+        [ 200, {'Content-Type' => 'text/html'}, Array(content) ]
       end
 
       def extension_options(extension)

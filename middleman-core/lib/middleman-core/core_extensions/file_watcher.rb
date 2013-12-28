@@ -1,5 +1,5 @@
-require "pathname"
-require "set"
+require 'pathname'
+require 'set'
 
 # API for watching file change events
 module Middleman
@@ -128,7 +128,7 @@ module Middleman
             path = Pathname(path)
             return unless path.exist?
 
-            glob = (path + "**").to_s
+            glob = (path + '**').to_s
             subset = @known_paths.select { |p| p.fnmatch(glob) }
 
             ::Middleman::Util.all_files_under(path).each do |filepath|

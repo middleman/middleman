@@ -8,7 +8,7 @@ module Middleman::Cli
 
     namespace :bundle
 
-    desc "bundle", "Setup initial bundle", :hide => true
+    desc 'bundle', 'Setup initial bundle', :hide => true
 
     # The setup task
     def bundle
@@ -23,11 +23,11 @@ module Middleman::Cli
 
     namespace :upgrade
 
-    desc "upgrade", "Upgrade installed bundle"
+    desc 'upgrade', 'Upgrade installed bundle'
 
     # The upgrade task
     def upgrade
-      inside(ENV["MM_ROOT"]) do
+      inside(ENV['MM_ROOT']) do
         run('bundle update')#, :capture => true)
       end
     end
@@ -35,6 +35,6 @@ module Middleman::Cli
 
   # Map "u" to "upgrade"
   Base.map({
-    "u" => "upgrade"
+    'u' => 'upgrade'
   })
 end

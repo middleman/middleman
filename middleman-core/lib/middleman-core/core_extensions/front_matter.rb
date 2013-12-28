@@ -1,11 +1,11 @@
-require "active_support/core_ext/hash/keys"
+require 'active_support/core_ext/hash/keys'
 require 'pathname'
 
 # Parsing YAML frontmatter
-require "yaml"
+require 'yaml'
 
 # Parsing JSON frontmatter
-require "active_support/json"
+require 'active_support/json'
 
 # Extensions namespace
 module Middleman::CoreExtensions
@@ -108,9 +108,9 @@ module Middleman::CoreExtensions
       # Copied from Sitemap::Store#file_to_path, but without
       # removing the file extension
       file = File.join(app.root, file)
-      prefix = app.source_dir.sub(/\/$/, "") + "/"
+      prefix = app.source_dir.sub(/\/$/, '') + '/'
       return unless file.include?(prefix)
-      path = file.sub(prefix, "").sub(/\.frontmatter$/, "")
+      path = file.sub(prefix, '').sub(/\.frontmatter$/, '')
 
       @cache.delete(path)
     end
@@ -122,7 +122,7 @@ module Middleman::CoreExtensions
     def parse_yaml_front_matter(content, full_path)
       yaml_regex = /\A(---\s*\n.*?\n?)^(---\s*$\n?)/m
       if content =~ yaml_regex
-        content = content.sub(yaml_regex, "")
+        content = content.sub(yaml_regex, '')
 
         begin
           data = YAML.load($1) || {}
@@ -144,10 +144,10 @@ module Middleman::CoreExtensions
       json_regex = /\A(;;;\s*\n.*?\n?)^(;;;\s*$\n?)/m
 
       if content =~ json_regex
-        content = content.sub(json_regex, "")
+        content = content.sub(json_regex, '')
 
         begin
-          json = ($1+$2).sub(";;;", "{").sub(";;;", "}")
+          json = ($1+$2).sub(';;;', '{').sub(';;;', '}')
           data = ActiveSupport::JSON.decode(json).symbolize_keys
         rescue => e
           app.logger.error "JSON Exception parsing #{full_path}: #{e.message}"
@@ -196,7 +196,7 @@ module Middleman::CoreExtensions
     end
 
     def normalize_path(path)
-      path.sub(%r{^#{Regexp.escape(app.source_dir)}\/}, "")
+      path.sub(%r{^#{Regexp.escape(app.source_dir)}\/}, '')
     end
   end
 end

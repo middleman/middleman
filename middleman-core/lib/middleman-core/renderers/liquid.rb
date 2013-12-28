@@ -1,5 +1,5 @@
 # Require Gem
-require "liquid"
+require 'liquid'
 
 module Middleman
   module Renderers

@@ -1,11 +1,11 @@
-require "middleman-core"
-require "fileutils"
+require 'middleman-core'
+require 'fileutils'
 require 'set'
 
 # CLI Module
 module Middleman::Cli
   # Alias "b" to "build"
-  Base.map({ "b" => "build" })
+  Base.map({ 'b' => 'build' })
 
   # The CLI Build class
   class Build < Thor
@@ -18,14 +18,14 @@ module Middleman::Cli
 
     namespace :build
 
-    desc "build [options]", "Builds the static site for deployment"
+    desc 'build [options]', 'Builds the static site for deployment'
     method_option :clean,
       :type    => :boolean,
       :default => true,
       :desc    => 'Remove orphaned files from build (--no-clean to disable)'
     method_option :glob,
       :type    => :string,
-      :aliases => "-g",
+      :aliases => '-g',
       :default => nil,
       :desc    => 'Build a subset of the project'
     method_option :verbose,
@@ -44,33 +44,33 @@ module Middleman::Cli
     # Core build Thor command
     # @return [void]
     def build
-      if !ENV["MM_ROOT"]
-        raise Thor::Error, "Error: Could not find a Middleman project config, perhaps you are in the wrong folder?"
+      if !ENV['MM_ROOT']
+        raise Thor::Error, 'Error: Could not find a Middleman project config, perhaps you are in the wrong folder?'
       end
 
       # Use Rack::Test for inspecting a running server for output
-      require "rack"
-      require "rack/test"
+      require 'rack'
+      require 'rack/test'
 
       require 'find'
 
       @debugging = Middleman::Cli::Base.respond_to?(:debugging) && Middleman::Cli::Base.debugging
       self.had_errors = false
 
-      self.class.shared_instance(options["verbose"], options["instrument"])
+      self.class.shared_instance(options['verbose'], options['instrument'])
 
       opts = {}
-      opts[:glob]  = options["glob"] if options.has_key?("glob")
-      opts[:clean] = options["clean"]
+      opts[:glob]  = options['glob'] if options.has_key?('glob')
+      opts[:clean] = options['clean']
 
       action BuildAction.new(self, opts)
 
       self.class.shared_instance.run_hook :after_build, self
 
       if self.had_errors && !self.debugging
-        msg = "There were errors during this build"
-        unless options["verbose"]
-          msg << ", re-run with `middleman build --verbose` to see the full exception."
+        msg = 'There were errors during this build'
+        unless options['verbose']
+          msg << ', re-run with `middleman build --verbose` to see the full exception.'
         end
         self.shell.say msg, :red
       end
@@ -134,7 +134,7 @@ module Middleman::Cli
         base.remove_file f, :force => true
       end
 
-      Dir[@build_dir.join("**", "*")].select {|d| File.directory?(d) }.each do |d|
+      Dir[@build_dir.join('**', '*')].select {|d| File.directory?(d) }.each do |d|
         base.remove_file d, :force => true if directory_empty? d
       end
     end
@@ -177,15 +177,15 @@ module Middleman::Cli
       sort_order = %w(.png .jpeg .jpg .gif .bmp .svg .svgz .ico .woff .otf .ttf .eot .js .css)
 
       # Pre-request CSS to give Compass a chance to build sprites
-      logger.debug "== Prerendering CSS"
+      logger.debug '== Prerendering CSS'
 
       @app.sitemap.resources.select do |resource|
-        resource.ext == ".css"
+        resource.ext == '.css'
       end.each do |resource|
         @rack.get(URI.escape(resource.destination_path))
       end
 
-      logger.debug "== Checking for Compass sprites"
+      logger.debug '== Checking for Compass sprites'
 
       # Double-check for compass sprites
       @app.files.find_new_files((@source_dir + @app.images_dir).relative_path_from(@app.root_path))
@@ -195,7 +195,7 @@ module Middleman::Cli
       # find files in the build folder when it needs to generate sprites for the
       # css files
 
-      logger.debug "== Building files"
+      logger.debug '== Building files'
 
       resources = @app.sitemap.resources.sort_by do |r|
         sort_order.index(r.ext) || 100
@@ -222,7 +222,7 @@ module Middleman::Cli
         end
       end
 
-      ::Middleman::Profiling.report("build")
+      ::Middleman::Profiling.report('build')
     end
 
     # Render a resource to a file.
@@ -268,14 +268,14 @@ module Middleman::Cli
       if base.debugging
         raise e
         exit(1)
-      elsif base.options["verbose"]
+      elsif base.options['verbose']
         base.shell.say response, :red
       end
     end
 
     def binary_encode(string)
       if string.respond_to?(:force_encoding)
-        string.force_encoding("ascii-8bit")
+        string.force_encoding('ascii-8bit')
       end
       string
     end

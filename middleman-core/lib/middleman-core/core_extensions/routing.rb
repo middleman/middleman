@@ -35,7 +35,7 @@ module Middleman
           opts[:layout] = config[:layout] if opts[:layout].nil?
 
           # If the url is a regexp
-          if url.is_a?(Regexp) || url.include?("*")
+          if url.is_a?(Regexp) || url.include?('*')
 
             # Use the metadata loop for matching against paths at runtime
             sitemap.provides_metadata_for_path(url) do |_|

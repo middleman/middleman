@@ -1,0 +1,25 @@
+AllCops:
+  Includes:
+    - Rakefile
+    - config.ru
+  Excludes:
+    - script/**
+    - vendor/**
+    - bin/**
+    - middleman-core/lib/vendored-middleman-deps/**
+    - middleman-core/bin/**
+    - middleman-core/fixtures/**
+    - middleman-core/features/**
+    - middleman-core/spec/**
+LineLength:
+  Enabled: false
+MethodLength:
+  Enabled: false
+ClassLength:
+  Enabled: false
+Documentation:
+  Enabled: false
+Encoding:
+  Enabled: false
+HashSyntax:
+  EnforcedStyle: ruby19

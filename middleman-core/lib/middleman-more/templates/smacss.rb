@@ -1,14 +1,14 @@
 # SMACSS
 class Middleman::Templates::Smacss < Middleman::Templates::Base
 
-  class_option "css_dir",
-    :default => "stylesheets",
+  class_option 'css_dir',
+    :default => 'stylesheets',
     :desc    => 'The path to the css files'
-  class_option "js_dir",
-    :default => "javascripts",
+  class_option 'js_dir',
+    :default => 'javascripts',
     :desc    => 'The path to the javascript files'
-  class_option "images_dir",
-    :default => "images",
+  class_option 'images_dir',
+    :default => 'images',
     :desc    => 'The path to the image files'
     
   # Template files are relative to this file
@@ -20,9 +20,9 @@ class Middleman::Templates::Smacss < Middleman::Templates::Base
   # Output the files
   # @return [void]
   def build_scaffold!
-    template "shared/config.tt", File.join(location, "config.rb")
-    directory "smacss/source", File.join(location, "source")
-    empty_directory File.join(location, "source")
+    template 'shared/config.tt', File.join(location, 'config.rb')
+    directory 'smacss/source', File.join(location, 'source')
+    empty_directory File.join(location, 'source')
   end
 end
 
