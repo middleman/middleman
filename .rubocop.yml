@@ -1,7 +1,9 @@
 AllCops:
   Includes:
     - Rakefile
+    - Gemfile
     - config.ru
+    - gem_rake_helper.rb
   Excludes:
     - script/**
     - vendor/**
