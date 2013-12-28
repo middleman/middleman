@@ -244,7 +244,7 @@ module Middleman
 
           # Store last engine for later (could be inside nested renders)
           context.current_engine, engine_was = engine, context.current_engine
-          
+
           # Save current buffer for later
           @_out_buf, _buf_was = '', @_out_buf
 

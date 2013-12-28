@@ -48,7 +48,7 @@ module Middleman::CoreExtensions
         { :options => data, :page => ::Middleman::Util.recursively_enhance(fmdata).freeze }
       end
     end
-    
+
     module ResourceInstanceMethods
       def ignored?
         if !proxy? && raw_data[:ignored] == true
@@ -178,7 +178,7 @@ module Middleman::CoreExtensions
       return [data, nil] if !app.files.exists?(full_path) || ::Middleman::Util.binary?(full_path)
 
       content = File.read(full_path)
-      
+
       begin
         if content =~ /\A.*coding:/
           lines = content.split(/\n/)

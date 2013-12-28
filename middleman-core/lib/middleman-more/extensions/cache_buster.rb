@@ -18,7 +18,7 @@ class Middleman::Extensions::CacheBuster < ::Middleman::Extension
     end if app.respond_to?(:compass_config)
   end
 
-  helpers do 
+  helpers do
     # asset_url override if we're using cache busting
     # @param [String] path
     # @param [String] prefix

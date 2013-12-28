@@ -1,6 +1,6 @@
 module Middleman
   module Configuration
-    # Access to a global configuration manager for the whole Middleman project, 
+    # Access to a global configuration manager for the whole Middleman project,
     # plus backwards compatibility mechanisms for older Middleman projects.
     module Global
       def self.included(app)

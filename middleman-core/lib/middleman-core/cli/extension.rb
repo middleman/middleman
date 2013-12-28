@@ -11,13 +11,13 @@ module Middleman::Cli
 
     # Required path for the new project to be generated
     argument :name, :type => :string
-    
+
     # Template files are relative to this file
     # @return [String]
     def self.source_root
       File.join(File.dirname(__FILE__), '..', 'templates', 'extension')
     end
-    
+
     desc 'extension [options]', 'Create Middleman extension scaffold NAME'
 
     # The extension task

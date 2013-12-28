@@ -2,7 +2,7 @@ require 'active_support/core_ext/object/inclusion'
 
 module Middleman
   module Sitemap
-    
+
     # Code adapted from https://github.com/ralph/document_mapper/
     module Queryable
       OPERATOR_MAPPING = {
@@ -146,7 +146,7 @@ class Symbol
       end
     OPERATORS
   end
-  
+
   unless method_defined?(:"<=>")
     def <=>(other)
       self.to_s <=> other.to_s

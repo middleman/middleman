@@ -26,7 +26,7 @@ class Middleman::Extensions::AssetHost < ::Middleman::Extension
     app.config[:asset_host] || options[:host]
   end
 
-  helpers do 
+  helpers do
     # Override default asset url helper to include asset hosts
     #
     # @param [String] path

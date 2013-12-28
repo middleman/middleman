@@ -40,12 +40,12 @@ module Middleman
 
         def initialize(*args, &block)
           super
-          
+
           if @options.has_key?(:context)
             @context = @options[:context]
           end
         end
-        
+
         # Define the expected syntax for the template
         # @return [Symbol]
         def syntax
@@ -73,15 +73,15 @@ module Middleman
         # @return [Hash]
         def sass_options
           more_opts = { :filename => eval_file, :line => line, :syntax => syntax }
-          
+
           if @context.is_a?(::Middleman::Application) && file
             location_of_sass_file = @context.source_dir
-          
+
             parts = basename.split('.')
             parts.pop
             more_opts[:css_filename] = File.join(location_of_sass_file, @context.config[:css_dir], parts.join('.'))
           end
-          
+
           options.merge(more_opts)
         end
       end

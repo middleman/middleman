@@ -181,7 +181,7 @@ module Middleman
         def respond_to?(method, include_private = false)
           super || has_key?(method)
         end
-        
+
         # Make DataStore act like a hash. Return requested data, or
         # nil if data does not exist
         #

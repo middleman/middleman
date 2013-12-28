@@ -10,7 +10,7 @@ class Middleman::Templates::Smacss < Middleman::Templates::Base
   class_option 'images_dir',
     :default => 'images',
     :desc    => 'The path to the image files'
-    
+
   # Template files are relative to this file
   # @return [String]
   def self.source_root

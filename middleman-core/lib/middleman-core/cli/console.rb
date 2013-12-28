@@ -8,7 +8,7 @@ module Middleman::Cli
     check_unknown_options!
 
     namespace :console
-    
+
     desc 'console [options]', 'Start an interactive console in the context of your Middleman application'
     method_option :environment,
       :aliases => '-e',

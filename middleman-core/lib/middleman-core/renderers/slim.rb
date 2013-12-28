@@ -23,7 +23,7 @@ module Middleman
             :generator => ::Temple::Generators::RailsOutputBuffer,
             :disable_escape => true
           )
-          
+
           app.after_configuration do
             context_hack = {
               :context => self
