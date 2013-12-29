@@ -11,6 +11,6 @@ matrix:
     - rvm: ruby-head
     - rvm: 2.1.0
     - rvm: jruby-19mode
-env: TEST=true TRAVIS=true
+env: TEST=true
 before_install: git submodule update --init --recursive
 script: bundle exec rake test
