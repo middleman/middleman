@@ -49,7 +49,7 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
       output = ActiveSupport::SafeBuffer.new
       output.safe_concat "<#{name}#{attributes}>"
       if content.respond_to?(:each) && !content.is_a?(String)
-        content.each { |c| output.safe_concat c; output.safe_concat NEWLINE }
+        content.each { |c| output.safe_concat c; output.safe_concat ::Padrino::Helpers::TagHelpers::NEWLINE }
       else
         output.safe_concat "#{content}"
       end
