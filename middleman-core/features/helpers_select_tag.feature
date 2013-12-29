@@ -11,8 +11,7 @@ Feature: select_tag helper
     When I go to "/select_tag.html"
     Then I should see:
     """
-    <select name="colors">
-    <option value="red">red</option>
+    <select name="colors"><option value="red">red</option>
     <option value="blue">blue</option>
     <option value="blorange">blorange</option>
     </select>
