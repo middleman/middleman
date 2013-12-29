@@ -23,8 +23,8 @@ gem "asciidoctor", :require => false
 platforms :ruby do
   gem "therubyracer"
   gem "redcarpet", "~> 3.0"
-  gem "pry", :require => false
-  gem "pry-debugger", :require => false
+  gem "pry", :require => false, :group => :development
+  gem "pry-debugger", :require => false, :group => :development
 end
 
 platforms :jruby do
