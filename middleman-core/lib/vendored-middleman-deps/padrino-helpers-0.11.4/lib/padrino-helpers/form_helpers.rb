@@ -622,7 +622,7 @@ module Padrino
         elsif options[:grouped_options]
           grouped_options_for_select(options.delete(:grouped_options), options.delete(:selected), prompt)
         end
-        select_options_html = select_options_html.unshift(blank_option(prompt)) if select_options_html.is_a?(Array)
+        select_options_html = select_options_html.unshift(blank_option(prompt)) if prompt && select_options_html.is_a?(Array)
         options.merge!(:name => "#{options[:name]}[]") if options[:multiple]
         safe_content_tag(:select, select_options_html, options)
       end
