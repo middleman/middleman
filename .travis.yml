@@ -12,5 +12,7 @@ matrix:
     - rvm: 2.1.0
     - rvm: jruby-19mode
 env: TEST=true
-before_install: git submodule update --init --recursive
+before_install: 
+  - git submodule update --init --recursive
+  - gem install bundler -v '= 1.5.1'
 script: bundle exec rake test
