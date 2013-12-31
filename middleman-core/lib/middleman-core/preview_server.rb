@@ -1,5 +1,6 @@
 require 'webrick'
 require 'middleman-core/meta_pages'
+require 'middleman-core/logger'
 
 module Middleman
   module PreviewServer
@@ -90,7 +91,7 @@ module Middleman
 
     private
       def new_app
-        opts = @options
+        opts = @options.dup
         server = ::Middleman::Application.server
 
         # Add in the meta pages application
@@ -100,11 +101,14 @@ module Middleman
         end
 
         @app = server.inst do
+          ::Middleman::Logger.singleton(
+            opts[:debug] ? 0 : 1,
+            opts[:instrumenting] || false
+          )
+
           if opts[:environment]
             config[:environment] = opts[:environment].to_sym
           end
-
-          logger(opts[:debug] ? 0 : 1, opts[:instrumenting] || false)
         end
       end
 

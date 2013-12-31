@@ -194,7 +194,10 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
     # or a Resource, this will produce the nice URL configured for that
     # path, respecting :relative_links, directory indexes, etc.
     def url_for(path_or_resource, options={})
-      ::Middleman::Util.url_for(self, path_or_resource, options)
+      options_with_resource = options.dup
+      options_with_resource[:current_resource] ||= current_resource
+
+      ::Middleman::Util.url_for(self, path_or_resource, options_with_resource)
     end
 
     # Overload the regular link_to to be sitemap-aware - if you
@@ -224,6 +227,14 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
 
         # Transform the url through our magic url_for method
         args[url_arg_index] = url_for(url, options)
+
+        # Cleanup before passing to Padrino
+        options.delete(:relative)
+        options.delete(:current_resource)
+        options.delete(:find_resource)
+        options.delete(:query)
+        options.delete(:anchor)
+        options.delete(:fragment)
       end
 
       super(*args, &block)

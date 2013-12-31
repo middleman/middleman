@@ -16,6 +16,9 @@ require 'active_support/core_ext/float/rounding'
 # Simple callback library
 require 'vendored-middleman-deps/hooks-0.2.0/lib/hooks'
 
+# Our custom logger
+require 'middleman-core/logger'
+
 require 'middleman-core/sitemap'
 
 require 'middleman-core/configuration'
@@ -156,8 +159,12 @@ module Middleman
     # with_layout and page routing
     include Middleman::CoreExtensions::Routing
 
+    attr_reader :logger
+
     # Initialize the Middleman project
     def initialize(&block)
+      @logger = ::Middleman::Logger.singleton
+
       # Clear the static class cache
       cache.clear
 
@@ -188,11 +195,15 @@ module Middleman
 
     # Whether we're in development mode
     # @return [Boolean] If we're in dev mode
-    def development?; config[:environment] == :development; end
+    def development?
+      config[:environment] == :development
+    end
 
     # Whether we're in build mode
     # @return [Boolean] If we're in build mode
-    def build?; config[:environment] == :build; end
+    def build?
+      config[:environment] == :build
+    end
 
     # The full path to the source directory
     #
@@ -201,7 +212,7 @@ module Middleman
       File.join(root, config[:source])
     end
 
-    delegate :logger, :instrument, :to => ::Middleman::Util
+    delegate :instrument, :to => ::Middleman::Util
 
     # Work around this bug: http://bugs.ruby-lang.org/issues/4521
     # where Ruby will call to_s/inspect while printing exception
@@ -211,27 +222,6 @@ module Middleman
       "#<Middleman::Application:0x#{object_id}>"
     end
     alias :inspect :to_s # Ruby 2.0 calls inspect for NoMethodError instead of to_s
-
-    # Expand a path to include the index file if it's a directory
-    #
-    # @private
-    # @param [String] path Request path
-    # @return [String] Path with index file if necessary
-    def full_path(path)
-      resource = sitemap.find_resource_by_destination_path(path)
-
-      if !resource
-        # Try it with /index.html at the end
-        indexed_path = File.join(path.sub(%r{/$}, ''), config[:index_file])
-        resource = sitemap.find_resource_by_destination_path(indexed_path)
-      end
-
-      if resource
-        '/' + resource.destination_path
-      else
-        '/' + Middleman::Util.normalize_path(path)
-      end
-    end
 
   end
 end

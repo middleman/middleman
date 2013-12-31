@@ -1,4 +1,6 @@
 require 'middleman-core'
+require 'middleman-core/logger'
+
 require 'fileutils'
 require 'set'
 
@@ -90,7 +92,7 @@ module Middleman::Cli
       def shared_instance(verbose=false, instrument=false)
         @_shared_instance ||= ::Middleman::Application.server.inst do
           config[:environment] = :build
-          logger(verbose ? 0 : 1, instrument)
+          ::Middleman::Logger.singleton(verbose ? 0 : 1, instrument)
         end
       end
     end

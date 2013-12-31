@@ -7,6 +7,18 @@ module Middleman
 
   # The Middleman Logger
   class Logger < ActiveSupport::BufferedLogger
+
+    def self.singleton(*args)
+      if !@_logger || args.length > 0
+        if args.length == 1 && (args.first.is_a?(::String) || args.first.respond_to?(:write))
+          args = [0, false, args.first]
+        end
+        @_logger = new(*args)
+      end
+
+      @_logger
+    end
+
     def initialize(log_level=1, is_instrumenting=false, target=$stdout)
       super(target)
 

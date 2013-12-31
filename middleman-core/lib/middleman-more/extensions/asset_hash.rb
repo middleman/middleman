@@ -1,3 +1,5 @@
+require 'middleman-core/util'
+
 class Middleman::Extensions::AssetHash < ::Middleman::Extension
   option :exts, %w(.jpg .jpeg .png .gif .js .css .otf .woff .eot .ttf .svg), 'List of extensions that get asset hashes appended to them.'
   option :ignore, [], 'Regexes of filenames to skip adding asset hashes to'
@@ -70,7 +72,7 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
       # We don't want to use this middleware when rendering files to figure out their hash!
       return [status, headers, response] if env['bypass_asset_hash'] == 'true'
 
-      path = @middleman_app.full_path(env['PATH_INFO'])
+      path = ::Middleman::Util.full_path(env['PATH_INFO'], @middleman_app)
 
       if path =~ /(^\/$)|(\.(htm|html|php|css|js)$)/
         body = ::Middleman::Util.extract_response_text(response)

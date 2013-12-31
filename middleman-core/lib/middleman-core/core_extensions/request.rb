@@ -4,6 +4,8 @@ require 'rack/file'
 require 'rack/lint'
 require 'rack/head'
 
+require 'middleman-core/util'
+
 module Middleman
   module CoreExtensions
 
@@ -231,7 +233,7 @@ module Middleman
           if request_path.respond_to? :force_encoding
             request_path.force_encoding('UTF-8')
           end
-          request_path = full_path(request_path)
+          request_path = ::Middleman::Util.full_path(request_path, self)
 
           # Run before callbacks
           run_hook :before

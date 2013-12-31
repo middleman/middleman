@@ -24,7 +24,7 @@ module Middleman
       # Initialize with parent app
       # @param [Middleman::Application] app
       def initialize(app)
-        @app   = app
+        @app = app
         @resources = []
         @_cached_metadata = {}
         @resource_list_manipulators = []
@@ -252,10 +252,10 @@ module Middleman
       # @param [String] path
       # @return [String]
       def strip_away_locale(path)
-        if app.respond_to? :langs
+        if @app.respond_to? :langs
           path_bits = path.split('.')
           lang = path_bits.last
-          if app.langs.include?(lang.to_sym)
+          if @app.langs.include?(lang.to_sym)
             return path_bits[0..-2].join('.')
           end
         end
