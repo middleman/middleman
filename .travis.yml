@@ -10,7 +10,6 @@ matrix:
   fast_finish: true
   allow_failures:
     - rvm: ruby-head
-    - rvm: 2.1.0
     - rvm: jruby-19mode
 env: TEST=true
 before_install: git submodule update --init --recursive
