@@ -15,7 +15,7 @@ module Middleman
       class << self
 
         # Once registered
-        def registered(app)
+        def included(app)
           # Include methods
           app.send :include, InstanceMethods
 
@@ -29,65 +29,65 @@ module Middleman
 
           # Activate custom renderers
           require 'middleman-core/renderers/erb'
-          app.register Middleman::Renderers::ERb
+          app.send :include, Middleman::Renderers::ERb
 
           # CoffeeScript Support
           begin
             require 'middleman-core/renderers/coffee_script'
-            app.register Middleman::Renderers::CoffeeScript
+            app.send :include, Middleman::Renderers::CoffeeScript
           rescue LoadError
           end
 
           # Haml Support
           begin
             require 'middleman-core/renderers/haml'
-            app.register Middleman::Renderers::Haml
+            app.send :include, Middleman::Renderers::Haml
           rescue LoadError
           end
 
           # Sass Support
           begin
             require 'middleman-core/renderers/sass'
-            app.register Middleman::Renderers::Sass
+            app.send :include, Middleman::Renderers::Sass
           rescue LoadError
           end
 
           # Markdown Support
           require 'middleman-core/renderers/markdown'
-          app.register Middleman::Renderers::Markdown
+          app.send :include, Middleman::Renderers::Markdown
 
           # AsciiDoc Support
           begin
             require 'middleman-core/renderers/asciidoc'
-            app.register Middleman::Renderers::AsciiDoc
+            app.send :include, Middleman::Renderers::AsciiDoc
           rescue LoadError
           end
 
           # Liquid Support
           begin
             require 'middleman-core/renderers/liquid'
-            app.register Middleman::Renderers::Liquid
+            app.send :include, Middleman::Renderers::Liquid
           rescue LoadError
           end
 
           # Slim Support
           begin
             require 'middleman-core/renderers/slim'
-            app.register Middleman::Renderers::Slim
+            app.send :include, Middleman::Renderers::Slim
           rescue LoadError
           end
 
           # Less Support
           begin
             require 'middleman-core/renderers/less'
-            app.register Middleman::Renderers::Less
+            app.send :include, Middleman::Renderers::Less
           rescue LoadError
           end
 
           # Stylus Support
           begin
             require 'middleman-core/renderers/stylus'
-            app.register Middleman::Renderers::Stylus
+            app.send :include, Middleman::Renderers::Stylus
           rescue LoadError
           end
 
@@ -102,8 +102,6 @@ module Middleman
             end
           end
         end
-
-        alias :included :registered
       end
 
       # Custom error class for handling

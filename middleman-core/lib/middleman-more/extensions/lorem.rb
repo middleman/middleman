@@ -174,3 +174,5 @@ class Middleman::Extensions::Lorem < ::Middleman::Extension
     end
   end
 end
+
+Middleman::Extensions::Lorem.register

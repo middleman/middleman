@@ -209,3 +209,5 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
     end
   end
 end
+
+Middleman::CoreExtensions::Internationalization.register(:i18n)

@@ -135,29 +135,29 @@ module Middleman
     include Middleman::CoreExtensions::Extensions
 
     # Basic Rack Request Handling
-    register Middleman::CoreExtensions::Request
+    include Middleman::CoreExtensions::Request
 
     # Handle exceptions
-    register Middleman::CoreExtensions::ShowExceptions
+    include Middleman::CoreExtensions::ShowExceptions
 
     # Add Watcher Callbacks
-    register Middleman::CoreExtensions::FileWatcher
+    include Middleman::CoreExtensions::FileWatcher
 
     # Activate Data package
-    register Middleman::CoreExtensions::Data
+    include Middleman::CoreExtensions::Data
 
     # Setup custom rendering
-    register Middleman::CoreExtensions::Rendering
+    include Middleman::CoreExtensions::Rendering
 
     # Parse YAML from templates. Must be before sitemap so sitemap
     # extensions see updated frontmatter!
     register Middleman::CoreExtensions::FrontMatter
 
     # Sitemap Config options and public api
-    register Middleman::Sitemap
+    include Middleman::Sitemap
 
     # Setup external helpers
-    register Middleman::CoreExtensions::ExternalHelpers
+    include Middleman::CoreExtensions::ExternalHelpers
 
     # Reference to Logger singleton
     attr_reader :logger
@@ -188,11 +188,19 @@ module Middleman
         Encoding.default_external = config[:encoding]
       end
 
-      # Evaluate a passed block if given
-      @config_context.instance_exec(&block) if block_given?
-
       config[:source] = ENV['MM_SOURCE'] if ENV['MM_SOURCE']
 
+      # Built-in extensions
+      activate :default_helpers
+      activate :lorem
+
+      if defined?(Middleman::CoreExtensions::Compass)
+        activate :compass
+      end
+
+      # Evaluate a passed block if given
+      @config_context.instance_exec(&block) if block_given?
+      
       super
     end
 
@@ -232,13 +240,3 @@ module Middleman
 
   end
 end
-
-Middleman::CoreExtensions::DefaultHelpers.activate
-
-Middleman::CoreExtensions::Internationalization.register(:i18n)
-
-if defined?(Middleman::CoreExtensions::Compass)
-  Middleman::CoreExtensions::Compass.activate
-end
-
-Middleman::Extensions::Lorem.activate

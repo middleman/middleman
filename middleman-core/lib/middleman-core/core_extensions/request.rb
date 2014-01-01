@@ -15,8 +15,7 @@ module Middleman
       # Extension registered
       class << self
         # @private
-        def registered(app)
-
+        def included(app)
           # CSSPIE HTC File
           ::Rack::Mime::MIME_TYPES['.htc'] = 'text/x-component'
 
@@ -32,7 +31,6 @@ module Middleman
           # Include instance methods
           app.send :include, InstanceMethods
         end
-        alias :included :registered
       end
 
       module ClassMethods

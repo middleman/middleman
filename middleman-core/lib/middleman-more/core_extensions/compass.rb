@@ -1,10 +1,11 @@
 require 'middleman-core/renderers/sass'
-require 'compass'
 
 class Middleman::CoreExtensions::Compass < ::Middleman::Extension
 
   def initialize(app, options_hash={}, &block)
     super
+
+    require 'compass'
 
     # Hooks to manually update the compass config after we're
     # done with it
@@ -73,3 +74,5 @@ class Middleman::CoreExtensions::Compass < ::Middleman::Extension
     end
   end
 end
+
+Middleman::CoreExtensions::Compass.register
