@@ -2,69 +2,72 @@
 module Middleman
   module CoreExtensions
     module Routing
-        # Takes a block which allows many pages to have the same layout
-        #
-        #   with_layout :admin do
-        #     page "/admin/"
-        #     page "/admin/login.html"
-        #   end
-        #
-        # @param [String, Symbol] layout_name
-        # @return [void]
-        def with_layout(layout_name, &block)
-          old_layout = config[:layout]
 
-          config[:layout] = layout_name
-          instance_exec(&block) if block_given?
-        ensure
-          config[:layout] = old_layout
+      # Sandboxed layout to implement temporary overriding of layout.
+      class LayoutBlock
+        attr_reader :scope
+
+        def initialize(scope, layout_name)
+          @scope = scope
+          @layout_name = layout_name
         end
 
-        # The page method allows the layout to be set on a specific path
-        #
-        #   page "/about.html", :layout => false
-        #   page "/", :layout => :homepage_layout
-        #
-        # @param [String] url
-        # @param [Hash] opts
-        # @return [void]
         def page(url, opts={}, &block)
-          blocks = Array(block)
+          opts[:layout] ||= @layout_name
+          @scope.page(url, opts, &block)
+        end
 
-          # Default layout
-          opts[:layout] = config[:layout] if opts[:layout].nil?
+        delegate :proxy, :to => :scope
+      end
 
-          # If the url is a regexp
-          if url.is_a?(Regexp) || url.include?('*')
+      # Takes a block which allows many pages to have the same layout
+      #
+      #   with_layout :admin do
+      #     page "/admin/"
+      #     page "/admin/login.html"
+      #   end
+      #
+      # @param [String, Symbol] layout_name
+      # @return [void]
+      def with_layout(layout_name, &block)
+        LayoutBlock.new(self, layout_name).instance_eval(&block)
+      end
 
-            # Use the metadata loop for matching against paths at runtime
-            sitemap.provides_metadata_for_path(url) do |_|
-              { :options => opts, :blocks => blocks }
-            end
+      # The page method allows the layout to be set on a specific path
+      #
+      #   page "/about.html", :layout => false
+      #   page "/", :layout => :homepage_layout
+      #
+      # @param [String] url
+      # @param [Hash] opts
+      # @return [void]
+      def page(url, opts={}, &block)
+        # Default layout
+        opts[:layout] = @app.config[:layout] if opts[:layout].nil?
+        metadata = { :options => opts, :blocks => Array(block) }
 
-            return
-          end
-
+        # If the url is a regexp
+        unless url.is_a?(Regexp) || url.include?('*')
           # Normalized path
           url = '/' + Middleman::Util.normalize_path(url)
-          if url.end_with?('/') || File.directory?(File.join(source_dir, url))
-            url = File.join(url, config[:index_file])
+          if url.end_with?('/') || File.directory?(File.join(@app.source_dir, url))
+            url = File.join(url, @app.config[:index_file])
           end
 
           # Setup proxy
           if target = opts.delete(:proxy)
             # TODO: deprecate proxy through page?
-            proxy(url, target, opts, &block) and return
+            @app.proxy(url, target, opts, &block)
+            return
           elsif opts.delete(:ignore)
             # TODO: deprecate ignore through page?
-            ignore(url)
-          end
-
-          # Setup a metadata matcher for rendering those options
-          sitemap.provides_metadata_for_path(url) do |_|
-            { :options => opts, :blocks => blocks }
+            @app.ignore(url)
           end
         end
+
+        # Setup a metadata matcher for rendering those options
+        @app.sitemap.provides_metadata_for_path(url) { |_| metadata }
+      end
     end
   end
 end

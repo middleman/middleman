@@ -3,7 +3,7 @@ class Middleman::Extensions::DirectoryIndexes < ::Middleman::Extension
   # Update the main sitemap resource list
   # @return [void]
   def manipulate_resource_list(resources)
-    index_file = app.index_file
+    index_file = app.config[:index_file]
     new_index_path = "/#{index_file}"
 
     resources.each do |resource|

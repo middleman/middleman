@@ -159,11 +159,18 @@ module Middleman
           local_config = File.join(root, 'config.rb')
           if File.exists? local_config
             logger.debug '== Reading:  Local config'
-            instance_eval File.read(local_config), local_config, 1
+            config_context.instance_eval File.read(local_config), local_config, 1
           end
 
-          run_hook :build_config if build?
-          run_hook :development_config if development?
+          if build?
+            run_hook :build_config
+            config_context.execute_configure_callbacks(:build)
+          end
+          
+          if development?
+            run_hook :development_config
+            config_context.execute_configure_callbacks(:development)
+          end
 
           run_hook :instance_available
 
@@ -177,6 +184,7 @@ module Middleman
           end
 
           run_hook :after_configuration
+          config_context.execute_after_configuration_callbacks
 
           logger.debug 'Loaded extensions:'
           self.extensions.each do |ext, klass|

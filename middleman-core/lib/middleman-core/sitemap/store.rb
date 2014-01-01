@@ -3,6 +3,13 @@ require 'active_support/core_ext/hash/deep_merge'
 require 'monitor'
 require 'middleman-core/sitemap/queryable'
 
+# Extensions
+require 'middleman-core/sitemap/extensions/on_disk'
+require 'middleman-core/sitemap/extensions/redirects'
+require 'middleman-core/sitemap/extensions/request_endpoints'
+require 'middleman-core/sitemap/extensions/proxies'
+require 'middleman-core/sitemap/extensions/ignores'
+
 module Middleman
 
   # Sitemap namespace
@@ -29,21 +36,31 @@ module Middleman
         @_cached_metadata = {}
         @resource_list_manipulators = []
         @needs_sitemap_rebuild = true
+        
         @lock = Monitor.new
-
         reset_lookup_cache!
 
-        # Register classes which can manipulate the main site map list
-        register_resource_list_manipulator(:on_disk, Middleman::Sitemap::Extensions::OnDisk.new(self))
+        # Handle ignore commands
+        Middleman::Sitemap::Extensions::Ignores.new(self)
 
-        # Request Endpoints
-        register_resource_list_manipulator(:request_endpoints, @app.endpoint_manager)
+        # Extensions
+        {
+          # Register classes which can manipulate the main site map list
+          on_disk: Middleman::Sitemap::Extensions::OnDisk,
 
-        # Proxies
-        register_resource_list_manipulator(:proxies, @app.proxy_manager)
+          # Request Endpoints
+          request_endpoints: Middleman::Sitemap::Extensions::RequestEndpoints,
 
-        # Redirects
-        register_resource_list_manipulator(:redirects, @app.redirect_manager)
+          # Proxies
+          proxies: Middleman::Sitemap::Extensions::Proxies,
+
+          # Redirects
+          redirects: Middleman::Sitemap::Extensions::Redirects
+        }.each do |k, m|
+          register_resource_list_manipulator(k, m.new(self))
+        end
+
+        app.config_context.class.send :delegate, :sitemap, :to => :app
       end
 
       # Register a klass which can manipulate the main site map list. Best to register

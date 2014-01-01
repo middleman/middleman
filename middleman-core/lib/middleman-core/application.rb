@@ -20,9 +20,12 @@ require 'vendored-middleman-deps/hooks-0.2.0/lib/hooks'
 require 'middleman-core/logger'
 
 require 'middleman-core/sitemap'
+require 'middleman-core/sitemap/store'
 
 require 'middleman-core/configuration'
 require 'middleman-core/core_extensions'
+
+require 'middleman-core/config_context'
 
 # Core Middleman Class
 module Middleman
@@ -150,26 +153,35 @@ module Middleman
     # extensions see updated frontmatter!
     register Middleman::CoreExtensions::FrontMatter
 
-    # Sitemap
+    # Sitemap Config options and public api
     register Middleman::Sitemap
 
     # Setup external helpers
     register Middleman::CoreExtensions::ExternalHelpers
 
-    # with_layout and page routing
-    include Middleman::CoreExtensions::Routing
-
+    # Reference to Logger singleton
     attr_reader :logger
+
+    # New container for config.rb commands
+    attr_reader :config_context
+
+    # Reference to Sitemap
+    attr_reader :sitemap
+
+    # Template cache
+    attr_reader :cache
 
     # Initialize the Middleman project
     def initialize(&block)
+      @cache = ::Tilt::Cache.new
       @logger = ::Middleman::Logger.singleton
-
-      # Clear the static class cache
-      cache.clear
+      @config_context = ConfigContext.new(self)
 
       # Setup the default values from calls to set before initialization
       self.class.config.load_settings(self.class.superclass.config.all_settings)
+
+      # Initialize the Sitemap
+      @sitemap = ::Middleman::Sitemap::Store.new(self)
 
       if Object.const_defined?(:Encoding)
         Encoding.default_internal = config[:encoding]
@@ -177,21 +189,16 @@ module Middleman
       end
 
       # Evaluate a passed block if given
-      instance_exec(&block) if block_given?
+      @config_context.instance_exec(&block) if block_given?
 
       config[:source] = ENV['MM_SOURCE'] if ENV['MM_SOURCE']
 
       super
     end
 
-    # Shared cache instance
-    #
-    # @private
-    # @return [Middleman::Util::Cache] The cache
-    def self.cache
-      @_cache ||= ::Tilt::Cache.new
+    def add_to_config_context(name, &func)
+      @config_context.define_singleton_method(name, &func)
     end
-    delegate :cache, :to => :"self.class"
 
     # Whether we're in development mode
     # @return [Boolean] If we're in dev mode

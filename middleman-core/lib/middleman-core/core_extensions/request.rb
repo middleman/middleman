@@ -51,6 +51,7 @@ module Middleman
           @inst ||= begin
             mm = new(&block)
             mm.run_hook :ready
+            mm.config_context.execute_ready_callbacks
             mm
           end
         end

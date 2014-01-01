@@ -24,7 +24,9 @@ end
 
 Given /^"([^\"]*)" is set to "([^\"]*)"$/ do |variable, value|
   @initialize_commands ||= []
-  @initialize_commands << lambda { set(variable.to_sym, value) }
+  @initialize_commands << lambda {
+    config[variable.to_sym] =  value
+  }
 end
 
 Given /^current environment is "([^\"]*)"$/ do |env|
@@ -44,8 +46,8 @@ Given /^the Server is running$/ do
 
   initialize_commands = @initialize_commands || []
   initialize_commands.unshift lambda {
-    set :environment, @current_env || :development
-    set :show_exceptions, false
+    config[:environment] = @current_env || :development
+    config[:show_exceptions] = false
   }
 
   @server_inst = Middleman::Application.server.inst do

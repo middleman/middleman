@@ -8,7 +8,7 @@ class Middleman::Extensions::CacheBuster < ::Middleman::Extension
     app.compass_config do |config|
       config.asset_cache_buster do |path, real_path|
         real_path = real_path.path if real_path.is_a? File
-        real_path = real_path.gsub(File.join(root, build_dir), source)
+        real_path = real_path.gsub(File.join(app.root, app.config[:build_dir]), app.config[:source])
         if File.readable?(real_path)
           File.mtime(real_path).strftime('%s')
         else
@@ -35,7 +35,7 @@ class Middleman::Extensions::CacheBuster < ::Middleman::Extension
         real_path_static = File.join(prefix, path)
 
         if build?
-          real_path_dynamic = File.join(build_dir, prefix, path)
+          real_path_dynamic = File.join(config[:build_dir], prefix, path)
           real_path_dynamic = File.expand_path(real_path_dynamic, root)
           http_path << '?' + File.mtime(real_path_dynamic).strftime('%s') if File.readable?(real_path_dynamic)
         elsif resource = sitemap.find_resource_by_path(real_path_static)

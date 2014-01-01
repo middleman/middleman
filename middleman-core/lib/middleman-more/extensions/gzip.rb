@@ -23,7 +23,7 @@ class Middleman::Extensions::Gzip < ::Middleman::Extension
 
   def after_build(builder)
     num_threads = 4
-    paths = ::Middleman::Util.all_files_under(app.build_dir)
+    paths = ::Middleman::Util.all_files_under(app.config[:build_dir])
     total_savings = 0
 
     # Fill a queue with inputs

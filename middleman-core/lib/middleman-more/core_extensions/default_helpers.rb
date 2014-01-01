@@ -105,8 +105,8 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
     def auto_tag(asset_ext, asset_dir=nil)
       if asset_dir.nil?
         asset_dir = case asset_ext
-          when :js  then js_dir
-          when :css then css_dir
+          when :js  then config[:js_dir]
+          when :css then config[:css_dir]
         end
       end
 
@@ -153,10 +153,10 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
     def asset_path(kind, source)
       return source if source.to_s.include?('//') || source.to_s.start_with?('data:')
       asset_folder  = case kind
-        when :css    then css_dir
-        when :js     then js_dir
-        when :images then images_dir
-        when :fonts  then fonts_dir
+        when :css    then config[:css_dir]
+        when :js     then config[:js_dir]
+        when :images then config[:images_dir]
+        when :fonts  then config[:fonts_dir]
         else kind.to_s
       end
       source = source.to_s.tr(' ', '')

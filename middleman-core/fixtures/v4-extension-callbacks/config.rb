@@ -1,9 +1,17 @@
 class ExtensionOne < ::Middleman::Extension
+  helpers do
+    def extension_two_was_activated
+      extensions[:extension_one].extension_two_was_activated
+    end
+  end
+
+  attr_reader :extension_two_was_activated
+
   def initialize(app, options_hash={})
     super
 
     after_extension_activated :extension_two do
-      app.set :extension_two_was_activated, true
+      @extension_two_was_activated = true
     end
   end
 end
@@ -11,11 +19,19 @@ end
 ExtensionOne.register
 
 class ExtensionTwo < ::Middleman::Extension
+  helpers do
+    def extension_one_was_activated
+      extensions[:extension_two].extension_one_was_activated
+    end
+  end
+
+  attr_reader :extension_one_was_activated
+
   def initialize(app, options_hash={})
     super
 
     after_extension_activated :extension_one do
-      app.set :extension_one_was_activated, true
+      @extension_one_was_activated = true
     end
   end
 end
