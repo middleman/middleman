@@ -1,12 +1,3 @@
-require 'middleman-core/sitemap/store'
-require 'middleman-core/sitemap/resource'
-
-require 'middleman-core/sitemap/extensions/on_disk'
-require 'middleman-core/sitemap/extensions/redirects'
-require 'middleman-core/sitemap/extensions/request_endpoints'
-require 'middleman-core/sitemap/extensions/proxies'
-require 'middleman-core/sitemap/extensions/ignores'
-
 # Core Sitemap Extensions
 module Middleman
 
@@ -17,11 +8,6 @@ module Middleman
 
       # Once registered
       def registered(app)
-
-        app.register Middleman::Sitemap::Extensions::RequestEndpoints
-        app.register Middleman::Sitemap::Extensions::Proxies
-        app.register Middleman::Sitemap::Extensions::Ignores
-        app.register Middleman::Sitemap::Extensions::Redirects
 
         # Set to automatically convert some characters into a directory
         app.config.define_setting :automatic_directory_matcher, nil, 'Set to automatically convert some characters into a directory'
@@ -46,11 +32,6 @@ module Middleman
 
         # Include instance methods
         app.send :include, InstanceMethods
-
-        # Initialize Sitemap
-        app.before_configuration do
-          sitemap
-        end
       end
       alias :included :registered
 
@@ -58,12 +39,6 @@ module Middleman
 
     # Sitemap instance methods
     module InstanceMethods
-
-      # Get the sitemap class instance
-      # @return [Middleman::Sitemap::Store]
-      def sitemap
-        @_sitemap ||= Store.new(self)
-      end
 
       # Get the resource object for the current path
       # @return [Middleman::Sitemap::Resource]

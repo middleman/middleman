@@ -68,6 +68,7 @@ module Middleman::Cli
       action BuildAction.new(self, opts)
 
       self.class.shared_instance.run_hook :after_build, self
+      self.class.shared_instance.config_context.execute_after_build_callbacks(self)
 
       if self.had_errors && !self.debugging
         msg = 'There were errors during this build'
@@ -110,7 +111,7 @@ module Middleman::Cli
     def initialize(base, config={})
       @app        = base.class.shared_instance
       @source_dir = Pathname(@app.source_dir)
-      @build_dir  = Pathname(@app.build_dir)
+      @build_dir  = Pathname(@app.config[:build_dir])
       @to_clean   = Set.new
 
       @logger = @app.logger
@@ -190,7 +191,7 @@ module Middleman::Cli
       logger.debug '== Checking for Compass sprites'
 
       # Double-check for compass sprites
-      @app.files.find_new_files((@source_dir + @app.images_dir).relative_path_from(@app.root_path))
+      @app.files.find_new_files((@source_dir + @app.config[:images_dir]).relative_path_from(@app.root_path))
       @app.sitemap.ensure_resource_list_updated!
 
       # Sort paths to be built by the above order. This is primarily so Compass can

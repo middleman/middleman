@@ -5,6 +5,7 @@ module Middleman
     module Global
       def self.included(app)
         app.send :extend, ClassMethods
+        app.send :delegate, :config, :to => :"self.class"
       end
 
       module ClassMethods
@@ -13,75 +14,6 @@ module Middleman
         def config
           @_config ||= ConfigurationManager.new
         end
-
-        # Set attributes (global variables)
-        #
-        # @deprecated Prefer accessing settings through "config".
-        #
-        # @param [Symbol] key Name of the attribue
-        # @param default Attribute value
-        # @return [void]
-        def set(key, default=nil, &block)
-          config.define_setting(key, default) unless config.defines_setting?(key)
-          @inst.set(key, default, &block) if @inst
-        end
-
-        # Access global settings as methods, to preserve compatibility with
-        # old Middleman.
-        #
-        # @deprecated Prefer accessing settings through "config".
-        def method_missing(method, *args)
-          if config.defines_setting? method
-            config[method]
-          else
-            super
-          end
-        end
-
-        # Needed so that method_missing makes sense
-        def respond_to?(method, include_private = false)
-          super || config.defines_setting?(method)
-        end
-      end
-
-      def config
-        self.class.config
-      end
-
-      # Backwards compatibilty with old Sinatra template interface
-      #
-      # @deprecated Prefer accessing settings through "config".
-      #
-      # @return [ConfigurationManager]
-      alias :settings :config
-
-      # Set attributes (global variables)
-      #
-      # @deprecated Prefer accessing settings through "config".
-      #
-      # @param [Symbol] key Name of the attribue
-      # @param value Attribute value
-      # @return [void]
-      def set(key, value=nil, &block)
-        value = block if block_given?
-        config[key] = value
-      end
-
-      # Access global settings as methods, to preserve compatibility with
-      # old Middleman.
-      #
-      # @deprecated Prefer accessing settings through "config".
-      def method_missing(method, *args)
-        if config.defines_setting? method
-          config[method]
-        else
-          super
-        end
-      end
-
-      # Needed so that method_missing makes sense
-      def respond_to?(method, include_private = false)
-        super || config.defines_setting?(method)
       end
     end
 

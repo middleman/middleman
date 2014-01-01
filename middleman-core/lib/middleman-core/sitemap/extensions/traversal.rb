@@ -9,12 +9,12 @@ module Middleman
         # @return [Middleman::Sitemap::Resource, nil]
         def parent
           parts = path.split('/')
-          parts.pop if path.include?(app.index_file)
+          parts.pop if path.include?(app.config[:index_file])
 
           return nil if parts.length < 1
 
           parts.pop
-          parts << app.index_file
+          parts << app.config[:index_file]
 
           parent_path = '/' + parts.join('/')
 
@@ -30,7 +30,7 @@ module Middleman
             base_path = eponymous_directory_path
             prefix    = %r|^#{base_path.sub("/", "\\/")}|
           else
-            base_path = path.sub("#{app.index_file}", '')
+            base_path = path.sub("#{app.config[:index_file]}", '')
             prefix    = %r|^#{base_path.sub("/", "\\/")}|
           end
 
@@ -43,7 +43,7 @@ module Middleman
               if parts.length == 1
                 true
               elsif parts.length == 2
-                parts.last == app.index_file
+                parts.last == app.config[:index_file]
               else
                 false
               end
@@ -61,14 +61,14 @@ module Middleman
         # Whether this resource either a directory index, or has the same name as an existing directory in the source
         # @return [Boolean]
         def directory_index?
-          path.include?(app.index_file) || path =~ /\/$/ || eponymous_directory?
+          path.include?(app.config[:index_file]) || path =~ /\/$/ || eponymous_directory?
         end
 
         # Whether the resource has the same name as a directory in the source
         # (e.g., if the resource is named 'gallery.html' and a path exists named 'gallery/', this would return true)
         # @return [Boolean]
         def eponymous_directory?
-          if !path.end_with?("/#{app.index_file}") && destination_path.end_with?("/#{app.index_file}")
+          if !path.end_with?("/#{app.config[:index_file]}") && destination_path.end_with?("/#{app.config[:index_file]}")
             return true
           end
           full_path = File.join(app.source_dir, eponymous_directory_path)
