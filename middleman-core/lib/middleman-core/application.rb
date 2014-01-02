@@ -11,7 +11,6 @@ require 'i18n'
 # Use ActiveSupport JSON
 require 'active_support/json'
 require 'active_support/core_ext/integer/inflections'
-require 'active_support/core_ext/float/rounding'
 
 # Simple callback library
 require 'hooks'

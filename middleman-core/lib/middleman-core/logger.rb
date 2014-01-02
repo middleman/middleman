@@ -1,12 +1,12 @@
 # Use the Ruby/Rails logger
 require 'active_support/notifications'
-require 'active_support/buffered_logger'
+require 'active_support/logger'
 require 'thread'
 
 module Middleman
 
   # The Middleman Logger
-  class Logger < ActiveSupport::BufferedLogger
+  class Logger < ActiveSupport::Logger
 
     def self.singleton(*args)
       if !@_logger || args.length > 0
