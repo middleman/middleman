@@ -24,7 +24,7 @@ module Middleman
             require filename
             next unless Object.const_defined?(module_name.to_sym)
 
-            helpers Object.const_get(module_name.to_sym)
+            @template_context_class.send :include, Object.const_get(module_name.to_sym)
           end
         end
       end

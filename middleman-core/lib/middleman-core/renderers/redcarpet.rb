@@ -40,6 +40,14 @@ module Middleman
         renderer.new(render_options)
       end
 
+      def evaluate(scope, locals, &block)
+        @output ||= begin
+          MiddlemanRedcarpetHTML.scope = ::Middleman::Renderers::Haml.last_haml_scope || scope
+
+          @engine.render(data)
+        end
+      end
+
       private
 
         def covert_options_to_aliases!
@@ -51,7 +59,7 @@ module Middleman
 
     # Custom Redcarpet renderer that uses our helpers for images and links
     class MiddlemanRedcarpetHTML < ::Redcarpet::Render::HTML
-      cattr_accessor :middleman_app
+      cattr_accessor :scope
 
       def initialize(options={})
         @local_options = options.dup
@@ -61,7 +69,7 @@ module Middleman
 
       def image(link, title, alt_text)
         if !@local_options[:no_images]
-          middleman_app.image_tag(link, :title => title, :alt => alt_text)
+          scope.image_tag(link, :title => title, :alt => alt_text)
         else
           link_string = link.dup
           link_string << %Q{"#{title}"} if title && title.length > 0 && title != alt_text
@@ -74,7 +82,7 @@ module Middleman
           attributes = { :title => title }
           attributes.merge!( @local_options[:link_attributes] ) if @local_options[:link_attributes]
 
-          middleman_app.link_to(content, link, attributes )
+          scope.link_to(content, link, attributes )
         else
           link_string = link.dup
           link_string << %Q{"#{title}"} if title && title.length > 0 && title != alt_text

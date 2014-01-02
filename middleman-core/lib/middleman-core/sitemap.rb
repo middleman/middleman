@@ -31,7 +31,7 @@ module Middleman
         }, 'Callbacks that can exclude paths from the sitemap'
 
         # Include instance methods
-        app.send :include, InstanceMethods
+        ::Middleman::TemplateContext.send :include, InstanceMethods
       end
 
     end

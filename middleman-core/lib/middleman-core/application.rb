@@ -44,15 +44,6 @@ module Middleman
     # Runs after the build is finished
     define_hook :after_build
 
-    # Mix-in helper methods. Accepts either a list of Modules
-    # and/or a block to be evaluated
-    # @return [void]
-    def self.helpers(*extensions, &block)
-      class_eval(&block)   if block_given?
-      include(*extensions) if extensions.any?
-    end
-    delegate :helpers, :to => :"self.class"
-
     # Root project directory (overwritten in middleman build/server)
     # @return [String]
     def self.root
@@ -170,11 +161,16 @@ module Middleman
     # Template cache
     attr_reader :cache
 
+    attr_reader :generic_template_context
+    delegate :link_to, :image_tag, :to => :generic_template_context
+
     # Initialize the Middleman project
     def initialize(&block)
       @cache = ::Tilt::Cache.new
       @logger = ::Middleman::Logger.singleton
-      @config_context = ConfigContext.new(self)
+      @template_context_class = Class.new(Middleman::TemplateContext)
+      @generic_template_context = @template_context_class.new(self)
+      @config_context = ConfigContext.new(self, @template_context_class)
 
       # Setup the default values from calls to set before initialization
       self.class.config.load_settings(self.class.superclass.config.all_settings)
