@@ -29,10 +29,9 @@ module Middleman
               :context => self
             }
 
-            slim_embedded = defined?(::Slim::Embedded) ? ::Slim::Embedded : ::Slim::EmbeddedEngine
-
+            ::Slim::Embedded::SassEngine.disable_option_validator!
             %w(sass scss markdown).each do |engine|
-              slim_embedded.default_options[engine.to_sym] = context_hack
+              ::Slim::Embedded.default_options[engine.to_sym] = context_hack
             end
           end
         end
