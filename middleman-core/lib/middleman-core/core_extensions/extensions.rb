@@ -36,7 +36,7 @@ module Middleman
       # Register extension
       class << self
         # @private
-        def registered(app)
+        def included(app)
           app.define_hook :initialized
           app.define_hook :instance_available
           app.define_hook :after_configuration
@@ -51,7 +51,6 @@ module Middleman
           app.send :include, InstanceMethods
           app.delegate :configure, :to => :"self.class"
         end
-        alias :included :registered
       end
 
       # Class methods
@@ -70,18 +69,10 @@ module Middleman
         # @param [Hash] options Per-extension options hash
         # @return [void]
         def register(extension, options={}, &block)
-          if extension.instance_of?(Class) && extension.ancestors.include?(::Middleman::Extension)
+          if extension.ancestors.include?(::Middleman::Extension)
             extension.new(self, options, &block)
           else
-            extend extension
-            if extension.respond_to?(:registered)
-              if extension.method(:registered).arity === 1
-                extension.registered(self, &block)
-              else
-                extension.registered(self, options, &block)
-              end
-            end
-            extension
+            $stderr.puts "!! Tried to register old-style extension: #{extension}"
           end
         end
       end
@@ -97,32 +88,26 @@ module Middleman
         # @param [Symbol, Module] ext Which extension to activate
         # @return [void]
         def activate(ext, options={}, &block)
-          ext_module = if ext.is_a?(Module)
-            ext
-          else
-            ::Middleman::Extensions.load(ext)
-          end
+          if extension = ::Middleman::Extensions::registered[ext]
+            if extension.ancestors.include?(::Middleman::Extension)
+              logger.debug "== Activating: #{ext}"
 
-          if ext_module.nil?
-            logger.error "== Unknown Extension: #{ext}"
-          else
-            logger.debug "== Activating: #{ext}"
-
-            if ext_module.instance_of? Module
-              extensions[ext] = self.class.register(ext_module, options, &block)
-            elsif ext_module.instance_of?(Class) && ext_module.ancestors.include?(::Middleman::Extension)
-              if ext_module.supports_multiple_instances?
+              if extension.supports_multiple_instances?
                 extensions[ext] ||= {}
                 key = "instance_#{extensions[ext].keys.length}"
-                extensions[ext][key] = ext_module.new(self.class, options, &block)
+                extensions[ext][key] = extension.new(self.class, options, &block)
               else
                 if extensions[ext]
                   logger.error "== #{ext} already activated."
                 else
-                  extensions[ext] = ext_module.new(self.class, options, &block)
+                  extensions[ext] = extension.new(self.class, options, &block)
                 end
               end
+            else
+              logger.error "!! Tried to activate old-style extension: #{ext}"
             end
+          else
+            logger.error "!! Unknown Extension: #{ext}"
           end
         end
 

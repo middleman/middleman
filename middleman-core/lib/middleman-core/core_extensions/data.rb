@@ -8,7 +8,7 @@ module Middleman
       # Extension registered
       class << self
         # @private
-        def registered(app)
+        def included(app)
           # Data formats
           require 'yaml'
           require 'active_support/json'
@@ -16,7 +16,6 @@ module Middleman
           app.config.define_setting :data_dir, 'data', 'The directory data files are stored in'
           app.send :include, InstanceMethods
         end
-        alias :included :registered
       end
 
       # Instance methods

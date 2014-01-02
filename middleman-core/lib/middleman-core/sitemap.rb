@@ -7,7 +7,7 @@ module Middleman
     class << self
 
       # Once registered
-      def registered(app)
+      def included(app)
 
         # Set to automatically convert some characters into a directory
         app.config.define_setting :automatic_directory_matcher, nil, 'Set to automatically convert some characters into a directory'
@@ -33,7 +33,6 @@ module Middleman
         # Include instance methods
         app.send :include, InstanceMethods
       end
-      alias :included :registered
 
     end
 

@@ -1,6 +1,3 @@
-require 'pathname'
-require 'set'
-
 # API for watching file change events
 module Middleman
   module CoreExtensions
@@ -27,7 +24,10 @@ module Middleman
       class << self
 
         # Once registered
-        def registered(app)
+        def included(app)
+          require 'pathname'
+          require 'set'
+
           app.send :include, InstanceMethods
 
           app.config.define_setting :file_watcher_ignore, IGNORE_LIST, 'Regexes for paths that should be ignored when they change.'
@@ -46,7 +46,6 @@ module Middleman
             files.reload_path('.')
           end
         end
-        alias :included :registered
       end
 
       # Instance methods
