@@ -1,6 +1,9 @@
 master
 ===
 
+* Remove old module-style extension support
+* Placed all `config.rb` evaluation inside the `ConfigContext` class
+
 3.2.1
 ===
 
