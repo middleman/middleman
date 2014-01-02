@@ -30,7 +30,7 @@ Gem::Specification.new do |s|
   s.add_dependency("thor", [">= 0.15.2", "< 2.0"])
 
   # Helpers
-  s.add_dependency("activesupport", ["~> 3.2.6"])
+  s.add_dependency("activesupport", ["~> 4.0.1"])
 
   # Watcher
   s.add_dependency("listen", ["~> 1.1"])
