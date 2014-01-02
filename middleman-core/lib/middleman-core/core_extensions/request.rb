@@ -151,10 +151,6 @@ module Middleman
 
       # Methods to be mixed-in to Middleman::Application
       module InstanceMethods
-        # Backwards-compatibility with old request.path signature
-        def request
-          Thread.current[:legacy_request]
-        end
 
         # Accessor for current path
         # @return [String]
@@ -168,23 +164,10 @@ module Middleman
         # @return [void]
         def current_path=(path)
           Thread.current[:current_path] = path
-          Thread.current[:legacy_request] = ::Thor::CoreExt::HashWithIndifferentAccess.new({
-            :path   => path,
-            :params => req ? ::Thor::CoreExt::HashWithIndifferentAccess.new(req.params) : {}
-          })
         end
 
         delegate :use, :to => :"self.class"
         delegate :map, :to => :"self.class"
-
-        # Rack request
-        # @return [Rack::Request]
-        def req
-          Thread.current[:req]
-        end
-        def req=(value)
-          Thread.current[:req] = value
-        end
 
         def call(env)
           dup.call!(env)
@@ -195,7 +178,7 @@ module Middleman
         # @param env Rack environment
         def call!(env)
           # Store environment, request and response for later
-          self.req = req = ::Rack::Request.new(env)
+          req = ::Rack::Request.new(env)
           res = ::Rack::Response.new
 
           logger.debug "== Request: #{env["PATH_INFO"]}"
@@ -253,7 +236,6 @@ module Middleman
           begin
             # Write out the contents of the page
             output = resource.render do
-              self.req = req
               self.current_path = current_path
             end
 
