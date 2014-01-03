@@ -153,20 +153,6 @@ module Middleman
       # Methods to be mixed-in to Middleman::Application
       module InstanceMethods
 
-        # Accessor for current path
-        # @return [String]
-        def current_path
-          Thread.current[:current_path]
-        end
-
-        # Set the current path
-        #
-        # @param [String] path The new current path
-        # @return [void]
-        def current_path=(path)
-          Thread.current[:current_path] = path
-        end
-
         delegate :use, :to => :"self.class"
         delegate :map, :to => :"self.class"
 
@@ -210,7 +196,6 @@ module Middleman
         # @param [Rack::Response] res
         def process_request(env, req, res)
           start_time = Time.now
-          current_path = nil
 
           request_path = URI.decode(env['PATH_INFO'].dup)
           if request_path.respond_to? :force_encoding
@@ -230,17 +215,12 @@ module Middleman
           # If this path is a binary file, send it immediately
           return send_file(resource, env) if resource.binary?
 
-          current_path = resource.destination_path
-
           res['Content-Type'] = resource.content_type || 'text/plain'
 
           begin
             # Write out the contents of the page
-            output = resource.render do
-              self.current_path = current_path
-            end
+            res.write resource.render
 
-            res.write output
             # Valid content is a 200 status
             res.status = 200
           rescue Middleman::TemplateRenderer::TemplateNotFound => e
@@ -249,7 +229,7 @@ module Middleman
           end
 
           # End the request
-          logger.debug "== Finishing Request: #{current_path} (#{(Time.now - start_time).round(2)}s)"
+          logger.debug "== Finishing Request: #{resource.destination_path} (#{(Time.now - start_time).round(2)}s)"
           halt res.finish
         end
 

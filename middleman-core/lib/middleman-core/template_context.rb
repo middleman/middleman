@@ -4,7 +4,7 @@ require 'middleman-core/template_renderer'
 module Middleman
   class TemplateContext
     attr_reader :app
-    attr_accessor :current_engine, :current_path
+    attr_accessor :current_engine
 
     delegate :config, :logger, :sitemap, :build?, :development?, :data, :extensions, :source_dir, :root, :to => :app
 

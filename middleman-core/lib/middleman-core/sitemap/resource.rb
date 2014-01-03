@@ -135,7 +135,7 @@ module Middleman
           blocks = Array(md[:blocks]).dup
           blocks << block if block_given?
 
-          app.current_path ||= self.destination_path
+          locs[:current_path] ||= self.destination_path
 
           # Certain output file types don't use layouts
           if !opts.has_key?(:layout)
