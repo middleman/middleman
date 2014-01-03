@@ -5,6 +5,7 @@ require 'rack/lint'
 require 'rack/head'
 
 require 'middleman-core/util'
+require 'middleman-core/template_renderer'
 
 module Middleman
   module CoreExtensions
@@ -242,7 +243,7 @@ module Middleman
             res.write output
             # Valid content is a 200 status
             res.status = 200
-          rescue Middleman::CoreExtensions::Rendering::TemplateNotFound => e
+          rescue Middleman::TemplateRenderer::TemplateNotFound => e
             res.write "Error: #{e.message}"
             res.status = 500
           end

@@ -1,5 +1,7 @@
 require 'middleman-core/sitemap/extensions/traversal'
 require 'middleman-core/sitemap/extensions/content_type'
+require 'middleman-core/file_renderer'
+require 'middleman-core/template_renderer'
 
 module Middleman
 
@@ -106,7 +108,7 @@ module Middleman
       # @return [String]
       def render(opts={}, locs={}, &block)
         if !template?
-          return app.template_data_for_file(source_file)
+          return ::Middleman::FileRenderer.new(@app, source_file).get_template_data_for_file
         end
 
         relative_source = Pathname(source_file).relative_path_from(Pathname(app.root))
@@ -140,7 +142,8 @@ module Middleman
             opts[:layout] = false if %w(.js .json .css .txt).include?(self.ext)
           end
 
-          app.render_template(source_file, locs, opts, blocks)
+          renderer = ::Middleman::TemplateRenderer.new(@app, source_file)
+          renderer.render(locs, opts, blocks)
         end
       end
 
