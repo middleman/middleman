@@ -221,7 +221,7 @@ module Middleman
           run_hook :before
 
           # Get the resource object for this path
-          resource = sitemap.find_resource_by_destination_path(request_path)
+          resource = sitemap.find_resource_by_destination_path(request_path.gsub(' ', '%20'))
 
           # Return 404 if not in sitemap
           return not_found(res, request_path) unless resource && !resource.ignored?

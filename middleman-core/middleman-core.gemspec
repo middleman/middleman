@@ -22,9 +22,6 @@ Gem::Specification.new do |s|
   s.add_dependency("rack", [">= 1.4.5"])
   s.add_dependency("tilt", ["~> 1.4.1"])
 
-  # Builder
-  s.add_dependency("rack-test", ["~> 0.6.2"])
-
   # Helpers
   s.add_dependency("activesupport", ["~> 4.0.1"])
 

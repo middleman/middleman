@@ -8,7 +8,7 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
     super
 
     require 'digest/sha1'
-    require 'rack/test'
+    require 'rack/mock'
     require 'uri'
   end
 
@@ -22,7 +22,7 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
   # Update the main sitemap resource list
   # @return [void]
   def manipulate_resource_list(resources)
-    @rack_client ||= ::Rack::Test::Session.new(app.class.to_rack_app)
+    @rack_client = ::Rack::MockRequest.new(app.class.to_rack_app)
 
     # Process resources in order: binary images and fonts, then SVG, then JS/CSS.
     # This is so by the time we get around to the text files (which may reference
@@ -43,7 +43,7 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
     return if ignored_resource?(resource)
 
     # Render through the Rack interface so middleware and mounted apps get a shot
-    response = @rack_client.get(URI.escape(resource.destination_path), {}, { 'bypass_asset_hash' => 'true' })
+    response = @rack_client.get(URI.escape(resource.destination_path), { 'bypass_asset_hash' => 'true' })
     raise "#{resource.path} should be in the sitemap!" unless response.status == 200
 
     digest = Digest::SHA1.hexdigest(response.body)[0..7]

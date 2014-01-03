@@ -50,9 +50,8 @@ module Middleman::Cli
         raise Thor::Error, 'Error: Could not find a Middleman project config, perhaps you are in the wrong folder?'
       end
 
-      # Use Rack::Test for inspecting a running server for output
       require 'rack'
-      require 'rack/test'
+      require 'rack/mock'
 
       require 'find'
 
@@ -115,7 +114,7 @@ module Middleman::Cli
       @to_clean   = Set.new
 
       @logger = @app.logger
-      @rack = ::Rack::Test::Session.new(@app.class.to_rack_app)
+      @rack = ::Rack::MockRequest.new(@app.class.to_rack_app)
 
       super(base, @build_dir, config)
     end
