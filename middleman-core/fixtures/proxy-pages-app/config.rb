@@ -13,9 +13,6 @@ proxy "/target_ignore4.html", "should_be_ignored8.html", :ignore => true
   proxy "/fake/#{num}.html", "/real/index.html", :ignore => true, :locals => { :num => num }
   proxy "fake2/#{num}.html", "/real/index.html", :ignore => true, :locals => { :num => num }
   proxy "fake3/#{num}.html", "real/index.html", :ignore => true, :locals => { :num => num }
-  proxy "/fake4/#{num}.html", "real/index-ivars.html", :ignore => true do
-    @num = num
-  end
 end
 
 proxy "明日がある.html", "/real.html", :layout => false

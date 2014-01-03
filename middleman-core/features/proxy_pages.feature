@@ -15,8 +15,6 @@ Feature: Proxy Pages (using proxy rather than page)
       | fake2/two.html                                |
       | fake3/one.html                                |
       | fake3/two.html                                |
-      | fake4/one.html                                |
-      | fake4/two.html                                |
       | target_ignore.html                            |
       | target_ignore2.html                           |
       | target_ignore3.html                           |
@@ -35,8 +33,6 @@ Feature: Proxy Pages (using proxy rather than page)
     Then I should see "I am real"
     When I go to "/fake3.html"
     Then I should see "I am real"
-    When I go to "/fake4.html"
-    Then I should see "I am real"
     
   Scenario: Preview proxy with variable one
     Given the Server is running at "proxy-pages-app"
@@ -49,9 +45,6 @@ Feature: Proxy Pages (using proxy rather than page)
     When I go to "/fake3/one.html"
     Then I should see "I am real: one"
     
-    When I go to "/fake4/one.html"
-    Then I should see "I am real: one"
-    
   Scenario: Preview proxy with variable two
     Given the Server is running at "proxy-pages-app"
     When I go to "/fake/two.html"
@@ -61,9 +54,6 @@ Feature: Proxy Pages (using proxy rather than page)
     Then I should see "I am real: two"
     
     When I go to "/fake3/two.html"
-    Then I should see "I am real: two"
-    
-    When I go to "/fake4/two.html"
     Then I should see "I am real: two"
 
   Scenario: Build proxy with variable one

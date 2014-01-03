@@ -1,6 +1,11 @@
 master
 ===
 
+* Remove `page` template local. Use `current_resource` instead.
+* Dropped support for `page` & `proxy` blocks.
+* Dropped support for instance variables inside templates.
+* Moved all rendering into `TemplateRenderer` and `FileRenderer`
+* Placed all template evaluation inside the `TemplateContext` class
 * Remove deprecated `request` instance
 * Remove old module-style extension support
 * Placed all `config.rb` evaluation inside the `ConfigContext` class

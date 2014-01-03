@@ -26,7 +26,7 @@ module Middleman
     # @param [Hash] locs
     # @param [Hash] opts
     # @return [String]
-    def render(locs={}, opts={}, blocks=[])
+    def render(locs={}, opts={})
       path = @path.dup
       extension = File.extname(path)
       engine = extension[1..-1].to_sym
@@ -41,10 +41,6 @@ module Middleman
 
       if context.respond_to?(:init_haml_helpers)
         context.init_haml_helpers
-      end
-
-      blocks.each do |block|
-        context.instance_eval(&block)
       end
 
       # Keep rendering template until we've used up all extensions. This

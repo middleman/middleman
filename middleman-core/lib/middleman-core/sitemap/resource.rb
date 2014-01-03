@@ -48,7 +48,7 @@ module Middleman
         @source_file = source_file
         @destination_path = @path
 
-        @local_metadata = { :options => {}, :locals => {}, :page => {}, :blocks => [] }
+        @local_metadata = { :options => {}, :locals => {}, :page => {}}
       end
 
       # Whether this resource has a template file
@@ -64,30 +64,18 @@ module Middleman
         result = store.metadata_for_path(path).dup
 
         file_meta = store.metadata_for_file(source_file).dup
-        if file_meta.has_key?(:blocks)
-          result[:blocks] += file_meta.delete(:blocks)
-        end
         result.deep_merge!(file_meta)
 
         local_meta = @local_metadata.dup
-        if local_meta.has_key?(:blocks)
-          result[:blocks] += local_meta.delete(:blocks)
-        end
         result.deep_merge!(local_meta)
 
-        result[:blocks] = result[:blocks].flatten.compact
         result
       end
 
       # Merge in new metadata specific to this resource.
       # @param [Hash] metadata A metadata block like provides_metadata_for_path takes
-      def add_metadata(metadata={}, &block)
-        metadata = metadata.dup
-        if metadata.has_key?(:blocks)
-          @local_metadata[:blocks] += metadata.delete(:blocks)
-        end
-        @local_metadata.deep_merge!(metadata)
-        @local_metadata[:blocks] += [ block ] if block_given?
+      def add_metadata(meta={})
+        @local_metadata.deep_merge!(meta.dup)
       end
 
       # The output/preview URL for this resource
@@ -106,7 +94,7 @@ module Middleman
 
       # Render this resource
       # @return [String]
-      def render(opts={}, locs={}, &block)
+      def render(opts={}, locs={})
         if !template?
           return ::Middleman::FileRenderer.new(@app, source_file).get_template_data_for_file
         end
@@ -132,9 +120,6 @@ module Middleman
             app.data.store('page', md[:page])
           end
 
-          blocks = Array(md[:blocks]).dup
-          blocks << block if block_given?
-
           locs[:current_path] ||= self.destination_path
 
           # Certain output file types don't use layouts
@@ -143,7 +128,7 @@ module Middleman
           end
 
           renderer = ::Middleman::TemplateRenderer.new(@app, source_file)
-          renderer.render(locs, opts, blocks)
+          renderer.render(locs, opts)
         end
       end
 

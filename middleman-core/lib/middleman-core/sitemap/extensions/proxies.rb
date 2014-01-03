@@ -23,13 +23,14 @@ module Middleman
         # @param [Hash] opts options to apply to the proxy, including things like
         #               :locals, :ignore to hide the proxy target, :layout, and :directory_indexes.
         # @return [void]
-        def create_proxy(path, target, opts={}, &block)
-          metadata = { :options => {}, :locals => {}, :blocks => [] }
-          metadata[:blocks] << block if block_given?
-          metadata[:locals] = opts.delete(:locals) || {}
+        def create_proxy(path, target, opts={})
+          options = opts.dup
 
-          @app.ignore(target) if opts.delete(:ignore)
-          metadata[:options] = opts
+          metadata = { :options => {}, :locals => {} }
+          metadata[:locals] = options.delete(:locals) || {}
+
+          @app.ignore(target) if options.delete(:ignore)
+          metadata[:options] = options
 
           @proxy_configs << ProxyConfiguration.new(:path => path, :target => target, :metadata => metadata)
 
@@ -45,6 +46,7 @@ module Middleman
               config.path
             )
             p.proxy_to(config.target)
+
             p.add_metadata(config.metadata)
             p
           end
@@ -65,7 +67,7 @@ module Middleman
           @target = ::Middleman::Util.normalize_path(t)
         end
 
-        # Additional metadata like blocks and locals to apply to the proxy
+        # Additional metadata like locals to apply to the proxy
         attr_accessor :metadata
 
         # Create a new proxy configuration from hash options

@@ -15,38 +15,16 @@ page "target_ignore3.html", :proxy => "should_be_ignored7.html", :ignore => true
 page "/target_ignore4.html", :proxy => "should_be_ignored8.html", :ignore => true
 
 %w(one two).each do |num|
-  page "/fake/#{num}.html", :proxy => "/real/index.html", :ignore => true do
-    @num = num
-  end
-  page "fake2/#{num}.html", :proxy => "/real/index.html", :ignore => true do
-    @num = num
-  end
-  page "fake3/#{num}.html", :proxy => "real/index.html", :ignore => true do
-    @num = num
-  end
-  page "/fake4/#{num}.html", :proxy => "real/index.html", :ignore => true do
-    @num = num
-  end
+  page "/fake/#{num}.html", :proxy => "/real/index.html", :ignore => true, :locals => { :num => num }
+  page "fake2/#{num}.html", :proxy => "/real/index.html", :ignore => true, :locals => { :num => num }
+  page "fake3/#{num}.html", :proxy => "real/index.html", :ignore => true, :locals => { :num => num }
+  page "/fake4/#{num}.html", :proxy => "real/index.html", :ignore => true, :locals => { :num => num }
 end
 
 page "明日がある.html", :proxy => "/real.html", :layout => false
 
-page "f*/*" do
-  @all_glob = "I am all glob"
-end
-
-page "fake/*" do
-  @glob_var = "I am one glob"
-end
-
-page "fake2/*" do
-  @glob_var = "I am two glob"
-end
-
-page "fake3/*" do
-  @glob_var = "I am three glob"
-end
-
-page "fake4/*" do
-  @glob_var = "I am four glob"
-end
+page "f*/*", :locals => { :all_glob => "I am all glob" }
+page "fake/*", :locals => { :glob_var => "I am one glob" }
+page "fake2/*", :locals => { :glob_var => "I am two glob" }
+page "fake3/*", :locals => { :glob_var => "I am three glob" }
+page "fake4/*", :locals => { :glob_var => "I am four glob" }

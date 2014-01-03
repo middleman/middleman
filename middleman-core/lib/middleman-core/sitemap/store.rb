@@ -137,18 +137,12 @@ module Middleman
       # @param [String] source_file
       # @return [Hash]
       def metadata_for_file(source_file)
-        blank_metadata = { :options => {}, :locals => {}, :page => {}, :blocks => [] }
+        blank_metadata = { :options => {}, :locals => {}, :page => {} }
 
         provides_metadata.inject(blank_metadata) do |result, (callback, matcher)|
           next result if matcher && !source_file.match(matcher)
 
           metadata = callback.call(source_file).dup
-
-          if metadata.has_key?(:blocks)
-            result[:blocks] << metadata[:blocks]
-            metadata.delete(:blocks)
-          end
-
           result.deep_merge(metadata)
         end
       end
@@ -171,7 +165,7 @@ module Middleman
       def metadata_for_path(request_path)
         return @_cached_metadata[request_path] if @_cached_metadata[request_path]
 
-        blank_metadata = { :options => {}, :locals => {}, :page => {}, :blocks => [] }
+        blank_metadata = { :options => {}, :locals => {}, :page => {} }
 
         @_cached_metadata[request_path] = provides_metadata_for_path.inject(blank_metadata) do |result, (callback, matcher)|
           case matcher
@@ -182,8 +176,6 @@ module Middleman
           end
 
           metadata = callback.call(request_path).dup
-
-          result[:blocks] += Array(metadata.delete(:blocks))
 
           result.deep_merge(metadata)
         end

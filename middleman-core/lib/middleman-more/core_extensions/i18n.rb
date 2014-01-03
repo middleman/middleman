@@ -124,19 +124,11 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
       lang = @mount_at_root
     end
 
-    instance_vars = Proc.new do
-      @lang         = lang
-      @page_id      = page_id
-    end
-
-    locals = {
-      :lang => lang,
-      :page_id => page_id
-    }
-
     {
-      :blocks => [instance_vars],
-      :locals => locals,
+      :locals => {
+        :lang => lang,
+        :page_id => page_id
+      },
       :options => { :lang => lang }
     }
   end
