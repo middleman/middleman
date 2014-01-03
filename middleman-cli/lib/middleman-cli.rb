@@ -1,3 +1,7 @@
+# Setup our load paths
+libdir = File.expand_path(File.dirname(__FILE__))
+$LOAD_PATH.unshift(libdir) unless $LOAD_PATH.include?(libdir)
+
 # Require thor since that's what the who CLI is built around
 require 'thor'
 require 'thor/group'
@@ -82,9 +86,9 @@ module Middleman
 end
 
 # Include the core CLI items
-require 'middleman-core/cli/init'
-require 'middleman-core/cli/bundler'
-require 'middleman-core/cli/extension'
-require 'middleman-core/cli/server'
-require 'middleman-core/cli/build'
-require 'middleman-core/cli/console'
+require 'middleman-cli/init'
+require 'middleman-cli/bundler'
+require 'middleman-cli/extension'
+require 'middleman-cli/server'
+require 'middleman-cli/build'
+require 'middleman-cli/console'

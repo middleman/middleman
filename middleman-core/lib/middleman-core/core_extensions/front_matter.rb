@@ -163,7 +163,7 @@ module Middleman::CoreExtensions
 
     # Get the frontmatter and plain content from a file
     # @param [String] path
-    # @return [Array<Thor::CoreExt::HashWithIndifferentAccess, String>]
+    # @return [Array<Middleman::Util::HashWithIndifferentAccess, String>]
     def frontmatter_and_content(path)
       full_path = if Pathname(path).relative?
         File.join(app.source_dir, path)
