@@ -21,7 +21,7 @@ module Padrino
 
     # Starts the application on the available server with specified options.
     def self.start(app, opts={})
-      options = {}.merge(opts) # We use a standard hash instead of Thor::CoreExt::HashWithIndifferentAccess
+      options = {}.merge(opts) # We use a standard hash instead of Middleman::Util::HashWithIndifferentAccess
       options.symbolize_keys!
       options[:Host] = options.delete(:host) || '127.0.0.1'
       options[:Port] = options.delete(:port) || 3000

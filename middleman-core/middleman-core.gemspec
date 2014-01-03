@@ -14,7 +14,6 @@ Gem::Specification.new do |s|
 
   s.files        = `git ls-files -z`.split("\0")
   s.test_files   = `git ls-files -z -- {fixtures,features}/*`.split("\0")
-  s.executable   = "middleman"
   s.require_path = "lib"
   s.required_ruby_version = '>= 1.9.3'
 
@@ -25,9 +24,6 @@ Gem::Specification.new do |s|
 
   # Builder
   s.add_dependency("rack-test", ["~> 0.6.2"])
-
-  # CLI
-  s.add_dependency("thor", [">= 0.17.0", "< 2.0"])
 
   # Helpers
   s.add_dependency("activesupport", ["~> 4.0.1"])

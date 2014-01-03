@@ -84,19 +84,16 @@ module Middleman::Templates
 end
 
 # Default template
-require 'middleman-core/templates/default'
+require 'middleman-cli/templates/default'
 
 # HTML5 template
-require 'middleman-core/templates/html5'
+require 'middleman-cli/templates/html5'
 
 # HTML5 Mobile template
-require 'middleman-core/templates/mobile'
-
-# SMACSS templates
-require 'middleman-more/templates/smacss'
+require 'middleman-cli/templates/mobile'
 
 # Local templates
-require 'middleman-core/templates/local'
+require 'middleman-cli/templates/local'
 
 # Barebones template
-require 'middleman-core/templates/empty'
+require 'middleman-cli/templates/empty'
