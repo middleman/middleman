@@ -12,6 +12,10 @@
 class Middleman::Extensions::Gzip < ::Middleman::Extension
   option :exts, %w(.js .css .html .htm), 'File extensions to Gzip when building.'
 
+  class NumberHelpers
+    include ::Padrino::Helpers::NumberHelpers
+  end
+
   def initialize(app, options_hash={})
     super
 
@@ -57,11 +61,11 @@ class Middleman::Extensions::Gzip < ::Middleman::Extension
       if output_filename
         total_savings += (old_size - new_size)
         size_change_word = (old_size - new_size) > 0 ? 'smaller' : 'larger'
-        builder.say_status :gzip, "#{output_filename} (#{app.number_to_human_size((old_size - new_size).abs)} #{size_change_word})"
+        builder.say_status :gzip, "#{output_filename} (#{NumberHelpers.new.number_to_human_size((old_size - new_size).abs)} #{size_change_word})"
       end
     end
 
-    builder.say_status :gzip, "Total gzip savings: #{app.number_to_human_size(total_savings)}", :blue
+    builder.say_status :gzip, "Total gzip savings: #{NumberHelpers.new.number_to_human_size(total_savings)}", :blue
     I18n.locale = old_locale
   end
 

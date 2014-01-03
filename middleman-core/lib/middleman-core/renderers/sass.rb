@@ -74,7 +74,7 @@ module Middleman
         def sass_options
           more_opts = { :filename => eval_file, :line => line, :syntax => syntax }
 
-          if @context.is_a?(::Middleman::Application) && file
+          if @context.is_a?(::Middleman::TemplateContext) && file
             location_of_sass_file = @context.source_dir
 
             parts = basename.split('.')

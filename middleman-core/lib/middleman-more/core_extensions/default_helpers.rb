@@ -21,15 +21,15 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
 
     require 'active_support/core_ext/object/to_query'
 
-    app.helpers ::Padrino::Helpers::OutputHelpers
-    app.helpers ::Padrino::Helpers::TagHelpers
-    app.helpers ::Padrino::Helpers::AssetTagHelpers
-    app.helpers ::Padrino::Helpers::FormHelpers
-    app.helpers ::Padrino::Helpers::FormatHelpers
-    app.helpers ::Padrino::Helpers::RenderHelpers
-    app.helpers ::Padrino::Helpers::NumberHelpers
-    # app.helpers ::Padrino::Helpers::TranslationHelpers
-    app.helpers ::Padrino::Helpers::Breadcrumbs
+    ::Middleman::TemplateContext.send :include, ::Padrino::Helpers::OutputHelpers
+    ::Middleman::TemplateContext.send :include, ::Padrino::Helpers::TagHelpers
+    ::Middleman::TemplateContext.send :include, ::Padrino::Helpers::AssetTagHelpers
+    ::Middleman::TemplateContext.send :include, ::Padrino::Helpers::FormHelpers
+    ::Middleman::TemplateContext.send :include, ::Padrino::Helpers::FormatHelpers
+    ::Middleman::TemplateContext.send :include, ::Padrino::Helpers::RenderHelpers
+    ::Middleman::TemplateContext.send :include, ::Padrino::Helpers::NumberHelpers
+    # ::Middleman::TemplateContext.send :include, ::Padrino::Helpers::TranslationHelpers
+    ::Middleman::TemplateContext.send :include, ::Padrino::Helpers::Breadcrumbs
 
     app.config.define_setting :relative_links, false, 'Whether to generate relative links instead of absolute ones'
   end
@@ -39,6 +39,7 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
 
     # Make all block content html_safe
     def content_tag(name, content = nil, options = nil, &block)
+      # safe_content_tag(name, content, options, &block)
       if block_given?
         options = content if content.is_a?(Hash)
         content = capture_html(&block)
@@ -61,17 +62,23 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
     def capture_html(*args, &block)
       handler = auto_find_proper_handler(&block)
       captured_block, captured_html = nil, ''
-      if handler && handler.is_type? && handler.block_is_type?(block)
+
+      if handler && handler.block_is_type?(block)
         captured_html, captured_block = handler.capture_from_template(*args, &block)
       end
+
       # invoking the block directly if there was no template
-      captured_html = block_given? && ( captured_block || block.call(*args) )  if captured_html.blank?
+      captured_html = block_given? && ( captured_block || block.call(*args) ) if captured_html.blank?
       captured_html
     end
 
     def auto_find_proper_handler(&block)
-      engine = block_given? ? File.extname(block.source_location[0])[1..-1].to_sym : current_engine
-      ::Padrino::Helpers::OutputHelpers.handlers.map { |h| h.new(self) }.find { |h| h.engines.include?(engine) && h.is_type? }
+      if block_given?
+        engine = File.extname(block.source_location[0])[1..-1].to_sym
+        ::Padrino::Helpers::OutputHelpers.handlers.map { |h| h.new(self) }.find { |h| h.engines.include?(engine) && h.block_is_type?(block) }
+      else
+        find_proper_handler
+      end
     end
 
     # Disable Padrino cache buster
@@ -197,7 +204,7 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
       options_with_resource = options.dup
       options_with_resource[:current_resource] ||= current_resource
 
-      ::Middleman::Util.url_for(self, path_or_resource, options_with_resource)
+      ::Middleman::Util.url_for(app, path_or_resource, options_with_resource)
     end
 
     # Overload the regular link_to to be sitemap-aware - if you

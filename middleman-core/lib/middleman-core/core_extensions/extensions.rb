@@ -182,6 +182,11 @@ module Middleman
             end
 
             if klass.is_a?(::Middleman::Extension)
+              # Forward Extension helpers to TemplateContext
+              (klass.class.defined_helpers || []).each do |m|
+                @template_context_class.send(:include, m)
+              end
+
               ::Middleman::Extension.activated_extension(klass)
             end
           end

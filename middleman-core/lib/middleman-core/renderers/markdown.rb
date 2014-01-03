@@ -30,11 +30,9 @@ module Middleman
               if config[:markdown_engine] == :redcarpet
                 require 'middleman-core/renderers/redcarpet'
                 ::Tilt.prefer(::Middleman::Renderers::RedcarpetTemplate, *markdown_exts)
-                MiddlemanRedcarpetHTML.middleman_app = self
               elsif config[:markdown_engine] == :kramdown
                 require 'middleman-core/renderers/kramdown'
                 ::Tilt.prefer(::Middleman::Renderers::KramdownTemplate, *markdown_exts)
-                MiddlemanKramdownHTML.middleman_app = self
               elsif !config[:markdown_engine].nil?
                 # Map symbols to classes
                 markdown_engine_klass = if config[:markdown_engine].is_a? Symbol

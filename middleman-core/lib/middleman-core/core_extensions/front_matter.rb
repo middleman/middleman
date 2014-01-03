@@ -81,13 +81,11 @@ module Middleman::CoreExtensions
       end
     end
 
-    helpers do
-      # Get the template data from a path
-      # @param [String] path
-      # @return [String]
-      def template_data_for_file(path)
-        extensions[:frontmatter].data(path).last
-      end
+    # Get the template data from a path
+    # @param [String] path
+    # @return [String]
+    def template_data_for_file(path)
+      data(path).last
     end
 
     def data(path)
