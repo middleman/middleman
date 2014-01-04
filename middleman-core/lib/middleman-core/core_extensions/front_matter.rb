@@ -41,11 +41,19 @@ module Middleman::CoreExtensions
         fmdata = data(path).first
 
         data = {}
+
         [:layout, :layout_engine].each do |opt|
           data[opt] = fmdata[opt] unless fmdata[opt].nil?
         end
+        
+        if fmdata[:renderer_options]
+          data[:renderer_options] = {}
+          fmdata[:renderer_options].each do |k, v|
+            data[:renderer_options][k.to_sym] = v
+          end
+        end
 
-        { :options => data, :page => ::Middleman::Util.recursively_enhance(fmdata).freeze }
+        { :options => data }
       end
     end
 

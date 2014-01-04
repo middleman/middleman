@@ -47,7 +47,7 @@ module Middleman
               # TODO grab all the author information
               page[:author] = (doc.attr 'author') unless (doc.attr 'author').nil?
 
-              {:options => opts, :page => ::Middleman::Util.recursively_enhance(page)}
+              { :options => opts, :locals => { :asciidoc => page } }
             end
           end
         end

@@ -48,7 +48,7 @@ module Middleman
         @source_file = source_file
         @destination_path = @path
 
-        @local_metadata = { :options => {}, :locals => {}, :page => {}}
+        @local_metadata = { :options => {}, :locals => {} }
       end
 
       # Whether this resource has a template file
@@ -104,22 +104,7 @@ module Middleman
         instrument 'render.resource', :path => relative_source  do
           md   = metadata.dup
           opts = md[:options].deep_merge(opts)
-
-          # Pass "renderer_options" hash from frontmatter along to renderer
-          if md[:page]['renderer_options']
-            opts[:renderer_options] = {}
-            md[:page]['renderer_options'].each do |k, v|
-              opts[:renderer_options][k.to_sym] = v
-            end
-          end
-
           locs = md[:locals].deep_merge(locs)
-
-          # Forward remaining data to helpers
-          if md.has_key?(:page)
-            app.data.store('page', md[:page])
-          end
-
           locs[:current_path] ||= self.destination_path
 
           # Certain output file types don't use layouts

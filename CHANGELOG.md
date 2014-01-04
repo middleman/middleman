@@ -1,6 +1,7 @@
 master
 ===
 
+* Asciidoc information now available with the `asciidoc` local, which is a normal hash.
 * Remove `page` template local. Use `current_resource` instead.
 * Dropped support for `page` & `proxy` blocks.
 * Dropped support for instance variables inside templates.
