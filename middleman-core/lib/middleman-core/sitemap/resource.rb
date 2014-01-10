@@ -73,7 +73,7 @@ module Middleman
       end
 
       # Merge in new metadata specific to this resource.
-      # @param [Hash] metadata A metadata block like provides_metadata_for_path takes
+      # @param [Hash] meta A metadata block like provides_metadata_for_path takes
       def add_metadata(meta={})
         @local_metadata.deep_merge!(meta.dup)
       end

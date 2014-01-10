@@ -2,7 +2,7 @@
 libdir = File.expand_path(File.dirname(__FILE__))
 $LOAD_PATH.unshift(libdir) unless $LOAD_PATH.include?(libdir)
 
-# Require thor since that's what the who CLI is built around
+# Require Thor since that's what the whole CLI is built around
 require 'thor'
 require 'thor/group'
 
@@ -11,7 +11,7 @@ module Middleman
 
   module Cli
 
-    # The base task from which everything else etends
+    # The base task from which everything else extends
     class Base < Thor
       class << self
         def start(*args)
