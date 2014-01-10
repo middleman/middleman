@@ -113,7 +113,7 @@ module Middleman
         end
       end
 
-      # Get a recusive list of files inside a set of paths.
+      # Get a recursive list of files inside a set of paths.
       # Works with symlinks.
       #
       # @param paths Some paths string or Pathname

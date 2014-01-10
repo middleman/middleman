@@ -58,7 +58,7 @@ module Middleman
           parent.children.reject { |p| p == self }
         end
 
-        # Whether this resource either a directory index, or has the same name as an existing directory in the source
+        # Whether this resource is either a directory index, or has the same name as an existing directory in the source
         # @return [Boolean]
         def directory_index?
           path.include?(app.config[:index_file]) || path =~ /\/$/ || eponymous_directory?
