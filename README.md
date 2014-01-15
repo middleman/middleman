@@ -91,7 +91,7 @@ The best way to get quick responses to your issues and swift fixes to your bugs 
 
 ## License
 
-Copyright (c) 2010-2013 Thomas Reynolds. MIT Licensed, see [LICENSE] for details.
+Copyright (c) 2010-2014 Thomas Reynolds. MIT Licensed, see [LICENSE] for details.
 
 [middleman]: http://middlemanapp.com
 [gem]: https://rubygems.org/gems/middleman
