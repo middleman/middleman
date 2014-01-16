@@ -50,6 +50,7 @@ module Middleman
 
           shell.say 'Tasks:'
           shell.print_table(list, :ident => 2, :truncate => true)
+          shell.say %(\nSee 'middleman help <command>' for more information on specific command.)
           shell.say
         end
       end
