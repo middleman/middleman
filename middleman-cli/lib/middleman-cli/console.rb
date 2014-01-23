@@ -1,7 +1,9 @@
 # CLI Module
 module Middleman::Cli
+  # Alias "c" to "console"
+  Base.map({ 'c' => 'console' })
 
-  # A thor task for creating new projects
+  # The CLI Console class
   class Console < Thor
     include Thor::Actions
 
