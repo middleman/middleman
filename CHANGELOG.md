@@ -1,6 +1,14 @@
 master
 ===
 
+3.2.2
+===
+
+* Specify the full path to the NEWLINE constant
+* Refactor some internals which were dependent on certain order of operations
+* Updated i18n dep
+* Updated Uglifier dep
+
 3.2.1
 ===
 
