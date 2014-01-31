@@ -32,7 +32,7 @@ module Middleman::Cli
           set :environment, opts[:environment].to_sym
         end
 
-        logger(opts[:debug] ? 0 : 1, opts[:instrumenting] || false)
+        ::Middleman::Logger.singleton(opts[:debug] ? 0 : 1, opts[:instrumenting] || false)
       end
 
       # TODO: get file watcher / reload! working in console
