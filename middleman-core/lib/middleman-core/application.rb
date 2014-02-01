@@ -10,7 +10,7 @@ require 'active_support/json'
 require 'active_support/core_ext/integer/inflections'
 
 # Simple callback library
-require 'vendored-middleman-deps/hooks-0.2.0/lib/hooks'
+require 'vendored-middleman-deps/hooks-0.3.3/lib/hooks'
 
 # Our custom logger
 require 'middleman-core/logger'
@@ -198,7 +198,7 @@ module Middleman
 
       # Evaluate a passed block if given
       @config_context.instance_exec(&block) if block_given?
-      
+
       super
     end
 
