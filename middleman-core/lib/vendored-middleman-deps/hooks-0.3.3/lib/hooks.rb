@@ -1,35 +1,41 @@
 require File.join(File.dirname(__FILE__), "hooks/inheritable_attribute")
+require File.join(File.dirname(__FILE__), "hooks/hook")
 
 # Almost like ActiveSupport::Callbacks but 76,6% less complex.
 #
 # Example:
 #
 #   class CatWidget < Apotomo::Widget
-#     define_hook :after_dinner
+#     define_hooks :before_dinner, :after_dinner
 #
 # Now you can add callbacks to your hook declaratively in your class.
 #
-#     after_dinner do puts "Ice cream!" end
+#     before_dinner :wash_paws
+#     after_dinner { puts "Ice cream!" }
 #     after_dinner :have_a_desert   # => refers to CatWidget#have_a_desert
 #
 # Running the callbacks happens on instances. It will run the block and #have_a_desert from above.
 #
 #   cat.run_hook :after_dinner
 module Hooks
-  VERSION = "0.2.0"
-
   def self.included(base)
-    base.extend InheritableAttribute
-    base.extend ClassMethods
+    base.class_eval do
+      extend InheritableAttribute
+      extend ClassMethods
+      inheritable_attr :_hooks
+      self._hooks= HookSet.new
+    end
   end
 
   module ClassMethods
-    def define_hook(name)
-      accessor_name = "_#{name}_callbacks"
+    def define_hooks(*names)
+      options = extract_options!(names)
 
-      setup_hook_accessors(accessor_name)
-      define_hook_writer(name, accessor_name)
+      names.each do |name|
+        setup_hook(name, options)
+      end
     end
+    alias_method :define_hook, :define_hooks
 
     # Like Hooks#run_hook but for the class. Note that +:callbacks+ must be class methods.
     #
@@ -46,13 +52,7 @@ module Hooks
     end
 
     def run_hook_for(name, scope, *args)
-      callbacks_for_hook(name).each do |callback|
-        if callback.kind_of? Symbol
-          scope.send(callback, *args)
-        else
-          scope.instance_exec(*args, &callback)
-        end
-      end
+      _hooks[name].run(scope, *args)
     end
 
     # Returns the callbacks for +name+. Handy if you want to run the callbacks yourself, say when
@@ -67,28 +67,37 @@ module Hooks
     #
     # would run callbacks in the object _instance_ context, passing +self+ as block parameter.
     def callbacks_for_hook(name)
-      send("_#{name}_callbacks")
+      _hooks[name]
     end
 
   private
-
-    def define_hook_writer(hook, accessor_name)
-      self.send(:define_method, hook.to_sym) do |&block|
-        if self.class.respond_to?(hook)
-          self.class.send(hook.to_sym, &block)
-        end
-      end
-
-      instance_eval <<-RUBY_EVAL, __FILE__, __LINE__ + 1
-        def #{hook}(method=nil, &block)
-          #{accessor_name} << (block || method)
-        end
-      RUBY_EVAL
+    def setup_hook(name, options)
+      _hooks[name] = Hook.new(options)
+      define_hook_writer(name)
     end
 
-    def setup_hook_accessors(accessor_name)
-      inheritable_attr(accessor_name)
-      send("#{accessor_name}=", [])  # initialize ivar.
+    def define_hook_writer(name)
+      self.send(:define_method, name.to_sym) do |&block|
+        if self.class.respond_to?(name)
+          self.class.send(name.to_sym, &block)
+        end
+      end
+      instance_eval *hook_writer_args(name)
+    end
+
+    def hook_writer_args(name)
+      # DISCUSS: isn't there a simpler way to define a dynamic method? should the internal logic be handled by HooksSet instead?
+      str = <<-RUBY_EVAL
+        def #{name}(method=nil, &block)
+          _hooks[:#{name}] << (block || method)
+        end
+      RUBY_EVAL
+
+      [str, __FILE__, __LINE__ + 1]
+    end
+
+    def extract_options!(args)
+      args.last.is_a?(Hash) ? args.pop : {}
     end
   end
 
@@ -106,4 +115,22 @@ module Hooks
   def run_hook(name, *args)
     self.class.run_hook_for(name, self, *args)
   end
+
+  class HookSet < Hash
+    def [](name)
+      super(name.to_sym)
+    end
+
+    def []=(name, values)
+      super(name.to_sym, values)
+    end
+
+    def clone
+      super.tap do |cloned|
+        each { |name, callbacks| cloned[name] = callbacks.clone }
+      end
+    end
+  end
 end
+
+require File.join(File.dirname(__FILE__), "hooks/instance_hooks")

@@ -22,12 +22,12 @@ module Hooks
         def #{name}=(v)
           @#{name} = v
         end
-
+        
         def #{name}
           return @#{name} unless superclass.respond_to?(:#{name}) and value = superclass.#{name}
           @#{name} ||= value.clone # only do this once.
         end
       }
     end
-  end
+  end  
 end
