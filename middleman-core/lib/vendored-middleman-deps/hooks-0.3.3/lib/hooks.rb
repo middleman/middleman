@@ -77,11 +77,6 @@ module Hooks
     end
 
     def define_hook_writer(name)
-      self.send(:define_method, name.to_sym) do |&block|
-        if self.class.respond_to?(name)
-          self.class.send(name.to_sym, &block)
-        end
-      end
       instance_eval *hook_writer_args(name)
     end
 
