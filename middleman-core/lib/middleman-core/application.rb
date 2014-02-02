@@ -10,7 +10,7 @@ require 'active_support/json'
 require 'active_support/core_ext/integer/inflections'
 
 # Simple callback library
-require 'vendored-middleman-deps/hooks-0.3.3/lib/hooks'
+require 'hooks'
 
 # Our custom logger
 require 'middleman-core/logger'
