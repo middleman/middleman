@@ -49,7 +49,7 @@ class Middleman::CoreExtensions::Compass < ::Middleman::Extension
     end
 
     # Call hook
-    app.run_hook :compass_config, ::Compass.configuration
+    app.run_hook_for :compass_config, app, ::Compass.configuration
 
     # Tell Tilt to use it as well (for inline sass blocks)
     ::Tilt.register 'sass', CompassSassTemplate

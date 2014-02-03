@@ -151,7 +151,7 @@ module Middleman
             run_hook :build_config
             config_context.execute_configure_callbacks(:build)
           end
-          
+
           if development?
             run_hook :development_config
             config_context.execute_configure_callbacks(:development)
