@@ -14,7 +14,7 @@ require 'active_support/core_ext/integer/inflections'
 require 'active_support/core_ext/float/rounding'
 
 # Simple callback library
-require 'vendored-middleman-deps/hooks-0.2.0/lib/hooks'
+require 'hooks'
 
 # Our custom logger
 require 'middleman-core/logger'
@@ -32,6 +32,7 @@ module Middleman
 
     # Uses callbacks
     include Hooks
+    include Hooks::InstanceHooks
 
     # Before request hook
     define_hook :before
@@ -223,6 +224,12 @@ module Middleman
     end
     alias :inspect :to_s # Ruby 2.0 calls inspect for NoMethodError instead of to_s
 
+    # Hooks clones _hooks from the class to the instance.
+    # https://github.com/apotonick/hooks/blob/master/lib/hooks/instance_hooks.rb#L10
+    # Middleman expects the same list of hooks for class and instance hooks:
+    def _hooks
+      self.class._hooks
+    end
   end
 end
 
