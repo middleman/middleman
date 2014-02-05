@@ -175,6 +175,7 @@ module Middleman
       # Bind app hooks to local methods
       bind_before_configuration
       bind_after_configuration
+      bind_before_build
       bind_after_build
     end
 
@@ -229,6 +230,19 @@ module Middleman
 
         if ext.respond_to?(:manipulate_resource_list)
           ext.app.sitemap.register_resource_list_manipulator(ext.class.extension_name, ext)
+        end
+      end
+    end
+
+    def bind_before_build
+      ext = self
+      if ext.respond_to?(:before_build)
+        @klass.before_build do |builder|
+          if ext.method(:before_build).arity === 1
+            ext.before_build(builder)
+          else
+            ext.before_build
+          end
         end
       end
     end

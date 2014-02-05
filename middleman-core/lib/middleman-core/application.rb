@@ -40,6 +40,9 @@ module Middleman
     # Ready (all loading and parsing of extensions complete) hook
     define_hook :ready
 
+    # Runs before the build is started
+    define_hook :before_build
+
     # Runs after the build is finished
     define_hook :after_build
 
