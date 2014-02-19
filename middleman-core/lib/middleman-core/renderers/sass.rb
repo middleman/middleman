@@ -14,10 +14,6 @@ module Middleman
           # Default sass options
           app.config.define_setting :sass, {}, 'Sass engine options'
 
-          # Location of SASS .sass-cache directory.
-          # @return [String]
-          app.config.define_setting :sass_cache_path, File.join(app.root_path, '.sass-cache'), 'Location of sass cache' # runtime compile of path
-
           app.before_configuration do
             template_extensions :scss => :css,
                                 :sass => :css

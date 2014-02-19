@@ -6,7 +6,7 @@ require 'i18n'
 
 # Don't fail on invalid locale, that's not what our current
 # users expect.
-::I18n.config.enforce_available_locales = false
+::I18n.enforce_available_locales = false
 
 # Use ActiveSupport JSON
 require 'active_support/json'

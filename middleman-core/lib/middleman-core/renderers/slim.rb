@@ -1,6 +1,20 @@
 # Load gem
 require 'slim'
 
+module SafeTemplate
+  def render(*)
+    super.html_safe
+  end
+end
+
+class Slim::Template
+  include SafeTemplate
+
+  def precompiled_preamble(locals)
+    "__in_slim_template = true\n" << super
+  end
+end
+
 module Middleman
   module Renderers
 
@@ -29,10 +43,9 @@ module Middleman
               :context => self
             }
 
-            slim_embedded = defined?(::Slim::Embedded) ? ::Slim::Embedded : ::Slim::EmbeddedEngine
-
+            ::Slim::Embedded::SassEngine.disable_option_validator!
             %w(sass scss markdown).each do |engine|
-              slim_embedded.default_options[engine.to_sym] = context_hack
+              ::Slim::Embedded.default_options[engine.to_sym] = context_hack
             end
           end
         end

@@ -21,7 +21,6 @@ class Middleman::CoreExtensions::Compass < ::Middleman::Extension
       compass_config.project_path    = app.source_dir
       compass_config.environment     = :development
       compass_config.cache           = false
-      # compass_config.cache_path      = app.config[:sass_cache_path]
       compass_config.sass_dir        = app.config[:css_dir]
       compass_config.css_dir         = app.config[:css_dir]
       compass_config.javascripts_dir = app.config[:js_dir]
