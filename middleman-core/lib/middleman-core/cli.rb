@@ -78,8 +78,6 @@ module Middleman
         tasks_dir = File.join(Dir.pwd, 'tasks')
         if File.exists?(tasks_dir)
           Dir[File.join(tasks_dir, '**/*_task.rb')].each do |file|
-            # puts file
-            # exit
             ::Middleman::Cli.module_eval File.read(file)
           end
         end
