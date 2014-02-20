@@ -4,14 +4,12 @@ Feature: Allow config.rb and extensions to add CLI commands
     Given an empty app
     And a file named "tasks/hello_task.rb" with:
       """
-      module Middleman::Cli
-        class Hello < Thor
-          namespace :hello
+      class Hello < Thor
+        namespace :hello
 
-          desc "hello", "Say hello"
-          def hello
-            puts "Hello World"
-          end
+        desc "hello", "Say hello"
+        def hello
+          puts "Hello World"
         end
       end
       """
@@ -22,14 +20,12 @@ Feature: Allow config.rb and extensions to add CLI commands
     Given an empty app
     And a file named "tasks/hello_task.rb" with:
       """
-      module Middleman::Cli
-        class Hello < Thor
-          namespace :hello
+      class Hello < Thor
+        namespace :hello
 
-          desc "hello", "Say hello"
-          def hello
-            puts "Hello World"
-          end
+        desc "hello", "Say hello"
+        def hello
+          puts "Hello World"
         end
       end
       """
