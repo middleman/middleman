@@ -13,3 +13,17 @@ Feature: Allow config.rb and extensions to add CLI commands
       """
     When I run `middleman hello`
     Then the output should contain "Hello World"
+    
+  Scenario: Command autoloaded from tasks/ directory added to task list
+    Given an empty app
+    And a file named "tasks/hello_task.rb" with:
+      """
+      class Hello < Thor
+        desc "hello", "Say hello"
+        def hello
+          puts "Hello World"
+        end
+      end
+      """
+    When I run `middleman help`
+    Then the output should contain "Say hello"
