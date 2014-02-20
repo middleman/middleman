@@ -38,6 +38,11 @@ module Middleman
           klass, task = Thor::Util.find_class_and_task_by_namespace("#{meth}:#{meth}")
           klass.start(['-h', task].compact, :shell => self.shell)
         else
+          tasks_dir = File.join(Dir.pwd, 'tasks')
+          if File.exists?(tasks_dir)
+            Dir[File.join(tasks_dir, '**/*_task.rb')].each { |f| require f }
+          end
+
           list = []
           Thor::Util.thor_classes_in(Middleman::Cli).each do |thor_class|
             list += thor_class.printable_tasks(false)
@@ -59,16 +64,12 @@ module Middleman
           meth = self.class.map[meth]
         end
 
-        klass, task = Thor::Util.find_class_and_task_by_namespace("#{meth}:#{meth}")
-
-        if klass.nil?
-          tasks_dir = File.join(Dir.pwd, 'tasks')
-
-          if File.exists?(tasks_dir)
-            Dir[File.join(tasks_dir, '**/*_task.rb')].each { |f| require f }
-            klass, task = Thor::Util.find_class_and_task_by_namespace("#{meth}:#{meth}")
-          end
+        tasks_dir = File.join(Dir.pwd, 'tasks')
+        if File.exists?(tasks_dir)
+          Dir[File.join(tasks_dir, '**/*_task.rb')].each { |f| require f }
         end
+
+        klass, task = Thor::Util.find_class_and_task_by_namespace("#{meth}:#{meth}")
 
         if klass.nil?
           raise Thor::Error.new "There's no '#{meth}' command for Middleman. Try 'middleman help' for a list of commands."
