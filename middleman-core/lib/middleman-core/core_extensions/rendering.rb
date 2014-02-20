@@ -316,6 +316,9 @@ module Middleman
             ::Tilt.mappings.each do |mapping_ext, engines|
               next unless engines.include? extension_class
               engine_options = config[mapping_ext.to_sym] || {}
+              engine_options = engine_options.each_with_object({}) do |k, h|
+                k.is_a?(Array) ? h.store(*k) : h[k] = true
+              end
               options.merge!(engine_options)
             end
 
