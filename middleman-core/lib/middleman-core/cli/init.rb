@@ -43,7 +43,7 @@ module Middleman::Cli
       :desc    => 'Skip Git ignores and keeps'
     # The init task
     # @param [String] name
-    def init(name)
+    def init(name = '.')
       key = options[:template].to_sym
       unless ::Middleman::Templates.registered.has_key?(key)
         raise Thor::Error.new "Unknown project template '#{key}'"
