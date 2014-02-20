@@ -28,3 +28,11 @@ Feature: Layouts dir
     When I go to "/index.html"
     Then I should see "contents of the layout"
 
+  Scenario: Prefer a layout in the layouts_dir to one with the same name in the root
+    Given a fixture app "layouts-dir-app"
+    And a file named "config.rb" with:
+    """
+    """
+    And the Server is running
+    When I go to "/ambiguous.html"
+    Then I should see "contents of the layout in layouts_dir"
