@@ -157,7 +157,7 @@ module Middleman
               content = render_individual_file(path, locs, opts, context)
               path = File.basename(path, File.extname(path))
             rescue LocalJumpError
-              raise "Tried to render a layout (calls yield) at #{path} like it was a template. Non-default layouts need to be in #{source}/#{layout_dir}."
+              raise "Tried to render a layout (calls yield) at #{path} like it was a template. Non-default layouts need to be in #{source}/#{config[:layouts_dir]}."
             end
           end
 
@@ -190,42 +190,29 @@ module Middleman
           locals = options[:locals]
 
           found_partial = false
-          engine        = nil
+          resolve_opts = { try_without_underscore: true }
 
           # If the path is known to the sitemap
           if resource = sitemap.find_resource_by_path(current_path)
             current_dir = File.dirname(resource.source_file)
-            engine = File.extname(resource.source_file)[1..-1].to_sym
+            resolve_opts[:preferred_engine] = File.extname(resource.source_file)[1..-1].to_sym
 
             # Look for partials relative to the current path
             relative_dir = File.join(current_dir.sub(%r{^#{Regexp.escape(self.source_dir)}/?}, ''), data)
 
-            # Try to use the current engine first
-            found_partial, found_engine = resolve_template(relative_dir, :preferred_engine => engine, :try_without_underscore => true)
-
-            # Fall back to any engine available
-            if !found_partial
-              found_partial, found_engine = resolve_template(relative_dir, :try_without_underscore => true)
-            end
+            found_partial = resolve_template(relative_dir, resolve_opts)
           end
 
           # Look in the partials_dir for the partial with the current engine
-          partials_path = File.join(config[:partials_dir], data)
-          if !found_partial && !engine.nil?
-            found_partial, found_engine = resolve_template(partials_path, :preferred_engine => engine, :try_without_underscore => true)
+          if !found_partial
+            partials_path = File.join(config[:partials_dir], data)
+            found_partial = resolve_template(partials_path, resolve_opts)
           end
 
-          # Look in the root with any engine
-          if !found_partial
-            found_partial, found_engine = resolve_template(partials_path, :try_without_underscore => true)
-          end
+          raise ::Middleman::CoreExtensions::Rendering::TemplateNotFound, "Could not locate partial: #{data}" unless found_partial
 
           # Render the partial if found, otherwide throw exception
-          if found_partial
-            render_individual_file(found_partial, locals, options, self, &block)
-          else
-            raise ::Middleman::CoreExtensions::Rendering::TemplateNotFound, "Could not locate partial: #{data}"
-          end
+          render_individual_file(found_partial, locals, options, self, &block)
         end
 
         # Render an on-disk file. Used for everything, including layouts.
@@ -370,26 +357,14 @@ module Middleman
           # Whether we've found the layout
           layout_path = false
 
-          # If we prefer a specific engine
-          if !preferred_engine.nil?
-            # Check root
-            layout_path, layout_engine = resolve_template(name, :preferred_engine => preferred_engine)
+          resolve_opts = {}
+          resolve_opts[:preferred_engine] = preferred_engine if !preferred_engine.nil?
 
-            # Check layouts folder
-            if !layout_path
-              layout_path, layout_engine = resolve_template(File.join(config[:layouts_dir], name.to_s), :preferred_engine => preferred_engine)
-            end
-          end
+          # Check layouts folder
+          layout_path = resolve_template(File.join(config[:layouts_dir], name.to_s), resolve_opts)
 
-          # Check root, no preference
-          if !layout_path
-            layout_path, layout_engine = resolve_template(name)
-          end
-
-          # Check layouts folder, no preference
-          if !layout_path
-            layout_path, layout_engine = resolve_template(File.join(config[:layouts_dir], name.to_s))
-          end
+          # If we didn't find it, check root
+          layout_path = resolve_template(name, resolve_opts) unless layout_path
 
           # Return the path
           layout_path
@@ -440,7 +415,8 @@ module Middleman
 
         # Find a template on disk given a output path
         # @param [String] request_path
-        # @param [Hash] options
+        # @option options [Boolean] :preferred_engine If set, try this engine first, then fall back to any engine.
+        # @option options [Boolean] :try_without_underscore
         # @return [Array<String, Symbol>, Boolean]
         def resolve_template(request_path, options={})
           # Find the path by searching or using the cache
@@ -450,48 +426,46 @@ module Middleman
             on_disk_path  = File.expand_path(relative_path, self.source_dir)
 
             # By default, any engine will do
-            preferred_engine = '*'
+            preferred_engines = ['*']
 
-            # Unless we're specifically looking for a preferred engine
+            # If we're specifically looking for a preferred engine
             if options.has_key?(:preferred_engine)
               extension_class = ::Tilt[options[:preferred_engine]]
               matched_exts = []
 
               # Get a list of extensions for a preferred engine
-              # TODO: Cache this
-              ::Tilt.mappings.each do |ext, engines|
-                next unless engines.include? extension_class
-                matched_exts << ext
-              end
+              matched_exts = ::Tilt.mappings.select do |ext, engines|
+                engines.include? extension_class
+              end.keys
 
-              # Change the glob to only look for the matched extensions
-              if matched_exts.length > 0
-                preferred_engine = '{' + matched_exts.join(',') + '}'
-              else
-                return false
+              # Prefer to look for the matched extensions
+              unless matched_exts.empty?
+                preferred_engines.unshift('{' + matched_exts.join(',') + '}')
               end
             end
 
-            # Look for files that match
-            path_with_ext = on_disk_path + '.' + preferred_engine
-
-            found_path = Dir[path_with_ext].find do |path|
-              ::Tilt[path]
+            search_paths = preferred_engines.flat_map do |preferred_engine|
+              path_with_ext = on_disk_path + '.' + preferred_engine
+              paths = [path_with_ext]
+              if options[:try_without_underscore]
+                paths << path_with_ext.sub(relative_path, relative_path.sub(/^_/, '').sub(/\/_/, '/'))
+              end
+              paths
             end
 
-            if !found_path && options[:try_without_underscore] &&
-              path_no_underscore = path_with_ext.
-                sub(relative_path, relative_path.sub(/^_/, '').
-                sub(/\/_/, '/'))
-              found_path = Dir[path_no_underscore].find do |path|
+            found_path = nil
+            search_paths.each do |path_with_ext|
+              found_path = Dir[path_with_ext].find do |path|
                 ::Tilt[path]
               end
+              break if found_path
             end
 
             # If we found one, return it and the found engine
-            if found_path || files.exists?(on_disk_path)
-              engine = found_path ? File.extname(found_path)[1..-1].to_sym : nil
-              [ found_path || on_disk_path, engine ]
+            if found_path
+              found_path
+            elsif File.exists?(on_disk_path)
+              on_disk_path
             else
               false
             end
