@@ -1,6 +1,20 @@
 # Load gem
 require 'slim'
 
+module SafeTemplate
+  def render(*)
+    super.html_safe
+  end
+end
+
+class Slim::Template
+  include SafeTemplate
+
+  def precompiled_preamble(locals)
+    "__in_slim_template = true\n" << super
+  end
+end
+
 module Middleman
   module Renderers
 

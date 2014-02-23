@@ -86,8 +86,8 @@ Feature: Markdown (Redcarpet) support
     Then I should see "![dust mite](http://dust.mite/image.png)"
     And I should not see "<img"
     When I go to "/with_toc_data.html"
-    Then I should see 'id="toc_0"'
-    And I should see 'id="toc_1"'
+    Then I should see 'id="first-header"'
+    And I should see 'id="second-header"'
     When I go to "/hard_wrap.html"
     Then I should see "br"
     When I go to "/link.html"

@@ -1,6 +1,16 @@
 # Require gem
 require 'haml'
 
+module SafeTemplate
+  def render(*)
+    super.html_safe
+  end
+end
+
+class Tilt::HamlTemplate
+  include SafeTemplate
+end
+
 module Middleman
   module Renderers
 

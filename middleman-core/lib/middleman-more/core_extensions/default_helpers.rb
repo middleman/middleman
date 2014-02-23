@@ -1,16 +1,20 @@
 if !defined?(::Padrino::Helpers)
-  require 'vendored-middleman-deps/padrino-core-0.11.4/lib/padrino-core/support_lite'
-  require 'vendored-middleman-deps/padrino-helpers-0.11.4/lib/padrino-helpers'
+  require 'vendored-middleman-deps/padrino-core-0.12.0/lib/padrino-core/support_lite'
+  require 'vendored-middleman-deps/padrino-helpers-0.12.0/lib/padrino-helpers'
+
+  # Don't fail on invalid locale, that's not what our current
+  # users expect.
+  ::I18n.enforce_available_locales = false
 end
 
 class Padrino::Helpers::OutputHelpers::ErbHandler
   # Force Erb capture not to use safebuffer
   def capture_from_template(*args, &block)
     self.output_buffer, _buf_was = '', self.output_buffer
-    captured_block = block.call(*args)
-    ret = eval('@_out_buf', block.binding)
+    raw = block.call(*args)
+    captured = template.instance_variable_get(:@_out_buf)
     self.output_buffer = _buf_was
-    [ ret, captured_block ]
+    engine_matches?(block) ? captured : raw
   end
 end
 
@@ -49,6 +53,7 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
       attributes = tag_attributes(options)
       output = ActiveSupport::SafeBuffer.new
       output.safe_concat "<#{name}#{attributes}>"
+
       if content.respond_to?(:each) && !content.is_a?(String)
         content.each { |c| output.safe_concat c; output.safe_concat ::Padrino::Helpers::TagHelpers::NEWLINE }
       else

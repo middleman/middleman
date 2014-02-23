@@ -3,7 +3,7 @@ require 'i18n'
 
 # Don't fail on invalid locale, that's not what our current
 # users expect.
-::I18n.config.enforce_available_locales = false
+::I18n.enforce_available_locales = false
 
 # Use ActiveSupport JSON
 require 'active_support/json'
@@ -40,6 +40,9 @@ module Middleman
 
     # Ready (all loading and parsing of extensions complete) hook
     define_hook :ready
+
+    # Runs before the build is started
+    define_hook :before_build
 
     # Runs after the build is finished
     define_hook :after_build

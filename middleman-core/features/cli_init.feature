@@ -15,19 +15,29 @@ Feature: Middleman CLI
       | source/javascripts/all.js                     |
       | source/stylesheets/all.css                    |
       | source/stylesheets/normalize.css              |
-      
+
+  Scenario: Create a new project in the current directory
+    Given a directory named "MY_PROJECT"
+    When I cd to "MY_PROJECT"
+    And I run `middleman init`
+    Then the exit status should be 0
+    And the following files should exist:
+      | Gemfile                                       |
+      | config.rb                                     |
+      | source/index.html.erb                         |
+
   Scenario: Create a new project (alias i)
     When I run `middleman i MY_PROJECT`
     Then a directory named "MY_PROJECT" should exist
-    
+
   Scenario: Create a new project (alias new)
     When I run `middleman new MY_PROJECT`
     Then a directory named "MY_PROJECT" should exist
-  
+
   Scenario: Create a new project (alias n)
     When I run `middleman n MY_PROJECT`
     Then a directory named "MY_PROJECT" should exist
-    
+
   Scenario: Create a new project with Rack
     When I run `middleman init MY_PROJECT --rack`
     Then a directory named "MY_PROJECT" should exist
@@ -36,7 +46,7 @@ Feature: Middleman CLI
       | config.rb                                     |
       | config.ru                                     |
       | Gemfile                                       |
-      
+
   Scenario: Create a new HTML5 project
     When I run `middleman init MY_PROJECT --template=html5`
     Then a directory named "MY_PROJECT" should exist
@@ -54,7 +64,7 @@ Feature: Middleman CLI
       | layouts/layout.erb                            |
       | humans.txt                                    |
       | js/main.js                                    |
-      
+
   Scenario: Create a new HTML5 project with Rack
     When I run `middleman init MY_PROJECT --rack --template=html5`
     Then a directory named "MY_PROJECT" should exist
@@ -63,7 +73,7 @@ Feature: Middleman CLI
       | config.rb                                     |
       | config.ru                                     |
       | Gemfile                                       |
-    
+
   Scenario: Create a new Mobile HTML5 project
     When I run `middleman init MY_PROJECT --template=mobile`
     Then a directory named "MY_PROJECT" should exist
@@ -79,7 +89,7 @@ Feature: Middleman CLI
       | index.html                                    |
       | humans.txt                                    |
       | js/libs/respond.min.js                        |
-      
+
   Scenario: Create a new Mobile HTML5 project with Rack
     When I run `middleman init MY_PROJECT --rack --template=mobile`
     Then a directory named "MY_PROJECT" should exist
