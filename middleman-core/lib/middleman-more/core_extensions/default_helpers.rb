@@ -68,7 +68,7 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
       handler = auto_find_proper_handler(&block)
       captured_block, captured_html = nil, ''
 
-      if handler && handler.block_is_type?(block)
+      if handler && handler.engine_matches?(block)
         captured_html, captured_block = handler.capture_from_template(*args, &block)
       end
 
@@ -80,7 +80,13 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
     def auto_find_proper_handler(&block)
       if block_given?
         engine = File.extname(block.source_location[0])[1..-1].to_sym
-        ::Padrino::Helpers::OutputHelpers.handlers.map { |h| h.new(self) }.find { |h| h.engines.include?(engine) && h.block_is_type?(block) }
+        ::Padrino::Helpers::OutputHelpers.handlers.select do |e, h|
+          e == engine
+        end.values.map do |h|
+          h.new(self)
+        end.find do |h|
+          h.engine_matches?(block)
+        end
       else
         find_proper_handler
       end
