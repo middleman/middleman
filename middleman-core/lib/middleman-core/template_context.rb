@@ -68,43 +68,28 @@ module Middleman
       locals = options[:locals]
 
       found_partial = false
-      engine        = nil
+      resolve_opts = { try_without_underscore: true }
 
       # If the path is known to the sitemap
       if resource = sitemap.find_resource_by_path(current_path)
         current_dir = File.dirname(resource.source_file)
-        engine = File.extname(resource.source_file)[1..-1].to_sym
+        resolve_opts[:preferred_engine] = File.extname(resource.source_file)[1..-1].to_sym
 
         # Look for partials relative to the current path
         relative_dir = File.join(current_dir.sub(%r{^#{Regexp.escape(self.source_dir)}/?}, ''), data)
 
-        # Try to use the current engine first
-        found_partial, found_engine = ::Middleman::TemplateRenderer.resolve_template(@app, relative_dir, :preferred_engine => engine, :try_without_underscore => true)
-
-        # Fall back to any engine available
-        if !found_partial
-          found_partial, found_engine = ::Middleman::TemplateRenderer.resolve_template(@app, relative_dir, :try_without_underscore => true)
-        end
+        found_partial = ::Middleman::TemplateRenderer.resolve_template(@app, relative_dir, resolve_opts)
       end
 
-      # Look in the partials_dir for the partial with the current engine
-      partials_path = File.join(config[:partials_dir], data)
-      if !found_partial && !engine.nil?
-        found_partial, found_engine = ::Middleman::TemplateRenderer.resolve_template(@app, partials_path, :preferred_engine => engine, :try_without_underscore => true)
-      end
-
-      # Look in the root with any engine
       if !found_partial
-        found_partial, found_engine = ::Middleman::TemplateRenderer.resolve_template(@app, partials_path, :try_without_underscore => true)
+        partials_path = File.join(@app.config[:partials_dir], data)
+        found_partial = ::Middleman::TemplateRenderer.resolve_template(@app, partials_path, resolve_opts)
       end
 
-      # Render the partial if found, otherwide throw exception
-      if found_partial
-        file_renderer = ::Middleman::FileRenderer.new(@app, found_partial)
-        file_renderer.render(locals, options, self, &block)
-      else
-        raise ::Middleman::TemplateRenderer::TemplateNotFound, "Could not locate partial: #{data}"
-      end
+      raise ::Middleman::TemplateRenderer::TemplateNotFound, "Could not locate partial: #{data}" unless found_partial
+
+      file_renderer = ::Middleman::FileRenderer.new(@app, found_partial)
+      file_renderer.render(locals, options, self, &block)
     end
   end
 end
