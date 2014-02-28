@@ -64,6 +64,8 @@ module Middleman::Cli
       opts[:glob]  = options['glob'] if options.has_key?('glob')
       opts[:clean] = options['clean']
 
+      self.class.shared_instance.run_hook :before_build, self
+
       action BuildAction.new(self, opts)
 
       self.class.shared_instance.run_hook :after_build, self

@@ -3,13 +3,24 @@ master
 
 * Asciidoc information now available with the `asciidoc` local, which is a normal hash.
 * Remove `page` template local. Use `current_resource` instead.
-* Dropped support for `page` & `proxy` blocks.
+* Dropped support for providing a block to `page` & `proxy`.
 * Dropped support for instance variables inside templates.
 * Moved all rendering into `TemplateRenderer` and `FileRenderer`
 * Placed all template evaluation inside the `TemplateContext` class
 * Remove deprecated `request` instance
 * Remove old module-style extension support
 * Placed all `config.rb` evaluation inside the `ConfigContext` class
+* Update Padrino to 0.12.0. Introduces BREAKING CHANGE for Haml. Helpers which take blocks used to require `-` instead of `=` to work correctly. Now, all helpers which output content should use `=`. See: http://www.padrinorb.com/blog/upgrading-padrino-from-0-11-x-to-0-12-0-guide
+* Depend on Erubis and remove support for specifying another ERb engine.
+* Removed the ability to set the `sass_cache_path`.
+
+3.2.2
+===
+
+* Specify the full path to the NEWLINE constant
+* Refactor some internals which were dependent on certain order of operations
+* Updated i18n dep
+* Updated Uglifier dep
 
 3.2.1
 ===
