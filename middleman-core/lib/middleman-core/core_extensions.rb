@@ -35,7 +35,6 @@ require 'middleman-more/core_extensions/i18n'
 begin
   require 'middleman-more/core_extensions/compass'
 rescue LoadError
-  $stderr.puts "Compass not installed: #{$!}"
 end
 
 ###
