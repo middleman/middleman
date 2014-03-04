@@ -88,7 +88,6 @@ end
 
 # Include the core CLI items
 require 'middleman-cli/init'
-require 'middleman-cli/bundler'
 require 'middleman-cli/extension'
 require 'middleman-cli/server'
 require 'middleman-cli/build'
