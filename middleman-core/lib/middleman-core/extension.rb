@@ -1,7 +1,8 @@
-require 'active_support/core_ext/class/attribute'
 require 'active_support/core_ext/module/delegation'
+require 'active_support/core_ext/class/attribute'
 
 module Middleman
+
   class Extension
     class_attribute :supports_multiple_instances, :instance_reader => false, :instance_writer => false
     class_attribute :defined_helpers, :instance_reader => false, :instance_writer => false
