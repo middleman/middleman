@@ -47,7 +47,7 @@ module Middleman
     def findup(filename, cwd = Pathname.new(Dir.pwd))
       return cwd.to_s if (cwd + filename).exist?
       return false if cwd.root?
-      findup(cwd.parent)
+      findup(filename, cwd.parent)
     end
 
   end
