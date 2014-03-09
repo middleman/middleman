@@ -1,6 +1,9 @@
 master
 ===
 
+* Remove 'upgrade' and 'install' CLI commands.
+* Gemfile may be in a parent directory of your Middleman project root (where 'config.rb' is).
+* All dependencies for your Middleman project must be expressed in `Gemfile` - Bundler is no longer optional.
 * Asciidoc information now available with the `asciidoc` local, which is a normal hash.
 * Remove `page` template local. Use `current_resource` instead.
 * Dropped support for providing a block to `page` & `proxy`.
