@@ -38,5 +38,6 @@ gem 'rubocop', :require => false
 # Middleman itself
 gem 'middleman-core', :path => 'middleman-core'
 gem 'middleman-cli', :path => 'middleman-cli'
+gem 'middleman-templates', :path => 'middleman-templates'
 gem 'middleman-sprockets', :github => 'middleman/middleman-sprockets', :require => false
 gem 'middleman', :path => 'middleman'

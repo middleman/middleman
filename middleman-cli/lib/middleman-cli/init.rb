@@ -1,4 +1,4 @@
-require 'middleman-cli/templates'
+require 'middleman-templates'
 
 # CLI Module
 module Middleman::Cli
