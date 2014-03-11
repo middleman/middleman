@@ -27,7 +27,7 @@ module Middleman::Cli
     # The extension task
     # @param [String] name
     def extension
-      generate_gitignore!
+      copy_file 'extension/gitignore', File.join(name, '.gitignore') unless options[:'skip-git']
       template 'extension/Rakefile', File.join(name, 'Rakefile')
       template 'extension/gemspec', File.join(name, "#{name}.gemspec")
       template 'extension/Gemfile', File.join(name, 'Gemfile')
@@ -39,15 +39,6 @@ module Middleman::Cli
 
     # Output a .gitignore file
     class_option :git, :type => :boolean, :default => true
-
-    no_tasks {
-      # Write a .gitignore file for project
-      # @return [void]
-      def generate_gitignore!
-        return if options[:'skip-git']
-        copy_file 'shared/gitignore', File.join(name, '.gitignore')
-      end
-    }
 
   end
 end
