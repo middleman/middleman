@@ -19,8 +19,8 @@ module Middleman
         @port = @options[:port] || DEFAULT_PORT
 
         mount_instance(new_app)
-        logger.info "== The Middleman is standing watch at http://#{host}:#{port}"
-        logger.info "== Inspect your site configuration at http://#{host}:#{port}/__middleman/"
+        logger.info "== The Middleman is standing watch at #{uri}"
+        logger.info "== Inspect your site configuration at #{uri + '__middleman'}"
 
         @initialized ||= false
         unless @initialized
@@ -226,6 +226,14 @@ module Middleman
           end
         end
       end
+
+      # Returns the URI the preview server will run on
+      # @return [URI]
+      def uri
+        host = (@host == '0.0.0.0') ? 'localhost' : @host
+        URI("http://#{host}:#{@port}")
+      end
+
     end
 
     class FilteredWebrickLog < ::WEBrick::Log
