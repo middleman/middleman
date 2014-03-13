@@ -62,17 +62,13 @@ module Middleman
       end
 
       class_option :'skip-bundle', :type => :boolean, :default => false
-      class_option :'skip-gemfile', :type => :boolean, :default => false
 
       # Write a Bundler Gemfile file for project
       # @return [void]
       def generate_bundler!
-        return if options[:'skip-gemfile']
-        template self.class.gemfile_template, File.join(location, 'Gemfile')
-
         return if options[:'skip-bundle']
         inside(location) do
-          ::Middleman::Cli::Bundle.new.invoke(:bundle)
+          run('bundle install')
         end unless ENV['TEST']
       end
 

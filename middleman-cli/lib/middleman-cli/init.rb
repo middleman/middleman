@@ -28,10 +28,6 @@ module Middleman::Cli
       :type    => :boolean,
       :default => false,
       :desc    => 'Include a config.ru file'
-    method_option 'skip-gemfile',
-      :type    => :boolean,
-      :default => false,
-      :desc    => "Don't create a Gemfile"
     method_option 'skip-bundle',
       :type    => :boolean,
       :aliases => '-B',
