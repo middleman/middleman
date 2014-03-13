@@ -66,6 +66,7 @@ module Middleman
       # Write a Bundler Gemfile file for project
       # @return [void]
       def generate_bundler!
+        template self.class.gemfile_template, File.join(location, 'Gemfile')
         return if options[:'skip-bundle']
         inside(location) do
           run('bundle install')
