@@ -1,6 +1,3 @@
-require 'middleman-core'
-require 'middleman-core/logger'
-
 require 'fileutils'
 require 'set'
 
@@ -49,6 +46,9 @@ module Middleman::Cli
       if !ENV['MM_ROOT']
         raise Thor::Error, 'Error: Could not find a Middleman project config, perhaps you are in the wrong folder?'
       end
+
+      require 'middleman-core'
+      require 'middleman-core/logger'
 
       require 'rack'
       require 'rack/mock'
