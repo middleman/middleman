@@ -28,7 +28,7 @@ module Middleman
         return false if Tilt.registered?(ext.sub('.', ''))
 
         dot_ext = (ext.to_s[0] == ?.) ? ext.dup : ".#{ext}"
-        
+
         if mime = ::Rack::Mime.mime_type(dot_ext, nil)
           !nonbinary_mime?(mime)
         else
@@ -113,21 +113,27 @@ module Middleman
         end
       end
 
-      # Get a recusive list of files inside a set of paths.
+      # Get a recusive list of files inside a path.
       # Works with symlinks.
       #
-      # @param paths Some paths string or Pathname
-      # @return [Array] An array of filenames
-      def all_files_under(*paths)
-        paths.flat_map do |p|
-          path = Pathname(p)
+      # @param path Some path string or Pathname
+      # @param ignore A proc/block that returns true if a given path should be ignored - if a path
+      #               is ignored, nothing below it will be searched either.
+      # @return [Array<Pathname>] An array of Pathnames for each file (no directories)
+      def all_files_under(path, &ignore)
+        path = Pathname(path)
 
-          if path.directory?
-            all_files_under(*path.children)
-          elsif path.file?
-            path
-          end
-        end.compact
+        return [] if ignore && ignore.call(path)
+
+        if path.directory?
+          path.children.flat_map do |child|
+            all_files_under(child, &ignore)
+          end.compact
+        elsif path.file?
+          [path]
+        else
+          []
+        end
       end
 
       # Given a source path (referenced either absolutely or relatively)
@@ -248,7 +254,7 @@ module Middleman
         s.each_byte do |c|
           return true if binary_bytes.include?(c)
         end
-        
+
         false
       end
 

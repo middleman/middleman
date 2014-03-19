@@ -7,12 +7,12 @@ module Middleman
     module FileWatcher
 
       IGNORE_LIST = [
-        /^bin\//,
-        /^\.bundle\//,
-        /^vendor\//,
-        /^\.sass-cache\//,
-        /^\.cache\//,
-        /^\.git\//,
+        /^bin(\/|$)/,
+        /^\.bundle(\/|$)/,
+        /^vendor(\/|$)/,
+        /^\.sass-cache(\/|$)/,
+        /^\.cache(\/|$)/,
+        /^\.git(\/|$)/,
         /^\.gitignore$/,
         /\.DS_Store/,
         /^\.rbenv-.*$/,
@@ -38,7 +38,7 @@ module Middleman
           end
 
           app.after_configuration do
-            config[:file_watcher_ignore] << %r{^#{config[:build_dir]}\/}
+            config[:file_watcher_ignore] << %r{^#{config[:build_dir]}(\/|$)}
           end
 
           # After config, load everything else
@@ -99,7 +99,6 @@ module Middleman
         # @return [void]
         def did_change(path)
           path = Pathname(path)
-          return if ignored?(path)
           logger.debug "== File Change: #{path}"
           @known_paths << path
           self.run_callbacks(path, :changed)
@@ -111,7 +110,6 @@ module Middleman
         # @return [void]
         def did_delete(path)
           path = Pathname(path)
-          return if ignored?(path)
           logger.debug "== File Deletion: #{path}"
           @known_paths.delete(path)
           self.run_callbacks(path, :deleted)
@@ -131,7 +129,7 @@ module Middleman
             glob = (path + '**').to_s
             subset = @known_paths.select { |p| p.fnmatch(glob) }
 
-            ::Middleman::Util.all_files_under(path).each do |filepath|
+            ::Middleman::Util.all_files_under(path, &method(:ignored?)).each do |filepath|
               next if only_new && subset.include?(filepath)
 
               subset.delete(filepath)
@@ -156,7 +154,6 @@ module Middleman
           @known_paths.include?(p)
         end
 
-      protected
         # Whether this path is ignored
         # @param [Pathname] path
         # @return [Boolean]
@@ -164,6 +161,8 @@ module Middleman
           path = path.to_s
           app.config[:file_watcher_ignore].any? { |r| path =~ r }
         end
+
+      protected
 
         # Notify callbacks for a file given an array of callbacks
         #
