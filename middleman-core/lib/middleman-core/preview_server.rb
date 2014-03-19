@@ -133,10 +133,12 @@ module Middleman
             @webrick.stop
           else
             added_and_modified.each do |path|
+              next if app.files.ignored?(path)
               app.files.did_change(path)
             end
 
             removed.each do |path|
+              next if app.files.ignored?(path)
               app.files.did_delete(path)
             end
           end
