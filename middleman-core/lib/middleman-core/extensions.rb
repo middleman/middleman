@@ -41,7 +41,12 @@ module Middleman
       end
 
       extensions.each do |spec|
-        require spec.name
+        begin
+          require spec.name
+        rescue LoadError
+          # Fall back to RubyGems convention
+          require spec.name.gsub('-', '/')
+        end
       end
     end
 
