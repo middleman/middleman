@@ -10,6 +10,7 @@ module Middleman
         /^bin(\/|$)/,
         /^\.bundle(\/|$)/,
         /^vendor(\/|$)/,
+        /^node_modules(\/|$)/,
         /^\.sass-cache(\/|$)/,
         /^\.cache(\/|$)/,
         /^\.git(\/|$)/,
