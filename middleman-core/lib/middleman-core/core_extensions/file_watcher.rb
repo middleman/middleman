@@ -10,6 +10,7 @@ module Middleman
         /^\.sass-cache\//,
         /^\.cache\//,
         /^\.git\//,
+        /^node_modules(\/|$)/,
         /^\.gitignore$/,
         /\.DS_Store/,
         /^\.rbenv-.*$/,
