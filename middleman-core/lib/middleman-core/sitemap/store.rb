@@ -205,11 +205,7 @@ module Middleman
       # @return [String]
       def extensionless_path(file)
         path = file.dup
-        path = remove_templating_extensions(path)
-
-        # If there is no extension, look for one
-        path = find_extension(path, file) if File.extname(strip_away_locale(path)).empty?
-        path
+        remove_templating_extensions(path)
       end
 
       # Actually update the resource list, assuming anything has called
@@ -266,22 +262,6 @@ module Middleman
           lang = path_bits.last
           if @app.langs.include?(lang.to_sym)
             return path_bits[0..-2].join('.')
-          end
-        end
-
-        path
-      end
-
-      # Finds an extension for path according to file's extension
-      # @param [String] path without extension
-      # @param [String] file path with original extensions
-      def find_extension(path, file)
-        input_ext = File.extname(file)
-
-        if !input_ext.empty?
-          input_ext = input_ext.split('.').last.to_sym
-          if @app.template_extensions.has_key?(input_ext)
-            path << ".#{@app.template_extensions[input_ext]}"
           end
         end
 

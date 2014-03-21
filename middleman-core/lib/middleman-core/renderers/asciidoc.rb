@@ -12,9 +12,6 @@ module Middleman
             :attributes => %W(showtitle env=middleman env-middleman middleman-version=#{::Middleman::VERSION})
           }, 'AsciiDoc engine options (Hash)'
           app.config.define_setting :asciidoc_attributes, [], 'AsciiDoc custom attributes (Array)'
-          app.before_configuration do
-            template_extensions :adoc => :html
-          end
 
           app.after_configuration do
             # QUESTION should base_dir be equal to docdir instead?

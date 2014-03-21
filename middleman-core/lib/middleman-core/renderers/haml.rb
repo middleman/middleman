@@ -44,10 +44,6 @@ module Middleman
         def registered(app)
           ::Tilt.prefer(::Middleman::Renderers::HamlTemplate, 'haml')
 
-          app.before_configuration do
-            template_extensions :haml => :html
-          end
-
           # Add haml helpers to context
           ::Middleman::TemplateContext.send :include, ::Haml::Helpers
         end

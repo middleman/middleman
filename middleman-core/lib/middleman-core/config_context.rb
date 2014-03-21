@@ -6,7 +6,7 @@ module Middleman
     attr_reader :app
 
     # Whitelist methods that can reach out.
-    delegate :config, :logger, :activate, :use, :map, :mime_type, :data, :template_extensions, :root, :to => :app
+    delegate :config, :logger, :activate, :use, :map, :mime_type, :data, :root, :to => :app
 
     def initialize(app, template_context_class)
       @app = app

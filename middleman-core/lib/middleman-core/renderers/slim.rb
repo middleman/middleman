@@ -26,10 +26,6 @@ module Middleman
 
         # Once registered
         def registered(app)
-          app.before_configuration do
-            template_extensions :slim => :html
-          end
-
           # Setup Slim options to work with partials
           ::Slim::Engine.set_default_options(
             :buffer    => '@_out_buf',

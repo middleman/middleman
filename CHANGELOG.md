@@ -1,6 +1,7 @@
 master
 ===
 
+* Removed "Implied Extension feature"
 * Remove 'upgrade' and 'install' CLI commands.
 * Gemfile may be in a parent directory of your Middleman project root (where 'config.rb' is).
 * All dependencies for your Middleman project must be expressed in `Gemfile` - Bundler is no longer optional.

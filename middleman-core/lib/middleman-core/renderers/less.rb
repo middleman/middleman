@@ -14,10 +14,6 @@ module Middleman
           # Default less options
           app.config.define_setting :less, {}, 'LESS compiler options'
 
-          app.before_configuration do
-            template_extensions :less => :css
-          end
-
           app.after_configuration do
             ::Less.paths << File.join(source_dir, config[:css_dir])
           end

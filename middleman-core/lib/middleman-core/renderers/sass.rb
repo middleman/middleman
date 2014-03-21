@@ -14,11 +14,6 @@ module Middleman
           # Default sass options
           app.config.define_setting :sass, {}, 'Sass engine options'
 
-          app.before_configuration do
-            template_extensions :scss => :css,
-                                :sass => :css
-          end
-
           # Tell Tilt to use it as well (for inline sass blocks)
           ::Tilt.register 'sass', SassPlusCSSFilenameTemplate
           ::Tilt.prefer(SassPlusCSSFilenameTemplate)

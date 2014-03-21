@@ -12,10 +12,6 @@ module Middleman
 
         # Once registerd
         def registered(app)
-          app.before_configuration do
-            template_extensions :liquid => :html
-          end
-
           # After config, setup liquid partial paths
           app.after_configuration do
             ::Liquid::Template.file_system = ::Liquid::LocalFileSystem.new(source_dir)

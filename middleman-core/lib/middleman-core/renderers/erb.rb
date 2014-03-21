@@ -7,10 +7,6 @@ module Middleman
 
         # once registered
         def registered(app)
-          app.before_configuration do
-            template_extensions :erb => :html
-          end
-
           # After config
           app.after_configuration do
             ::Tilt.prefer(Template, :erb)

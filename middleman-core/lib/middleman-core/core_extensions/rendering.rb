@@ -11,9 +11,6 @@ module Middleman
 
         # Once registered
         def included(app)
-          # Include methods
-          app.send :include, InstanceMethods
-
           app.define_hook :before_render
           app.define_hook :after_render
 
@@ -96,20 +93,6 @@ module Middleman
               end
             end
           end
-        end
-      end
-
-      # Rendering instance methods
-      module InstanceMethods
-
-        # Add or overwrite a default template extension
-        #
-        # @param [Hash] extension_map
-        # @return [Hash]
-        def template_extensions(extension_map=nil)
-          @_template_extensions ||= {}
-          @_template_extensions.merge!(extension_map) if extension_map
-          @_template_extensions
         end
       end
     end
