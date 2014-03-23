@@ -96,7 +96,9 @@ require 'middleman-core/templates/mobile'
 require 'middleman-more/templates/smacss'
 
 # Local templates
-require 'middleman-core/templates/local'
+if ENV['HOME'] # Sometimes HOME doesn't exist, in which case there's no point to local templates
+  require 'middleman-core/templates/local'
+end
 
 # Barebones template
 require 'middleman-core/templates/empty'
