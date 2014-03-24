@@ -1,9 +1,9 @@
 # Local templates
 class Middleman::Templates::Local < Middleman::Templates::Base
-  # Look for templates in ~/.middleman
+  # Look for templates inside .middleman in the user's home directory 
   # @return [String]
   def self.source_root
-    File.join(File.expand_path('~/'), '.middleman')
+    File.join(Dir.home, '.middleman')
   end
 
   # Just copy from the template path
