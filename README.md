@@ -62,11 +62,11 @@ Additionally, up-to-date generated code documentation is available on [RubyDoc].
 
 ## Build & Dependency Status
 
-[![Gem Version](https://badge.fury.io/rb/middleman.png)][gem]
-[![Build Status](https://travis-ci.org/middleman/middleman.png)][travis]
-[![Code Coverage](https://coveralls.io/repos/middleman/middleman/badge.png)][coveralls]
-[![Dependency Status](https://gemnasium.com/middleman/middleman.png?travis)][gemnasium]
-[![Code Quality](https://codeclimate.com/github/middleman/middleman.png)][codeclimate]
+[![Gem Version](http://img.shields.io/gem/v/middleman.svg)][gem]
+[![Build Status](http://img.shields.io/travis/middleman/middleman.svg)][travis]
+[![Code Coverage](http://img.shields.io/coveralls/middleman/middleman.svg)][coveralls]
+[![Dependency Status](http://img.shields.io/gemnasium/middleman/middleman.svg)][gemnasium]
+[![Code Quality](http://img.shields.io/codeclimate/github/middleman/middleman.svg)][codeclimate]
 
 ## Community
 
