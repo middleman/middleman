@@ -15,7 +15,6 @@ Gem::Specification.new do |s|
 
   s.files        = `git ls-files -z`.split("\0")
   s.test_files   = `git ls-files -z -- {fixtures,features}/*`.split("\0")
-  s.executable   = 'middleman'
   s.require_path = 'lib'
   s.required_ruby_version = '>= 1.9.3'
 
