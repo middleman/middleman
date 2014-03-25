@@ -1,0 +1,3 @@
+lib/**/*.rb
+--no-private
+--hide-void-return
