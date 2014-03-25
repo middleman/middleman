@@ -88,16 +88,19 @@ end
 # Register all official templates
 Dir.glob(File.expand_path('../middleman-templates/*.rb', __FILE__), &method(:require))
 
-# Iterate over directories in the templates path and register each one.
-Dir[File.join(Middleman::Templates::Local.source_root, '*')].each do |dir|
-  next unless File.directory?(dir)
-  template_file = File.join(dir, 'template.rb')
+# Sometimes HOME doesn't exist, in which case there's no point to local templates
+if ENV['HOME']
+  # Iterate over directories in the templates path and register each one.
+  Dir[File.join(Middleman::Templates::Local.source_root, '*')].each do |dir|
+    next unless File.directory?(dir)
+    template_file = File.join(dir, 'template.rb')
 
-  # If a template.rb file is found require it (therefore registering the template)
-  # else register the folder as a Local template (which when built, just copies the folder)
-  if File.exists?(template_file)
-    require template_file
-  else
-    Middleman::Templates.register(File.basename(dir).to_sym, Middleman::Templates::Local)
+    # If a template.rb file is found require it (therefore registering the template)
+    # else register the folder as a Local template (which when built, just copies the folder)
+    if File.exists?(template_file)
+      require template_file
+    else
+      Middleman::Templates.register(File.basename(dir).to_sym, Middleman::Templates::Local)
+    end
   end
 end
