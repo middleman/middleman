@@ -13,6 +13,7 @@ AllCops:
     - middleman-core/fixtures/**
     - middleman-core/features/**
     - middleman-core/spec/**
+    - middleman-templates/lib/middleman-templates/**
 LineLength:
   Enabled: false
 MethodLength:
