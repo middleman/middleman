@@ -1,6 +1,7 @@
 master
 ===
 
+* Removed ability to server folders of content statically (non-Middleman projects).
 * Prevent local templates being loaded when $HOME is not set
 * Removed "Implied Extension feature"
 * Remove 'upgrade' and 'install' CLI commands.
