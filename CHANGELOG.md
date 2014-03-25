@@ -1,6 +1,7 @@
 master
 ===
 
+* Prevent local templates being loaded when $HOME is not set
 * Removed "Implied Extension feature"
 * Remove 'upgrade' and 'install' CLI commands.
 * Gemfile may be in a parent directory of your Middleman project root (where 'config.rb' is).
