@@ -167,7 +167,7 @@ module Middleman
     attr_reader :template_context_class
 
     attr_reader :generic_template_context
-    delegate :link_to, :image_tag, :to => :generic_template_context
+    delegate :link_to, :image_tag, :asset_path, :to => :generic_template_context
 
     # Initialize the Middleman project
     def initialize(&block)
