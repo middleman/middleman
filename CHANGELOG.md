@@ -1,6 +1,7 @@
 master
 ===
 
+* New FileWatcher API.
 * Remove the `partials_dir` setting. Partials should live next to content, or be addressed with absolute paths.
 * Partials must be named with a leading underscore. `_my_snippet.html.erb`, not `my_snippet.html.erb`.
 * Removed the `proxy` and `ignore` options for the `page` command in `config.rb`. Use the `proxy` and `ignore` commands instead of passing these options to `page`.

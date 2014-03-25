@@ -20,10 +20,15 @@ module Middleman
 
         # Setup data files before anything else so they are available when
         # parsing config.rb
-        file_watcher.changed(data_file_matcher, &app.extensions[:data].data_store.method(:touch_file))
-        file_watcher.deleted(data_file_matcher, &app.extensions[:data].data_store.method(:remove_file))
+        app.files.changed(data_file_matcher, &app.extensions[:data].data_store.method(:touch_file))
+        app.files.deleted(data_file_matcher, &app.extensions[:data].data_store.method(:remove_file))
 
-        file_watcher.reload_path(app.config[:data_dir])
+        # Tell the file watcher to observe the :data_dir
+        app.files.watch :data do |path, _app|
+          path.match data_file_matcher
+        end
+
+        app.files.reload_path(app.config[:data_dir])
       end
 
       helpers do

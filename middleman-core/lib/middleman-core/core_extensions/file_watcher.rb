@@ -6,38 +6,24 @@ module Middleman
   module CoreExtensions
     # API for watching file change events
     class FileWatcher < Extension
-      # Regexes in this list will filter out filenames of files that shouldn't cause file change notifications.
-      IGNORE_LIST = [
-        /^bin(\/|$)/,
-        /^\.bundle(\/|$)/,
-        /^vendor(\/|$)/,
-        /^node_modules(\/|$)/,
-        /^\.sass-cache(\/|$)/,
-        /^\.cache(\/|$)/,
-        /^\.git(\/|$)/,
-        /^\.gitignore$/,
-        /\.DS_Store/,
-        /^\.rbenv-.*$/,
-        /^Gemfile$/,
-        /^Gemfile\.lock$/,
-        /~$/,
-        /(^|\/)\.?#/,
-        /^tmp\//
-      ]
-
       attr_reader :api
 
-      # Before parsing config, load the data/ directory
-      def before_configuration
-        app.config.define_setting :file_watcher_ignore, IGNORE_LIST, 'Regexes for paths that should be ignored when they change.'
+      def initialize(app, config={}, &block)
+        super
+      end
 
+      # Before parsing config, load the data/ directory
+      Contract None => Any
+      def before_configuration
         @api = API.new(app)
+        app.add_to_instance :files, &method(:api)
         app.add_to_config_context :files, &method(:api)
       end
 
+      Contract None => Any
       def after_configuration
-        app.config[:file_watcher_ignore] << %r{^#{app.config[:build_dir]}(\/|$)}
         @api.reload_path('.')
+        @api.is_ready = true
       end
 
       # Core File Change API class
@@ -47,6 +33,7 @@ module Middleman
 
         attr_reader :app
         attr_reader :known_paths
+        attr_accessor :is_ready
 
         def_delegator :@app, :logger
 
@@ -54,9 +41,38 @@ module Middleman
         def initialize(app)
           @app = app
           @known_paths = Set.new
+          @is_ready = false
+
+          @watchers = {
+            source: proc { |path, _| path.match(/^#{app.config[:source]}\//) },
+            library: /^(lib|helpers)\/.*\.rb$/
+          }
+
+          @ignores = {
+            emacs_files: /(^|\/)\.?#/,
+            tilde_files: /~$/,
+            ds_store: /\.DS_Store\//,
+            git: /(^|\/)\.git(ignore|modules|\/)/
+          }
 
           @on_change_callbacks = Set.new
           @on_delete_callbacks = Set.new
+        end
+
+        # Add a proc to watch paths
+        Contract Symbol, Or[Regexp, Proc] => Any
+        def watch(name, regex=nil, &block)
+          @watchers[name] = block_given? ? block : regex
+
+          reload_path('.') if @is_ready
+        end
+
+        # Add a proc to ignore paths
+        Contract Symbol, Or[Regexp, Proc] => Any
+        def ignore(name, regex=nil, &block)
+          @ignores[name] = block_given? ? block : regex
+
+          reload_path('.') if @is_ready
         end
 
         CallbackDescriptor = Struct.new(:proc, :matcher)
@@ -85,6 +101,7 @@ module Middleman
         #
         # @param [Pathname] path The file that changed
         # @return [void]
+        Contract Or[Pathname, String] => Any
         def did_change(path)
           path = Pathname(path)
           logger.debug "== File Change: #{path}"
@@ -96,6 +113,7 @@ module Middleman
         #
         # @param [Pathname] path The file that was deleted
         # @return [void]
+        Contract Or[Pathname, String] => Any
         def did_delete(path)
           path = Pathname(path)
           logger.debug "== File Deletion: #{path}"
@@ -108,6 +126,7 @@ module Middleman
         # @param [Pathname] path The path to reload
         # @param [Boolean] only_new Whether we only look for new files
         # @return [void]
+        Contract Or[String, Pathname], Maybe[Bool] => Any
         def reload_path(path, only_new=false)
           # chdir into the root directory so Pathname can work with relative paths
           Dir.chdir @app.root_path do
@@ -132,6 +151,7 @@ module Middleman
         #
         # @param [Pathname] path The path to reload
         # @return [void]
+        Contract Pathname => Any
         def find_new_files(path)
           reload_path(path, true)
         end
@@ -149,7 +169,20 @@ module Middleman
         Contract Or[String, Pathname] => Bool
         def ignored?(path)
           path = path.to_s
-          app.config[:file_watcher_ignore].any? { |r| path =~ r }
+
+          watched = @watchers.values.any? { |validator| matches?(validator, path) }
+          not_ignored = @ignores.values.none? { |validator| matches?(validator, path) }
+
+          !(watched && not_ignored)
+        end
+
+        Contract Or[Regexp, RespondTo[:call]], String => Bool
+        def matches?(validator, path)
+          if validator.is_a? Regexp
+            !!validator.match(path)
+          else
+            !!validator.call(path, @app)
+          end
         end
 
         protected
@@ -159,6 +192,7 @@ module Middleman
         # @param [Pathname] path The file that was changed
         # @param [Symbol] callbacks_name The name of the callbacks method
         # @return [void]
+        Contract Or[Pathname, String], Symbol => Any
         def run_callbacks(path, callbacks_name)
           path = path.to_s
           send(callbacks_name).each do |callback|

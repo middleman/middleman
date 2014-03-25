@@ -27,8 +27,8 @@ module Middleman::CoreExtensions
     end
 
     def before_configuration
-      file_watcher.changed(&method(:clear_data))
-      file_watcher.deleted(&method(:clear_data))
+      app.files.changed(&method(:clear_data))
+      app.files.deleted(&method(:clear_data))
     end
 
     # @return Array<Middleman::Sitemap::Resource>
@@ -96,7 +96,7 @@ module Middleman::CoreExtensions
 
       data = {}
 
-      return [data, nil] if !file_watcher.exists?(full_path) || ::Middleman::Util.binary?(full_path)
+      return [data, nil] if !app.files.exists?(full_path) || ::Middleman::Util.binary?(full_path)
 
       content = File.read(full_path)
 

@@ -194,7 +194,7 @@ module Middleman::Cli
       logger.debug '== Checking for generated images'
 
       # Double-check for generated images
-      @app.extensions[:file_watcher].api.find_new_files((@source_dir + @app.config[:images_dir]).relative_path_from(@app.root_path))
+      @app.files.find_new_files((@source_dir + @app.config[:images_dir]).relative_path_from(@app.root_path))
       @app.sitemap.ensure_resource_list_updated!
 
       # Sort paths to be built by the above order. This is primarily so Compass can

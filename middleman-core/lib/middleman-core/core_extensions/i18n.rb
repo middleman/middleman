@@ -16,11 +16,16 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
       ::I18n::Backend::Simple.send(:include, ::I18n::Backend::Fallbacks)
     end
 
-    app.config.define_setting :locales_dir, 'locales', 'The directory holding your locale configurations'
+    locales_file_path = options[:data]
 
-    file_watcher.reload_path(app.config[:locales_dir] || options[:data])
+    # Tell the file watcher to observe the :locales_dir
+    app.files.watch :locales do |path, _app|
+      path.match(/^#{locales_file_path}\/.*(yml|yaml)$/)
+    end
 
-    @locales_glob = File.join(app.config[:locales_dir] || options[:data], '**', '*.{rb,yml,yaml}')
+    app.files.reload_path(locales_file_path)
+
+    @locales_glob = File.join(locales_file_path, '**', '*.{rb,yml,yaml}')
     @locales_regex = convert_glob_to_regex(@locales_glob)
 
     @maps = {}
@@ -33,8 +38,8 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
     # Don't output localizable files
     app.ignore File.join(options[:templates_dir], '**')
 
-    file_watcher.changed(&method(:on_file_changed))
-    file_watcher.deleted(&method(:on_file_changed))
+    app.files.changed(&method(:on_file_changed))
+    app.files.deleted(&method(:on_file_changed))
   end
 
   helpers do
@@ -111,7 +116,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
     if options[:langs]
       Array(options[:langs]).map(&:to_sym)
     else
-      known_langs = file_watcher.known_paths.select do |p|
+      known_langs = app.files.known_paths.select do |p|
         p.to_s.match(@locales_regex) && (p.to_s.split(File::SEPARATOR).length == 2)
       end
 
