@@ -88,7 +88,7 @@ module Middleman
         # @param [Symbol, Module] ext Which extension to activate
         # @return [void]
         def activate(ext, options={}, &block)
-          if extension = ::Middleman::Extensions::registered[ext]
+          if extension = ::Middleman::Extensions.load(ext)
             if extension.ancestors.include?(::Middleman::Extension)
               logger.debug "== Activating: #{ext}"
 

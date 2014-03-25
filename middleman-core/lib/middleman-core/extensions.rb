@@ -17,10 +17,34 @@ module Middleman
       #
       # @param [Symbol] name The name of the extension
       # @param [Module] namespace The extension module
-      def register(name, namespace)
-        if !registered.has_key?(name.to_sym)
-          registered[name.to_sym] = namespace
+      # @yield Instead of passing a module in namespace, you can provide
+      #        a block which returns your extension module. This gives
+      #        you the ability to require other files only when the
+      #        extension is activated.
+      def register(name, namespace=nil, &block)
+        # If we've already got a matching extension that passed the
+        # version check, bail out.
+        return if registered.has_key?(name.to_sym) && !registered[name.to_sym].is_a?(String)
+
+        registered[name.to_sym] = if block_given?
+          block
+        elsif namespace
+          namespace
         end
+      end
+
+      # Load an extension by name, evaluating block definition if necessary.
+      def load(name)
+        name = name.to_sym
+        return nil unless registered.has_key?(name)
+
+        extension = registered[name]
+        if extension.is_a?(Proc)
+          extension = extension.call() || nil
+          registered[name] = extension
+        end
+
+        extension
       end
     end
   end
