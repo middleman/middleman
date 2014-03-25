@@ -1,17 +1,24 @@
 language: ruby
+cache: bundler
+env: TEST=true
 bundler_args: --without development
+before_install: git submodule update --init --recursive
 rvm:
   - ruby-head
+  - ruby
+  - jruby-head
+  - jruby
+  - jruby-19mode
   - 2.1.0
   - 2.0.0
   - 1.9.3
-  - jruby-19mode
+  - rbx-2
 matrix:
   fast_finish: true
   allow_failures:
     - rvm: ruby-head
-    - rvm: 2.1.0
+    - rvm: ruby
+    - rvm: jruby-head
+    - rvm: jruby
     - rvm: jruby-19mode
-env: TEST=true
-before_install: git submodule update --init --recursive
-script: bundle exec rake test
+    - rvm: rbx-2
