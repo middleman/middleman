@@ -287,7 +287,7 @@ module Middleman
     # A hash with indifferent access and magic predicates.
     # Copied from Thor
     #
-    #   hash = Middleman::Application.new 'foo' => 'bar', 'baz' => 'bee', 'force' => true
+    #   hash = Middleman::Util::HashWithIndifferentAccess.new 'foo' => 'bar', 'baz' => 'bee', 'force' => true
     #
     #   hash[:foo]  #=> 'bar'
     #   hash['foo'] #=> 'bar'
