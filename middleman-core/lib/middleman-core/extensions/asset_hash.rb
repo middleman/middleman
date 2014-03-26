@@ -41,6 +41,7 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
   def manipulate_single_resource(resource)
     return unless options.exts.include?(resource.ext)
     return if ignored_resource?(resource)
+    return if resource.ignored?
 
     # Render through the Rack interface so middleware and mounted apps get a shot
     response = @rack_client.get(URI.escape(resource.destination_path), { 'bypass_asset_hash' => 'true' })
