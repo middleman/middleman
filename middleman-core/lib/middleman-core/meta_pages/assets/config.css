@@ -25,6 +25,7 @@
 
 .value {
     color: #002B36;
+    white-space: pre-wrap;
 }
 
 .description {
@@ -33,4 +34,16 @@
 
 .extensions .settings {
     margin-left: 1em;
+}
+
+.inactive {
+    color: #999999;
+}
+
+.inactive:after {
+    content: "Inactive";
+    font-weight: bold;
+    color: #999999;
+    margin-left: 10px;
+    font-size: .7em;
 }

@@ -168,6 +168,7 @@ body {
     padding-right: 1em;
     position: relative;
     margin-top: 2em;
+    margin-bottom: 2em;
 }
 .container:after {
     clear: both;
@@ -355,14 +356,29 @@ pre .tex .formula {
 #main {
     display: inline;
     float: left;
-    font-size: 120%;
+    font-size: 100%;
     margin-left: 0;
     margin-right: 1.20482%;
     width: 100%;
 }
 #main h1 {
-    font-size: 2em;
+    font-size: 3em;
+    font-weight: bold;
+    margin-bottom: .5em;
 }
 #main h2 {
-    font-size: 1.5em;
+    font-size: 2em;
+    line-height: 1.2;
+    margin-bottom: 0.75em;
+}
+
+.nav-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-list a {
+    font-size: 1.4em;
+    font-weight: bold;
 }

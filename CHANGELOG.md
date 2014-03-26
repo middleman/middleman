@@ -4,6 +4,7 @@ master
 * Update Padrino to 0.12.0. Introduces BREAKING CHANGE for Haml. Helpers which take blocks used to require `-` instead of `=` to work correctly. Now, all helpers which output content should use `=`. See: http://www.padrinorb.com/blog/upgrading-padrino-from-0-11-x-to-0-12-0-guide
 * Depend on Erubis and remove support for specifying another ERb engine.
 * Removed the ability to set the `sass_cache_path`.
+* Improved /__middleman/ meta pages. For example, sitemap view now calls out ignored resources, prints data/options better, and shows which special locals are available on a page.
 
 3.2.2
 ===

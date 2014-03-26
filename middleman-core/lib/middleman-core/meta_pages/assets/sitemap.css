@@ -9,7 +9,7 @@ details > details {
 }
 
 details.resource > summary {
-    
+
 }
 
 .resource-details {
@@ -27,6 +27,7 @@ summary > i {
 
 .resource-details th, .resource-details td {
     padding: 0;
+    vertical-align: top;
 }
 
 .resource-details th {
@@ -38,6 +39,22 @@ summary > i {
 
 .resource-details td {
     font-family: "Arvo","andale mono","lucida console",monospace;
+}
+
+.ignored > summary {
+    color: #999999;
+}
+
+.ignored i {
+    opacity: 0.4;
+}
+
+.ignored > summary:after {
+    content: "Ignored";
+    font-weight: bold;
+    color: #999999;
+    margin-left: 10px;
+    font-size: .7em;
 }
 
 details > summary:before {
