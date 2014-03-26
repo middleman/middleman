@@ -128,7 +128,6 @@ module Middleman
           $LOAD_PATH.unshift(root)
 
           ::Middleman::Extension.clear_after_extension_callbacks
-          run_hook :initialized
 
           if config[:autoload_sprockets]
             begin
@@ -137,6 +136,8 @@ module Middleman
             rescue LoadError
             end
           end
+
+          run_hook :initialized
 
           run_hook :before_configuration
 
