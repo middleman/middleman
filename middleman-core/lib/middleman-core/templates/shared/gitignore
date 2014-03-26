@@ -10,8 +10,9 @@
 # Ignore the build directory
 /build
 
-# Ignore Sass' cache
+# Ignore cache
 /.sass-cache
+/.cache
 
 # Ignore .DS_store file
 .DS_Store
