@@ -1,3 +1,5 @@
+require 'pp'
+
 module Middleman
   module MetaPages
     # View class for a config entry
@@ -13,22 +15,18 @@ module Middleman
         content = ''
         key_classes = ['key']
         key_classes << 'modified' if @setting.value_set?
-        content << content_tag(:span, @setting.key.inspect, :class => key_classes.join(' '))
+        content << content_tag(:span, @setting.key.pretty_inspect.strip, :class => key_classes.join(' '))
         content << ' = '
-        content << content_tag(:span, @setting.value.inspect, :class => 'value')
-        if @setting.default
+        content << content_tag(:span, @setting.value.pretty_inspect.strip, :class => 'value')
+        if @setting.default && @setting.value_set? && @setting.default != @setting.value
           content << content_tag(:span, :class => 'default') do
-            if @setting.value_set?
-              "Default: #{@setting.default.inspect}"
-            else
-              '(Default)'
-            end
+            "(Default: #{@setting.default.inspect})"
           end
         end
 
         if @setting.description
           content << content_tag(:p, :class => 'description') do
-            CGI::escapeHTML(@setting.description)
+            @setting.description
           end
         end
 
