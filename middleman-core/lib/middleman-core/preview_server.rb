@@ -166,9 +166,10 @@ module Middleman
       # @return [void]
       def setup_webrick(is_logging)
         http_opts = {
-          :BindAddress => host,
-          :Port        => port,
-          :AccessLog   => []
+          :BindAddress        => host,
+          :Port               => port,
+          :AccessLog          => [],
+          :DoNotReverseLookup => true
         }
 
         if is_logging
