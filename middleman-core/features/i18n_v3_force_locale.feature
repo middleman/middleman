@@ -1,7 +1,7 @@
-Feature: i18n manually setting locale
+Feature: i18n v3 manually setting locale
 
   Scenario: Setting I18n.locale in a block (see issue #809) or with the :lang option
-    Given the Server is running at "i18n-force-locale"
+    Given the Server is running at "i18n-v3-force-locale"
     When I go to "/en/index.html"
     Then I should see "Hello"
     Then I should see "I18n.locale: en"

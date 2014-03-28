@@ -4,7 +4,7 @@ end
 
 proxy "/fr/index.html", "index.html", :lang => :fr
 
-activate :i18n
+activate :i18n_v3
 
 # This is what breaks i18n, just because it adds a resource list manipulator that 
 # forces a rebuild of the resource list.

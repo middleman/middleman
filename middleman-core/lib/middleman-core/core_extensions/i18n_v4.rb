@@ -3,17 +3,12 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
   option :langs, nil, 'List of langs, will autodiscover by default'
   option :lang_map, {}, 'Language shortname map'
   option :path, '/:locale/', 'URL prefix path'
-  option :templates_dir, 'localizable', 'Location of templates to be localized'
+  option :files_glob, ["**/*.html"], 'Files to automatically localize'
   option :mount_at_root, nil, 'Mount a specific language at the root of the site'
   option :data, 'locales', 'The directory holding your locale configurations'
 
   def initialize(app, options_hash={}, &block)
     super
-
-    # TODO
-    # If :directory_indexes is already active,
-    # throw a warning explaining the bug and telling the use
-    # to reverse the order.
 
     # See https://github.com/svenfuchs/i18n/wiki/Fallbacks
     unless options[:no_fallbacks]
@@ -21,32 +16,27 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
       ::I18n::Backend::Simple.send(:include, ::I18n::Backend::Fallbacks)
     end
 
-    app.config.define_setting :locales_dir, 'locales', 'The directory holding your locale configurations'
-
     app.send :include, LocaleHelpers
   end
 
   def after_configuration
-    app.files.reload_path(app.config[:locals_dir] || options[:data])
+    # app.files.reload_path(app.config[:locals_dir] || options[:data])
 
-    @locales_glob = File.join(app.config[:locals_dir] || options[:data], '**', '*.{rb,yml,yaml}')
-    @locales_regex = convert_glob_to_regex(@locales_glob)
+    # @locales_glob = File.join(app.config[:locals_dir] || options[:data], '**', '*.{rb,yml,yaml}')
+    # @locales_regex = convert_glob_to_regex(@locales_glob)
 
-    @maps = {}
-    @mount_at_root = options[:mount_at_root].nil? ? langs.first : options[:mount_at_root]
+    # @maps = {}
+    # @mount_at_root = options[:mount_at_root].nil? ? langs.first : options[:mount_at_root]
 
-    configure_i18n
+    # configure_i18n
 
-    if !app.build?
-      logger.info "== Locales: #{langs.join(", ")} (Default #{@mount_at_root})"
-    end
+    # if !app.build?
+    #   logger.info "== Locales: #{langs.join(", ")} (Default #{@mount_at_root})"
+    # end
 
-    # Don't output localizable files
-    app.ignore File.join(options[:templates_dir], '**')
-
-    app.sitemap.provides_metadata_for_path(&method(:metadata_for_path))
-    app.files.changed(&method(:on_file_changed))
-    app.files.deleted(&method(:on_file_changed))
+    # app.sitemap.provides_metadata_for_path(&method(:metadata_for_path))
+    # app.files.changed(&method(:on_file_changed))
+    # app.files.deleted(&method(:on_file_changed))
   end
 
   helpers do
@@ -63,33 +53,32 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
 
   # Update the main sitemap resource list
   # @return [void]
-  def manipulate_resource_list(resources)
-    @_localization_data = {}
+  # def manipulate_resource_list(resources)
+  #   @_localization_data = {}
 
-    new_resources = []
+  #   new_resources = []
 
-    resources.each do |resource|
-      # If it uses file extension localization
-      if !parse_locale_extension(resource.path).nil?
-        result = parse_locale_extension(resource.path)
-        lang, path, page_id = result
-        new_resources << build_resource(path, resource.path, page_id, lang)
-      # If it's a "localizable template"
-      elsif File.fnmatch?(File.join(options[:templates_dir], '**'), resource.path)
-        page_id = File.basename(resource.path, File.extname(resource.path))
-        langs.each do |lang|
-          # Remove folder name
-          path = resource.path.sub(options[:templates_dir], '')
-          new_resources << build_resource(path, resource.path, page_id, lang)
-        end
-      end
-    end
+  #   resources.each do |resource|
+  #     # If it uses file extension localization
+  #     if !parse_locale_extension(resource.path).nil?
+  #       result = parse_locale_extension(resource.path)
+  #       lang, path, page_id = result
+  #       new_resources << build_resource(path, resource.path, page_id, lang)
+  #     # If it's a "localizable template"
+  #     elsif File.fnmatch?(File.join(options[:templates_dir], '**'), resource.path)
+  #       page_id = File.basename(resource.path, File.extname(resource.path))
+  #       langs.each do |lang|
+  #         # Remove folder name
+  #         path = resource.path.sub(options[:templates_dir], '')
+  #         new_resources << build_resource(path, resource.path, page_id, lang)
+  #       end
+  #     end
+  #   end
 
-    resources + new_resources
-  end
+  #   resources + new_resources
+  # end
 
   private
-
 
   def on_file_changed(file)
     if @locales_regex =~ file
@@ -201,3 +190,5 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
     end
   end
 end
+
+Middleman::CoreExtensions::Internationalization.register(:i18n)

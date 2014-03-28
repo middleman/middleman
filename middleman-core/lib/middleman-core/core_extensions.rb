@@ -45,8 +45,13 @@ end
 # Setup Optional Extensions
 ###
 
+Middleman::Extensions.register :i18n_v3 do
+  require 'middleman-core/core_extensions/i18n_v3'
+  Middleman::CoreExtensions::InternationalizationV3
+end
+
 Middleman::Extensions.register :i18n do
-  require 'middleman-core/core_extensions/i18n'
+  require 'middleman-core/core_extensions/i18n_v4'
   Middleman::CoreExtensions::Internationalization
 end
 
