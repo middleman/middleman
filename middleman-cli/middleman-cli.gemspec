@@ -19,6 +19,8 @@ Gem::Specification.new do |s|
   s.require_path = 'lib'
   s.required_ruby_version = '>= 1.9.3'
 
+  s.add_dependency('middleman-templates', Middleman::VERSION)
+
   # CLI
   s.add_dependency('thor', ['>= 0.17.0', '< 2.0'])
 end
