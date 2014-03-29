@@ -88,26 +88,19 @@ module Middleman
         # @param [Symbol, Module] ext Which extension to activate
         # @return [void]
         def activate(ext, options={}, &block)
-          if extension = ::Middleman::Extensions.load(ext)
-            if extension.ancestors.include?(::Middleman::Extension)
-              logger.debug "== Activating: #{ext}"
+          extension = ::Middleman::Extensions.load(ext)
+          logger.debug "== Activating: #{ext}"
 
-              if extension.supports_multiple_instances?
-                extensions[ext] ||= {}
-                key = "instance_#{extensions[ext].keys.length}"
-                extensions[ext][key] = extension.new(self.class, options, &block)
-              else
-                if extensions[ext]
-                  logger.error "== #{ext} already activated."
-                else
-                  extensions[ext] = extension.new(self.class, options, &block)
-                end
-              end
-            else
-              logger.error "!! Tried to activate old-style extension: #{ext}"
-            end
+          if extension.supports_multiple_instances?
+            extensions[ext] ||= {}
+            key = "instance_#{extensions[ext].keys.length}"
+            extensions[ext][key] = extension.new(self.class, options, &block)
           else
-            logger.error "!! Unknown Extension: #{ext}"
+            if extensions[ext]
+              raise "#{ext} has already been activated and cannot be re-activated."
+            else
+              extensions[ext] = extension.new(self.class, options, &block)
+            end
           end
         end
 

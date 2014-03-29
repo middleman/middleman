@@ -259,5 +259,3 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
     end
   end
 end
-
-Middleman::CoreExtensions::DefaultHelpers.register

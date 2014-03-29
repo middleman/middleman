@@ -33,14 +33,6 @@ module Middleman
         self.defined_helpers += m
       end
 
-      def extension_name
-        self.ext_name || self.name.underscore.split('/').last.to_sym
-      end
-
-      def register(n=self.extension_name)
-        ::Middleman::Extensions.register(n, self)
-      end
-
       def activate
         new(::Middleman::Application)
       end
@@ -56,7 +48,7 @@ module Middleman
       end
 
       def activated_extension(instance)
-        name = instance.class.extension_name
+        name = instance.class.ext_name
         return unless @_extension_activation_callbacks && @_extension_activation_callbacks[name]
         @_extension_activation_callbacks[name].each do |block|
           block.arity == 1 ? block.call(instance) : block.call()
@@ -136,7 +128,7 @@ module Middleman
         end
 
         if ext.respond_to?(:manipulate_resource_list)
-          ext.app.sitemap.register_resource_list_manipulator(ext.class.extension_name, ext)
+          ext.app.sitemap.register_resource_list_manipulator(ext.class.ext_name, ext)
         end
       end
     end

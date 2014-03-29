@@ -73,5 +73,3 @@ class Middleman::CoreExtensions::Compass < ::Middleman::Extension
     end
   end
 end
-
-Middleman::CoreExtensions::Compass.register

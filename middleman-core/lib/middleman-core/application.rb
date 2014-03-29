@@ -196,8 +196,10 @@ module Middleman
       activate :default_helpers
       activate :lorem
 
-      if defined?(Middleman::CoreExtensions::Compass)
+      begin
         activate :compass
+      rescue LoadError
+        # Compass is not available, don't complain about it
       end
 
       # Evaluate a passed block if given

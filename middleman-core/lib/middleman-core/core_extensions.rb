@@ -27,68 +27,97 @@ require 'middleman-core/core_extensions/routing'
 require 'middleman-core/core_extensions/show_exceptions'
 
 # Setup default helpers
-require 'middleman-core/core_extensions/default_helpers'
-
-require 'middleman-core/core_extensions/i18n'
+Middleman::Extensions.register :default_helpers do
+  require 'middleman-core/core_extensions/default_helpers'
+  Middleman::CoreExtensions::DefaultHelpers
+end
 
 # Compass framework
-begin
+Middleman::Extensions.register :compass do
   require 'middleman-core/core_extensions/compass'
-rescue LoadError
+  Middleman::CoreExtensions::Compass
 end
 
 ###
 # Setup Optional Extensions
 ###
 
+Middleman::Extensions.register :i18n do
+  require 'middleman-core/core_extensions/i18n'
+  Middleman::CoreExtensions::Internationalization
+end
+
 # CacheBuster adds a query string to assets in dynamic templates to
 # avoid browser caches failing to update to your new content.
-require 'middleman-core/extensions/cache_buster'
-Middleman::Extensions::CacheBuster.register
+Middleman::Extensions.register :cache_buster do
+  require 'middleman-core/extensions/cache_buster'
+  Middleman::Extensions::CacheBuster
+end
 
 # RelativeAssets allow any asset path in dynamic templates to be either
 # relative to the root of the project or use an absolute URL.
-require 'middleman-core/extensions/relative_assets'
-Middleman::Extensions::RelativeAssets.register
+Middleman::Extensions.register :relative_assets do
+  require 'middleman-core/extensions/relative_assets'
+  Middleman::Extensions::RelativeAssets
+end
 
 # AssetHost allows you to setup multiple domains to host your static
 # assets. Calls to asset paths in dynamic templates will then rotate
 # through each of the asset servers to better spread the load.
-require 'middleman-core/extensions/asset_host'
-Middleman::Extensions::AssetHost.register
+Middleman::Extensions.register :asset_host do
+  require 'middleman-core/extensions/asset_host'
+  Middleman::Extensions::AssetHost
+end
 
 # MinifyCss compresses CSS
-require 'middleman-core/extensions/minify_css'
-Middleman::Extensions::MinifyCss.register
+Middleman::Extensions.register :minify_css do
+  require 'middleman-core/extensions/minify_css'
+  Middleman::Extensions::MinifyCss
+end
 
 # MinifyJavascript compresses JS
-require 'middleman-core/extensions/minify_javascript'
-Middleman::Extensions::MinifyJavascript.register
+Middleman::Extensions.register :minify_javascript do
+  require 'middleman-core/extensions/minify_javascript'
+  Middleman::Extensions::MinifyJavascript
+end
 
 # GZIP assets and pages during build
-require 'middleman-core/extensions/gzip'
-Middleman::Extensions::Gzip.register
+Middleman::Extensions.register :gzip do
+  require 'middleman-core/extensions/gzip'
+  Middleman::Extensions::Gzip
+end
 
 # AssetHash appends a hash of the file contents to the assets filename
 # to avoid browser caches failing to update to your new content.
-require 'middleman-core/extensions/asset_hash'
-Middleman::Extensions::AssetHash.register
+Middleman::Extensions.register :asset_hash do
+  require 'middleman-core/extensions/asset_hash'
+  Middleman::Extensions::AssetHash
+end
 
 # Provide Apache-style index.html files for directories
-require 'middleman-core/extensions/directory_indexes'
-Middleman::Extensions::DirectoryIndexes.register
+Middleman::Extensions.register :directory_indexes do
+  require 'middleman-core/extensions/directory_indexes'
+  Middleman::Extensions::DirectoryIndexes
+end
 
 # Lorem provides a handful of helpful prototyping methods to generate
 # words, paragraphs, fake images, names and email addresses.
-require 'middleman-core/extensions/lorem'
+Middleman::Extensions.register :lorem do
+  require 'middleman-core/extensions/lorem'
+  Middleman::Extensions::Lorem
+end
 
 # AutomaticImageSizes inspects the images used in your dynamic templates
 # and automatically adds width and height attributes to their HTML
 # elements.
-require 'middleman-core/extensions/automatic_image_sizes'
-Middleman::Extensions::AutomaticImageSizes.register
+Middleman::Extensions.register :automatic_image_sizes do
+  require 'middleman-core/extensions/automatic_image_sizes'
+  Middleman::Extensions::AutomaticImageSizes
+end
 
 # AutomaticAltTags uses the file name of the `image_tag` to generate
 # a default `:alt` value.
-require 'middleman-core/extensions/automatic_alt_tags'
-Middleman::Extensions::AutomaticAltTags.register
+Middleman::Extensions.register :automatic_alt_tags do
+  require 'middleman-core/extensions/automatic_alt_tags'
+  Middleman::Extensions::AutomaticAltTags
+end
