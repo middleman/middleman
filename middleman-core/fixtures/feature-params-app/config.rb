@@ -11,6 +11,6 @@ class ExtensionA < ::Middleman::Extension
   option :hola, '', ''
 end
 
-ExtensionA.register
+Middleman::Extensions.register :extension_a, ExtensionA
 
 activate :extension_a, :hello => "world", :hola => "mundo"

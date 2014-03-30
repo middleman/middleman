@@ -16,7 +16,7 @@ class ExtensionOne < ::Middleman::Extension
   end
 end
 
-ExtensionOne.register
+Middleman::Extensions.register :extension_one, ExtensionOne
 
 class ExtensionTwo < ::Middleman::Extension
   helpers do
@@ -36,7 +36,7 @@ class ExtensionTwo < ::Middleman::Extension
   end
 end
 
-ExtensionTwo.register
+Middleman::Extensions.register :extension_two, ExtensionTwo
 
 activate :extension_one
 activate :extension_two

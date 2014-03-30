@@ -84,8 +84,8 @@ module Middleman
     # @param [String] path
     # @return [String]
     def get_template_data_for_file
-      if @app.extensions[:frontmatter]
-        @app.extensions[:frontmatter].template_data_for_file(@path)
+      if @app.extensions[:front_matter]
+        @app.extensions[:front_matter].template_data_for_file(@path)
       else
         File.read(File.expand_path(@path, source_dir))
       end

@@ -142,10 +142,6 @@ module Middleman
     # Setup custom rendering
     include Middleman::CoreExtensions::Rendering
 
-    # Parse YAML from templates. Must be before sitemap so sitemap
-    # extensions see updated frontmatter!
-    register Middleman::CoreExtensions::FrontMatter
-
     # Sitemap Config options and public api
     include Middleman::Sitemap
 
@@ -182,6 +178,10 @@ module Middleman
       # Setup the default values from calls to set before initialization
       self.class.config.load_settings(self.class.superclass.config.all_settings)
 
+      # Parse YAML from templates. Must be before sitemap so sitemap
+      # extensions see updated frontmatter!
+      activate :front_matter
+
       # Initialize the Sitemap
       @sitemap = ::Middleman::Sitemap::Store.new(self)
 
@@ -196,8 +196,10 @@ module Middleman
       activate :default_helpers
       activate :lorem
 
-      if defined?(Middleman::CoreExtensions::Compass)
+      begin
         activate :compass
+      rescue LoadError
+        # Compass is not available, don't complain about it
       end
 
       # Evaluate a passed block if given

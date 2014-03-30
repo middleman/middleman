@@ -1,6 +1,5 @@
 # Core Sitemap Extensions
 module Middleman
-
   module Sitemap
 
     # Setup Extension
