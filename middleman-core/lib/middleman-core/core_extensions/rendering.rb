@@ -48,13 +48,6 @@ module Middleman
           require 'middleman-core/renderers/markdown'
           app.send :include, Middleman::Renderers::Markdown
 
-          # AsciiDoc Support
-          begin
-            require 'middleman-core/renderers/asciidoc'
-            app.send :include, Middleman::Renderers::AsciiDoc
-          rescue LoadError
-          end
-
           # Liquid Support
           begin
             require 'middleman-core/renderers/liquid'

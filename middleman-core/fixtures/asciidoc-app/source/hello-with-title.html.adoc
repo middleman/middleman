@@ -1,4 +1,0 @@
-= Page Title
-:page-layout: default
-
-Hello, AsciiDoc!

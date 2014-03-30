@@ -18,7 +18,6 @@ gem 'slim', require: false
 gem 'liquid', require: false
 gem 'less', '~> 2.3.0', require: false
 gem 'stylus', require: false
-gem 'asciidoctor', require: false
 
 platforms :ruby do
   gem 'therubyracer'
