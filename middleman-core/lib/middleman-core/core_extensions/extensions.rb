@@ -62,19 +62,6 @@ module Middleman
         def configure(env, &block)
           send("#{env}_config", &block)
         end
-
-        # Register a new extension
-        #
-        # @param [Module] extension Extension modules to register
-        # @param [Hash] options Per-extension options hash
-        # @return [void]
-        def register(extension, options={}, &block)
-          if extension.ancestors.include?(::Middleman::Extension)
-            extension.new(self, options, &block)
-          else
-            $stderr.puts "!! Tried to register old-style extension: #{extension}"
-          end
-        end
       end
 
       # Instance methods

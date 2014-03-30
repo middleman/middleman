@@ -12,7 +12,10 @@ require 'middleman-core/core_extensions/extensions'
 require 'middleman-core/core_extensions/data'
 
 # Parse YAML from templates
-require 'middleman-core/core_extensions/front_matter'
+Middleman::Extensions.register :front_matter do
+  require 'middleman-core/core_extensions/front_matter'
+  Middleman::CoreExtensions::FrontMatter
+end
 
 # External helpers looks in the helpers/ folder for helper modules
 require 'middleman-core/core_extensions/external_helpers'
