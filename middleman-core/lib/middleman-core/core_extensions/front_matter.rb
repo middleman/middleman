@@ -32,7 +32,6 @@ module Middleman::CoreExtensions
     end
 
     def after_configuration
-      app.extensions[:frontmatter] = self
       app.ignore %r{\.frontmatter$}
 
       ::Middleman::Sitemap::Resource.send :include, ResourceInstanceMethods
@@ -45,7 +44,7 @@ module Middleman::CoreExtensions
         [:layout, :layout_engine].each do |opt|
           data[opt] = fmdata[opt] unless fmdata[opt].nil?
         end
-        
+
         if fmdata[:renderer_options]
           data[:renderer_options] = {}
           fmdata[:renderer_options].each do |k, v|
@@ -71,7 +70,7 @@ module Middleman::CoreExtensions
       # @private
       # @return [Hash]
       def raw_data
-        app.extensions[:frontmatter].data(source_file).first
+        app.extensions[:front_matter].data(source_file).first
       end
 
       # This page's frontmatter
