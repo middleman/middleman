@@ -14,14 +14,17 @@ class Middleman::Extensions::RelativeAssets < ::Middleman::Extension
     # asset_url override for relative assets
     # @param [String] path
     # @param [String] prefix
+    # @param [Hash] options Data to pass through.
     # @return [String]
-    def asset_url(path, prefix='')
-      path = super(path, prefix)
+    def asset_url(path, prefix='', options={})
+      path = super
 
-      if path.include?('//') || path.start_with?('data:') || !current_resource
+      requested_resource = options[:current_resource] || current_resource
+
+      if path.include?('//') || path.start_with?('data:') || !requested_resource
         path
       else
-        current_dir = Pathname('/' + current_resource.destination_path)
+        current_dir = Pathname('/' + requested_resource.destination_path)
         Pathname(path).relative_path_from(current_dir.dirname).to_s
       end
     end

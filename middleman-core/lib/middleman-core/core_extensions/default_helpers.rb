@@ -167,8 +167,9 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
     #
     # @param [Symbol] kind The type of file
     # @param [String] source The path to the file
+    # @param [Hash] options Data to pass through.
     # @return [String]
-    def asset_path(kind, source)
+    def asset_path(kind, source, options={})
       return source if source.to_s.include?('//') || source.to_s.start_with?('data:')
       asset_folder  = case kind
         when :css    then config[:css_dir]
@@ -182,15 +183,16 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
       source << ".#{kind}" unless ignore_extension || source.end_with?(".#{kind}")
       asset_folder = '' if source.start_with?('/') # absolute path
 
-      asset_url(source, asset_folder)
+      asset_url(source, asset_folder, options)
     end
 
     # Get the URL of an asset given a type/prefix
     #
     # @param [String] path The path (such as "photo.jpg")
     # @param [String] prefix The type prefix (such as "images")
+    # @param [Hash] options Data to pass through.
     # @return [String] The fully qualified asset url
-    def asset_url(path, prefix='')
+    def asset_url(path, prefix='', options={})
       # Don't touch assets which already have a full path
       if path.include?('//') or path.start_with?('data:')
         path

@@ -31,8 +31,9 @@ class Middleman::Extensions::AssetHost < ::Middleman::Extension
     #
     # @param [String] path
     # @param [String] prefix
+    # @param [Hash] options Data to pass through.
     # @return [String]
-    def asset_url(path, prefix='')
+    def asset_url(path, prefix='', options={})
       controller = extensions[:asset_host]
 
       original_output = super

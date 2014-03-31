@@ -22,7 +22,8 @@ class Middleman::Extensions::CacheBuster < ::Middleman::Extension
     # asset_url override if we're using cache busting
     # @param [String] path
     # @param [String] prefix
-    def asset_url(path, prefix='')
+    # @param [Hash] options Data to pass through.
+    def asset_url(path, prefix='', options={})
       http_path = super
 
       if http_path.include?('://') || !%w(.css .png .jpg .jpeg .svg .svgz .js .gif).include?(File.extname(http_path))
