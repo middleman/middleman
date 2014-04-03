@@ -20,3 +20,4 @@ Makefile
 .idea
 *.sublime-workspace
 /bin
+middleman-core/fixtures/compass-sprites-app/source/images/icon-s0de2218f58.png

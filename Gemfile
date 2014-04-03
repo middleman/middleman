@@ -6,13 +6,12 @@ gem 'yard',     '~> 0.8.0', :require => false
 
 # Test tools
 gem 'cucumber', '~> 1.3.1'
-gem 'fivemat'
+gem 'fivemat',  '~> 1.2.1'
 gem 'aruba',    '~> 0.5.1'
 gem 'rspec',    '~> 2.12'
 gem 'simplecov'
 
 # Optional middleman dependencies, included for tests
-gem 'haml', '~> 4.0.0', :require => false # Make sure to use Haml 4 for tests
 gem 'sinatra', :require => false
 gem 'slim', :require => false
 gem 'liquid', :require => false

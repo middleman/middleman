@@ -3,4 +3,4 @@ Feature: Compass sprites should be generated on build and copied
     Given a successfully built app at "compass-sprites-app"
     When I cd to "build"
     Then the following files should exist:
-      | images/icon-s1a8aa64128.png |
+      | images/icon-s0de2218f58.png |
