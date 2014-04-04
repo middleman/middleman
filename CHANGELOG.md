@@ -14,6 +14,7 @@ master
 * Depend on Erubis and remove support for specifying another ERb engine.
 * Removed the ability to set the `sass_cache_path`.
 * Improved /__middleman/ meta pages. For example, sitemap view now calls out ignored resources, prints data/options better, and shows which special locals are available on a page.
+* Bump Uglifier to 2.5.x
 
 3.2.2
 ===
