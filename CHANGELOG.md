@@ -5,7 +5,7 @@ master
 ===
 
 * Update Padrino to 0.12.1. Introduces BREAKING CHANGE for Haml. Helpers which take blocks used to require `-` instead of `=` to work correctly. Now, all helpers which output content should use `=`. See: http://www.padrinorb.com/blog/upgrading-padrino-from-0-11-x-to-0-12-0-guide
-* Update Sass to 3.3.x and Haml to 4.x
+* Update Haml to 4.x
 * Disable Webrick reverse DNS lookup, vastly improving performance when accessing from a VM.
 * Ignore `node_modules` in FileWatcher
 * Add `tzinfo-data` for Windows users.
