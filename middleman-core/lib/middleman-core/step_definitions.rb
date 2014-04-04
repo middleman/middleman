@@ -3,10 +3,11 @@ MIDDLEMAN_BIN_PATH  = File.join(MIDDLEMAN_ROOT_PATH, 'bin')
 ENV['PATH'] = "#{MIDDLEMAN_BIN_PATH}#{File::PATH_SEPARATOR}#{ENV['PATH']}"
 
 require 'aruba/cucumber'
+require 'aruba/jruby'
 require 'middleman-core/step_definitions/middleman_steps'
 require 'middleman-core/step_definitions/builder_steps'
 require 'middleman-core/step_definitions/server_steps'
 
 Before do
-  @aruba_timeout_seconds = 60
+  @aruba_timeout_seconds = RUBY_PLATFORM == 'java' ? 120 : 60
 end
