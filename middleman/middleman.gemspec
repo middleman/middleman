@@ -7,8 +7,8 @@ Gem::Specification.new do |s|
   s.version     = Middleman::VERSION
   s.platform    = Gem::Platform::RUBY
   s.license     = "MIT"
-  s.authors     = ["Thomas Reynolds", "Ben Hollis"]
-  s.email       = ["me@tdreyno.com", "ben@benhollis.net"]
+  s.authors     = ["Thomas Reynolds", "Ben Hollis", "Karl Freeman"]
+  s.email       = ["me@tdreyno.com", "ben@benhollis.net", "karlfreeman@gmail.com"]
   s.homepage    = "http://middlemanapp.com"
   s.summary     = "Hand-crafted frontend development"
   s.description = "A static site generator. Provides dozens of templating languages (Haml, Sass, Compass, Slim, CoffeeScript, and more). Makes minification, compression, cache busting, Yaml data (and more) an easy part of your development cycle."
