@@ -1,2 +1,0 @@
-class Child < Parent
-end

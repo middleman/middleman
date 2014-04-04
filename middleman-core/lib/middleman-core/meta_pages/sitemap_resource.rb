@@ -1,7 +1,4 @@
-if !defined?(::Padrino::Helpers)
-  require 'vendored-middleman-deps/padrino-core-0.12.0/lib/padrino-core/support_lite'
-  require 'vendored-middleman-deps/padrino-helpers-0.12.0/lib/padrino-helpers'
-end
+require 'padrino-helpers'
 
 module Middleman
   module MetaPages

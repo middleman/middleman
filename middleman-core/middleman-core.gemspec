@@ -33,6 +33,7 @@ Gem::Specification.new do |s|
 
   # Helpers
   s.add_dependency("activesupport", ["~> 4.0.1"])
+  s.add_dependency("padrino-helpers", ["~> 0.12.1"])
 
   # Watcher
   s.add_dependency("listen", ["~> 1.1"])
