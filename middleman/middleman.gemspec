@@ -25,6 +25,6 @@ Gem::Specification.new do |s|
   s.add_dependency("compass", [">= 0.12.4"])
   s.add_dependency("uglifier", ["~> 2.5"])
   s.add_dependency("coffee-script", ["~> 2.2.0"])
-  s.add_dependency("execjs", ["~> 1.4.0"])
+  s.add_dependency("execjs", ["~> 2.0"])
   s.add_dependency("kramdown", ["~> 1.2"])
 end

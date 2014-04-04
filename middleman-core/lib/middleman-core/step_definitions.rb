@@ -8,5 +8,5 @@ require 'middleman-core/step_definitions/builder_steps'
 require 'middleman-core/step_definitions/server_steps'
 
 Before do
-  @aruba_timeout_seconds = 30
+  @aruba_timeout_seconds = 60
 end
