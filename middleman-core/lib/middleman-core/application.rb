@@ -149,7 +149,9 @@ module Middleman
     include Middleman::CoreExtensions::ExternalHelpers
 
     # Reference to Logger singleton
-    attr_reader :logger
+    def logger
+      ::Middleman::Logger.singleton
+    end
 
     # New container for config.rb commands
     attr_reader :config_context
@@ -167,7 +169,6 @@ module Middleman
 
     # Initialize the Middleman project
     def initialize(&block)
-      @logger = ::Middleman::Logger.singleton
       @template_context_class = Class.new(Middleman::TemplateContext)
       @generic_template_context = @template_context_class.new(self)
       @config_context = ConfigContext.new(self, @template_context_class)
