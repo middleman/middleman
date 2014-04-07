@@ -26,7 +26,7 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
       :proc              => method(:rewrite_url)
   end
 
-  def rewrite_url(asset_path, dirpath)
+  def rewrite_url(asset_path, dirpath, request_path)
     relative_path = Pathname.new(asset_path).relative?
 
     full_asset_path = if relative_path

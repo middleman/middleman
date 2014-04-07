@@ -187,9 +187,9 @@ module Middleman::Cli
         resource.ext == '.css'
       end.each(&method(:build_resource))
 
-      logger.debug '== Checking for Compass sprites'
+      logger.debug '== Checking for generated images'
 
-      # Double-check for compass sprites
+      # Double-check for generated images
       @app.files.find_new_files((@source_dir + @app.config[:images_dir]).relative_path_from(@app.root_path))
       @app.sitemap.ensure_resource_list_updated!
 

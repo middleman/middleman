@@ -38,8 +38,13 @@ module Middleman
       class << self
         # Once registered
         def registered(app)
+          opts = { output_style: :nested }
+          opts[:line_comments] = false if ENV['TEST']
+
           # Default sass options
-          app.config.define_setting :sass, {}, 'Sass engine options'
+          app.config.define_setting :sass, opts, 'Sass engine options'
+
+          app.config.define_setting :sass_assets_paths, [], 'Paths to extra SASS/SCSS files'
 
           # Tell Tilt to use it as well (for inline sass blocks)
           ::Tilt.register 'sass', SassPlusCSSFilenameTemplate
@@ -50,6 +55,8 @@ module Middleman
           ::Tilt.prefer(ScssPlusCSSFilenameTemplate)
 
           ::Compass::ImportOnce.activate!
+
+          require 'middleman-core/renderers/sass_functions'
         end
 
         alias_method :included, :registered
@@ -88,14 +95,22 @@ module Middleman
         # Change Sass path, for url functions, to the build folder if we're building
         # @return [Hash]
         def sass_options
-          more_opts = { filename: eval_file, line: line, syntax: syntax }
+          ctx = ::Middleman::Renderers::Haml.last_haml_scope || @context
 
-          if @context.is_a?(::Middleman::TemplateContext) && file
-            location_of_sass_file = @context.source_dir
+          more_opts = {
+            load_paths: ctx.config[:sass_assets_paths],
+            filename: eval_file,
+            line: line,
+            syntax: syntax,
+            custom: { middleman_context: ctx.app }
+          }
+
+          if ctx.is_a?(::Middleman::TemplateContext) && file
+            location_of_sass_file = ctx.source_dir
 
             parts = basename.split('.')
             parts.pop
-            more_opts[:css_filename] = File.join(location_of_sass_file, @context.config[:css_dir], parts.join('.'))
+            more_opts[:css_filename] = File.join(location_of_sass_file, ctx.config[:css_dir], parts.join('.'))
           end
 
           options.merge(more_opts)

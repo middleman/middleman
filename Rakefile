@@ -46,7 +46,6 @@ task :test do
   GEM_PATHS.each do |g|
     Dir.chdir("#{File.join(ROOT, g)}") { sh "#{Gem.ruby} -S rake test" }
   end
-  Rake::Task['rubocop'].invoke
 end
 
 desc 'Run specs for all middleman gems'
@@ -56,10 +55,15 @@ task :spec do
   end
 end
 
-require 'rubocop/rake_task'
-desc 'Run RuboCop to check code consistency'
-Rubocop::RakeTask.new(:rubocop) do |task|
-  task.fail_on_error = false
+begin
+  require 'rubocop/rake_task'
+  if defined?(Rubocop)
+    desc 'Run RuboCop to check code consistency'
+    Rubocop::RakeTask.new(:rubocop) do |task|
+      task.fail_on_error = false
+    end
+  end
+rescue LoadError
 end
 
 desc 'Run tests for all middleman gems'

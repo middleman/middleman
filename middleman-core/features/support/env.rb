@@ -1,5 +1,6 @@
 ENV["TEST"] = "true"
-ENV["AUTOLOAD_SPROCKETS"] = "false"
+ENV["AUTOLOAD_SPROCKETS"] ||= "false"
+ENV["AUTOLOAD_COMPASS"] ||= "false"
 
 require 'simplecov'
 SimpleCov.root(File.expand_path(File.dirname(__FILE__) + '/../..'))

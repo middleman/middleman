@@ -162,27 +162,7 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
     # @param [Hash] options Data to pass through.
     # @return [String]
     def asset_path(kind, source, options={})
-      return source if source.to_s.include?('//') || source.to_s.start_with?('data:')
-
-      asset_folder = case kind
-      when :css
-        config[:css_dir]
-      when :js
-        config[:js_dir]
-      when :images
-        config[:images_dir]
-      when :fonts
-        config[:fonts_dir]
-      else
-        kind.to_s
-      end
-
-      source = source.to_s.tr(' ', '')
-      ignore_extension = (kind == :images || kind == :fonts) # don't append extension
-      source << ".#{kind}" unless ignore_extension || source.end_with?(".#{kind}")
-      asset_folder = '' if source.start_with?('/') # absolute path
-
-      asset_url(source, asset_folder, options)
+      ::Middleman::Util.asset_path(app, kind, source, options)
     end
 
     # Get the URL of an asset given a type/prefix
@@ -190,22 +170,8 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
     # @param [String] path The path (such as "photo.jpg")
     # @param [String] prefix The type prefix (such as "images")
     # @return [String] The fully qualified asset url
-    def asset_url(path, prefix='', _)
-      # Don't touch assets which already have a full path
-      if path.include?('//') || path.start_with?('data:')
-        path
-      else # rewrite paths to use their destination path
-        if resource = sitemap.find_resource_by_destination_path(url_for(path))
-          resource.url
-        else
-          path = File.join(prefix, path)
-          if resource = sitemap.find_resource_by_path(path)
-            resource.url
-          else
-            File.join(config[:http_prefix], path)
-          end
-        end
-      end
+    def asset_url(path, prefix='', options={})
+      ::Middleman::Util.asset_url(app, prefix, options)
     end
 
     # Given a source path (referenced either absolutely or relatively)

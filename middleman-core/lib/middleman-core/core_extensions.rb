@@ -32,14 +32,6 @@ Middleman::Extensions.register :default_helpers, auto_activate: :before_configur
   Middleman::CoreExtensions::DefaultHelpers
 end
 
-# Compass framework
-begin
-  require 'middleman-core/core_extensions/compass'
-  Middleman::Extensions.register :compass, Middleman::CoreExtensions::Compass, auto_activate: :before_configuration
-rescue LoadError
-  # Compass is not available, don't complain about it
-end
-
 # Lorem provides a handful of helpful prototyping methods to generate
 # words, paragraphs, fake images, names and email addresses.
 Middleman::Extensions.register :lorem, auto_activate: :before_configuration do

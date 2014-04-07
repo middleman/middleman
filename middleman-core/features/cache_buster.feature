@@ -5,7 +5,7 @@ Feature: Generate mtime-based query string for busting browser caches
     Given "cache_buster" feature is "disabled"
     And the Server is running at "cache-buster-app"
     When I go to "/stylesheets/relative_assets.css"
-    Then I should see "blank.gif'"
+    Then I should see 'blank.gif"'
     
   Scenario: Rendering html with the feature disabled
     Given "cache_buster" feature is "disabled"
