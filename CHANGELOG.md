@@ -1,7 +1,7 @@
 master
 ===
 
-3.3.0
+3.3.0-3.3.2
 ===
 
 * Update Padrino to 0.12.1. Introduces BREAKING CHANGE for Haml. Helpers which take blocks used to require `-` instead of `=` to work correctly. Now, all helpers which output content should use `=`. See: http://www.padrinorb.com/blog/upgrading-padrino-from-0-11-x-to-0-12-0-guide
