@@ -162,12 +162,13 @@ module Middleman
     # with_layout and page routing
     include Middleman::CoreExtensions::Routing
 
-    attr_reader :logger
+    # Reference to Logger singleton
+    def logger
+      ::Middleman::Logger.singleton
+    end
 
     # Initialize the Middleman project
     def initialize(&block)
-      @logger = ::Middleman::Logger.singleton
-
       # Clear the static class cache
       cache.clear
 
