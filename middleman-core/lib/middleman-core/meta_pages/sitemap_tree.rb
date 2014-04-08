@@ -45,7 +45,11 @@ module Middleman
       end
 
       def css_classes
-        ['tree']
+        ['tree'].concat(ignored? ? ['ignored'] : [])
+      end
+
+      def ignored?
+        @children.values.all?(&:ignored?)
       end
 
       protected

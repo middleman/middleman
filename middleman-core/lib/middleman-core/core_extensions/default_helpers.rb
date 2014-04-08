@@ -1,11 +1,8 @@
-if !defined?(::Padrino::Helpers)
-  require 'vendored-middleman-deps/padrino-core-0.12.0/lib/padrino-core/support_lite'
-  require 'vendored-middleman-deps/padrino-helpers-0.12.0/lib/padrino-helpers'
+require 'padrino-helpers'
 
-  # Don't fail on invalid locale, that's not what our current
-  # users expect.
-  ::I18n.enforce_available_locales = false
-end
+# Don't fail on invalid locale, that's not what our current
+# users expect.
+::I18n.enforce_available_locales = false
 
 class Padrino::Helpers::OutputHelpers::ErbHandler
   # Force Erb capture not to use safebuffer
@@ -65,16 +62,13 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
     end
 
     def capture_html(*args, &block)
-      handler = auto_find_proper_handler(&block)
-      captured_block, captured_html = nil, ''
-
-      if handler && handler.engine_matches?(block)
-        captured_html, captured_block = handler.capture_from_template(*args, &block)
+      result = if handler = auto_find_proper_handler(&block)
+        handler.capture_from_template(*args, &block)
+      else
+        block.call(*args)
       end
 
-      # invoking the block directly if there was no template
-      captured_html = block_given? && ( captured_block || block.call(*args) ) if captured_html.blank?
-      captured_html
+      ActiveSupport::SafeBuffer.new.safe_concat(result)
     end
 
     def auto_find_proper_handler(&block)

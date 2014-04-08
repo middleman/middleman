@@ -7,8 +7,8 @@ Gem::Specification.new do |s|
   s.version     = Middleman::VERSION
   s.platform    = Gem::Platform::RUBY
   s.license     = 'MIT'
-  s.authors     = ['Thomas Reynolds', 'Ben Hollis']
-  s.email       = ['me@tdreyno.com', 'ben@benhollis.net']
+  s.authors     = ['Thomas Reynolds', 'Ben Hollis', 'Karl Freeman']
+  s.email       = ['me@tdreyno.com', 'ben@benhollis.net', 'karlfreeman@gmail.com']
   s.homepage    = 'http://middlemanapp.com'
   s.summary     = 'Hand-crafted frontend development'
   s.description = 'A static site generator. Provides dozens of templating languages (Haml, Sass, Compass, Slim, CoffeeScript, and more). Makes minification, compression, cache busting, Yaml data (and more) an easy part of your development cycle.'
@@ -22,11 +22,11 @@ Gem::Specification.new do |s|
   s.add_dependency('middleman-cli', Middleman::VERSION)
   s.add_dependency('middleman-templates', Middleman::VERSION)
   s.add_dependency('middleman-sprockets', '>= 3.1.2')
-  s.add_dependency("haml", [">= 4.0.5"])
-  s.add_dependency("sass", [">= 3.3.4"])
-  s.add_dependency("compass", [">= 1.0.0.alpha.19"])
-  s.add_dependency('uglifier', ['~> 2.4.0'])
+  s.add_dependency('haml', ['>= 4.0.5'])
+  s.add_dependency('sass', ['>= 3.3.4'])
+  s.add_dependency('compass', ['>= 1.0.0.alpha.19'])
+  s.add_dependency('uglifier', ['~> 2.5'])
   s.add_dependency('coffee-script', ['~> 2.2.0'])
-  s.add_dependency('execjs', ['~> 2.0.2'])
+  s.add_dependency('execjs', ['~> 2.0'])
   s.add_dependency('kramdown', ['~> 1.2'])
 end

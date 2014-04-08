@@ -7,8 +7,8 @@ Gem::Specification.new do |s|
   s.version     = Middleman::VERSION
   s.platform    = Gem::Platform::RUBY
   s.license     = 'MIT'
-  s.authors     = ['Thomas Reynolds', 'Ben Hollis']
-  s.email       = ['me@tdreyno.com', 'ben@benhollis.net']
+  s.authors     = ['Thomas Reynolds', 'Ben Hollis', 'Karl Freeman']
+  s.email       = ['me@tdreyno.com', 'ben@benhollis.net', 'karlfreeman@gmail.com']
   s.homepage    = 'http://middlemanapp.com'
   s.summary     = 'Hand-crafted frontend development'
   s.description = 'A static site generator. Provides dozens of templating languages (Haml, Sass, Compass, Slim, CoffeeScript, and more). Makes minification, compression, cache busting, Yaml data (and more) an easy part of your development cycle.'
@@ -20,13 +20,14 @@ Gem::Specification.new do |s|
 
   # Core
   s.add_dependency('bundler', ['~> 1.1'])
-  s.add_dependency('rack', ['>= 1.4.5'])
+  s.add_dependency('rack', ['>= 1.4.5', '< 2.0'])
   s.add_dependency('tilt', ['~> 1.4.1'])
   s.add_dependency('erubis')
   s.add_dependency('hooks', ['~> 0.3'])
 
   # Helpers
   s.add_dependency('activesupport', ['~> 4.0.1'])
+  s.add_dependency("padrino-helpers", ['~> 0.12.1'])
 
   # Watcher
   s.add_dependency('listen', ['~> 1.1'])

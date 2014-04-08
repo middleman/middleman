@@ -15,7 +15,7 @@ module Middleman
       # @return [void]
       def start(opts={})
         @options = opts
-        @host = @options[:host] || Socket.gethostname
+        @host = @options[:host] || Socket.ip_address_list.find(&:ipv4_private?).ip_address
         @port = @options[:port] || DEFAULT_PORT
 
         mount_instance(new_app)
@@ -166,9 +166,10 @@ module Middleman
       # @return [void]
       def setup_webrick(is_logging)
         http_opts = {
-          :BindAddress => host,
-          :Port        => port,
-          :AccessLog   => []
+          :BindAddress        => host,
+          :Port               => port,
+          :AccessLog          => [],
+          :DoNotReverseLookup => true
         }
 
         if is_logging

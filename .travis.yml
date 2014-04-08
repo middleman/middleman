@@ -23,3 +23,8 @@ matrix:
     - rvm: jruby
     - rvm: jruby-19mode
     - rvm: rbx-2
+env: TEST=true
+before_install: git submodule update --init --recursive
+script: bundle exec rake test
+notifications:
+  slack: middleman:JW9OvXmn1m3XrSERe8866nBR

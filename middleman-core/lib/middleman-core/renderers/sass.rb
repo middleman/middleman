@@ -1,4 +1,5 @@
 require 'sass'
+require 'compass/import-once'
 
 module Middleman
   module Renderers
@@ -21,6 +22,8 @@ module Middleman
           # Tell Tilt to use it as well (for inline scss blocks)
           ::Tilt.register 'scss', ScssPlusCSSFilenameTemplate
           ::Tilt.prefer(ScssPlusCSSFilenameTemplate)
+
+          ::Compass::ImportOnce.activate!
         end
 
         alias :included :registered

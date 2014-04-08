@@ -29,7 +29,6 @@ module Middleman
 
       desc 'version', 'Show version'
       def version
-        require 'middleman-core/version'
         say "Middleman #{Middleman::VERSION}"
       end
 
@@ -85,6 +84,9 @@ module Middleman
     end
   end
 end
+
+# Require the Middleman version
+require 'middleman-core/version'
 
 # Include the core CLI items
 require 'middleman-cli/init'
