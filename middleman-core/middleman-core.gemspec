@@ -26,7 +26,7 @@ Gem::Specification.new do |s|
   s.add_dependency('hooks', ['~> 0.3'])
 
   # Helpers
-  s.add_dependency('activesupport', ['~> 4.0.1'])
+  s.add_dependency('activesupport', ['~> 4.1.0'])
   s.add_dependency("padrino-helpers", ['~> 0.12.1'])
 
   # Watcher
