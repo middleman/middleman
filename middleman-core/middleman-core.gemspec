@@ -32,7 +32,7 @@ Gem::Specification.new do |s|
   s.add_dependency("thor", [">= 0.15.2", "< 2.0"])
 
   # Helpers
-  s.add_dependency("activesupport", ["~> 4.0.1"])
+  s.add_dependency("activesupport", ["~> 4.1.0"])
   s.add_dependency("padrino-helpers", ["~> 0.12.1"])
 
   # Watcher
