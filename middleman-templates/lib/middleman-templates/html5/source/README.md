@@ -20,8 +20,9 @@ Choose one of the following options:
    [html5boilerplate.com](http://html5boilerplate.com/) or a custom build from
    [Initializr](http://www.initializr.com).
 2. Clone the git repo — `git clone
-   https://github.com/h5bp/html5-boilerplate.git` - and checkout the tagged
-   release you'd like to use.
+   https://github.com/h5bp/html5-boilerplate.git` - and checkout the [tagged
+   release](https://github.com/h5bp/html5-boilerplate/releases) you'd like to
+   use.
 
 
 ## Features
@@ -49,15 +50,13 @@ Choose one of the following options:
 
 ## Documentation
 
-Take a look at the [documentation table of
-contents](/h5bp/html5-boilerplate/blob/master/doc/README.md). This
+Take a look at the [documentation table of contents](doc/TOC.md). This
 documentation is bundled with the project, which makes it readily available for
-offline reading and provides a useful starting point for any documentation
-you want to write about your project.
+offline reading and provides a useful starting point for any documentation you
+want to write about your project.
 
 
 ## Contributing
 
-Anyone and everyone is welcome to
-[contribute](/h5bp/html5-boilerplate/blob/master/doc/contribute.md). Hundreds
-of developers have helped make the HTML5 Boilerplate what it is today.
+Anyone and everyone is welcome to [contribute](CONTRIBUTING.md). Hundreds of
+developers have helped make the HTML5 Boilerplate what it is today.
