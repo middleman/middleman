@@ -1,10 +1,10 @@
 AllCops:
-  Includes:
+  Include:
     - Rakefile
     - Gemfile
     - config.ru
     - gem_rake_helper.rb
-  Excludes:
+  Exclude:
     - script/**
     - vendor/**
     - bin/**
