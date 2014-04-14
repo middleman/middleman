@@ -3,6 +3,8 @@ require 'middleman-core/util'
 class Middleman::Extensions::AssetHash < ::Middleman::Extension
   option :exts, %w(.jpg .jpeg .png .gif .js .css .otf .woff .eot .ttf .svg), 'List of extensions that get asset hashes appended to them.'
   option :ignore, [], 'Regexes of filenames to skip adding asset hashes to'
+  option :format, ':basename-:digest.:ext', 'Format of renamed file.'
+  option :keep_original, false, 'Whether the original file name should exist along side the hashed version.'
 
   def initialize(app, options_hash={}, &block)
     super
@@ -24,10 +26,12 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
   def manipulate_resource_list(resources)
     @rack_client = ::Rack::MockRequest.new(app.class.to_rack_app)
 
+    proxied_renames = []
+
     # Process resources in order: binary images and fonts, then SVG, then JS/CSS.
     # This is so by the time we get around to the text files (which may reference
     # images and fonts) the static assets' hashes are already calculated.
-    resources.sort_by do |a|
+    sorted_resources = resources.sort_by do |a|
       if %w(.svg).include? a.ext
         0
       elsif %w(.js .css).include? a.ext
@@ -35,21 +39,47 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
       else
         -1
       end
-    end.each(&method(:manipulate_single_resource))
+    end.each do |resource|
+      next unless options.exts.include?(resource.ext)
+      next if ignored_resource?(resource)
+      next if resource.ignored?
+
+      new_name = hashed_filename(resource)
+
+      if options.keep_original
+        p = ::Middleman::Sitemap::Resource.new(
+          app.sitemap,
+          new_name
+        )
+        p.proxy_to(resource.path)
+
+        proxied_renames << p
+      else
+        resource.destination_path = new_name
+      end
+    end
+
+    sorted_resources + proxied_renames
   end
 
-  def manipulate_single_resource(resource)
-    return unless options.exts.include?(resource.ext)
-    return if ignored_resource?(resource)
-    return if resource.ignored?
-
+  def hashed_filename(resource)
     # Render through the Rack interface so middleware and mounted apps get a shot
     response = @rack_client.get(URI.escape(resource.destination_path), { 'bypass_asset_hash' => 'true' })
     raise "#{resource.path} should be in the sitemap!" unless response.status == 200
 
     digest = Digest::SHA1.hexdigest(response.body)[0..7]
 
-    resource.destination_path = resource.destination_path.sub(/\.(\w+)$/) { |ext| "-#{digest}#{ext}" }
+    file_name = File.basename(resource.destination_path)
+    path = resource.destination_path.split(file_name).first
+
+    ext_without_leading_period = resource.ext.sub(/^\./, '')
+
+    base_name = File.basename(file_name, resource.ext)
+
+    path + options.format.dup
+      .gsub(/:basename/, base_name)
+      .gsub(/:digest/, digest)
+      .gsub(/:ext/, ext_without_leading_period)
   end
 
   def ignored_resource?(resource)

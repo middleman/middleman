@@ -16,6 +16,7 @@ master
 * Remove deprecated `request` instance
 * Remove old module-style extension support
 * Placed all `config.rb` evaluation inside the `ConfigContext` class
+* Add :format and :keep_original options to :asset_hash
 
 3.3.0-3.3.2
 ===
