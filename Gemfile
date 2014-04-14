@@ -38,6 +38,3 @@ gem 'rubocop', :require => false
 gem 'middleman-core', :path => 'middleman-core'
 gem 'middleman-sprockets', :github => 'middleman/middleman-sprockets'
 gem 'middleman', :path => 'middleman'
-
-# Replace standard URI library
-gem "addressable"
