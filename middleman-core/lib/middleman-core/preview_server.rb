@@ -15,7 +15,7 @@ module Middleman
       # @return [void]
       def start(opts={})
         @options = opts
-        @host = @options[:host] || Socket.ip_address_list.find(&:ipv4_private?).ip_address
+        @host = @options[:host] || '0.0.0.0'
         @port = @options[:port] || DEFAULT_PORT
 
         mount_instance(new_app)

@@ -15,7 +15,7 @@ module Middleman::Cli
     method_option :host,
       :type    => :string,
       :aliases => '-h',
-      :default => Socket.ip_address_list.find(&:ipv4_private?).ip_address,
+      :default => '0.0.0.0',
       :desc    => 'Bind to HOST address'
     method_option :port,
       :aliases => '-p',
