@@ -4,6 +4,9 @@ require 'active_support/notifications'
 # Using Thor's indifferent hash access
 require 'thor'
 
+# For URI parsing
+require 'addressable/uri'
+
 # Core Pathname library used for traversal
 require 'pathname'
 
@@ -149,8 +152,8 @@ module Middleman
 
         # Try to parse URL
         begin
-          uri = URI(url)
-        rescue URI::InvalidURIError
+          uri = Addressable::URI.parse(url)
+        rescue TypeError
           # Nothing we can do with it, it's not really a URI
           return url
         end
