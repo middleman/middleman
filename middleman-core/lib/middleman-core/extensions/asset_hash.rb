@@ -10,13 +10,37 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
     require 'digest/sha1'
     require 'rack/mock'
     require 'uri'
+    require 'middleman-core/middleware/inline_url_rewriter'
   end
 
   def after_configuration
     # Allow specifying regexes to ignore, plus always ignore apple touch icons
     @ignore = Array(options.ignore) + [/^apple-touch-icon/]
 
-    app.use Middleware, exts: options.exts, middleman_app: app, ignore: @ignore
+    app.use ::Middleman::Middleware::InlineURLRewriter,
+      :id                => :asset_hash,
+      :url_extensions    => options.exts,
+      :source_extensions => %w(.htm .html .php .css .js),
+      :ignore            => @ignore,
+      :middleman_app     => app,
+      :proc              => method(:rewrite_url)
+  end
+
+  def rewrite_url(asset_path, dirpath)
+    relative_path = Pathname.new(asset_path).relative?
+
+    full_asset_path = if relative_path
+      dirpath.join(asset_path).to_s
+    else
+      asset_path
+    end
+
+    if asset_page = app.sitemap.find_resource_by_path(full_asset_path)
+      replacement_path = "/#{asset_page.destination_path}"
+      replacement_path = Pathname.new(replacement_path).relative_path_from(dirpath).to_s if relative_path
+
+      replacement_path
+    end
   end
 
   # Update the main sitemap resource list
@@ -44,7 +68,10 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
     return if resource.ignored?
 
     # Render through the Rack interface so middleware and mounted apps get a shot
-    response = @rack_client.get(URI.escape(resource.destination_path), 'bypass_asset_hash' => 'true')
+    response = @rack_client.get(URI.escape(resource.destination_path), {
+      'bypass_inline_url_rewriter_asset_hash' => 'true'
+    })
+
     raise "#{resource.path} should be in the sitemap!" unless response.status == 200
 
     digest = Digest::SHA1.hexdigest(response.body)[0..7]
@@ -55,74 +82,4 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
   def ignored_resource?(resource)
     @ignore.any? { |ignore| Middleman::Util.path_match(ignore, resource.destination_path) }
   end
-
-  # The asset hash middleware is responsible for rewriting references to
-  # assets to include their new, hashed name.
-  class Middleware
-    def initialize(app, options={})
-      @rack_app        = app
-      @exts            = options[:exts]
-      @ignore          = options[:ignore]
-      @exts_regex_text = @exts.map { |e| Regexp.escape(e) }.join('|')
-      @middleman_app   = options[:middleman_app]
-    end
-
-    def call(env)
-      status, headers, response = @rack_app.call(env)
-
-      # We don't want to use this middleware when rendering files to figure out their hash!
-      return [status, headers, response] if env['bypass_asset_hash'] == 'true'
-
-      path = ::Middleman::Util.full_path(env['PATH_INFO'], @middleman_app)
-
-      if path =~ /(^\/$)|(\.(htm|html|php|css|js)$)/
-        body = ::Middleman::Util.extract_response_text(response)
-        if body
-          status, headers, response = Rack::Response.new(rewrite_paths(body, path), status, headers).finish
-        end
-      end
-
-      [status, headers, response]
-    end
-
-    private
-
-    def rewrite_paths(body, path)
-      dirpath = Pathname.new(File.dirname(path))
-
-      # TODO: This regex will change some paths in plan HTML (not in a tag) - is that OK?
-      body.gsub(/([=\'\"\(]\s*)([^\s\'\"\)]+(#{@exts_regex_text}))/) do |match|
-        opening_character = $1
-        asset_path = $2
-
-        relative_path = Pathname.new(asset_path).relative?
-
-        asset_path = dirpath.join(asset_path).to_s if relative_path
-
-        if @ignore.any? { |r| asset_path.match(r) }
-          match
-        elsif asset_page = @middleman_app.sitemap.find_resource_by_path(asset_path)
-          replacement_path = "/#{asset_page.destination_path}"
-          replacement_path = Pathname.new(replacement_path).relative_path_from(dirpath).to_s if relative_path
-
-          "#{opening_character}#{replacement_path}"
-        else
-          match
-        end
-      end
-    end
-  end
 end
-
-# =================Temp Generate Test data==============================
-#   ["jpg", "png", "gif"].each do |ext|
-#     [["<p>", "</p>"], ["<p><img src=", " /></p>"], ["<p>background-image:url(", ");</p>"]].each do |outer|
-#       [["",""], ["'", "'"], ['"','"']].each do |inner|
-#         [["", ""], ["/", ""], ["../", ""], ["../../", ""], ["../../../", ""], ["http://example.com/", ""], ["a","a"], ["1","1"], [".", "."], ["-","-"], ["_","_"]].each do |path_parts|
-#           name = 'images/100px.'
-#           puts outer[0] + inner[0] + path_parts[0] + name + ext + path_parts[1] + inner[1] + outer[1]
-#         end
-#       end
-#     end
-#     puts "<br /><br /><br />"
-#   end

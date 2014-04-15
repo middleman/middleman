@@ -222,6 +222,19 @@ module Middleman
         end
       end
 
+      def rewrite_paths(body, path, exts, &block)
+        body.dup.gsub(/([=\'\"\(]\s*)([^\s\'\"\)]+(#{Regexp.union(exts)}))/) do |match|
+          opening_character = $1
+          asset_path = $2
+
+          if result = yield(asset_path)
+            "#{opening_character}#{result}"
+          else
+            match
+          end
+        end
+      end
+
       private
 
       # Is mime type known to be non-binary?
