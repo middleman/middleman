@@ -201,6 +201,12 @@ module Middleman
         fragment = options[:anchor] || options[:fragment]
         uri.fragment = fragment.to_s if fragment
 
+        # Normalize URI
+        uri.site = uri.normalized_site
+        uri.path = Addressable::URI.normalized_encode(uri.path)
+        uri.query = uri.normalized_query
+        uri.fragment = uri.normalized_fragment
+
         # Finally make the URL back into a string
         uri.to_s
       end
