@@ -40,6 +40,6 @@ Gem::Specification.new do |s|
 
   # i18n
   s.add_dependency("i18n", ["~> 0.6.9"])
-  
-  s.add_dependency("addressable", ["~> 2.3.6"])
+
+  s.add_dependency("addressable", ["~> 2.3.5"])
 end
