@@ -46,7 +46,11 @@ module Middleman
         @source_file = source_file
         @destination_path = @path
 
-        @local_metadata = { options: {}, locals: {} }
+        # Options are generally rendering/sitemap options
+        # Locals are local variables for rendering this resource's template
+        # Page are data that is exposed through this resource's data member.
+        # Note: It is named 'page' for backwards compatibility with older MM.
+        @local_metadata = { options: {}, locals: {}, page: {} }
       end
 
       # Whether this resource has a template file
@@ -68,6 +72,12 @@ module Middleman
         result.deep_merge!(local_meta)
 
         result
+      end
+
+      # Data about this resource, populated from frontmatter or extensions.
+      # @return [HashWithIndifferentAccess]
+      def data
+        metadata[:page]
       end
 
       # Merge in new metadata specific to this resource.

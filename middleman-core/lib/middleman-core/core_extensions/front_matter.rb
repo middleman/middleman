@@ -29,29 +29,36 @@ module Middleman::CoreExtensions
       app.files.deleted { |file| ext.clear_data(file) }
     end
 
+    # Modify each resource to add data & options from frontmatter.
+    def manipulate_resource_list(resources)
+      resources.each do |resource|
+        fmdata = data(resource.path).first
+
+        # Copy over special options
+        opts = fmdata.extract!(:layout, :layout_engine, :renderer_options)
+        if opts.has_key?(:renderer_options)
+          opts[:renderer_options].symbolize_keys!
+        end
+
+        ignored = fmdata.delete(:ignored)
+
+        # TODO: Enhance data? NOOOO
+        # TODO: stringify-keys? immutable/freeze?
+
+        resource.add_metadata options: opts, page: fmdata
+
+        # TODO: resource.ignore! if ignored
+
+        # TODO: Save new template here somewhere?
+      end
+    end
+
     def after_configuration
       app.ignore %r{\.frontmatter$}
+      # TODO: Add to file watcher ignore?
 
-      ::Middleman::Sitemap::Resource.send :include, ResourceInstanceMethods
-
-      app.sitemap.provides_metadata do |path|
-        fmdata = data(path).first
-
-        data = {}
-
-        [:layout, :layout_engine].each do |opt|
-          data[opt] = fmdata[opt] unless fmdata[opt].nil?
-        end
-
-        if fmdata[:renderer_options]
-          data[:renderer_options] = {}
-          fmdata[:renderer_options].each do |k, v|
-            data[:renderer_options][k.to_sym] = v
-          end
-        end
-
-        { options: data }
-      end
+      # TODO: Replace all of this functionality
+      #::Middleman::Sitemap::Resource.send :include, ResourceInstanceMethods
     end
 
     module ResourceInstanceMethods
