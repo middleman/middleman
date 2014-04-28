@@ -25,8 +25,10 @@ module Middleman
         @app = app
         @resources = []
         @_cached_metadata = {}
+        # TODO: Should this be a set or hash?
         @resource_list_manipulators = []
         @needs_sitemap_rebuild = true
+        @provides_metadata_for_path = Set.new
 
         @lock = Monitor.new
         reset_lookup_cache!
@@ -123,6 +125,40 @@ module Middleman
       # adds ways to ignore files, you should call this to make sure #resources works right.
       def invalidate_resources_not_ignored_cache!
         @resources_not_ignored = nil
+      end
+
+      # Register a handler to provide metadata on a url path
+      # Extensions authors should prefer adding metadata to Resources via a
+      # sitemap manipulator and Resource#add_metadata.
+      #
+      # @param [Regexp, String] matcher or glob string
+      def provides_metadata_for_path(matcher=nil, &block)
+        if block_given?
+          @provides_metadata_for_path << [block, matcher]
+          @_cached_metadata = {}
+        end
+        nil
+      end
+
+      # Get the metadata for a specific source path
+      # @param [String] path Source path of a resource
+      # @return [Hash]
+      def metadata_for_path(path)
+        return @_cached_metadata[path] if @_cached_metadata.has_key?(path)
+
+        blank_metadata = { options: {}, locals: {}, page: {} }
+
+        @_cached_metadata[path] = @provides_metadata_for_path.inject(blank_metadata) do |result, (callback, matcher)|
+          case matcher
+          when Regexp
+            next result unless path =~ matcher
+          when String
+            next result unless File.fnmatch('/' + Util.strip_leading_slash(matcher), "/#{path}")
+          end
+
+          metadata = callback.call(path)
+          result.deep_merge(metadata)
+        end
       end
 
       # Get the URL path for an on-disk file

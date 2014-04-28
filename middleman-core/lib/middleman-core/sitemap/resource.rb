@@ -11,15 +11,12 @@ module Middleman
       include Middleman::Sitemap::Extensions::Traversal
       include Middleman::Sitemap::Extensions::ContentType
 
-      # @return [Middleman::Sitemap::Store]
-      #attr_reader :store
-
       # The source path of this resource (relative to the source directory,
       # without template extensions)
       # @return [String]
       attr_reader :path
 
-      # The output path for this resource
+      # The output path in the build directory for this resource
       # @return [String]
       attr_accessor :destination_path
 
@@ -78,14 +75,14 @@ module Middleman
       end
 
       # Merge in new metadata specific to this resource.
-      # @param [Hash] meta A metadata block like provides_metadata_for_path takes
+      # @param [Hash] meta A metadata block with keys :options, :locals, :page.
+      #   Options are generally rendering/sitemap options
+      #   Locals are local variables for rendering this resource's template
+      #   Page are data that is exposed through this resource's data member.
+      #   Note: It is named 'page' for backwards compatibility with older MM.
       def add_metadata(meta={})
         @local_metadata.deep_merge!(meta.dup)
       end
-
-      # The output/preview URL for this resource
-      # @return [String]
-      attr_accessor :destination_path
 
       # Extension of the path (i.e. '.js')
       # @return [String]
