@@ -52,6 +52,16 @@ module Middleman
         !::Tilt[source_file].nil?
       end
 
+      # Merge in new metadata specific to this resource.
+      # @param [Hash] meta A metadata block with keys :options, :locals, :page.
+      #   Options are generally rendering/sitemap options
+      #   Locals are local variables for rendering this resource's template
+      #   Page are data that is exposed through this resource's data member.
+      #   Note: It is named 'page' for backwards compatibility with older MM.
+      def add_metadata(meta={})
+        @local_metadata.deep_merge!(meta)
+      end
+
       # Get the metadata for both the current source_file and the current path
       # @return [Hash]
       def metadata
@@ -62,18 +72,21 @@ module Middleman
       # Data about this resource, populated from frontmatter or extensions.
       # @return [HashWithIndifferentAccess]
       def data
-        # TODO: Upconvert/freeze at this point?
-        metadata[:page]
+        # TODO: Should this really be a HashWithIndifferentAccess?
+        ::Middleman::Util.recursively_enhance(metadata[:page]).freeze
       end
 
-      # Merge in new metadata specific to this resource.
-      # @param [Hash] meta A metadata block with keys :options, :locals, :page.
-      #   Options are generally rendering/sitemap options
-      #   Locals are local variables for rendering this resource's template
-      #   Page are data that is exposed through this resource's data member.
-      #   Note: It is named 'page' for backwards compatibility with older MM.
-      def add_metadata(meta={})
-        @local_metadata.deep_merge!(meta)
+      # Options about how this resource is rendered, such as its :layout,
+      # :renderer_options, and whether or not to use :directory_indexes.
+      # @return [Hash]
+      def options
+        metadata[:options]
+      end
+
+      # Local variable mappings that are used when rendering the template for this resource.
+      # @return [Hash]
+      def locals
+        metadata[:locals]
       end
 
       # Extension of the path (i.e. '.js')

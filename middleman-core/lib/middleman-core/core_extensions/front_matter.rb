@@ -35,7 +35,9 @@ module Middleman::CoreExtensions
         fmdata = data(resource.path).first
 
         # Copy over special options
-        opts = fmdata.extract!(:layout, :layout_engine, :renderer_options)
+        # TODO: Should we make people put these under "options" instead of having
+        # special known keys?
+        opts = fmdata.extract!(:layout, :layout_engine, :renderer_options, :directory_index, :content_type)
         if opts.has_key?(:renderer_options)
           opts[:renderer_options].symbolize_keys!
         end
@@ -55,41 +57,6 @@ module Middleman::CoreExtensions
 
     def after_configuration
       app.ignore %r{\.frontmatter$}
-
-      # TODO: Replace all of this functionality
-      #::Middleman::Sitemap::Resource.send :include, ResourceInstanceMethods
-    end
-
-    module ResourceInstanceMethods
-      def ignored?
-        if !proxy? && raw_data[:ignored] == true
-          true
-        else
-          super
-        end
-      end
-
-      # This page's frontmatter without being enhanced for access by either symbols or strings.
-      # Used internally
-      # @private
-      # @return [Hash]
-      def raw_data
-        app.extensions[:front_matter].data(source_file).first
-      end
-
-      # This page's frontmatter
-      # @return [Hash]
-      def data
-        @enhanced_data ||= ::Middleman::Util.recursively_enhance(raw_data).freeze
-      end
-
-      # Override Resource#content_type to take into account frontmatter
-      def content_type
-        # Allow setting content type in frontmatter too
-        raw_data.fetch :content_type do
-          super
-        end
-      end
     end
 
     # Get the template data from a path

@@ -63,14 +63,8 @@ module Middleman
           return output.call if output
         end
 
-        attr_reader :request_path
-
         def binary?
           false
-        end
-
-        def raw_data
-          {}
         end
 
         def ignored?
