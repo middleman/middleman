@@ -48,8 +48,7 @@ module Middleman
           # Liquid Support
           begin
             require 'middleman-core/renderers/liquid'
-            Middleman::Extensions.register :liquid, Middleman::Renderers::Liquid
-            activate :liquid
+            Middleman::Extensions.register :liquid, Middleman::Renderers::Liquid, auto_activate: :before_configuration
           rescue LoadError
           end
 
