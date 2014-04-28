@@ -14,7 +14,9 @@ module Middleman
         options = opts.dup
 
         # Default layout
+        # TODO: This seems wrong
         options[:layout] = @app.config[:layout] if options[:layout].nil?
+        # TODO: You can set options and locals, but not data
         metadata = { options: options, locals: options.delete(:locals) || {} }
 
         # If the url is a regexp
@@ -37,6 +39,9 @@ module Middleman
         end
 
         # Setup a metadata matcher for rendering those options
+        # TODO: How to get rid of this? Perhaps a separate extension that manipulates
+        # in this sort of data?
+        # This is harder because sitemap isn't available.
         @app.sitemap.provides_metadata_for_path(url) { |_| metadata }
       end
     end

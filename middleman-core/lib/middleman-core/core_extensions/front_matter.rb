@@ -55,7 +55,6 @@ module Middleman::CoreExtensions
 
     def after_configuration
       app.ignore %r{\.frontmatter$}
-      # TODO: Add to file watcher ignore?
 
       # TODO: Replace all of this functionality
       #::Middleman::Sitemap::Resource.send :include, ResourceInstanceMethods

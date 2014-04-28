@@ -42,7 +42,6 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
     # Don't output localizable files
     app.ignore File.join(options[:templates_dir], '**')
 
-    app.sitemap.provides_metadata_for_path(&method(:metadata_for_path))
     app.files.changed(&method(:on_file_changed))
     app.files.deleted(&method(:on_file_changed))
   end
@@ -56,14 +55,12 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
   delegate :logger, to: :app
 
   def langs
-    @_langs ||= known_languages
+    @langs ||= known_languages
   end
 
   # Update the main sitemap resource list
   # @return [void]
   def manipulate_resource_list(resources)
-    @_localization_data = {}
-
     new_resources = []
 
     resources.each do |resource|
@@ -81,6 +78,10 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
           new_resources << build_resource(path, resource.path, page_id, lang)
         end
       end
+
+      # This is for backwards compatibility with the old provides_metadata-based code
+      # that used to be in this extension, but I don't know how much sense it makes.
+      resource.add_metadata options: { lang: @mount_at_root }, locals: { lang: @mount_at_root }
     end
 
     resources + new_resources
@@ -90,7 +91,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
 
   def on_file_changed(file)
     if @locales_regex =~ file
-      @_langs = nil # Clear langs cache
+      @langs = nil # Clear langs cache
       ::I18n.reload!
     end
   end
@@ -112,24 +113,6 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
     end
   end
 
-  def metadata_for_path(url)
-    if d = localization_data(url)
-      lang, page_id = d
-    else
-      # Default to the @mount_at_root lang
-      page_id = nil
-      lang = @mount_at_root
-    end
-
-    {
-      locals: {
-        lang: lang,
-        page_id: page_id
-      },
-      options: { lang: lang }
-    }
-  end
-
   def known_languages
     if options[:langs]
       Array(options[:langs]).map(&:to_sym)
@@ -142,11 +125,6 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
         File.basename(p.to_s).sub(/\.ya?ml$/, '').sub(/\.rb$/, '')
       }.sort.map(&:to_sym)
     end
-  end
-
-  def localization_data(path)
-    @_localization_data ||= {}
-    @_localization_data[path]
   end
 
   # Parse locale extension filename
@@ -183,10 +161,9 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
 
     path = path.sub(options[:templates_dir] + '/', '')
 
-    @_localization_data[path] = [lang, path, localized_page_id]
-
     p = ::Middleman::Sitemap::Resource.new(app.sitemap, path)
     p.proxy_to(source_path)
+    p.add_metadata locals: { lang: lang, page_id: path }, options: { lang: lang }
 
     ::I18n.locale = old_locale
     p
