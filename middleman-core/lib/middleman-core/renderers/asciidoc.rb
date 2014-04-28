@@ -4,7 +4,6 @@ module Middleman
   module Renderers
     module AsciiDoc
       class << self
-
         def registered(app)
           app.config.define_setting :asciidoc, {
             :safe => :safe,
@@ -35,11 +34,11 @@ module Middleman
                   opts[:layout] = layout
                 end
               end
-              opts[:layout_engine] = (doc.attr 'page-layout-engine') if (doc.attr? 'page-layout-engine')
+              opts[:layout_engine] = (doc.attr 'page-layout-engine') if doc.attr? 'page-layout-engine'
               # TODO override attributes to set docfile, docdir, docname, etc
               # alternative is to set :renderer_options, which get merged into options by the rendering extension
-              #opts[:attributes] = config[:asciidoc][:attributes].dup
-              #opts[:attributes].concat %W(docfile=#{path} docdir=#{File.dirname path} docname=#{(File.basename path).sub(/\.adoc$/, '')})
+              # opts[:attributes] = config[:asciidoc][:attributes].dup
+              # opts[:attributes].concat %W(docfile=#{path} docdir=#{File.dirname path} docname=#{(File.basename path).sub(/\.adoc$/, '')})
 
               page = {}
               page[:title] = doc.doctitle
@@ -47,12 +46,12 @@ module Middleman
               # TODO grab all the author information
               page[:author] = (doc.attr 'author') unless (doc.attr 'author').nil?
 
-              {:options => opts, :page => ::Middleman::Util.recursively_enhance(page)}
+              { :options => opts, :page => ::Middleman::Util.recursively_enhance(page) }
             end
           end
         end
 
-        alias :included :registered
+        alias_method :included, :registered
       end
     end
   end

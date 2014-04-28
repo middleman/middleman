@@ -7,7 +7,7 @@ require 'padrino-helpers'
 class Padrino::Helpers::OutputHelpers::ErbHandler
   # Force Erb capture not to use safebuffer
   def capture_from_template(*args, &block)
-    self.output_buffer, _buf_was = '', self.output_buffer
+    self.output_buffer, _buf_was = '', output_buffer
     raw = block.call(*args)
     captured = template.instance_variable_get(:@_out_buf)
     self.output_buffer = _buf_was
@@ -16,7 +16,6 @@ class Padrino::Helpers::OutputHelpers::ErbHandler
 end
 
 class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
-
   def initialize(app, options_hash={}, &block)
     super
 
@@ -39,7 +38,7 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
   helpers do
 
     # Make all block content html_safe
-    def content_tag(name, content = nil, options = nil, &block)
+    def content_tag(name, content=nil, options=nil, &block)
       if block_given?
         options = content if content.is_a?(Hash)
         content = capture_html(&block)
@@ -108,8 +107,10 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
     def auto_tag(asset_ext, asset_dir=nil)
       if asset_dir.nil?
         asset_dir = case asset_ext
-          when :js  then js_dir
-          when :css then css_dir
+        when :js
+          js_dir
+        when :css
+          css_dir
         end
       end
 
@@ -124,7 +125,7 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
     # Generate body css classes based on the current path
     #
     # @return [String]
-    def page_classes(path = current_path.dup, options={})
+    def page_classes(path=current_path.dup, options={})
       if path.is_a? Hash
         options = path
         path = current_path.dup
@@ -135,7 +136,7 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
 
       classes = []
       parts = path.split('.').first.split('/')
-      parts.each_with_index { |_, i| classes << parts.first(i+1).join('_') }
+      parts.each_with_index { |_, i| classes << parts.first(i + 1).join('_') }
 
       prefix = options[:numeric_prefix] || 'x'
       classes.map do |c|
@@ -155,13 +156,19 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
     # @return [String]
     def asset_path(kind, source)
       return source if source.to_s.include?('//') || source.to_s.start_with?('data:')
-      asset_folder  = case kind
-        when :css    then css_dir
-        when :js     then js_dir
-        when :images then images_dir
-        when :fonts  then fonts_dir
-        else kind.to_s
+      asset_folder = case kind
+      when :css
+        css_dir
+      when :js
+        js_dir
+      when :images
+        images_dir
+      when :fonts
+        fonts_dir
+      else
+        kind.to_s
       end
+
       source = source.to_s.tr(' ', '')
       ignore_extension = (kind == :images || kind == :fonts) # don't append extension
       source << ".#{kind}" unless ignore_extension || source.end_with?(".#{kind}")
@@ -177,7 +184,7 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
     # @return [String] The fully qualified asset url
     def asset_url(path, prefix='')
       # Don't touch assets which already have a full path
-      if path.include?('//') or path.start_with?('data:')
+      if path.include?('//') || path.start_with?('data:')
         path
       else # rewrite paths to use their destination path
         if resource = sitemap.find_resource_by_destination_path(url_for(path))
@@ -221,12 +228,12 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
       options_index = block_given? ? 1 : 2
 
       if block_given? && args.size > 2
-        raise ArgumentError.new('Too many arguments to link_to(url, options={}, &block)')
+        raise ArgumentError, 'Too many arguments to link_to(url, options={}, &block)'
       end
 
       if url = args[url_arg_index]
         options = args[options_index] || {}
-        raise ArgumentError.new('Options must be a hash') unless options.is_a?(Hash)
+        raise ArgumentError, 'Options must be a hash' unless options.is_a?(Hash)
 
         # Transform the url through our magic url_for method
         args[url_arg_index] = url_for(url, options)

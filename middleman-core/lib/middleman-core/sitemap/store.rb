@@ -4,10 +4,8 @@ require 'monitor'
 require 'middleman-core/sitemap/queryable'
 
 module Middleman
-
   # Sitemap namespace
   module Sitemap
-
     # The Store class
     #
     # The Store manages a collection of Resource objects, which represent
@@ -15,7 +13,6 @@ module Middleman
     # which is the path relative to the source directory, minus any template
     # extensions. All "path" parameters used in this class are source paths.
     class Store
-
       # @return [Middleman::Application]
       attr_accessor :app
 
@@ -122,12 +119,12 @@ module Middleman
       def metadata_for_file(source_file)
         blank_metadata = { :options => {}, :locals => {}, :page => {}, :blocks => [] }
 
-        provides_metadata.inject(blank_metadata) do |result, (callback, matcher)|
+        provides_metadata.reduce(blank_metadata) do |result, (callback, matcher)|
           next result if matcher && !source_file.match(matcher)
 
           metadata = callback.call(source_file).dup
 
-          if metadata.has_key?(:blocks)
+          if metadata.key?(:blocks)
             result[:blocks] << metadata[:blocks]
             metadata.delete(:blocks)
           end
@@ -156,7 +153,7 @@ module Middleman
 
         blank_metadata = { :options => {}, :locals => {}, :page => {}, :blocks => [] }
 
-        @_cached_metadata[request_path] = provides_metadata_for_path.inject(blank_metadata) do |result, (callback, matcher)|
+        @_cached_metadata[request_path] = provides_metadata_for_path.reduce(blank_metadata) do |result, (callback, matcher)|
           case matcher
           when Regexp
             next result unless request_path =~ matcher
@@ -213,7 +210,7 @@ module Middleman
 
           @app.logger.debug '== Rebuilding resource list'
 
-          @resources = @resource_list_manipulators.inject([]) do |result, (_, inst)|
+          @resources = @resource_list_manipulators.reduce([]) do |result, (_, inst)|
             newres = inst.manipulate_resource_list(result)
 
             # Reset lookup cache
@@ -269,9 +266,9 @@ module Middleman
       def find_extension(path, file)
         input_ext = File.extname(file)
 
-        if !input_ext.empty?
+        unless input_ext.empty?
           input_ext = input_ext.split('.').last.to_sym
-          if @app.template_extensions.has_key?(input_ext)
+          if @app.template_extensions.key?(input_ext)
             path << ".#{@app.template_extensions[input_ext]}"
           end
         end

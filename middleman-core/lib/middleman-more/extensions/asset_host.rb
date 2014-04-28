@@ -14,7 +14,7 @@ class Middleman::Extensions::AssetHost < ::Middleman::Extension
         if asset_host.is_a?(Proc)
           config.asset_host(&asset_host)
         else
-          config.asset_host do |asset|
+          config.asset_host do |_|
             asset_host
           end
         end

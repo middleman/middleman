@@ -2,7 +2,6 @@ require 'active_support/core_ext/module/delegation'
 require 'active_support/core_ext/class/attribute'
 
 module Middleman
-
   class Extension
     class_attribute :supports_multiple_instances, :instance_reader => false, :instance_writer => false
     class_attribute :defined_helpers, :instance_reader => false, :instance_writer => false
@@ -34,10 +33,10 @@ module Middleman
       end
 
       def extension_name
-        self.ext_name || self.name.underscore.split('/').last.to_sym
+        ext_name || name.underscore.split('/').last.to_sym
       end
 
-      def register(n=self.extension_name)
+      def register(n=extension_name)
         ::Middleman::Extensions.register(n, self)
       end
 
@@ -59,7 +58,7 @@ module Middleman
         name = instance.class.extension_name
         return unless @_extension_activation_callbacks && @_extension_activation_callbacks[name]
         @_extension_activation_callbacks[name].each do |block|
-          block.arity == 1 ? block.call(instance) : block.call()
+          block.arity == 1 ? block.call(instance) : block.call
         end
       end
     end
@@ -91,7 +90,7 @@ module Middleman
       end
     end
 
-  protected
+    protected
 
     def setup_options(options_hash, &block)
       @options = self.class.config.dup
@@ -142,7 +141,7 @@ module Middleman
       ext = self
       if ext.respond_to?(:before_build)
         @klass.before_build do |builder|
-          if ext.method(:before_build).arity === 1
+          if ext.method(:before_build).arity == 1
             ext.before_build(builder)
           else
             ext.before_build
@@ -155,7 +154,7 @@ module Middleman
       ext = self
       if ext.respond_to?(:after_build)
         @klass.after_build do |builder|
-          if ext.method(:after_build).arity === 1
+          if ext.method(:after_build).arity == 1
             ext.after_build(builder)
           else
             ext.after_build

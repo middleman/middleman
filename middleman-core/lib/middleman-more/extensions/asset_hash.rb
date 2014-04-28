@@ -44,7 +44,7 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
     return if resource.ignored?
 
     # Render through the Rack interface so middleware and mounted apps get a shot
-    response = @rack_client.get(URI.escape(resource.destination_path), {}, { 'bypass_asset_hash' => 'true' })
+    response = @rack_client.get(URI.escape(resource.destination_path), {},  'bypass_asset_hash' => 'true')
     raise "#{resource.path} should be in the sitemap!" unless response.status == 200
 
     digest = Digest::SHA1.hexdigest(response.body)[0..7]
@@ -63,7 +63,7 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
       @rack_app        = app
       @exts            = options[:exts]
       @ignore          = options[:ignore]
-      @exts_regex_text = @exts.map {|e| Regexp.escape(e) }.join('|')
+      @exts_regex_text = @exts.map { |e| Regexp.escape(e) }.join('|')
       @middleman_app   = options[:middleman_app]
     end
 
@@ -85,7 +85,7 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
       [status, headers, response]
     end
 
-  private
+    private
 
     def rewrite_paths(body, path)
       dirpath = Pathname.new(File.dirname(path))
@@ -111,9 +111,7 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
         end
       end
     end
-
   end
-
 end
 
 # =================Temp Generate Test data==============================

@@ -5,10 +5,8 @@ require 'rack/showexceptions'
 module Middleman
   module CoreExtensions
     module ShowExceptions
-
       # Setup extension
       class << self
-
         # Once registered
         def registered(app)
           # Whether to catch and display exceptions

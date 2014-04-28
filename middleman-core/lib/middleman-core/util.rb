@@ -14,7 +14,6 @@ require 'rack/mime'
 module Middleman
   module Util
     class << self
-
       # Whether the source file is binary.
       #
       # @param [String] filename The file to check.
@@ -27,7 +26,7 @@ module Middleman
 
         return false if Tilt.registered?(ext.sub('.', ''))
 
-        dot_ext = (ext.to_s[0] == ?.) ? ext.dup : ".#{ext}"
+        dot_ext = (ext.to_s[0] == '.') ? ext.dup : ".#{ext}"
 
         if mime = ::Rack::Mime.mime_type(dot_ext, nil)
           !nonbinary_mime?(mime)
@@ -69,7 +68,7 @@ module Middleman
       # @return [String]
       def normalize_path(path)
         # The tr call works around a bug in Ruby's Unicode handling
-        path.sub(%r{^/}, '').tr('','')
+        path.sub(%r{^/}, '').tr('', '')
       end
 
       # This is a separate method from normalize_path in case we
@@ -85,7 +84,7 @@ module Middleman
       def extract_response_text(response)
         # The rack spec states all response bodies must respond to each
         result = ''
-        response.each do |part, s|
+        response.each do |part, _|
           result << part
         end
         result
@@ -210,7 +209,7 @@ module Middleman
       def full_path(path, app)
         resource = app.sitemap.find_resource_by_destination_path(path)
 
-        if !resource
+        unless resource
           # Try it with /index.html at the end
           indexed_path = File.join(path.sub(%r{/$}, ''), app.config[:index_file])
           resource = app.sitemap.find_resource_by_destination_path(indexed_path)
@@ -223,7 +222,7 @@ module Middleman
         end
       end
 
-    private
+      private
 
       # Is mime type known to be non-binary?
       #

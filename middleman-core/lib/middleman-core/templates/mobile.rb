@@ -1,6 +1,5 @@
 # Mobile HTML5 Boilerplate
 class Middleman::Templates::Mobile < Middleman::Templates::Base
-
   # Slightly different paths
   class_option :css_dir, :default => 'css'
   class_option :js_dir, :default => 'js'

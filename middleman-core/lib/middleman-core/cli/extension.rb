@@ -1,6 +1,5 @@
 # CLI Module
 module Middleman::Cli
-
   # A thor task for creating new projects
   class Extension < Thor
     include Thor::Actions
@@ -44,6 +43,5 @@ module Middleman::Cli
         copy_file 'gitignore', File.join(name, '.gitignore')
       end
     }
-
   end
 end

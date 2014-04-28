@@ -1,7 +1,5 @@
 module Middleman
-
   module Extensions
-
     class << self
       def registered
         @_registered ||= {}
@@ -24,7 +22,7 @@ module Middleman
       def register(name, namespace=nil, &block)
         # If we've already got a matching extension that passed the
         # version check, bail out.
-        return if registered.has_key?(name.to_sym) &&
+        return if registered.key?(name.to_sym) &&
         !registered[name.to_sym].is_a?(String)
 
         registered[name.to_sym] = if block_given?
@@ -36,11 +34,11 @@ module Middleman
 
       def load(name)
         name = name.to_sym
-        return nil unless registered.has_key?(name)
+        return nil unless registered.key?(name)
 
         extension = registered[name]
         if extension.is_a?(Proc)
-          extension = extension.call() || nil
+          extension = extension.call || nil
           registered[name] = extension
         end
 
@@ -92,7 +90,7 @@ module Middleman
     # @return [Boolean] Whether the file exists
     def spec_has_file?(spec, path)
       full_path = File.join(spec.full_gem_path, path)
-      File.exists?(full_path)
+      File.exist?(full_path)
     end
   end
 end

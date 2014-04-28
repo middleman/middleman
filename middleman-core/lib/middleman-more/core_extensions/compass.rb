@@ -2,7 +2,6 @@ require 'middleman-core/renderers/sass'
 require 'compass'
 
 class Middleman::CoreExtensions::Compass < ::Middleman::Extension
-
   def initialize(app, options_hash={}, &block)
     super
 

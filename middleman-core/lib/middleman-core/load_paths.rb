@@ -2,7 +2,6 @@
 require 'pathname'
 
 module Middleman
-
   class << self
     def setup_load_paths
       @_is_setup ||= begin
@@ -20,12 +19,12 @@ module Middleman
           root_gemfile = File.expand_path('Gemfile', ENV['MM_ROOT'])
           ENV['BUNDLE_GEMFILE'] ||= root_gemfile
 
-          if !File.exists?(ENV['BUNDLE_GEMFILE'])
+          unless File.exist?(ENV['BUNDLE_GEMFILE'])
             git_gemfile = Pathname.new(__FILE__).expand_path.parent.parent.parent + 'Gemfile'
             ENV['BUNDLE_GEMFILE'] = git_gemfile.to_s
           end
 
-          if File.exists?(ENV['BUNDLE_GEMFILE'])
+          if File.exist?(ENV['BUNDLE_GEMFILE'])
             is_bundler_setup = true
             require 'bundler/setup'
           end
@@ -45,12 +44,10 @@ module Middleman
     end
 
     # Recursive method to find config.rb
-    def locate_root(cwd = Pathname.new(Dir.pwd))
+    def locate_root(cwd=Pathname.new(Dir.pwd))
       return cwd.to_s if (cwd + 'config.rb').exist?
       return false if cwd.root?
       locate_root(cwd.parent)
     end
-
   end
-
 end

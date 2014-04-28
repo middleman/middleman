@@ -3,13 +3,10 @@ require 'compass/import-once'
 
 module Middleman
   module Renderers
-
     # Sass renderer
     module Sass
-
       # Setup extension
       class << self
-
         # Once registered
         def registered(app)
           # Default sass options
@@ -31,16 +28,15 @@ module Middleman
           ::Compass::ImportOnce.activate!
         end
 
-        alias :included :registered
+        alias_method :included, :registered
       end
 
       # A SassTemplate for Tilt which outputs debug messages
       class SassPlusCSSFilenameTemplate < ::Tilt::SassTemplate
-
         def initialize(*args, &block)
           super
 
-          if @options.has_key?(:context)
+          if @options.key?(:context)
             @context = @options[:context]
           end
         end
@@ -87,7 +83,6 @@ module Middleman
 
       # SCSS version of the above template
       class ScssPlusCSSFilenameTemplate < SassPlusCSSFilenameTemplate
-
         # Define the expected syntax for the template
         # @return [Symbol]
         def syntax

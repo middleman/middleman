@@ -2,10 +2,8 @@ require 'middleman-core/sitemap/extensions/traversal'
 require 'middleman-core/sitemap/extensions/content_type'
 
 module Middleman
-
   # Sitemap namespace
   module Sitemap
-
     # Sitemap Resource class
     class Resource
       include Middleman::Sitemap::Extensions::Traversal
@@ -62,13 +60,13 @@ module Middleman
         result = store.metadata_for_path(path).dup
 
         file_meta = store.metadata_for_file(source_file).dup
-        if file_meta.has_key?(:blocks)
+        if file_meta.key?(:blocks)
           result[:blocks] += file_meta.delete(:blocks)
         end
         result.deep_merge!(file_meta)
 
         local_meta = @local_metadata.dup
-        if local_meta.has_key?(:blocks)
+        if local_meta.key?(:blocks)
           result[:blocks] += local_meta.delete(:blocks)
         end
         result.deep_merge!(local_meta)
@@ -81,11 +79,11 @@ module Middleman
       # @param [Hash] metadata A metadata block like provides_metadata_for_path takes
       def add_metadata(metadata={}, &block)
         metadata = metadata.dup
-        if metadata.has_key?(:blocks)
+        if metadata.key?(:blocks)
           @local_metadata[:blocks] += metadata.delete(:blocks)
         end
         @local_metadata.deep_merge!(metadata)
-        @local_metadata[:blocks] += [ block ] if block_given?
+        @local_metadata[:blocks] += [block] if block_given?
       end
 
       # The output/preview URL for this resource
@@ -99,13 +97,13 @@ module Middleman
       end
 
       def request_path
-        self.destination_path
+        destination_path
       end
 
       # Render this resource
       # @return [String]
       def render(opts={}, locs={}, &block)
-        if !template?
+        unless template?
           return app.template_data_for_file(source_file)
         end
 
@@ -126,18 +124,18 @@ module Middleman
           locs = md[:locals].deep_merge(locs)
 
           # Forward remaining data to helpers
-          if md.has_key?(:page)
+          if md.key?(:page)
             app.data.store('page', md[:page])
           end
 
           blocks = Array(md[:blocks]).dup
           blocks << block if block_given?
 
-          app.current_path ||= self.destination_path
+          app.current_path ||= destination_path
 
           # Certain output file types don't use layouts
-          if !opts.has_key?(:layout)
-            opts[:layout] = false if %w(.js .json .css .txt).include?(self.ext)
+          unless opts.key?(:layout)
+            opts[:layout] = false if %w(.js .json .css .txt).include?(ext)
           end
 
           app.render_template(source_file, locs, opts, blocks)

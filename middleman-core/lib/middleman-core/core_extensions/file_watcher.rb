@@ -5,7 +5,6 @@ require 'set'
 module Middleman
   module CoreExtensions
     module FileWatcher
-
       IGNORE_LIST = [
         /^bin(\/|$)/,
         /^\.bundle(\/|$)/,
@@ -26,7 +25,6 @@ module Middleman
 
       # Setup extension
       class << self
-
         # Once registered
         def registered(app)
           app.send :include, InstanceMethods
@@ -47,12 +45,11 @@ module Middleman
             files.reload_path('.')
           end
         end
-        alias :included :registered
+        alias_method :included, :registered
       end
 
       # Instance methods
       module InstanceMethods
-
         # Access the file api
         # @return [Middleman::CoreExtensions::FileWatcher::API]
         def files
@@ -62,7 +59,6 @@ module Middleman
 
       # Core File Change API class
       class API
-
         attr_reader :app
         attr_reader :known_paths
         delegate :logger, :to => :app
@@ -102,7 +98,7 @@ module Middleman
           path = Pathname(path)
           logger.debug "== File Change: #{path}"
           @known_paths << path
-          self.run_callbacks(path, :changed)
+          run_callbacks(path, :changed)
         end
 
         # Notify callbacks that a file was deleted
@@ -113,7 +109,7 @@ module Middleman
           path = Pathname(path)
           logger.debug "== File Deletion: #{path}"
           @known_paths.delete(path)
-          self.run_callbacks(path, :deleted)
+          run_callbacks(path, :deleted)
         end
 
         # Manually trigger update events
@@ -151,7 +147,7 @@ module Middleman
 
         def exists?(path)
           p = Pathname(path)
-          p = p.relative_path_from(Pathname(@app.root)) if !p.relative?
+          p = p.relative_path_from(Pathname(@app.root)) unless p.relative?
           @known_paths.include?(p)
         end
 
@@ -163,7 +159,7 @@ module Middleman
           app.config[:file_watcher_ignore].any? { |r| path =~ r }
         end
 
-      protected
+        protected
 
         # Notify callbacks for a file given an array of callbacks
         #
@@ -172,7 +168,7 @@ module Middleman
         # @return [void]
         def run_callbacks(path, callbacks_name)
           path = path.to_s
-          self.send(callbacks_name).each do |callback, matcher|
+          send(callbacks_name).each do |callback, matcher|
             next unless matcher.nil? || path.match(matcher)
             @app.instance_exec(path, &callback)
           end

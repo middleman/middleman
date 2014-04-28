@@ -4,10 +4,8 @@ require 'thor/group'
 
 # Templates namespace
 module Middleman::Templates
-
   # Static methods
   class << self
-
     # Get list of registered templates and add new ones
     #
     #     Middleman::Templates.register(:ext_name, klass)
@@ -22,7 +20,7 @@ module Middleman::Templates
     end
 
     # Middleman::Templates.register(name, klass)
-    alias :registered :register
+    alias_method :registered, :register
   end
 
   # Base Template class. Handles basic options and paths.

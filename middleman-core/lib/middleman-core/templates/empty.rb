@@ -1,6 +1,5 @@
 # A barebones template with nothing much in it
 class Middleman::Templates::Empty < Middleman::Templates::Base
-
   # Template files are relative to this file
   # @return [String]
   def self.source_root

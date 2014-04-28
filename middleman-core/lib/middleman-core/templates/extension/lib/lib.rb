@@ -28,7 +28,6 @@ class MyExtension < ::Middleman::Extension
   #   def a_helper
   #   end
   # end
-
 end
 
 # Register extensions which can be activated

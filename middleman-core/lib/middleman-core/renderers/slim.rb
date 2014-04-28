@@ -17,13 +17,10 @@ end
 
 module Middleman
   module Renderers
-
     # Slim renderer
     module Slim
-
       # Setup extension
       class << self
-
         # Once registered
         def registered(app)
           app.before_configuration do
@@ -50,7 +47,7 @@ module Middleman
           end
         end
 
-        alias :included :registered
+        alias_method :included, :registered
       end
     end
   end

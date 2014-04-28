@@ -94,11 +94,11 @@ class Middleman::Extensions::Lorem < ::Middleman::Extension
       # Get a placeholder date
       # @param [String] fmt
       # @return [String]
-      def date(fmt = '%a %b %d, %Y')
+      def date(fmt='%a %b %d, %Y')
         y = rand(20) + 1990
         m = rand(12) + 1
         d = rand(31) + 1
-        Time.local(y,m,d).strftime(fmt)
+        Time.local(y, m, d).strftime(fmt)
       end
 
       # Get a placeholder name
@@ -125,16 +125,16 @@ class Middleman::Extensions::Lorem < ::Middleman::Extension
       # Via http://www.kevadamson.com/talking-of-design/article/140-alternative-characters-to-lorem-ipsum
       # @return [String]
       def tweet
-        tweets = [ 'Far away, in a forest next to a river beneath the mountains, there lived a small purple otter called Philip. Philip likes sausages. The End.',
-                   'He liked the quality sausages from Marks & Spencer but due to the recession he had been forced to shop in a less desirable supermarket. End.',
-                   'He awoke one day to find his pile of sausages missing. Roger the greedy boar with human eyes, had skateboarded into the forest & eaten them!']
+        tweets = ['Far away, in a forest next to a river beneath the mountains, there lived a small purple otter called Philip. Philip likes sausages. The End.',
+                  'He liked the quality sausages from Marks & Spencer but due to the recession he had been forced to shop in a less desirable supermarket. End.',
+                  'He awoke one day to find his pile of sausages missing. Roger the greedy boar with human eyes, had skateboarded into the forest & eaten them!']
         tweets[rand(tweets.size)]
       end
 
       # Get a placeholder email address
       # @return [String]
       def email
-        delimiters = [ '_', '-', '' ]
+        delimiters = ['_', '-', '']
         domains = %w(gmail.com yahoo.com hotmail.com email.com live.com me.com mac.com aol.com fastmail.com mail.com)
         username = name.gsub(/[^\w]/, delimiters[rand(delimiters.size)])
         "#{username}@#{domains[rand(domains.size)]}".downcase
@@ -147,7 +147,7 @@ class Middleman::Extensions::Lorem < ::Middleman::Extension
       def image(size, options={})
         domain           = options[:domain] || 'http://placehold.it'
         src              = "#{domain}/#{size}"
-        hex              = %w[a b c d e f 0 1 2 3 4 5 6 7 8 9]
+        hex              = %w(a b c d e f 0 1 2 3 4 5 6 7 8 9)
         background_color = options[:background_color]
         color            = options[:color]
 
@@ -159,7 +159,7 @@ class Middleman::Extensions::Lorem < ::Middleman::Extension
         src << "/#{background_color.sub(/^#/, '')}" if background_color
         src << '/ccc' if background_color.nil? && color
         src << "/#{color.sub(/^#/, '')}" if color
-        src << "&text=#{Rack::Utils::escape(options[:text])}" if options[:text]
+        src << "&text=#{Rack::Utils.escape(options[:text])}" if options[:text]
 
         src
       end

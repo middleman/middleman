@@ -14,7 +14,7 @@ module Middleman
 
       def render
         content = ''
-        @children.keys.sort do |a,b|
+        @children.keys.sort do |a, b|
           a_subtree = @children[a]
           b_subtree = @children[b]
           if a_subtree.is_a? SitemapResource

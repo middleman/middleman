@@ -1,6 +1,5 @@
 # CLI Module
 module Middleman::Cli
-
   # A thor task for creating new projects
   class Console < Thor
     include Thor::Actions
@@ -11,13 +10,13 @@ module Middleman::Cli
 
     desc 'console [options]', 'Start an interactive console in the context of your Middleman application'
     method_option :environment,
-      :aliases => '-e',
-      :default => ENV['MM_ENV'] || ENV['RACK_ENV'] || 'development',
-      :desc    => 'The environment Middleman will run under'
+                  :aliases => '-e',
+                  :default => ENV['MM_ENV'] || ENV['RACK_ENV'] || 'development',
+                  :desc    => 'The environment Middleman will run under'
     method_option :verbose,
-      :type    => :boolean,
-      :default => false,
-      :desc    => 'Print debug messages'
+                  :type    => :boolean,
+                  :default => false,
+                  :desc    => 'Print debug messages'
     def console
       require 'middleman-core'
       require 'irb'
@@ -27,7 +26,7 @@ module Middleman::Cli
         :debug => options['verbose']
       }
 
-      @app =::Middleman::Application.server.inst do
+      @app = ::Middleman::Application.server.inst do
         if opts[:environment]
           set :environment, opts[:environment].to_sym
         end

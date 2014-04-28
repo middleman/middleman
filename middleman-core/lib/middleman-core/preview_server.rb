@@ -4,7 +4,6 @@ require 'middleman-core/logger'
 
 module Middleman
   module PreviewServer
-
     DEFAULT_PORT = 4567
 
     class << self
@@ -70,7 +69,7 @@ module Middleman
 
         begin
           app = new_app
-        rescue Exception => e
+        rescue => e
           logger.error "Error reloading Middleman: #{e}\n#{e.backtrace.join("\n")}"
           logger.info '== The Middleman is still running the application from before the error'
           return
@@ -89,7 +88,7 @@ module Middleman
         @webrick.shutdown
       end
 
-    private
+      private
       def new_app
         opts = @options.dup
         server = ::Middleman::Application.server
@@ -181,7 +180,7 @@ module Middleman
         begin
           ::WEBrick::HTTPServer.new(http_opts)
         rescue Errno::EADDRINUSE
-          logger.error "== Port #{port} is unavailable. Either close the instance of Middleman already running on #{port} or start this Middleman on a new port with: --port=#{port.to_i+1}"
+          logger.error "== Port #{port} is unavailable. Either close the instance of Middleman already running on #{port} or start this Middleman on a new port with: --port=#{port.to_i + 1}"
           exit(1)
         end
       end

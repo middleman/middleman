@@ -9,10 +9,8 @@ require 'active_support/json'
 
 # Extensions namespace
 module Middleman::CoreExtensions
-
   class FrontMatter < ::Middleman::Extension
-
-    YAML_ERRORS = [ StandardError ]
+    YAML_ERRORS = [StandardError]
 
     # https://github.com/tenderlove/psych/issues/23
     if defined?(Psych) && defined?(Psych::SyntaxError)
@@ -115,7 +113,7 @@ module Middleman::CoreExtensions
       @cache.delete(path)
     end
 
-  private
+    private
     # Parse YAML frontmatter out of a string
     # @param [String] content
     # @return [Array<Hash, String>]
@@ -147,7 +145,7 @@ module Middleman::CoreExtensions
         content = content.sub(json_regex, '')
 
         begin
-          json = ($1+$2).sub(';;;', '{').sub(';;;', '}')
+          json = ($1 + $2).sub(';;;', '{').sub(';;;', '}')
           data = ActiveSupport::JSON.decode(json).symbolize_keys
         rescue => e
           app.logger.error "JSON Exception parsing #{full_path}: #{e.message}"

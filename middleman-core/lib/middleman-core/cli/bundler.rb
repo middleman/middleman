@@ -1,6 +1,5 @@
 # CLI Module
 module Middleman::Cli
-
   # A initializing Bundler
   class Bundle < Thor
     include Thor::Actions
@@ -12,7 +11,7 @@ module Middleman::Cli
 
     # The setup task
     def bundle
-      run('bundle install')#, :capture => true)
+      run('bundle install')# , :capture => true)
     end
   end
 
@@ -28,13 +27,13 @@ module Middleman::Cli
     # The upgrade task
     def upgrade
       inside(ENV['MM_ROOT']) do
-        run('bundle update')#, :capture => true)
+        run('bundle update')# , :capture => true)
       end
     end
   end
 
   # Map "u" to "upgrade"
-  Base.map({
-    'u' => 'upgrade'
-  })
+  Base.map(
+             'u' => 'upgrade'
+  )
 end

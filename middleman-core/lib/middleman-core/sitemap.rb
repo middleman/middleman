@@ -9,15 +9,11 @@ require 'middleman-core/sitemap/extensions/ignores'
 
 # Core Sitemap Extensions
 module Middleman
-
   module Sitemap
-
     # Setup Extension
     class << self
-
       # Once registered
       def registered(app)
-
         app.register Middleman::Sitemap::Extensions::RequestEndpoints
         app.register Middleman::Sitemap::Extensions::Proxies
         app.register Middleman::Sitemap::Extensions::Ignores
@@ -39,8 +35,8 @@ module Middleman
           # Files starting with an underscore, but not a double-underscore
           :partials => proc { |file| file =~ %r{/_[^_]} },
 
-          :layout => proc { |file, app|
-            file.start_with?(File.join(app.config[:source], 'layout.')) || file.start_with?(File.join(app.config[:source], 'layouts/'))
+          :layout => proc { |file, sitemap_app|
+            file.start_with?(File.join(sitemap_app.config[:source], 'layout.')) || file.start_with?(File.join(sitemap_app.config[:source], 'layouts/'))
           }
         }, 'Callbacks that can exclude paths from the sitemap'
 
@@ -52,13 +48,11 @@ module Middleman
           sitemap
         end
       end
-      alias :included :registered
-
+      alias_method :included, :registered
     end
 
     # Sitemap instance methods
     module InstanceMethods
-
       # Get the sitemap class instance
       # @return [Middleman::Sitemap::Store]
       def sitemap
@@ -77,7 +71,6 @@ module Middleman
         return nil unless current_path
         sitemap.find_resource_by_destination_path(current_path)
       end
-
     end
   end
 end

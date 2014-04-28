@@ -1,6 +1,5 @@
 module Middleman
   module Profiling
-
     # The profiler instance. There can only be one!
     def self.profiler=(prof)
       @profiler = prof
@@ -31,11 +30,9 @@ module Middleman
     # A profiler that uses ruby-prof
     class RubyProfProfiler
       def initialize
-        begin
-          require 'ruby-prof'
-        rescue LoadError
-          raise "To use the --profile option, you must add the 'ruby-prof' gem to your Gemfile"
-        end
+        require 'ruby-prof'
+      rescue LoadError
+        raise "To use the --profile option, you must add the 'ruby-prof' gem to your Gemfile"
       end
 
       def start
@@ -50,7 +47,7 @@ module Middleman
         outfile = (outfile + '.html') unless outfile.end_with? '.html'
         FileUtils.mkdir_p(File.dirname(outfile))
         File.open(outfile, 'w') do |f|
-          printer.print(f, :min_percent=> 1)
+          printer.print(f, :min_percent => 1)
         end
       end
     end

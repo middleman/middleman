@@ -225,7 +225,7 @@ module Middleman
     def to_s
       "#<Middleman::Application:0x#{object_id}>"
     end
-    alias :inspect :to_s # Ruby 2.0 calls inspect for NoMethodError instead of to_s
+    alias_method :inspect, :to_s # Ruby 2.0 calls inspect for NoMethodError instead of to_s
 
     # Hooks clones _hooks from the class to the instance.
     # https://github.com/apotonick/hooks/blob/master/lib/hooks/instance_hooks.rb#L10

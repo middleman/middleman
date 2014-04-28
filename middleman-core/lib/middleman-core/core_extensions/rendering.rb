@@ -10,10 +10,8 @@ end
 module Middleman
   module CoreExtensions
     module Rendering
-
       # Setup extension
       class << self
-
         # Once registered
         def registered(app)
           # Include methods
@@ -93,7 +91,7 @@ module Middleman
 
           # Clean up missing Tilt exts
           app.after_configuration do
-            Tilt.mappings.each do |key, klasses|
+            Tilt.mappings.each do |key, _|
               begin
                 Tilt[".#{key}"]
               rescue LoadError, NameError
@@ -103,7 +101,7 @@ module Middleman
           end
         end
 
-        alias :included :registered
+        alias_method :included, :registered
       end
 
       # Custom error class for handling
@@ -112,7 +110,6 @@ module Middleman
 
       # Rendering instance methods
       module InstanceMethods
-
         # Add or overwrite a default template extension
         #
         # @param [Hash] extension_map
@@ -140,7 +137,7 @@ module Middleman
 
           # Use a dup of self as a context so that instance variables set within
           # the template don't persist for other templates.
-          context = self.dup
+          context = dup
           blocks.each do |block|
             context.instance_eval(&block)
           end
@@ -184,7 +181,7 @@ module Middleman
         # @param [String, Symbol] data
         # @param [Hash] options
         # @return [String]
-        def render(engine, data, options={}, &block)
+        def render(_, data, options={}, &block)
           data = data.to_s
 
           locals = options[:locals]
@@ -198,13 +195,13 @@ module Middleman
             resolve_opts[:preferred_engine] = File.extname(resource.source_file)[1..-1].to_sym
 
             # Look for partials relative to the current path
-            relative_dir = File.join(current_dir.sub(%r{^#{Regexp.escape(self.source_dir)}/?}, ''), data)
+            relative_dir = File.join(current_dir.sub(%r{^#{Regexp.escape(source_dir)}/?}, ''), data)
 
             found_partial = resolve_template(relative_dir, resolve_opts)
           end
 
           # Look in the partials_dir for the partial with the current engine
-          if !found_partial
+          unless found_partial
             partials_path = File.join(config[:partials_dir], data)
             found_partial = resolve_template(partials_path, resolve_opts)
           end
@@ -222,7 +219,7 @@ module Middleman
         # @param [Hash] opts
         # @param [Class] context
         # @return [String]
-        def render_individual_file(path, locs = {}, opts = {}, context = self, &block)
+        def render_individual_file(path, locs={}, opts={}, context=self, &block)
           path = path.to_s
 
           # Detect the remdering engine from the extension
@@ -260,7 +257,7 @@ module Middleman
 
           # Read compiled template from disk or cache
           template = cache.fetch(:compiled_template, extension, options, body) do
-           ::Tilt.new(path, 1, options) { body }
+            ::Tilt.new(path, 1, options) { body }
           end
 
           # Render using Tilt
@@ -317,7 +314,7 @@ module Middleman
         # @return [String]
         def fetch_layout(engine, opts)
           # The layout name comes from either the system default or the options
-          local_layout = opts.has_key?(:layout) ? opts[:layout] : config[:layout]
+          local_layout = opts.key?(:layout) ? opts[:layout] : config[:layout]
           return false unless local_layout
 
           # Look for engine-specific options
@@ -325,9 +322,9 @@ module Middleman
 
           # The engine for the layout can be set in options, engine_options or passed
           # into this method
-          layout_engine = if opts.has_key?(:layout_engine)
+          layout_engine = if opts.key?(:layout_engine)
             opts[:layout_engine]
-          elsif engine_options.has_key?(:layout_engine)
+          elsif engine_options.key?(:layout_engine)
             engine_options[:layout_engine]
           else
             engine
@@ -354,11 +351,8 @@ module Middleman
         # @param [Symbol] preferred_engine
         # @return [String]
         def locate_layout(name, preferred_engine=nil)
-          # Whether we've found the layout
-          layout_path = false
-
           resolve_opts = {}
-          resolve_opts[:preferred_engine] = preferred_engine if !preferred_engine.nil?
+          resolve_opts[:preferred_engine] = preferred_engine unless preferred_engine.nil?
 
           # Check layouts folder
           layout_path = resolve_template(File.join(config[:layouts_dir], name.to_s), resolve_opts)
@@ -377,13 +371,13 @@ module Middleman
           # Save current buffer for later
           @_out_buf, _buf_was = '', @_out_buf
 
-          layout_path = locate_layout(layout_name, self.current_engine)
+          layout_path = locate_layout(layout_name, current_engine)
 
           extension = File.extname(layout_path)
           engine = extension[1..-1].to_sym
 
           # Store last engine for later (could be inside nested renders)
-          self.current_engine, engine_was = engine, self.current_engine
+          self.current_engine, engine_was = engine, current_engine
 
           begin
             content = if block_given?
@@ -423,15 +417,14 @@ module Middleman
           request_path = request_path.to_s
           cache.fetch(:resolve_template, request_path, options) do
             relative_path = Util.strip_leading_slash(request_path)
-            on_disk_path  = File.expand_path(relative_path, self.source_dir)
+            on_disk_path  = File.expand_path(relative_path, source_dir)
 
             # By default, any engine will do
             preferred_engines = ['*']
 
             # If we're specifically looking for a preferred engine
-            if options.has_key?(:preferred_engine)
+            if options.key?(:preferred_engine)
               extension_class = ::Tilt[options[:preferred_engine]]
-              matched_exts = []
 
               # Get a list of extensions for a preferred engine
               matched_exts = ::Tilt.mappings.select do |ext, engines|
@@ -464,7 +457,7 @@ module Middleman
             # If we found one, return it and the found engine
             if found_path
               found_path
-            elsif File.exists?(on_disk_path)
+            elsif File.exist?(on_disk_path)
               on_disk_path
             else
               false

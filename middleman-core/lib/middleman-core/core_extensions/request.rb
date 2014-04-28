@@ -8,15 +8,12 @@ require 'middleman-core/util'
 
 module Middleman
   module CoreExtensions
-
     # Base helper to manipulate asset paths
     module Request
-
       # Extension registered
       class << self
         # @private
         def registered(app)
-
           # CSSPIE HTC File
           ::Rack::Mime::MIME_TYPES['.htc'] = 'text/x-component'
 
@@ -32,7 +29,7 @@ module Middleman
           # Include instance methods
           app.send :include, InstanceMethods
         end
-        alias :included :registered
+        alias_method :included, :registered
       end
 
       module ClassMethods
@@ -60,9 +57,7 @@ module Middleman
         # @private
         # @param [Middleman::Application] inst
         # @return [void]
-        def inst=(inst)
-          @inst = inst
-        end
+        attr_writer :inst
 
         # Return built Rack app
         #
@@ -169,10 +164,10 @@ module Middleman
         # @return [void]
         def current_path=(path)
           Thread.current[:current_path] = path
-          Thread.current[:legacy_request] = ::Thor::CoreExt::HashWithIndifferentAccess.new({
-            :path   => path,
-            :params => req ? ::Thor::CoreExt::HashWithIndifferentAccess.new(req.params) : {}
-          })
+          Thread.current[:legacy_request] = ::Thor::CoreExt::HashWithIndifferentAccess.new(
+                                                                                             :path   => path,
+                                                                                             :params => req ? ::Thor::CoreExt::HashWithIndifferentAccess.new(req.params) : {}
+          )
         end
 
         delegate :use, :to => :"self.class"
@@ -183,6 +178,7 @@ module Middleman
         def req
           Thread.current[:req]
         end
+
         def req=(value)
           Thread.current[:req] = value
         end
@@ -199,7 +195,7 @@ module Middleman
           self.req = req = ::Rack::Request.new(env)
           res = ::Rack::Response.new
 
-          logger.debug "== Request: #{env["PATH_INFO"]}"
+          logger.debug "== Request: #{env['PATH_INFO']}"
 
           # Catch :halt exceptions and use that response if given
           catch(:halt) do
@@ -277,7 +273,7 @@ module Middleman
         # @param [String] value Mime type
         # @return [void]
         def mime_type(type, value)
-          type = ".#{type}" unless type.to_s[0] == ?.
+          type = ".#{type}" unless type.to_s[0] == '.'
           ::Rack::Mime::MIME_TYPES[type] = value
         end
 

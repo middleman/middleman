@@ -24,7 +24,6 @@ class Middleman::Extensions::MinifyJavascript < ::Middleman::Extension
 
   # Rack middleware to look for JS and compress it
   class Rack
-
     # Init
     # @param [Class] app
     # @param [Hash] options
@@ -51,7 +50,7 @@ class Middleman::Extensions::MinifyJavascript < ::Middleman::Extension
 
           headers['Content-Length'] = ::Rack::Utils.bytesize(minified).to_s
           response = [minified]
-        elsif path.end_with?('.js') && @ignore.none? {|ignore| Middleman::Util.path_match(ignore, path) }
+        elsif path.end_with?('.js') && @ignore.none? { |ignore| Middleman::Util.path_match(ignore, path) }
           uncompressed_source = ::Middleman::Util.extract_response_text(response)
           minified = @compressor.compress(uncompressed_source)
 
@@ -65,7 +64,7 @@ class Middleman::Extensions::MinifyJavascript < ::Middleman::Extension
       [status, headers, response]
     end
 
-  private
+    private
 
     def minify_inline_content(uncompressed_source)
       uncompressed_source.gsub(/(<script[^>]*>\s*(?:\/\/(?:(?:<!--)|(?:<!\[CDATA\[))\n)?)(.*?)((?:(?:\n\s*)?\/\/(?:(?:-->)|(?:\]\]>)))?\s*<\/script>)/m) do |match|

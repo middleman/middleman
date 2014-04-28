@@ -1,14 +1,9 @@
 module Middleman
-
   module Sitemap
-
     module Extensions
-
       module Proxies
-
         # Setup extension
         class << self
-
           # Once registered
           def registered(app)
             ::Middleman::Sitemap::Resource.send :include, ResourceInstanceMethods
@@ -17,7 +12,7 @@ module Middleman
             app.send :include, InstanceMethods
           end
 
-          alias :included :registered
+          alias_method :included, :registered
         end
 
         module ResourceInstanceMethods
@@ -38,9 +33,7 @@ module Middleman
 
           # The path of the page this page is proxied to, or nil if it's not proxied.
           # @return [String]
-          def proxied_to
-            @proxied_to
-          end
+          attr_reader :proxied_to
 
           # The resource for the page this page is proxied to. Throws an exception
           # if there is no resource.

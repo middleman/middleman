@@ -1,6 +1,5 @@
 # The Cache Buster extension
 class Middleman::Extensions::CacheBuster < ::Middleman::Extension
-
   def initialize(app, options_hash={}, &block)
     super
 

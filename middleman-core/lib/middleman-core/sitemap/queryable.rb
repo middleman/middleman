@@ -2,7 +2,6 @@ require 'active_support/core_ext/object/inclusion'
 
 module Middleman
   module Sitemap
-
     # Code adapted from https://github.com/ralph/document_mapper/
     module Queryable
       OPERATOR_MAPPING = {
@@ -21,11 +20,11 @@ module Middleman
       OperatorNotSupportedError = Class.new StandardError
 
       module API
-        def select(options = {})
+        def select(options={})
           documents = resources.select { |r| !r.raw_data.empty? }
           options[:where].each do |selector, selector_value|
             documents = documents.select do |document|
-              next unless document.raw_data.has_key? selector.attribute
+              next unless document.raw_data.key? selector.attribute
               document_value = document.raw_data[selector.attribute]
               operator = OPERATOR_MAPPING[selector.operator]
               document_value.send operator, selector_value
@@ -78,12 +77,12 @@ module Middleman
           symbol_hash = constraints_hash.reject { |key, value| key.is_a? Selector }
           symbol_hash.each do |attribute, value|
             selector = Selector.new(:attribute => attribute, :operator => 'equal')
-            selector_hash.update({ selector => value })
+            selector_hash.update(selector => value)
           end
           Query.new @model, opts(:where => @where.merge(selector_hash))
         end
 
-        def opts new_opts
+        def opts(new_opts)
           { :where => {}.merge(@where),
             :order_by => @order_by,
             :offset => @offset,
@@ -92,7 +91,7 @@ module Middleman
         end
 
         def order_by(field)
-          Query.new @model, opts(:order_by => field.is_a?(Symbol) ? {field => :asc} : field)
+          Query.new @model, opts(:order_by => field.is_a?(Symbol) ? { field => :asc } : field)
         end
 
         def offset(number)
@@ -104,11 +103,11 @@ module Middleman
         end
 
         def first
-          self.all.first
+          all.first
         end
 
         def last
-          self.all.last
+          all.last
         end
 
         def all
@@ -126,7 +125,7 @@ module Middleman
       class Selector
         attr_reader :attribute, :operator
 
-        def initialize(opts = {})
+        def initialize(opts={})
           unless VALID_OPERATORS.include? opts[:operator]
             raise OperatorNotSupportedError
           end
@@ -149,7 +148,7 @@ class Symbol
 
   unless method_defined?(:"<=>")
     def <=>(other)
-      self.to_s <=> other.to_s
+      to_s <=> other.to_s
     end
   end
 end

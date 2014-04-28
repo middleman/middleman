@@ -3,10 +3,8 @@ require 'coffee_script'
 
 module Middleman
   module Renderers
-
     # CoffeeScript Renderer
     module CoffeeScript
-
       # Setup extension
       class << self
         # Once registered
@@ -20,7 +18,7 @@ module Middleman
             DebuggingCoffeeScriptTemplate.middleman_app = self
           end
         end
-        alias :included :registered
+        alias_method :included, :registered
       end
 
       # A Template for Tilt which outputs debug messages

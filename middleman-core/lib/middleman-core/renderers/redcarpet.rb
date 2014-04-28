@@ -2,9 +2,7 @@ require 'redcarpet'
 
 module Middleman
   module Renderers
-
     class RedcarpetTemplate < ::Tilt::RedcarpetTemplate::Redcarpet2
-
       # because tilt has decided to convert these
       # in the wrong direction
       ALIASES = {
@@ -15,7 +13,7 @@ module Middleman
       # Don't overload :renderer option with smartypants
       # Support renderer-level options
       def generate_renderer
-        return options.delete(:renderer) if options.has_key?(:renderer)
+        return options.delete(:renderer) if options.key?(:renderer)
 
         covert_options_to_aliases!
 
@@ -32,8 +30,8 @@ module Middleman
         # Renderer Options
         possible_render_opts = [:filter_html, :no_images, :no_links, :no_styles, :safe_links_only, :with_toc_data, :hard_wrap, :xhtml, :prettify, :link_attributes]
 
-        render_options = possible_render_opts.inject({}) do |sum, opt|
-          sum[opt] = options.delete(opt) if options.has_key?(opt)
+        render_options = possible_render_opts.reduce({}) do |sum, opt|
+          sum[opt] = options.delete(opt) if options.key?(opt)
           sum
         end
 
@@ -42,11 +40,11 @@ module Middleman
 
       private
 
-        def covert_options_to_aliases!
-          ALIASES.each do |aka, actual|
-            options[actual] = options.delete(aka) if options.has_key? aka
-          end
+      def covert_options_to_aliases!
+        ALIASES.each do |aka, actual|
+          options[actual] = options.delete(aka) if options.key? aka
         end
+      end
     end
 
     # Custom Redcarpet renderer that uses our helpers for images and links
@@ -64,7 +62,7 @@ module Middleman
           middleman_app.image_tag(link, :title => title, :alt => alt_text)
         else
           link_string = link.dup
-          link_string << %Q{"#{title}"} if title && title.length > 0 && title != alt_text
+          link_string << %Q("#{title}") if title && title.length > 0 && title != alt_text
           %Q{![#{alt_text}](#{link_string})}
         end
       end
@@ -72,12 +70,12 @@ module Middleman
       def link(link, title, content)
         if !@local_options[:no_links]
           attributes = { :title => title }
-          attributes.merge!( @local_options[:link_attributes] ) if @local_options[:link_attributes]
+          attributes.merge!(@local_options[:link_attributes]) if @local_options[:link_attributes]
 
-          middleman_app.link_to(content, link, attributes )
+          middleman_app.link_to(content, link, attributes)
         else
           link_string = link.dup
-          link_string << %Q{"#{title}"} if title && title.length > 0 && title != alt_text
+          link_string << %Q("#{title}") if title && title.length > 0 && title != alt_text
           %Q{[#{content}](#{link_string})}
         end
       end

@@ -1,21 +1,16 @@
 module Middleman
-
   module Sitemap
-
     module Extensions
-
       module Redirects
-
         # Setup extension
         class << self
-
           # Once registered
           def registered(app)
             # Include methods
             app.send :include, InstanceMethods
           end
 
-          alias :included :registered
+          alias_method :included, :registered
         end
 
         module InstanceMethods
@@ -78,10 +73,10 @@ module Middleman
           end
 
           def render(*args, &block)
-            url = ::Middleman::Util.url_for(store.app, @request_path, {
-              :relative => false,
-              :find_resource => true
-            })
+            url = ::Middleman::Util.url_for(store.app, @request_path,
+                                            :relative => false,
+                                            :find_resource => true
+            )
 
             if output
               output.call(path, url)
@@ -119,7 +114,6 @@ module Middleman
           def metadata
             @local_metadata.dup
           end
-
         end
       end
     end

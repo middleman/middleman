@@ -3,13 +3,10 @@ require 'liquid'
 
 module Middleman
   module Renderers
-
     # Liquid Renderer
     module Liquid
-
       # Setup extension
       class << self
-
         # Once registerd
         def registered(app)
           app.before_configuration do
@@ -27,9 +24,8 @@ module Middleman
           end
         end
 
-        alias :included :registered
+        alias_method :included, :registered
       end
     end
-
   end
 end

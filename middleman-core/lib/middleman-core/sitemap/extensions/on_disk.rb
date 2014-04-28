@@ -1,13 +1,9 @@
 require 'set'
 
 module Middleman
-
   module Sitemap
-
     module Extensions
-
       class OnDisk
-
         attr_accessor :sitemap
         attr_accessor :waiting_for_ready
 

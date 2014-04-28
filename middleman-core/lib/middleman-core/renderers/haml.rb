@@ -13,10 +13,8 @@ end
 
 module Middleman
   module Renderers
-
     # Haml Renderer
     module Haml
-
       # Setup extension
       class << self
         # Once registered
@@ -33,7 +31,7 @@ module Middleman
             init_haml_helpers
           end
         end
-        alias :included :registered
+        alias_method :included, :registered
       end
     end
   end

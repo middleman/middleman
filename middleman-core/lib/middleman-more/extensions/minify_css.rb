@@ -20,9 +20,9 @@ class Middleman::Extensions::MinifyCss < ::Middleman::Extension
   end
 
   class SassCompressor
-    def self.compress(style, options = {})
+    def self.compress(style, options={})
       root_node = ::Sass::SCSS::CssParser.new(style, 'middleman-css-input', 1).parse
-      root_node.options = { :style => :compressed }
+      root_node.options = options.merge(:style => :compressed)
       root_node.render.strip
     end
   end
@@ -49,7 +49,7 @@ class Middleman::Extensions::MinifyCss < ::Middleman::Extension
 
       if inline_html_content?(env['PATH_INFO'])
         minified = ::Middleman::Util.extract_response_text(response)
-        minified.gsub!(INLINE_CSS_REGEX) do |match|
+        minified.gsub!(INLINE_CSS_REGEX) do
           $1 << @compressor.compress($2) << $3
         end
 
@@ -65,13 +65,14 @@ class Middleman::Extensions::MinifyCss < ::Middleman::Extension
       [status, headers, response]
     end
 
-  private
+    private
+
     def inline_html_content?(path)
       (path.end_with?('.html') || path.end_with?('.php')) && @inline
     end
 
     def standalone_css_content?(path)
-      path.end_with?('.css') && @ignore.none? {|ignore| Middleman::Util.path_match(ignore, path) }
+      path.end_with?('.css') && @ignore.none? { |ignore| Middleman::Util.path_match(ignore, path) }
     end
   end
 end

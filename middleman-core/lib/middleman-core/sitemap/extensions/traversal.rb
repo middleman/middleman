@@ -1,9 +1,6 @@
 module Middleman
-
   module Sitemap
-
     module Extensions
-
       module Traversal
         # This resource's parent resource
         # @return [Middleman::Sitemap::Resource, nil]
@@ -28,14 +25,14 @@ module Middleman
 
           if eponymous_directory?
             base_path = eponymous_directory_path
-            prefix    = %r|^#{base_path.sub("/", "\\/")}|
+            prefix    = %r{^#{base_path.sub("/", "\\/")}}
           else
             base_path = path.sub("#{app.index_file}", '')
-            prefix    = %r|^#{base_path.sub("/", "\\/")}|
+            prefix    = %r{^#{base_path.sub("/", "\\/")}}
           end
 
           store.resources.select do |sub_resource|
-            if sub_resource.path == self.path || sub_resource.path !~ prefix
+            if sub_resource.path == path || sub_resource.path !~ prefix
               false
             else
               inner_path = sub_resource.path.sub(prefix, '')
@@ -72,7 +69,7 @@ module Middleman
             return true
           end
           full_path = File.join(app.source_dir, eponymous_directory_path)
-          !!(File.exists?(full_path) && File.directory?(full_path))
+          !!(File.exist?(full_path) && File.directory?(full_path))
         end
 
         # The path for this resource if it were a directory, and not a file

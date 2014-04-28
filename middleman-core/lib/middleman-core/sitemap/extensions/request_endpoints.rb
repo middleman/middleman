@@ -1,21 +1,16 @@
 module Middleman
-
   module Sitemap
-
     module Extensions
-
       module RequestEndpoints
-
         # Setup extension
         class << self
-
           # Once registered
           def registered(app)
             # Include methods
             app.send :include, InstanceMethods
           end
 
-          alias :included :registered
+          alias_method :included, :registered
         end
 
         module InstanceMethods
@@ -48,7 +43,7 @@ module Middleman
             if block_given?
               endpoint[:output] = block
             else
-              endpoint[:request_path] = opts[:path] if opts.has_key?(:path)
+              endpoint[:request_path] = opts[:path] if opts.key?(:path)
             end
 
             @endpoints[path] = endpoint
@@ -65,7 +60,7 @@ module Middleman
                 path,
                 config[:request_path]
               )
-              r.output = config[:output] if config.has_key?(:output)
+              r.output = config[:output] if config.key?(:output)
               r
             end
           end
@@ -85,12 +80,10 @@ module Middleman
           end
 
           def render(*args, &block)
-            return self.output.call if self.output
+            return output.call if output
           end
 
-          def request_path
-            @request_path
-          end
+          attr_reader :request_path
 
           def binary?
             false
@@ -107,7 +100,6 @@ module Middleman
           def metadata
             @local_metadata.dup
           end
-
         end
       end
     end
