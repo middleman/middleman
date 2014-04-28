@@ -1,23 +1,15 @@
 # Minify Javascript Extension
 class Middleman::Extensions::MinifyJavascript < ::Middleman::Extension
-  option :compressor, nil, 'Set the JS compressor to use.'
   option :inline, false, 'Whether to minify JS inline within HTML files'
   option :ignore, [], 'Patterns to avoid minifying'
-
-  def initialize(app, options_hash={}, &block)
-    super
-
-    app.config.define_setting :js_compressor, nil, 'Set the JS compressor to use. Deprecated in favor of the :compressor option when activating :minify_js'
-  end
+  option :compressor, Proc.new { 
+    require 'uglifier'
+    ::Uglifier.new
+  }, 'Set the JS compressor to use.'
 
   def after_configuration
-    chosen_compressor = app.config[:js_compressor] || options[:compressor] || begin
-      require 'uglifier'
-      ::Uglifier.new
-    end
-
     # Setup Rack middleware to minify CSS
-    app.use Rack, :compressor => chosen_compressor,
+    app.use Rack, :compressor => options[:compressor],
                   :ignore     => Array(options[:ignore]) + [/\.min\./],
                   :inline     => options[:inline]
   end
@@ -30,9 +22,12 @@ class Middleman::Extensions::MinifyJavascript < ::Middleman::Extension
     # @param [Hash] options
     def initialize(app, options={})
       @app = app
-      @compressor = options[:compressor]
-      @ignore = options[:ignore]
-      @inline = options[:inline]
+      @ignore = options.fetch(:ignore)
+      @inline = options.fetch(:inline)
+
+      @compressor = options.fetch(:compressor)
+      @compressor = @compressor.to_proc if @compressor.respond_to? :to_proc
+      @compressor = @compressor.call if @compressor.is_a? Proc
     end
 
     # Rack interface

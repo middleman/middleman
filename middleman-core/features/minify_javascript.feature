@@ -49,9 +49,7 @@ Feature: Minify Javascript
         end
       end
 
-      activate :minify_javascript, :inline => true
-
-      set :js_compressor, ::PassThrough
+      activate :minify_javascript, :inline => true, :compressor => ::PassThrough
 
       page "/inline-js.html", :layout => false
       """
@@ -195,9 +193,7 @@ Feature: Minify Javascript
         end
       end
 
-      activate :minify_javascript, :inline => true
-
-      set :js_compressor, ::PassThrough
+      activate :minify_javascript, :inline => true, :compressor => ::PassThrough
 
       page "/inline-coffeescript.html", :layout => false
       """
@@ -215,9 +211,7 @@ Feature: Minify Javascript
         end
       end
 
-      activate :minify_javascript
-
-      set :js_compressor, ::PassThrough
+      activate :minify_javascript, :compressor => ::PassThrough
       """
     And the Server is running at "passthrough-app"
     When I go to "/javascripts/coffee_test.js"

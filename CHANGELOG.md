@@ -1,6 +1,8 @@
 master
 ===
 
+* Removed `css_compressor` setting, use `activate :minify_css, :compressor =>` instead.
+* Removed `js_compressor` setting, use `activate :minify_javascript, :compressor =>` instead.
 * Removed ability to server folders of content statically (non-Middleman projects).
 * Prevent local templates being loaded when $HOME is not set
 * Removed "Implied Extension feature"

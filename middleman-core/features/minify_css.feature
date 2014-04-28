@@ -36,9 +36,7 @@ Feature: Minify CSS
         end
       end
 
-      activate :minify_css
-
-      set :css_compressor, ::PassThrough
+      activate :minify_css, :compressor => ::PassThrough
       """
     And the Server is running at "passthrough-app"
     When I go to "/stylesheets/site.css"
@@ -71,9 +69,7 @@ Feature: Minify CSS
         end
       end
 
-      activate :minify_css, :inline => true
-
-      set :css_compressor, ::PassThrough
+      activate :minify_css, :inline => true, :compressor => ::PassThrough
 
       page "/inline-css.html", :layout => false
       """
