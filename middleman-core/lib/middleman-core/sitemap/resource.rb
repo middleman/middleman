@@ -55,16 +55,8 @@ module Middleman
       # Get the metadata for both the current source_file and the current path
       # @return [Hash]
       def metadata
-        # TODO: Get rid of all this
-        result = @store.metadata_for_path(path).dup
-
-        file_meta = @store.metadata_for_file(source_file).dup
-        result.deep_merge!(file_meta)
-
-        local_meta = @local_metadata.dup
-        result.deep_merge!(local_meta)
-
-        result
+        # TODO: The only reason we call metadata_for_page is to power the "page" DSL
+        @store.metadata_for_path(path).deep_merge @local_metadata
       end
 
       # Data about this resource, populated from frontmatter or extensions.
@@ -81,7 +73,7 @@ module Middleman
       #   Page are data that is exposed through this resource's data member.
       #   Note: It is named 'page' for backwards compatibility with older MM.
       def add_metadata(meta={})
-        @local_metadata.deep_merge!(meta.dup)
+        @local_metadata.deep_merge!(meta)
       end
 
       # Extension of the path (i.e. '.js')
@@ -98,7 +90,7 @@ module Middleman
         relative_source = Pathname(source_file).relative_path_from(Pathname(@app.root))
 
         @app.instrument 'render.resource', path: relative_source, destination_path: destination_path do
-          md   = metadata.dup
+          md   = metadata
           opts = md[:options].deep_merge(opts)
           locs = md[:locals].deep_merge(locs)
           locs[:current_path] ||= destination_path
