@@ -1,6 +1,7 @@
 master
 ===
 
+* Removed Queryable Sitemap API
 * Removed `css_compressor` setting, use `activate :minify_css, :compressor =>` instead.
 * Removed `js_compressor` setting, use `activate :minify_javascript, :compressor =>` instead.
 * Removed ability to server folders of content statically (non-Middleman projects).
