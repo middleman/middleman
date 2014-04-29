@@ -48,7 +48,7 @@ module Middleman
 
           app.extend ClassMethods
           app.send :include, InstanceMethods
-          app.delegate :configure, :to => :"self.class"
+          app.delegate :configure, to: :"self.class"
         end
         alias_method :included, :registered
       end
@@ -95,6 +95,7 @@ module Middleman
         #
         # @param [Symbol, Module] ext Which extension to activate
         # @return [void]
+        # rubocop:disable BlockNesting
         def activate(ext, options={}, &block)
           ext_module = if ext.is_a?(Module)
             ext

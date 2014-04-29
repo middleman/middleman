@@ -30,10 +30,11 @@ module Middleman
       # @param [Symbol, String, nil] meth
       # @param [Boolean] subcommand
       # @return [void]
+      # rubocop:disable UnusedMethodArgument
       def help(meth=nil, subcommand=false)
         if meth && !self.respond_to?(meth)
           klass, task = Thor::Util.find_class_and_task_by_namespace("#{meth}:#{meth}")
-          klass.start(['-h', task].compact, :shell => shell)
+          klass.start(['-h', task].compact, shell: shell)
         else
           list = []
           Thor::Util.thor_classes_in(Middleman::Cli).each do |thor_class|
@@ -42,7 +43,7 @@ module Middleman
           list.sort! { |a, b| a[0] <=> b[0] }
 
           shell.say 'Tasks:'
-          shell.print_table(list, :ident => 2, :truncate => true)
+          shell.print_table(list, ident: 2, truncate: true)
           shell.say
         end
       end
@@ -51,10 +52,7 @@ module Middleman
       # @param [Symbol] meth
       def method_missing(meth, *args)
         meth = meth.to_s
-
-        if self.class.map.key?(meth)
-          meth = self.class.map[meth]
-        end
+        meth = self.class.map[meth] if self.class.map.key?(meth)
 
         klass, task = Thor::Util.find_class_and_task_by_namespace("#{meth}:#{meth}")
 
@@ -71,7 +69,7 @@ module Middleman
           raise Thor::Error, "There's no '#{meth}' command for Middleman. Try 'middleman help' for a list of commands."
         else
           args.unshift(task) if task
-          klass.start(args, :shell => shell)
+          klass.start(args, shell: shell)
         end
       end
     end

@@ -55,10 +55,10 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
     end
   end
 
-  delegate :logger, :to => :app
+  delegate :logger, to: :app
 
   def langs
-    @_langs ||= get_known_languages
+    @_langs ||= known_languages
   end
 
   # Update the main sitemap resource list
@@ -115,7 +115,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
   end
 
   def metadata_for_path(url)
-    if d = get_localization_data(url)
+    if d = localization_data(url)
       lang, page_id = d
     else
       # Default to the @mount_at_root lang
@@ -129,18 +129,18 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
     end
 
     locals = {
-      :lang => lang,
-      :page_id => page_id
+      lang: lang,
+      page_id: page_id
     }
 
     {
-      :blocks => [instance_vars],
-      :locals => locals,
-      :options => { :lang => lang }
+      blocks: [instance_vars],
+      locals: locals,
+      options: { lang: lang }
     }
   end
 
-  def get_known_languages
+  def known_languages
     if options[:langs]
       Array(options[:langs]).map(&:to_sym)
     else
@@ -154,7 +154,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
     end
   end
 
-  def get_localization_data(path)
+  def localization_data(path)
     @_localization_data ||= {}
     @_localization_data[path]
   end
@@ -177,7 +177,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
   def build_resource(path, source_path, page_id, lang)
     old_locale = ::I18n.locale
     ::I18n.locale = lang
-    localized_page_id = ::I18n.t("paths.#{page_id}", :default => page_id, :fallback => [])
+    localized_page_id = ::I18n.t("paths.#{page_id}", default: page_id, fallback: [])
 
     prefix = if (options[:mount_at_root] == lang) || (options[:mount_at_root].nil? && langs[0] == lang)
       '/'

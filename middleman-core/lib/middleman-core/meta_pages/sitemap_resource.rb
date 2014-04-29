@@ -14,7 +14,7 @@ module Middleman
       def render
         classes = 'resource-details'
         classes << ' ignored' if @resource.ignored?
-        content_tag :div, :class => classes do
+        content_tag :div, class: classes do
           content_tag :table do
             content = ''
             resource_properties.each do |label, value|
@@ -38,7 +38,7 @@ module Middleman
         build_path = @resource.destination_path
         build_path = 'Not built' if ignored?
         props['Build Path'] = build_path if @resource.path != build_path
-        props['URL'] = content_tag(:a, @resource.url, :href => @resource.url) unless ignored?
+        props['URL'] = content_tag(:a, @resource.url, href: @resource.url) unless ignored?
         props['Source File'] = @resource.source_file.sub(/^#{Regexp.escape(ENV['MM_ROOT'] + '/')}/, '')
 
         data = @resource.data

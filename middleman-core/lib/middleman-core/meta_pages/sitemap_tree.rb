@@ -13,8 +13,7 @@ module Middleman
       end
 
       def render
-        content = ''
-        @children.keys.sort do |a, b|
+        sorted_children_keys = @children.keys.sort do |a, b|
           a_subtree = @children[a]
           b_subtree = @children[b]
           if a_subtree.is_a? SitemapResource
@@ -32,7 +31,9 @@ module Middleman
           else
             a.downcase <=> b.downcase
           end
-        end.each do |path_part|
+        end
+
+        sorted_children_keys.reduce('') do |content, path_part|
           subtree = @children[path_part]
           content << "<details class='#{subtree.css_classes.join(' ')}'>"
           content << '<summary>'
@@ -41,7 +42,6 @@ module Middleman
           content << subtree.render
           content << '</details>'
         end
-        content
       end
 
       def css_classes

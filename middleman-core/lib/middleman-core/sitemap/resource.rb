@@ -11,7 +11,7 @@ module Middleman
 
       # @return [Middleman::Application]
       attr_reader :app
-      delegate :logger, :instrument, :to => :app
+      delegate :logger, :instrument, to: :app
 
       # @return [Middleman::Sitemap::Store]
       attr_reader :store
@@ -44,7 +44,7 @@ module Middleman
         @source_file = source_file
         @destination_path = @path
 
-        @local_metadata = { :options => {}, :locals => {}, :page => {}, :blocks => [] }
+        @local_metadata = { options: {}, locals: {}, page: {}, blocks: [] }
       end
 
       # Whether this resource has a template file
@@ -60,15 +60,11 @@ module Middleman
         result = store.metadata_for_path(path).dup
 
         file_meta = store.metadata_for_file(source_file).dup
-        if file_meta.key?(:blocks)
-          result[:blocks] += file_meta.delete(:blocks)
-        end
+        result[:blocks] += file_meta.delete(:blocks) if file_meta.key?(:blocks)
         result.deep_merge!(file_meta)
 
         local_meta = @local_metadata.dup
-        if local_meta.key?(:blocks)
-          result[:blocks] += local_meta.delete(:blocks)
-        end
+        result[:blocks] += local_meta.delete(:blocks) if local_meta.key?(:blocks)
         result.deep_merge!(local_meta)
 
         result[:blocks] = result[:blocks].flatten.compact
@@ -79,9 +75,7 @@ module Middleman
       # @param [Hash] metadata A metadata block like provides_metadata_for_path takes
       def add_metadata(metadata={}, &block)
         metadata = metadata.dup
-        if metadata.key?(:blocks)
-          @local_metadata[:blocks] += metadata.delete(:blocks)
-        end
+        @local_metadata[:blocks] += metadata.delete(:blocks) if metadata.key?(:blocks)
         @local_metadata.deep_merge!(metadata)
         @local_metadata[:blocks] += [block] if block_given?
       end
@@ -103,13 +97,11 @@ module Middleman
       # Render this resource
       # @return [String]
       def render(opts={}, locs={}, &block)
-        unless template?
-          return app.template_data_for_file(source_file)
-        end
+        return app.template_data_for_file(source_file) unless template?
 
         relative_source = Pathname(source_file).relative_path_from(Pathname(app.root))
 
-        instrument 'render.resource', :path => relative_source, :destination_path => destination_path  do
+        instrument 'render.resource', path: relative_source, destination_path: destination_path  do
           md   = metadata.dup
           opts = md[:options].deep_merge(opts)
 
@@ -124,9 +116,7 @@ module Middleman
           locs = md[:locals].deep_merge(locs)
 
           # Forward remaining data to helpers
-          if md.key?(:page)
-            app.data.store('page', md[:page])
-          end
+          app.data.store('page', md[:page]) if md.key?(:page)
 
           blocks = Array(md[:blocks]).dup
           blocks << block if block_given?

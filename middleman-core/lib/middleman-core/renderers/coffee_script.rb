@@ -14,7 +14,7 @@ module Middleman
           ::Tilt.prefer(DebuggingCoffeeScriptTemplate)
 
           app.before_configuration do
-            template_extensions :coffee => :js
+            template_extensions coffee: :js
             DebuggingCoffeeScriptTemplate.middleman_app = self
           end
         end

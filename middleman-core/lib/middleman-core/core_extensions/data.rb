@@ -143,9 +143,6 @@ module Middleman
         def data_for_path(path)
           response = nil
 
-          @@local_sources ||= {}
-          @@callback_sources ||= {}
-
           if store.key?(path.to_s)
             response = store[path.to_s]
           elsif callbacks.key?(path.to_s)
@@ -164,10 +161,7 @@ module Middleman
             return @local_data[path.to_s]
           else
             result = data_for_path(path)
-
-            if result
-              return ::Middleman::Util.recursively_enhance(result)
-            end
+            return ::Middleman::Util.recursively_enhance(result) if result
           end
 
           super
@@ -187,11 +181,11 @@ module Middleman
           __send__(key) if key?(key)
         end
 
-        def has_key?(key)
-          @local_data.key?(key.to_s) || !!(data_for_path(key))
+        def key?(key)
+          @local_data.key?(key.to_s) || data_for_path(key)
         end
 
-        alias_method :key?, :has_key?
+        alias_method :has_key?, :key?
 
         # Convert all the data into a static hash
         #

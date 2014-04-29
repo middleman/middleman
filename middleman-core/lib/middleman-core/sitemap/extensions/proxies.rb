@@ -17,9 +17,10 @@ module Middleman
 
         module ResourceInstanceMethods
           # Whether this page is a proxy
+          # rubocop:disable TrivialAccessors
           # @return [Boolean]
           def proxy?
-            !!@proxied_to
+            @proxied_to
           end
 
           # Set this page to proxy to a target path
@@ -52,6 +53,7 @@ module Middleman
             proxy_resource
           end
 
+          # rubocop:disable AccessorMethodName
           def get_source_file
             if proxy?
               proxied_to_resource.source_file
@@ -97,14 +99,14 @@ module Middleman
           #               :locals, :ignore to hide the proxy target, :layout, and :directory_indexes.
           # @return [void]
           def proxy(path, target, opts={}, &block)
-            metadata = { :options => {}, :locals => {}, :blocks => [] }
+            metadata = { options: {}, locals: {}, blocks: [] }
             metadata[:blocks] << block if block_given?
             metadata[:locals] = opts.delete(:locals) || {}
 
             @app.ignore(target) if opts.delete(:ignore)
             metadata[:options] = opts
 
-            @proxy_configs << ProxyConfiguration.new(:path => path, :target => target, :metadata => metadata)
+            @proxy_configs << ProxyConfiguration.new(path: path, target: target, metadata: metadata)
 
             @app.sitemap.rebuild_resource_list!(:added_proxy)
           end

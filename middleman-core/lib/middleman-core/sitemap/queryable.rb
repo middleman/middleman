@@ -73,33 +73,33 @@ module Middleman
         end
 
         def where(constraints_hash)
-          selector_hash = constraints_hash.reject { |key, value| !key.is_a? Selector }
-          symbol_hash = constraints_hash.reject { |key, value| key.is_a? Selector }
+          selector_hash = constraints_hash.reject { |key, _| !key.is_a? Selector }
+          symbol_hash = constraints_hash.reject { |key, _| key.is_a? Selector }
           symbol_hash.each do |attribute, value|
-            selector = Selector.new(:attribute => attribute, :operator => 'equal')
+            selector = Selector.new(attribute: attribute, operator: 'equal')
             selector_hash.update(selector => value)
           end
-          Query.new @model, opts(:where => @where.merge(selector_hash))
+          Query.new @model, opts(where: @where.merge(selector_hash))
         end
 
         def opts(new_opts)
-          { :where => {}.merge(@where),
-            :order_by => @order_by,
-            :offset => @offset,
-            :limit => @limit
+          { where: {}.merge(@where),
+            order_by: @order_by,
+            offset: @offset,
+            limit: @limit
           }.merge(new_opts)
         end
 
         def order_by(field)
-          Query.new @model, opts(:order_by => field.is_a?(Symbol) ? { field => :asc } : field)
+          Query.new @model, opts(order_by: field.is_a?(Symbol) ? { field => :asc } : field)
         end
 
         def offset(number)
-          Query.new @model, opts(:offset => number)
+          Query.new @model, opts(offset: number)
         end
 
         def limit(number)
-          Query.new @model, opts(:limit => number)
+          Query.new @model, opts(limit: number)
         end
 
         def first
@@ -111,13 +111,9 @@ module Middleman
         end
 
         def all
-          result = @model.select(:where => @where, :order_by => @order_by)
-          if @offset.present?
-            result = result.last([result.size - @offset, 0].max)
-          end
-          if @limit.present?
-            result = result.first(@limit)
-          end
+          result = @model.select(where: @where, order_by: @order_by)
+          result = result.last([result.size - @offset, 0].max) if @offset.present?
+          result = result.first(@limit) if @limit.present?
           result
         end
       end

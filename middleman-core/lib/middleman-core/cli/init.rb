@@ -11,35 +11,35 @@ module Middleman::Cli
     desc 'init NAME [options]', 'Create new project NAME'
     available_templates = ::Middleman::Templates.registered.keys.join(', ')
     method_option 'template',
-                  :aliases => '-T',
-                  :default => 'default',
-                  :desc    => "Use a project template: #{available_templates}"
+                  aliases: '-T',
+                  default: 'default',
+                  desc: "Use a project template: #{available_templates}"
     method_option 'css_dir',
       # :default => "stylesheets",
-                  :desc    => 'The path to the css files'
+                  desc: 'The path to the css files'
     method_option 'js_dir',
       # :default => "javascripts",
-                  :desc    => 'The path to the javascript files'
+                  desc: 'The path to the javascript files'
     method_option 'images_dir',
       # :default => "images",
-                  :desc    => 'The path to the image files'
+                  desc: 'The path to the image files'
     method_option 'rack',
-                  :type    => :boolean,
-                  :default => false,
-                  :desc    => 'Include a config.ru file'
+                  type: :boolean,
+                  default: false,
+                  desc: 'Include a config.ru file'
     method_option 'skip-gemfile',
-                  :type    => :boolean,
-                  :default => false,
-                  :desc    => "Don't create a Gemfile"
+                  type: :boolean,
+                  default: false,
+                  desc: "Don't create a Gemfile"
     method_option 'skip-bundle',
-                  :type    => :boolean,
-                  :aliases => '-B',
-                  :default => false,
-                  :desc    => "Don't run bundle install"
+                  type: :boolean,
+                  aliases: '-B',
+                  default: false,
+                  desc: "Don't run bundle install"
     method_option 'skip-git',
-                  :type    => :boolean,
-                  :default => false,
-                  :desc    => 'Skip Git ignores and keeps'
+                  type: :boolean,
+                  default: false,
+                  desc: 'Skip Git ignores and keeps'
     # The init task
     # @param [String] name
     def init(name='.')

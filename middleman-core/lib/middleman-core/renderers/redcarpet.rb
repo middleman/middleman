@@ -6,7 +6,7 @@ module Middleman
       # because tilt has decided to convert these
       # in the wrong direction
       ALIASES = {
-        :escape_html => :filter_html
+        escape_html: :filter_html
       }
 
       # Overwrite built-in Tilt version.
@@ -59,7 +59,7 @@ module Middleman
 
       def image(link, title, alt_text)
         if !@local_options[:no_images]
-          middleman_app.image_tag(link, :title => title, :alt => alt_text)
+          middleman_app.image_tag(link, title: title, alt: alt_text)
         else
           link_string = link.dup
           link_string << %Q("#{title}") if title && title.length > 0 && title != alt_text
@@ -69,7 +69,7 @@ module Middleman
 
       def link(link, title, content)
         if !@local_options[:no_links]
-          attributes = { :title => title }
+          attributes = { title: title }
           attributes.merge!(@local_options[:link_attributes]) if @local_options[:link_attributes]
 
           middleman_app.link_to(content, link, attributes)

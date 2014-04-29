@@ -13,8 +13,8 @@ module Middleman
           app.config.define_setting :sass, {}, 'Sass engine options'
 
           app.before_configuration do
-            template_extensions :scss => :css,
-                                :sass => :css
+            template_extensions scss: :css,
+                                sass: :css
           end
 
           # Tell Tilt to use it as well (for inline sass blocks)
@@ -36,9 +36,7 @@ module Middleman
         def initialize(*args, &block)
           super
 
-          if @options.key?(:context)
-            @context = @options[:context]
-          end
+          @context = @options[:context] if @options.key?(:context)
         end
 
         # Define the expected syntax for the template
@@ -51,23 +49,22 @@ module Middleman
 
         # Add exception messaging
         # @param [Class] context
-        # @param [Hash] locals
         # @return [String]
-        def evaluate(context, locals, &block)
+        def evaluate(context, _)
           @context ||= context
           @engine = ::Sass::Engine.new(data, sass_options)
 
           begin
             @engine.render
           rescue ::Sass::SyntaxError => e
-            ::Sass::SyntaxError.exception_to_css(e, :full_exception => true)
+            ::Sass::SyntaxError.exception_to_css(e, full_exception: true)
           end
         end
 
         # Change Sass path, for url functions, to the build folder if we're building
         # @return [Hash]
         def sass_options
-          more_opts = { :filename => eval_file, :line => line, :syntax => syntax }
+          more_opts = { filename: eval_file, line: line, syntax: syntax }
 
           if @context.is_a?(::Middleman::Application) && file
             location_of_sass_file = @context.source_dir

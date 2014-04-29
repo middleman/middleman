@@ -12,7 +12,7 @@ module Middleman
           app.config.define_setting :less, {}, 'LESS compiler options'
 
           app.before_configuration do
-            template_extensions :less => :css
+            template_extensions less: :css
           end
 
           app.after_configuration do
@@ -33,7 +33,7 @@ module Middleman
           if ::Less.const_defined? :Engine
             @engine = ::Less::Engine.new(data)
           else
-            parser  = ::Less::Parser.new(options.merge :filename => eval_file, :line => line, :paths => ['.', File.dirname(eval_file)])
+            parser  = ::Less::Parser.new(options.merge filename: eval_file, line: line, paths: ['.', File.dirname(eval_file)])
             @engine = parser.parse(data)
           end
         end

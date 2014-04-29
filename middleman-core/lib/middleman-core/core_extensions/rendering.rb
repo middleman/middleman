@@ -1,12 +1,12 @@
 # Shutup Tilt Warnings
 # @private
 class Tilt::Template
-  def warn(*args)
-    # Kernel.warn(*args)
+  def warn(*)
   end
 end
 
 # Rendering extension
+# rubocop:disable UnderscorePrefixedVariableName
 module Middleman
   module CoreExtensions
     module Rendering
@@ -402,6 +402,7 @@ module Middleman
         end
 
         # The currently rendering engine
+        # rubocop:disable TrivialAccessors
         # @return [Symbol, nil]
         def current_engine=(v)
           @_current_engine = v
@@ -427,7 +428,7 @@ module Middleman
               extension_class = ::Tilt[options[:preferred_engine]]
 
               # Get a list of extensions for a preferred engine
-              matched_exts = ::Tilt.mappings.select do |ext, engines|
+              matched_exts = ::Tilt.mappings.select do |_, engines|
                 engines.include? extension_class
               end.keys
 

@@ -7,7 +7,7 @@ module Middleman::Cli
 
     namespace :bundle
 
-    desc 'bundle', 'Setup initial bundle', :hide => true
+    desc 'bundle', 'Setup initial bundle', hide: true
 
     # The setup task
     def bundle

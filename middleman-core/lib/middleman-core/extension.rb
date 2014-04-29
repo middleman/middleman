@@ -3,9 +3,9 @@ require 'active_support/core_ext/class/attribute'
 
 module Middleman
   class Extension
-    class_attribute :supports_multiple_instances, :instance_reader => false, :instance_writer => false
-    class_attribute :defined_helpers, :instance_reader => false, :instance_writer => false
-    class_attribute :ext_name, :instance_reader => false, :instance_writer => false
+    class_attribute :supports_multiple_instances, instance_reader: false, instance_writer: false
+    class_attribute :defined_helpers, instance_reader: false, instance_writer: false
+    class_attribute :ext_name, instance_reader: false, instance_writer: false
 
     class << self
       def config
@@ -23,7 +23,7 @@ module Middleman
       def helpers(*m, &block)
         self.defined_helpers ||= []
 
-        if block
+        if block_given?
           mod = Module.new
           mod.module_eval(&block)
           m = [mod]
@@ -66,7 +66,7 @@ module Middleman
     attr_accessor :options
     attr_reader :app
 
-    delegate :after_extension_activated, :to => :"::Middleman::Extension"
+    delegate :after_extension_activated, to: :"::Middleman::Extension"
 
     def initialize(klass, options_hash={}, &block)
       @_helpers = []
@@ -92,7 +92,7 @@ module Middleman
 
     protected
 
-    def setup_options(options_hash, &block)
+    def setup_options(options_hash)
       @options = self.class.config.dup
       @options.finalize!
 
@@ -127,10 +127,9 @@ module Middleman
     def bind_after_configuration
       ext = self
       @klass.after_configuration do
-        if ext.respond_to?(:after_configuration)
-          ext.after_configuration
-        end
+        ext.after_configuration if ext.respond_to?(:after_configuration)
 
+        # rubocop:disable IfUnlessModifier
         if ext.respond_to?(:manipulate_resource_list)
           ext.app.sitemap.register_resource_list_manipulator(ext.class.extension_name, ext)
         end

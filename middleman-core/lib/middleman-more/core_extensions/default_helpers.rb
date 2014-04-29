@@ -6,6 +6,7 @@ require 'padrino-helpers'
 
 class Padrino::Helpers::OutputHelpers::ErbHandler
   # Force Erb capture not to use safebuffer
+  # rubocop:disable UnderscorePrefixedVariableName
   def capture_from_template(*args, &block)
     self.output_buffer, _buf_was = '', output_buffer
     raw = block.call(*args)
@@ -38,6 +39,7 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
   helpers do
 
     # Make all block content html_safe
+    # rubocop:disable Semicolon
     def content_tag(name, content=nil, options=nil, &block)
       if block_given?
         options = content if content.is_a?(Hash)

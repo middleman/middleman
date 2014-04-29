@@ -11,11 +11,11 @@ module Middleman
           app.config.define_setting :markdown_engine_prefix, ::Tilt, 'The parent module for markdown template engines'
 
           app.before_configuration do
-            template_extensions :markdown => :html,
-                                :mdown    => :html,
-                                :md       => :html,
-                                :mkd      => :html,
-                                :mkdn     => :html
+            template_extensions markdown: :html,
+                                mdown: :html,
+                                md: :html,
+                                mkd: :html,
+                                mkdn: :html
           end
 
           # Once configuration is parsed

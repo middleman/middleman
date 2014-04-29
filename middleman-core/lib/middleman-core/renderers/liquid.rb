@@ -10,7 +10,7 @@ module Middleman
         # Once registerd
         def registered(app)
           app.before_configuration do
-            template_extensions :liquid => :html
+            template_extensions liquid: :html
           end
 
           # After config, setup liquid partial paths
@@ -18,8 +18,8 @@ module Middleman
             ::Liquid::Template.file_system = ::Liquid::LocalFileSystem.new(source_dir)
 
             # Convert data object into a hash for liquid
-            sitemap.provides_metadata %r{\.liquid$} do |path|
-              { :locals => { :data => data.to_h } }
+            sitemap.provides_metadata %r{\.liquid$} do
+              { locals: { data: data.to_h } }
             end
           end
         end

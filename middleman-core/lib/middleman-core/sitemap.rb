@@ -25,17 +25,17 @@ module Middleman
         # Setup callbacks which can exclude paths from the sitemap
         app.config.define_setting :ignored_sitemap_matchers, {
           # dotfiles and folders in the root
-          :root_dotfiles => proc { |file| file.start_with?('.') },
+          root_dotfiles: proc { |file| file.start_with?('.') },
 
           # Files starting with an dot, but not .htaccess
-          :source_dotfiles => proc { |file|
+          source_dotfiles: proc { |file|
             file =~ %r{/\.} && file !~ %r{/\.(htaccess|htpasswd|nojekyll)}
           },
 
           # Files starting with an underscore, but not a double-underscore
-          :partials => proc { |file| file =~ %r{/_[^_]} },
+          partials: proc { |file| file =~ %r{/_[^_]} },
 
-          :layout => proc { |file, sitemap_app|
+          layout: proc { |file, sitemap_app|
             file.start_with?(File.join(sitemap_app.config[:source], 'layout.')) || file.start_with?(File.join(sitemap_app.config[:source], 'layouts/'))
           }
         }, 'Callbacks that can exclude paths from the sitemap'

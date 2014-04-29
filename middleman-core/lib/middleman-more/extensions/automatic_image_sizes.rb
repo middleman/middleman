@@ -24,7 +24,7 @@ class Middleman::Extensions::AutomaticImageSizes < ::Middleman::Extension
 
         if File.exist?(full_path)
           begin
-            width, height = ::FastImage.size(full_path, :raise_on_failure => true)
+            width, height = ::FastImage.size(full_path, raise_on_failure: true)
             params[:width]  = width
             params[:height] = height
           rescue FastImage::UnknownImageType

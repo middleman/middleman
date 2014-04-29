@@ -19,26 +19,26 @@ module Middleman::Cli
 
     desc 'build [options]', 'Builds the static site for deployment'
     method_option :clean,
-                  :type    => :boolean,
-                  :default => true,
-                  :desc    => 'Remove orphaned files from build (--no-clean to disable)'
+                  type: :boolean,
+                  default: true,
+                  desc: 'Remove orphaned files from build (--no-clean to disable)'
     method_option :glob,
-                  :type    => :string,
-                  :aliases => '-g',
-                  :default => nil,
-                  :desc    => 'Build a subset of the project'
+                  type: :string,
+                  aliases: '-g',
+                  default: nil,
+                  desc: 'Build a subset of the project'
     method_option :verbose,
-                  :type    => :boolean,
-                  :default => false,
-                  :desc    => 'Print debug messages'
+                  type: :boolean,
+                  default: false,
+                  desc: 'Print debug messages'
     method_option :instrument,
-                  :type    => :string,
-                  :default => false,
-                  :desc    => 'Print instrument messages'
+                  type: :string,
+                  default: false,
+                  desc: 'Print instrument messages'
     method_option :profile,
-                  :type    => :boolean,
-                  :default => false,
-                  :desc    => 'Generate profiling report for the build'
+                  type: :boolean,
+                  default: false,
+                  desc: 'Generate profiling report for the build'
 
     # Core build Thor command
     # @return [void]
@@ -135,11 +135,11 @@ module Middleman::Cli
     # @return [void]
     def clean!
       @to_clean.each do |f|
-        base.remove_file f, :force => true
+        base.remove_file f, force: true
       end
 
       Dir[@build_dir.join('**', '*')].select { |d| File.directory?(d) }.each do |d|
-        base.remove_file d, :force => true if directory_empty? d
+        base.remove_file d, force: true if directory_empty? d
       end
     end
 
@@ -273,7 +273,6 @@ module Middleman::Cli
       base.say_status :error, file_name, :red
       if base.debugging
         raise e
-        exit(1)
       elsif base.options['verbose']
         base.shell.say response, :red
       end

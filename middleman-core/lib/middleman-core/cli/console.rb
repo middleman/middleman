@@ -10,26 +10,24 @@ module Middleman::Cli
 
     desc 'console [options]', 'Start an interactive console in the context of your Middleman application'
     method_option :environment,
-                  :aliases => '-e',
-                  :default => ENV['MM_ENV'] || ENV['RACK_ENV'] || 'development',
-                  :desc    => 'The environment Middleman will run under'
+                  aliases: '-e',
+                  default: ENV['MM_ENV'] || ENV['RACK_ENV'] || 'development',
+                  desc: 'The environment Middleman will run under'
     method_option :verbose,
-                  :type    => :boolean,
-                  :default => false,
-                  :desc    => 'Print debug messages'
+                  type: :boolean,
+                  default: false,
+                  desc: 'Print debug messages'
     def console
       require 'middleman-core'
       require 'irb'
 
       opts = {
-        :environment => options['environment'],
-        :debug => options['verbose']
+        environment: options['environment'],
+        debug: options['verbose']
       }
 
       @app = ::Middleman::Application.server.inst do
-        if opts[:environment]
-          set :environment, opts[:environment].to_sym
-        end
+        set :environment, opts[:environment].to_sym if opts[:environment]
 
         ::Middleman::Logger.singleton(opts[:debug] ? 0 : 1, opts[:instrumenting] || false)
       end

@@ -38,8 +38,8 @@ RSpec::Core::RakeTask.new do |spec|
 end
 
 desc 'Run tests, both RSpec and Cucumber'
-task :test => [:spec, :cucumber]
+task test: [:spec, :cucumber]
 
 YARD::Rake::YardocTask.new
 
-task :default => :test
+task default: :test

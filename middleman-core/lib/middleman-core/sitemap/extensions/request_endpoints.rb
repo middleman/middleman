@@ -37,7 +37,7 @@ module Middleman
           # differs from the output path
           def create_endpoint(path, opts={}, &block)
             endpoint = {
-              :request_path => path
+              request_path: path
             }
 
             if block_given?
@@ -79,7 +79,7 @@ module Middleman
             true
           end
 
-          def render(*args, &block)
+          def render(*)
             return output.call if output
           end
 

@@ -61,7 +61,7 @@ module Middleman
       class API
         attr_reader :app
         attr_reader :known_paths
-        delegate :logger, :to => :app
+        delegate :logger, to: :app
 
         # Initialize api and internal path cache
         def initialize(app)

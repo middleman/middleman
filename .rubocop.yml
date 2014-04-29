@@ -25,8 +25,7 @@ Documentation:
 Encoding:
   Enabled: false
 HashSyntax:
-  # EnforcedStyle: ruby19
-  Enabled: false
+  EnforcedStyle: ruby19
 SpaceAroundEqualsInParameterDefault:
   EnforcedStyle: no_space
 Blocks:

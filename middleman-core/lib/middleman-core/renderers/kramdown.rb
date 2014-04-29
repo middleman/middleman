@@ -4,7 +4,7 @@ module Middleman
   module Renderers
     # Our own Kramdown Tilt template that simply uses our custom renderer.
     class KramdownTemplate < ::Tilt::KramdownTemplate
-      def evaluate(scope, locals, &block)
+      def evaluate(*)
         @output ||= begin
           output, warnings = MiddlemanKramdownHTML.convert(@engine.root, @engine.options)
           @engine.warnings.concat(warnings)
@@ -17,7 +17,7 @@ module Middleman
     class MiddlemanKramdownHTML < ::Kramdown::Converter::Html
       cattr_accessor :middleman_app
 
-      def convert_img(el, indent)
+      def convert_img(el, _)
         attrs = el.attr.dup
 
         link = attrs.delete('src')

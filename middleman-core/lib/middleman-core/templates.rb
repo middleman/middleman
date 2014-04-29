@@ -39,13 +39,13 @@ module Middleman::Templates
     end
 
     # Required path for the new project to be generated
-    argument :location, :type => :string
+    argument :location, type: :string
 
     # Name of the template being used to generate the project.
-    class_option :template, :default => 'default'
+    class_option :template, default: 'default'
 
     # Output a config.ru file for Rack if --rack is passed
-    class_option :rack, :type => :boolean, :default => false
+    class_option :rack, type: :boolean, default: false
 
     # Write a Rack config.ru file for project
     # @return [void]
@@ -54,8 +54,8 @@ module Middleman::Templates
       template 'shared/config.ru', File.join(location, 'config.ru')
     end
 
-    class_option :'skip-bundle', :type => :boolean, :default => false
-    class_option :'skip-gemfile', :type => :boolean, :default => false
+    class_option :'skip-bundle', type: :boolean, default: false
+    class_option :'skip-gemfile', type: :boolean, default: false
 
     # Write a Bundler Gemfile file for project
     # @return [void]
@@ -70,7 +70,7 @@ module Middleman::Templates
     end
 
     # Output a .gitignore file
-    class_option :'skip-git', :type => :boolean, :default => false
+    class_option :'skip-git', type: :boolean, default: false
 
     # Write a .gitignore file for project
     # @return [void]
@@ -94,9 +94,8 @@ require 'middleman-core/templates/mobile'
 require 'middleman-more/templates/smacss'
 
 # Local templates
-if ENV['HOME'] # Sometimes HOME doesn't exist, in which case there's no point to local templates
-  require 'middleman-core/templates/local'
-end
+# Sometimes HOME doesn't exist, in which case there's no point to local templates
+require 'middleman-core/templates/local' if ENV['HOME']
 
 # Barebones template
 require 'middleman-core/templates/empty'

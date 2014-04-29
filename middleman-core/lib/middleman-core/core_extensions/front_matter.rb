@@ -43,7 +43,7 @@ module Middleman::CoreExtensions
           data[opt] = fmdata[opt] unless fmdata[opt].nil?
         end
 
-        { :options => data, :page => ::Middleman::Util.recursively_enhance(fmdata).freeze }
+        { options: data, page: ::Middleman::Util.recursively_enhance(fmdata).freeze }
       end
     end
 
@@ -114,6 +114,7 @@ module Middleman::CoreExtensions
     end
 
     private
+
     # Parse YAML frontmatter out of a string
     # @param [String] content
     # @return [Array<Hash, String>]

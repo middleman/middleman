@@ -7,7 +7,7 @@ module Middleman
         # once registered
         def registered(app)
           app.before_configuration do
-            template_extensions :erb => :html
+            template_extensions erb: :html
           end
 
           # After config

@@ -20,7 +20,7 @@ module Middleman
         # Once registered
         def registered(app)
           app.before_configuration do
-            template_extensions :haml => :html
+            template_extensions haml: :html
           end
 
           # Add haml helpers to context

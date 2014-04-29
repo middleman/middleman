@@ -9,7 +9,7 @@ module Middleman::Cli
     namespace :extension
 
     # Required path for the new project to be generated
-    argument :name, :type => :string
+    argument :name, type: :string
 
     # Template files are relative to this file
     # @return [String]
@@ -33,7 +33,7 @@ module Middleman::Cli
     end
 
     # Output a .gitignore file
-    class_option :git, :type => :boolean, :default => true
+    class_option :git, type: :boolean, default: true
 
     no_tasks {
       # Write a .gitignore file for project

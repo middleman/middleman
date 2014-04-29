@@ -39,7 +39,7 @@ module Middleman
 
           # Use the metadata loop for matching against paths at runtime
           sitemap.provides_metadata_for_path(url) do |_|
-            { :options => opts, :blocks => blocks }
+            { options: opts, blocks: blocks }
           end
 
           return
@@ -54,7 +54,8 @@ module Middleman
         # Setup proxy
         if target = opts.delete(:proxy)
           # TODO: deprecate proxy through page?
-          proxy(url, target, opts, &block) and return
+          proxy(url, target, opts, &block)
+          return
         elsif opts.delete(:ignore)
           # TODO: deprecate ignore through page?
           ignore(url)
@@ -62,7 +63,7 @@ module Middleman
 
         # Setup a metadata matcher for rendering those options
         sitemap.provides_metadata_for_path(url) do |_|
-          { :options => opts, :blocks => blocks }
+          { options: opts, blocks: blocks }
         end
       end
     end

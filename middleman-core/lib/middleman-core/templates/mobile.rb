@@ -1,9 +1,9 @@
 # Mobile HTML5 Boilerplate
 class Middleman::Templates::Mobile < Middleman::Templates::Base
   # Slightly different paths
-  class_option :css_dir, :default => 'css'
-  class_option :js_dir, :default => 'js'
-  class_option :images_dir, :default => 'img'
+  class_option :css_dir, default: 'css'
+  class_option :js_dir, default: 'js'
+  class_option :images_dir, default: 'img'
 
   # Template files are relative to this file
   # @return [String]

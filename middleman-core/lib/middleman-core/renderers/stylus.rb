@@ -13,7 +13,7 @@ module Middleman
           app.set :styl, {}
 
           app.before_configuration do
-            template_extensions :styl => :css
+            template_extensions styl: :css
           end
         end
 

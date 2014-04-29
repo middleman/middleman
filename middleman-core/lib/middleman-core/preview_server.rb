@@ -2,13 +2,14 @@ require 'webrick'
 require 'middleman-core/meta_pages'
 require 'middleman-core/logger'
 
+# rubocop:disable GlobalVars
 module Middleman
   module PreviewServer
     DEFAULT_PORT = 4567
 
     class << self
       attr_reader :app, :host, :port
-      delegate :logger, :to => :app
+      delegate :logger, to: :app
 
       # Start an instance of Middleman::Application
       # @return [void]
@@ -89,6 +90,7 @@ module Middleman
       end
 
       private
+
       def new_app
         opts = @options.dup
         server = ::Middleman::Application.server
@@ -119,7 +121,7 @@ module Middleman
         if first_run
           # Watcher Library
           require 'listen'
-          @listener = Listen.to(Dir.pwd, :relative_paths => true, :force_polling => @options[:force_polling])
+          @listener = Listen.to(Dir.pwd, relative_paths: true, force_polling: @options[:force_polling])
           @listener.latency(@options[:latency])
         end
 
@@ -165,10 +167,10 @@ module Middleman
       # @return [void]
       def setup_webrick(is_logging)
         http_opts = {
-          :BindAddress        => host,
-          :Port               => port,
-          :AccessLog          => [],
-          :DoNotReverseLookup => true
+          BindAddress: host,
+          Port: port,
+          AccessLog: [],
+          DoNotReverseLookup: true
         }
 
         if is_logging

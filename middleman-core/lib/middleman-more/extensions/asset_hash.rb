@@ -16,7 +16,7 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
     # Allow specifying regexes to ignore, plus always ignore apple touch icons
     @ignore = Array(options.ignore) + [/^apple-touch-icon/]
 
-    app.use Middleware, :exts => options.exts, :middleman_app => app, :ignore => @ignore
+    app.use Middleware, exts: options.exts, middleman_app: app, ignore: @ignore
   end
 
   # Update the main sitemap resource list

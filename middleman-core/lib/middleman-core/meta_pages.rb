@@ -19,7 +19,7 @@ module Middleman
         meta_pages = self
         @rack_app = Rack::Builder.new do
           # Serve assets from metadata/assets
-          use Rack::Static, :urls => ['/assets'], :root => File.join(File.dirname(__FILE__), 'meta_pages')
+          use Rack::Static, urls: ['/assets'], root: File.join(File.dirname(__FILE__), 'meta_pages')
 
           map '/' do
             run meta_pages.method(:index)
@@ -54,7 +54,7 @@ module Middleman
           sitemap_tree.add_resource resource
         end
 
-        template('sitemap.html.erb', :sitemap_tree => sitemap_tree)
+        template('sitemap.html.erb', sitemap_tree: sitemap_tree)
       end
 
       # Inspect configuration
@@ -80,9 +80,9 @@ module Middleman
         end
 
         template('config.html.erb',
-                 :global_config => global_config,
-                 :extension_config => extension_config,
-                 :registered_extensions => Middleman::Extensions.registered.dup)
+                 global_config: global_config,
+                 extension_config: extension_config,
+                 registered_extensions: Middleman::Extensions.registered.dup)
       end
 
       private

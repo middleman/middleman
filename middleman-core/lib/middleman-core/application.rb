@@ -52,20 +52,20 @@ module Middleman
       class_eval(&block)   if block_given?
       include(*extensions) if extensions.any?
     end
-    delegate :helpers, :to => :"self.class"
+    delegate :helpers, to: :"self.class"
 
     # Root project directory (overwritten in middleman build/server)
     # @return [String]
     def self.root
       ENV['MM_ROOT'] || Dir.pwd
     end
-    delegate :root, :to => :"self.class"
+    delegate :root, to: :"self.class"
 
     # Pathname-addressed root
     def self.root_path
       Pathname(root)
     end
-    delegate :root_path, :to => :"self.class"
+    delegate :root_path, to: :"self.class"
 
     # Name of the source directory
     # @return [String]
@@ -195,7 +195,7 @@ module Middleman
     def self.cache
       @_cache ||= ::Tilt::Cache.new
     end
-    delegate :cache, :to => :"self.class"
+    delegate :cache, to: :"self.class"
 
     # Whether we're in development mode
     # @return [Boolean] If we're in dev mode
@@ -216,7 +216,7 @@ module Middleman
       File.join(root, config[:source])
     end
 
-    delegate :instrument, :to => ::Middleman::Util
+    delegate :instrument, to: ::Middleman::Util
 
     # Work around this bug: http://bugs.ruby-lang.org/issues/4521
     # where Ruby will call to_s/inspect while printing exception

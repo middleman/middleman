@@ -24,20 +24,20 @@ module Middleman
         # Once registered
         def registered(app)
           app.before_configuration do
-            template_extensions :slim => :html
+            template_extensions slim: :html
           end
 
           # Setup Slim options to work with partials
           ::Slim::Engine.set_default_options(
-            :buffer    => '@_out_buf',
-            :use_html_safe => true,
-            :generator => ::Temple::Generators::RailsOutputBuffer,
-            :disable_escape => true
+            buffer: '@_out_buf',
+            use_html_safe: true,
+            generator: ::Temple::Generators::RailsOutputBuffer,
+            disable_escape: true
           )
 
           app.after_configuration do
             context_hack = {
-              :context => self
+              context: self
             }
 
             ::Slim::Embedded::SassEngine.disable_option_validator!

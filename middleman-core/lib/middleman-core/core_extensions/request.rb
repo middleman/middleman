@@ -69,15 +69,15 @@ module Middleman
             app.use Rack::Lint
             app.use Rack::Head
 
-            Array(@middleware).each do |klass, options, block|
-              app.use(klass, *options, &block)
+            Array(@middleware).each do |klass, options, middleware_block|
+              app.use(klass, *options, &middleware_block)
             end
 
             inner_app = inst(&block)
             app.map('/') { run inner_app }
 
-            Array(@mappings).each do |path, block|
-              app.map(path, &block)
+            Array(@mappings).each do |path, map_block|
+              app.map(path, &map_block)
             end
 
             app
@@ -125,6 +125,7 @@ module Middleman
         # configuration can be included later without impacting
         # other classes and instances.
         #
+        # rubocop:disable ClassVars
         # @return [Class]
         def server(&block)
           @@servercounter ||= 0
@@ -165,13 +166,13 @@ module Middleman
         def current_path=(path)
           Thread.current[:current_path] = path
           Thread.current[:legacy_request] = ::Thor::CoreExt::HashWithIndifferentAccess.new(
-                                                                                             :path   => path,
-                                                                                             :params => req ? ::Thor::CoreExt::HashWithIndifferentAccess.new(req.params) : {}
+                                                                                             path: path,
+                                                                                             params: req ? ::Thor::CoreExt::HashWithIndifferentAccess.new(req.params) : {}
           )
         end
 
-        delegate :use, :to => :"self.class"
-        delegate :map, :to => :"self.class"
+        delegate :use, to: :"self.class"
+        delegate :map, to: :"self.class"
 
         # Rack request
         # @return [Rack::Request]
