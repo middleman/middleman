@@ -30,7 +30,7 @@ end
 
 # Code Quality
 gem 'coveralls', require: false
-gem 'rubocop', require: false, group: :development
+gem 'rubocop', require: false
 
 # Middleman itself
 gem 'middleman-core', path: 'middleman-core'
