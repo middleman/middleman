@@ -4,12 +4,11 @@ require 'middleman-core/logger'
 
 module Middleman
   module PreviewServer
-
     DEFAULT_PORT = 4567
 
     class << self
       attr_reader :app, :host, :port
-      delegate :logger, :to => :app
+      delegate :logger, to: :app
 
       # Start an instance of Middleman::Application
       # @return [void]
@@ -70,7 +69,7 @@ module Middleman
 
         begin
           app = new_app
-        rescue Exception => e
+        rescue => e
           logger.error "Error reloading Middleman: #{e}\n#{e.backtrace.join("\n")}"
           logger.info '== The Middleman is still running the application from before the error'
           return
@@ -89,7 +88,7 @@ module Middleman
         @webrick.shutdown
       end
 
-    private
+      private
       def new_app
         opts = @options.dup
         server = ::Middleman::Application.server
@@ -120,7 +119,7 @@ module Middleman
         if first_run
           # Watcher Library
           require 'listen'
-          @listener = Listen.to(Dir.pwd, :relative_paths => true, :force_polling => @options[:force_polling])
+          @listener = Listen.to(Dir.pwd, relative_paths: true, force_polling: @options[:force_polling])
           @listener.latency(@options[:latency])
         end
 
@@ -166,10 +165,10 @@ module Middleman
       # @return [void]
       def setup_webrick(is_logging)
         http_opts = {
-          :BindAddress        => host,
-          :Port               => port,
-          :AccessLog          => [],
-          :DoNotReverseLookup => true
+          BindAddress: host,
+          Port: port,
+          AccessLog: [],
+          DoNotReverseLookup: true
         }
 
         if is_logging
@@ -181,7 +180,7 @@ module Middleman
         begin
           ::WEBrick::HTTPServer.new(http_opts)
         rescue Errno::EADDRINUSE
-          logger.error "== Port #{port} is unavailable. Either close the instance of Middleman already running on #{port} or start this Middleman on a new port with: --port=#{port.to_i+1}"
+          logger.error "== Port #{port} is unavailable. Either close the instance of Middleman already running on #{port} or start this Middleman on a new port with: --port=#{port.to_i + 1}"
           exit(1)
         end
       end
@@ -236,7 +235,6 @@ module Middleman
         host = (@host == '0.0.0.0') ? 'localhost' : @host
         URI("http://#{host}:#{@port}")
       end
-
     end
 
     class FilteredWebrickLog < ::WEBrick::Log

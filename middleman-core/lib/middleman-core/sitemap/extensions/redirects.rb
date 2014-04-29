@@ -1,11 +1,8 @@
 require 'middleman-core/sitemap/resource'
 
 module Middleman
-
   module Sitemap
-
     module Extensions
-
       # Manages the list of proxy configurations and manipulates the sitemap
       # to include new resources based on those configurations
       class Redirects
@@ -58,10 +55,10 @@ module Middleman
         end
 
         def render(*args, &block)
-          url = ::Middleman::Util.url_for(store.app, @request_path, {
-            :relative => false,
-            :find_resource => true
-          })
+          url = ::Middleman::Util.url_for(store.app, @request_path,
+                                          relative: false,
+                                          find_resource: true
+          )
 
           if output
             output.call(path, url)
@@ -99,7 +96,6 @@ module Middleman
         def metadata
           @local_metadata.dup
         end
-
       end
     end
   end

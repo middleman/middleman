@@ -4,10 +4,8 @@ require 'active_support/logger'
 require 'thread'
 
 module Middleman
-
   # The Middleman Logger
   class Logger < ActiveSupport::Logger
-
     def self.singleton(*args)
       if !@_logger || args.length > 0
         if args.length == 1 && (args.first.is_a?(::String) || args.first.respond_to?(:write))
@@ -42,7 +40,7 @@ module Middleman
       return if @instrumenting.is_a?(String) && @instrumenting != 'instrument' && !message.include?(@instrumenting)
 
       evt = ActiveSupport::Notifications::Event.new(message, *args)
-      self.info "== Instrument (#{evt.name.sub(/.middleman$/, '')}): #{evt.duration}ms"
+      info "== Instrument (#{evt.name.sub(/.middleman$/, '')}): #{evt.duration}ms"
     end
   end
 end

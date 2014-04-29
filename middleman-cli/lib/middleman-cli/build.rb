@@ -4,7 +4,7 @@ require 'set'
 # CLI Module
 module Middleman::Cli
   # Alias "b" to "build"
-  Base.map({ 'b' => 'build' })
+  Base.map('b' => 'build')
 
   # The CLI Build class
   class Build < Thor
@@ -19,31 +19,31 @@ module Middleman::Cli
 
     desc 'build [options]', 'Builds the static site for deployment'
     method_option :clean,
-      :type    => :boolean,
-      :default => true,
-      :desc    => 'Remove orphaned files from build (--no-clean to disable)'
+                  type: :boolean,
+                  default: true,
+                  desc: 'Remove orphaned files from build (--no-clean to disable)'
     method_option :glob,
-      :type    => :string,
-      :aliases => '-g',
-      :default => nil,
-      :desc    => 'Build a subset of the project'
+                  type: :string,
+                  aliases: '-g',
+                  default: nil,
+                  desc: 'Build a subset of the project'
     method_option :verbose,
-      :type    => :boolean,
-      :default => false,
-      :desc    => 'Print debug messages'
+                  type: :boolean,
+                  default: false,
+                  desc: 'Print debug messages'
     method_option :instrument,
-      :type    => :string,
-      :default => false,
-      :desc    => 'Print instrument messages'
+                  type: :string,
+                  default: false,
+                  desc: 'Print instrument messages'
     method_option :profile,
-      :type    => :boolean,
-      :default => false,
-      :desc    => 'Generate profiling report for the build'
+                  type: :boolean,
+                  default: false,
+                  desc: 'Generate profiling report for the build'
 
     # Core build Thor command
     # @return [void]
     def build
-      if !ENV['MM_ROOT']
+      unless ENV['MM_ROOT']
         raise Thor::Error, 'Error: Could not find a Middleman project config, perhaps you are in the wrong folder?'
       end
 
@@ -61,7 +61,7 @@ module Middleman::Cli
       self.class.shared_instance(options['verbose'], options['instrument'])
 
       opts = {}
-      opts[:glob]  = options['glob'] if options.has_key?('glob')
+      opts[:glob]  = options['glob'] if options.key?('glob')
       opts[:clean] = options['clean']
 
       self.class.shared_instance.run_hook :before_build, self
@@ -71,15 +71,15 @@ module Middleman::Cli
       self.class.shared_instance.run_hook :after_build, self
       self.class.shared_instance.config_context.execute_after_build_callbacks(self)
 
-      if self.had_errors && !self.debugging
+      if had_errors && !debugging
         msg = 'There were errors during this build'
         unless options['verbose']
           msg << ', re-run with `middleman build --verbose` to see the full exception.'
         end
-        self.shell.say msg, :red
+        shell.say msg, :red
       end
 
-      exit(1) if self.had_errors
+      exit(1) if had_errors
     end
 
     # Static methods
@@ -129,17 +129,17 @@ module Middleman::Cli
       clean! if should_clean?
     end
 
-  protected
+    protected
 
     # Remove files which were not built in this cycle
     # @return [void]
     def clean!
       @to_clean.each do |f|
-        base.remove_file f, :force => true
+        base.remove_file f, force: true
       end
 
-      Dir[@build_dir.join('**', '*')].select {|d| File.directory?(d) }.each do |d|
-        base.remove_file d, :force => true if directory_empty? d
+      Dir[@build_dir.join('**', '*')].select { |d| File.directory?(d) }.each do |d|
+        base.remove_file d, force: true if directory_empty? d
       end
     end
 

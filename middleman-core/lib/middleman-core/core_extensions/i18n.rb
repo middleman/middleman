@@ -37,8 +37,8 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
 
     configure_i18n
 
-    if !app.build?
-      logger.info "== Locales: #{langs.join(", ")} (Default #{@mount_at_root})"
+    unless app.build?
+      logger.info "== Locales: #{langs.join(', ')} (Default #{@mount_at_root})"
     end
 
     # Don't output localizable files
@@ -55,7 +55,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
     end
   end
 
-  delegate :logger, :to => :app
+  delegate :logger, to: :app
 
   def langs
     @_langs ||= get_known_languages
@@ -70,7 +70,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
 
     resources.each do |resource|
       # If it uses file extension localization
-      if !parse_locale_extension(resource.path).nil?
+      if parse_locale_extension(resource.path)
         result = parse_locale_extension(resource.path)
         lang, path, page_id = result
         new_resources << build_resource(path, resource.path, page_id, lang)
@@ -89,7 +89,6 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
   end
 
   private
-
 
   def on_file_changed(file)
     if @locales_regex =~ file
@@ -125,11 +124,11 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
     end
 
     {
-      :locals => {
-        :lang => lang,
-        :page_id => page_id
+      locals: {
+        lang: lang,
+        page_id: page_id
       },
-      :options => { :lang => lang }
+      options: { lang: lang }
     }
   end
 
@@ -168,9 +167,9 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
   def build_resource(path, source_path, page_id, lang)
     old_locale = ::I18n.locale
     ::I18n.locale = lang
-    localized_page_id = ::I18n.t("paths.#{page_id}", :default => page_id, :fallback => [])
+    localized_page_id = ::I18n.t("paths.#{page_id}", default: page_id, fallback: [])
 
-    prefix = if (options[:mount_at_root] == lang) || (options[:mount_at_root] == nil && langs[0] == lang)
+    prefix = if (options[:mount_at_root] == lang) || (options[:mount_at_root].nil? && langs[0] == lang)
       '/'
     else
       replacement = options[:lang_map].fetch(lang, lang)
@@ -182,7 +181,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
       File.join(prefix, path.sub(page_id, localized_page_id))
     )
 
-    path.gsub!(options[:templates_dir]+'/', '')
+    path.gsub!(options[:templates_dir] + '/', '')
 
     @_localization_data[path] = [lang, path, localized_page_id]
 

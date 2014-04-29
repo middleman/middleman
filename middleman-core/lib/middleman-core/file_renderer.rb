@@ -2,14 +2,12 @@ require 'tilt'
 require 'active_support/core_ext/string/output_safety'
 
 module Middleman
-
   class FileRenderer
-
     def self.cache
       @_cache ||= ::Tilt::Cache.new
     end
 
-    delegate :cache, :to => :"self.class"
+    delegate :cache, to: :"self.class"
 
     def initialize(app, path)
       @app = app
@@ -22,7 +20,7 @@ module Middleman
     # @param [Hash] opts
     # @param [Class] context
     # @return [String]
-    def render(locs = {}, opts = {}, context, &block)
+    def render(locs={}, opts={}, context, &block)
       path = @path.dup
 
       # Detect the remdering engine from the extension
@@ -60,7 +58,7 @@ module Middleman
 
       # Read compiled template from disk or cache
       template = cache.fetch(:compiled_template, extension, options, body) do
-       ::Tilt.new(path, 1, options) { body }
+        ::Tilt.new(path, 1, options) { body }
       end
 
       # Render using Tilt
@@ -91,7 +89,7 @@ module Middleman
       end
     end
 
-  protected
+    protected
 
     # Get a hash of configuration options for a given file extension, from
     # config.rb

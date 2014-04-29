@@ -1,6 +1,5 @@
 # Relative Assets extension
 class Middleman::Extensions::RelativeAssets < ::Middleman::Extension
-
   def initialize(app, options_hash={}, &block)
     super
 

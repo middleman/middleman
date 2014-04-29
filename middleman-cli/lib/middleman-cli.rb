@@ -8,9 +8,7 @@ require 'thor/group'
 
 # CLI Module
 module Middleman
-
   module Cli
-
     # The base task from which everything else extends
     class Base < Thor
       class << self
@@ -36,19 +34,19 @@ module Middleman
       # @param [Symbol, String, nil] meth
       # @param [Boolean] subcommand
       # @return [void]
-      def help(meth = nil, subcommand = false)
+      def help(meth=nil, subcommand=false)
         if meth && !self.respond_to?(meth)
           klass, task = Thor::Util.find_class_and_task_by_namespace("#{meth}:#{meth}")
-          klass.start(['-h', task].compact, :shell => self.shell)
+          klass.start(['-h', task].compact, shell: shell)
         else
           list = []
           Thor::Util.thor_classes_in(Middleman::Cli).each do |thor_class|
             list += thor_class.printable_tasks(false)
           end
-          list.sort!{ |a,b| a[0] <=> b[0] }
+          list.sort! { |a, b| a[0] <=> b[0] }
 
           shell.say 'Tasks:'
-          shell.print_table(list, :ident => 2, :truncate => true)
+          shell.print_table(list, ident: 2, truncate: true)
           shell.say %(\nSee 'middleman help <command>' for more information on specific command.)
           shell.say
         end
@@ -59,7 +57,7 @@ module Middleman
       def method_missing(meth, *args)
         meth = meth.to_s
 
-        if self.class.map.has_key?(meth)
+        if self.class.map.key?(meth)
           meth = self.class.map[meth]
         end
 
@@ -68,7 +66,7 @@ module Middleman
         if klass.nil?
           tasks_dir = File.join(Dir.pwd, 'tasks')
 
-          if File.exists?(tasks_dir)
+          if File.exist?(tasks_dir)
             Dir[File.join(tasks_dir, '**/*_task.rb')].each { |f| require f }
             klass, task = Thor::Util.find_class_and_task_by_namespace("#{meth}:#{meth}")
           end
@@ -78,7 +76,7 @@ module Middleman
           raise Thor::Error.new "There's no '#{meth}' command for Middleman. Try 'middleman help' for a list of commands."
         else
           args.unshift(task) if task
-          klass.start(args, :shell => self.shell)
+          klass.start(args, shell: shell)
         end
       end
     end

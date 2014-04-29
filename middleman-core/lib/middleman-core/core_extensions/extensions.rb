@@ -32,7 +32,6 @@
 module Middleman
   module CoreExtensions
     module Extensions
-
       # Register extension
       class << self
         # @private
@@ -49,7 +48,7 @@ module Middleman
 
           app.extend ClassMethods
           app.send :include, InstanceMethods
-          app.delegate :configure, :to => :"self.class"
+          app.delegate :configure, to: :"self.class"
         end
       end
 
@@ -123,7 +122,7 @@ module Middleman
 
           # Check for and evaluate local configuration
           local_config = File.join(root, 'config.rb')
-          if File.exists? local_config
+          if File.exist? local_config
             logger.debug '== Reading:  Local config'
             config_context.instance_eval File.read(local_config), local_config, 1
           end
@@ -145,7 +144,7 @@ module Middleman
           # polluted with paths from other test app directories that don't
           # exist anymore.
           if ENV['TEST']
-            ::I18n.load_path.delete_if {|path| path =~ %r{tmp/aruba}}
+            ::I18n.load_path.delete_if { |path| path =~ %r{tmp/aruba} }
             ::I18n.reload!
           end
 
@@ -153,9 +152,9 @@ module Middleman
           config_context.execute_after_configuration_callbacks
 
           logger.debug 'Loaded extensions:'
-          self.extensions.each do |ext, klass|
+          extensions.each do |ext, klass|
             if ext.is_a?(Hash)
-              ext.each do |k,_|
+              ext.each do |k, _|
                 logger.debug "== Extension: #{k}"
               end
             else

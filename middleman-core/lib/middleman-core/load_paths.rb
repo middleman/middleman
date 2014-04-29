@@ -2,7 +2,6 @@
 require 'pathname'
 
 module Middleman
-
   class << self
     def setup_load_paths
       @_is_setup ||= begin
@@ -31,11 +30,11 @@ module Middleman
     def setup_bundler
       ENV['BUNDLE_GEMFILE'] ||= findup('Gemfile', ENV['MM_ROOT'])
 
-      if !File.exists?(ENV['BUNDLE_GEMFILE'])
+      unless File.exist?(ENV['BUNDLE_GEMFILE'])
         ENV['BUNDLE_GEMFILE'] = File.expand_path('../../../../Gemfile', __FILE__)
       end
 
-      if File.exists?(ENV['BUNDLE_GEMFILE'])
+      if File.exist?(ENV['BUNDLE_GEMFILE'])
         require 'bundler/setup'
         Bundler.require
       else
@@ -44,12 +43,10 @@ module Middleman
     end
 
     # Recursive method to find a file in parent directories
-    def findup(filename, cwd = Pathname.new(Dir.pwd))
+    def findup(filename, cwd=Pathname.new(Dir.pwd))
       return cwd.to_s if (cwd + filename).exist?
       return false if cwd.root?
       findup(filename, cwd.parent)
     end
-
   end
-
 end

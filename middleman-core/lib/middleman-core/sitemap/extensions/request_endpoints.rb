@@ -1,11 +1,7 @@
 module Middleman
-
   module Sitemap
-
     module Extensions
-
       class RequestEndpoints
-
         # Manages the list of proxy configurations and manipulates the sitemap
         # to include new resources based on those configurations
         def initialize(sitemap)
@@ -21,13 +17,13 @@ module Middleman
         # differs from the output path
         def create_endpoint(path, opts={}, &block)
           endpoint = {
-            :request_path => path
+            request_path: path
           }
 
           if block_given?
             endpoint[:output] = block
           else
-            endpoint[:request_path] = opts[:path] if opts.has_key?(:path)
+            endpoint[:request_path] = opts[:path] if opts.key?(:path)
           end
 
           @endpoints[path] = endpoint
@@ -44,7 +40,7 @@ module Middleman
               path,
               config[:request_path]
             )
-            r.output = config[:output] if config.has_key?(:output)
+            r.output = config[:output] if config.key?(:output)
             r
           end
         end
@@ -64,12 +60,10 @@ module Middleman
         end
 
         def render(*args, &block)
-          return self.output.call if self.output
+          return output.call if output
         end
 
-        def request_path
-          @request_path
-        end
+        attr_reader :request_path
 
         def binary?
           false

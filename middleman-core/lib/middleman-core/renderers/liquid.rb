@@ -3,13 +3,10 @@ require 'liquid'
 
 module Middleman
   module Renderers
-
     # Liquid Renderer
     module Liquid
-
       # Setup extension
       class << self
-
         # Once registerd
         def registered(app)
           # After config, setup liquid partial paths
@@ -18,14 +15,13 @@ module Middleman
 
             # Convert data object into a hash for liquid
             sitemap.provides_metadata %r{\.liquid$} do |path|
-              { :locals => { :data => data.to_h } }
+              { locals: { data: data.to_h } }
             end
           end
         end
 
-        alias :included :registered
+        alias_method :included, :registered
       end
     end
-
   end
 end

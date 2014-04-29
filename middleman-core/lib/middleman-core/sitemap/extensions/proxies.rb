@@ -1,9 +1,6 @@
 module Middleman
-
   module Sitemap
-
     module Extensions
-
       # Manages the list of proxy configurations and manipulates the sitemap
       # to include new resources based on those configurations
       class Proxies
@@ -26,13 +23,13 @@ module Middleman
         def create_proxy(path, target, opts={})
           options = opts.dup
 
-          metadata = { :options => {}, :locals => {} }
+          metadata = { options: {}, locals: {} }
           metadata[:locals] = options.delete(:locals) || {}
 
           @app.ignore(target) if options.delete(:ignore)
           metadata[:options] = options
 
-          @proxy_configs << ProxyConfiguration.new(:path => path, :target => target, :metadata => metadata)
+          @proxy_configs << ProxyConfiguration.new(path: path, target: target, metadata: metadata)
 
           @app.sitemap.rebuild_resource_list!(:added_proxy)
         end
@@ -106,9 +103,7 @@ module Middleman
 
         # The path of the page this page is proxied to, or nil if it's not proxied.
         # @return [String]
-        def proxied_to
-          @proxied_to
-        end
+        attr_reader :proxied_to
 
         # The resource for the page this page is proxied to. Throws an exception
         # if there is no resource.

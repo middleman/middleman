@@ -14,7 +14,6 @@ require 'rack/mime'
 module Middleman
   module Util
     class << self
-
       # Whether the source file is binary.
       #
       # @param [String] filename The file to check.
@@ -27,7 +26,7 @@ module Middleman
 
         return false if Tilt.registered?(ext.sub('.', ''))
 
-        dot_ext = (ext.to_s[0] == ?.) ? ext.dup : ".#{ext}"
+        dot_ext = (ext.to_s[0] == '.') ? ext.dup : ".#{ext}"
 
         if mime = ::Rack::Mime.mime_type(dot_ext, nil)
           !nonbinary_mime?(mime)
@@ -69,7 +68,7 @@ module Middleman
       # @return [String]
       def normalize_path(path)
         # The tr call works around a bug in Ruby's Unicode handling
-        path.sub(%r{^/}, '').tr('','')
+        path.sub(%r{^/}, '').tr('', '')
       end
 
       # This is a separate method from normalize_path in case we
@@ -210,7 +209,7 @@ module Middleman
       def full_path(path, app)
         resource = app.sitemap.find_resource_by_destination_path(path)
 
-        if !resource
+        unless resource
           # Try it with /index.html at the end
           indexed_path = File.join(path.sub(%r{/$}, ''), app.config[:index_file])
           resource = app.sitemap.find_resource_by_destination_path(indexed_path)
@@ -294,7 +293,6 @@ module Middleman
     #   hash.foo?   #=> true
     #
     class HashWithIndifferentAccess < ::Hash #:nodoc:
-
       def initialize(hash={})
         super()
         hash.each do |key, value|
@@ -315,7 +313,7 @@ module Middleman
       end
 
       def values_at(*indices)
-        indices.collect { |key| self[convert_key(key)] }
+        indices.map { |key| self[convert_key(key)] }
       end
 
       def merge(other)
@@ -336,9 +334,9 @@ module Middleman
 
       protected
 
-        def convert_key(key)
-          key.is_a?(Symbol) ? key.to_s : key
-        end
+      def convert_key(key)
+        key.is_a?(Symbol) ? key.to_s : key
+      end
 
         # Magic predicates. For instance:
         #
@@ -346,18 +344,18 @@ module Middleman
         #   options.shebang                 # => "/usr/lib/local/ruby"
         #   options.test_framework?(:rspec) # => options[:test_framework] == :rspec
         #
-        def method_missing(method, *args, &block)
-          method = method.to_s
-          if method =~ /^(\w+)\?$/
-            if args.empty?
-              !!self[$1]
-            else
-              self[$1] == args.first
-            end
+      def method_missing(method, *args, &block)
+        method = method.to_s
+        if method =~ /^(\w+)\?$/
+          if args.empty?
+            !!self[$1]
           else
-            self[method]
+            self[$1] == args.first
           end
+        else
+          self[method]
         end
+      end
     end
   end
 end

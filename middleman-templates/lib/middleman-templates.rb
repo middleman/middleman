@@ -18,7 +18,7 @@ module Middleman
       # @param [Symbol] name The name of the template
       # @param [Class] klass The class to be executed for this template
       # @return [Hash] List of registered templates
-      def register(name = nil, klass = nil)
+      def register(name=nil, klass=nil)
         @_template_mappings ||= {}
         @_template_mappings[name] = klass if name && klass
         @_template_mappings
@@ -97,7 +97,7 @@ if ENV['HOME']
 
     # If a template.rb file is found require it (therefore registering the template)
     # else register the folder as a Local template (which when built, just copies the folder)
-    if File.exists?(template_file)
+    if File.exist?(template_file)
       require template_file
     else
       Middleman::Templates.register(File.basename(dir).to_sym, Middleman::Templates::Local)

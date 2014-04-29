@@ -7,7 +7,7 @@ module Middleman
         # Setup a default helpers paths
         app.config.define_setting :helpers_dir, 'helpers', 'Directory to autoload helper modules from'
         app.config.define_setting :helpers_filename_glob, '**.rb', 'Glob pattern for matching helper ruby files'
-        app.config.define_setting :helpers_filename_to_module_name_proc, Proc.new { |filename|
+        app.config.define_setting :helpers_filename_to_module_name_proc, proc { |filename|
           basename = File.basename(filename, File.extname(filename))
           basename.camelcase
         }, 'Proc implementing the conversion from helper filename to module name'
@@ -15,7 +15,7 @@ module Middleman
         # After config
         app.after_configuration do
           helpers_path = File.join(root, config[:helpers_dir])
-          next unless File.exists?(helpers_path)
+          next unless File.exist?(helpers_path)
 
           Dir[File.join(helpers_path, config[:helpers_filename_glob])].each do |filename|
             module_name = config[:helpers_filename_to_module_name_proc].call(filename)

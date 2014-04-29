@@ -4,7 +4,6 @@ module Middleman
     module ERb
       # Setup extension
       class << self
-
         # once registered
         def registered(app)
           # After config
@@ -12,7 +11,7 @@ module Middleman
             ::Tilt.prefer(Template, :erb)
           end
         end
-        alias :included :registered
+        alias_method :included, :registered
       end
 
       class Template < ::Tilt::ErubisTemplate
@@ -22,7 +21,7 @@ module Middleman
         def precompiled_preamble(locals)
           original = super
           "__in_erb_template = true\n" << original
-          #.rpartition("\n").first << "#{@outvar} = _buf = ActiveSupport::SafeBuffer.new\n"
+          # .rpartition("\n").first << "#{@outvar} = _buf = ActiveSupport::SafeBuffer.new\n"
         end
       end
     end

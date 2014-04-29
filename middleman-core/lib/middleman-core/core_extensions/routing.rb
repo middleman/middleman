@@ -2,7 +2,6 @@
 module Middleman
   module CoreExtensions
     module Routing
-
       # Sandboxed layout to implement temporary overriding of layout.
       class LayoutBlock
         attr_reader :scope
@@ -17,7 +16,7 @@ module Middleman
           @scope.page(url, opts)
         end
 
-        delegate :proxy, :to => :scope
+        delegate :proxy, to: :scope
       end
 
       # Takes a block which allows many pages to have the same layout
@@ -46,7 +45,7 @@ module Middleman
 
         # Default layout
         options[:layout] = @app.config[:layout] if options[:layout].nil?
-        metadata = { :options => options, :locals => options.delete(:locals) || {} }
+        metadata = { options: options, locals: options.delete(:locals) || {} }
 
         # If the url is a regexp
         unless url.is_a?(Regexp) || url.include?('*')

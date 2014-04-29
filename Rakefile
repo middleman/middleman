@@ -11,11 +11,11 @@ middleman_gems = %w(middleman-core middleman-templates middleman-cli middleman)
 GEM_PATHS = middleman_gems.freeze
 
 def sh_rake(command)
-  sh "#{Gem.ruby} -S rake #{command}", :verbose => true
+  sh "#{Gem.ruby} -S rake #{command}", verbose: true
 end
 
 def say(text, color=:magenta)
-  n = { :bold => 1, :red => 31, :green => 32, :yellow => 33, :blue => 34, :magenta => 35 }.fetch(color, 0)
+  n = { bold: 1, red: 31, green: 32, yellow: 33, blue: 34, magenta: 35 }.fetch(color, 0)
   puts "\e[%dm%s\e[0m" % [n, text]
 end
 
@@ -29,7 +29,7 @@ end
 desc 'Clean pkg and other stuff'
 task :clean do
   GEM_PATHS.each do |g|
-    %w[tmp pkg coverage].each { |dir| sh 'rm -rf %s' % File.join(g, dir) }
+    %w(tmp pkg coverage).each { |dir| sh 'rm -rf %s' % File.join(g, dir) }
   end
 end
 
@@ -54,7 +54,7 @@ task :bump, [:version] do |t, args|
 end
 
 desc 'Executes a fresh install removing all middleman version and then reinstall all gems'
-task :fresh => [:uninstall, :install, :clean]
+task fresh: [:uninstall, :install, :clean]
 
 desc 'Pushes repository to GitHub'
 task :push do
@@ -65,7 +65,7 @@ task :push do
 end
 
 desc 'Release all middleman gems'
-task :publish => :push do
+task publish: :push do
   say 'Pushing to rubygems...'
   GEM_PATHS.each do |dir|
     Dir.chdir(dir) { sh_rake('release') }
@@ -115,4 +115,4 @@ rescue LoadError
 end
 
 desc 'Run tests for all middleman gems'
-task :default => :test
+task default: :test

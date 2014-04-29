@@ -2,22 +2,22 @@
 class Middleman::Extensions::MinifyCss < ::Middleman::Extension
   option :inline, false, 'Whether to minify CSS inline within HTML files'
   option :ignore, [], 'Patterns to avoid minifying'
-  option :compressor, Proc.new {
+  option :compressor, proc {
     require 'sass'
     SassCompressor
   }, 'Set the CSS compressor to use.'
 
   def after_configuration
     # Setup Rack middleware to minify CSS
-    app.use Rack, :compressor => options[:compressor],
-                  :ignore     => Array(options[:ignore]) + [/\.min\./],
-                  :inline     => options[:inline]
+    app.use Rack, compressor: options[:compressor],
+                  ignore: Array(options[:ignore]) + [/\.min\./],
+                  inline: options[:inline]
   end
 
   class SassCompressor
-    def self.compress(style, options = {})
+    def self.compress(style, options={})
       root_node = ::Sass::SCSS::CssParser.new(style, 'middleman-css-input', 1).parse
-      root_node.options = { :style => :compressed }
+      root_node.options = { style: :compressed }
       root_node.render.strip
     end
   end
@@ -63,13 +63,13 @@ class Middleman::Extensions::MinifyCss < ::Middleman::Extension
       [status, headers, response]
     end
 
-  private
+    private
     def inline_html_content?(path)
       (path.end_with?('.html') || path.end_with?('.php')) && @inline
     end
 
     def standalone_css_content?(path)
-      path.end_with?('.css') && @ignore.none? {|ignore| Middleman::Util.path_match(ignore, path) }
+      path.end_with?('.css') && @ignore.none? { |ignore| Middleman::Util.path_match(ignore, path) }
     end
   end
 end

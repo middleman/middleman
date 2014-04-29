@@ -5,7 +5,7 @@ module Middleman
     module Global
       def self.included(app)
         app.send :extend, ClassMethods
-        app.send :delegate, :config, :to => :"self.class"
+        app.send :delegate, :config, to: :"self.class"
       end
 
       module ClassMethods
@@ -67,7 +67,7 @@ module Middleman
       end
 
       # Needed so that method_missing makes sense
-      def respond_to?(method, include_private = false)
+      def respond_to?(method, include_private=false)
         super || defines_setting?(method) || (method =~ /^(\w+)=$/ && defines_setting?($1))
       end
 
@@ -75,7 +75,7 @@ module Middleman
       # @param [Symbol] key
       # @return [Boolean]
       def defines_setting?(key)
-        @settings.has_key?(key)
+        @settings.key?(key)
       end
 
       # Define a new setting, with optional default and user-friendly description.
@@ -87,7 +87,7 @@ module Middleman
       # @return [ConfigSetting]
       def define_setting(key, default=nil, description=nil)
         raise "Setting #{key} doesn't exist" if @finalized
-        raise "Setting #{key} already defined" if @settings.has_key?(key)
+        raise "Setting #{key} already defined" if @settings.key?(key)
         raise 'Setting key must be a Symbol' unless key.is_a? Symbol
 
         @settings[key] = ConfigSetting.new(key, default, description)
@@ -102,7 +102,7 @@ module Middleman
 
       # Deep duplicate of the configuration manager
       def dup
-        ConfigurationManager.new.tap {|c| c.load_settings(self.all_settings) }
+        ConfigurationManager.new.tap { |c| c.load_settings(all_settings) }
       end
 
       # Load in a list of settings

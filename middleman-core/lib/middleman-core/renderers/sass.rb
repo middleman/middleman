@@ -3,13 +3,10 @@ require 'compass/import-once'
 
 module Middleman
   module Renderers
-
     # Sass renderer
     module Sass
-
       # Setup extension
       class << self
-
         # Once registered
         def registered(app)
           # Default sass options
@@ -26,16 +23,15 @@ module Middleman
           ::Compass::ImportOnce.activate!
         end
 
-        alias :included :registered
+        alias_method :included, :registered
       end
 
       # A SassTemplate for Tilt which outputs debug messages
       class SassPlusCSSFilenameTemplate < ::Tilt::SassTemplate
-
         def initialize(*args, &block)
           super
 
-          if @options.has_key?(:context)
+          if @options.key?(:context)
             @context = @options[:context]
           end
         end
@@ -59,14 +55,14 @@ module Middleman
           begin
             @engine.render
           rescue ::Sass::SyntaxError => e
-            ::Sass::SyntaxError.exception_to_css(e, :full_exception => true)
+            ::Sass::SyntaxError.exception_to_css(e, full_exception: true)
           end
         end
 
         # Change Sass path, for url functions, to the build folder if we're building
         # @return [Hash]
         def sass_options
-          more_opts = { :filename => eval_file, :line => line, :syntax => syntax }
+          more_opts = { filename: eval_file, line: line, syntax: syntax }
 
           if @context.is_a?(::Middleman::TemplateContext) && file
             location_of_sass_file = @context.source_dir
@@ -82,7 +78,6 @@ module Middleman
 
       # SCSS version of the above template
       class ScssPlusCSSFilenameTemplate < SassPlusCSSFilenameTemplate
-
         # Define the expected syntax for the template
         # @return [Symbol]
         def syntax

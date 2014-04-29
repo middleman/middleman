@@ -2,13 +2,10 @@ require 'middleman-core/template_context'
 
 # Rendering extension
 module Middleman
-
   module CoreExtensions
     module Rendering
-
       # Setup extension
       class << self
-
         # Once registered
         def included(app)
           app.define_hook :before_render

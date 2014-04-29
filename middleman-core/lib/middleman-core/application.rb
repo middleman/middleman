@@ -52,13 +52,13 @@ module Middleman
     def self.root
       ENV['MM_ROOT'] || Dir.pwd
     end
-    delegate :root, :to => :"self.class"
+    delegate :root, to: :"self.class"
 
     # Pathname-addressed root
     def self.root_path
       Pathname(root)
     end
-    delegate :root_path, :to => :"self.class"
+    delegate :root_path, to: :"self.class"
 
     # Name of the source directory
     # @return [String]
@@ -165,7 +165,7 @@ module Middleman
     attr_reader :template_context_class
 
     attr_reader :generic_template_context
-    delegate :link_to, :image_tag, :asset_path, :to => :generic_template_context
+    delegate :link_to, :image_tag, :asset_path, to: :generic_template_context
 
     # Initialize the Middleman project
     def initialize(&block)
@@ -210,7 +210,7 @@ module Middleman
     end
 
     def add_to_instance(name, &func)
-      self.define_singleton_method(name, &func)
+      define_singleton_method(name, &func)
     end
 
     def add_to_config_context(name, &func)
@@ -236,7 +236,7 @@ module Middleman
       File.join(root, config[:source])
     end
 
-    delegate :instrument, :to => ::Middleman::Util
+    delegate :instrument, to: ::Middleman::Util
 
     # Work around this bug: http://bugs.ruby-lang.org/issues/4521
     # where Ruby will call to_s/inspect while printing exception
@@ -245,7 +245,7 @@ module Middleman
     def to_s
       "#<Middleman::Application:0x#{object_id}>"
     end
-    alias :inspect :to_s # Ruby 2.0 calls inspect for NoMethodError instead of to_s
+    alias_method :inspect, :to_s # Ruby 2.0 calls inspect for NoMethodError instead of to_s
 
     # Hooks clones _hooks from the class to the instance.
     # https://github.com/apotonick/hooks/blob/master/lib/hooks/instance_hooks.rb#L10

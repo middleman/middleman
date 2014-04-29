@@ -6,7 +6,7 @@ module Middleman
     attr_reader :app
     attr_accessor :current_engine
 
-    delegate :config, :logger, :sitemap, :build?, :development?, :data, :extensions, :source_dir, :root, :to => :app
+    delegate :config, :logger, :sitemap, :build?, :development?, :data, :extensions, :source_dir, :root, to: :app
 
     def initialize(app, locs={}, opts={})
       @app = app
@@ -30,13 +30,13 @@ module Middleman
       # Save current buffer for later
       _buf_was = save_buffer
 
-      layout_path = ::Middleman::TemplateRenderer.locate_layout(@app, layout_name, self.current_engine)
+      layout_path = ::Middleman::TemplateRenderer.locate_layout(@app, layout_name, current_engine)
 
       extension = File.extname(layout_path)
       engine = extension[1..-1].to_sym
 
       # Store last engine for later (could be inside nested renders)
-      self.current_engine, engine_was = engine, self.current_engine
+      self.current_engine, engine_was = engine, current_engine
 
       begin
         content = if block_given?
@@ -76,12 +76,12 @@ module Middleman
         resolve_opts[:preferred_engine] = File.extname(resource.source_file)[1..-1].to_sym
 
         # Look for partials relative to the current path
-        relative_dir = File.join(current_dir.sub(%r{^#{Regexp.escape(self.source_dir)}/?}, ''), data)
+        relative_dir = File.join(current_dir.sub(%r{^#{Regexp.escape(source_dir)}/?}, ''), data)
 
         found_partial = ::Middleman::TemplateRenderer.resolve_template(@app, relative_dir, resolve_opts)
       end
 
-      if !found_partial
+      unless found_partial
         partials_path = File.join(@app.config[:partials_dir], data)
         found_partial = ::Middleman::TemplateRenderer.resolve_template(@app, partials_path, resolve_opts)
       end

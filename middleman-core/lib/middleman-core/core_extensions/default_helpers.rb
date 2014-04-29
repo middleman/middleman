@@ -7,7 +7,7 @@ require 'padrino-helpers'
 class Padrino::Helpers::OutputHelpers::ErbHandler
   # Force Erb capture not to use safebuffer
   def capture_from_template(*args, &block)
-    self.output_buffer, _buf_was = '', self.output_buffer
+    self.output_buffer, _buf_was = '', output_buffer
     raw = block.call(*args)
     captured = template.instance_variable_get(:@_out_buf)
     self.output_buffer = _buf_was
@@ -16,7 +16,6 @@ class Padrino::Helpers::OutputHelpers::ErbHandler
 end
 
 class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
-
   def initialize(app, options_hash={}, &block)
     super
 
@@ -39,7 +38,7 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
   helpers do
 
     # Make all block content html_safe
-    def content_tag(name, content = nil, options = nil, &block)
+    def content_tag(name, content=nil, options=nil, &block)
       # safe_content_tag(name, content, options, &block)
       if block_given?
         options = content if content.is_a?(Hash)
@@ -133,7 +132,7 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
     # Generate body css classes based on the current path
     #
     # @return [String]
-    def page_classes(path = current_path.dup, options={})
+    def page_classes(path=current_path.dup, options={})
       if path.is_a? Hash
         options = path
         path = current_path.dup
@@ -144,7 +143,7 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
 
       classes = []
       parts = path.split('.').first.split('/')
-      parts.each_with_index { |_, i| classes << parts.first(i+1).join('_') }
+      parts.each_with_index { |_, i| classes << parts.first(i + 1).join('_') }
 
       prefix = options[:numeric_prefix] || 'x'
       classes.map do |c|

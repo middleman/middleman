@@ -2,11 +2,10 @@ require 'active_support/core_ext/module/delegation'
 require 'active_support/core_ext/class/attribute'
 
 module Middleman
-
   class Extension
-    class_attribute :supports_multiple_instances, :instance_reader => false, :instance_writer => false
-    class_attribute :defined_helpers, :instance_reader => false, :instance_writer => false
-    class_attribute :ext_name, :instance_reader => false, :instance_writer => false
+    class_attribute :supports_multiple_instances, instance_reader: false, instance_writer: false
+    class_attribute :defined_helpers, instance_reader: false, instance_writer: false
+    class_attribute :ext_name, instance_reader: false, instance_writer: false
 
     class << self
       def config
@@ -51,7 +50,7 @@ module Middleman
         name = instance.class.ext_name
         return unless @_extension_activation_callbacks && @_extension_activation_callbacks[name]
         @_extension_activation_callbacks[name].each do |block|
-          block.arity == 1 ? block.call(instance) : block.call()
+          block.arity == 1 ? block.call(instance) : block.call
         end
       end
     end
@@ -59,7 +58,7 @@ module Middleman
     attr_accessor :options
     attr_reader :app
 
-    delegate :after_extension_activated, :to => :"::Middleman::Extension"
+    delegate :after_extension_activated, to: :"::Middleman::Extension"
 
     def initialize(klass, options_hash={}, &block)
       @_helpers = []
@@ -86,7 +85,7 @@ module Middleman
       end
     end
 
-  protected
+    protected
 
     def setup_options(options_hash, &block)
       @options = self.class.config.dup

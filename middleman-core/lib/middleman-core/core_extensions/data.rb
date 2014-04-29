@@ -1,10 +1,8 @@
 module Middleman
   module CoreExtensions
-
     # The data extension parses YAML and JSON files in the data/ directory
     # and makes them available to config.rb, templates and extensions
     module Data
-
       # Extension registered
       class << self
         # @private
@@ -23,12 +21,12 @@ module Middleman
         # Setup data files before anything else so they are available when
         # parsing config.rb
         def initialize
-          self.files.changed DataStore.matcher do |file|
-            self.data.touch_file(file) if file.start_with?("#{config[:data_dir]}/")
+          files.changed DataStore.matcher do |file|
+            data.touch_file(file) if file.start_with?("#{config[:data_dir]}/")
           end
 
-          self.files.deleted DataStore.matcher do |file|
-            self.data.remove_file(file) if file.start_with?("#{config[:data_dir]}/")
+          files.deleted DataStore.matcher do |file|
+            data.remove_file(file) if file.start_with?("#{config[:data_dir]}/")
           end
 
           super
@@ -44,10 +42,8 @@ module Middleman
 
       # The core logic behind the data extension.
       class DataStore
-
         # Static methods
         class << self
-
           # The regex which tells Middleman which files are for data
           #
           # @return [Regexp]
@@ -136,7 +132,7 @@ module Middleman
             data_branch = data_branch[dir]
           end
 
-          data_branch.delete(basename) if data_branch.has_key?(basename)
+          data_branch.delete(basename) if data_branch.key?(basename)
         end
 
         # Get a hash from either internal static data or a callback
@@ -149,10 +145,10 @@ module Middleman
           @@local_sources ||= {}
           @@callback_sources ||= {}
 
-          if self.store.has_key?(path.to_s)
-            response = self.store[path.to_s]
-          elsif self.callbacks.has_key?(path.to_s)
-            response = self.callbacks[path.to_s].call()
+          if store.key?(path.to_s)
+            response = store[path.to_s]
+          elsif callbacks.key?(path.to_s)
+            response = callbacks[path.to_s].call
           end
 
           response
@@ -163,7 +159,7 @@ module Middleman
         # @param [String] path The namespace to search for
         # @return [Hash, nil]
         def method_missing(path)
-          if @local_data.has_key?(path.to_s)
+          if @local_data.key?(path.to_s)
             return @local_data[path.to_s]
           else
             result = data_for_path(path)
@@ -177,8 +173,8 @@ module Middleman
         end
 
         # Needed so that method_missing makes sense
-        def respond_to?(method, include_private = false)
-          super || has_key?(method)
+        def respond_to?(method, include_private=false)
+          super || key?(method)
         end
 
         # Make DataStore act like a hash. Return requested data, or
@@ -187,11 +183,11 @@ module Middleman
         # @param [String, Symbol] key The name of the data namespace
         # @return [Hash, nil]
         def [](key)
-          __send__(key) if has_key?(key)
+          __send__(key) if key?(key)
         end
 
         def has_key?(key)
-          @local_data.has_key?(key.to_s) || !!(data_for_path(key))
+          @local_data.key?(key.to_s) || !!(data_for_path(key))
         end
 
         # Convert all the data into a static hash
@@ -200,11 +196,11 @@ module Middleman
         def to_h
           data = {}
 
-          self.store.each do |k, v|
+          store.each do |k, v|
             data[k] = data_for_path(k)
           end
 
-          self.callbacks.each do |k, v|
+          callbacks.each do |k, v|
             data[k] = data_for_path(k)
           end
 

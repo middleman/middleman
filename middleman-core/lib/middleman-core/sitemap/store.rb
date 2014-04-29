@@ -10,10 +10,8 @@ require 'middleman-core/sitemap/extensions/proxies'
 require 'middleman-core/sitemap/extensions/ignores'
 
 module Middleman
-
   # Sitemap namespace
   module Sitemap
-
     # The Store class
     #
     # The Store manages a collection of Resource objects, which represent
@@ -21,7 +19,6 @@ module Middleman
     # which is the path relative to the source directory, minus any template
     # extensions. All "path" parameters used in this class are source paths.
     class Store
-
       # @return [Middleman::Application]
       attr_accessor :app
 
@@ -33,7 +30,7 @@ module Middleman
         @_cached_metadata = {}
         @resource_list_manipulators = []
         @needs_sitemap_rebuild = true
-        
+
         @lock = Monitor.new
         reset_lookup_cache!
 
@@ -57,7 +54,7 @@ module Middleman
           register_resource_list_manipulator(k, m.new(self))
         end
 
-        app.config_context.class.send :delegate, :sitemap, :to => :app
+        app.config_context.class.send :delegate, :sitemap, to: :app
       end
 
       # Register a klass which can manipulate the main site map list. Best to register
@@ -134,9 +131,9 @@ module Middleman
       # @param [String] source_file
       # @return [Hash]
       def metadata_for_file(source_file)
-        blank_metadata = { :options => {}, :locals => {} }
+        blank_metadata = { options: {}, locals: {} }
 
-        provides_metadata.inject(blank_metadata) do |result, (callback, matcher)|
+        provides_metadata.reduce(blank_metadata) do |result, (callback, matcher)|
           next result if matcher && !source_file.match(matcher)
 
           metadata = callback.call(source_file).dup
@@ -162,9 +159,9 @@ module Middleman
       def metadata_for_path(request_path)
         return @_cached_metadata[request_path] if @_cached_metadata[request_path]
 
-        blank_metadata = { :options => {}, :locals => {} }
+        blank_metadata = { options: {}, locals: {} }
 
-        @_cached_metadata[request_path] = provides_metadata_for_path.inject(blank_metadata) do |result, (callback, matcher)|
+        @_cached_metadata[request_path] = provides_metadata_for_path.reduce(blank_metadata) do |result, (callback, matcher)|
           case matcher
           when Regexp
             next result unless request_path =~ matcher
@@ -215,7 +212,7 @@ module Middleman
 
           @app.logger.debug '== Rebuilding resource list'
 
-          @resources = @resource_list_manipulators.inject([]) do |result, (_, inst)|
+          @resources = @resource_list_manipulators.reduce([]) do |result, (_, inst)|
             newres = inst.manipulate_resource_list(result)
 
             # Reset lookup cache

@@ -1,12 +1,9 @@
 module Middleman
   module Renderers
-
     # Markdown renderer
     module Markdown
-
       # Setup extension
       class << self
-
         # Once registered
         def registered(app)
           # Set our preference for a markdown engine
@@ -25,7 +22,7 @@ module Middleman
               elsif config[:markdown_engine] == :kramdown
                 require 'middleman-core/renderers/kramdown'
                 ::Tilt.prefer(::Middleman::Renderers::KramdownTemplate, *markdown_exts)
-              elsif !config[:markdown_engine].nil?
+              elsif config[:markdown_engine]
                 # Map symbols to classes
                 markdown_engine_klass = if config[:markdown_engine].is_a? Symbol
                   engine = config[:markdown_engine].to_s
@@ -48,9 +45,8 @@ module Middleman
           end
         end
 
-        alias :included :registered
+        alias_method :included, :registered
       end
     end
-
   end
 end

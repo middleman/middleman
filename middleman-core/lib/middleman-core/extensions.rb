@@ -1,7 +1,5 @@
 module Middleman
-
   module Extensions
-
     class << self
       def registered
         @_registered ||= {}
@@ -32,7 +30,7 @@ module Middleman
       #        extension is activated.
       def register(name, namespace=nil, &block)
         # If we've already got an extension registered under this name, bail out
-        if registered.has_key?(name.to_sym)
+        if registered.key?(name.to_sym)
           raise "There is already an extension registered with the name '#{name}'"
         end
 
@@ -41,7 +39,7 @@ module Middleman
         elsif namespace && namespace.ancestors.include?(::Middleman::Extension)
           namespace
         else
-          raise "You must provide a Middleman::Extension or a block that returns a Middleman::Extension"
+          raise 'You must provide a Middleman::Extension or a block that returns a Middleman::Extension'
         end
       end
 
@@ -49,17 +47,17 @@ module Middleman
       def load(name)
         name = name.to_sym
 
-        unless registered.has_key?(name)
+        unless registered.key?(name)
           raise "Unknown Extension: #{name}. Check the name and make sure you have referenced the extension's gem in your Gemfile."
         end
 
         extension = registered[name]
         if extension.is_a?(Proc)
-          extension = extension.call()
+          extension = extension.call
           registered[name] = extension
         end
 
-        if !extension.ancestors.include?(::Middleman::Extension)
+        unless extension.ancestors.include?(::Middleman::Extension)
           raise "Tried to activate old-style extension: #{name}. They are no longer supported."
         end
 
@@ -116,7 +114,7 @@ module Middleman
     # @return [Boolean] Whether the file exists
     def spec_has_file?(spec, path)
       full_path = File.join(spec.full_gem_path, path)
-      File.exists?(full_path)
+      File.exist?(full_path)
     end
   end
 end

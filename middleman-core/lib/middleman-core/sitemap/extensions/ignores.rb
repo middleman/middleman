@@ -1,9 +1,6 @@
 module Middleman
-
   module Sitemap
-
     module Extensions
-
       # Class to handle managing ignores
       class Ignores
         def initialize(sitemap)
@@ -23,15 +20,15 @@ module Middleman
         # @return [void]
         def create_ignore(path=nil, &block)
           if path.is_a? Regexp
-            @ignored_callbacks << Proc.new {|p| p =~ path }
+            @ignored_callbacks << proc { |p| p =~ path }
           elsif path.is_a? String
             path_clean = ::Middleman::Util.normalize_path(path)
             if path_clean.include?('*') # It's a glob
-              @ignored_callbacks << Proc.new {|p| File.fnmatch(path_clean, p) }
+              @ignored_callbacks << proc { |p| File.fnmatch(path_clean, p) }
             else
               # Add a specific-path ignore unless that path is already covered
               return if ignored?(path_clean)
-              @ignored_callbacks << Proc.new {|p| p == path_clean }
+              @ignored_callbacks << proc { |p| p == path_clean }
             end
           elsif block_given?
             @ignored_callbacks << block
@@ -48,10 +45,9 @@ module Middleman
           @ignored_callbacks.any? { |b| b.call(path_clean) }
         end
       end
-  
+
       # Helpers methods for Resources
       module IgnoreResourceInstanceMethods
-
         # Whether the Resource is ignored
         # @return [Boolean]
         def ignored?

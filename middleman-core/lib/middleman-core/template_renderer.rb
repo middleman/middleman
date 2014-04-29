@@ -4,14 +4,12 @@ require 'middleman-core/template_context'
 require 'middleman-core/file_renderer'
 
 module Middleman
-
   class TemplateRenderer
-
     def self.cache
       @_cache ||= ::Tilt::Cache.new
     end
 
-    delegate :cache, :to => :"self.class"
+    delegate :cache, to: :"self.class"
 
     # Custom error class for handling
     class TemplateNotFound < RuntimeError; end
@@ -73,7 +71,7 @@ module Middleman
       ::I18n.locale = old_locale if defined?(::I18n)
     end
 
-  protected
+    protected
 
     # Find a layout for a given engine
     #
@@ -82,7 +80,7 @@ module Middleman
     # @return [String]
     def fetch_layout(engine, opts)
       # The layout name comes from either the system default or the options
-      local_layout = opts.has_key?(:layout) ? opts[:layout] : @app.config[:layout]
+      local_layout = opts.key?(:layout) ? opts[:layout] : @app.config[:layout]
       return false unless local_layout
 
       # Look for engine-specific options
@@ -90,9 +88,9 @@ module Middleman
 
       # The engine for the layout can be set in options, engine_options or passed
       # into this method
-      layout_engine = if opts.has_key?(:layout_engine)
+      layout_engine = if opts.key?(:layout_engine)
         opts[:layout_engine]
-      elsif engine_options.has_key?(:layout_engine)
+      elsif engine_options.key?(:layout_engine)
         engine_options[:layout_engine]
       else
         engine
@@ -131,7 +129,7 @@ module Middleman
       layout_path = false
 
       resolve_opts = {}
-      resolve_opts[:preferred_engine] = preferred_engine if !preferred_engine.nil?
+      resolve_opts[:preferred_engine] = preferred_engine unless preferred_engine.nil?
 
       # Check layouts folder
       layout_path = resolve_template(app, File.join(app.config[:layouts_dir], name.to_s), resolve_opts)
@@ -167,7 +165,7 @@ module Middleman
         preferred_engines = ['*']
 
         # If we're specifically looking for a preferred engine
-        if options.has_key?(:preferred_engine)
+        if options.key?(:preferred_engine)
           extension_class = ::Tilt[options[:preferred_engine]]
           matched_exts = []
 
@@ -202,7 +200,7 @@ module Middleman
         # If we found one, return it
         if found_path
           found_path
-        elsif File.exists?(on_disk_path)
+        elsif File.exist?(on_disk_path)
           on_disk_path
         else
           false

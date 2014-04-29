@@ -9,10 +9,8 @@ require 'middleman-core/template_renderer'
 
 module Middleman
   module CoreExtensions
-
     # Base helper to manipulate asset paths
     module Request
-
       # Extension registered
       class << self
         # @private
@@ -60,9 +58,7 @@ module Middleman
         # @private
         # @param [Middleman::Application] inst
         # @return [void]
-        def inst=(inst)
-          @inst = inst
-        end
+        attr_writer :inst
 
         # Return built Rack app
         #
@@ -152,9 +148,8 @@ module Middleman
 
       # Methods to be mixed-in to Middleman::Application
       module InstanceMethods
-
-        delegate :use, :to => :"self.class"
-        delegate :map, :to => :"self.class"
+        delegate :use, to: :"self.class"
+        delegate :map, to: :"self.class"
 
         def call(env)
           dup.call!(env)
@@ -168,7 +163,7 @@ module Middleman
           req = ::Rack::Request.new(env)
           res = ::Rack::Response.new
 
-          logger.debug "== Request: #{env["PATH_INFO"]}"
+          logger.debug "== Request: #{env['PATH_INFO']}"
 
           # Catch :halt exceptions and use that response if given
           catch(:halt) do
@@ -239,7 +234,7 @@ module Middleman
         # @param [String] value Mime type
         # @return [void]
         def mime_type(type, value)
-          type = ".#{type}" unless type.to_s[0] == ?.
+          type = ".#{type}" unless type.to_s[0] == '.'
           ::Rack::Mime::MIME_TYPES[type] = value
         end
 

@@ -4,10 +4,8 @@ require 'middleman-core/file_renderer'
 require 'middleman-core/template_renderer'
 
 module Middleman
-
   # Sitemap namespace
   module Sitemap
-
     # Sitemap Resource class
     class Resource
       include Middleman::Sitemap::Extensions::Traversal
@@ -15,7 +13,7 @@ module Middleman
 
       # @return [Middleman::Application]
       attr_reader :app
-      delegate :logger, :instrument, :to => :app
+      delegate :logger, :instrument, to: :app
 
       # @return [Middleman::Sitemap::Store]
       attr_reader :store
@@ -48,7 +46,7 @@ module Middleman
         @source_file = source_file
         @destination_path = @path
 
-        @local_metadata = { :options => {}, :locals => {} }
+        @local_metadata = { options: {}, locals: {} }
       end
 
       # Whether this resource has a template file
@@ -89,27 +87,27 @@ module Middleman
       end
 
       def request_path
-        self.destination_path
+        destination_path
       end
 
       # Render this resource
       # @return [String]
       def render(opts={}, locs={})
-        if !template?
+        unless template?
           return ::Middleman::FileRenderer.new(@app, source_file).get_template_data_for_file
         end
 
         relative_source = Pathname(source_file).relative_path_from(Pathname(app.root))
 
-        instrument 'render.resource', :path => relative_source, :destination_path => destination_path  do
+        instrument 'render.resource', path: relative_source, destination_path: destination_path  do
           md   = metadata.dup
           opts = md[:options].deep_merge(opts)
           locs = md[:locals].deep_merge(locs)
-          locs[:current_path] ||= self.destination_path
+          locs[:current_path] ||= destination_path
 
           # Certain output file types don't use layouts
-          if !opts.has_key?(:layout)
-            opts[:layout] = false if %w(.js .json .css .txt).include?(self.ext)
+          unless opts.key?(:layout)
+            opts[:layout] = false if %w(.js .json .css .txt).include?(ext)
           end
 
           renderer = ::Middleman::TemplateRenderer.new(@app, source_file)
