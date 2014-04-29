@@ -13,9 +13,7 @@ module Middleman
         # When in dev
         app.configure :development do
           # Include middlemare
-          if config[:show_exceptions]
-            use ::Rack::ShowExceptions
-          end
+          use ::Rack::ShowExceptions if config[:show_exceptions]
         end
       end
     end

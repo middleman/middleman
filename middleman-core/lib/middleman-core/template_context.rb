@@ -1,6 +1,7 @@
 require 'middleman-core/file_renderer'
 require 'middleman-core/template_renderer'
 
+# rubocop:disable UnderscorePrefixedVariableName
 module Middleman
   class TemplateContext
     attr_reader :app
@@ -19,6 +20,7 @@ module Middleman
       _buf_was
     end
 
+    # rubocop:disable TrivialAccessors
     def restore_buffer(_buf_was)
       @_out_buf = _buf_was
     end
@@ -62,7 +64,7 @@ module Middleman
     # @param [String, Symbol] data
     # @param [Hash] options
     # @return [String]
-    def render(engine, data, options={}, &block)
+    def render(_, data, options={}, &block)
       data = data.to_s
 
       locals = options[:locals]

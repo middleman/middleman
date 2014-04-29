@@ -73,6 +73,7 @@ module Middleman
         #
         # @param [Symbol, Module] ext Which extension to activate
         # @return [void]
+        # rubocop:disable BlockNesting
         def activate(ext, options={}, &block)
           extension = ::Middleman::Extensions.load(ext)
           logger.debug "== Activating: #{ext}"

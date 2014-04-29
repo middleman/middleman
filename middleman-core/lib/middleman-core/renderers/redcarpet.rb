@@ -38,7 +38,7 @@ module Middleman
         renderer.new(render_options)
       end
 
-      def evaluate(scope, locals, &block)
+      def evaluate(scope, _)
         @output ||= begin
           MiddlemanRedcarpetHTML.scope = ::Middleman::Renderers::Haml.last_haml_scope || scope
 

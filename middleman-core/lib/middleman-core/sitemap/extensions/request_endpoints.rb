@@ -59,7 +59,7 @@ module Middleman
           true
         end
 
-        def render(*args, &block)
+        def render(*)
           return output.call if output
         end
 

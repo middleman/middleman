@@ -30,9 +30,7 @@ module Middleman::Cli
       }
 
       @app = ::Middleman::Application.server.inst do
-        if opts[:environment]
-          config[:environment] = opts[:environment].to_sym
-        end
+        config[:environment] = opts[:environment].to_sym if opts[:environment]
 
         ::Middleman::Logger.singleton(opts[:debug] ? 0 : 1, opts[:instrumenting] || false)
       end

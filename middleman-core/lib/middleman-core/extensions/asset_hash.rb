@@ -39,7 +39,9 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
       else
         -1
       end
-    end.each do |resource|
+    end
+
+    sorted_resources.each do |resource|
       next unless options.exts.include?(resource.ext)
       next if ignored_resource?(resource)
       next if resource.ignored?
@@ -64,7 +66,7 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
 
   def hashed_filename(resource)
     # Render through the Rack interface so middleware and mounted apps get a shot
-    response = @rack_client.get(URI.escape(resource.destination_path),  'bypass_asset_hash' => 'true')
+    response = @rack_client.get(URI.escape(resource.destination_path), 'bypass_asset_hash' => 'true')
     raise "#{resource.path} should be in the sitemap!" unless response.status == 200
 
     digest = Digest::SHA1.hexdigest(response.body)[0..7]

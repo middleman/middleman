@@ -39,7 +39,7 @@ class Middleman::Extensions::Gzip < ::Middleman::Extension
 
     # Farm out gzip tasks to threads and put the results in in_queue
     out_queue = Queue.new
-    threads = num_threads.times.map do
+    num_threads.times.each do
       Thread.new do
         while path = in_queue.pop
           out_queue << gzip_file(path.to_s)

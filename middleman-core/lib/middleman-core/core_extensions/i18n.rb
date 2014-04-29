@@ -58,7 +58,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
   delegate :logger, to: :app
 
   def langs
-    @_langs ||= get_known_languages
+    @_langs ||= known_languages
   end
 
   # Update the main sitemap resource list
@@ -72,8 +72,8 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
       # If it uses file extension localization
       if parse_locale_extension(resource.path)
         result = parse_locale_extension(resource.path)
-        lang, path, page_id = result
-        new_resources << build_resource(path, resource.path, page_id, lang)
+        ext_lang, path, page_id = result
+        new_resources << build_resource(path, resource.path, page_id, ext_lang)
       # If it's a "localizable template"
       elsif File.fnmatch?(File.join(options[:templates_dir], '**'), resource.path)
         page_id = File.basename(resource.path, File.extname(resource.path))
@@ -99,7 +99,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
 
   def convert_glob_to_regex(glob)
     # File.fnmatch doesn't support brackets: {rb,yml,yaml}
-    regex = @locales_glob.sub(/\./, '\.').sub(File.join('**', '*'), '.*').sub(/\//, '\/').sub('{rb,yml,yaml}', '(rb|ya?ml)')
+    regex = glob.sub(/\./, '\.').sub(File.join('**', '*'), '.*').sub(/\//, '\/').sub('{rb,yml,yaml}', '(rb|ya?ml)')
     %r{^#{regex}}
   end
 
@@ -115,7 +115,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
   end
 
   def metadata_for_path(url)
-    if d = get_localization_data(url)
+    if d = localization_data(url)
       lang, page_id = d
     else
       # Default to the @mount_at_root lang
@@ -132,19 +132,21 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
     }
   end
 
-  def get_known_languages
+  def known_languages
     if options[:langs]
       Array(options[:langs]).map(&:to_sym)
     else
       known_langs = app.files.known_paths.select do |p|
-        p.to_s.match(@locales_regex) && (p.to_s.split(File::SEPARATOR).length === 2)
-      end.map { |p|
+        p.to_s.match(@locales_regex) && (p.to_s.split(File::SEPARATOR).length == 2)
+      end
+
+      known_langs.map { |p|
         File.basename(p.to_s).sub(/\.ya?ml$/, '').sub(/\.rb$/, '')
       }.sort.map(&:to_sym)
     end
   end
 
-  def get_localization_data(path)
+  def localization_data(path)
     @_localization_data ||= {}
     @_localization_data[path]
   end

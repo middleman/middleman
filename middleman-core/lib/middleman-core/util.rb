@@ -84,7 +84,7 @@ module Middleman
       def extract_response_text(response)
         # The rack spec states all response bodies must respond to each
         result = ''
-        response.each do |part, s|
+        response.each do |part, _|
           result << part
         end
         result
@@ -338,13 +338,13 @@ module Middleman
         key.is_a?(Symbol) ? key.to_s : key
       end
 
-        # Magic predicates. For instance:
-        #
-        #   options.force?                  # => !!options['force']
-        #   options.shebang                 # => "/usr/lib/local/ruby"
-        #   options.test_framework?(:rspec) # => options[:test_framework] == :rspec
-        #
-      def method_missing(method, *args, &block)
+      # Magic predicates. For instance:
+      #
+      #   options.force?                  # => !!options['force']
+      #   options.shebang                 # => "/usr/lib/local/ruby"
+      #   options.test_framework?(:rspec) # => options[:test_framework] == :rspec
+      # rubocop:disable DoubleNegation
+      def method_missing(method, *args)
         method = method.to_s
         if method =~ /^(\w+)\?$/
           if args.empty?

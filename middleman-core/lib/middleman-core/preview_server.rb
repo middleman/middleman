@@ -2,6 +2,7 @@ require 'webrick'
 require 'middleman-core/meta_pages'
 require 'middleman-core/logger'
 
+# rubocop:disable GlobalVars
 module Middleman
   module PreviewServer
     DEFAULT_PORT = 4567
@@ -14,7 +15,7 @@ module Middleman
       # @return [void]
       def start(opts={})
         @options = opts
-        @host = @options[:host] || Socket.ip_address_list.find(&:ipv4_private?).ip_address
+        @host = @options[:host] || '0.0.0.0'
         @port = @options[:port] || DEFAULT_PORT
 
         mount_instance(new_app)
@@ -89,6 +90,7 @@ module Middleman
       end
 
       private
+
       def new_app
         opts = @options.dup
         server = ::Middleman::Application.server

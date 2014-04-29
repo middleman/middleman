@@ -20,6 +20,7 @@ module Middleman
     # @param [Hash] opts
     # @param [Class] context
     # @return [String]
+    # rubocop:disable UnderscorePrefixedVariableName
     def render(locs={}, opts={}, context, &block)
       path = @path.dup
 
@@ -37,7 +38,7 @@ module Middleman
       body = if opts[:template_body]
         opts.delete(:template_body)
       else
-        get_template_data_for_file
+        template_data_for_file
       end
 
       # Merge per-extension options from config
@@ -81,7 +82,7 @@ module Middleman
     # Get the template data from a path
     # @param [String] path
     # @return [String]
-    def get_template_data_for_file
+    def template_data_for_file
       if @app.extensions[:front_matter]
         @app.extensions[:front_matter].template_data_for_file(@path)
       else

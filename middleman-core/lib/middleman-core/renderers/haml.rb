@@ -40,7 +40,7 @@ module Middleman
       # Setup extension
       class << self
         # Once registered
-        def registered(app)
+        def registered(_)
           ::Tilt.prefer(::Middleman::Renderers::HamlTemplate, 'haml')
 
           # Add haml helpers to context

@@ -1,3 +1,5 @@
+# rubocop:disable FileName
+
 # Setup our load paths
 libdir = File.expand_path(File.dirname(__FILE__))
 $LOAD_PATH.unshift(libdir) unless $LOAD_PATH.include?(libdir)
@@ -34,6 +36,7 @@ module Middleman
       # @param [Symbol, String, nil] meth
       # @param [Boolean] subcommand
       # @return [void]
+      # rubocop:disable UnusedMethodArgument
       def help(meth=nil, subcommand=false)
         if meth && !self.respond_to?(meth)
           klass, task = Thor::Util.find_class_and_task_by_namespace("#{meth}:#{meth}")
@@ -56,10 +59,7 @@ module Middleman
       # @param [Symbol] meth
       def method_missing(meth, *args)
         meth = meth.to_s
-
-        if self.class.map.key?(meth)
-          meth = self.class.map[meth]
-        end
+        meth = self.class.map[meth] if self.class.map.key?(meth)
 
         klass, task = Thor::Util.find_class_and_task_by_namespace("#{meth}:#{meth}")
 
@@ -73,7 +73,7 @@ module Middleman
         end
 
         if klass.nil?
-          raise Thor::Error.new "There's no '#{meth}' command for Middleman. Try 'middleman help' for a list of commands."
+          raise Thor::Error, "There's no '#{meth}' command for Middleman. Try 'middleman help' for a list of commands."
         else
           args.unshift(task) if task
           klass.start(args, shell: shell)

@@ -30,9 +30,7 @@ module Middleman
       #        extension is activated.
       def register(name, namespace=nil, &block)
         # If we've already got an extension registered under this name, bail out
-        if registered.key?(name.to_sym)
-          raise "There is already an extension registered with the name '#{name}'"
-        end
+        raise "There is already an extension registered with the name '#{name}'" if registered.key?(name.to_sym)
 
         registered[name.to_sym] = if block_given?
           block

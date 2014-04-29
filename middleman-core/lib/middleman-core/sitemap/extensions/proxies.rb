@@ -88,8 +88,9 @@ module Middleman
       module ProxyResourceInstanceMethods
         # Whether this page is a proxy
         # @return [Boolean]
+        # rubocop:disable TrivialAccessors
         def proxy?
-          !!@proxied_to
+          @proxied_to
         end
 
         # Set this page to proxy to a target path
@@ -122,6 +123,7 @@ module Middleman
           proxy_resource
         end
 
+        # rubocop:disable AccessorMethodName
         def get_source_file
           if proxy?
             proxied_to_resource.source_file

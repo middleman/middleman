@@ -17,9 +17,7 @@ module Middleman
         # @param [String] path
         # @param [Hash] opts The :to value gives a target path
         def create_redirect(path, opts={}, &block)
-          if block_given?
-            opts[:template] = block
-          end
+          opts[:template] = block if block_given?
 
           @redirects[path] = opts
 
@@ -54,7 +52,7 @@ module Middleman
           true
         end
 
-        def render(*args, &block)
+        def render(*)
           url = ::Middleman::Util.url_for(store.app, @request_path,
                                           relative: false,
                                           find_resource: true

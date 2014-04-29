@@ -12,7 +12,6 @@ gem 'rspec', '~> 2.12'
 gem 'simplecov'
 
 # Optional middleman dependencies, included for tests
-gem 'haml', '~> 4.0.0', require: false # Make sure to use Haml 4 for tests
 gem 'sinatra', require: false
 gem 'slim', require: false
 gem 'liquid', require: false
@@ -30,7 +29,6 @@ platforms :jruby do
 end
 
 # Code Quality
-gem 'cane', platforms: [:mri_19, :mri_20], require: false
 gem 'coveralls', require: false
 gem 'rubocop', require: false, group: :development
 

@@ -35,13 +35,13 @@ module Middleman
         # Update or add an on-disk file path
         # @param [String] file
         # @return [Boolean]
-        def touch_file(file, rebuild=true)
+        def touch_file(file)
           return false if File.directory?(file)
 
           path = @sitemap.file_to_path(file)
           return false unless path
 
-          ignored = @app.config[:ignored_sitemap_matchers].any? do |name, callback|
+          ignored = @app.config[:ignored_sitemap_matchers].any? do |_, callback|
             if callback.arity == 1
               callback.call(file)
             else
@@ -67,7 +67,7 @@ module Middleman
         # Remove a file from the store
         # @param [String] file
         # @return [void]
-        def remove_file(file, rebuild=true)
+        def remove_file(file)
           if @file_paths_on_disk.delete?(file)
             @sitemap.rebuild_resource_list!(:removed_file)
             unless waiting_for_ready || @app.build?

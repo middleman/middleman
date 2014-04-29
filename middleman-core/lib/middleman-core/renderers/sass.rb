@@ -31,9 +31,7 @@ module Middleman
         def initialize(*args, &block)
           super
 
-          if @options.key?(:context)
-            @context = @options[:context]
-          end
+          @context = @options[:context] if @options.key?(:context)
         end
 
         # Define the expected syntax for the template
@@ -46,9 +44,8 @@ module Middleman
 
         # Add exception messaging
         # @param [Class] context
-        # @param [Hash] locals
         # @return [String]
-        def evaluate(context, locals, &block)
+        def evaluate(context, _)
           @context ||= context
           @engine = ::Sass::Engine.new(data, sass_options)
 

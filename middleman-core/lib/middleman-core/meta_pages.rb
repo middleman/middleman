@@ -40,12 +40,12 @@ module Middleman
       end
 
       # The index page
-      def index(env)
+      def index(_)
         template('index.html.erb')
       end
 
       # Inspect the sitemap
-      def sitemap(env)
+      def sitemap(_)
         resources = @middleman.inst.sitemap.resources(true)
 
         sitemap_tree = SitemapTree.new
@@ -58,7 +58,7 @@ module Middleman
       end
 
       # Inspect configuration
-      def config(env)
+      def config(_)
         global_config = @middleman.inst.config.all_settings.map { |c| ConfigSetting.new(c) }
         extension_config = {}
 

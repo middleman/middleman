@@ -6,6 +6,7 @@ require 'padrino-helpers'
 
 class Padrino::Helpers::OutputHelpers::ErbHandler
   # Force Erb capture not to use safebuffer
+  # rubocop:disable UnderscorePrefixedVariableName
   def capture_from_template(*args, &block)
     self.output_buffer, _buf_was = '', output_buffer
     raw = block.call(*args)
@@ -38,6 +39,7 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
   helpers do
 
     # Make all block content html_safe
+    # rubocop:disable Semicolon
     def content_tag(name, content=nil, options=nil, &block)
       # safe_content_tag(name, content, options, &block)
       if block_given?
@@ -70,6 +72,7 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
       ActiveSupport::SafeBuffer.new.safe_concat(result)
     end
 
+    # rubocop:disable MultilineBlockChain, UnusedBlockArgument
     def auto_find_proper_handler(&block)
       if block_given?
         engine = File.extname(block.source_location[0])[1..-1].to_sym
@@ -116,8 +119,10 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
     def auto_tag(asset_ext, asset_dir=nil)
       if asset_dir.nil?
         asset_dir = case asset_ext
-          when :js  then config[:js_dir]
-          when :css then config[:css_dir]
+        when :js
+          config[:js_dir]
+        when :css
+          config[:css_dir]
         end
       end
 
@@ -164,13 +169,20 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
     # @return [String]
     def asset_path(kind, source, options={})
       return source if source.to_s.include?('//') || source.to_s.start_with?('data:')
-      asset_folder  = case kind
-        when :css    then config[:css_dir]
-        when :js     then config[:js_dir]
-        when :images then config[:images_dir]
-        when :fonts  then config[:fonts_dir]
-        else kind.to_s
+
+      asset_folder = case kind
+      when :css
+        config[:css_dir]
+      when :js
+        config[:js_dir]
+      when :images
+        config[:images_dir]
+      when :fonts
+        config[:fonts_dir]
+      else
+        kind.to_s
       end
+
       source = source.to_s.tr(' ', '')
       ignore_extension = (kind == :images || kind == :fonts) # don't append extension
       source << ".#{kind}" unless ignore_extension || source.end_with?(".#{kind}")
@@ -185,9 +197,10 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
     # @param [String] prefix The type prefix (such as "images")
     # @param [Hash] options Data to pass through.
     # @return [String] The fully qualified asset url
+    # rubocop:disable UnusedMethodArgument
     def asset_url(path, prefix='', options={})
       # Don't touch assets which already have a full path
-      if path.include?('//') or path.start_with?('data:')
+      if path.include?('//') || path.start_with?('data:')
         path
       else # rewrite paths to use their destination path
         if resource = sitemap.find_resource_by_destination_path(url_for(path))
@@ -229,12 +242,12 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
       options_index = block_given? ? 1 : 2
 
       if block_given? && args.size > 2
-        raise ArgumentError.new('Too many arguments to link_to(url, options={}, &block)')
+        raise ArgumentError, 'Too many arguments to link_to(url, options={}, &block)'
       end
 
       if url = args[url_arg_index]
         options = args[options_index] || {}
-        raise ArgumentError.new('Options must be a hash') unless options.is_a?(Hash)
+        raise ArgumentError, 'Options must be a hash' unless options.is_a?(Hash)
 
         # Transform the url through our magic url_for method
         args[url_arg_index] = url_for(url, options)

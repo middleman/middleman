@@ -1,6 +1,7 @@
 module Middleman
   module Profiling
     # The profiler instance. There can only be one!
+    # rubocop:disable TrivialAccessors
     def self.profiler=(prof)
       @profiler = prof
     end
@@ -23,7 +24,7 @@ module Middleman
       def start
       end
 
-      def report(report_name)
+      def report(_)
       end
     end
 

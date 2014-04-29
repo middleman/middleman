@@ -1,6 +1,7 @@
 require 'middleman-core/template_context'
 
 # Rendering extension
+# rubocop:disable UnderscorePrefixedVariableName
 module Middleman
   module CoreExtensions
     module Rendering
@@ -75,7 +76,7 @@ module Middleman
 
           # Clean up missing Tilt exts
           app.after_configuration do
-            Tilt.mappings.each do |key, klasses|
+            Tilt.mappings.each do |key, _|
               begin
                 Tilt[".#{key}"]
               rescue LoadError, NameError

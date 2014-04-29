@@ -70,15 +70,15 @@ module Middleman
             app.use Rack::Lint
             app.use Rack::Head
 
-            Array(@middleware).each do |klass, options, block|
-              app.use(klass, *options, &block)
+            Array(@middleware).each do |klass, options, middleware_block|
+              app.use(klass, *options, &middleware_block)
             end
 
             inner_app = inst(&block)
             app.map('/') { run inner_app }
 
-            Array(@mappings).each do |path, block|
-              app.map(path, &block)
+            Array(@mappings).each do |path, map_block|
+              app.map(path, &map_block)
             end
 
             app
@@ -126,6 +126,7 @@ module Middleman
         # configuration can be included later without impacting
         # other classes and instances.
         #
+        # rubocop:disable ClassVars
         # @return [Class]
         def server(&block)
           @@servercounter ||= 0
@@ -189,7 +190,7 @@ module Middleman
         # @param env
         # @param [Rack::Request] req
         # @param [Rack::Response] res
-        def process_request(env, req, res)
+        def process_request(env, _, res)
           start_time = Time.now
 
           request_path = URI.decode(env['PATH_INFO'].dup)

@@ -119,6 +119,7 @@ module Middleman::CoreExtensions
     end
 
     private
+
     # Parse YAML frontmatter out of a string
     # @param [String] content
     # @return [Array<Hash, String>]

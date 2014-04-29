@@ -273,7 +273,6 @@ module Middleman::Cli
       base.say_status :error, file_name, :red
       if base.debugging
         raise e
-        exit(1)
       elsif base.options['verbose']
         base.shell.say response, :red
       end

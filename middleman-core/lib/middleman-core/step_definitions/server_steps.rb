@@ -25,7 +25,7 @@ end
 Given /^"([^\"]*)" is set to "([^\"]*)"$/ do |variable, value|
   @initialize_commands ||= []
   @initialize_commands << lambda {
-    config[variable.to_sym] =  value
+    config[variable.to_sym] = value
   }
 end
 

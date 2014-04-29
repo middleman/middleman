@@ -4,7 +4,7 @@ module Middleman
   module Renderers
     # Our own Kramdown Tilt template that simply uses our custom renderer.
     class KramdownTemplate < ::Tilt::KramdownTemplate
-      def evaluate(scope, locals, &block)
+      def evaluate(scope, *)
         @output ||= begin
           MiddlemanKramdownHTML.scope = ::Middleman::Renderers::Haml.last_haml_scope || scope
 
@@ -19,7 +19,7 @@ module Middleman
     class MiddlemanKramdownHTML < ::Kramdown::Converter::Html
       cattr_accessor :scope
 
-      def convert_img(el, indent)
+      def convert_img(el, _)
         attrs = el.attr.dup
 
         link = attrs.delete('src')

@@ -37,9 +37,7 @@ module Middleman
       # Sandboxed class for template eval
       context = @app.template_context_class.new(@app, locs, opts)
 
-      if context.respond_to?(:init_haml_helpers)
-        context.init_haml_helpers
-      end
+      context.init_haml_helpers if context.respond_to?(:init_haml_helpers)
 
       # Keep rendering template until we've used up all extensions. This
       # handles cases like `style.css.sass.erb`
@@ -125,9 +123,6 @@ module Middleman
     # @param [Symbol] preferred_engine
     # @return [String]
     def self.locate_layout(app, name, preferred_engine=nil)
-      # Whether we've found the layout
-      layout_path = false
-
       resolve_opts = {}
       resolve_opts[:preferred_engine] = preferred_engine unless preferred_engine.nil?
 
@@ -167,10 +162,9 @@ module Middleman
         # If we're specifically looking for a preferred engine
         if options.key?(:preferred_engine)
           extension_class = ::Tilt[options[:preferred_engine]]
-          matched_exts = []
 
           # Get a list of extensions for a preferred engine
-          matched_exts = ::Tilt.mappings.select do |ext, engines|
+          matched_exts = ::Tilt.mappings.select do |_, engines|
             engines.include? extension_class
           end.keys
 

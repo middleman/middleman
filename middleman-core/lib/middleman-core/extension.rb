@@ -87,7 +87,7 @@ module Middleman
 
     protected
 
-    def setup_options(options_hash, &block)
+    def setup_options(options_hash)
       @options = self.class.config.dup
       @options.finalize!
 
@@ -122,10 +122,9 @@ module Middleman
     def bind_after_configuration
       ext = self
       @klass.after_configuration do
-        if ext.respond_to?(:after_configuration)
-          ext.after_configuration
-        end
+        ext.after_configuration if ext.respond_to?(:after_configuration)
 
+        # rubocop:disable IfUnlessModifier
         if ext.respond_to?(:manipulate_resource_list)
           ext.app.sitemap.register_resource_list_manipulator(ext.class.ext_name, ext)
         end
@@ -136,7 +135,7 @@ module Middleman
       ext = self
       if ext.respond_to?(:before_build)
         @klass.before_build do |builder|
-          if ext.method(:before_build).arity === 1
+          if ext.method(:before_build).arity == 1
             ext.before_build(builder)
           else
             ext.before_build
@@ -149,7 +148,7 @@ module Middleman
       ext = self
       if ext.respond_to?(:after_build)
         @klass.after_build do |builder|
-          if ext.method(:after_build).arity === 1
+          if ext.method(:after_build).arity == 1
             ext.after_build(builder)
           else
             ext.after_build

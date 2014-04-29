@@ -14,7 +14,7 @@ module Middleman
             ::Liquid::Template.file_system = ::Liquid::LocalFileSystem.new(source_dir)
 
             # Convert data object into a hash for liquid
-            sitemap.provides_metadata %r{\.liquid$} do |path|
+            sitemap.provides_metadata %r{\.liquid$} do
               { locals: { data: data.to_h } }
             end
           end

@@ -43,16 +43,17 @@ module Middleman
       # Get the value of a setting by key. Returns nil if there is no such setting.
       # @return [Object]
       def [](key)
-        setting = @settings[key]
-        setting ? setting.value : nil
+        setting_obj = setting(key)
+        setting_obj ? setting_obj.value : nil
       end
 
       # Set the value of a setting by key. Creates the setting if it doesn't exist.
       # @param [Symbol] key
       # @param [Object] val
+      # rubocop:disable UselessSetterCall
       def []=(key, val)
-        setting = @settings[key] || define_setting(key)
-        setting.value = val
+        setting_obj = setting(key) || define_setting(key)
+        setting_obj.value = val
       end
 
       # Allow configuration settings to be read and written via methods
@@ -159,6 +160,7 @@ module Middleman
       end
 
       # Whether or not there has been a value set beyond the default
+      # rubocop:disable TrivialAccessors
       def value_set?
         @value_set
       end
