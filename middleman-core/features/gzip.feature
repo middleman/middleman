@@ -34,3 +34,19 @@ Feature: GZIP assets during build
       | build/stylesheets/test.css |
     And the following files should not exist:
       | build/stylesheets/test.css.gz |
+
+  Scenario: Gzipped files are not produced for ignored paths
+    Given a fixture app "gzip-app"
+    And a file named "config.rb" with:
+      """
+      activate :gzip, ignore: ['index.html', %r(javascripts/.*)]
+      """
+    And a successfully built app at "gzip-app"
+    Then the following files should exist:
+      | build/index.html |
+      | build/javascripts/test.js |
+      | build/stylesheets/test.css |
+      | build/stylesheets/test.css.gz |
+    And the following files should not exist:
+      | build/index.html.gz |
+      | build/javascripts/test.js.gz |
