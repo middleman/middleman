@@ -265,7 +265,12 @@ module Middleman
 
           # Allow hooks to manipulate the result after render
           self.class.callbacks_for_hook(:after_render).each do |callback|
-            content = callback.call(content, path, locs, template_class)
+            # Uber::Options::Value doesn't respond to call
+            if callback.respond_to?(:call)
+              content = callback.call(content, path, locs, template_class)
+            elsif callback.respond_to?(:evaluate)
+              content = callback.evaluate(self, content, path, locs, template_class)
+            end
           end
 
           output = ::ActiveSupport::SafeBuffer.new ''
