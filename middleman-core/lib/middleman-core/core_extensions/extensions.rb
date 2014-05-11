@@ -47,7 +47,6 @@ module Middleman
           app.config[:autoload_sprockets] = (ENV['AUTOLOAD_SPROCKETS'] == 'true') if ENV['AUTOLOAD_SPROCKETS']
 
           app.extend ClassMethods
-          app.send :include, InstanceMethods
           app.delegate :configure, to: :"self.class"
         end
       end
@@ -56,121 +55,119 @@ module Middleman
       module ClassMethods
         # Add a callback to run in a specific environment
         #
-        # @param [String, Symbol] env The environment to run in
+        # @param [String, Symbol] env The environment to run in (:build, :development)
         # @return [void]
         def configure(env, &block)
           send("#{env}_config", &block)
         end
       end
 
-      # Instance methods
-      module InstanceMethods
-        # This method is available in the project's `config.rb`.
-        # It takes a underscore-separated symbol, finds the appropriate
-        # feature module and includes it.
-        #
-        #     activate :lorem
-        #
-        # @param [Symbol, Module] ext Which extension to activate
-        # @return [void]
-        # rubocop:disable BlockNesting
-        def activate(ext, options={}, &block)
-          extension = ::Middleman::Extensions.load(ext)
-          logger.debug "== Activating: #{ext}"
+      # This method is available in the project's `config.rb`.
+      # It takes a underscore-separated symbol, finds the appropriate
+      # feature module and includes it.
+      #
+      #     activate :lorem
+      #
+      # @param [Symbol, Module] ext Which extension to activate
+      # @return [void]
+      # rubocop:disable BlockNesting
+      def activate(ext, options={}, &block)
+        extension = ::Middleman::Extensions.load(ext)
+        logger.debug "== Activating: #{ext}"
 
-          if extension.supports_multiple_instances?
-            extensions[ext] ||= {}
-            key = "instance_#{extensions[ext].keys.length}"
-            extensions[ext][key] = extension.new(self.class, options, &block)
+        if extension.supports_multiple_instances?
+          extensions[ext] ||= {}
+          key = "instance_#{extensions[ext].keys.length}"
+          extensions[ext][key] = extension.new(self.class, options, &block)
+        else
+          if extensions[ext]
+            raise "#{ext} has already been activated and cannot be re-activated."
           else
-            if extensions[ext]
-              raise "#{ext} has already been activated and cannot be re-activated."
-            else
-              extensions[ext] = extension.new(self.class, options, &block)
-            end
+            extensions[ext] = extension.new(self.class, options, &block)
+          end
+        end
+      end
+
+      # Access activated extensions
+      #
+      # @return [Hash<Symbol,Middleman::Extension|Module>]
+      def extensions
+        @extensions ||= {}
+      end
+
+      # Load features before starting server
+      def initialize
+        super
+
+        self.class.inst = self
+
+        # Search the root of the project for required files
+        $LOAD_PATH.unshift(root)
+
+        ::Middleman::Extension.clear_after_extension_callbacks
+
+        if config[:autoload_sprockets]
+          begin
+            require 'middleman-sprockets'
+            activate(:sprockets)
+          rescue LoadError
           end
         end
 
-        # Access activated extensions
-        #
-        # @return [Hash<Symbol,Middleman::Extension|Module>]
-        def extensions
-          @extensions ||= {}
+        run_hook :initialized
+
+        run_hook :before_configuration
+
+        # Check for and evaluate local configuration
+        local_config = File.join(root, 'config.rb')
+        if File.exist? local_config
+          logger.debug '== Reading:  Local config'
+          config_context.instance_eval File.read(local_config), local_config, 1
         end
 
-        # Load features before starting server
-        def initialize
-          super
+        if build?
+          run_hook :build_config
+          config_context.execute_configure_callbacks(:build)
+        end
 
-          self.class.inst = self
+        if development?
+          run_hook :development_config
+          config_context.execute_configure_callbacks(:development)
+        end
 
-          # Search the root of the project for required files
-          $LOAD_PATH.unshift(root)
+        run_hook :instance_available
 
-          ::Middleman::Extension.clear_after_extension_callbacks
+        # This is for making the tests work - since the tests
+        # don't completely reload middleman, I18n.load_path can get
+        # polluted with paths from other test app directories that don't
+        # exist anymore.
+        if ENV['TEST']
+          ::I18n.load_path.delete_if { |path| path =~ %r{tmp/aruba} }
+          ::I18n.reload!
+        end
 
-          if config[:autoload_sprockets]
-            begin
-              require 'middleman-sprockets'
-              activate(:sprockets)
-            rescue LoadError
+        run_hook :after_configuration
+        config_context.execute_after_configuration_callbacks
+
+        logger.debug 'Loaded extensions:'
+        extensions.each do |ext, klass|
+          if ext.is_a?(Hash)
+            ext.each do |k, _|
+              logger.debug "== Extension: #{k}"
             end
+          else
+            logger.debug "== Extension: #{ext}"
           end
 
-          run_hook :initialized
-
-          run_hook :before_configuration
-
-          # Check for and evaluate local configuration
-          local_config = File.join(root, 'config.rb')
-          if File.exist? local_config
-            logger.debug '== Reading:  Local config'
-            config_context.instance_eval File.read(local_config), local_config, 1
-          end
-
-          if build?
-            run_hook :build_config
-            config_context.execute_configure_callbacks(:build)
-          end
-
-          if development?
-            run_hook :development_config
-            config_context.execute_configure_callbacks(:development)
-          end
-
-          run_hook :instance_available
-
-          # This is for making the tests work - since the tests
-          # don't completely reload middleman, I18n.load_path can get
-          # polluted with paths from other test app directories that don't
-          # exist anymore.
-          if ENV['TEST']
-            ::I18n.load_path.delete_if { |path| path =~ %r{tmp/aruba} }
-            ::I18n.reload!
-          end
-
-          run_hook :after_configuration
-          config_context.execute_after_configuration_callbacks
-
-          logger.debug 'Loaded extensions:'
-          extensions.each do |ext, klass|
-            if ext.is_a?(Hash)
-              ext.each do |k, _|
-                logger.debug "== Extension: #{k}"
-              end
-            else
-              logger.debug "== Extension: #{ext}"
+          if klass.is_a?(::Middleman::Extension)
+            # Forward Extension helpers to TemplateContext
+            (klass.class.defined_helpers || []).each do |m|
+              @template_context_class.send(:include, m)
             end
 
-            if klass.is_a?(::Middleman::Extension)
-              # Forward Extension helpers to TemplateContext
-              (klass.class.defined_helpers || []).each do |m|
-                @template_context_class.send(:include, m)
-              end
-
-              ::Middleman::Extension.activated_extension(klass)
-            end
+            ::Middleman::Extension.activated_extension(klass)
           end
+
         end
       end
     end
