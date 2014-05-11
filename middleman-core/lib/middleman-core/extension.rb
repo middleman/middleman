@@ -32,10 +32,6 @@ module Middleman
         self.defined_helpers += m
       end
 
-      def activate
-        new(::Middleman::Application)
-      end
-
       def clear_after_extension_callbacks
         @_extension_activation_callbacks = {}
       end
@@ -155,6 +151,7 @@ module Middleman
           end
         end
       end
+
     end
   end
 end
