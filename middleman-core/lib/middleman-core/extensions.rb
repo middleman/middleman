@@ -1,4 +1,10 @@
+require 'middleman-core/extension'
+
 module Middleman
+  # The Extensions module is used to handle global registration and loading of Middleman Extensions.
+  #
+  # The application-facing extension API (activate, etc) is in Middleman::CoreExtensions::Extensions in
+  # middleman-core/core_extensions/extensions.rb.
   module Extensions
     class << self
       def registered
@@ -66,55 +72,4 @@ module Middleman
       end
     end
   end
-
-  # Where to look in gems for extensions to auto-register. Since most extensions are
-  # called out in a Gemfile, this is really only useful for template extensions that get
-  # used by "middleman init".
-  EXTENSION_FILE = File.join('lib', 'middleman_extension.rb') unless const_defined?(:EXTENSION_FILE)
-
-  class << self
-    # Automatically load extensions from available RubyGems
-    # which contain the EXTENSION_FILE
-    #
-    # @private
-    def load_extensions_in_path
-      require 'rubygems'
-
-      extensions = rubygems_latest_specs.select do |spec|
-        spec_has_file?(spec, EXTENSION_FILE)
-      end
-
-      extensions.each do |spec|
-        require spec.name
-      end
-    end
-
-    # Backwards compatible means of finding all the latest gemspecs
-    # available on the system
-    #
-    # @private
-    # @return [Array] Array of latest Gem::Specification
-    def rubygems_latest_specs
-      # If newer Rubygems
-      if ::Gem::Specification.respond_to? :latest_specs
-        ::Gem::Specification.latest_specs(true)
-      else
-        ::Gem.source_index.latest_specs
-      end
-    end
-
-    # Where a given Gem::Specification has a specific file. Used
-    # to discover extensions.
-    #
-    # @private
-    # @param [Gem::Specification] spec
-    # @param [String] path Path to look for
-    # @return [Boolean] Whether the file exists
-    def spec_has_file?(spec, path)
-      full_path = File.join(spec.full_gem_path, path)
-      File.exist?(full_path)
-    end
-  end
 end
-
-require 'middleman-core/extension'

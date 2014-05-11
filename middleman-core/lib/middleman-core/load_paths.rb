@@ -1,5 +1,6 @@
 # Core Pathname library used for traversal
 require 'pathname'
+require 'middleman-core/auto_gem_extensions'
 
 module Middleman
   class << self
