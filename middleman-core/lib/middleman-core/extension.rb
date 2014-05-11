@@ -81,7 +81,7 @@ module Middleman
       end
     end
 
-    protected
+    private
 
     def setup_options(options_hash)
       @options = self.class.config.dup
@@ -151,7 +151,6 @@ module Middleman
           end
         end
       end
-
     end
   end
 end
