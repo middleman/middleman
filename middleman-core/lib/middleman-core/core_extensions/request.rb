@@ -56,8 +56,6 @@ module Middleman
         # Set the shared instance
         #
         # @private
-        # @param [Middleman::Application] inst
-        # @return [void]
         attr_writer :inst
 
         # Return built Rack app
@@ -188,7 +186,6 @@ module Middleman
         # message.
         #
         # @param env
-        # @param [Rack::Request] req
         # @param [Rack::Response] res
         def process_request(env, _, res)
           start_time = Time.now

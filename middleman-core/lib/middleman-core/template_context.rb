@@ -60,7 +60,6 @@ module Middleman
     # Sinatra/Padrino compatible render method signature referenced by some view
     # helpers. Especially partials.
     #
-    # @param [String, Symbol] engine
     # @param [String, Symbol] data
     # @param [Hash] options
     # @return [String]

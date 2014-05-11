@@ -1,34 +1,3 @@
-# Middleman provides an extension API which allows you to hook into the
-# lifecycle of a page request, or static build, and manipulate the output.
-# Internal to Middleman, these extensions are called "features," but we use
-# the exact same API as is made available to the public.
-#
-# A Middleman extension looks like this:
-#
-#     module MyExtension
-#       class << self
-#         def registered(app)
-#           # My Code
-#         end
-#       end
-#     end
-#
-# In your `config.rb`, you must load your extension (if it is not defined in
-# that file) and call `activate`.
-#
-#     require "my_extension"
-#     activate MyExtension
-#
-# This will call the `registered` method in your extension and provide you
-# with the `app` parameter which is a Middleman::Application context. From here
-# you can choose to respond to requests for certain paths or simply attach
-# Rack middleware to the stack.
-#
-# The built-in features cover a wide range of functions. Some provide helper
-# methods to use in your views. Some modify the output on-the-fly. And some
-# apply computationally-intensive changes to your final build files.
-
-# Namespace extensions module
 module Middleman
   module CoreExtensions
     module Extensions

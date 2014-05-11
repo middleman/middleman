@@ -6,3 +6,4 @@ lib/**/*.rb
 --exclude lib/middleman-cli/templates/extension/
 --no-private
 --hide-void-return
+--markup=markdown
