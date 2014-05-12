@@ -57,21 +57,20 @@ module Middleman
         app.config_context.class.send :delegate, :sitemap, to: :app
       end
 
-      # Register a klass which can manipulate the main site map list. Best to register
-      # these in a before_configuration or after_configuration hook.
+      # Register an object which can transform the sitemap resource list. Best to register
+      # these in a `before_configuration` or `after_configuration` hook.
       #
       # @param [Symbol] name Name of the manipulator for debugging
-      # @param [Class, Module] inst Abstract namespace which can update the resource list
+      # @param [#manipulate_resource_list] manipulator Resource list manipulator
       # @return [void]
-      def register_resource_list_manipulator(name, inst, *)
-        @resource_list_manipulators << [name, inst]
+      def register_resource_list_manipulator(name, manipulator, *)
+        @resource_list_manipulators << [name, manipulator]
         rebuild_resource_list!(:registered_new)
       end
 
       # Rebuild the list of resources from scratch, using registed manipulators
-      # rubocop:disable UnusedMethodArgument
       # @return [void]
-      def rebuild_resource_list!(reason=nil)
+      def rebuild_resource_list!(_=nil)
         @lock.synchronize do
           @needs_sitemap_rebuild = true
         end

@@ -3,3 +3,4 @@ lib/**/*.rb
 --exclude lib/middleman-core/step_definitions
 --no-private
 --hide-void-return
+--markup=markdown

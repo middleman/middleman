@@ -2,3 +2,4 @@ lib/**/*.rb
 --exclude lib/middleman-templates
 --no-private
 --hide-void-return
+--markup=markdown

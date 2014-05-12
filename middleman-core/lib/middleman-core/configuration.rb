@@ -82,9 +82,11 @@ module Middleman
       # Define a new setting, with optional default and user-friendly description.
       # Once the configuration manager is finalized, no new settings may be defined.
       #
-      # @param [Symbol] key
-      # @param [Object] default
-      # @param [String] description
+      # @example
+      #   config.define_setting :compress, false, 'Whether to compress the output'
+      # @param [Symbol] key The name of the option
+      # @param [Object] default The default value for the option
+      # @param [String] description A human-readable description of what the option does
       # @return [ConfigSetting]
       def define_setting(key, default=nil, description=nil)
         raise "Setting #{key} doesn't exist" if @finalized
