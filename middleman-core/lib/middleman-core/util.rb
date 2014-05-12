@@ -4,6 +4,9 @@ require 'active_support/notifications'
 # Using Thor's indifferent hash access
 require 'thor'
 
+# For URI parsing
+require 'addressable/uri'
+
 # Core Pathname library used for traversal
 require 'pathname'
 
@@ -148,8 +151,8 @@ module Middleman
 
         # Try to parse URL
         begin
-          uri = URI(url)
-        rescue URI::InvalidURIError
+          uri = Addressable::URI.parse(url)
+        rescue TypeError
           # Nothing we can do with it, it's not really a URI
           return url
         end
@@ -196,6 +199,12 @@ module Middleman
         # Support a :fragment or :anchor option just like Padrino
         fragment = options[:anchor] || options[:fragment]
         uri.fragment = fragment.to_s if fragment
+
+        # Normalize URI
+        uri.site = uri.normalized_site
+        uri.path = Addressable::URI.normalized_encode(uri.path)
+        uri.query = uri.normalized_query
+        uri.fragment = uri.normalized_fragment
 
         # Finally make the URL back into a string
         uri.to_s
