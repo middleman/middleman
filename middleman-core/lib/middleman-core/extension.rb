@@ -81,6 +81,12 @@ module Middleman
     #   @return [Symbol] the name this extension is registered under. This is the symbol used to activate the extension.
     class_attribute :ext_name, instance_reader: false, instance_writer: false
 
+    # @!attribute resource_list_manipulator_priority
+    #   @!scope class
+    #   @return [Numeric] the priority for this extension's `manipulate_resource_list` method, if it has one.
+    #   @see Middleman::Sitemap::Store#register_resource_list_manipulator
+    class_attribute :resource_list_manipulator_priority, instance_reader: false, instance_writer: false
+
     class << self
       # @api private
       # @return [Middleman::Configuration::ConfigurationManager] The defined options for this extension.
@@ -150,7 +156,7 @@ module Middleman
       # @return [void]
       def activated_extension(instance)
         name = instance.class.ext_name
-        return unless @_extension_activation_callbacks && @_extension_activation_callbacks.has_key?(name)
+        return unless @_extension_activation_callbacks && @_extension_activation_callbacks.key?(name)
         @_extension_activation_callbacks[name].each do |block|
           block.arity == 1 ? block.call(instance) : block.call
         end
@@ -276,7 +282,7 @@ module Middleman
 
         # rubocop:disable IfUnlessModifier
         if ext.respond_to?(:manipulate_resource_list)
-          ext.app.sitemap.register_resource_list_manipulator(ext.class.ext_name, ext)
+          ext.app.sitemap.register_resource_list_manipulator(ext.class.ext_name, ext, ext.class.resource_list_manipulator_priority)
         end
       end
     end
