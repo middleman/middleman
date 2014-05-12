@@ -1,5 +1,9 @@
 # Directory Indexes extension
 class Middleman::Extensions::DirectoryIndexes < ::Middleman::Extension
+  # This should run after most other sitemap manipulators so that it
+  # gets a chance to modify any new resources that get added.
+  self.resource_list_manipulator_priority = 100
+
   # Update the main sitemap resource list
   # @return [void]
   def manipulate_resource_list(resources)
