@@ -9,11 +9,9 @@ Feature: select_tag helper
     """
     And the Server is running at "indexable-app"
     When I go to "/select_tag.html"
-    Then I should see:
-    """
-    <select name="colors" include_blank="Choose a color"><option value="">Choose a color</option>
-    <option value="red">red</option>
-    <option value="blue">blue</option>
-    <option value="blorange">blorange</option>
-    </select>
-    """
+    Then I should see '<select name="colors"'
+    Then I should see '<option value="">Choose a color</option>'
+    Then I should see '<option value="red">red</option>'
+    Then I should see '<option value="blue">blue</option>'
+    Then I should see '<option value="blorange">blorange</option>'
+    Then I should see '</select>'

@@ -1,6 +1,9 @@
 # Require gem
 require 'haml'
 
+# Require padrino-helpers now so that we get a chance to replace their renderer with ours in Tilt.
+require 'padrino-helpers'
+
 module SafeTemplate
   def render(*)
     super.html_safe
@@ -41,7 +44,7 @@ module Middleman
       class << self
         # Once registered
         def registered(_)
-          ::Tilt.prefer(::Middleman::Renderers::HamlTemplate, 'haml')
+          ::Tilt.prefer(::Middleman::Renderers::HamlTemplate, :haml)
 
           # Add haml helpers to context
           ::Middleman::TemplateContext.send :include, ::Haml::Helpers
