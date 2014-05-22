@@ -222,6 +222,10 @@ module Middleman
         def render_individual_file(path, locs={}, opts={}, context=self, &block)
           path = path.to_s
 
+          # Mutability is FUN!
+          # Try to work around: https://github.com/middleman/middleman/issues/501
+          locs = locs.dup
+
           # Detect the remdering engine from the extension
           extension = File.extname(path)
           engine = extension[1..-1].to_sym
