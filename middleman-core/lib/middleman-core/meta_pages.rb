@@ -63,6 +63,8 @@ module Middleman
         extension_config = {}
 
         @middleman.inst.extensions.each do |ext_name, extension|
+          next if ::Middleman::Extension.auto_activate_before_configuration.include? ext_name
+
           if extension.is_a?(Hash)
             # Multiple instance extension
             if extension.size == 1
@@ -72,10 +74,8 @@ module Middleman
                 extension_config["#{ext_name} (#{inst})"] = extension_options(ext)
               end
             end
-          elsif extension.is_a?(::Middleman::Extension)
-            extension_config[ext_name] = extension_options(extension)
           else
-            extension_config[ext_name] = nil
+            extension_config[ext_name] = extension_options(extension)
           end
         end
 
