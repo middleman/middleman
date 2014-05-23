@@ -14,9 +14,6 @@ module Middleman
         app.define_hook :build_config
         app.define_hook :development_config
 
-        app.config.define_setting :autoload_sprockets, true, 'Automatically load sprockets at startup?'
-        app.config[:autoload_sprockets] = (ENV['AUTOLOAD_SPROCKETS'] == 'true') if ENV['AUTOLOAD_SPROCKETS']
-
         app.extend ClassMethods
         app.delegate :configure, to: :"self.class"
       end
@@ -89,11 +86,12 @@ module Middleman
 
         ::Middleman::Extension.clear_after_extension_callbacks
 
-        if config[:autoload_sprockets]
+        if ENV['AUTOLOAD_SPROCKETS'] != 'false'
           begin
             require 'middleman-sprockets'
-            activate(:sprockets)
+            activate :sprockets
           rescue LoadError
+            # It's OK if somebody is using middleman-core without middleman-sprockets
           end
         end
 
@@ -132,24 +130,27 @@ module Middleman
         run_hook :after_configuration
         config_context.execute_after_configuration_callbacks
 
+        extension_instances = []
         logger.debug 'Loaded extensions:'
-        extensions.each do |ext, klass|
+        extensions.each do |ext_name, ext|
           if ext.is_a?(Hash)
-            ext.each do |k, _|
-              logger.debug "== Extension: #{k}"
+            ext.each do |instance_key, instance|
+              logger.debug "== Extension: #{ext_name} #{instance_key}"
+              extension_instances << instance
             end
           else
-            logger.debug "== Extension: #{ext}"
+            logger.debug "== Extension: #{ext_name}"
+            extension_instances << ext
+          end
+        end
+
+        extension_instances.each do |ext|
+          # Forward Extension helpers to TemplateContext
+          Array(ext.class.defined_helpers).each do |m|
+            @template_context_class.send(:include, m)
           end
 
-          if klass.is_a?(::Middleman::Extension)
-            # Forward Extension helpers to TemplateContext
-            (klass.class.defined_helpers || []).each do |m|
-              @template_context_class.send(:include, m)
-            end
-
-            ::Middleman::Extension.activated_extension(klass)
-          end
+          ::Middleman::Extension.activated_extension(ext)
         end
       end
     end
