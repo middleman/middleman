@@ -38,7 +38,7 @@ module Middleman
       #        extension is first activated.
       # @return [void]
       def register(name, extension_class=nil, &block)
-        raise "Extension name must be a symbol" unless name.is_a?(Symbol)
+        raise 'Extension name must be a symbol' unless name.is_a?(Symbol)
         # If we've already got an extension registered under this name, bail out
         raise "There is already an extension registered with the name '#{name}'" if registered.key?(name)
 
@@ -57,7 +57,7 @@ module Middleman
       # @return [Class<Middleman::Extension>] A {Middleman::Extension} class implementing the extension
       #
       def load(name)
-        raise "Extension name must be a symbol" unless name.is_a?(Symbol)
+        raise 'Extension name must be a symbol' unless name.is_a?(Symbol)
 
         unless registered.key?(name)
           raise "Unknown Extension: #{name}. Check the name and make sure you have referenced the extension's gem in your Gemfile."

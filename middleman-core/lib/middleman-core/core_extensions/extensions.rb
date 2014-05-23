@@ -1,28 +1,34 @@
 module Middleman
   module CoreExtensions
+    # The Extensions core module provides basic configurability to Middleman projects:
+    #
+    # * It loads and evaluates `config.rb`.
+    # * It defines lifecycle hooks for extensions and `config.rb` to use.
+    # * It provides the {#activate} method for use in `config.rb`.
     module Extensions
-      # Register extension
-      class << self
-        # @private
-        def included(app)
-          app.define_hook :initialized
-          app.define_hook :instance_available
-          app.define_hook :after_configuration
-          app.define_hook :before_configuration
-          app.define_hook :build_config
-          app.define_hook :development_config
+      def self.included(app)
+        app.define_hook :initialized
+        app.define_hook :instance_available
+        app.define_hook :after_configuration
+        app.define_hook :before_configuration
+        app.define_hook :build_config
+        app.define_hook :development_config
 
-          app.config.define_setting :autoload_sprockets, true, 'Automatically load sprockets at startup?'
-          app.config[:autoload_sprockets] = (ENV['AUTOLOAD_SPROCKETS'] == 'true') if ENV['AUTOLOAD_SPROCKETS']
+        app.config.define_setting :autoload_sprockets, true, 'Automatically load sprockets at startup?'
+        app.config[:autoload_sprockets] = (ENV['AUTOLOAD_SPROCKETS'] == 'true') if ENV['AUTOLOAD_SPROCKETS']
 
-          app.extend ClassMethods
-          app.delegate :configure, to: :"self.class"
-        end
+        app.extend ClassMethods
+        app.delegate :configure, to: :"self.class"
       end
 
-      # Class methods
       module ClassMethods
-        # Add a callback to run in a specific environment
+        # Register a block to run only in a specific environment.
+        #
+        # @example
+        #    # Only minify when building
+        #    configure :build do
+        #      activate :minify_javascript
+        #    end
         #
         # @param [String, Symbol] env The environment to run in (:build, :development)
         # @return [void]
@@ -31,47 +37,55 @@ module Middleman
         end
       end
 
-      # This method is available in the project's `config.rb`.
-      # It takes a underscore-separated symbol, finds the appropriate
-      # feature module and includes it.
+      # Activate an extension, optionally passing in options.
+      # This method is typically used from a project's `config.rb`.
       #
+      # @example Activate an extension with no options
       #     activate :lorem
       #
-      # @param [Symbol, Module] ext Which extension to activate
+      # @example Activate an extension, with options
+      #     activate :minify_javascript, inline: true
+      #
+      # @example Use a block to configure extension options
+      #     activate :minify_javascript do |opts|
+      #       opts.ignore += ['*-test.js']
+      #     end
+      #
+      # @param [Symbol] ext_name The name of thed extension to activate
+      # @param [Hash] options Options to pass to the extension
+      # @yield [Middleman::Configuration::ConfigurationManager] Extension options that can be modified before the extension is initialized.
       # @return [void]
-      # rubocop:disable BlockNesting
-      def activate(ext, options={}, &block)
-        extension = ::Middleman::Extensions.load(ext)
-        logger.debug "== Activating: #{ext}"
+      def activate(ext_name, options={}, &block)
+        extension = ::Middleman::Extensions.load(ext_name)
+        logger.debug "== Activating: #{ext_name}"
 
         if extension.supports_multiple_instances?
-          extensions[ext] ||= {}
-          key = "instance_#{extensions[ext].keys.length}"
-          extensions[ext][key] = extension.new(self.class, options, &block)
+          extensions[ext_name] ||= {}
+          key = "instance_#{extensions[ext_name].keys.length}"
+          extensions[ext_name][key] = extension.new(self.class, options, &block)
+        elsif extensions.key?(ext_name)
+          raise "#{ext_name} has already been activated and cannot be re-activated."
         else
-          if extensions[ext]
-            raise "#{ext} has already been activated and cannot be re-activated."
-          else
-            extensions[ext] = extension.new(self.class, options, &block)
-          end
+          extensions[ext_name] = extension.new(self.class, options, &block)
         end
       end
 
-      # Access activated extensions
+      # A hash of all activated extensions, indexed by their name. If an extension supports multiple
+      # instances, it will be stored as a hash of instances instead of just the instance.
       #
-      # @return [Hash<Symbol,Middleman::Extension|Module>]
+      # @return [Hash{Symbol => Middleman::Extension, Hash{String => Middleman::Extension}}]
       def extensions
         @extensions ||= {}
       end
 
-      # Load features before starting server
+      # Override application initialization to load `config.rb` and to call lifecycle hooks.
       def initialize
         super
 
         self.class.inst = self
 
         # Search the root of the project for required files
-        $LOAD_PATH.unshift(root)
+        $LOAD_PATH.unshift(root) unless $LOAD_PATH.include?(root)
 
         ::Middleman::Extension.clear_after_extension_callbacks
 
@@ -87,7 +101,7 @@ module Middleman
 
         run_hook :before_configuration
 
-        # Check for and evaluate local configuration
+        # Check for and evaluate local configuration in `config.rb`
         local_config = File.join(root, 'config.rb')
         if File.exist? local_config
           logger.debug '== Reading:  Local config'
@@ -136,7 +150,6 @@ module Middleman
 
             ::Middleman::Extension.activated_extension(klass)
           end
-
         end
       end
     end
