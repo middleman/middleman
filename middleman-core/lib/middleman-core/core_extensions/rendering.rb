@@ -143,7 +143,8 @@ module Middleman
           end
 
           # Store current locs/opts for later
-          @current_locs = locs, @current_opts = opts
+          @current_locs = locs
+          @current_opts = opts
 
           # Keep rendering template until we've used up all extensions. This
           # handles cases like `style.css.sass.erb`
