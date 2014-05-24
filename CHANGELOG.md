@@ -1,6 +1,15 @@
 master
 ===
 
+3.3.3
+===
+
+* Fix thread-safety issue #501 which could cause excepts when livereloading.
+* Update to support Hooks 0.4.x dep.
+* Update to support Padrino 0.12.2+ dep.
+* Fix `after_render` manipulation of content. #1278
+* Fix combo of compass-import-once and sass-globs. middleman/middleman-sprockets#56
+
 3.3.0-3.3.2
 ===
 
