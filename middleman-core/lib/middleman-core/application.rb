@@ -25,6 +25,15 @@ require 'middleman-core/config_context'
 require 'middleman-core/file_renderer'
 require 'middleman-core/template_renderer'
 
+# Rack Request
+require 'middleman-core/core_extensions/request'
+
+# Custom Extension API and config.rb handling
+require 'middleman-core/core_extensions/extensions'
+
+# Catch and show exceptions at the Rack level
+require 'middleman-core/core_extensions/show_exceptions'
+
 # Core Middleman Class
 module Middleman
   class Application
@@ -168,7 +177,7 @@ module Middleman
     delegate :link_to, :image_tag, :asset_path, to: :generic_template_context
 
     # Initialize the Middleman project
-    def initialize(&block)
+    def initialize
       @template_context_class = Class.new(Middleman::TemplateContext)
       @generic_template_context = @template_context_class.new(self)
       @config_context = ConfigContext.new(self, @template_context_class)
@@ -192,19 +201,6 @@ module Middleman
       end
 
       config[:source] = ENV['MM_SOURCE'] if ENV['MM_SOURCE']
-
-      # Built-in extensions
-      activate :default_helpers
-      activate :lorem
-
-      begin
-        activate :compass
-      rescue LoadError
-        # Compass is not available, don't complain about it
-      end
-
-      # Evaluate a passed block if given
-      @config_context.instance_exec(&block) if block_given?
 
       super
     end

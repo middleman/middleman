@@ -1,11 +1,5 @@
-# Rack Request
-require 'middleman-core/core_extensions/request'
-
 # File Change Notifier
 require 'middleman-core/core_extensions/file_watcher'
-
-# Custom Feature API
-require 'middleman-core/core_extensions/extensions'
 
 # Data looks at the data/ folder for YAML files and makes them available
 # to dynamic requests.
@@ -23,22 +17,18 @@ require 'middleman-core/core_extensions/external_helpers'
 # Extended version of Padrino's rendering
 require 'middleman-core/core_extensions/rendering'
 
-# Pass custom options to views
-require 'middleman-core/core_extensions/routing'
-
-# Catch and show exceptions at the Rack level
-require 'middleman-core/core_extensions/show_exceptions'
-
 # Setup default helpers
-Middleman::Extensions.register :default_helpers do
+Middleman::Extensions.register :default_helpers, auto_activate_before_configuration: true do
   require 'middleman-core/core_extensions/default_helpers'
   Middleman::CoreExtensions::DefaultHelpers
 end
 
 # Compass framework
-Middleman::Extensions.register :compass do
+begin
   require 'middleman-core/core_extensions/compass'
-  Middleman::CoreExtensions::Compass
+  Middleman::Extensions.register :compass, Middleman::CoreExtensions::Compass, auto_activate_before_configuration: true
+rescue LoadError
+  # Compass is not available, don't complain about it
 end
 
 ###
@@ -105,7 +95,7 @@ end
 
 # Lorem provides a handful of helpful prototyping methods to generate
 # words, paragraphs, fake images, names and email addresses.
-Middleman::Extensions.register :lorem do
+Middleman::Extensions.register :lorem, auto_activate_before_configuration: true do
   require 'middleman-core/extensions/lorem'
   Middleman::Extensions::Lorem
 end

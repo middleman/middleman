@@ -76,7 +76,7 @@ module Middleman
       end
 
       # Override application initialization to load `config.rb` and to call lifecycle hooks.
-      def initialize
+      def initialize(&block)
         super
 
         self.class.inst = self
@@ -98,6 +98,9 @@ module Middleman
             # It's OK if somebody is using middleman-core without middleman-sprockets
           end
         end
+
+        # Evaluate a passed block if given
+        config_context.instance_exec(&block) if block_given?
 
         run_hook :initialized
 

@@ -1,7 +1,6 @@
 require 'middleman-core/template_context'
 
 # Rendering extension
-# rubocop:disable UnderscorePrefixedVariableName
 module Middleman
   module CoreExtensions
     module Rendering
