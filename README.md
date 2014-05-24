@@ -89,6 +89,22 @@ The best way to get quick responses to your issues and swift fixes to your bugs 
 
 [Click here to lend your support to Middleman](https://spacebox.io/s/4dXbHBorC3)
 
+## Versioning
+
+This library aims to adhere to [Semantic Versioning 2.0.0][semver]. Violations
+of this scheme should be reported as bugs. Specifically, if a minor or patch
+version is released that breaks backward compatibility, that version should be
+immediately yanked and/or a new version should be immediately released that
+restores compatibility. Breaking changes to the public API will only be
+introduced with new major versions. As a result of this policy, you can (and
+should) specify a dependency on this gem using the [Pessimistic Version
+Constraint][pvc] with two digits of precision. For example:
+
+    spec.add_dependency 'middleman-core', '~> 3.0'
+
+[semver]: http://semver.org/
+[pvc]: http://docs.rubygems.org/read/chapter/16#page74
+
 ## License
 
 Copyright (c) 2010-2013 Thomas Reynolds. MIT Licensed, see [LICENSE] for details.
