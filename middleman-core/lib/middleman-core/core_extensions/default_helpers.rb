@@ -6,12 +6,11 @@ require 'padrino-helpers'
 
 class Padrino::Helpers::OutputHelpers::ErbHandler
   # Force Erb capture not to use safebuffer
-  # rubocop:disable UnderscorePrefixedVariableName
   def capture_from_template(*args, &block)
-    self.output_buffer, _buf_was = '', output_buffer
+    self.output_buffer, buf_was = '', output_buffer
     raw = block.call(*args)
     captured = template.instance_variable_get(:@_out_buf)
-    self.output_buffer = _buf_was
+    self.output_buffer = buf_was
     engine_matches?(block) ? captured : raw
   end
 end
@@ -39,7 +38,6 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
   helpers do
 
     # Make all block content html_safe
-    # rubocop:disable Semicolon
     def content_tag(name, content=nil, options=nil, &block)
       # safe_content_tag(name, content, options, &block)
       if block_given?
@@ -53,7 +51,10 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
       output.safe_concat "<#{name}#{attributes}>"
 
       if content.respond_to?(:each) && !content.is_a?(String)
-        content.each { |c| output.safe_concat c; output.safe_concat ::Padrino::Helpers::TagHelpers::NEWLINE }
+        content.each do |c|
+          output.safe_concat c
+          output.safe_concat ::Padrino::Helpers::TagHelpers::NEWLINE
+        end
       else
         output.safe_concat "#{content}"
       end
@@ -72,17 +73,10 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
       ActiveSupport::SafeBuffer.new.safe_concat(result)
     end
 
-    # rubocop:disable MultilineBlockChain, UnusedBlockArgument
     def auto_find_proper_handler(&block)
       if block_given?
         engine = File.extname(block.source_location[0])[1..-1].to_sym
-        ::Padrino::Helpers::OutputHelpers.handlers.select do |e, h|
-          e == engine
-        end.values.map do |h|
-          h.new(self)
-        end.find do |h|
-          h.engine_matches?(block)
-        end
+        ::Padrino::Helpers::OutputHelpers.handlers.select { |e, _| e == engine }.values.map { |h| h.new(self) }.find { |h| h.engine_matches?(block) }
       else
         find_proper_handler
       end
@@ -195,10 +189,8 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
     #
     # @param [String] path The path (such as "photo.jpg")
     # @param [String] prefix The type prefix (such as "images")
-    # @param [Hash] options Data to pass through.
     # @return [String] The fully qualified asset url
-    # rubocop:disable UnusedMethodArgument
-    def asset_url(path, prefix='', options={})
+    def asset_url(path, prefix='', _)
       # Don't touch assets which already have a full path
       if path.include?('//') || path.start_with?('data:')
         path

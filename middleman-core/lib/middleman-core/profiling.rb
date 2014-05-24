@@ -1,22 +1,21 @@
 module Middleman
   module Profiling
-    # The profiler instance. There can only be one!
-    # rubocop:disable TrivialAccessors
-    def self.profiler=(prof)
-      @profiler = prof
-    end
-    def self.profiler
-      @profiler ||= NullProfiler.new
-    end
+    class << self
+      # The profiler instance. There can only be one!
+      attr_writer :profiler
+      def profiler
+        @profiler ||= NullProfiler.new
+      end
 
-    # Start the profiler
-    def self.start
-      profiler.start
-    end
+      # Start the profiler
+      def start
+        profiler.start
+      end
 
-    # Stop the profiler and generate a report. Make sure to call start first
-    def self.report(report_name)
-      profiler.report(report_name)
+      # Stop the profiler and generate a report. Make sure to call start first
+      def report(report_name)
+        profiler.report(report_name)
+      end
     end
 
     # A profiler that does nothing. The default.

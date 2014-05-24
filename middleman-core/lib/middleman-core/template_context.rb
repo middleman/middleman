@@ -1,7 +1,6 @@
 require 'middleman-core/file_renderer'
 require 'middleman-core/template_renderer'
 
-# rubocop:disable UnderscorePrefixedVariableName
 module Middleman
   class TemplateContext
     attr_reader :app
@@ -16,13 +15,13 @@ module Middleman
     end
 
     def save_buffer
-      @_out_buf, _buf_was = '', @_out_buf
-      _buf_was
+      @_out_buf, buf_was = '', @_out_buf
+      buf_was
     end
 
     # rubocop:disable TrivialAccessors
-    def restore_buffer(_buf_was)
-      @_out_buf = _buf_was
+    def restore_buffer(buf_was)
+      @_out_buf = buf_was
     end
 
     # Allow layouts to be wrapped in the contents of other layouts
@@ -30,7 +29,7 @@ module Middleman
     # @return [void]
     def wrap_layout(layout_name, &block)
       # Save current buffer for later
-      _buf_was = save_buffer
+      buf_was = save_buffer
 
       layout_path = ::Middleman::TemplateRenderer.locate_layout(@app, layout_name, current_engine)
 
@@ -48,7 +47,7 @@ module Middleman
         end
       ensure
         # Reset stored buffer
-        restore_buffer(_buf_was)
+        restore_buffer(buf_was)
       end
 
       file_renderer = ::Middleman::FileRenderer.new(@app, layout_path)

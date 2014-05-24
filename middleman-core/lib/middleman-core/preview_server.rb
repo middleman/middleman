@@ -2,7 +2,6 @@ require 'webrick'
 require 'middleman-core/meta_pages'
 require 'middleman-core/logger'
 
-# rubocop:disable GlobalVars
 module Middleman
   module PreviewServer
     DEFAULT_PORT = 4567
@@ -35,12 +34,12 @@ module Middleman
           loop do
             @webrick.start
 
-            # $mm_shutdown is set by the signal handler
-            if $mm_shutdown
+            # @mm_shutdown is set by the signal handler
+            if @mm_shutdown
               shutdown
               exit
-            elsif $mm_reload
-              $mm_reload = false
+            elsif @mm_reload
+              @mm_reload = false
               reload
             end
           end
@@ -130,7 +129,7 @@ module Middleman
 
           # See if the changed file is config.rb or lib/*.rb
           if needs_to_reload?(added_and_modified + removed)
-            $mm_reload = true
+            @mm_reload = true
             @webrick.stop
           else
             added_and_modified.each do |path|
@@ -156,7 +155,7 @@ module Middleman
           if Signal.list[sig]
             Signal.trap(sig) do
               # Do as little work as possible in the signal context
-              $mm_shutdown = true
+              @mm_shutdown = true
               @webrick.stop
             end
           end

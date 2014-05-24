@@ -20,7 +20,6 @@ module Middleman
     # @param [Hash] opts
     # @param [Class] context
     # @return [String]
-    # rubocop:disable UnderscorePrefixedVariableName
     def render(locs={}, opts={}, context, &block)
       path = @path.dup
 
@@ -32,7 +31,7 @@ module Middleman
       context.current_engine, engine_was = engine, context.current_engine
 
       # Save current buffer for later
-      _buf_was = context.save_buffer
+      buf_was = context.save_buffer
 
       # Read from disk or cache the contents of the file
       body = if opts[:template_body]
@@ -85,7 +84,7 @@ module Middleman
       output
     ensure
       # Reset stored buffer
-      context.restore_buffer(_buf_was)
+      context.restore_buffer(buf_was)
       context.current_engine = engine_was
     end
 

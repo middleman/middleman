@@ -124,12 +124,11 @@ module Middleman
         # configuration can be included later without impacting
         # other classes and instances.
         #
-        # rubocop:disable ClassVars
         # @return [Class]
         def server(&block)
-          @@servercounter ||= 0
-          @@servercounter += 1
-          const_set("MiddlemanApplication#{@@servercounter}", Class.new(Middleman::Application, &block))
+          @servercounter ||= 0
+          @servercounter += 1
+          const_set("MiddlemanApplication#{@servercounter}", Class.new(Middleman::Application, &block))
         end
       end
 
