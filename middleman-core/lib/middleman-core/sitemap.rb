@@ -34,7 +34,7 @@ module Middleman
     # Sitemap instance methods
     module InstanceMethods
       def current_path
-        @current_locs[:current_path]
+        @locs[:current_path]
       end
 
       # Get the resource object for the current path

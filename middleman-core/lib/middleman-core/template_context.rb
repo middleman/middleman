@@ -1,95 +1,159 @@
+require 'pathname'
 require 'middleman-core/file_renderer'
 require 'middleman-core/template_renderer'
 
 module Middleman
+  # The TemplateContext Class
+  #
+  # A clean context, separate from Application, in which templates can be executed.
+  # All helper methods and values available in a template, but be accessible here.
+  # Also implements two helpers: wrap_layout & render (used by padrino's partial method).
+  # A new context is created for each render of a path, but that context is shared through
+  # the request, passed from template, to layouts and partials.
   class TemplateContext
+    # Allow templates to directly access the current app instance.
+    # @return [Middleman::Application]
     attr_reader :app
+
+    # Required for Padrino's rendering
     attr_accessor :current_engine
 
+    # Shorthand references to global values on the app instance.
     delegate :config, :logger, :sitemap, :build?, :development?, :data, :extensions, :source_dir, :root, to: :app
 
+    # Initialize a context with the current app and predefined locals and options hashes.
+    #
+    # @param [Middleman::Application] app
+    # @param [Hash] locs
+    # @param [Hash] opts
     def initialize(app, locs={}, opts={})
       @app = app
-      @current_locs = locs
-      @current_opts = opts
+      @locs = locs.dup.freeze
+      @opts = opts.dup.freeze
     end
 
+    # Return the current buffer to the caller and clear the value internally.
+    # Used when moving between templates when rendering layouts or partials.
+    #
+    # @api private
+    # @return [String] The old buffer.
     def save_buffer
       @_out_buf, buf_was = '', @_out_buf
       buf_was
     end
 
+    # Restore a previously saved buffer.
+    #
+    # @api private
+    # @param [String] buf_was
+    # @return [void]
     # rubocop:disable TrivialAccessors
     def restore_buffer(buf_was)
       @_out_buf = buf_was
     end
 
-    # Allow layouts to be wrapped in the contents of other layouts
+    # Allow layouts to be wrapped in the contents of other layouts.
+    #
     # @param [String, Symbol] layout_name
     # @return [void]
     def wrap_layout(layout_name, &block)
       # Save current buffer for later
       buf_was = save_buffer
 
+      # Find a layout for this file
       layout_path = ::Middleman::TemplateRenderer.locate_layout(@app, layout_name, current_engine)
 
+      # Get the layout engine
       extension = File.extname(layout_path)
       engine = extension[1..-1].to_sym
 
       # Store last engine for later (could be inside nested renders)
       self.current_engine, engine_was = engine, current_engine
 
+      # By default, no content is captured
+      content = ''
+
+      # Attempt to capture HTML from block
       begin
-        content = if block_given?
-          capture_html(&block)
-        else
-          ''
-        end
+        content = capture_html(&block) if block_given?
       ensure
-        # Reset stored buffer
+        # Reset stored buffer, regardless of success
         restore_buffer(buf_was)
       end
-
-      file_renderer = ::Middleman::FileRenderer.new(@app, layout_path)
-      concat_safe_content file_renderer.render(@current_locs || {}, @current_opts || {}, self) { content }
+      # Render the layout, with the contents of the block inside.
+      concat_safe_content render_file(layout_path, @locs, @opts) { content }
     ensure
+      # Reset engine back to template's value, regardless of success
       self.current_engine = engine_was
     end
 
     # Sinatra/Padrino compatible render method signature referenced by some view
     # helpers. Especially partials.
     #
-    # @param [String, Symbol] data
+    # @param [] _ Unused parameter.
+    # @param [String, Symbol] name The partial to render.
     # @param [Hash] options
     # @return [String]
-    def render(_, data, options={}, &block)
-      data = data.to_s
+    def render(_, name, options={}, &block)
+      name = name.to_s
 
-      locals = options[:locals]
+      partial_path = locate_partial_relative(name) || locate_partial_in_partials_dir(name)
 
-      found_partial = false
-      resolve_opts = { try_without_underscore: true }
+      raise ::Middleman::TemplateRenderer::TemplateNotFound, "Could not locate partial: #{name}" unless partial_path
 
-      # If the path is known to the sitemap
-      if resource = sitemap.find_resource_by_path(current_path)
-        current_dir = File.dirname(resource.source_file)
-        resolve_opts[:preferred_engine] = File.extname(resource.source_file)[1..-1].to_sym
+      opts = options.dup
+      locs = opts.delete(:locals)
 
-        # Look for partials relative to the current path
-        relative_dir = File.join(current_dir.sub(%r{^#{Regexp.escape(source_dir)}/?}, ''), data)
+      render_file(partial_path, locs.freeze, opts.freeze, &block)
+    end
 
-        found_partial = ::Middleman::TemplateRenderer.resolve_template(@app, relative_dir, resolve_opts)
-      end
+    protected
 
-      unless found_partial
-        partials_path = File.join(@app.config[:partials_dir], data)
-        found_partial = ::Middleman::TemplateRenderer.resolve_template(@app, partials_path, resolve_opts)
-      end
+    # Locate a partial reltive to the current path, given a name.
+    #
+    # @api private
+    # @param [String] name
+    # @return [String]
+    def locate_partial_relative(name)
+      return unless resource = sitemap.find_resource_by_path(current_path)
 
-      raise ::Middleman::TemplateRenderer::TemplateNotFound, "Could not locate partial: #{data}" unless found_partial
+      # Look for partials relative to the current path
+      current_dir = File.dirname(resource.source_file)
+      relative_dir = File.join(current_dir.sub(%r{^#{Regexp.escape(source_dir)}/?}, ''), name)
 
-      file_renderer = ::Middleman::FileRenderer.new(@app, found_partial)
-      file_renderer.render(locals, options, self, &block)
+      ::Middleman::TemplateRenderer.resolve_template(
+        @app,
+        relative_dir,
+        try_without_underscore: true,
+        preferred_engine: File.extname(resource.source_file)[1..-1].to_sym
+      )
+    end
+
+    # Locate a partial reltive to the partials dir, given a name.
+    #
+    # @api private
+    # @param [String] name
+    # @return [String]
+    def locate_partial_in_partials_dir(name)
+      partials_path = File.join(@app.config[:partials_dir], name)
+      ::Middleman::TemplateRenderer.resolve_template(
+        @app,
+        partials_path,
+        try_without_underscore: true
+      )
+    end
+
+    # Render a path with locs, opts and contents block.
+    #
+    # @api private
+    # @param [String] path The file path.
+    # @param [Hash] locs Template locals.
+    # @param [Hash] opts Template options.
+    # @param [Proc] block A block will be evaluated to return internal contents.
+    # @return [String] The resulting content string.
+    def render_file(path, locs, opts, &block)
+      file_renderer = ::Middleman::FileRenderer.new(@app, path)
+      file_renderer.render(locs, opts, self, &block)
     end
   end
 end
