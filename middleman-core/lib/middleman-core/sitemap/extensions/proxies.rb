@@ -10,8 +10,6 @@ module Middleman
           @app.define_singleton_method(:proxy, &method(:create_proxy))
 
           @proxy_configs = Set.new
-
-          ::Middleman::Sitemap::Resource.send :include, ProxyResourceInstanceMethods
         end
 
         # Setup a proxy from a path to a target
@@ -82,65 +80,6 @@ module Middleman
         # Two configurations are equal if they reference the same path
         def hash
           path.hash
-        end
-      end
-
-      module ProxyResourceInstanceMethods
-        # Whether this page is a proxy
-        # @return [Boolean]
-        # rubocop:disable TrivialAccessors
-        def proxy?
-          @proxied_to
-        end
-
-        # Set this page to proxy to a target path
-        # @param [String] target
-        # @return [void]
-        def proxy_to(target)
-          target = ::Middleman::Util.normalize_path(target)
-          raise "You can't proxy #{path} to itself!" if target == path
-          @proxied_to = target
-        end
-
-        # The path of the page this page is proxied to, or nil if it's not proxied.
-        # @return [String]
-        attr_reader :proxied_to
-
-        # The resource for the page this page is proxied to. Throws an exception
-        # if there is no resource.
-        # @return [Sitemap::Resource]
-        def proxied_to_resource
-          proxy_resource = store.find_resource_by_path(proxied_to)
-
-          unless proxy_resource
-            raise "Path #{path} proxies to unknown file #{proxied_to}:#{store.resources.map(&:path)}"
-          end
-
-          if proxy_resource.proxy?
-            raise "You can't proxy #{path} to #{proxied_to} which is itself a proxy."
-          end
-
-          proxy_resource
-        end
-
-        # rubocop:disable AccessorMethodName
-        def get_source_file
-          if proxy?
-            proxied_to_resource.source_file
-          else
-            super
-          end
-        end
-
-        def content_type
-          mime_type = super
-          return mime_type if mime_type
-
-          if proxy?
-            proxied_to_resource.content_type
-          else
-            nil
-          end
         end
       end
     end

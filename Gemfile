@@ -22,6 +22,8 @@ platforms :ruby do
   gem 'therubyracer'
   gem 'redcarpet', '~> 3.1'
   gem 'pry', require: false, group: :development
+  gem 'pry-debugger'
+  gem 'pry-stack_explorer'
 end
 
 platforms :jruby do

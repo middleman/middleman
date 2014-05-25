@@ -65,20 +65,8 @@ module Middleman
 
         attr_reader :request_path
 
-        def binary?
-          false
-        end
-
-        def raw_data
-          {}
-        end
-
         def ignored?
           false
-        end
-
-        def metadata
-          @local_metadata.dup
         end
       end
     end

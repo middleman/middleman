@@ -30,60 +30,27 @@ module Middleman::CoreExtensions
     end
 
     def after_configuration
-      app.ignore %r{\.frontmatter$}
-
-      ::Middleman::Sitemap::Resource.send :include, ResourceInstanceMethods
-
       app.sitemap.provides_metadata do |path|
-        fmdata = data(path).first
-
-        data = {}
-
-        [:layout, :layout_engine].each do |opt|
-          data[opt] = fmdata[opt] unless fmdata[opt].nil?
-        end
-
-        if fmdata[:renderer_options]
-          data[:renderer_options] = {}
-          fmdata[:renderer_options].each do |k, v|
-            data[:renderer_options][k.to_sym] = v
-          end
-        end
-
-        { options: data }
+        frontmatter = data(path).first
+        self.class.frontmatter_to_metadata(frontmatter)
       end
     end
 
-    module ResourceInstanceMethods
-      def ignored?
-        if !proxy? && raw_data[:ignored] == true
-          true
-        else
-          super
+    def self.frontmatter_to_metadata(frontmatter)
+      options = {}
+
+      [:layout, :layout_engine].each do |opt|
+        options[opt] = frontmatter[opt] unless frontmatter[opt].nil?
+      end
+
+      if frontmatter[:renderer_options]
+        options[:renderer_options] = {}
+        frontmatter[:renderer_options].each do |k, v|
+          options[:renderer_options][k.to_sym] = v
         end
       end
 
-      # This page's frontmatter without being enhanced for access by either symbols or strings.
-      # Used internally
-      # @private
-      # @return [Hash]
-      def raw_data
-        app.extensions[:front_matter].data(source_file).first
-      end
-
-      # This page's frontmatter
-      # @return [Hash]
-      def data
-        @enhanced_data ||= ::Middleman::Util.recursively_enhance(raw_data).freeze
-      end
-
-      # Override Resource#content_type to take into account frontmatter
-      def content_type
-        # Allow setting content type in frontmatter too
-        raw_data.fetch :content_type do
-          super
-        end
-      end
+      { options: options, data: frontmatter }
     end
 
     # Get the template data from a path
@@ -95,16 +62,7 @@ module Middleman::CoreExtensions
 
     def data(path)
       p = normalize_path(path)
-      @cache[p] ||= begin
-        data, content = frontmatter_and_content(p)
-
-        if app.files.exists?("#{path}.frontmatter")
-          external_data, _ = frontmatter_and_content("#{p}.frontmatter")
-          data = external_data.deep_merge(data)
-        end
-
-        [data, content]
-      end
+      @cache[p] ||= self.class.frontmatter_and_content(app, p)
     end
 
     def clear_data(file)
@@ -113,17 +71,15 @@ module Middleman::CoreExtensions
       file = File.join(app.root, file)
       prefix = app.source_dir.sub(/\/$/, '') + '/'
       return unless file.include?(prefix)
-      path = file.sub(prefix, '').sub(/\.frontmatter$/, '')
+      path = file.sub(prefix, '')
 
       @cache.delete(path)
     end
 
-    private
-
     # Parse YAML frontmatter out of a string
     # @param [String] content
     # @return [Array<Hash, String>]
-    def parse_yaml_front_matter(content, full_path)
+    def self.parse_yaml_front_matter(app, content, full_path)
       yaml_regex = /\A(---\s*\n.*?\n?)^(---\s*$\n?)/m
       if content =~ yaml_regex
         content = content.sub(yaml_regex, '')
@@ -144,7 +100,7 @@ module Middleman::CoreExtensions
       [{}, content]
     end
 
-    def parse_json_front_matter(content, full_path)
+    def self.parse_json_front_matter(app, content, full_path)
       json_regex = /\A(;;;\s*\n.*?\n?)^(;;;\s*$\n?)/m
 
       if content =~ json_regex
@@ -170,7 +126,7 @@ module Middleman::CoreExtensions
     # Get the frontmatter and plain content from a file
     # @param [String] path
     # @return [Array<Middleman::Util::HashWithIndifferentAccess, String>]
-    def frontmatter_and_content(path)
+    def self.frontmatter_and_content(app, path)
       full_path = if Pathname(path).relative?
         File.join(app.source_dir, path)
       else
@@ -190,7 +146,7 @@ module Middleman::CoreExtensions
           content = lines.join("\n")
         end
 
-        result = parse_yaml_front_matter(content, full_path) || parse_json_front_matter(content, full_path)
+        result = parse_yaml_front_matter(app, content, full_path) || parse_json_front_matter(app, content, full_path)
         return result if result
       rescue
         # Probably a binary file, move on

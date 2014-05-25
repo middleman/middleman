@@ -12,7 +12,6 @@ module Middleman
           @ignored_callbacks = []
 
           sitemap.define_singleton_method(:ignored?, &method(:ignored?))
-          ::Middleman::Sitemap::Resource.send :include, IgnoreResourceInstanceMethods
         end
 
         # Ignore a path or add an ignore callback
@@ -43,18 +42,6 @@ module Middleman
         def ignored?(path)
           path_clean = ::Middleman::Util.normalize_path(path)
           @ignored_callbacks.any? { |b| b.call(path_clean) }
-        end
-      end
-
-      # Helpers methods for Resources
-      module IgnoreResourceInstanceMethods
-        # Whether the Resource is ignored
-        # @return [Boolean]
-        def ignored?
-          @app.sitemap.ignored?(path) ||
-          (!proxy? &&
-            @app.sitemap.ignored?(source_file.sub("#{@app.source_dir}/", ''))
-          )
         end
       end
     end

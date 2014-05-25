@@ -1,6 +1,7 @@
 master
 ===
 
+* Removed neighboring .frontmatter support
 * Removed `with_layout`. Use loops of `page` instead.
 * Removed Queryable Sitemap API
 * Removed `css_compressor` setting, use `activate :minify_css, :compressor =>` instead.
