@@ -1,6 +1,6 @@
 module Middleman
   class ConfigContext
-    # with_layout and page routing
+    # page routing
     include Middleman::CoreExtensions::Routing
 
     attr_reader :app

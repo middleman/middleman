@@ -2,36 +2,6 @@
 module Middleman
   module CoreExtensions
     module Routing
-      # Sandboxed layout to implement temporary overriding of layout.
-      class LayoutBlock
-        attr_reader :scope
-
-        def initialize(scope, layout_name)
-          @scope = scope
-          @layout_name = layout_name
-        end
-
-        def page(url, opts={})
-          opts[:layout] ||= @layout_name
-          @scope.page(url, opts)
-        end
-
-        delegate :proxy, to: :scope
-      end
-
-      # Takes a block which allows many pages to have the same layout
-      #
-      #   with_layout :admin do
-      #     page "/admin/"
-      #     page "/admin/login.html"
-      #   end
-      #
-      # @param [String, Symbol] layout_name
-      # @return [void]
-      def with_layout(layout_name, &block)
-        LayoutBlock.new(self, layout_name).instance_eval(&block)
-      end
-
       # The page method allows the layout to be set on a specific path
       #
       #   page "/about.html", :layout => false

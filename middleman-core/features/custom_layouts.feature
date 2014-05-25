@@ -7,18 +7,6 @@ Feature: Custom layouts
     When I go to "/custom-layout.html"
     Then I should see "Custom Layout"
     
-  Scenario: Using with_layout block
-    Given "/custom-layout.html" with_layout block has layout "custom"
-    And the Server is running at "custom-layout-app2"
-    When I go to "/custom-layout.html"
-    Then I should see "Custom Layout"
-
-  Scenario: Using with_layout block with globs
-    Given "/custom-*" with_layout block has layout "custom"
-    And the Server is running at "custom-layout-app2"
-    When I go to "/custom-layout.html"
-    Then I should see "Custom Layout"
-    
   Scenario: Using custom :layout attribute with folders
     Given page "/custom-layout-dir/" has layout "custom"
     And the Server is running at "custom-layout-app2"
