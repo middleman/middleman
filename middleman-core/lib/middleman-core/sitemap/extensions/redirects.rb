@@ -75,24 +75,8 @@ module Middleman
           end
         end
 
-        # def request_path
-        #   @request_path
-        # end
-
-        def binary?
-          false
-        end
-
-        def raw_data
-          {}
-        end
-
         def ignored?
           false
-        end
-
-        def metadata
-          @local_metadata.dup
         end
       end
     end

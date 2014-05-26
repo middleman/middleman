@@ -44,11 +44,10 @@ module Middleman
         data = @resource.data
         props['Data'] = data.inspect unless data.empty?
 
-        meta = @resource.metadata
-        options = meta[:options]
+        options = @resource.render_options
         props['Options'] = options.inspect unless options.empty?
 
-        locals = meta[:locals].keys
+        locals = @resource.render_locals.keys
         props['Locals'] = locals.join(', ') unless locals.empty?
 
         props
