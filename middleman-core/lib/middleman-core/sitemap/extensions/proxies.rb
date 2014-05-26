@@ -88,7 +88,6 @@ module Middleman
       module ProxyResourceInstanceMethods
         # Whether this page is a proxy
         # @return [Boolean]
-        # rubocop:disable TrivialAccessors
         def proxy?
           @proxied_to
         end

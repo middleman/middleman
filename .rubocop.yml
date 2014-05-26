@@ -51,3 +51,5 @@ FormatString:
   Enabled: false
 CaseIndentation:
   IndentWhenRelativeTo: end
+TrivialAccessors:
+  ExactNameMatch: true

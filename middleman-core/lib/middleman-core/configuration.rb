@@ -162,7 +162,6 @@ module Middleman
       end
 
       # Whether or not there has been a value set beyond the default
-      # rubocop:disable TrivialAccessors
       def value_set?
         @value_set
       end

@@ -47,7 +47,6 @@ module Middleman
     # @api private
     # @param [String] buf_was
     # @return [void]
-    # rubocop:disable TrivialAccessors
     def restore_buffer(buf_was)
       @_out_buf = buf_was
     end
