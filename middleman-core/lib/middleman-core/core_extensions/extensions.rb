@@ -86,7 +86,7 @@ module Middleman
 
         ::Middleman::Extension.clear_after_extension_callbacks
 
-        ::Middleman::Extensions.auto_activate_before_configuration.each do |ext_name|
+        ::Middleman::Extensions.auto_activate[:before_configuration].each do |ext_name|
           activate ext_name
         end
 

@@ -179,11 +179,9 @@ module Middleman
       # Setup the default values from calls to set before initialization
       self.class.config.load_settings(self.class.superclass.config.all_settings)
 
-      # Parse YAML from templates. Must be before sitemap so sitemap
-      # extensions see updated frontmatter!
-      activate :front_matter
-      activate :data
-      activate :file_watcher
+      ::Middleman::Extensions.auto_activate[:before_sitemap].each do |ext_name|
+        activate ext_name
+      end
 
       # Initialize the Sitemap
       @sitemap = ::Middleman::Sitemap::Store.new(self)

@@ -63,7 +63,7 @@ module Middleman
         extension_config = {}
 
         @middleman.inst.extensions.each do |ext_name, extension|
-          next if ::Middleman::Extension.auto_activate_before_configuration.include? ext_name
+          next if ::Middleman::Extension.auto_activated.include? ext_name
 
           if extension.is_a?(Hash)
             # Multiple instance extension
