@@ -148,9 +148,6 @@ module Middleman
     # Sitemap Config options and public api
     include Middleman::Sitemap
 
-    # Setup external helpers
-    include Middleman::CoreExtensions::ExternalHelpers
-
     # Reference to Logger singleton
     def logger
       ::Middleman::Logger.singleton

@@ -18,7 +18,10 @@ Middleman::Extensions.register :front_matter do
 end
 
 # External helpers looks in the helpers/ folder for helper modules
-require 'middleman-core/core_extensions/external_helpers'
+Middleman::Extensions.register :external_helpers, auto_activate_before_configuration: true  do
+  require 'middleman-core/core_extensions/external_helpers'
+  Middleman::CoreExtensions::ExternalHelpers
+end
 
 # Extended version of Padrino's rendering
 require 'middleman-core/core_extensions/rendering'
