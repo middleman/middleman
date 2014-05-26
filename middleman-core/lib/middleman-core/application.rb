@@ -25,6 +25,15 @@ require 'middleman-core/config_context'
 require 'middleman-core/file_renderer'
 require 'middleman-core/template_renderer'
 
+# Rack Request
+require 'middleman-core/core_extensions/request'
+
+# Custom Extension API and config.rb handling
+require 'middleman-core/core_extensions/extensions'
+
+# Catch and show exceptions at the Rack level
+require 'middleman-core/core_extensions/show_exceptions'
+
 # Core Middleman Class
 module Middleman
   class Application
@@ -133,20 +142,11 @@ module Middleman
     # Handle exceptions
     include Middleman::CoreExtensions::ShowExceptions
 
-    # Add Watcher Callbacks
-    include Middleman::CoreExtensions::FileWatcher
-
-    # Activate Data package
-    include Middleman::CoreExtensions::Data
-
     # Setup custom rendering
     include Middleman::CoreExtensions::Rendering
 
     # Sitemap Config options and public api
     include Middleman::Sitemap
-
-    # Setup external helpers
-    include Middleman::CoreExtensions::ExternalHelpers
 
     # Reference to Logger singleton
     def logger
@@ -168,7 +168,7 @@ module Middleman
     delegate :link_to, :image_tag, :asset_path, to: :generic_template_context
 
     # Initialize the Middleman project
-    def initialize(&block)
+    def initialize
       @template_context_class = Class.new(Middleman::TemplateContext)
       @generic_template_context = @template_context_class.new(self)
       @config_context = ConfigContext.new(self, @template_context_class)
@@ -179,9 +179,9 @@ module Middleman
       # Setup the default values from calls to set before initialization
       self.class.config.load_settings(self.class.superclass.config.all_settings)
 
-      # Parse YAML from templates. Must be before sitemap so sitemap
-      # extensions see updated frontmatter!
-      activate :front_matter
+      ::Middleman::Extensions.auto_activate[:before_sitemap].each do |ext_name|
+        activate ext_name
+      end
 
       # Initialize the Sitemap
       @sitemap = ::Middleman::Sitemap::Store.new(self)
@@ -192,19 +192,6 @@ module Middleman
       end
 
       config[:source] = ENV['MM_SOURCE'] if ENV['MM_SOURCE']
-
-      # Built-in extensions
-      activate :default_helpers
-      activate :lorem
-
-      begin
-        activate :compass
-      rescue LoadError
-        # Compass is not available, don't complain about it
-      end
-
-      # Evaluate a passed block if given
-      @config_context.instance_exec(&block) if block_given?
 
       super
     end

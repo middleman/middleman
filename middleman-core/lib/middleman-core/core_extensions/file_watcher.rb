@@ -1,7 +1,11 @@
-# API for watching file change events
+require 'pathname'
+require 'set'
+
 module Middleman
   module CoreExtensions
-    module FileWatcher
+    # API for watching file change events
+    class FileWatcher < Extension
+      # Regexes in this list will filter out filenames of files that shouldn't cause file change notifications.
       IGNORE_LIST = [
         /^bin(\/|$)/,
         /^\.bundle(\/|$)/,
@@ -20,39 +24,30 @@ module Middleman
         /^tmp\//
       ]
 
-      # Setup extension
-      class << self
-        # Once registered
-        def included(app)
-          require 'pathname'
-          require 'set'
+      def initialize(app, options_hash={}, &block)
+        super
 
-          app.send :include, InstanceMethods
+        app.config.define_setting :file_watcher_ignore, IGNORE_LIST, 'Regexes for paths that should be ignored when they change.'
 
-          app.config.define_setting :file_watcher_ignore, IGNORE_LIST, 'Regexes for paths that should be ignored when they change.'
-
-          # Before parsing config, load the data/ directory
-          app.before_configuration do
-            files.reload_path(config[:data_dir])
-          end
-
-          app.after_configuration do
-            config[:file_watcher_ignore] << %r{^#{config[:build_dir]}(\/|$)}
-          end
-
-          # After config, load everything else
-          app.ready do
-            files.reload_path('.')
-          end
-        end
+        # Directly include the #files method instead of using helpers so that this is available immediately
+        app.send :include, InstanceMethods
       end
 
-      # Instance methods
+      # Before parsing config, load the data/ directory
+      def before_configuration
+        app.files.reload_path(app.config[:data_dir])
+      end
+
+      def after_configuration
+        app.config[:file_watcher_ignore] << %r{^#{app.config[:build_dir]}(\/|$)}
+        app.files.reload_path('.')
+      end
+
       module InstanceMethods
         # Access the file api
         # @return [Middleman::CoreExtensions::FileWatcher::API]
         def files
-          @_files_api ||= API.new(self)
+          @files_api ||= API.new(self)
         end
       end
 

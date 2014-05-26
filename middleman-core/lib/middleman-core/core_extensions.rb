@@ -1,44 +1,50 @@
-# Rack Request
-require 'middleman-core/core_extensions/request'
-
-# File Change Notifier
-require 'middleman-core/core_extensions/file_watcher'
-
-# Custom Feature API
-require 'middleman-core/core_extensions/extensions'
-
-# Data looks at the data/ folder for YAML files and makes them available
-# to dynamic requests.
-require 'middleman-core/core_extensions/data'
-
 # Parse YAML from templates
-Middleman::Extensions.register :front_matter do
+Middleman::Extensions.register :front_matter, auto_activate: :before_sitemap do
   require 'middleman-core/core_extensions/front_matter'
   Middleman::CoreExtensions::FrontMatter
 end
 
+# Data looks at the data/ folder for YAML files and makes them available
+# to dynamic requests.
+Middleman::Extensions.register :data, auto_activate: :before_sitemap do
+  require 'middleman-core/core_extensions/data'
+  Middleman::CoreExtensions::Data
+end
+
+# File Change Notifier
+Middleman::Extensions.register :file_watcher, auto_activate: :before_sitemap do
+  require 'middleman-core/core_extensions/file_watcher'
+  Middleman::CoreExtensions::FileWatcher
+end
+
 # External helpers looks in the helpers/ folder for helper modules
-require 'middleman-core/core_extensions/external_helpers'
+Middleman::Extensions.register :external_helpers, auto_activate: :before_configuration do
+  require 'middleman-core/core_extensions/external_helpers'
+  Middleman::CoreExtensions::ExternalHelpers
+end
 
 # Extended version of Padrino's rendering
 require 'middleman-core/core_extensions/rendering'
 
-# Pass custom options to views
-require 'middleman-core/core_extensions/routing'
-
-# Catch and show exceptions at the Rack level
-require 'middleman-core/core_extensions/show_exceptions'
-
 # Setup default helpers
-Middleman::Extensions.register :default_helpers do
+Middleman::Extensions.register :default_helpers, auto_activate: :before_configuration do
   require 'middleman-core/core_extensions/default_helpers'
   Middleman::CoreExtensions::DefaultHelpers
 end
 
 # Compass framework
-Middleman::Extensions.register :compass do
+begin
   require 'middleman-core/core_extensions/compass'
-  Middleman::CoreExtensions::Compass
+  Middleman::Extensions.register :compass, Middleman::CoreExtensions::Compass, auto_activate: :before_configuration
+rescue LoadError
+  # Compass is not available, don't complain about it
+end
+
+# Lorem provides a handful of helpful prototyping methods to generate
+# words, paragraphs, fake images, names and email addresses.
+Middleman::Extensions.register :lorem, auto_activate: :before_configuration do
+  require 'middleman-core/extensions/lorem'
+  Middleman::Extensions::Lorem
 end
 
 ###
@@ -101,13 +107,6 @@ end
 Middleman::Extensions.register :directory_indexes do
   require 'middleman-core/extensions/directory_indexes'
   Middleman::Extensions::DirectoryIndexes
-end
-
-# Lorem provides a handful of helpful prototyping methods to generate
-# words, paragraphs, fake images, names and email addresses.
-Middleman::Extensions.register :lorem do
-  require 'middleman-core/extensions/lorem'
-  Middleman::Extensions::Lorem
 end
 
 # AutomaticImageSizes inspects the images used in your dynamic templates

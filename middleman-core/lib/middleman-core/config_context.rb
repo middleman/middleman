@@ -1,3 +1,5 @@
+require 'middleman-core/core_extensions/routing'
+
 module Middleman
   class ConfigContext
     # page routing

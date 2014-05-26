@@ -1,37 +1,35 @@
+require 'yaml'
+require 'active_support/json'
+
 module Middleman
   module CoreExtensions
-    # The data extension parses YAML and JSON files in the data/ directory
-    # and makes them available to config.rb, templates and extensions
-    module Data
-      # Extension registered
-      class << self
-        # @private
-        def included(app)
-          # Data formats
-          require 'yaml'
-          require 'active_support/json'
+    # The data extension parses YAML and JSON files in the `data/` directory
+    # and makes them available to `config.rb`, templates and extensions
+    class Data < Extension
+      # The regex which tells Middleman which files are for data
+      MATCHER = /[\w-]+\.(yml|yaml|json)$/
 
-          app.config.define_setting :data_dir, 'data', 'The directory data files are stored in'
-          app.send :include, InstanceMethods
+      def initialize(app, options_hash={}, &block)
+        super
+        app.config.define_setting :data_dir, 'data', 'The directory data files are stored in'
+
+        # Directly include the #data method instead of using helpers so that this is available immediately
+        app.send :include, InstanceMethods
+      end
+
+      def before_configuration
+        # Setup data files before anything else so they are available when
+        # parsing config.rb
+        app.files.changed MATCHER do |file|
+          data.touch_file(file) if file.start_with?("#{config[:data_dir]}/")
+        end
+
+        app.files.deleted MATCHER do |file|
+          data.remove_file(file) if file.start_with?("#{config[:data_dir]}/")
         end
       end
 
-      # Instance methods
       module InstanceMethods
-        # Setup data files before anything else so they are available when
-        # parsing config.rb
-        def initialize
-          files.changed DataStore.matcher do |file|
-            data.touch_file(file) if file.start_with?("#{config[:data_dir]}/")
-          end
-
-          files.deleted DataStore.matcher do |file|
-            data.remove_file(file) if file.start_with?("#{config[:data_dir]}/")
-          end
-
-          super
-        end
-
         # The data object
         #
         # @return [DataStore]
@@ -42,25 +40,14 @@ module Middleman
 
       # The core logic behind the data extension.
       class DataStore
-        # Static methods
-        class << self
-          # The regex which tells Middleman which files are for data
-          #
-          # @return [Regexp]
-          def matcher
-            %r{[\w-]+\.(yml|yaml|json)$}
-          end
-        end
-
         # Store static data hash
         #
         # @param [Symbol] name Name of the data, used for namespacing
         # @param [Hash] content The content for this data
         # @return [Hash]
         def store(name=nil, content=nil)
-          @_local_sources ||= {}
-          @_local_sources[name.to_s] = content unless name.nil? || content.nil?
-          @_local_sources
+          @local_sources[name.to_s] = content unless name.nil? || content.nil?
+          @local_sources
         end
 
         # Store callback-based data
@@ -69,9 +56,8 @@ module Middleman
         # @param [Proc] proc The callback which will return data
         # @return [Hash]
         def callbacks(name=nil, proc=nil)
-          @_callback_sources ||= {}
-          @_callback_sources[name.to_s] = proc unless name.nil? || proc.nil?
-          @_callback_sources
+          @callback_sources[name.to_s] = proc unless name.nil? || proc.nil?
+          @callback_sources
         end
 
         # Setup data store
@@ -80,6 +66,8 @@ module Middleman
         def initialize(app)
           @app = app
           @local_data = {}
+          @local_sources = {}
+          @callback_sources = {}
         end
 
         # Update the internal cache for a given file path
