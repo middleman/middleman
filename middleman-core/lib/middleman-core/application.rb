@@ -142,9 +142,6 @@ module Middleman
     # Handle exceptions
     include Middleman::CoreExtensions::ShowExceptions
 
-    # Add Watcher Callbacks
-    include Middleman::CoreExtensions::FileWatcher
-
     # Activate Data package
     include Middleman::CoreExtensions::Data
 
@@ -191,6 +188,7 @@ module Middleman
       # Parse YAML from templates. Must be before sitemap so sitemap
       # extensions see updated frontmatter!
       activate :front_matter
+      activate :file_watcher
 
       # Initialize the Sitemap
       @sitemap = ::Middleman::Sitemap::Store.new(self)

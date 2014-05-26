@@ -1,5 +1,8 @@
 # File Change Notifier
-require 'middleman-core/core_extensions/file_watcher'
+Middleman::Extensions.register :file_watcher do
+  require 'middleman-core/core_extensions/file_watcher'
+  Middleman::CoreExtensions::FileWatcher
+end
 
 # Data looks at the data/ folder for YAML files and makes them available
 # to dynamic requests.
