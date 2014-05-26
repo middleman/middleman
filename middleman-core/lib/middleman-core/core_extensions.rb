@@ -6,7 +6,10 @@ end
 
 # Data looks at the data/ folder for YAML files and makes them available
 # to dynamic requests.
-require 'middleman-core/core_extensions/data'
+Middleman::Extensions.register :data do
+  require 'middleman-core/core_extensions/data'
+  Middleman::CoreExtensions::Data
+end
 
 # Parse YAML from templates
 Middleman::Extensions.register :front_matter do
