@@ -11,7 +11,7 @@ AllCops:
     - '**/bin/**/*'
     - 'middleman-core/lib/middleman-core/step_definitions/**/*'
     - 'middleman-core/lib/vendored-middleman-deps/**/*'
-    - 'middleman-templates/lib/middleman-templates/**/*'
+    - 'middleman-cli/lib/middleman-templates/**/*'
     - 'middleman-core/fixtures/**/*'
     - 'middleman-core/features/**/*'
     - 'middleman-core/spec/**/*'
