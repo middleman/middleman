@@ -13,4 +13,4 @@ end
 
 Middleman::Extensions.register :extension_a, ExtensionA
 
-activate :extension_a, :hello => "world", :hola => "mundo"
+activate :extension_a, hello: "world", hola: "mundo"

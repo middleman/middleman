@@ -18,13 +18,13 @@
 # Per-page layout changes:
 #
 # With no layout
-# page "/path/to/file.html", :layout => false
+# page "/path/to/file.html", layout: false
 #
 # With alternative layout
-# page "/path/to/file.html", :layout => :otherlayout
+# page "/path/to/file.html", layout: :otherlayout
 
 # Proxy (fake) files
-# page "/this-page-has-no-template.html", :proxy => "/template-file.html" do
+# page "/this-page-has-no-template.html", proxy: "/template-file.html" do
 #   @which_fake_page = "Rendering a fake page with a variable"
 # end
 

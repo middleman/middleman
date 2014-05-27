@@ -5,8 +5,8 @@ Feature: content_tag helper
     And an empty file named "config.rb"
     And a file named "source/index.html.erb" with:
     """
-    <%= content_tag :div, "<hello>world</hello>", :class => 'one' %>
-    <% content_tag :where, :class => 'the hell is' do %>
+    <%= content_tag :div, "<hello>world</hello>", class: 'one' %>
+    <% content_tag :where, class: 'the hell is' do %>
     <my>damn croissant</my>
     <% end %>
     """

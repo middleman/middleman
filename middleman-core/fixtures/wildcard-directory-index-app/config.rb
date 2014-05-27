@@ -1,2 +1,2 @@
 activate :directory_indexes
-page "/admin/*", :layout => :admin
+page "/admin/*", layout: :admin

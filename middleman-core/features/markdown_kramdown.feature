@@ -6,7 +6,7 @@ Feature: Markdown (Kramdown) support
     And a file named "config.rb" with:
       """
       set :markdown_engine, :kramdown
-      set :markdown, :smartypants => true
+      set :markdown, smartypants: true
       """
     Given the Server is running at "markdown-app"
     When I go to "/smarty_pants.html"

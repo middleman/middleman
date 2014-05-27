@@ -1,4 +1,4 @@
-page "/path/*", :layout => "alt"
+page "/path/*", layout: "alt"
 
 # Doesn't work, and shouldn't
 # page "/path/*" do

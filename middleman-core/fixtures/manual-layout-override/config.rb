@@ -1,3 +1,3 @@
 set :layout, :custom
 
-page "/", :layout => :another
+page "/", layout: :another

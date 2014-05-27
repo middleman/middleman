@@ -1,1 +1,1 @@
-page "/index.html", :layout => false
+page "/index.html", layout: false

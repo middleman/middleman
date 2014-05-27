@@ -17,8 +17,8 @@ Feature: Setting the right content type for files
     Given a fixture app "content-type-app"
     And a file named "config.rb" with:
     """
-    page "README", :content_type => 'text/awesome'
-    proxy "bar", "index.html", :content_type => 'text/custom'
+    page "README", content_type: 'text/awesome'
+    proxy "bar", "index.html", content_type: 'text/custom'
     proxy "foo", "README" # auto-delegate to target content type
     """
     And the Server is running at "content-type-app"

@@ -36,7 +36,7 @@ Feature: Minify CSS
         end
       end
 
-      activate :minify_css, :compressor => ::PassThrough
+      activate :minify_css, compressor: ::PassThrough
       """
     And the Server is running at "passthrough-app"
     When I go to "/stylesheets/site.css"
@@ -69,9 +69,9 @@ Feature: Minify CSS
         end
       end
 
-      activate :minify_css, :inline => true, :compressor => ::PassThrough
+      activate :minify_css, inline: true, compressor: ::PassThrough
 
-      page "/inline-css.html", :layout => false
+      page "/inline-css.html", layout: false
       """
     And the Server is running at "passthrough-app"
     When I go to "/inline-css.html"
@@ -94,9 +94,9 @@ Feature: Minify CSS
         end
       end
 
-      activate :minify_css, :inline => true, :compressor => ::HelloCompressor
+      activate :minify_css, inline: true, compressor: ::HelloCompressor
 
-      page "/inline-css.html", :layout => false
+      page "/inline-css.html", layout: false
       """
     And the Server is running at "passthrough-app"
     When I go to "/inline-css.html"
@@ -111,7 +111,7 @@ Feature: Minify CSS
     Given a fixture app "minify-css-app"
     And a file named "config.rb" with:
       """
-      activate :minify_css, :inline => true
+      activate :minify_css, inline: true
       """
     And the Server is running at "minify-css-app"
     When I go to "/inline-css.html"

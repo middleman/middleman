@@ -49,9 +49,9 @@ Feature: Minify Javascript
         end
       end
 
-      activate :minify_javascript, :inline => true, :compressor => ::PassThrough
+      activate :minify_javascript, inline: true, compressor: ::PassThrough
 
-      page "/inline-js.html", :layout => false
+      page "/inline-js.html", layout: false
       """
     And the Server is running at "passthrough-app"
     When I go to "/inline-js.html"
@@ -96,9 +96,9 @@ Feature: Minify Javascript
         end
       end
 
-      activate :minify_javascript, :inline => true, :compressor => ::HelloCompressor
+      activate :minify_javascript, inline: true, compressor: ::HelloCompressor
 
-      page "/inline-js.html", :layout => false
+      page "/inline-js.html", layout: false
       """
     And the Server is running at "passthrough-app"
     When I go to "/inline-js.html"
@@ -124,7 +124,7 @@ Feature: Minify Javascript
     Given a fixture app "minify-js-app"
     And a file named "config.rb" with:
       """
-      activate :minify_javascript, :inline => true
+      activate :minify_javascript, inline: true
       """
     And the Server is running at "minify-js-app"
     When I go to "/inline-js.html"
@@ -167,7 +167,7 @@ Feature: Minify Javascript
     Given a fixture app "minify-js-app"
     And a file named "config.rb" with:
       """
-      activate :minify_javascript, :inline => true
+      activate :minify_javascript, inline: true
       """
     And the Server is running at "minify-js-app"
     When I go to "/inline-coffeescript.html"
@@ -193,9 +193,9 @@ Feature: Minify Javascript
         end
       end
 
-      activate :minify_javascript, :inline => true, :compressor => ::PassThrough
+      activate :minify_javascript, inline: true, compressor: ::PassThrough
 
-      page "/inline-coffeescript.html", :layout => false
+      page "/inline-coffeescript.html", layout: false
       """
     And the Server is running at "passthrough-app"
     When I go to "/inline-coffeescript.html"
@@ -211,7 +211,7 @@ Feature: Minify Javascript
         end
       end
 
-      activate :minify_javascript, :compressor => ::PassThrough
+      activate :minify_javascript, compressor: ::PassThrough
       """
     And the Server is running at "passthrough-app"
     When I go to "/javascripts/coffee_test.js"

@@ -109,7 +109,7 @@ Feature: Assets get a file hash appended to their and references to them are upd
     Given a fixture app "asset-hash-app"
     And a file named "config.rb" with:
       """
-      activate :asset_hash, :ignore => [%r(javascripts/*), 'images/*']
+      activate :asset_hash, ignore: [%r(javascripts/*), 'images/*']
       activate :relative_assets
       activate :directory_indexes
       """

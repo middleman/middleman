@@ -1,1 +1,1 @@
-set :erb, :layout_engine => :str
+set :erb, layout_engine: :str

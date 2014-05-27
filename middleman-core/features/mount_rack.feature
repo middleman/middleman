@@ -48,10 +48,10 @@ Feature: Support Rack apps mounted using map
       end
 
       configure :build do
-        endpoint "sinatra/index2.html", :path => "/sinatra/"
+        endpoint "sinatra/index2.html", path: "/sinatra/"
       end
 
-      endpoint "dedoo.html", :path => "/sinatra/derp.html"
+      endpoint "dedoo.html", path: "/sinatra/derp.html"
 
       endpoint "hello.html" do
         "world"

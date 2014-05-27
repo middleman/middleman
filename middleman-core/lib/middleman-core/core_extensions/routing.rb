@@ -4,8 +4,8 @@ module Middleman
     module Routing
       # The page method allows the layout to be set on a specific path
       #
-      #   page "/about.html", :layout => false
-      #   page "/", :layout => :homepage_layout
+      #   page "/about.html", layout: false
+      #   page "/", layout: :homepage_layout
       #
       # @param [String] url
       # @param [Hash] opts

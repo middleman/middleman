@@ -20,13 +20,13 @@ Feature: link_to helper
     And an empty file named "config.rb"
     And a file named "source/link_to.html.erb" with:
     """
-    absolute: <%= link_to "Needs Index", "/needs_index.html", :relative => true %>
-    relative: <%= link_to "Relative", "needs_index.html", :relative => true %>
+    absolute: <%= link_to "Needs Index", "/needs_index.html", relative: true %>
+    relative: <%= link_to "Relative", "needs_index.html", relative: true %>
     """
     And a file named "source/link_to/sub.html.erb" with:
     """
-    absolute: <%= link_to "Needs Index", "/needs_index.html", :relative => true %>
-    relative: <%= link_to "Relative", "../needs_index.html", :relative => true %>
+    absolute: <%= link_to "Needs Index", "/needs_index.html", relative: true %>
+    relative: <%= link_to "Relative", "../needs_index.html", relative: true %>
     """
     And the Server is running at "indexable-app"
     When I go to "/link_to.html"
@@ -79,7 +79,7 @@ Feature: link_to helper
     And a file named "source/link_to.html.erb" with:
     """
     absolute: <%= link_to "Needs Index", "/needs_index.html" %>
-    relative: <%= link_to "Relative", "needs_index.html", :relative => false %>
+    relative: <%= link_to "Relative", "needs_index.html", relative: false %>
     unknown: <%= link_to "Unknown", "foo.html" %>
     """
     And a file named "source/link_to/sub.html.erb" with:
@@ -100,13 +100,13 @@ Feature: link_to helper
     Given a fixture app "indexable-app"
     And a file named "source/link_to.html.erb" with:
     """
-    absolute: <%= link_to "Needs Index", "/needs_index.html", :relative => true %>
-    relative: <%= link_to "Relative", "needs_index.html", :relative => true %>
+    absolute: <%= link_to "Needs Index", "/needs_index.html", relative: true %>
+    relative: <%= link_to "Relative", "needs_index.html", relative: true %>
     """
     And a file named "source/link_to/sub.html.erb" with:
     """
-    absolute: <%= link_to "Needs Index", "/needs_index.html", :relative => true %>
-    relative: <%= link_to "Relative", "../needs_index.html", :relative => true %>
+    absolute: <%= link_to "Needs Index", "/needs_index.html", relative: true %>
+    relative: <%= link_to "Relative", "../needs_index.html", relative: true %>
     """
     And the Server is running at "indexable-app"
     When I go to "/link_to/"
@@ -158,8 +158,8 @@ Feature: link_to helper
     Given a fixture app "indexable-app"
     And a file named "source/link_to.html.erb" with:
     """
-    <%= link_to "Needs Index String", "/needs_index.html", :query => "foo" %>
-    <%= link_to "Needs Index Hash", "/needs_index.html", :query => { :foo => :bar } %>
+    <%= link_to "Needs Index String", "/needs_index.html", query: "foo" %>
+    <%= link_to "Needs Index Hash", "/needs_index.html", query: { foo: :bar } %>
     """
     And the Server is running at "indexable-app"
     When I go to "/link_to/"

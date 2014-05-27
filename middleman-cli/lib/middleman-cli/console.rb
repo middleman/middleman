@@ -1,7 +1,7 @@
 # CLI Module
 module Middleman::Cli
   # Alias "c" to "console"
-  Base.map('c' => 'console')
+  Base.map(c: 'console')
 
   # The CLI Console class
   class Console < Thor

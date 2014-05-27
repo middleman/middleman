@@ -7,14 +7,14 @@ Feature: Markdown (Redcarpet) support
     And a file named "config.rb" with:
       """
       set :markdown_engine, :redcarpet
-      set :markdown, :no_intra_emphasis => true,
-                     :tables => true,
-                     :fenced_code_blocks => true,
-                     :autolink => true,
-                     :strikethrough => true,
-                     :space_after_headers => true,
-                     :superscript => true,
-                     :lax_spacing => true
+      set :markdown, no_intra_emphasis: true,
+                     tables: true,
+                     fenced_code_blocks: true,
+                     autolink: true,
+                     strikethrough: true,
+                     space_after_headers: true,
+                     superscript: true,
+                     lax_spacing: true
 
       """
     Given the Server is running at "markdown-app"
@@ -42,9 +42,9 @@ Feature: Markdown (Redcarpet) support
     And a file named "config.rb" with:
       """
       set :markdown_engine, :redcarpet
-      set :markdown, :underline => true,
-                     :highlight => true,
-                     :disable_indented_code_blocks => true
+      set :markdown, underline: true,
+                     highlight: true,
+                     disable_indented_code_blocks: true
       """
     Given the Server is running at "markdown-app"
     When I go to "/underline.html"
@@ -59,7 +59,7 @@ Feature: Markdown (Redcarpet) support
     And a file named "config.rb" with:
       """
       set :markdown_engine, :redcarpet
-      set :markdown, :smartypants => true
+      set :markdown, smartypants: true
       """
     Given the Server is running at "markdown-app"
     When I go to "/smarty_pants.html"
@@ -70,13 +70,13 @@ Feature: Markdown (Redcarpet) support
     And a file named "config.rb" with:
       """
       set :markdown_engine, :redcarpet
-      set :markdown, :filter_html => true,
-                     :no_images => true,
-                     :no_links => true,
-                     :with_toc_data => true,
-                     :hard_wrap => true,
-                     :safe_links_only => true,
-                     :prettify => true
+      set :markdown, filter_html: true,
+                     no_images: true,
+                     no_links: true,
+                     with_toc_data: true,
+                     hard_wrap: true,
+                     safe_links_only: true,
+                     prettify: true
 
       """
     Given the Server is running at "markdown-app"
@@ -103,7 +103,7 @@ Feature: Markdown (Redcarpet) support
     And a file named "config.rb" with:
       """
       set :markdown_engine, :redcarpet
-      set :markdown, :link_attributes => { :target => "_blank" }
+      set :markdown, link_attributes: { target: "_blank" }
       """
     And a file named "source/link.html.markdown" with:
       """
@@ -118,8 +118,8 @@ Feature: Markdown (Redcarpet) support
     And a file named "config.rb" with:
       """
       set :markdown_engine, :redcarpet
-      set :markdown, :xhtml => true,
-                     :hard_wrap => true
+      set :markdown, xhtml: true,
+                     hard_wrap: true
       """
     Given the Server is running at "markdown-app"
     When I go to "/hard_wrap.html"
@@ -130,7 +130,7 @@ Feature: Markdown (Redcarpet) support
     And a file named "config.rb" with:
       """
       set :markdown_engine, :redcarpet
-      set :markdown, :smartypants => true
+      set :markdown, smartypants: true
       """
     Given the Server is running at "markdown-frontmatter-options-app"
     When I go to "/smarty_pants-default.html"

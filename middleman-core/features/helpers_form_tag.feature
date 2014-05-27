@@ -5,16 +5,16 @@ Feature: form_tag helper
     And an empty file named "config.rb"
     And a file named "source/form_tag.html.erb" with:
     """
-    absolute: <% form_tag "/needs_index.html#absolute", :relative => true do %>
+    absolute: <% form_tag "/needs_index.html#absolute", relative: true do %>
     <% end %>
-    relative: <% form_tag "needs_index.html#relative", :relative => true do %>
+    relative: <% form_tag "needs_index.html#relative", relative: true do %>
     <% end %>
     """
     And a file named "source/form_tag/sub.html.erb" with:
     """
-    absolute: <% form_tag "/needs_index.html#absolute", :relative => true do %>
+    absolute: <% form_tag "/needs_index.html#absolute", relative: true do %>
     <% end %>
-    relative: <% form_tag "../needs_index.html#relative", :relative => true do %>
+    relative: <% form_tag "../needs_index.html#relative", relative: true do %>
     <% end %>
     """
     And the Server is running at "indexable-app"

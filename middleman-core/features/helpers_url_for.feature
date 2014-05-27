@@ -5,13 +5,13 @@ Feature: url_for helper
     And an empty file named "config.rb"
     And a file named "source/url_for.html.erb" with:
     """
-    absolute: <%= url_for "/needs_index.html", :relative => true %>
-    relative: <%= url_for "needs_index.html", :relative => true %>
+    absolute: <%= url_for "/needs_index.html", relative: true %>
+    relative: <%= url_for "needs_index.html", relative: true %>
     """
     And a file named "source/url_for/sub.html.erb" with:
     """
-    absolute: <%= url_for "/needs_index.html", :relative => true %>
-    relative: <%= url_for "../needs_index.html", :relative => true %>
+    absolute: <%= url_for "/needs_index.html", relative: true %>
+    relative: <%= url_for "../needs_index.html", relative: true %>
     """
     And the Server is running at "indexable-app"
     When I go to "/url_for.html"
@@ -64,7 +64,7 @@ Feature: url_for helper
     And a file named "source/url_for.html.erb" with:
     """
     absolute: <%= url_for "/needs_index.html" %>
-    relative: <%= url_for "needs_index.html", :relative => false %>
+    relative: <%= url_for "needs_index.html", relative: false %>
     unknown: <%= url_for "foo.html" %>
     """
     And a file named "source/url_for/sub.html.erb" with:
@@ -85,13 +85,13 @@ Feature: url_for helper
     Given a fixture app "indexable-app"
     And a file named "source/url_for.html.erb" with:
     """
-    absolute: <%= url_for "/needs_index.html", :relative => true %>
-    relative: <%= url_for "needs_index.html", :relative => true %>
+    absolute: <%= url_for "/needs_index.html", relative: true %>
+    relative: <%= url_for "needs_index.html", relative: true %>
     """
     And a file named "source/url_for/sub.html.erb" with:
     """
-    absolute: <%= url_for "/needs_index.html", :relative => true %>
-    relative: <%= url_for "../needs_index.html", :relative => true %>
+    absolute: <%= url_for "/needs_index.html", relative: true %>
+    relative: <%= url_for "../needs_index.html", relative: true %>
     """
     And the Server is running at "indexable-app"
     When I go to "/url_for/"
@@ -143,8 +143,8 @@ Feature: url_for helper
     Given a fixture app "indexable-app"
     And a file named "source/url_for.html.erb" with:
     """
-    Needs Index String <%= url_for "/needs_index.html", :query => "foo" %>
-    Needs Index Hash <%= url_for "/needs_index.html", :query => { :foo => :bar } %>
+    Needs Index String <%= url_for "/needs_index.html", query: "foo" %>
+    Needs Index Hash <%= url_for "/needs_index.html", query: { foo: :bar } %>
     """
     And the Server is running at "indexable-app"
     When I go to "/url_for/"

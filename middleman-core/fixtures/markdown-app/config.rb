@@ -1,1 +1,1 @@
-set :markdown, :smartypants => true
+set :markdown, smartypants: true

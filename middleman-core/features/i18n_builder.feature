@@ -49,7 +49,7 @@ Feature: i18n Builder
     Given a fixture app "i18n-test-app"
     And a file named "config.rb" with:
       """
-      activate :i18n, :path => "/lang_:locale/"
+      activate :i18n, path: "/lang_:locale/"
       """
     Given a successfully built app at "i18n-test-app"
     When I cd to "build"
@@ -69,7 +69,7 @@ Feature: i18n Builder
     Given a fixture app "i18n-alt-root-app"
     And a file named "config.rb" with:
       """
-      activate :i18n, :templates_dir => "lang_data"
+      activate :i18n, templates_dir: "lang_data"
       """
     Given a successfully built app at "i18n-alt-root-app"
     When I cd to "build"
@@ -89,7 +89,7 @@ Feature: i18n Builder
     Given a fixture app "i18n-test-app"
     And a file named "config.rb" with:
       """
-      activate :i18n, :lang_map => { :en => :english, :es => :spanish }
+      activate :i18n, lang_map: { en: :english, es: :spanish }
       """
     Given a successfully built app at "i18n-test-app"
     When I cd to "build"
@@ -109,7 +109,7 @@ Feature: i18n Builder
     Given a fixture app "i18n-test-app"
     And a file named "config.rb" with:
       """
-      activate :i18n, :mount_at_root => false
+      activate :i18n, mount_at_root: false
       """
     Given a successfully built app at "i18n-test-app"
     When I cd to "build"
@@ -130,7 +130,7 @@ Feature: i18n Builder
     Given a fixture app "i18n-test-app"
     And a file named "config.rb" with:
       """
-      activate :i18n, :langs => [:en]
+      activate :i18n, langs: [:en]
       """
     Given a successfully built app at "i18n-test-app"
     When I cd to "build"
