@@ -34,4 +34,7 @@ Gem::Specification.new do |s|
 
   # i18n
   s.add_dependency('i18n', ['~> 0.6.9'])
+
+  # Automatic Image Sizes
+  s.add_dependency('fastimage', ['~> 1.6.2'])
 end
