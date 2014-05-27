@@ -183,7 +183,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
       File.join(prefix, path.sub(page_id, localized_page_id))
     )
 
-    path.gsub!(options[:templates_dir] + '/', '')
+    path = path.sub(options[:templates_dir] + '/', '')
 
     @_localization_data[path] = [lang, path, localized_page_id]
 
