@@ -23,5 +23,5 @@ Gem::Specification.new do |s|
   s.add_dependency('thor', ['>= 0.17.0', '< 2.0'])
 
   # Templates
-  s.add_dependency('octokit', ['~> 3.1'])
+  s.add_dependency('rugged', [])
 end
