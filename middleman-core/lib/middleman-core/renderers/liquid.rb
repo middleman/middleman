@@ -7,7 +7,7 @@ module Middleman
     class Liquid < Middleman::Extension
       # After config, setup liquid partial paths
       def after_configuration
-        ::Liquid::Template.file_system = ::Liquid::LocalFileSystem.new(source_dir)
+        ::Liquid::Template.file_system = ::Liquid::LocalFileSystem.new(app.source_dir)
       end
 
       def manipulate_resource_list(resources)

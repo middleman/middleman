@@ -7,9 +7,9 @@ module Middleman
         attr_accessor :sitemap
         attr_accessor :waiting_for_ready
 
-        def initialize(sitemap)
+        def initialize(app, sitemap)
           @sitemap = sitemap
-          @app     = @sitemap.app
+          @app     = app
           @file_paths_on_disk = Set.new
 
           scoped_self = self

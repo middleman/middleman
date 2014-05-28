@@ -4,8 +4,8 @@ module Middleman
       class RequestEndpoints
         # Manages the list of proxy configurations and manipulates the sitemap
         # to include new resources based on those configurations
-        def initialize(sitemap)
-          @app = sitemap.app
+        def initialize(app)
+          @app = app
           @app.add_to_config_context :endpoint, &method(:create_endpoint)
 
           @endpoints = {}

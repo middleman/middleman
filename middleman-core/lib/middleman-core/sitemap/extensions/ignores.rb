@@ -3,15 +3,15 @@ module Middleman
     module Extensions
       # Class to handle managing ignores
       class Ignores
-        def initialize(sitemap)
-          @app = sitemap.app
+        def initialize(app, sitemap)
+          @app = app
           @app.add_to_config_context :ignore, &method(:create_ignore)
-          @app.define_singleton_method(:ignore, &method(:create_ignore))
+          @app.define_singleton_method :ignore, &method(:create_ignore)
 
           # Array of callbacks which can ass ignored
           @ignored_callbacks = []
 
-          sitemap.define_singleton_method(:ignored?, &method(:ignored?))
+          sitemap.define_singleton_method :ignored?, &method(:ignored?)
           ::Middleman::Sitemap::Resource.send :include, IgnoreResourceInstanceMethods
         end
 

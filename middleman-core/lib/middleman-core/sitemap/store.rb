@@ -19,6 +19,9 @@ module Middleman
     # which is the path relative to the source directory, minus any template
     # extensions. All "path" parameters used in this class are source paths.
     class Store
+      # @return [Middleman::Application]
+      attr_reader :app
+
       # Initialize with parent app
       # @param [Middleman::Application] app
       def initialize(app)
@@ -34,23 +37,23 @@ module Middleman
         reset_lookup_cache!
 
         # Handle ignore commands
-        Middleman::Sitemap::Extensions::Ignores.new(self)
+        Middleman::Sitemap::Extensions::Ignores.new(@app, self)
 
         # Extensions
         {
           # Register classes which can manipulate the main site map list
-          on_disk: Middleman::Sitemap::Extensions::OnDisk,
+          on_disk: Middleman::Sitemap::Extensions::OnDisk.new(@app, self),
 
           # Request Endpoints
-          request_endpoints: Middleman::Sitemap::Extensions::RequestEndpoints,
+          request_endpoints: Middleman::Sitemap::Extensions::RequestEndpoints.new(@app),
 
           # Proxies
-          proxies: Middleman::Sitemap::Extensions::Proxies,
+          proxies: Middleman::Sitemap::Extensions::Proxies.new(@app),
 
           # Redirects
-          redirects: Middleman::Sitemap::Extensions::Redirects
+          redirects: Middleman::Sitemap::Extensions::Redirects.new(@app)
         }.each do |k, m|
-          register_resource_list_manipulator(k, m.new(self))
+          register_resource_list_manipulator(k, m)
         end
 
         @app.config_context.class.send :delegate, :sitemap, to: :app
