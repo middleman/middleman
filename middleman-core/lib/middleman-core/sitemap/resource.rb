@@ -42,7 +42,7 @@ module Middleman
         # Locals are local variables for rendering this resource's template
         # Page are data that is exposed through this resource's data member.
         # Note: It is named 'page' for backwards compatibility with older MM.
-        @local_metadata = { options: {}, locals: {}, page: {} }
+        @metadata = { options: {}, locals: {}, page: {} }
       end
 
       # Whether this resource has a template file
@@ -59,15 +59,12 @@ module Middleman
       #   Page are data that is exposed through this resource's data member.
       #   Note: It is named 'page' for backwards compatibility with older MM.
       def add_metadata(meta={})
-        @local_metadata.deep_merge!(meta)
+        @metadata.deep_merge!(meta)
       end
 
-      # Get the metadata for both the current source_file and the current path
+      # The metadata for this resource
       # @return [Hash]
-      def metadata
-        # TODO: The only reason we call metadata_for_page is to power the "page" DSL
-        @store.metadata_for_path(path).deep_merge @local_metadata
-      end
+      attr_reader :metadata
 
       # Data about this resource, populated from frontmatter or extensions.
       # @return [HashWithIndifferentAccess]

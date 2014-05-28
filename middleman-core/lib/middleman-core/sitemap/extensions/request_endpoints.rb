@@ -71,8 +71,8 @@ module Middleman
           false
         end
 
-        def metadata
-          @local_metadata.dup
+        def get_source_file
+          ''
         end
       end
     end

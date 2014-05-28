@@ -105,6 +105,9 @@ module Middleman
 
         run_hook :before_configuration
 
+        # Evaluate a passed block if given
+        config_context.instance_exec(&block) if block_given?
+
         # Check for and evaluate local configuration in `config.rb`
         local_config = File.join(root, 'config.rb')
         if File.exist? local_config

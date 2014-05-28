@@ -53,7 +53,7 @@ module Middleman
         end
 
         def render(*)
-          url = ::Middleman::Util.url_for(store.app, @request_path,
+          url = ::Middleman::Util.url_for(@store.app, @request_path,
                                           relative: false,
                                           find_resource: true
           )
@@ -81,10 +81,6 @@ module Middleman
 
         def ignored?
           false
-        end
-
-        def metadata
-          @local_metadata.dup
         end
 
         def get_source_file
