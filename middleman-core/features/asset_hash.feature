@@ -94,7 +94,7 @@ Feature: Assets get a file hash appended to their and references to them are upd
       activate :relative_assets
       activate :directory_indexes
       require 'lib/middleware.rb'
-      use Middleware
+      use ::Middleware
       """
     Given the Server is running at "asset-hash-app"
     When I go to "/"
