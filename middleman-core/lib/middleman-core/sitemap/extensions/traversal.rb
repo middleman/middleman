@@ -6,16 +6,23 @@ module Middleman
         # @return [Middleman::Sitemap::Resource, nil]
         def parent
           parts = path.split('/')
-          parts.pop if path.include?(app.config[:index_file])
+          tail = parts.pop
+          is_index = (tail == app.config[:index_file])
 
-          return nil if parts.length < 1
+          return nil if is_index && parts.length < 1
 
-          parts.pop
-          parts << app.config[:index_file]
+          test_expr = parts.join('\\/')
+          # eponymous reverse-lookup
+          found = store.resources.find do |candidate|
+            candidate.path =~ %r!^#{test_expr}(?:\.[a-zA-Z0-9]+|\/)$!
+          end
 
-          parent_path = '/' + parts.join('/')
-
-          store.find_resource_by_destination_path(parent_path)
+          if found
+            found
+          else
+            parts.pop if is_index
+            store.find_resource_by_destination_path("#{parts.join('/')}/#{app.config[:index_file]}")
+          end
         end
 
         # This resource's child resources

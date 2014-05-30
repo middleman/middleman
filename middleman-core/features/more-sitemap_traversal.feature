@@ -71,3 +71,13 @@ Feature: Step through sitemap as a tree (more)
     Then I should see "Child: directory-indexed/sibling2.html"
     Then I should see "Child: directory-indexed/sub2/index.html"
     Then I should see "Sibling: root.html"
+
+  Scenario: Child pages can see their parent and siblings too in named directory
+    Given the Server is running at "more-traversal-app"
+    When I go to "/directory-indexed/sibling"
+    Then I should see "Path: directory-indexed/sibling.html"
+    Then I should see "Parent: directory-indexed.html"
+    Then I should see "Sibling: directory-indexed/fake.html"
+    Then I should see "Sibling: directory-indexed/fake2.html"
+    Then I should see "Sibling: directory-indexed/sibling2.html"
+    Then I should see "Sibling: directory-indexed/sub2/index.html"
