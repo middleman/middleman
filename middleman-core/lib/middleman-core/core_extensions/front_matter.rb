@@ -32,7 +32,9 @@ module Middleman::CoreExtensions
     # Modify each resource to add data & options from frontmatter.
     def manipulate_resource_list(resources)
       resources.each do |resource|
-        fmdata = data(resource.path).first
+        next if resource.source_file.blank?
+
+        fmdata = data(resource.source_file).first.dup
 
         # Copy over special options
         # TODO: Should we make people put these under "options" instead of having
@@ -75,6 +77,8 @@ module Middleman::CoreExtensions
           external_data, _ = frontmatter_and_content("#{p}.frontmatter")
           data = external_data.deep_merge(data)
         end
+
+
 
         [data, content]
       end
