@@ -46,6 +46,7 @@ module Middleman
       # @option opts [Symbol, Boolean, String] layout The layout name to use (e.g. `:article`) or `false` to disable layout.
       # @option opts [Boolean] directory_indexes Whether or not the `:directory_indexes` extension applies to these paths.
       # @option opts [Hash] locals Local variables for the template. These will be available when the template renders.
+      # @option opts [Hash] data Extra metadata to add to the page. This is the same as frontmatter, though frontmatter will take precedence over metadata defined here. Available via {Resource#data}.
       # @option opts [String] proxy The source path for a template to proxy this path to. Only valid when a single path is provided. Prefer using the `proxy` method to do this.
       # @option opts [Boolean] ignore Set to `true` to ignore the provided path(s). Only valid when a single path is provided. Prefer using the `ignore` method to do this.
       # @return [void]
@@ -56,7 +57,7 @@ module Middleman
         # TODO: This seems wrong
         options[:layout] = @app.config[:layout] if options[:layout].nil?
         # TODO: You can set options and locals, but not data
-        metadata = { options: options, locals: options.delete(:locals) || {} }
+        metadata = { options: options, locals: options.delete(:locals) || {}, page: options.delete(:data) || {} }
 
         # If the path is a regexp
         unless path.is_a?(Regexp) || path.include?('*')
