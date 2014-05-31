@@ -52,6 +52,9 @@ module Middleman::CoreExtensions
         resource.add_metadata options: opts, page: fmdata
 
         # TODO: resource.ignore! if ignored
+        # TODO: This doesn't really work because resources can't themselves be ignored / when
+        # an ignore rule is in place it's forever
+        resource.ignore! if ignored == true && !resource.proxy?
 
         # TODO: Save new template here somewhere?
       end

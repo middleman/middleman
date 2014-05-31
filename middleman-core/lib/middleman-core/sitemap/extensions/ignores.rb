@@ -48,11 +48,16 @@ module Middleman
 
       # Helpers methods for Resources
       module IgnoreResourceInstanceMethods
+        # Ignore a resource directly, without going through the whole
+        # ignore filter stuff.
+        def ignore!
+          @ignored = true
+        end
+
         # Whether the Resource is ignored
         # @return [Boolean]
         def ignored?
-          # Check frontmatter/data
-          return true if !proxy? && data[:ignored] == true
+          return true if @ignored
           # Ignore based on the source path (without template extensions)
           return true if @app.sitemap.ignored?(path)
           # This allows files to be ignored by their source file name (with template extensions)
