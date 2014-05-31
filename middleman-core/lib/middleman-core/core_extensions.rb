@@ -50,7 +50,6 @@ Middleman::Extensions.register :routing, auto_activate: :before_configuration do
   Middleman::CoreExtensions::Routing
 end
 
-
 ###
 # Setup Optional Extensions
 ###

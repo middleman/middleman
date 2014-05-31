@@ -43,9 +43,7 @@ module Middleman::CoreExtensions
         # TODO: Should we make people put these under "options" instead of having
         # special known keys?
         opts = fmdata.extract!(:layout, :layout_engine, :renderer_options, :directory_index, :content_type)
-        if opts.has_key?(:renderer_options)
-          opts[:renderer_options].symbolize_keys!
-        end
+        opts[:renderer_options].symbolize_keys! if opts.key?(:renderer_options)
 
         ignored = fmdata.delete(:ignored)
 
@@ -54,9 +52,6 @@ module Middleman::CoreExtensions
 
         resource.add_metadata options: opts, page: fmdata
 
-        # TODO: resource.ignore! if ignored
-        # TODO: This doesn't really work because resources can't themselves be ignored / when
-        # an ignore rule is in place it's forever
         resource.ignore! if ignored == true && !resource.proxy?
 
         # TODO: Save new template here somewhere?
@@ -83,8 +78,6 @@ module Middleman::CoreExtensions
           external_data, _ = frontmatter_and_content("#{p}.frontmatter")
           data = external_data.deep_merge(data)
         end
-
-
 
         [data, content]
       end

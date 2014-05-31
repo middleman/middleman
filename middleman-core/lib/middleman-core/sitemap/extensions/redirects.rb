@@ -83,6 +83,7 @@ module Middleman
           false
         end
 
+        # rubocop:disable AccessorMethodName
         def get_source_file
           ''
         end
