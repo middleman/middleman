@@ -27,9 +27,9 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
   end
 
   def after_configuration
-    app.files.reload_path(app.config[:locals_dir] || options[:data])
+    app.files.reload_path(app.config[:locales_dir] || options[:data])
 
-    @locales_glob = File.join(app.config[:locals_dir] || options[:data], '**', '*.{rb,yml,yaml}')
+    @locales_glob = File.join(app.config[:locales_dir] || options[:data], '**', '*.{rb,yml,yaml}')
     @locales_regex = convert_glob_to_regex(@locales_glob)
 
     @maps = {}
@@ -81,7 +81,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
 
       # This is for backwards compatibility with the old provides_metadata-based code
       # that used to be in this extension, but I don't know how much sense it makes.
-      resource.add_metadata options: { lang: @mount_at_root }, locals: { lang: @mount_at_root }
+      #resource.add_metadata options: { lang: @mount_at_root }, locals: { lang: @mount_at_root }
     end
 
     resources + new_resources
