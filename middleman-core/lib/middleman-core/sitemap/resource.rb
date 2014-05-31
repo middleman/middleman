@@ -20,6 +20,11 @@ module Middleman
       # @return [String]
       attr_accessor :destination_path
 
+      # The path to use when requesting this resource. Normally it's
+      # the same as {#destination_path} but it can be overridden in subclasses.
+      # @return [String]
+      alias_method :request_path, :destination_path
+
       # Set the on-disk source file for this resource
       # @return [String]
       def source_file

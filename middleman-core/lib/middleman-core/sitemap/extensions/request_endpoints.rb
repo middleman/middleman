@@ -49,11 +49,12 @@ module Middleman
       class EndpointResource < ::Middleman::Sitemap::Resource
         attr_accessor :output
 
-        def initialize(store, path, source_file)
-          @request_path = ::Middleman::Util.normalize_path(source_file)
-
+        def initialize(store, path, request_path)
           super(store, path)
+          @request_path = ::Middleman::Util.normalize_path(request_path)
         end
+
+        attr_reader :request_path
 
         def template?
           true
