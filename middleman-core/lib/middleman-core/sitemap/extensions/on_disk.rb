@@ -15,14 +15,16 @@ module Middleman
           scoped_self = self
           @waiting_for_ready = true
 
-          # Register file change callback
-          @app.files.changed do |file|
-            scoped_self.touch_file(file)
-          end
+          @app.before_configuration do
+            # Register file change callback
+            files.changed do |file|
+              scoped_self.touch_file(file)
+            end
 
-          # Register file delete callback
-          @app.files.deleted do |file|
-            scoped_self.remove_file(file)
+            # Register file delete callback
+            files.deleted do |file|
+              scoped_self.remove_file(file)
+            end
           end
 
           @app.ready do
