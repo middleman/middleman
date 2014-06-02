@@ -109,7 +109,12 @@ Feature: Assets get a file hash appended to their and references to them are upd
     Given a fixture app "asset-hash-app"
     And a file named "config.rb" with:
       """
-      activate :asset_hash, ignore: [%r(javascripts/*), 'images/*']
+      is_stylesheet = proc { |path| path.start_with? 'stylesheets' }
+      activate :asset_hash, ignore: [
+        %r(javascripts/*),
+        'images/*',
+        is_stylesheet
+      ]
       activate :relative_assets
       activate :directory_indexes
       """
@@ -123,7 +128,7 @@ Feature: Assets get a file hash appended to their and references to them are upd
       | images/100px.jpg |
       | images/100px.gif |
       | javascripts/application.js |
-      | stylesheets/site-50eaa978.css |
+      | stylesheets/site.css |
       | index.html |
       | subdir/index.html |
       | other/index.html |
@@ -132,7 +137,7 @@ Feature: Assets get a file hash appended to their and references to them are upd
       | images/100px-5fd6fb90.jpg |
       | images/100px-5fd6fb90.gif |
       | javascripts/application-1d8d5276.js |
-      | stylesheets/site.css |
+      | stylesheets/site-50eaa978.css |
 
   # @wip Currently broken, we should move all asset-host functionality out of Compass and into something more similar to asset_hash with Rack-based rewrites
   # Scenario: Enabling an asset host and referencing assets in CSS with URL fragments are rewritten correctly

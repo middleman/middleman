@@ -49,7 +49,7 @@ module Middleman
                 asset_path
               end
 
-              @ignore.none? { |r| full_asset_path.match(r) } && @proc.call(asset_path, dirpath)
+              @ignore.none? { |r| should_ignore?(r, full_asset_path) } && @proc.call(asset_path, dirpath)
             end
 
             status, headers, response = ::Rack::Response.new(
@@ -61,6 +61,21 @@ module Middleman
         end
 
         [status, headers, response]
+      end
+
+      def should_ignore?(validator, value)
+        if validator.is_a? Regexp
+          # Treat as Regexp
+          value.match(validator)
+        elsif validator.respond_to? :call
+          # Treat as proc
+          validator.call(value)
+        elsif validator.is_a? String
+          # Treat as glob
+          File.fnmatch(value, validator)
+        else
+          # If some unknown thing, don't ignore
+        end
       end
     end
   end
