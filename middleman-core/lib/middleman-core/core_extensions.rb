@@ -11,6 +11,12 @@ Middleman::Extensions.register :data, auto_activate: :before_sitemap do
   Middleman::CoreExtensions::Data
 end
 
+# Catch and show exceptions at the Rack level
+Middleman::Extensions.register :show_exceptions, auto_activate: :before_configuration, modes: [:server] do
+  require 'middleman-core/core_extensions/show_exceptions'
+  Middleman::CoreExtensions::ShowExceptions
+end
+
 # File Change Notifier
 Middleman::Extensions.register :file_watcher, auto_activate: :before_sitemap do
   require 'middleman-core/core_extensions/file_watcher'

@@ -29,10 +29,6 @@ Given /^"([^\"]*)" is set to "([^\"]*)"$/ do |variable, value|
   }
 end
 
-Given /^current environment is "([^\"]*)"$/ do |env|
-  @current_env = env.to_sym
-end
-
 Given /^the Server is running$/ do
   root_dir = File.expand_path(current_dir)
 
@@ -45,14 +41,12 @@ Given /^the Server is running$/ do
   ENV['MM_ROOT'] = root_dir
 
   initialize_commands = @initialize_commands || []
-  initialize_commands.unshift lambda {
-    config[:environment] = @current_env || :development
-    config[:show_exceptions] = false
-  }
 
   @server_inst = Middleman::Application.server.inst do
-    initialize_commands.each do |p|
-      instance_exec(&p)
+    app.initialized do
+      initialize_commands.each do |p|
+        config_context.instance_exec(&p)
+      end
     end
   end
 

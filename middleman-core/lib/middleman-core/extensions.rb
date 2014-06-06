@@ -14,18 +14,14 @@ module Middleman
       before_configuration: []
     }
 
+    AutoActivation = Struct.new(:name, :modes)
+
     class << self
       # @api private
       # A hash of all registered extensions. Registered extensions are not necessarily active - this
       # is the set of all extensions that are known to Middleman.
       # @return [Hash{Symbol => Class<Middleman::Extension>, Proc}] A directory of known extensions indexed by the name they were registered under. The value may be a Proc, which can be lazily called to return an extension class.
       attr_reader :registered
-
-      # @api private
-      # A list of extensions that should be automatically loaded at different points in the application startup lifecycle.
-      # Only internal, built-in Middleman extensions should be listed here.
-      # @return [Hash{Symbol => Symbol}] A hash from event name to extension name.
-      attr_reader :auto_activate
 
       # Register a new extension. Choose a name which will be
       # used to activate the extension in `config.rb`, like this:
@@ -71,7 +67,10 @@ module Middleman
           raise 'You must provide a Middleman::Extension or a block that returns a Middleman::Extension'
         end
 
-        @auto_activate[options[:auto_activate]] << name if options[:auto_activate]
+        if options[:auto_activate]
+          descriptor = AutoActivation.new(name, options[:modes] || :all)
+          @auto_activate[options[:auto_activate]] << descriptor
+        end
       end
 
       # @api private
@@ -106,7 +105,19 @@ module Middleman
       # A flattened list of all extensions which are automatically activated
       # @return [Array<Symbol>] A list of extension names which are automatically activated.
       def auto_activated
-        @auto_activate.values.flatten
+        @auto_activate.values.map(&:name).flatten
+      end
+
+      # @api private
+      # Load autoactivatable extensions for the given env.
+      # @param [Symbol] group The name of the auto_activation group.
+      # @param [Middleman::Application] app An instance of the app.
+      def auto_activate(group, app)
+        @auto_activate[group].each do |descriptor|
+          if descriptor[:modes] == :all || descriptor[:modes].include?(app.config[:mode])
+            app.activate descriptor[:name]
+          end
+        end
       end
     end
   end

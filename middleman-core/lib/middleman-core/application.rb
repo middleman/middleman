@@ -31,9 +31,6 @@ require 'middleman-core/core_extensions/request'
 # Custom Extension API and config.rb handling
 require 'middleman-core/core_extensions/extensions'
 
-# Catch and show exceptions at the Rack level
-require 'middleman-core/core_extensions/show_exceptions'
-
 # Core Middleman Class
 module Middleman
   class Application
@@ -73,9 +70,13 @@ module Middleman
     # @return [String]
     config.define_setting :source,      'source', 'Name of the source directory'
 
-    # Middleman environment. Defaults to :development, set to :build by the build process
+    # Middleman mode. Defaults to :server, set to :build by the build process
     # @return [String]
-    config.define_setting :environment, ((ENV['MM_ENV'] && ENV['MM_ENV'].to_sym) || :development), 'Middleman environment. Defaults to :development, set to :build by the build process'
+    config.define_setting :mode, ((ENV['MM_ENV'] && ENV['MM_ENV'].to_sym) || :server), 'Middleman mode. Defaults to :server'
+
+    # Middleman environment. Defaults to :development
+    # @return [String]
+    config.define_setting :environment, :development, 'Middleman environment. Defaults to :development'
 
     # Which file should be used for directory indexes
     # @return [String]
@@ -139,9 +140,6 @@ module Middleman
     # Basic Rack Request Handling
     include Middleman::CoreExtensions::Request
 
-    # Handle exceptions
-    include Middleman::CoreExtensions::ShowExceptions
-
     # Setup custom rendering
     include Middleman::CoreExtensions::Rendering
 
@@ -179,9 +177,7 @@ module Middleman
       # Setup the default values from calls to set before initialization
       self.class.config.load_settings(self.class.superclass.config.all_settings)
 
-      ::Middleman::Extensions.auto_activate[:before_sitemap].each do |ext_name|
-        activate ext_name
-      end
+      ::Middleman::Extensions.auto_activate(:before_sitemap, self)
 
       # Initialize the Sitemap
       @sitemap = ::Middleman::Sitemap::Store.new(self)
@@ -204,16 +200,22 @@ module Middleman
       @config_context.define_singleton_method(name, &func)
     end
 
-    # Whether we're in development mode
+    # Whether we're in server mode
     # @return [Boolean] If we're in dev mode
-    def development?
-      config[:environment] == :development
+    def server?
+      config[:mode] == :server
     end
 
     # Whether we're in build mode
-    # @return [Boolean] If we're in build mode
+    # @return [Boolean] If we're in dev mode
     def build?
-      config[:environment] == :build
+      config[:mode] == :build
+    end
+
+    # Whether we're in a specific environment
+    # @return [Boolean]
+    def environment?(key)
+      config[:environment] == key
     end
 
     # The full path to the source directory

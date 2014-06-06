@@ -18,6 +18,10 @@ module Middleman::Cli
     namespace :build
 
     desc 'build [options]', 'Builds the static site for deployment'
+    method_option :environment,
+                  aliases: '-e',
+                  default: ENV['MM_ENV'] || ENV['RACK_ENV'] || 'development',
+                  desc: 'The environment Middleman will run under'
     method_option :clean,
                   type: :boolean,
                   default: true,
@@ -58,18 +62,26 @@ module Middleman::Cli
       @debugging = Middleman::Cli::Base.respond_to?(:debugging) && Middleman::Cli::Base.debugging
       self.had_errors = false
 
-      self.class.shared_instance(options['verbose'], options['instrument'])
+      env = options['environment'].to_sym
+      verbose = options['verbose'] ? 0 : 1
+      instrument = options['instrument']
+
+      app = ::Middleman::Application.server.inst do
+        config[:mode] = :build
+        config[:environment] = env
+        ::Middleman::Logger.singleton(verbose, instrument)
+      end
 
       opts = {}
       opts[:glob]  = options['glob'] if options.key?('glob')
       opts[:clean] = options['clean']
 
-      self.class.shared_instance.run_hook :before_build, self
+      app.run_hook :before_build, self
 
-      action BuildAction.new(self, opts)
+      action BuildAction.new(self, app, opts)
 
-      self.class.shared_instance.run_hook :after_build, self
-      self.class.shared_instance.config_context.execute_after_build_callbacks(self)
+      app.run_hook :after_build, self
+      app.config_context.execute_after_build_callbacks(self)
 
       if had_errors && !debugging
         msg = 'There were errors during this build'
@@ -87,16 +99,6 @@ module Middleman::Cli
       def exit_on_failure?
         true
       end
-
-      # Middleman::Application singleton
-      #
-      # @return [Middleman::Application]
-      def shared_instance(verbose=false, instrument=false)
-        @_shared_instance ||= ::Middleman::Application.server.inst do
-          config[:environment] = :build
-          ::Middleman::Logger.singleton(verbose ? 0 : 1, instrument)
-        end
-      end
     end
   end
 
@@ -109,8 +111,8 @@ module Middleman::Cli
     #
     # @param [Middleman::Cli::Build] base
     # @param [Hash] config
-    def initialize(base, config={})
-      @app        = base.class.shared_instance
+    def initialize(base, app, config={})
+      @app        = app
       @source_dir = Pathname(@app.source_dir)
       @build_dir  = Pathname(@app.config[:build_dir])
       @to_clean   = Set.new
