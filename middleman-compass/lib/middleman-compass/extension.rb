@@ -8,30 +8,31 @@ module Middleman
 
       # Hooks to manually update the compass config after we're
       # done with it
-      app.define_hook :compass_config    end
+      app.define_hook :compass_config
+    end
 
     def after_configuration
-      ::Compass.configuration do |compass_config|
-        compass_config.project_path    = app.source_dir
-        compass_config.environment     = :development
-        compass_config.cache           = false
-        compass_config.sass_dir        = app.config[:css_dir]
-        compass_config.css_dir         = app.config[:css_dir]
-        compass_config.javascripts_dir = app.config[:js_dir]
-        compass_config.fonts_dir       = app.config[:fonts_dir]
-        compass_config.images_dir      = app.config[:images_dir]
-        compass_config.http_path       = app.config[:http_prefix]
+      ::Compass.configuration do |compass|
+        compass.project_path    = app.source_dir
+        compass.environment     = :development
+        compass.cache           = false
+        compass.sass_dir        = app.config[:css_dir]
+        compass.css_dir         = app.config[:css_dir]
+        compass.javascripts_dir = app.config[:js_dir]
+        compass.fonts_dir       = app.config[:fonts_dir]
+        compass.images_dir      = app.config[:images_dir]
+        compass.http_path       = app.config[:http_prefix]
 
         # Disable this initially, the cache_buster extension will
         # re-enable it if requested.
-        compass_config.asset_cache_buster { |_| nil }
+        compass.asset_cache_buster { |_| nil }
 
         # Disable this initially, the relative_assets extension will
 
-        compass_config.relative_assets = false
+        compass.relative_assets = false
 
         # Default output style
-        compass_config.output_style = :nested
+        compass.output_style = :nested
       end
 
       # Call hook

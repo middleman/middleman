@@ -17,9 +17,6 @@ module Middleman
         app.config.define_setting :autoload_sprockets, true, 'Automatically load sprockets at startup?'
         app.config[:autoload_sprockets] = (ENV['AUTOLOAD_SPROCKETS'] == 'true') if ENV['AUTOLOAD_SPROCKETS']
 
-        app.config.define_setting :autoload_compass, true, 'Automatically load compass at startup?'
-        app.config[:autoload_compass] = (ENV['AUTOLOAD_COMPASS'] == 'true') if ENV['AUTOLOAD_COMPASS']
-
         app.extend ClassMethods
         app.delegate :configure, to: :"self.class"
       end
@@ -102,15 +99,6 @@ module Middleman
             activate :sprockets
           rescue LoadError
             # It's OK if somebody is using middleman-core without middleman-sprockets
-          end
-        end
-
-        if config[:autoload_compass]
-          begin
-            require 'middleman-compass'
-            activate :compass
-          rescue LoadError
-            # Compass is not available, don't complain about it
           end
         end
 
