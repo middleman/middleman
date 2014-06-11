@@ -37,6 +37,6 @@ gem 'rubocop', require: false
 # Middleman itself
 gem 'middleman-core', path: 'middleman-core'
 gem 'middleman-cli', path: 'middleman-cli'
-gem 'middleman-compass', path: 'middleman-compass', require: false
+gem 'middleman-compass',  github: 'middleman/middleman-compass', require: false
 gem 'middleman-sprockets', github: 'middleman/middleman-sprockets', require: false
 gem 'middleman', path: 'middleman'
