@@ -58,7 +58,7 @@ end
 
 require 'rubocop/rake_task'
 desc 'Run RuboCop to check code consistency'
-Rubocop::RakeTask.new(:rubocop) do |task|
+RuboCop::RakeTask.new(:rubocop) do |task|
   task.fail_on_error = false
 end
 
