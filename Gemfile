@@ -5,10 +5,10 @@ gem 'rake', '~> 10.0.3', require: false
 gem 'yard', '~> 0.8.0', require: false
 
 # Test tools
-gem 'cucumber', '~> 1.3.1'
-gem 'fivemat', '~> 1.2.1'
-gem 'aruba', '~> 0.5.1'
-gem 'rspec', '~> 2.12'
+gem 'cucumber', '~> 1.3.15'
+gem 'fivemat', '~> 1.3.1'
+gem 'aruba', '~> 0.5.4'
+gem 'rspec', '~> 3.0'
 gem 'simplecov'
 
 # Optional middleman dependencies, included for tests

@@ -64,7 +64,7 @@ end
 
 Then /^the file "([^\"]*)" should not have been updated$/ do |file|
   target = File.join(current_dir, file)
-  File.mtime(target).should == @modification_times[target]
+  expect(File.mtime(target)).to eq(@modification_times[target])
 end
 
 # Provide this Aruba overload in case we're matching something with quotes in it

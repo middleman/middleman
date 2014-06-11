@@ -71,40 +71,40 @@ end
 
 Then /^going to "([^\"]*)" should not raise an exception$/ do |url|
   last_response = nil
-  lambda {
+  expect {
     last_response = @browser.get(URI.escape(url))
-  }.should_not raise_exception
+  }.to_not raise_error
   @last_response = last_response
 end
 
 Then /^the content type should be "([^\"]*)"$/ do |expected|
-  @last_response.content_type.should start_with(expected)
+  expect(@last_response.content_type).to start_with(expected)
 end
 
 Then /^I should see "([^\"]*)"$/ do |expected|
-  @last_response.body.should include(expected)
+  expect(@last_response.body).to include(expected)
 end
 
 Then /^I should see '([^\']*)'$/ do |expected|
-  @last_response.body.should include(expected)
+  expect(@last_response.body).to include(expected)
 end
 
 Then /^I should see:$/ do |expected|
-  @last_response.body.should include(expected)
+  expect(@last_response.body).to include(expected)
 end
 
 Then /^I should not see "([^\"]*)"$/ do |expected|
-  @last_response.body.should_not include(expected)
+  expect(@last_response.body).to_not include(expected)
 end
 
 Then /^I should see content matching %r{(.*)}$/ do |expected|
-  @last_response.body.should match(expected)
+  expect(@last_response.body).to match(expected)
 end
 
 Then /^I should not see content matching %r{(.*)}$/ do |expected|
-  @last_response.body.should_not match(expected)
+  expect(@last_response.body).to_not match(expected)
 end
 
 Then /^I should see "([^\"]*)" lines$/ do |lines|
-  @last_response.body.chomp.split($/).length.should == lines.to_i
+  expect(@last_response.body.chomp.split($/).length).to eq(lines.to_i)
 end
