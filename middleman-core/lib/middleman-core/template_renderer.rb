@@ -37,6 +37,7 @@ module Middleman
       # Sandboxed class for template eval
       context = @app.template_context_class.new(@app, locs, opts)
 
+      # TODO: Only for HAML files
       context.init_haml_helpers if context.respond_to?(:init_haml_helpers)
 
       # Keep rendering template until we've used up all extensions. This

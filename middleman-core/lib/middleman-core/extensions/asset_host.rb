@@ -1,51 +1,36 @@
+require 'middleman-core/middleware/inline_url_rewriter'
 
-# Asset Host module
 class Middleman::Extensions::AssetHost < ::Middleman::Extension
-  option :host, nil, 'The asset host to use, or false for no asset host, or a Proc to determine asset host'
+  option :host, nil, 'The asset host to use or a Proc to determine asset host'
+  option :exts, %w(.css .png .jpg .jpeg .svg .svgz .js .gif), 'List of extensions that get cache busters strings appended to them.'
+  option :sources, %w(.htm .html .php .css .js), 'List of extensions that are searched for bustable assets.'
+  option :ignore, [], 'Regexes of filenames to skip adding query strings to'
 
-  def initialize(app, options_hash={}, &block)
-    super
-
-    # Backwards compatible API
-    app.config.define_setting :asset_host, nil, 'The asset host to use, or false for no asset host, or a Proc to determine asset host'
-
-    app.compass_config do |config|
-      if asset_host = extensions[:asset_host].host
-        if asset_host.is_a?(Proc)
-          config.asset_host(&asset_host)
-        else
-          config.asset_host do |_|
-            asset_host
-          end
-        end
-      end
-    end if app.respond_to?(:compass_config)
+  def after_configuration
+    app.use ::Middleman::Middleware::InlineURLRewriter,
+      :id                => :asset_host,
+      :url_extensions    => options.exts,
+      :source_extensions => options.sources,
+      :ignore            => options.ignore,
+      :middleman_app     => app,
+      :proc              => method(:rewrite_url)
   end
 
-  def host
-    app.config[:asset_host] || options[:host]
-  end
+  def rewrite_url(asset_path, dirpath, request_path)
+    relative_path = Pathname.new(asset_path).relative?
 
-  helpers do
-    # Override default asset url helper to include asset hosts
-    #
-    # @param [String] path
-    # @param [String] prefix
-    # @param [Hash] options Data to pass through.
-    # @return [String]
-    def asset_url(path, prefix='', options={})
-      controller = extensions[:asset_host]
-
-      original_output = super
-      return original_output unless controller.host
-
-      asset_prefix = if controller.host.is_a?(Proc)
-        controller.host.call(original_output)
-      elsif controller.host.is_a?(String)
-        controller.host
-      end
-
-      File.join(asset_prefix, original_output)
+    full_asset_path = if relative_path
+      dirpath.join(asset_path).to_s
+    else
+      asset_path
     end
+
+    asset_prefix = if options[:host].is_a?(Proc)
+      options[:host].call(full_asset_path)
+    elsif options[:host].is_a?(String)
+      options[:host]
+    end
+
+    File.join(asset_prefix, full_asset_path)
   end
 end

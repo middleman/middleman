@@ -97,6 +97,14 @@ Then /^I should not see "([^\"]*)"$/ do |expected|
   @last_response.body.should_not include(expected)
 end
 
+Then /^I should see content matching %r{(.*)}$/ do |expected|
+  @last_response.body.should match(expected)
+end
+
+Then /^I should not see content matching %r{(.*)}$/ do |expected|
+  @last_response.body.should_not match(expected)
+end
+
 Then /^I should see "([^\"]*)" lines$/ do |lines|
   @last_response.body.chomp.split($/).length.should == lines.to_i
 end

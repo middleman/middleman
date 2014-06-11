@@ -37,4 +37,14 @@ Gem::Specification.new do |s|
 
   # Automatic Image Sizes
   s.add_dependency('fastimage', ['~> 1.6.2'])
+
+  # Minify CSS
+  s.add_dependency('sass', ['>= 3.3.4'])
+
+  # Work around Sass performance
+  s.add_dependency('compass-import-once', ['~> 1.0.4'])
+
+  # Minify JS
+  s.add_dependency('uglifier', ['~> 2.5'])
+  s.add_dependency('execjs', ['~> 2.0'])
 end

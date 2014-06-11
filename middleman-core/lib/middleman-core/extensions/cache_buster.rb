@@ -1,56 +1,26 @@
 # The Cache Buster extension
 class Middleman::Extensions::CacheBuster < ::Middleman::Extension
+  option :exts, %w(.css .png .jpg .jpeg .svg .svgz .js .gif), 'List of extensions that get cache busters strings appended to them.'
+  option :sources, %w(.htm .html .php .css .js), 'List of extensions that are searched for bustable assets.'
+  option :ignore, [], 'Regexes of filenames to skip adding query strings to'
+
   def initialize(app, options_hash={}, &block)
     super
 
-    # After compass is setup, make it use the registered cache buster
-    app.compass_config do |config|
-      config.asset_cache_buster do |path, real_path|
-        real_path = real_path.path if real_path.is_a? File
-        real_path = real_path.gsub(File.join(app.root, app.config[:build_dir]), app.config[:source])
-        if File.readable?(real_path)
-          File.mtime(real_path).strftime('%s')
-        else
-          logger.warn "WARNING: '#{File.basename(path)}' was not found (or cannot be read) in #{File.dirname(real_path)}"
-        end
-      end
-    end if app.respond_to?(:compass_config)
+    require 'middleman-core/middleware/inline_url_rewriter'
   end
 
-  helpers do
-    # asset_url override if we're using cache busting
-    # @param [String] path
-    # @param [String] prefix
-    # @param [Hash] options Data to pass through.
-    def asset_url(path, prefix='', options={})
-      http_path = super
+  def after_configuration
+    app.use ::Middleman::Middleware::InlineURLRewriter,
+      :id                => :cache_buster,
+      :url_extensions    => options.exts,
+      :source_extensions => options.sources,
+      :ignore            => options.ignore,
+      :middleman_app     => app,
+      :proc              => method(:rewrite_url)
+  end
 
-      if http_path.include?('://') || !%w(.css .png .jpg .jpeg .svg .svgz .js .gif).include?(File.extname(http_path))
-        http_path
-      else
-        if respond_to?(:http_images_path) && prefix == http_images_path
-          prefix = images_dir
-        end
-
-        real_path_static = File.join(prefix, path)
-
-        if build?
-          real_path_dynamic = File.join(config[:build_dir], prefix, path)
-          real_path_dynamic = File.expand_path(real_path_dynamic, root)
-          http_path << '?' + File.mtime(real_path_dynamic).strftime('%s') if File.readable?(real_path_dynamic)
-        elsif resource = sitemap.find_resource_by_path(real_path_static)
-          if !resource.template?
-            http_path << '?' + File.mtime(resource.source_file).strftime('%s')
-          else
-            # It's a template, possible with partials. We can't really
-            # know when it's updated, so generate fresh cache buster every
-            # time during developement
-            http_path << '?' + Time.now.strftime('%s')
-          end
-        end
-
-        http_path
-      end
-    end
+  def rewrite_url(asset_path, dirpath, request_path)
+    asset_path + '?' + Time.now.strftime('%s')
   end
 end

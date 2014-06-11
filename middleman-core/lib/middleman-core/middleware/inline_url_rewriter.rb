@@ -49,7 +49,7 @@ module Middleman
                 asset_path
               end
 
-              @ignore.none? { |r| should_ignore?(r, full_asset_path) } && @proc.call(asset_path, dirpath)
+              @ignore.none? { |r| should_ignore?(r, full_asset_path) } && @proc.call(asset_path, dirpath, path)
             end
 
             status, headers, response = ::Rack::Response.new(

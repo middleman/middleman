@@ -135,6 +135,55 @@ module Middleman
         end
       end
 
+      # Get the path of a file of a given type
+      #
+      # @param [Symbol] kind The type of file
+      # @param [String] source The path to the file
+      # @param [Hash] options Data to pass through.
+      # @return [String]
+      def asset_path(app, kind, source, options={})
+        return source if source.to_s.include?('//') || source.to_s.start_with?('data:')
+
+        asset_folder = case kind
+          when :css    then app.config[:css_dir]
+          when :js     then app.config[:js_dir]
+          when :images then app.config[:images_dir]
+          when :fonts  then app.config[:fonts_dir]
+          else kind.to_s
+        end
+
+        source = source.to_s.tr(' ', '')
+        ignore_extension = (kind == :images || kind == :fonts) # don't append extension
+        source << ".#{kind}" unless ignore_extension || source.end_with?(".#{kind}")
+        asset_folder = '' if source.start_with?('/') # absolute path
+
+        asset_url(app, source, asset_folder, options)
+      end
+
+      # Get the URL of an asset given a type/prefix
+      #
+      # @param [String] path The path (such as "photo.jpg")
+      # @param [String] prefix The type prefix (such as "images")
+      # @param [Hash] options Data to pass through.
+      # @return [String] The fully qualified asset url
+      def asset_url(app, path, prefix='', options={})
+        # Don't touch assets which already have a full path
+        if path.include?('//') or path.start_with?('data:')
+          path
+        else # rewrite paths to use their destination path
+          if resource = app.sitemap.find_resource_by_destination_path(url_for(app, path))
+            resource.url
+          else
+            path = File.join(prefix, path)
+            if resource = app.sitemap.find_resource_by_path(path)
+              resource.url
+            else
+              File.join(app.config[:http_prefix], path)
+            end
+          end
+        end
+      end
+
       # Given a source path (referenced either absolutely or relatively)
       # or a Resource, this will produce the nice URL configured for that
       # path, respecting :relative_links, directory indexes, etc.

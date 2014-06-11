@@ -14,6 +14,9 @@ module Middleman
         app.define_hook :build_config
         app.define_hook :development_config
 
+        app.config.define_setting :autoload_sprockets, true, 'Automatically load sprockets at startup?'
+        app.config[:autoload_sprockets] = (ENV['AUTOLOAD_SPROCKETS'] == 'true') if ENV['AUTOLOAD_SPROCKETS']
+
         app.extend ClassMethods
         app.delegate :configure, to: :"self.class"
       end
@@ -90,7 +93,7 @@ module Middleman
           activate ext_name
         end
 
-        if ENV['AUTOLOAD_SPROCKETS'] != 'false'
+        if config[:autoload_sprockets]
           begin
             require 'middleman-sprockets'
             activate :sprockets

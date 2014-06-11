@@ -22,6 +22,8 @@ platforms :ruby do
   gem 'therubyracer'
   gem 'redcarpet', '~> 3.1'
   gem 'pry', require: false, group: :development
+  # gem 'pry-debugger', require: false, group: :development
+  # gem 'pry-stack_explorer', require: false, group: :development
 end
 
 platforms :jruby do
@@ -35,5 +37,6 @@ gem 'rubocop', require: false
 # Middleman itself
 gem 'middleman-core', path: 'middleman-core'
 gem 'middleman-cli', path: 'middleman-cli'
+gem 'middleman-compass', path: 'middleman-compass', require: false
 gem 'middleman-sprockets', github: 'middleman/middleman-sprockets', require: false
 gem 'middleman', path: 'middleman'

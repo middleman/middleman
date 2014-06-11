@@ -10,7 +10,7 @@ Feature: Assets get a file hash appended to their and references to them are upd
       | images/100px-5fd6fb90.jpg |
       | images/100px-5fd6fb90.gif |
       | javascripts/application-1d8d5276.js |
-      | stylesheets/site-50eaa978.css |
+      | stylesheets/site-7474cadd.css |
       | index.html |
       | subdir/index.html |
       | other/index.html |
@@ -22,15 +22,18 @@ Feature: Assets get a file hash appended to their and references to them are upd
       | stylesheets/site.css |
 
     And the file "javascripts/application-1d8d5276.js" should contain "img.src = '/images/100px-5fd6fb90.jpg'"
-    And the file "stylesheets/site-50eaa978.css" should contain "background-image: url('../images/100px-5fd6fb90.jpg')"
+    And the file "stylesheets/site-7474cadd.css" should contain:
+      """
+      background-image: url("../images/100px-5fd6fb90.jpg")
+      """
     And the file "index.html" should contain 'href="apple-touch-icon.png"'
-    And the file "index.html" should contain 'href="stylesheets/site-50eaa978.css"'
+    And the file "index.html" should contain 'href="stylesheets/site-7474cadd.css"'
     And the file "index.html" should contain 'src="javascripts/application-1d8d5276.js"'
     And the file "index.html" should contain 'src="images/100px-5fd6fb90.jpg"'
-    And the file "subdir/index.html" should contain 'href="../stylesheets/site-50eaa978.css"'
+    And the file "subdir/index.html" should contain 'href="../stylesheets/site-7474cadd.css"'
     And the file "subdir/index.html" should contain 'src="../javascripts/application-1d8d5276.js"'
     And the file "subdir/index.html" should contain 'src="../images/100px-5fd6fb90.jpg"'
-    And the file "other/index.html" should contain 'href="../stylesheets/site-50eaa978.css"'
+    And the file "other/index.html" should contain 'href="../stylesheets/site-7474cadd.css"'
     And the file "other/index.html" should contain 'src="../javascripts/application-1d8d5276.js"'
     And the file "other/index.html" should contain 'src="../images/100px-5fd6fb90.jpg"'
 
@@ -38,32 +41,35 @@ Feature: Assets get a file hash appended to their and references to them are upd
     Given the Server is running at "asset-hash-app"
     When I go to "/"
     Then I should see 'href="apple-touch-icon.png"'
-    And I should see 'href="stylesheets/site-50eaa978.css"'
+    And I should see 'href="stylesheets/site-7474cadd.css"'
     And I should see 'src="javascripts/application-1d8d5276.js"'
     And I should see 'src="images/100px-5fd6fb90.jpg"'
     When I go to "/subdir/"
-    Then I should see 'href="../stylesheets/site-50eaa978.css"'
+    Then I should see 'href="../stylesheets/site-7474cadd.css"'
     And I should see 'src="../javascripts/application-1d8d5276.js"'
     And I should see 'src="../images/100px-5fd6fb90.jpg"'
     When I go to "/other/"
-    Then I should see 'href="../stylesheets/site-50eaa978.css"'
+    Then I should see 'href="../stylesheets/site-7474cadd.css"'
     And I should see 'src="../javascripts/application-1d8d5276.js"'
     And I should see 'src="../images/100px-5fd6fb90.jpg"'
     When I go to "/javascripts/application-1d8d5276.js"
     Then I should see "img.src = '/images/100px-5fd6fb90.jpg'"
-    When I go to "/stylesheets/site-50eaa978.css"
-    Then I should see "background-image: url('../images/100px-5fd6fb90.jpg')"
+    When I go to "/stylesheets/site-7474cadd.css"
+    Then I should see:
+      """
+      background-image: url("../images/100px-5fd6fb90.jpg")
+      """
 
   Scenario: Enabling an asset host still produces hashed files and references
     Given the Server is running at "asset-hash-host-app"
     When I go to "/"
-    Then I should see 'href="http://middlemanapp.com/stylesheets/site-54baaf3a.css"'
+    Then I should see 'href="http://middlemanapp.com/stylesheets/site-1fdf4fb5.css"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg"'
     When I go to "/subdir/"
-    Then I should see 'href="http://middlemanapp.com/stylesheets/site-54baaf3a.css"'
+    Then I should see 'href="http://middlemanapp.com/stylesheets/site-1fdf4fb5.css"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg"'
     When I go to "/other/"
-    Then I should see 'href="http://middlemanapp.com/stylesheets/site-54baaf3a.css"'
+    Then I should see 'href="http://middlemanapp.com/stylesheets/site-1fdf4fb5.css"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg"'
     # Asset helpers don't appear to work from Compass right now
     # When I go to "/stylesheets/site-e5a31a3e.css"
@@ -98,11 +104,11 @@ Feature: Assets get a file hash appended to their and references to them are upd
       """
     Given the Server is running at "asset-hash-app"
     When I go to "/"
-    Then I should see 'href="stylesheets/site-5770af52.css'
-    When I go to "stylesheets/site-5770af52.css"
+    Then I should see 'href="stylesheets/site-ac2166fd.css'
+    When I go to "stylesheets/site-ac2166fd.css"
     Then I should see 'background-image'
     Then I should see 'Added by Rack filter'
-    When I go to "stylesheets/site-50eaa978.css"
+    When I go to "stylesheets/site-7474cadd.css"
     Then I should see 'Not Found'
 
   Scenario: Hashed-asset files are not produced for ignored paths
@@ -137,7 +143,7 @@ Feature: Assets get a file hash appended to their and references to them are upd
       | images/100px-5fd6fb90.jpg |
       | images/100px-5fd6fb90.gif |
       | javascripts/application-1d8d5276.js |
-      | stylesheets/site-50eaa978.css |
+      | stylesheets/site-7474cadd.css |
 
   # @wip Currently broken, we should move all asset-host functionality out of Compass and into something more similar to asset_hash with Rack-based rewrites
   # Scenario: Enabling an asset host and referencing assets in CSS with URL fragments are rewritten correctly
