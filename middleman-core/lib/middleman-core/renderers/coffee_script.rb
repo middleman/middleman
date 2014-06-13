@@ -30,7 +30,7 @@ module Middleman
         # @param [Hash] locals
         # @return [String]
         def evaluate(context, locals, &block)
-          return super if middleman_app.build?
+          return super unless middleman_app.server?
 
           begin
             super

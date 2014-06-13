@@ -8,7 +8,7 @@ module Middleman
     attr_reader :app
 
     # Whitelist methods that can reach out.
-    delegate :config, :logger, :activate, :use, :map, :mime_type, :data, :root, to: :app
+    delegate :config, :logger, :activate, :use, :map, :mime_type, :data, :files, :root, to: :app
 
     def initialize(app, template_context_class)
       @app = app
@@ -31,6 +31,14 @@ module Middleman
 
       helper_modules.each do |mod|
         @template_context_class.send :include, mod
+      end
+    end
+
+    def include_environment(name)
+      path = File.dirname(__FILE__)
+      other_config = File.join(path, name.to_s)
+      if File.exist? other_config
+        instance_eval File.read(other_config), other_config, 1
       end
     end
 

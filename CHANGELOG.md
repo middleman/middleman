@@ -1,6 +1,7 @@
 master
 ===
 
+* Add support for `environments` with the `-e` CLI flag. Loads additional config from `environments/envname.rb`. Removed `development?` helper in favor of `environment?(:development)`. Added `server?` helper to differentiate between build and server mode.
 * Removed `with_layout`. Use loops of `page` instead.
 * Removed Queryable Sitemap API
 * Removed `css_compressor` setting, use `activate :minify_css, :compressor =>` instead.

@@ -51,8 +51,8 @@
 # Change the images directory
 # set :images_dir, "alternative_image_directory"
 
-# Build-specific configuration
-configure :build do
+# Production build configuration
+configure :production do
   # For example, change the Compass output style for deployment
   # activate :minify_css
 

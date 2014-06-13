@@ -37,9 +37,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
 
     configure_i18n
 
-    unless app.build?
-      logger.info "== Locales: #{langs.join(', ')} (Default #{@mount_at_root})"
-    end
+    logger.info "== Locales: #{langs.join(', ')} (Default #{@mount_at_root})"
 
     # Don't output localizable files
     app.ignore File.join(options[:templates_dir], '**')
