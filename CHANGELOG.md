@@ -1,6 +1,7 @@
 master
 ===
 
+* The `page` command in `config.rb` can now be used to add data to the page via the `data` argument. It is accessed the same way as frontmatter data, via `current_resource.data`.
 * Add support for `environments` with the `-e` CLI flag. Loads additional config from `environments/envname.rb`. Removed `development?` helper in favor of `environment?(:development)`. Added `server?` helper to differentiate between build and server mode.
 * Removed `with_layout`. Use loops of `page` instead.
 * Removed Queryable Sitemap API
