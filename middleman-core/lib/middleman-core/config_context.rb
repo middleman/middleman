@@ -1,10 +1,5 @@
-require 'middleman-core/core_extensions/routing'
-
 module Middleman
   class ConfigContext
-    # page routing
-    include Middleman::CoreExtensions::Routing
-
     attr_reader :app
 
     # Whitelist methods that can reach out.

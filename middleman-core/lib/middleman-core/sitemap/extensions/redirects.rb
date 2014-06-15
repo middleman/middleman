@@ -6,8 +6,8 @@ module Middleman
       # Manages the list of proxy configurations and manipulates the sitemap
       # to include new resources based on those configurations
       class Redirects
-        def initialize(sitemap)
-          @app = sitemap.app
+        def initialize(app)
+          @app = app
           @app.add_to_config_context :redirect, &method(:create_redirect)
 
           @redirects = {}
@@ -53,7 +53,7 @@ module Middleman
         end
 
         def render(*)
-          url = ::Middleman::Util.url_for(store.app, @request_path,
+          url = ::Middleman::Util.url_for(@store.app, @request_path,
                                           relative: false,
                                           find_resource: true
           )
@@ -75,24 +75,17 @@ module Middleman
           end
         end
 
-        # def request_path
-        #   @request_path
-        # end
-
         def binary?
           false
-        end
-
-        def raw_data
-          {}
         end
 
         def ignored?
           false
         end
 
-        def metadata
-          @local_metadata.dup
+        # rubocop:disable AccessorMethodName
+        def get_source_file
+          ''
         end
       end
     end

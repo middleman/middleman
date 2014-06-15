@@ -4,8 +4,8 @@ module Middleman
       class RequestEndpoints
         # Manages the list of proxy configurations and manipulates the sitemap
         # to include new resources based on those configurations
-        def initialize(sitemap)
-          @app = sitemap.app
+        def initialize(app)
+          @app = app
           @app.add_to_config_context :endpoint, &method(:create_endpoint)
 
           @endpoints = {}
@@ -49,11 +49,12 @@ module Middleman
       class EndpointResource < ::Middleman::Sitemap::Resource
         attr_accessor :output
 
-        def initialize(store, path, source_file)
-          @request_path = ::Middleman::Util.normalize_path(source_file)
-
+        def initialize(store, path, request_path)
           super(store, path)
+          @request_path = ::Middleman::Util.normalize_path(request_path)
         end
+
+        attr_reader :request_path
 
         def template?
           true
@@ -63,22 +64,17 @@ module Middleman
           return output.call if output
         end
 
-        attr_reader :request_path
-
         def binary?
           false
-        end
-
-        def raw_data
-          {}
         end
 
         def ignored?
           false
         end
 
-        def metadata
-          @local_metadata.dup
+        # rubocop:disable AccessorMethodName
+        def get_source_file
+          ''
         end
       end
     end

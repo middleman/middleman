@@ -3,15 +3,15 @@ module Middleman
     module Extensions
       # Class to handle managing ignores
       class Ignores
-        def initialize(sitemap)
-          @app = sitemap.app
+        def initialize(app, sitemap)
+          @app = app
           @app.add_to_config_context :ignore, &method(:create_ignore)
-          @app.define_singleton_method(:ignore, &method(:create_ignore))
+          @app.define_singleton_method :ignore, &method(:create_ignore)
 
           # Array of callbacks which can ass ignored
           @ignored_callbacks = []
 
-          sitemap.define_singleton_method(:ignored?, &method(:ignored?))
+          sitemap.define_singleton_method :ignored?, &method(:ignored?)
           ::Middleman::Sitemap::Resource.send :include, IgnoreResourceInstanceMethods
         end
 
@@ -48,13 +48,20 @@ module Middleman
 
       # Helpers methods for Resources
       module IgnoreResourceInstanceMethods
+        # Ignore a resource directly, without going through the whole
+        # ignore filter stuff.
+        def ignore!
+          @ignored = true
+        end
+
         # Whether the Resource is ignored
         # @return [Boolean]
         def ignored?
-          @app.sitemap.ignored?(path) ||
-          (!proxy? &&
-            @app.sitemap.ignored?(source_file.sub("#{@app.source_dir}/", ''))
-          )
+          return true if @ignored
+          # Ignore based on the source path (without template extensions)
+          return true if @app.sitemap.ignored?(path)
+          # This allows files to be ignored by their source file name (with template extensions)
+          !proxy? && @app.sitemap.ignored?(source_file.sub("#{@app.source_dir}/", ''))
         end
       end
     end

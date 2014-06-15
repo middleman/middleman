@@ -4,8 +4,8 @@ module Middleman
       # Manages the list of proxy configurations and manipulates the sitemap
       # to include new resources based on those configurations
       class Proxies
-        def initialize(sitemap)
-          @app = sitemap.app
+        def initialize(app)
+          @app = app
           @app.add_to_config_context :proxy, &method(:create_proxy)
           @app.define_singleton_method(:proxy, &method(:create_proxy))
 
@@ -109,10 +109,10 @@ module Middleman
         # if there is no resource.
         # @return [Sitemap::Resource]
         def proxied_to_resource
-          proxy_resource = store.find_resource_by_path(proxied_to)
+          proxy_resource = @store.find_resource_by_path(proxied_to)
 
           unless proxy_resource
-            raise "Path #{path} proxies to unknown file #{proxied_to}:#{store.resources.map(&:path)}"
+            raise "Path #{path} proxies to unknown file #{proxied_to}:#{@store.resources.map(&:path)}"
           end
 
           if proxy_resource.proxy?

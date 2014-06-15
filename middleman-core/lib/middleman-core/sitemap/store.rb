@@ -20,14 +20,14 @@ module Middleman
     # extensions. All "path" parameters used in this class are source paths.
     class Store
       # @return [Middleman::Application]
-      attr_accessor :app
+      attr_reader :app
 
       # Initialize with parent app
       # @param [Middleman::Application] app
       def initialize(app)
         @app = app
         @resources = []
-        @_cached_metadata = {}
+        # TODO: Should this be a set or hash?
         @resource_list_manipulators = []
         @needs_sitemap_rebuild = true
 
@@ -35,26 +35,26 @@ module Middleman
         reset_lookup_cache!
 
         # Handle ignore commands
-        Middleman::Sitemap::Extensions::Ignores.new(self)
+        Middleman::Sitemap::Extensions::Ignores.new(@app, self)
 
         # Extensions
         {
           # Register classes which can manipulate the main site map list
-          on_disk: Middleman::Sitemap::Extensions::OnDisk,
+          on_disk: Middleman::Sitemap::Extensions::OnDisk.new(@app, self),
 
           # Request Endpoints
-          request_endpoints: Middleman::Sitemap::Extensions::RequestEndpoints,
+          request_endpoints: Middleman::Sitemap::Extensions::RequestEndpoints.new(@app),
 
           # Proxies
-          proxies: Middleman::Sitemap::Extensions::Proxies,
+          proxies: Middleman::Sitemap::Extensions::Proxies.new(@app),
 
           # Redirects
-          redirects: Middleman::Sitemap::Extensions::Redirects
+          redirects: Middleman::Sitemap::Extensions::Redirects.new(@app)
         }.each do |k, m|
-          register_resource_list_manipulator(k, m.new(self))
+          register_resource_list_manipulator(k, m)
         end
 
-        app.config_context.class.send :delegate, :sitemap, to: :app
+        @app.config_context.class.send :delegate, :sitemap, to: :app
       end
 
       # Register an object which can transform the sitemap resource list. Best to register
@@ -126,63 +126,6 @@ module Middleman
       # adds ways to ignore files, you should call this to make sure #resources works right.
       def invalidate_resources_not_ignored_cache!
         @resources_not_ignored = nil
-      end
-
-      # Register a handler to provide metadata on a file path
-      # @param [Regexp] matcher
-      # @return [Array<Array<Proc, Regexp>>]
-      def provides_metadata(matcher=nil, &block)
-        @_provides_metadata ||= []
-        @_provides_metadata << [block, matcher] if block_given?
-        @_provides_metadata
-      end
-
-      # Get the metadata for a specific file
-      # @param [String] source_file
-      # @return [Hash]
-      def metadata_for_file(source_file)
-        blank_metadata = { options: {}, locals: {} }
-
-        provides_metadata.reduce(blank_metadata) do |result, (callback, matcher)|
-          next result if matcher && !source_file.match(matcher)
-
-          metadata = callback.call(source_file).dup
-          result.deep_merge(metadata)
-        end
-      end
-
-      # Register a handler to provide metadata on a url path
-      # @param [Regexp] matcher
-      # @return [Array<Array<Proc, Regexp>>]
-      def provides_metadata_for_path(matcher=nil, &block)
-        @_provides_metadata_for_path ||= []
-        if block_given?
-          @_provides_metadata_for_path << [block, matcher]
-          @_cached_metadata = {}
-        end
-        @_provides_metadata_for_path
-      end
-
-      # Get the metadata for a specific URL
-      # @param [String] request_path
-      # @return [Hash]
-      def metadata_for_path(request_path)
-        return @_cached_metadata[request_path] if @_cached_metadata[request_path]
-
-        blank_metadata = { options: {}, locals: {} }
-
-        @_cached_metadata[request_path] = provides_metadata_for_path.reduce(blank_metadata) do |result, (callback, matcher)|
-          case matcher
-          when Regexp
-            next result unless request_path =~ matcher
-          when String
-            next result unless File.fnmatch('/' + Util.strip_leading_slash(matcher), "/#{request_path}")
-          end
-
-          metadata = callback.call(request_path).dup
-
-          result.deep_merge(metadata)
-        end
       end
 
       # Get the URL path for an on-disk file

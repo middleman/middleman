@@ -11,27 +11,24 @@ module Middleman
       include Middleman::Sitemap::Extensions::Traversal
       include Middleman::Sitemap::Extensions::ContentType
 
-      # @return [Middleman::Application]
-      attr_reader :app
-      delegate :logger, :instrument, to: :app
-
-      # @return [Middleman::Sitemap::Store]
-      attr_reader :store
-
       # The source path of this resource (relative to the source directory,
       # without template extensions)
       # @return [String]
       attr_reader :path
 
-      # The output path for this resource
+      # The output path in the build directory for this resource
       # @return [String]
       attr_accessor :destination_path
 
+      # The path to use when requesting this resource. Normally it's
+      # the same as {#destination_path} but it can be overridden in subclasses.
+      # @return [String]
+      alias_method :request_path, :destination_path
+
       # Set the on-disk source file for this resource
       # @return [String]
-      # attr_reader :source_file
-
       def source_file
+        # TODO: Make this work when get_source_file doesn't exist
         @source_file || get_source_file
       end
 
@@ -46,7 +43,11 @@ module Middleman
         @source_file = source_file
         @destination_path = @path
 
-        @local_metadata = { options: {}, locals: {} }
+        # Options are generally rendering/sitemap options
+        # Locals are local variables for rendering this resource's template
+        # Page are data that is exposed through this resource's data member.
+        # Note: It is named 'page' for backwards compatibility with older MM.
+        @metadata = { options: {}, locals: {}, page: {} }
       end
 
       # Whether this resource has a template file
@@ -56,29 +57,39 @@ module Middleman
         !::Tilt[source_file].nil?
       end
 
-      # Get the metadata for both the current source_file and the current path
-      # @return [Hash]
-      def metadata
-        result = store.metadata_for_path(path).dup
-
-        file_meta = store.metadata_for_file(source_file).dup
-        result.deep_merge!(file_meta)
-
-        local_meta = @local_metadata.dup
-        result.deep_merge!(local_meta)
-
-        result
-      end
-
       # Merge in new metadata specific to this resource.
-      # @param [Hash] meta A metadata block like provides_metadata_for_path takes
+      # @param [Hash] meta A metadata block with keys :options, :locals, :page.
+      #   Options are generally rendering/sitemap options
+      #   Locals are local variables for rendering this resource's template
+      #   Page are data that is exposed through this resource's data member.
+      #   Note: It is named 'page' for backwards compatibility with older MM.
       def add_metadata(meta={})
-        @local_metadata.deep_merge!(meta.dup)
+        @metadata.deep_merge!(meta)
       end
 
-      # The output/preview URL for this resource
-      # @return [String]
-      attr_accessor :destination_path
+      # The metadata for this resource
+      # @return [Hash]
+      attr_reader :metadata
+
+      # Data about this resource, populated from frontmatter or extensions.
+      # @return [HashWithIndifferentAccess]
+      def data
+        # TODO: Should this really be a HashWithIndifferentAccess?
+        ::Middleman::Util.recursively_enhance(metadata[:page]).freeze
+      end
+
+      # Options about how this resource is rendered, such as its :layout,
+      # :renderer_options, and whether or not to use :directory_indexes.
+      # @return [Hash]
+      def options
+        metadata[:options]
+      end
+
+      # Local variable mappings that are used when rendering the template for this resource.
+      # @return [Hash]
+      def locals
+        metadata[:locals]
+      end
 
       # Extension of the path (i.e. '.js')
       # @return [String]
@@ -86,19 +97,15 @@ module Middleman
         File.extname(path)
       end
 
-      def request_path
-        destination_path
-      end
-
       # Render this resource
       # @return [String]
       def render(opts={}, locs={})
         return ::Middleman::FileRenderer.new(@app, source_file).template_data_for_file unless template?
 
-        relative_source = Pathname(source_file).relative_path_from(Pathname(app.root))
+        relative_source = Pathname(source_file).relative_path_from(Pathname(@app.root))
 
-        instrument 'render.resource', path: relative_source, destination_path: destination_path  do
-          md   = metadata.dup
+        @app.instrument 'render.resource', path: relative_source, destination_path: destination_path do
+          md   = metadata
           opts = md[:options].deep_merge(opts)
           locs = md[:locals].deep_merge(locs)
           locs[:current_path] ||= destination_path
@@ -118,11 +125,11 @@ module Middleman
       # @return [String]
       def url
         url_path = destination_path
-        if app.config[:strip_index_file]
-          url_path = url_path.sub(/(^|\/)#{Regexp.escape(app.config[:index_file])}$/,
-                                  app.config[:trailing_slash] ? '/' : '')
+        if @app.config[:strip_index_file]
+          url_path = url_path.sub(/(^|\/)#{Regexp.escape(@app.config[:index_file])}$/,
+                                  @app.config[:trailing_slash] ? '/' : '')
         end
-        File.join(app.config[:http_prefix], url_path)
+        File.join(@app.config[:http_prefix], url_path)
       end
 
       # Whether the source file is binary.

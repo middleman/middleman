@@ -45,6 +45,11 @@ Middleman::Extensions.register :lorem, auto_activate: :before_configuration do
   Middleman::Extensions::Lorem
 end
 
+Middleman::Extensions.register :routing, auto_activate: :before_configuration do
+  require 'middleman-core/core_extensions/routing'
+  Middleman::CoreExtensions::Routing
+end
+
 ###
 # Setup Optional Extensions
 ###

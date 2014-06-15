@@ -10,6 +10,9 @@ require 'active_support/json'
 # Extensions namespace
 module Middleman::CoreExtensions
   class FrontMatter < ::Middleman::Extension
+    # Try to run after routing but before directory_indexes
+    self.resource_list_manipulator_priority = 90
+
     YAML_ERRORS = [StandardError]
 
     # https://github.com/tenderlove/psych/issues/23
@@ -29,61 +32,34 @@ module Middleman::CoreExtensions
       app.files.deleted { |file| ext.clear_data(file) }
     end
 
-    def after_configuration
-      app.ignore %r{\.frontmatter$}
+    # Modify each resource to add data & options from frontmatter.
+    def manipulate_resource_list(resources)
+      resources.each do |resource|
+        next if resource.source_file.blank?
 
-      ::Middleman::Sitemap::Resource.send :include, ResourceInstanceMethods
+        fmdata = data(resource.source_file).first.dup
 
-      app.sitemap.provides_metadata do |path|
-        fmdata = data(path).first
+        # Copy over special options
+        # TODO: Should we make people put these under "options" instead of having
+        # special known keys?
+        opts = fmdata.extract!(:layout, :layout_engine, :renderer_options, :directory_index, :content_type)
+        opts[:renderer_options].symbolize_keys! if opts.key?(:renderer_options)
 
-        data = {}
+        ignored = fmdata.delete(:ignored)
 
-        [:layout, :layout_engine].each do |opt|
-          data[opt] = fmdata[opt] unless fmdata[opt].nil?
-        end
+        # TODO: Enhance data? NOOOO
+        # TODO: stringify-keys? immutable/freeze?
 
-        if fmdata[:renderer_options]
-          data[:renderer_options] = {}
-          fmdata[:renderer_options].each do |k, v|
-            data[:renderer_options][k.to_sym] = v
-          end
-        end
+        resource.add_metadata options: opts, page: fmdata
 
-        { options: data }
+        resource.ignore! if ignored == true && !resource.proxy?
+
+        # TODO: Save new template here somewhere?
       end
     end
 
-    module ResourceInstanceMethods
-      def ignored?
-        if !proxy? && raw_data[:ignored] == true
-          true
-        else
-          super
-        end
-      end
-
-      # This page's frontmatter without being enhanced for access by either symbols or strings.
-      # Used internally
-      # @private
-      # @return [Hash]
-      def raw_data
-        app.extensions[:front_matter].data(source_file).first
-      end
-
-      # This page's frontmatter
-      # @return [Hash]
-      def data
-        @enhanced_data ||= ::Middleman::Util.recursively_enhance(raw_data).freeze
-      end
-
-      # Override Resource#content_type to take into account frontmatter
-      def content_type
-        # Allow setting content type in frontmatter too
-        raw_data.fetch :content_type do
-          super
-        end
-      end
+    def after_configuration
+      app.ignore %r{\.frontmatter$}
     end
 
     # Get the template data from a path

@@ -7,22 +7,24 @@ module Middleman
         attr_accessor :sitemap
         attr_accessor :waiting_for_ready
 
-        def initialize(sitemap)
+        def initialize(app, sitemap)
           @sitemap = sitemap
-          @app     = @sitemap.app
+          @app     = app
           @file_paths_on_disk = Set.new
 
           scoped_self = self
           @waiting_for_ready = true
 
-          # Register file change callback
-          @app.files.changed do |file|
-            scoped_self.touch_file(file)
-          end
+          @app.before_configuration do
+            # Register file change callback
+            files.changed do |file|
+              scoped_self.touch_file(file)
+            end
 
-          # Register file delete callback
-          @app.files.deleted do |file|
-            scoped_self.remove_file(file)
+            # Register file delete callback
+            files.deleted do |file|
+              scoped_self.remove_file(file)
+            end
           end
 
           @app.ready do

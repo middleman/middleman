@@ -83,9 +83,6 @@ module Middleman
         # Search the root of the project for required files
         $LOAD_PATH.unshift(root) unless $LOAD_PATH.include?(root)
 
-        # Evaluate a passed block if given
-        config_context.instance_exec(&block) if block_given?
-
         super
 
         ::Middleman::Extension.clear_after_extension_callbacks
@@ -104,6 +101,9 @@ module Middleman
         run_hook :initialized
 
         run_hook :before_configuration
+
+        # Evaluate a passed block if given
+        config_context.instance_exec(&block) if block_given?
 
         # Check for and evaluate local configuration in `config.rb`
         local_config = File.join(root, 'config.rb')

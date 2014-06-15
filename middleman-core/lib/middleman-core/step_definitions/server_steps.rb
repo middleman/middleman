@@ -41,12 +41,11 @@ Given /^the Server is running$/ do
   ENV['MM_ROOT'] = root_dir
 
   initialize_commands = @initialize_commands || []
+  initialize_commands.unshift lambda { config[:show_exceptions] = false }
 
   @server_inst = Middleman::Application.server.inst do
-    app.initialized do
-      initialize_commands.each do |p|
-        config_context.instance_exec(&p)
-      end
+    initialize_commands.each do |p|
+      instance_exec(&p)
     end
   end
 
