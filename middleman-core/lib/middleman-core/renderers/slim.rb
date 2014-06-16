@@ -33,7 +33,7 @@ module Middleman
 
           app.after_configuration do
             context_hack = {
-              context: self.template_context_class.new(self)
+              context: template_context_class.new(self)
             }
 
             ::Slim::Embedded::SassEngine.disable_option_validator!

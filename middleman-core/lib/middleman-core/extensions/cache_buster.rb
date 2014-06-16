@@ -12,15 +12,15 @@ class Middleman::Extensions::CacheBuster < ::Middleman::Extension
 
   def after_configuration
     app.use ::Middleman::Middleware::InlineURLRewriter,
-      :id                => :cache_buster,
-      :url_extensions    => options.exts,
-      :source_extensions => options.sources,
-      :ignore            => options.ignore,
-      :middleman_app     => app,
-      :proc              => method(:rewrite_url)
+            id: :cache_buster,
+            url_extensions: options.exts,
+            source_extensions: options.sources,
+            ignore: options.ignore,
+            middleman_app: app,
+            proc: method(:rewrite_url)
   end
 
-  def rewrite_url(asset_path, dirpath, request_path)
+  def rewrite_url(asset_path, _dirpath, _request_path)
     asset_path + '?' + Time.now.strftime('%s')
   end
 end

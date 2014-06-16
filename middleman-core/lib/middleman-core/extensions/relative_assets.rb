@@ -12,12 +12,12 @@ class Middleman::Extensions::RelativeAssets < ::Middleman::Extension
 
   def after_configuration
     app.use ::Middleman::Middleware::InlineURLRewriter,
-      :id                => :asset_hash,
-      :url_extensions    => options.exts,
-      :source_extensions => options.sources,
-      :ignore            => options.ignore,
-      :middleman_app     => app,
-      :proc              => method(:rewrite_url)
+            id: :asset_hash,
+            url_extensions: options.exts,
+            source_extensions: options.sources,
+            ignore: options.ignore,
+            middleman_app: app,
+            proc: method(:rewrite_url)
   end
 
   def rewrite_url(asset_path, dirpath, request_path)

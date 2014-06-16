@@ -14,7 +14,7 @@ module Middleman
           test_expr = parts.join('\\/')
           # eponymous reverse-lookup
           found = @store.resources.find do |candidate|
-            candidate.path =~ %r!^#{test_expr}(?:\.[a-zA-Z0-9]+|\/)$!
+            candidate.path =~ %r{^#{test_expr}(?:\.[a-zA-Z0-9]+|\/)$}
           end
 
           if found

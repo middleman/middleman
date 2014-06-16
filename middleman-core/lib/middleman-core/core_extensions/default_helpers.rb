@@ -170,7 +170,7 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
     # @param [String] path The path (such as "photo.jpg")
     # @param [String] prefix The type prefix (such as "images")
     # @return [String] The fully qualified asset url
-    def asset_url(path, prefix='', options={})
+    def asset_url(_path, prefix='', options={})
       ::Middleman::Util.asset_url(app, prefix, options)
     end
 

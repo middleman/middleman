@@ -1,7 +1,6 @@
 module Sprockets
   module Sass
     module Functions
-      
       # Using Middleman::Util#asset_path, return the full path
       # for the given +source+ as a Sass String. This supports keyword
       # arguments that mirror the +options+.
@@ -11,7 +10,7 @@ module Sprockets
       #   background: url(image-path("image.jpg"));                // background: url("/assets/image.jpg");
       #   background: url(image-path("image.jpg", $digest: true)); // background: url("/assets/image-27a8f1f96afd8d4c67a59eb9447f45bd.jpg");
       #
-      def image_path(source, options = {})
+      def image_path(source, options={})
         p = ::Middleman::Util.asset_path(middleman_context, :images, source.value, map_options(options))
         ::Sass::Script::String.new p.to_s, :string
       end
@@ -25,7 +24,7 @@ module Sprockets
       #   background: image-url("image.jpg");                // background: url("/assets/image.jpg");
       #   background: image-url("image.jpg", $digest: true); // background: url("/assets/image-27a8f1f96afd8d4c67a59eb9447f45bd.jpg");
       #
-      def image_url(source, options = {}, cache_buster = nil)
+      def image_url(source, options={}, _cache_buster=nil)
         # Work with the Compass #image_url API
         if options.respond_to? :value
           case options.value
@@ -47,7 +46,7 @@ module Sprockets
       #   src: url(font-path("font.ttf"));                // src: url("/assets/font.ttf");
       #   src: url(font-path("font.ttf", $digest: true)); // src: url("/assets/font-27a8f1f96afd8d4c67a59eb9447f45bd.ttf");
       #
-      def font_path(source, options = {})
+      def font_path(source, options={})
         p = ::Middleman::Util.asset_path(middleman_context, :fonts, source.value, map_options(options))
         ::Sass::Script::String.new p.to_s, :string
       end
@@ -61,7 +60,7 @@ module Sprockets
       #   src: font-url("font.ttf");                  // src: url("/assets/font.ttf");
       #   src: font-url("image.jpg", $digest: true);  // src: url("/assets/font-27a8f1f96afd8d4c67a59eb9447f45bd.ttf");
       #
-      def font_url(source, options = {})
+      def font_url(source, options={})
         # Work with the Compass #font_url API
         if options.respond_to? :value
           case options.value
@@ -84,7 +83,7 @@ module Sprockets
 
       # Returns an options hash where the keys are symbolized
       # and the values are unwrapped Sass literals.
-      def map_options(options = {}) # :nodoc:
+      def map_options(options={}) # :nodoc:
         ::Sass::Util.map_hash(options) do |key, value|
           [key.to_sym, value.respond_to?(:value) ? value.value : value]
         end
@@ -102,16 +101,16 @@ module Sass::Script::Functions
     defined?(@signatures) && @signatures.delete(method)
   end
 
-  declare :asset_path,     [:source], :var_kwargs => true
+  declare :asset_path,     [:source], var_kwargs: true
   declare :asset_path,     [:source, :kind]
-  declare :asset_url,      [:source], :var_kwargs => true
+  declare :asset_url,      [:source], var_kwargs: true
   declare :asset_url,      [:source, :kind]
-  declare :image_path,     [:source], :var_kwargs => true
-  declare :image_url,      [:source], :var_kwargs => true
+  declare :image_path,     [:source], var_kwargs: true
+  declare :image_url,      [:source], var_kwargs: true
   declare :image_url,      [:source, :only_path]
   declare :image_url,      [:source, :only_path, :cache_buster]
-  declare :font_path,      [:source], :var_kwargs => true
-  declare :font_url,       [:source], :var_kwargs => true
+  declare :font_path,      [:source], var_kwargs: true
+  declare :font_url,       [:source], var_kwargs: true
   declare :font_url,       [:source, :only_path]
   declare :asset_data_uri, [:source]
 end

@@ -166,7 +166,7 @@ module Middleman
       # @param [String] prefix The type prefix (such as "images")
       # @param [Hash] options Data to pass through.
       # @return [String] The fully qualified asset url
-      def asset_url(app, path, prefix='', options={})
+      def asset_url(app, path, prefix='', _options={})
         # Don't touch assets which already have a full path
         if path.include?('//') or path.start_with?('data:')
           path
@@ -271,7 +271,7 @@ module Middleman
         end
       end
 
-      def rewrite_paths(body, path, exts, &block)
+      def rewrite_paths(body, _path, exts, &_block)
         body.dup.gsub(/([=\'\"\(]\s*)([^\s\'\"\)]+(#{Regexp.union(exts)}))/) do |match|
           opening_character = $1
           asset_path = $2

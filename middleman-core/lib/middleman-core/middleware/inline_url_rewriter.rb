@@ -12,7 +12,7 @@ module Middleman
         @uid = options[:id]
         @proc = options[:proc]
 
-        raise "InlineURLRewriter requires a :proc to call with inline URL results" unless @proc
+        raise 'InlineURLRewriter requires a :proc to call with inline URL results' unless @proc
 
         @exts = options[:url_extensions]
 
@@ -35,7 +35,7 @@ module Middleman
         end
 
         path = ::Middleman::Util.full_path(env['PATH_INFO'], @middleman_app)
-    
+
         if path =~ /(^\/$)|(#{@source_exts_regex_text}$)/
           if body = ::Middleman::Util.extract_response_text(response)
             dirpath = Pathname.new(File.dirname(path))

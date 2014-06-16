@@ -18,15 +18,15 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
     @ignore = Array(options.ignore) + [/^apple-touch-icon/]
 
     app.use ::Middleman::Middleware::InlineURLRewriter,
-      :id                => :asset_hash,
-      :url_extensions    => options.exts,
-      :source_extensions => %w(.htm .html .php .css .js),
-      :ignore            => @ignore,
-      :middleman_app     => app,
-      :proc              => method(:rewrite_url)
+            id: :asset_hash,
+            url_extensions: options.exts,
+            source_extensions: %w(.htm .html .php .css .js),
+            ignore: @ignore,
+            middleman_app: app,
+            proc: method(:rewrite_url)
   end
 
-  def rewrite_url(asset_path, dirpath, request_path)
+  def rewrite_url(asset_path, dirpath, _request_path)
     relative_path = Pathname.new(asset_path).relative?
 
     full_asset_path = if relative_path
@@ -68,9 +68,9 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
     return if resource.ignored?
 
     # Render through the Rack interface so middleware and mounted apps get a shot
-    response = @rack_client.get(URI.escape(resource.destination_path), {
-      'bypass_inline_url_rewriter_asset_hash' => 'true'
-    })
+    response = @rack_client.get(URI.escape(resource.destination_path),
+                                'bypass_inline_url_rewriter_asset_hash' => 'true'
+                                )
 
     raise "#{resource.path} should be in the sitemap!" unless response.status == 200
 
