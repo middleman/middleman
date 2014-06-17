@@ -96,13 +96,17 @@ module Middleman
       # to #match or #call, and returns whether or not the
       # given path matches that matcher.
       #
-      # @param matcher A matcher string/regexp/proc/etc
-      # @param path A path as a string
+      # @param [String, #match, #call] matcher A matcher String, RegExp, Proc, etc.
+      # @param [String] path A path as a string
       # @return [Boolean] Whether the path matches the matcher
       def path_match(matcher, path)
-        case
+        !!case
         when matcher.is_a?(String)
-          path.match(matcher)
+          if matcher.include? '*'
+            File.fnmatch(matcher, path)
+          else
+            path == matcher
+           end
         when matcher.respond_to?(:match)
           matcher.match(path)
         when matcher.respond_to?(:call)
