@@ -19,14 +19,7 @@ module Middleman
       def manipulate_resource_list(resources)
         resources.each do |resource|
           @page_configs.each do |matcher, metadata|
-            case matcher
-            when Regexp
-              next unless resource.path =~ matcher
-            when String
-              next unless File.fnmatch('/' + Util.strip_leading_slash(matcher), "/#{resource.path}")
-            end
-
-            resource.add_metadata metadata
+            resource.add_metadata(metadata) if Middleman::Util.path_match(matcher, "/#{resource.path}")
           end
         end
       end
@@ -47,8 +40,6 @@ module Middleman
       # @option opts [Boolean] directory_indexes Whether or not the `:directory_indexes` extension applies to these paths.
       # @option opts [Hash] locals Local variables for the template. These will be available when the template renders.
       # @option opts [Hash] data Extra metadata to add to the page. This is the same as frontmatter, though frontmatter will take precedence over metadata defined here. Available via {Resource#data}.
-      # @option opts [String] proxy The source path for a template to proxy this path to. Only valid when a single path is provided. Prefer using the `proxy` method to do this.
-      # @option opts [Boolean] ignore Set to `true` to ignore the provided path(s). Only valid when a single path is provided. Prefer using the `ignore` method to do this.
       # @return [void]
       def page(path, opts={})
         options = opts.dup
@@ -56,26 +47,22 @@ module Middleman
         # Default layout
         # TODO: This seems wrong
         options[:layout] = @app.config[:layout] if options[:layout].nil?
-        # TODO: You can set options and locals, but not data
-        metadata = { options: options, locals: options.delete(:locals) || {}, page: options.delete(:data) || {} }
+        metadata = {
+          options: options,
+          locals: options.delete(:locals) || {},
+          page: options.delete(:data) || {}
+        }
 
-        # If the path is a regexp
-        unless path.is_a?(Regexp) || path.include?('*')
-          # Normalized path
-          path = '/' + Middleman::Util.normalize_path(path)
+        if path.is_a?(String) && !path.include?('*')
+          # Normalize path
+          path = Middleman::Util.normalize_path(path)
           if path.end_with?('/') || File.directory?(File.join(@app.source_dir, path))
             path = File.join(path, @app.config[:index_file])
           end
+        end
 
-          # Setup proxy
-          if target = options.delete(:proxy)
-            # TODO: deprecate proxy through page?
-            @app.proxy(path, target, opts.dup)
-            return
-          elsif options.delete(:ignore)
-            # TODO: deprecate ignore through page?
-            @app.ignore(path)
-          end
+        if path.is_a?(String)
+          path = '/' + Util.strip_leading_slash(path)
         end
 
         @page_configs << [path, metadata]
