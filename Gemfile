@@ -31,6 +31,7 @@ platforms :jruby do
 end
 
 # Code Quality
+gem 'codeclimate-test-reporter', group: :test, require: nil
 gem 'coveralls', require: false
 gem 'rubocop', require: false
 
