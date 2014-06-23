@@ -1,5 +1,6 @@
 require 'active_support/core_ext/module/delegation'
 require 'active_support/core_ext/class/attribute'
+require 'middleman-core/configuration'
 
 module Middleman
   class Extension
