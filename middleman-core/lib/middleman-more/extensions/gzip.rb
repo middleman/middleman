@@ -11,6 +11,7 @@
 #
 class Middleman::Extensions::Gzip < ::Middleman::Extension
   option :exts, %w(.js .css .html .htm), 'File extensions to Gzip when building.'
+  option :ignore, [], 'Patterns to avoid gzipping'
 
   def initialize(app, options_hash={})
     super
@@ -29,7 +30,7 @@ class Middleman::Extensions::Gzip < ::Middleman::Extension
     # Fill a queue with inputs
     in_queue = Queue.new
     paths.each do |path|
-      in_queue << path if options.exts.include?(path.extname)
+      in_queue << path if should_gzip?(path)
     end
     num_paths = in_queue.size
 
@@ -92,5 +93,14 @@ class Middleman::Extensions::Gzip < ::Middleman::Extension
     new_size = File.size(output_filename)
 
     [output_filename, old_size, new_size]
+  end
+
+  private
+
+  # Whether a path should be gzipped
+  # @param [Pathname] path A destination path
+  # @return [Boolean]
+  def should_gzip?(path)
+    options.exts.include?(path.extname) && options.ignore.none? { |ignore| Middleman::Util.path_match(ignore, path.to_s) }
   end
 end
