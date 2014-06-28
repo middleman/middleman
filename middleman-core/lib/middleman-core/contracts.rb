@@ -59,6 +59,21 @@ if ENV['TEST'] || ENV['CONTRACTS'] == 'true'
       end
     end
 
+    # class MethodDefined
+    #   def self.[](val)
+    #     @lookup ||= {}
+    #     @lookup[val] ||= new(val)
+    #   end
+
+    #   def initialize(val)
+    #     @val = val
+    #   end
+
+    #   def valid?(val)
+    #     val.method_defined? @val
+    #   end
+    # end
+
     ResourceList = Contracts::ArrayOf[IsA['Middleman::Sitemap::Resource']]
   end
 else
@@ -141,6 +156,9 @@ else
 
     class Frozen < Callable
     end
+
+    # class MethodDefined < Callable
+    # end
   end
 end
 

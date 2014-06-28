@@ -1,0 +1,26 @@
+<!doctype html>
+<html>
+  <head>
+  </head>
+  <body>
+
+<!-- ARTICLES -->
+<% collected.articles.each do |article| %>
+  <li>
+    <a href="<%= article.url %>">Article: <%= article.data.title %></a>
+    <time><%= article.data.date.strftime('%b %e') %></time>
+  </li>
+<% end %>
+
+<!-- TAGS -->
+<% collected[:tags].each do |k, items| %>
+  <li>
+    <%= k %>
+    <% items.each do |article| %>
+      <%= article.data.title %>
+    <% end %>
+  </li>
+<% end %>
+
+  </body>
+</html>

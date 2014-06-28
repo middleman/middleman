@@ -165,7 +165,11 @@ module Middleman
         # Ignore based on the source path (without template extensions)
         return true if @app.sitemap.ignored?(path)
         # This allows files to be ignored by their source file name (with template extensions)
-        !self.is_a?(ProxyResource) && @app.sitemap.ignored?(source_file[:relative_path].to_s)
+        if !self.is_a?(ProxyResource) && source_file && @app.sitemap.ignored?(source_file[:relative_path].to_s)
+          true
+        else
+          false
+        end
       end
 
       # The preferred MIME content type for this resource based on extension or metadata
@@ -173,6 +177,31 @@ module Middleman
       Contract None => Maybe[String]
       def content_type
         options[:content_type] || ::Rack::Mime.mime_type(ext, nil)
+      end
+
+      def to_s
+        "#<Middleman::Sitemap::Resource path=#{@path}>"
+      end
+      alias_method :inspect, :to_s # Ruby 2.0 calls inspect for NoMethodError instead of to_s
+    end
+
+    class StringResource < Resource
+      def initialize(store, path, contents=nil, &block)
+        @request_path = path
+        @contents = block_given? ? block : contents
+        super(store, path)
+      end
+
+      def template?
+        true
+      end
+
+      def render(*)
+        @contents.respond_to?(:call) ? @contents.call : @contents
+      end
+
+      def binary?
+        false
       end
     end
   end

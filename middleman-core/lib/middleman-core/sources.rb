@@ -172,7 +172,7 @@ module Middleman
           .lazy
           .select { |d| d.type == type }
           .map { |d| d.find(path, glob) }
-          .reject { |d| d.nil? }
+          .reject(&:nil?)
           .first
     end
 
