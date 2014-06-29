@@ -105,6 +105,7 @@ class Middleman::Extensions::Gzip < ::Middleman::Extension
   # @param [Pathname] path A destination path
   # @return [Boolean]
   def should_gzip?(path)
+    path = path.sub app.config[:build_dir] + '/', ''
     options.exts.include?(path.extname) && options.ignore.none? { |ignore| Middleman::Util.path_match(ignore, path.to_s) }
   end
 end
