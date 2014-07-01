@@ -15,19 +15,24 @@ module Middleman
         end
 
         # Setup a proxy from a path to a target
-        # @param [String] path
-        # @param [String] target
-        # @param [Hash] opts options to apply to the proxy, including things like
-        #               :locals, :ignore to hide the proxy target, :layout, and :directory_indexes.
+        # @param [String] path The new, proxied path to create
+        # @param [String] target The existing path that should be proxied to. This must be a real resource, not another proxy.
+        # @option opts [Boolean] ignore Ignore the target from the sitemap (so only the new, proxy resource ends up in the output)
+        # @option opts [Symbol, Boolean, String] layout The layout name to use (e.g. `:article`) or `false` to disable layout.
+        # @option opts [Boolean] directory_indexes Whether or not the `:directory_indexes` extension applies to these paths.
+        # @option opts [Hash] locals Local variables for the template. These will be available when the template renders.
+        # @option opts [Hash] data Extra metadata to add to the page. This is the same as frontmatter, though frontmatter will take precedence over metadata defined here. Available via {Resource#data}.
         # @return [void]
         def create_proxy(path, target, opts={})
           options = opts.dup
 
-          metadata = { options: {}, locals: {} }
-          metadata[:locals] = options.delete(:locals) || {}
-
           @app.ignore(target) if options.delete(:ignore)
-          metadata[:options] = options
+
+          metadata = {
+            options: options,
+            locals: options.delete(:locals) || {},
+            page: options.delete(:data) || {}
+          }
 
           @proxy_configs << ProxyConfiguration.new(path: path, target: target, metadata: metadata)
 

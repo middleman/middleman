@@ -1,5 +1,5 @@
-page "/sub/fake.html", proxy: "/proxied.html", ignore: true
-page "/sub/fake2.html", proxy: "/proxied.html", ignore: true
+proxy "/sub/fake.html", "/proxied.html", ignore: true
+proxy "/sub/fake2.html", "/proxied.html", ignore: true
 
-page "/directory-indexed/fake.html", proxy: "/proxied.html", ignore: true
-page "/directory-indexed/fake2.html", proxy: "/proxied.html", ignore: true
+proxy "/directory-indexed/fake.html", "/proxied.html", ignore: true
+proxy "/directory-indexed/fake2.html", "/proxied.html", ignore: true
