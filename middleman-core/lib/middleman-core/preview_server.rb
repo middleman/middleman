@@ -110,18 +110,15 @@ module Middleman
       end
 
       def start_file_watcher
-        return if @options[:disable_watcher]
+        return if @listener or @options[:disable_watcher]
 
-        first_run = !@listener
+        # Watcher Library
+        require 'listen'
 
-        if first_run
-          # Watcher Library
-          require 'listen'
-          @listener = Listen.to(Dir.pwd, relative_paths: true, force_polling: @options[:force_polling])
-          @listener.latency(@options[:latency])
-        end
+        options = {force_polling: @options[:force_polling]}
+        options[:latency] = @options[:latency] if @options[:latency]
 
-        @listener.change do |modified, added, removed|
+        @listener = Listen.to(Dir.pwd, options) do |modified, added, removed|
           added_and_modified = (modified + added)
 
           # See if the changed file is config.rb or lib/*.rb
@@ -130,19 +127,21 @@ module Middleman
             @webrick.stop
           else
             added_and_modified.each do |path|
-              next if app.files.ignored?(path)
-              app.files.did_change(path)
+              relative_path = Pathname(path).relative_path_from(Pathname(Dir.pwd)).to_s
+              next if app.files.ignored?(relative_path)
+              app.files.did_change(relative_path)
             end
 
             removed.each do |path|
-              next if app.files.ignored?(path)
-              app.files.did_delete(path)
+              relative_path = Pathname(path).relative_path_from(Pathname(Dir.pwd)).to_s
+              next if app.files.ignored?(relative_path)
+              app.files.did_delete(relative_path)
             end
           end
         end
 
         # Don't block this thread
-        @listener.start if first_run
+        @listener.start
       end
 
       # Trap some interupt signals and shut down smoothly
