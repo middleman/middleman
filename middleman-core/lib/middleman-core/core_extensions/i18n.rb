@@ -92,10 +92,10 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
   private
 
   def on_file_changed(file)
-    if @locales_regex =~ file
-      @langs = nil # Clear langs cache
-      ::I18n.reload!
-    end
+    return unless @locales_regex =~ file
+
+    @_langs = nil # Clear langs cache
+    ::I18n.reload!
   end
 
   def convert_glob_to_regex(glob)
@@ -109,10 +109,9 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
     ::I18n.reload!
 
     ::I18n.default_locale = @mount_at_root
+
     # Reset fallbacks to fall back to our new default
-    if ::I18n.respond_to? :fallbacks
-      ::I18n.fallbacks = ::I18n::Locale::Fallbacks.new
-    end
+    ::I18n.fallbacks = ::I18n::Locale::Fallbacks.new if ::I18n.respond_to?(:fallbacks)
   end
 
   def known_languages

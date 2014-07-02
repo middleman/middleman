@@ -170,10 +170,10 @@ module Middleman::Cli
         path.to_s !~ /\/\./ || path.to_s =~ /\.(htaccess|htpasswd)/
       end
 
-      if RUBY_PLATFORM =~ /darwin/
-        # handle UTF-8-MAC filename on MacOS
-        @to_clean = @to_clean.map { |path| path.to_s.encode('UTF-8', 'UTF-8-MAC') }
-      end
+      return unless RUBY_PLATFORM =~ /darwin/
+
+      # handle UTF-8-MAC filename on MacOS
+      @to_clean = @to_clean.map { |path| path.to_s.encode('UTF-8', 'UTF-8-MAC') }
     end
 
     # Actually build the app
@@ -222,14 +222,14 @@ module Middleman::Cli
 
       output_path = render_to_file(resource)
 
-      if should_clean? && output_path.exist?
-        if RUBY_PLATFORM =~ /darwin/
-          # handle UTF-8-MAC filename on MacOS
+      return unless should_clean? && output_path.exist?
 
-          @to_clean.delete(output_path.realpath.to_s.encode('UTF-8', 'UTF-8-MAC'))
-        else
-          @to_clean.delete(output_path.realpath)
-        end
+      if RUBY_PLATFORM =~ /darwin/
+        # handle UTF-8-MAC filename on MacOS
+
+        @to_clean.delete(output_path.realpath.to_s.encode('UTF-8', 'UTF-8-MAC'))
+      else
+        @to_clean.delete(output_path.realpath)
       end
     end
 
@@ -281,9 +281,7 @@ module Middleman::Cli
     end
 
     def binary_encode(string)
-      if string.respond_to?(:force_encoding)
-        string.force_encoding('ascii-8bit')
-      end
+      string.force_encoding('ascii-8bit') if string.respond_to?(:force_encoding)
       string
     end
   end

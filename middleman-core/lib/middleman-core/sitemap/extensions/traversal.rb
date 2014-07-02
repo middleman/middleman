@@ -75,6 +75,7 @@ module Middleman
           if !path.end_with?("/#{@app.config[:index_file]}") && destination_path.end_with?("/#{@app.config[:index_file]}")
             return true
           end
+
           full_path = File.join(@app.source_dir, eponymous_directory_path)
           File.exist?(full_path) && File.directory?(full_path)
         end
