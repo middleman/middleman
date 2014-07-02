@@ -118,10 +118,10 @@ module Middleman
 
     def bind_before_configuration
       ext = self
-      if ext.respond_to?(:before_configuration)
-        @klass.before_configuration do
-          ext.before_configuration
-        end
+      return unless ext.respond_to?(:before_configuration)
+
+      @klass.before_configuration do
+        ext.before_configuration
       end
     end
 
@@ -139,26 +139,26 @@ module Middleman
 
     def bind_before_build
       ext = self
-      if ext.respond_to?(:before_build)
-        @klass.before_build do |builder|
-          if ext.method(:before_build).arity == 1
-            ext.before_build(builder)
-          else
-            ext.before_build
-          end
+      return unless ext.respond_to?(:before_build)
+
+      @klass.before_build do |builder|
+        if ext.method(:before_build).arity == 1
+          ext.before_build(builder)
+        else
+          ext.before_build
         end
       end
     end
 
     def bind_after_build
       ext = self
-      if ext.respond_to?(:after_build)
-        @klass.after_build do |builder|
-          if ext.method(:after_build).arity == 1
-            ext.after_build(builder)
-          else
-            ext.after_build
-          end
+      return unless ext.respond_to?(:after_build)
+
+      @klass.after_build do |builder|
+        if ext.method(:after_build).arity == 1
+          ext.after_build(builder)
+        else
+          ext.after_build
         end
       end
     end

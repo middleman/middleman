@@ -55,11 +55,11 @@ class Middleman::Extensions::Gzip < ::Middleman::Extension
     num_paths.times do
       output_filename, old_size, new_size = out_queue.pop
 
-      if output_filename
-        total_savings += (old_size - new_size)
-        size_change_word = (old_size - new_size) > 0 ? 'smaller' : 'larger'
-        builder.say_status :gzip, "#{output_filename} (#{app.number_to_human_size((old_size - new_size).abs)} #{size_change_word})"
-      end
+      next unless output_filename
+
+      total_savings += (old_size - new_size)
+      size_change_word = (old_size - new_size) > 0 ? 'smaller' : 'larger'
+      builder.say_status :gzip, "#{output_filename} (#{app.number_to_human_size((old_size - new_size).abs)} #{size_change_word})"
     end
 
     builder.say_status :gzip, "Total gzip savings: #{app.number_to_human_size(total_savings)}", :blue

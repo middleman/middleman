@@ -2,15 +2,15 @@
 module Middleman
   module CoreExtensions
     module Routing
-        # Takes a block which allows many pages to have the same layout
-        #
-        #   with_layout :admin do
-        #     page "/admin/"
-        #     page "/admin/login.html"
-        #   end
-        #
-        # @param [String, Symbol] layout_name
-        # @return [void]
+      # Takes a block which allows many pages to have the same layout
+      #
+      #   with_layout :admin do
+      #     page "/admin/"
+      #     page "/admin/login.html"
+      #   end
+      #
+      # @param [String, Symbol] layout_name
+      # @return [void]
       def with_layout(layout_name, &block)
         old_layout = config[:layout]
 
@@ -20,14 +20,14 @@ module Middleman
         config[:layout] = old_layout
       end
 
-        # The page method allows the layout to be set on a specific path
-        #
-        #   page "/about.html", :layout => false
-        #   page "/", :layout => :homepage_layout
-        #
-        # @param [String] url
-        # @param [Hash] opts
-        # @return [void]
+      # The page method allows the layout to be set on a specific path
+      #
+      #   page "/about.html", :layout => false
+      #   page "/", :layout => :homepage_layout
+      #
+      # @param [String] url
+      # @param [Hash] opts
+      # @return [void]
       def page(url, opts={}, &block)
         blocks = Array(block)
 

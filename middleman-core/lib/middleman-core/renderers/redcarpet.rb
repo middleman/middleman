@@ -20,8 +20,8 @@ module Middleman
         # Pick a renderer
         renderer = MiddlemanRedcarpetHTML
 
-        # Support SmartyPants
         if options.delete(:smartypants)
+          # Support SmartyPants
           renderer = Class.new(renderer) do
             include ::Redcarpet::Render::SmartyPants
           end
@@ -30,9 +30,8 @@ module Middleman
         # Renderer Options
         possible_render_opts = [:filter_html, :no_images, :no_links, :no_styles, :safe_links_only, :with_toc_data, :hard_wrap, :xhtml, :prettify, :link_attributes]
 
-        render_options = possible_render_opts.reduce({}) do |sum, opt|
+        render_options = possible_render_opts.each_with_object({}) do |opt, sum|
           sum[opt] = options.delete(opt) if options.key?(opt)
-          sum
         end
 
         renderer.new(render_options)
@@ -63,7 +62,7 @@ module Middleman
         else
           link_string = link.dup
           link_string << %Q("#{title}") if title && title.length > 0 && title != alt_text
-          %Q{![#{alt_text}](#{link_string})}
+          "![#{alt_text}](#{link_string})"
         end
       end
 
@@ -76,7 +75,7 @@ module Middleman
         else
           link_string = link.dup
           link_string << %Q("#{title}") if title && title.length > 0 && title != alt_text
-          %Q{[#{content}](#{link_string})}
+          "[#{content}](#{link_string})"
         end
       end
     end

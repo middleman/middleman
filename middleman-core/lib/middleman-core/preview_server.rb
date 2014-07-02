@@ -23,26 +23,25 @@ module Middleman
         logger.info "== Inspect your site configuration at http://#{host}:#{port}/__middleman/"
 
         @initialized ||= false
-        unless @initialized
-          @initialized = true
+        return if @initialized
+        @initialized = true
 
-          register_signal_handlers
+        register_signal_handlers
 
-          # Save the last-used @options so it may be re-used when
-          # reloading later on.
-          ::Middleman::Profiling.report('server_start')
+        # Save the last-used @options so it may be re-used when
+        # reloading later on.
+        ::Middleman::Profiling.report('server_start')
 
-          loop do
-            @webrick.start
+        loop do
+          @webrick.start
 
-            # $mm_shutdown is set by the signal handler
-            if $mm_shutdown
-              shutdown
-              exit
-            elsif $mm_reload
-              $mm_reload = false
-              reload
-            end
+          # $mm_shutdown is set by the signal handler
+          if $mm_shutdown
+            shutdown
+            exit
+          elsif $mm_reload
+            $mm_reload = false
+            reload
           end
         end
       end
@@ -107,9 +106,7 @@ module Middleman
             opts[:instrumenting] || false
           )
 
-          if opts[:environment]
-            config[:environment] = opts[:environment].to_sym
-          end
+          config[:environment] = opts[:environment].to_sym if opts[:environment]
         end
       end
 
@@ -153,12 +150,12 @@ module Middleman
       # @return [void]
       def register_signal_handlers
         %w(INT HUP TERM QUIT).each do |sig|
-          if Signal.list[sig]
-            Signal.trap(sig) do
-              # Do as little work as possible in the signal context
-              $mm_shutdown = true
-              @webrick.stop
-            end
+          next unless Signal.list[sig]
+
+          Signal.trap(sig) do
+            # Do as little work as possible in the signal context
+            $mm_shutdown = true
+            @webrick.stop
           end
         end
       end
@@ -234,9 +231,7 @@ module Middleman
 
     class FilteredWebrickLog < ::WEBrick::Log
       def log(level, data)
-        unless data =~ %r{Could not determine content-length of response body.}
-          super(level, data)
-        end
+        super(level, data) unless data =~ %r{Could not determine content-length of response body.}
       end
     end
   end

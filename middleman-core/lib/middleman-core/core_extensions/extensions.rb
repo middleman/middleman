@@ -188,9 +188,7 @@ module Middleman
               logger.debug "== Extension: #{ext}"
             end
 
-            if klass.is_a?(::Middleman::Extension)
-              ::Middleman::Extension.activated_extension(klass)
-            end
+            ::Middleman::Extension.activated_extension(klass) if klass.is_a?(::Middleman::Extension)
           end
         end
       end

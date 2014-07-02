@@ -57,25 +57,22 @@ module Middleman
           # whether or not it belongs in the sitemap (like a partial)
           @sitemap.rebuild_resource_list!(:touched_file)
 
-          unless waiting_for_ready || @app.build?
-            # Force sitemap rebuild so the next request is ready to go.
-            # Skip this during build because the builder will control sitemap refresh.
-            @sitemap.ensure_resource_list_updated!
-          end
+          # Force sitemap rebuild so the next request is ready to go.
+          # Skip this during build because the builder will control sitemap refresh.
+          @sitemap.ensure_resource_list_updated! unless waiting_for_ready || @app.build?
         end
 
         # Remove a file from the store
         # @param [String] file
         # @return [void]
         def remove_file(file)
-          if @file_paths_on_disk.delete?(file)
-            @sitemap.rebuild_resource_list!(:removed_file)
-            unless waiting_for_ready || @app.build?
-              # Force sitemap rebuild so the next request is ready to go.
-              # Skip this during build because the builder will control sitemap refresh.
-              @sitemap.ensure_resource_list_updated!
-            end
-          end
+          return unless @file_paths_on_disk.delete?(file)
+
+          @sitemap.rebuild_resource_list!(:removed_file)
+
+          # Force sitemap rebuild so the next request is ready to go.
+          # Skip this during build because the builder will control sitemap refresh.
+          @sitemap.ensure_resource_list_updated! unless waiting_for_ready || @app.build?
         end
 
         # Update the main sitemap resource list

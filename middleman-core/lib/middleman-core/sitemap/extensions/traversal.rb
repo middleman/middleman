@@ -13,15 +13,15 @@ module Middleman
 
           test_expr = parts.join('\\/')
           # A makeshift for eponymous reverse-lookup
-          found = store.resources.find { |candidate|
-              candidate.path =~ %r!^#{test_expr}(?:\.[a-zA-Z0-9]+|\/)$!
-          }
+          found = store.resources.find do |candidate|
+            candidate.path =~ %r{^#{test_expr}(?:\.[a-zA-Z0-9]+|\/)$}
+          end
 
           if found
-            return found
+            found
           else
             parts.pop if is_index
-            return store.find_resource_by_destination_path("#{parts.join('/')}/#{app.index_file}")
+            store.find_resource_by_destination_path("#{parts.join('/')}/#{app.index_file}")
           end
         end
 
@@ -75,6 +75,7 @@ module Middleman
           if !path.end_with?("/#{app.index_file}") && destination_path.end_with?("/#{app.index_file}")
             return true
           end
+
           full_path = File.join(app.source_dir, eponymous_directory_path)
           File.exist?(full_path) && File.directory?(full_path)
         end

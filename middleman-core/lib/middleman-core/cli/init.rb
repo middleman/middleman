@@ -15,13 +15,13 @@ module Middleman::Cli
                   default: 'default',
                   desc: "Use a project template: #{available_templates}"
     method_option 'css_dir',
-      # :default => "stylesheets",
+                  # :default => "stylesheets",
                   desc: 'The path to the css files'
     method_option 'js_dir',
-      # :default => "javascripts",
+                  # :default => "javascripts",
                   desc: 'The path to the javascript files'
     method_option 'images_dir',
-      # :default => "images",
+                  # :default => "images",
                   desc: 'The path to the image files'
     method_option 'rack',
                   type: :boolean,
