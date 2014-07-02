@@ -29,9 +29,9 @@ class Middleman::Extensions::RelativeAssets < ::Middleman::Extension
       asset_path
     end
 
-    if !full_asset_path.include?('//') && !asset_path.start_with?('data:')
-      current_dir = Pathname('/' + request_path).dirname
-      Pathname(full_asset_path).relative_path_from(current_dir).to_s
-    end
+    return unless !full_asset_path.include?('//') && !asset_path.start_with?('data:')
+
+    current_dir = Pathname('/' + request_path).dirname
+    Pathname(full_asset_path).relative_path_from(current_dir).to_s
   end
 end

@@ -81,9 +81,9 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
 
       # This is for backwards compatibility with the old provides_metadata-based code
       # that used to be in this extension, but I don't know how much sense it makes.
-      unless resource.options[:lang]
-        resource.add_metadata options: { lang: @mount_at_root }, locals: { lang: @mount_at_root }
-      end
+      next if resource.options[:lang]
+
+      resource.add_metadata options: { lang: @mount_at_root }, locals: { lang: @mount_at_root }
     end
 
     resources + new_resources

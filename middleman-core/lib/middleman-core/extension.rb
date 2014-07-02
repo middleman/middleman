@@ -233,10 +233,11 @@ module Middleman
       @app = app
 
       ext = self
-      if ext.respond_to?(:instance_available)
-        @klass.instance_available do
-          ext.instance_available
-        end
+
+      return unless ext.respond_to?(:instance_available)
+
+      @klass.instance_available do
+        ext.instance_available
       end
     end
 

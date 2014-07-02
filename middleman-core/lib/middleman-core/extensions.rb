@@ -67,10 +67,10 @@ module Middleman
           raise 'You must provide a Middleman::Extension or a block that returns a Middleman::Extension'
         end
 
-        if options[:auto_activate]
-          descriptor = AutoActivation.new(name, options[:modes] || :all)
-          @auto_activate[options[:auto_activate]] << descriptor
-        end
+        return unless options[:auto_activate]
+
+        descriptor = AutoActivation.new(name, options[:modes] || :all)
+        @auto_activate[options[:auto_activate]] << descriptor
       end
 
       # @api private
@@ -114,9 +114,9 @@ module Middleman
       # @param [Middleman::Application] app An instance of the app.
       def auto_activate(group, app)
         @auto_activate[group].each do |descriptor|
-          if descriptor[:modes] == :all || descriptor[:modes].include?(app.config[:mode])
-            app.activate descriptor[:name]
-          end
+          next unless descriptor[:modes] == :all || descriptor[:modes].include?(app.config[:mode])
+
+          app.activate descriptor[:name]
         end
       end
     end

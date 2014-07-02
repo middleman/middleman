@@ -17,16 +17,16 @@ module Middleman
       def after_configuration
         helpers_path = File.join(app.root, app.config[:helpers_dir])
 
-        if File.exist?(helpers_path)
-          Dir[File.join(helpers_path, app.config[:helpers_filename_glob])].each do |filename|
-            module_name = app.config[:helpers_filename_to_module_name_proc].call(filename)
-            next unless module_name
+        return unless File.exist?(helpers_path)
 
-            require filename
-            next unless Object.const_defined?(module_name.to_sym)
+        Dir[File.join(helpers_path, app.config[:helpers_filename_glob])].each do |filename|
+          module_name = app.config[:helpers_filename_to_module_name_proc].call(filename)
+          next unless module_name
 
-            app.template_context_class.send :include, Object.const_get(module_name.to_sym)
-          end
+          require filename
+          next unless Object.const_defined?(module_name.to_sym)
+
+          app.template_context_class.send :include, Object.const_get(module_name.to_sym)
         end
       end
     end

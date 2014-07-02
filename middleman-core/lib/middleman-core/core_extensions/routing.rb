@@ -61,9 +61,7 @@ module Middleman
           end
         end
 
-        if path.is_a?(String)
-          path = '/' + Util.strip_leading_slash(path)
-        end
+        path = '/' + Util.strip_leading_slash(path) if path.is_a?(String)
 
         @page_configs << [path, metadata]
       end

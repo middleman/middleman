@@ -100,15 +100,15 @@ module Middleman
       # @param [String] path A path as a string
       # @return [Boolean] Whether the path matches the matcher
       def path_match(matcher, path)
-        !!case
+        case
         when matcher.is_a?(String)
           if matcher.include? '*'
             File.fnmatch(matcher, path)
           else
             path == matcher
-           end
+          end
         when matcher.respond_to?(:match)
-          matcher.match(path)
+          !matcher.match(path).nil?
         when matcher.respond_to?(:call)
           matcher.call(path)
         else
@@ -149,11 +149,16 @@ module Middleman
         return source if source.to_s.include?('//') || source.to_s.start_with?('data:')
 
         asset_folder = case kind
-          when :css    then app.config[:css_dir]
-          when :js     then app.config[:js_dir]
-          when :images then app.config[:images_dir]
-          when :fonts  then app.config[:fonts_dir]
-          else kind.to_s
+        when :css
+          app.config[:css_dir]
+        when :js
+          app.config[:js_dir]
+        when :images
+          app.config[:images_dir]
+        when :fonts
+          app.config[:fonts_dir]
+        else
+          kind.to_s
         end
 
         source = source.to_s.tr(' ', '')
@@ -172,7 +177,7 @@ module Middleman
       # @return [String] The fully qualified asset url
       def asset_url(app, path, prefix='', _options={})
         # Don't touch assets which already have a full path
-        if path.include?('//') or path.start_with?('data:')
+        if path.include?('//') || path.start_with?('data:')
           path
         else # rewrite paths to use their destination path
           if resource = app.sitemap.find_resource_by_destination_path(url_for(app, path))

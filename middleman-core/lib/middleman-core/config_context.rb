@@ -32,9 +32,10 @@ module Middleman
     def include_environment(name)
       path = File.dirname(__FILE__)
       other_config = File.join(path, name.to_s)
-      if File.exist? other_config
-        instance_eval File.read(other_config), other_config, 1
-      end
+
+      return unless File.exist? other_config
+
+      instance_eval File.read(other_config), other_config, 1
     end
 
     def ready(&block)

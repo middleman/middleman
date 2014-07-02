@@ -35,12 +35,11 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
       asset_path
     end
 
-    if asset_page = app.sitemap.find_resource_by_path(full_asset_path)
-      replacement_path = "/#{asset_page.destination_path}"
-      replacement_path = Pathname.new(replacement_path).relative_path_from(dirpath).to_s if relative_path
+    return unless asset_page = app.sitemap.find_resource_by_path(full_asset_path)
 
-      replacement_path
-    end
+    replacement_path = "/#{asset_page.destination_path}"
+    replacement_path = Pathname.new(replacement_path).relative_path_from(dirpath).to_s if relative_path
+    replacement_path
   end
 
   # Update the main sitemap resource list
