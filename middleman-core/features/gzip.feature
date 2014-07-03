@@ -1,3 +1,4 @@
+@nowindows
 Feature: GZIP assets during build
 
   Scenario: Built assets should be gzipped

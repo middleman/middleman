@@ -17,11 +17,11 @@ gem 'slim', require: false
 gem 'liquid', require: false
 gem 'less', '~> 2.3.0', require: false
 gem 'stylus', require: false
+gem 'redcarpet', '~> 3.1', require: false
 gem 'asciidoctor', require: false
 
 platforms :ruby do
   gem 'therubyracer'
-  gem 'redcarpet', '~> 3.1'
   gem 'pry', require: false, group: :development
 end
 

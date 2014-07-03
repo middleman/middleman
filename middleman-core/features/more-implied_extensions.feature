@@ -19,10 +19,7 @@ Feature: More default extensions
     When I go to "/stylesheets/style2.css"
     Then I should see "section"
     Then I should not see "I am in the layout"
-    When I go to "/stylesheets/style3.css"
-    Then I should see "color"
-    Then I should not see "I am in the layout"
-  
+
   Scenario: Default extensions build
     Given a fixture app "more-implied-extensions-app"
     And a successfully built app at "more-implied-extensions-app"
@@ -35,7 +32,6 @@ Feature: More default extensions
       | javascripts/app.js     |
       | stylesheets/style.css  |
       | stylesheets/style2.css |
-      | stylesheets/style3.css |
     And the file "test.html" should contain "Hello"
     And the file "test2.html" should contain "World"
     And the file "test3.html" should contain "Howdy"
@@ -46,5 +42,3 @@ Feature: More default extensions
     And the file "stylesheets/style.css" should not contain "I am in the layout"
     And the file "stylesheets/style2.css" should contain "section"
     And the file "stylesheets/style2.css" should not contain "I am in the layout"
-    And the file "stylesheets/style3.css" should contain "color"
-    And the file "stylesheets/style3.css" should not contain "I am in the layout"
