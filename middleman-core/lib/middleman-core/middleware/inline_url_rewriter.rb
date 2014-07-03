@@ -1,10 +1,13 @@
 require 'middleman-core/util'
+require 'middleman-core/contracts'
 require 'rack'
 require 'rack/response'
 
 module Middleman
   module Middleware
     class InlineURLRewriter
+      include Contracts
+
       def initialize(app, options={})
         @rack_app = app
         @middleman_app = options[:middleman_app]
@@ -63,10 +66,11 @@ module Middleman
         [status, headers, response]
       end
 
+      Contract Or[Regexp, RespondTo[:call], String] => Bool
       def should_ignore?(validator, value)
         if validator.is_a? Regexp
           # Treat as Regexp
-          value.match(validator)
+          !value.match(validator).nil?
         elsif validator.respond_to? :call
           # Treat as proc
           validator.call(value)

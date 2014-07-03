@@ -26,6 +26,7 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
             proc: method(:rewrite_url)
   end
 
+  Contract String, Or[String, Pathname], Any => Maybe[String]
   def rewrite_url(asset_path, dirpath, _request_path)
     relative_path = Pathname.new(asset_path).relative?
 
@@ -43,7 +44,8 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
   end
 
   # Update the main sitemap resource list
-  # @return [void]
+  # @return Array<Middleman::Sitemap::Resource>
+  Contract ResourceList => ResourceList
   def manipulate_resource_list(resources)
     @rack_client ||= begin
       rack_app = ::Middleman::Rack.new(app).to_app
@@ -64,6 +66,7 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
     end.each(&method(:manipulate_single_resource))
   end
 
+  Contract IsA['Middleman::Sitemap::Resource'] => Maybe[IsA['Middleman::Sitemap::Resource']]
   def manipulate_single_resource(resource)
     return unless options.exts.include?(resource.ext)
     return if ignored_resource?(resource)
@@ -79,8 +82,10 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
     digest = Digest::SHA1.hexdigest(response.body)[0..7]
 
     resource.destination_path = resource.destination_path.sub(/\.(\w+)$/) { |ext| "-#{digest}#{ext}" }
+    resource
   end
 
+  Contract IsA['Middleman::Sitemap::Resource'] => Bool
   def ignored_resource?(resource)
     @ignore.any? { |ignore| Middleman::Util.path_match(ignore, resource.destination_path) }
   end

@@ -1,3 +1,5 @@
+require 'middleman-core/contracts'
+
 # Minify Javascript Extension
 class Middleman::Extensions::MinifyJavascript < ::Middleman::Extension
   option :inline, false, 'Whether to minify JS inline within HTML files'
@@ -16,6 +18,8 @@ class Middleman::Extensions::MinifyJavascript < ::Middleman::Extension
 
   # Rack middleware to look for JS and compress it
   class Rack
+    include Contracts
+
     # Init
     # @param [Class] app
     # @param [Hash] options
@@ -61,6 +65,7 @@ class Middleman::Extensions::MinifyJavascript < ::Middleman::Extension
 
     private
 
+    Contract String => String
     def minify_inline_content(uncompressed_source)
       uncompressed_source.gsub(/(<script[^>]*>\s*(?:\/\/(?:(?:<!--)|(?:<!\[CDATA\[))\n)?)(.*?)((?:(?:\n\s*)?\/\/(?:(?:-->)|(?:\]\]>)))?\s*<\/script>)/m) do |match|
         first = $1

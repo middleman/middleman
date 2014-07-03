@@ -1,3 +1,5 @@
+require 'middleman-core/extensions'
+
 # File Change Notifier
 Middleman::Extensions.register :file_watcher, auto_activate: :before_sitemap do
   require 'middleman-core/core_extensions/file_watcher'

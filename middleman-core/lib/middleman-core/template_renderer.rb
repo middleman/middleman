@@ -2,10 +2,12 @@ require 'tilt'
 require 'active_support/core_ext/string/output_safety'
 require 'middleman-core/template_context'
 require 'middleman-core/file_renderer'
+require 'middleman-core/contracts'
 
 module Middleman
   class TemplateRenderer
     extend Forwardable
+    include Contracts
 
     def self.cache
       @_cache ||= ::Tilt::Cache.new
@@ -26,6 +28,7 @@ module Middleman
     # @param [Hash] locs
     # @param [Hash] opts
     # @return [String]
+    Contract Hash, Hash => String
     def render(locs={}, opts={})
       path = @path.dup
       extension = File.extname(path)
@@ -78,7 +81,8 @@ module Middleman
     #
     # @param [Symbol] engine
     # @param [Hash] opts
-    # @return [String]
+    # @return [String, Boolean]
+    Contract Symbol, Hash => Or[String, Bool]
     def fetch_layout(engine, opts)
       # The layout name comes from either the system default or the options
       local_layout = opts.key?(:layout) ? opts[:layout] : @app.config[:layout]
@@ -117,6 +121,7 @@ module Middleman
     # @param [String] name
     # @param [Symbol] preferred_engine
     # @return [String]
+    Contract Or[String, Symbol], Symbol => Maybe[String]
     def locate_layout(name, preferred_engine=nil)
       self.class.locate_layout(@app, name, preferred_engine)
     end
@@ -125,6 +130,7 @@ module Middleman
     # @param [String] name
     # @param [Symbol] preferred_engine
     # @return [String]
+    Contract IsA['Middleman::Application'], Or[String, Symbol], Symbol => Maybe[String]
     def self.locate_layout(app, name, preferred_engine=nil)
       resolve_opts = {}
       resolve_opts[:preferred_engine] = preferred_engine unless preferred_engine.nil?
@@ -143,6 +149,7 @@ module Middleman
     # @param [String] request_path
     # @param [Hash] options
     # @return [Array<String, Symbol>, Boolean]
+    Contract String, Hash => ArrayOf[Or[String, Symbol]]
     def resolve_template(request_path, options={})
       self.class.resolve_template(@app, request_path, options)
     end
@@ -151,6 +158,7 @@ module Middleman
     # @param [String] request_path
     # @option options [Boolean] :preferred_engine If set, try this engine first, then fall back to any engine.
     # @return [String, Boolean] Either the path to the template, or false
+    Contract IsA['Middleman::Application'], Or[Symbol, String], Hash => Maybe[String]
     def self.resolve_template(app, request_path, options={})
       # Find the path by searching or using the cache
       request_path = request_path.to_s
@@ -194,7 +202,7 @@ module Middleman
         elsif File.exist?(on_disk_path)
           on_disk_path
         else
-          false
+          nil
         end
       end
     end

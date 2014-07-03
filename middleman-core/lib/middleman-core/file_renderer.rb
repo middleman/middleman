@@ -1,5 +1,7 @@
 require 'tilt'
 require 'active_support/core_ext/string/output_safety'
+require 'active_support/core_ext/module/delegation'
+require 'middleman-core/contracts'
 
 ::Tilt.mappings.delete('html') # WTF, Tilt?
 ::Tilt.mappings.delete('csv')
@@ -7,6 +9,7 @@ require 'active_support/core_ext/string/output_safety'
 module Middleman
   class FileRenderer
     extend Forwardable
+    include Contracts
 
     def self.cache
       @_cache ||= ::Tilt::Cache.new
@@ -25,6 +28,7 @@ module Middleman
     # @param [Hash] opts
     # @param [Class] context
     # @return [String]
+    Contract Hash, Hash, Any, Proc => String
     def render(locs={}, opts={}, context, &block)
       path = @path.dup
 
@@ -96,6 +100,7 @@ module Middleman
     # Get the template data from a path
     # @param [String] path
     # @return [String]
+    Contract String => String
     def template_data_for_file
       if @app.extensions[:front_matter]
         @app.extensions[:front_matter].template_data_for_file(@path)
@@ -111,6 +116,7 @@ module Middleman
     #
     # @param [String] ext
     # @return [Hash]
+    Contract String => Hash
     def options_for_ext(ext)
       # Read options for extension from config/Tilt or cache
       cache.fetch(:options_for_ext, ext) do

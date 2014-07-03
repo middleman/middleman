@@ -18,6 +18,7 @@ module Middleman
         # @param [String] path
         # @param [Hash] opts The :path value gives a request path if it
         # differs from the output path
+        Contract String, Or[({ path: String }), Proc] => Any
         def create_endpoint(path, opts={}, &block)
           endpoint = {
             request_path: path
@@ -35,7 +36,8 @@ module Middleman
         end
 
         # Update the main sitemap resource list
-        # @return [void]
+        # @return Array<Middleman::Sitemap::Resource>
+        Contract ResourceList => ResourceList
         def manipulate_resource_list(resources)
           resources + @endpoints.map do |path, config|
             r = EndpointResource.new(
@@ -50,6 +52,7 @@ module Middleman
       end
 
       class EndpointResource < ::Middleman::Sitemap::Resource
+        Contract None => Maybe[Proc]
         attr_accessor :output
 
         def initialize(store, path, request_path)
@@ -57,16 +60,20 @@ module Middleman
           @request_path = ::Middleman::Util.normalize_path(request_path)
         end
 
+        Contract None => String
         attr_reader :request_path
 
+        Contract None => Bool
         def template?
           true
         end
 
+        Contract Args[Any] => String
         def render(*)
           return output.call if output
         end
 
+        Contract None => Bool
         def ignored?
           false
         end

@@ -1,5 +1,6 @@
 require 'active_support/core_ext/class/attribute'
 require 'middleman-core/configuration'
+require 'middleman-core/contracts'
 
 module Middleman
   # Middleman's Extension API provides the ability to add functionality to Middleman
@@ -64,6 +65,7 @@ module Middleman
   # @see http://middlemanapp.com/advanced/custom/ Middleman Custom Extensions Documentation
   class Extension
     extend Forwardable
+    include Contracts
 
     # @!attribute supports_multiple_instances
     #   @!scope class

@@ -20,6 +20,7 @@ class Middleman::Extensions::RelativeAssets < ::Middleman::Extension
             proc: method(:rewrite_url)
   end
 
+  Contract String, Or[String, Pathname], Any => Maybe[String]
   def rewrite_url(asset_path, dirpath, request_path)
     relative_path = Pathname.new(asset_path).relative?
 

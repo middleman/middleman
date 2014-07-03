@@ -20,6 +20,7 @@ class Middleman::Extensions::CacheBuster < ::Middleman::Extension
             proc: method(:rewrite_url)
   end
 
+  Contract String, Or[String, Pathname], Any => String
   def rewrite_url(asset_path, _dirpath, _request_path)
     asset_path + '?' + Time.now.strftime('%s')
   end

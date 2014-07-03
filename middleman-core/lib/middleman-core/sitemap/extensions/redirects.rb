@@ -1,4 +1,5 @@
 require 'middleman-core/sitemap/resource'
+require 'middleman-core/contracts'
 
 module Middleman
   module Sitemap
@@ -17,6 +18,7 @@ module Middleman
         # Setup a redirect from a path to a target
         # @param [String] path
         # @param [Hash] opts The :to value gives a target path
+        Contract String, ({ to: Or[String, IsA['Middleman::Sitemap::Resource']] }), Proc => Any
         def create_redirect(path, opts={}, &block)
           opts[:template] = block if block_given?
 
@@ -26,7 +28,8 @@ module Middleman
         end
 
         # Update the main sitemap resource list
-        # @return [void]
+        # @return Array<Middleman::Sitemap::Resource>
+        Contract ResourceList => ResourceList
         def manipulate_resource_list(resources)
           resources + @redirects.map do |path, opts|
             r = RedirectResource.new(
@@ -41,6 +44,7 @@ module Middleman
       end
 
       class RedirectResource < ::Middleman::Sitemap::Resource
+        Contract None => Maybe[Proc]
         attr_accessor :output
 
         def initialize(store, path, target)
@@ -49,10 +53,12 @@ module Middleman
           super(store, path)
         end
 
+        Contract None => Bool
         def template?
           true
         end
 
+        Contract Args[Any] => String
         def render(*)
           url = ::Middleman::Util.url_for(@store.app, @request_path,
                                           relative: false,
@@ -76,6 +82,7 @@ module Middleman
           end
         end
 
+        Contract None => Bool
         def ignored?
           false
         end

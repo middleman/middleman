@@ -16,6 +16,7 @@ class Middleman::Extensions::AssetHost < ::Middleman::Extension
             proc: method(:rewrite_url)
   end
 
+  Contract String, Or[String, Pathname], Any => String
   def rewrite_url(asset_path, dirpath, _request_path)
     relative_path = Pathname.new(asset_path).relative?
 

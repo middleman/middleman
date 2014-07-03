@@ -31,7 +31,8 @@ module Middleman::CoreExtensions
       file_watcher.deleted(&method(:clear_data))
     end
 
-    # Modify each resource to add data & options from frontmatter.
+    # @return Array<Middleman::Sitemap::Resource>
+    Contract ResourceList => ResourceList
     def manipulate_resource_list(resources)
       resources.each do |resource|
         next if resource.source_file.blank?
@@ -60,10 +61,12 @@ module Middleman::CoreExtensions
     # Get the template data from a path
     # @param [String] path
     # @return [String]
+    Contract String => String
     def template_data_for_file(path)
       data(path).last
     end
 
+    Contract String => [Hash, Maybe[String]]
     def data(path)
       p = normalize_path(path)
       @cache[p] ||= frontmatter_and_content(p)
@@ -83,6 +86,7 @@ module Middleman::CoreExtensions
     # Get the frontmatter and plain content from a file
     # @param [String] path
     # @return [Array<Middleman::Util::HashWithIndifferentAccess, String>]
+    Contract String => [Hash, Maybe[String]]
     def frontmatter_and_content(path)
       full_path = if Pathname(path).relative?
         File.join(app.source_dir, path)
@@ -117,6 +121,7 @@ module Middleman::CoreExtensions
     # Parse YAML frontmatter out of a string
     # @param [String] content
     # @return [Array<Hash, String>]
+    Contract String, String => Maybe[[Hash, String]]
     def parse_yaml_front_matter(content, full_path)
       yaml_regex = /\A(---\s*\n.*?\n?)^(---\s*$\n?)/m
       if content =~ yaml_regex
@@ -127,10 +132,10 @@ module Middleman::CoreExtensions
           data = data.symbolize_keys
         rescue *YAML_ERRORS => e
           app.logger.error "YAML Exception parsing #{full_path}: #{e.message}"
-          return false
+          return nil
         end
       else
-        return false
+        return nil
       end
 
       [data, content]
@@ -138,6 +143,10 @@ module Middleman::CoreExtensions
       [{}, content]
     end
 
+    # Parse JSON frontmatter out of a string
+    # @param [String] content
+    # @return [Array<Hash, String>]
+    Contract String, String => Maybe[[Hash, String]]
     def parse_json_front_matter(content, full_path)
       json_regex = /\A(;;;\s*\n.*?\n?)^(;;;\s*$\n?)/m
 
@@ -149,11 +158,11 @@ module Middleman::CoreExtensions
           data = ActiveSupport::JSON.decode(json).symbolize_keys
         rescue => e
           app.logger.error "JSON Exception parsing #{full_path}: #{e.message}"
-          return false
+          return nil
         end
 
       else
-        return false
+        return nil
       end
 
       [data, content]

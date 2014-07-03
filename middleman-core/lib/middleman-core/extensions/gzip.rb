@@ -70,6 +70,7 @@ class Middleman::Extensions::Gzip < ::Middleman::Extension
     I18n.locale = old_locale
   end
 
+  Contract String => [Maybe[String], Maybe[Num], Maybe[Num]]
   def gzip_file(path)
     input_file = File.open(path, 'rb').read
     output_filename = path + '.gz'
@@ -104,6 +105,7 @@ class Middleman::Extensions::Gzip < ::Middleman::Extension
   # Whether a path should be gzipped
   # @param [Pathname] path A destination path
   # @return [Boolean]
+  Contract Pathname => Bool
   def should_gzip?(path)
     path = path.sub app.config[:build_dir] + '/', ''
     options.exts.include?(path.extname) && options.ignore.none? { |ignore| Middleman::Util.path_match(ignore, path.to_s) }

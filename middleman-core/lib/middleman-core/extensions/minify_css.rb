@@ -1,3 +1,5 @@
+require 'middleman-core/contracts'
+
 # Minify CSS Extension
 class Middleman::Extensions::MinifyCss < ::Middleman::Extension
   option :inline, false, 'Whether to minify CSS inline within HTML files'
@@ -24,6 +26,7 @@ class Middleman::Extensions::MinifyCss < ::Middleman::Extension
 
   # Rack middleware to look for CSS and compress it
   class Rack
+    include Contracts
     INLINE_CSS_REGEX = /(<style[^>]*>\s*(?:\/\*<!\[CDATA\[\*\/\n)?)(.*?)((?:(?:\n\s*)?\/\*\]\]>\*\/)?\s*<\/style>)/m
 
     # Init
@@ -65,10 +68,12 @@ class Middleman::Extensions::MinifyCss < ::Middleman::Extension
 
     private
 
+    Contract String => Bool
     def inline_html_content?(path)
       (path.end_with?('.html') || path.end_with?('.php')) && @inline
     end
 
+    Contract String => Bool
     def standalone_css_content?(path)
       path.end_with?('.css') && @ignore.none? { |ignore| Middleman::Util.path_match(ignore, path) }
     end
