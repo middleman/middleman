@@ -75,17 +75,8 @@ module Middleman
           end
         end
 
-        def binary?
-          false
-        end
-
         def ignored?
           false
-        end
-
-        # rubocop:disable AccessorMethodName
-        def get_source_file
-          ''
         end
       end
     end

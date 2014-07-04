@@ -1,5 +1,5 @@
+require 'rack/mime'
 require 'middleman-core/sitemap/extensions/traversal'
-require 'middleman-core/sitemap/extensions/content_type'
 require 'middleman-core/file_renderer'
 require 'middleman-core/template_renderer'
 
@@ -9,7 +9,6 @@ module Middleman
     # Sitemap Resource class
     class Resource
       include Middleman::Sitemap::Extensions::Traversal
-      include Middleman::Sitemap::Extensions::ContentType
 
       # The source path of this resource (relative to the source directory,
       # without template extensions)
@@ -24,6 +23,18 @@ module Middleman
       # the same as {#destination_path} but it can be overridden in subclasses.
       # @return [String]
       alias_method :request_path, :destination_path
+
+      # Get the on-disk source file for this resource
+      # @return [String]
+      def source_file
+        if @source_file
+          @source_file
+        elsif proxy?
+          proxied_to_resource.source_file
+        else
+          nil
+        end
+      end
 
       # Initialize resource with parent store and URL
       # @param [Middleman::Sitemap::Store] store
@@ -137,6 +148,72 @@ module Middleman
       # @return [Boolean]
       def binary?
         source_file && ::Middleman::Util.binary?(source_file)
+      end
+
+      # Ignore a resource directly, without going through the whole
+      # ignore filter stuff.
+      # @return [void]
+      def ignore!
+        @ignored = true
+      end
+
+      # Whether the Resource is ignored
+      # @return [Boolean]
+      def ignored?
+        return true if @ignored
+        # Ignore based on the source path (without template extensions)
+        return true if @app.sitemap.ignored?(path)
+        # This allows files to be ignored by their source file name (with template extensions)
+        !proxy? && @app.sitemap.ignored?(source_file.sub("#{@app.source_dir}/", ''))
+      end
+
+      # The preferred MIME content type for this resource based on extension or metadata
+      # @return [String] MIME type for this resource
+      def content_type
+        mime_type = options[:content_type] || ::Rack::Mime.mime_type(ext, nil)
+        return mime_type if mime_type
+
+        if proxy?
+          proxied_to_resource.content_type
+        else
+          nil
+        end
+      end
+
+      # Whether this page is a proxy
+      # @return [Boolean]
+      def proxy?
+        @proxied_to
+      end
+
+      # Set this page to proxy to a target path
+      # @param [String] target
+      # @return [void]
+      def proxy_to(target)
+        target = ::Middleman::Util.normalize_path(target)
+        raise "You can't proxy #{path} to itself!" if target == path
+        @proxied_to = target
+      end
+
+      # The path of the page this page is proxied to, or nil if it's not proxied.
+      # @return [String]
+      attr_reader :proxied_to
+
+      # The resource for the page this page is proxied to. Throws an exception
+      # if there is no resource.
+      # @return [Sitemap::Resource]
+      def proxied_to_resource
+        proxy_resource = @store.find_resource_by_path(proxied_to)
+
+        unless proxy_resource
+          raise "Path #{path} proxies to unknown file #{proxied_to}:#{@store.resources.map(&:path)}"
+        end
+
+        if proxy_resource.proxy?
+          raise "You can't proxy #{path} to #{proxied_to} which is itself a proxy."
+        end
+
+        proxy_resource
       end
     end
   end
