@@ -2,14 +2,12 @@ require 'middleman-core/sitemap/extensions/traversal'
 require 'middleman-core/sitemap/extensions/content_type'
 require 'middleman-core/file_renderer'
 require 'middleman-core/template_renderer'
-require 'hamster/immutable'
 
 module Middleman
   # Sitemap namespace
   module Sitemap
     # Sitemap Resource class
     class Resource
-      # include ::Hamster::Immutable
       include Middleman::Sitemap::Extensions::Traversal
       include Middleman::Sitemap::Extensions::ContentType
 
