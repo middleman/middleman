@@ -2,12 +2,14 @@ require 'middleman-core/sitemap/extensions/traversal'
 require 'middleman-core/sitemap/extensions/content_type'
 require 'middleman-core/file_renderer'
 require 'middleman-core/template_renderer'
+require 'hamster/immutable'
 
 module Middleman
   # Sitemap namespace
   module Sitemap
     # Sitemap Resource class
     class Resource
+      # include ::Hamster::Immutable
       include Middleman::Sitemap::Extensions::Traversal
       include Middleman::Sitemap::Extensions::ContentType
 
@@ -25,13 +27,6 @@ module Middleman
       # @return [String]
       alias_method :request_path, :destination_path
 
-      # Set the on-disk source file for this resource
-      # @return [String]
-      def source_file
-        # TODO: Make this work when get_source_file doesn't exist
-        @source_file || get_source_file
-      end
-
       # Initialize resource with parent store and URL
       # @param [Middleman::Sitemap::Store] store
       # @param [String] path
@@ -48,6 +43,13 @@ module Middleman
         # Page are data that is exposed through this resource's data member.
         # Note: It is named 'page' for backwards compatibility with older MM.
         @metadata = { options: {}, locals: {}, page: {} }
+      end
+
+      # Set the on-disk source file for this resource
+      # @return [String]
+      def source_file
+        # TODO: Make this work when get_source_file doesn't exist
+        @source_file || get_source_file
       end
 
       # Whether this resource has a template file

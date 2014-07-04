@@ -10,8 +10,6 @@ module Middleman
           @app.define_singleton_method(:proxy, &method(:create_proxy))
 
           @proxy_configs = Set.new
-
-          ::Middleman::Sitemap::Resource.send :include, ProxyResourceInstanceMethods
         end
 
         # Setup a proxy from a path to a target
@@ -43,11 +41,11 @@ module Middleman
         # @return [void]
         def manipulate_resource_list(resources)
           resources + @proxy_configs.map do |config|
-            p = ::Middleman::Sitemap::Resource.new(
+            p = ProxyResource.new(
               @app.sitemap,
-              config.path
+              config.path,
+              config.target
             )
-            p.proxy_to(config.target)
 
             p.add_metadata(config.metadata)
             p
@@ -89,63 +87,59 @@ module Middleman
           path.hash
         end
       end
+    end
 
-      module ProxyResourceInstanceMethods
-        # Whether this page is a proxy
-        # @return [Boolean]
-        def proxy?
-          @proxied_to
+    class ProxyResource < ::Middleman::Sitemap::Resource
+      # Initialize resource with parent store and URL
+      # @param [Middleman::Sitemap::Store] store
+      # @param [String] path
+      # @param [String] source_file
+      def initialize(store, path, target)
+        super(store, path)
+
+        target = ::Middleman::Util.normalize_path(target)
+        raise "You can't proxy #{path} to itself!" if target == path
+        @target = target
+      end
+
+      # The resource for the page this page is proxied to. Throws an exception
+      # if there is no resource.
+      # @return [Sitemap::Resource]
+      def target_resource
+        resource = @store.find_resource_by_path(@target)
+
+        unless resource
+          raise "Path #{path} proxies to unknown file #{@target}:#{@store.resources.map(&:path)}"
         end
 
-        # Set this page to proxy to a target path
-        # @param [String] target
-        # @return [void]
-        def proxy_to(target)
-          target = ::Middleman::Util.normalize_path(target)
-          raise "You can't proxy #{path} to itself!" if target == path
-          @proxied_to = target
+        if resource.is_a? ProxyResource
+          raise "You can't proxy #{path} to #{@target} which is itself a proxy."
         end
 
-        # The path of the page this page is proxied to, or nil if it's not proxied.
-        # @return [String]
-        attr_reader :proxied_to
+        resource
+      end
 
-        # The resource for the page this page is proxied to. Throws an exception
-        # if there is no resource.
-        # @return [Sitemap::Resource]
-        def proxied_to_resource
-          proxy_resource = @store.find_resource_by_path(proxied_to)
+      # rubocop:disable AccessorMethodName
+      def get_source_file
+        target_resource.source_file
+      end
 
-          unless proxy_resource
-            raise "Path #{path} proxies to unknown file #{proxied_to}:#{@store.resources.map(&:path)}"
-          end
+      def content_type
+        mime_type = super
+        return mime_type if mime_type
 
-          if proxy_resource.proxy?
-            raise "You can't proxy #{path} to #{proxied_to} which is itself a proxy."
-          end
+        target_resource.content_type
+      end
 
-          proxy_resource
-        end
+      # Whether the Resource is ignored
+      # @return [Boolean]
+      def ignored?
+        return true if @ignored
 
-        # rubocop:disable AccessorMethodName
-        def get_source_file
-          if proxy?
-            proxied_to_resource.source_file
-          else
-            super
-          end
-        end
+        # Ignore based on the source path (without template extensions)
+        return true if @app.sitemap.ignored?(path)
 
-        def content_type
-          mime_type = super
-          return mime_type if mime_type
-
-          if proxy?
-            proxied_to_resource.content_type
-          else
-            nil
-          end
-        end
+        false
       end
     end
   end

@@ -162,8 +162,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
 
     path = path.sub(options[:templates_dir] + '/', '')
 
-    p = ::Middleman::Sitemap::Resource.new(app.sitemap, path)
-    p.proxy_to(source_path)
+    p = ::Middleman::Sitemap::ProxyResource.new(app.sitemap, path, source_path)
     p.add_metadata locals: { lang: lang, page_id: path }, options: { lang: lang }
 
     ::I18n.locale = old_locale

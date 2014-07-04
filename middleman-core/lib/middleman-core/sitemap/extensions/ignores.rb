@@ -58,10 +58,12 @@ module Middleman
         # @return [Boolean]
         def ignored?
           return true if @ignored
+
           # Ignore based on the source path (without template extensions)
           return true if @app.sitemap.ignored?(path)
+
           # This allows files to be ignored by their source file name (with template extensions)
-          !proxy? && @app.sitemap.ignored?(source_file.sub("#{@app.source_dir}/", ''))
+          @app.sitemap.ignored?(source_file.sub("#{@app.source_dir}/", ''))
         end
       end
     end
