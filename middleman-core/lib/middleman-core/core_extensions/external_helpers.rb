@@ -14,16 +14,19 @@ module Middleman
             basename.camelcase
           }, 'Proc implementing the conversion from helper filename to module name'
 
-          # After config
-          app.after_configuration do
-            helpers_path = File.join(root, config[:helpers_dir])
-            next unless File.exist?(helpers_path)
+          # Before config
+          app.before_configuration do
 
-            Dir[File.join(helpers_path, config[:helpers_filename_glob])].each do |filename|
-              module_name = config[:helpers_filename_to_module_name_proc].call(filename)
+            # Watch for changes in the helpers directory
+            files.changed Regexp.new("#{config[:helpers_dir]}/.*\\.rb") do |path|
+              helper_path = File.join(root, path)
+              next unless File.exist?(helper_path)
+
+              module_name = config[:helpers_filename_to_module_name_proc].call(helper_path)
               next unless module_name
 
-              require filename
+              Object.send(:remove_const, module_name.to_sym) if Object.const_defined?(module_name.to_sym)
+              load helper_path
               next unless Object.const_defined?(module_name.to_sym)
 
               helpers Object.const_get(module_name.to_sym)
