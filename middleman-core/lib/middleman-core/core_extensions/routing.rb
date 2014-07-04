@@ -45,8 +45,6 @@ module Middleman
         options = opts.dup
 
         # Default layout
-        # TODO: This seems wrong
-        options[:layout] = @app.config[:layout] if options[:layout].nil?
         metadata = {
           options: options,
           locals: options.delete(:locals) || {},

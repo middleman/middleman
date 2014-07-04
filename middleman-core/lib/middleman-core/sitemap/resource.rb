@@ -136,7 +136,7 @@ module Middleman
       #
       # @return [Boolean]
       def binary?
-        ::Middleman::Util.binary?(source_file)
+        source_file && ::Middleman::Util.binary?(source_file)
       end
     end
   end
