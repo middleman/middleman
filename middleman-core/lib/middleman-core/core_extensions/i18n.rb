@@ -7,9 +7,9 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
   option :mount_at_root, nil, 'Mount a specific language at the root of the site'
   option :data, 'locales', 'The directory holding your locale configurations'
 
-  def initialize(app, options_hash={}, &block)
-    super
+  def_delegator :@app, :logger
 
+  def after_configuration
     # TODO
     # If :directory_indexes is already active,
     # throw a warning explaining the bug and telling the use
@@ -23,10 +23,6 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
 
     app.config.define_setting :locales_dir, 'locales', 'The directory holding your locale configurations'
 
-    app.send :include, LocaleHelpers
-  end
-
-  def after_configuration
     file_watcher.reload_path(app.config[:locales_dir] || options[:data])
 
     @locales_glob = File.join(app.config[:locales_dir] || options[:data], '**', '*.{rb,yml,yaml}')
@@ -51,8 +47,6 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
       ::I18n.t(*args)
     end
   end
-
-  def_delegator :@app, :logger
 
   def langs
     @langs ||= known_languages
@@ -167,13 +161,5 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
 
     ::I18n.locale = old_locale
     p
-  end
-
-  module LocaleHelpers
-    # Access the list of languages supported by this Middleman application
-    # @return [Array<Symbol>]
-    def langs
-      extensions[:i18n].langs
-    end
   end
 end

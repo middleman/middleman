@@ -204,10 +204,10 @@ module Middleman
       # @param [String] path
       # @return [String]
       def strip_away_locale(path)
-        if @app.respond_to? :langs
+        if @app.extensions[:i18n]
           path_bits = path.split('.')
           lang = path_bits.last
-          return path_bits[0..-2].join('.') if @app.langs.include?(lang.to_sym)
+          return path_bits[0..-2].join('.') if @app.extensions[:i18n].langs.include?(lang.to_sym)
         end
 
         path
