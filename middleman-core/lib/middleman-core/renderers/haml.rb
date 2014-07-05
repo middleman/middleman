@@ -37,19 +37,16 @@ module Middleman
     end
 
     # Haml Renderer
-    module Haml
-      mattr_accessor :last_haml_scope
+    class Haml < ::Middleman::Extension
+      cattr_accessor :last_haml_scope
 
-      # Setup extension
-      class << self
-        # Once registered
-        def registered(_)
-          ::Tilt.prefer(::Middleman::Renderers::HamlTemplate, :haml)
+      def initialize(app, options={}, &block)
+        super
 
-          # Add haml helpers to context
-          ::Middleman::TemplateContext.send :include, ::Haml::Helpers
-        end
-        alias_method :included, :registered
+        ::Tilt.prefer(::Middleman::Renderers::HamlTemplate, :haml)
+
+        # Add haml helpers to context
+        ::Middleman::TemplateContext.send :include, ::Haml::Helpers
       end
     end
   end

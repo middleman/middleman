@@ -1,7 +1,7 @@
 module Middleman
   class ExtensionManager
     extend Forwardable
-    def_delegator :"::Middleman::Logger", :singleton, :logger
+    def_delegator :@app, :logger
     def_delegators :@activated, :[]
 
     def initialize(app)
@@ -32,7 +32,13 @@ module Middleman
     # @yield [Middleman::Configuration::ConfigurationManager] Extension options that can be modified before the extension is initialized.
     # @return [void]
     def activate(ext_name, options={}, &block)
-      extension = ::Middleman::Extensions.load(ext_name)
+      begin
+        extension = ::Middleman::Extensions.load(ext_name)
+      rescue LoadError => e
+        logger.debug "== Failed Activation `#{ext_name}` : #{e.message}"
+        return
+      end
+
       logger.debug "== Activating: #{ext_name}"
 
       if extension.supports_multiple_instances?

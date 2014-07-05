@@ -3,17 +3,11 @@ require 'stylus/tilt'
 
 module Middleman
   module Renderers
-    # Sass renderer
-    module Stylus
-      # Setup extension
-      class << self
-        # Once registered
-        def registered(app)
-          # Default stylus options
-          app.config.define_setting :styl, {}, 'Stylus config options'
-        end
+    class Stylus < ::Middleman::Extension
+      def initialize(app, options={}, &block)
+        super
 
-        alias_method :included, :registered
+        app.config.define_setting :styl, {}, 'Stylus config options'
       end
     end
   end

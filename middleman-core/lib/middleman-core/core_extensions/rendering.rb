@@ -1,90 +1,55 @@
 require 'middleman-core/template_context'
 
-# Rendering extension
-module Middleman
-  module CoreExtensions
-    module Rendering
-      # Setup extension
-      class << self
-        # Once registered
-        def included(app)
-          app.define_hook :before_render
-          app.define_hook :after_render
+# ERb Support
+Middleman::Extensions.register :erb_renderer, auto_activate: :before_configuration do
+  require 'middleman-core/renderers/erb'
+  Middleman::Renderers::ERb
+end
 
-          ::Tilt.mappings.delete('html') # WTF, Tilt?
-          ::Tilt.mappings.delete('csv')
+# CoffeeScript Support
+Middleman::Extensions.register :coffee_renderer, auto_activate: :before_configuration do
+  require 'middleman-core/renderers/coffee_script'
+  Middleman::Renderers::CoffeeScript
+end
 
-          require 'active_support/core_ext/string/output_safety'
+# Haml Support
+Middleman::Extensions.register :haml_renderer, auto_activate: :before_configuration do
+  require 'middleman-core/renderers/haml'
+  Middleman::Renderers::Haml
+end
 
-          # Activate custom renderers
-          require 'middleman-core/renderers/erb'
-          app.send :include, Middleman::Renderers::ERb
+# Sass Support
+Middleman::Extensions.register :sass_renderer, auto_activate: :before_configuration do
+  require 'middleman-core/renderers/sass'
+  Middleman::Renderers::Sass
+end
 
-          # CoffeeScript Support
-          begin
-            require 'middleman-core/renderers/coffee_script'
-            app.send :include, Middleman::Renderers::CoffeeScript
-          rescue LoadError
-          end
+# Markdown Support
+Middleman::Extensions.register :markdown_renderer, auto_activate: :before_configuration do
+  require 'middleman-core/renderers/markdown'
+  Middleman::Renderers::Markdown
+end
 
-          # Haml Support
-          begin
-            require 'middleman-core/renderers/haml'
-            app.send :include, Middleman::Renderers::Haml
-          rescue LoadError
-          end
+# Liquid Support
+Middleman::Extensions.register :liquid_renderer, auto_activate: :before_configuration do
+  require 'middleman-core/renderers/liquid'
+  Middleman::Renderers::Liquid
+end
 
-          # Sass Support
-          begin
-            require 'middleman-core/renderers/sass'
-            app.send :include, Middleman::Renderers::Sass
-          rescue LoadError
-          end
+# Slim Support
+Middleman::Extensions.register :slim_renderer, auto_activate: :before_configuration do
+  require 'middleman-core/renderers/slim'
+  Middleman::Renderers::Slim
+end
 
-          # Markdown Support
-          require 'middleman-core/renderers/markdown'
-          app.send :include, Middleman::Renderers::Markdown
+# Less Support
+Middleman::Extensions.register :less_renderer, auto_activate: :before_configuration do
+  require 'middleman-core/renderers/less'
+  Middleman::Renderers::Less
+end
 
-          # Liquid Support
-          begin
-            require 'middleman-core/renderers/liquid'
-            Middleman::Extensions.register :liquid, Middleman::Renderers::Liquid, auto_activate: :before_configuration
-          rescue LoadError
-          end
-
-          # Slim Support
-          begin
-            require 'middleman-core/renderers/slim'
-            app.send :include, Middleman::Renderers::Slim
-          rescue LoadError
-          end
-
-          # Less Support
-          begin
-            require 'middleman-core/renderers/less'
-            app.send :include, Middleman::Renderers::Less
-          rescue LoadError
-          end
-
-          # Stylus Support
-          begin
-            require 'middleman-core/renderers/stylus'
-            app.send :include, Middleman::Renderers::Stylus
-          rescue LoadError
-          end
-
-          # Clean up missing Tilt exts
-          app.after_configuration do
-            Tilt.mappings.each do |key, _|
-              begin
-                Tilt[".#{key}"]
-              rescue LoadError, NameError
-                Tilt.mappings.delete(key)
-              end
-            end
-          end
-        end
-      end
-    end
-  end
+# Stylus Support
+Middleman::Extensions.register :stylus_renderer, auto_activate: :before_configuration do
+  require 'middleman-core/renderers/stylus'
+  Middleman::Renderers::Stylus
 end

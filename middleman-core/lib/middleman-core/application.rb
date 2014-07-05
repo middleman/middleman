@@ -53,6 +53,9 @@ module Middleman
     # Runs after the build is finished
     define_hook :after_build
 
+    define_hook :before_render
+    define_hook :after_render
+
     # Root project directory (overwritten in middleman build/server)
     # @return [String]
     def self.root
@@ -166,9 +169,6 @@ module Middleman
     # Basic Rack Request Handling
     include Middleman::CoreExtensions::Request
 
-    # Setup custom rendering
-    include Middleman::CoreExtensions::Rendering
-
     # Reference to Logger singleton
     def_delegator :"::Middleman::Logger", :singleton, :logger
 
@@ -226,7 +226,7 @@ module Middleman
       if config[:autoload_sprockets]
         begin
           require 'middleman-sprockets'
-          activate :sprockets
+          @extensions.activate :sprockets
         rescue LoadError
           # It's OK if somebody is using middleman-core without middleman-sprockets
         end
@@ -247,6 +247,15 @@ module Middleman
       if ENV['TEST']
         ::I18n.load_path.delete_if { |path| path =~ %r{tmp/aruba} }
         ::I18n.reload!
+      end
+
+      # Clean up missing Tilt exts
+      Tilt.mappings.each do |key, _|
+        begin
+          Tilt[".#{key}"]
+        rescue LoadError, NameError
+          Tilt.mappings.delete(key)
+        end
       end
 
       run_hook :after_configuration

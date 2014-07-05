@@ -1,17 +1,9 @@
 # ERb renderer
 module Middleman
   module Renderers
-    module ERb
-      # Setup extension
-      class << self
-        # once registered
-        def registered(app)
-          # After config
-          app.after_configuration do
-            ::Tilt.prefer(Template, :erb)
-          end
-        end
-        alias_method :included, :registered
+    class ERb < ::Middleman::Extension
+      def after_configuration
+        ::Tilt.prefer(Template, :erb)
       end
 
       class Template < ::Tilt::ErubisTemplate

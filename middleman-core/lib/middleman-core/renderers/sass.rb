@@ -33,33 +33,30 @@ end
 module Middleman
   module Renderers
     # Sass renderer
-    module Sass
+    class Sass < ::Middleman::Extension
       # Setup extension
-      class << self
-        # Once registered
-        def registered(app)
-          opts = { output_style: :nested }
-          opts[:line_comments] = false if ENV['TEST']
+      def initialize(app, options={}, &block)
+        super
 
-          # Default sass options
-          app.config.define_setting :sass, opts, 'Sass engine options'
+        opts = { output_style: :nested }
+        opts[:line_comments] = false if ENV['TEST']
 
-          app.config.define_setting :sass_assets_paths, [], 'Paths to extra SASS/SCSS files'
+        # Default sass options
+        app.config.define_setting :sass, opts, 'Sass engine options'
 
-          # Tell Tilt to use it as well (for inline sass blocks)
-          ::Tilt.register 'sass', SassPlusCSSFilenameTemplate
-          ::Tilt.prefer(SassPlusCSSFilenameTemplate)
+        app.config.define_setting :sass_assets_paths, [], 'Paths to extra SASS/SCSS files'
 
-          # Tell Tilt to use it as well (for inline scss blocks)
-          ::Tilt.register 'scss', ScssPlusCSSFilenameTemplate
-          ::Tilt.prefer(ScssPlusCSSFilenameTemplate)
+        # Tell Tilt to use it as well (for inline sass blocks)
+        ::Tilt.register 'sass', SassPlusCSSFilenameTemplate
+        ::Tilt.prefer(SassPlusCSSFilenameTemplate)
 
-          ::Compass::ImportOnce.activate!
+        # Tell Tilt to use it as well (for inline scss blocks)
+        ::Tilt.register 'scss', ScssPlusCSSFilenameTemplate
+        ::Tilt.prefer(ScssPlusCSSFilenameTemplate)
 
-          require 'middleman-core/renderers/sass_functions'
-        end
+        ::Compass::ImportOnce.activate!
 
-        alias_method :included, :registered
+        require 'middleman-core/renderers/sass_functions'
       end
 
       # A SassTemplate for Tilt which outputs debug messages

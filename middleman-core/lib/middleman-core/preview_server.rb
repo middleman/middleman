@@ -94,6 +94,12 @@ module Middleman
 
       def new_app
         opts = @options.dup
+
+        ::Middleman::Logger.singleton(
+          opts[:debug] ? 0 : 1,
+          opts[:instrumenting] || false
+        )
+
         server = ::Middleman::Application.server
 
         # Add in the meta pages application
@@ -103,11 +109,6 @@ module Middleman
         end
 
         @app = server.inst do
-          ::Middleman::Logger.singleton(
-            opts[:debug] ? 0 : 1,
-            opts[:instrumenting] || false
-          )
-
           config[:environment] = opts[:environment].to_sym if opts[:environment]
         end
       end

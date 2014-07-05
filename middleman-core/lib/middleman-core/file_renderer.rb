@@ -1,6 +1,9 @@
 require 'tilt'
 require 'active_support/core_ext/string/output_safety'
 
+::Tilt.mappings.delete('html') # WTF, Tilt?
+::Tilt.mappings.delete('csv')
+
 module Middleman
   class FileRenderer
     extend Forwardable

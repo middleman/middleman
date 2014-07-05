@@ -18,32 +18,27 @@ end
 module Middleman
   module Renderers
     # Slim renderer
-    module Slim
+    class Slim < ::Middleman::Extension
       # Setup extension
-      class << self
-        # Once registered
-        def registered(app)
-          # Setup Slim options to work with partials
-          ::Slim::Engine.set_default_options(
-            buffer: '@_out_buf',
-            use_html_safe: true,
-            generator: ::Temple::Generators::RailsOutputBuffer,
-            disable_escape: true
-          )
+      def initialize(_app, _options={}, &_block)
+        # Setup Slim options to work with partials
+        ::Slim::Engine.set_default_options(
+          buffer: '@_out_buf',
+          use_html_safe: true,
+          generator: ::Temple::Generators::RailsOutputBuffer,
+          disable_escape: true
+        )
+      end
 
-          app.after_configuration do
-            context_hack = {
-              context: template_context_class.new(self)
-            }
+      def after_configuration
+        context_hack = {
+          context: app.template_context_class.new(self)
+        }
 
-            ::Slim::Embedded::SassEngine.disable_option_validator!
-            %w(sass scss markdown).each do |engine|
-              ::Slim::Embedded.default_options[engine.to_sym] = context_hack
-            end
-          end
+        ::Slim::Embedded::SassEngine.disable_option_validator!
+        %w(sass scss markdown).each do |engine|
+          ::Slim::Embedded.default_options[engine.to_sym] = context_hack
         end
-
-        alias_method :included, :registered
       end
     end
   end
