@@ -17,9 +17,9 @@ module Middleman
         @middleman = middleman
 
         meta_pages = self
-        @rack_app = Rack::Builder.new do
+        @rack_app = ::Rack::Builder.new do
           # Serve assets from metadata/assets
-          use Rack::Static, urls: ['/assets'], root: File.join(File.dirname(__FILE__), 'meta_pages')
+          use ::Rack::Static, urls: ['/assets'], root: File.join(File.dirname(__FILE__), 'meta_pages')
 
           map '/' do
             run meta_pages.method(:index)
@@ -46,7 +46,7 @@ module Middleman
 
       # Inspect the sitemap
       def sitemap(_)
-        resources = @middleman.inst.sitemap.resources(true)
+        resources = @middleman.sitemap.resources(true)
 
         sitemap_tree = SitemapTree.new
 
@@ -59,10 +59,10 @@ module Middleman
 
       # Inspect configuration
       def config(_)
-        global_config = @middleman.inst.config.all_settings.map { |c| ConfigSetting.new(c) }
+        global_config = @middleman.config.all_settings.map { |c| ConfigSetting.new(c) }
         extension_config = {}
 
-        @middleman.inst.extensions.each do |ext_name, extension|
+        @middleman.extensions.each do |ext_name, extension|
           next if ::Middleman::Extension.auto_activated.include? ext_name
 
           if extension.is_a?(Hash)

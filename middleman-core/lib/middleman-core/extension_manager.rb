@@ -1,6 +1,7 @@
 module Middleman
   class ExtensionManager
     extend Forwardable
+
     def_delegator :@app, :logger
     def_delegators :@activated, :[]
 
@@ -44,11 +45,11 @@ module Middleman
       if extension.supports_multiple_instances?
         @activated[ext_name] ||= {}
         key = "instance_#{@activated[ext_name].keys.length}"
-        @activated[ext_name][key] = extension.new(@app.class, options, &block)
+        @activated[ext_name][key] = extension.new(@app, options, &block)
       elsif @activated.key?(ext_name)
         raise "#{ext_name} has already been activated and cannot be re-activated."
       else
-        @activated[ext_name] = extension.new(@app.class, options, &block)
+        @activated[ext_name] = extension.new(@app, options, &block)
       end
     end
 

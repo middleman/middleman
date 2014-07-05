@@ -1,3 +1,5 @@
+require 'rack/mime'
+
 module Middleman
   class ConfigContext
     extend Forwardable
@@ -86,6 +88,16 @@ module Middleman
     def set(key, default=nil, &block)
       config.define_setting(key, default) unless config.defines_setting?(key)
       @app.config[key] = block_given? ? block : default
+    end
+
+    # Add a new mime-type for a specific extension
+    #
+    # @param [Symbol] type File extension
+    # @param [String] value Mime type
+    # @return [void]
+    def mime_type(type, value)
+      type = ".#{type}" unless type.to_s[0] == '.'
+      ::Rack::Mime::MIME_TYPES[type] = value
     end
   end
 end

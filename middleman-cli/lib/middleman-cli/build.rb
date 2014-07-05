@@ -53,6 +53,7 @@ module Middleman::Cli
 
       require 'middleman-core'
       require 'middleman-core/logger'
+      require 'middleman-core/rack'
 
       require 'rack'
       require 'rack/mock'
@@ -66,7 +67,7 @@ module Middleman::Cli
       verbose = options['verbose'] ? 0 : 1
       instrument = options['instrument']
 
-      app = ::Middleman::Application.server.inst do
+      app = ::Middleman::Application.new do
         config[:mode] = :build
         config[:environment] = env
         ::Middleman::Logger.singleton(verbose, instrument)
@@ -118,7 +119,8 @@ module Middleman::Cli
       @to_clean   = Set.new
 
       @logger = @app.logger
-      @rack = ::Rack::MockRequest.new(@app.class.to_rack_app)
+      rack_app = ::Middleman::Rack.new(@app).to_app
+      @rack = ::Rack::MockRequest.new(rack_app)
 
       super(base, @build_dir, config)
     end

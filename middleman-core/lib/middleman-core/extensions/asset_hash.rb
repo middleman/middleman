@@ -45,7 +45,10 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
   # Update the main sitemap resource list
   # @return [void]
   def manipulate_resource_list(resources)
-    @rack_client = ::Rack::MockRequest.new(app.class.to_rack_app)
+    @rack_client ||= begin
+      rack_app = ::Middleman::Rack.new(app).to_app
+      ::Rack::MockRequest.new(rack_app)
+    end
 
     # Process resources in order: binary images and fonts, then SVG, then JS/CSS.
     # This is so by the time we get around to the text files (which may reference

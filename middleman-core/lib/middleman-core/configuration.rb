@@ -1,21 +1,5 @@
 module Middleman
   module Configuration
-    # Access to a global configuration manager for the whole Middleman project,
-    # plus backwards compatibility mechanisms for older Middleman projects.
-    module Global
-      def self.included(app)
-        app.send :extend, ClassMethods
-        app.send :def_delegator, :"self.class", :config
-      end
-
-      module ClassMethods
-        # Global configuration for the whole Middleman project.
-        # @return [ConfigurationManager]
-        def config
-          @_config ||= ConfigurationManager.new
-        end
-      end
-    end
 
     # A class that manages a collection of documented settings.
     # Can be used by extensions as well as the main Middleman
