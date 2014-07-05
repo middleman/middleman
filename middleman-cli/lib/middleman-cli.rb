@@ -32,6 +32,8 @@ module Middleman
         say "Middleman #{Middleman::VERSION}"
       end
 
+      desc 'help', 'Show help'
+
       # Override the Thor help method to find help for subtasks
       # @param [Symbol, String, nil] meth
       # @param [Boolean] subcommand
@@ -92,3 +94,4 @@ require 'middleman-cli/extension'
 require 'middleman-cli/server'
 require 'middleman-cli/build'
 require 'middleman-cli/console'
+require 'middleman-cli/git'
