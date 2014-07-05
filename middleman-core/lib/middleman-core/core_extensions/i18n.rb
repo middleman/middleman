@@ -52,7 +52,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
     end
   end
 
-  delegate :logger, to: :app
+  def_delegator :@app, :logger
 
   def langs
     @langs ||= known_languages

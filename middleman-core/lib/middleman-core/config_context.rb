@@ -1,9 +1,11 @@
 module Middleman
   class ConfigContext
+    extend Forwardable
+
     attr_reader :app
 
     # Whitelist methods that can reach out.
-    delegate :config, :logger, :activate, :use, :map, :mime_type, :data, :files, :root, to: :app
+    def_delegators :@app, :config, :logger, :activate, :use, :map, :mime_type, :data, :files, :root
 
     def initialize(app, template_context_class)
       @app = app

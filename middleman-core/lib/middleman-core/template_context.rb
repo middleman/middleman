@@ -11,6 +11,8 @@ module Middleman
   # A new context is created for each render of a path, but that context is shared through
   # the request, passed from template, to layouts and partials.
   class TemplateContext
+    extend Forwardable
+
     # Allow templates to directly access the current app instance.
     # @return [Middleman::Application]
     attr_reader :app
@@ -19,7 +21,7 @@ module Middleman
     attr_accessor :current_engine
 
     # Shorthand references to global values on the app instance.
-    delegate :config, :logger, :sitemap, :server?, :build?, :environment?, :data, :extensions, :source_dir, :root, to: :app
+    def_delegators :@app, :config, :logger, :sitemap, :server?, :build?, :environment?, :data, :extensions, :source_dir, :root
 
     # Initialize a context with the current app and predefined locals and options hashes.
     #
@@ -154,7 +156,7 @@ module Middleman
       file_renderer = ::Middleman::FileRenderer.new(@app, path)
       file_renderer.render(locs, opts, self, &block)
     end
-  
+
     def current_path
       @locs[:current_path]
     end

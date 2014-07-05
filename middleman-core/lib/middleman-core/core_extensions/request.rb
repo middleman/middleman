@@ -146,8 +146,9 @@ module Middleman
 
       # Methods to be mixed-in to Middleman::Application
       module InstanceMethods
-        delegate :use, to: :"self.class"
-        delegate :map, to: :"self.class"
+        def self.included(app)
+          app.send :def_delegators, :"self.class", :use, :map
+        end
 
         def call(env)
           dup.call!(env)

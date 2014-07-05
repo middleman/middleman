@@ -8,8 +8,10 @@ module Middleman
     DEFAULT_PORT = 4567
 
     class << self
+      extend Forwardable
+
       attr_reader :app, :host, :port
-      delegate :logger, to: :app
+      def_delegator :app, :logger
 
       # Start an instance of Middleman::Application
       # @return [void]

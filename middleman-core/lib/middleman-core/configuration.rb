@@ -5,7 +5,7 @@ module Middleman
     module Global
       def self.included(app)
         app.send :extend, ClassMethods
-        app.send :delegate, :config, to: :"self.class"
+        app.send :def_delegator, :"self.class", :config
       end
 
       module ClassMethods

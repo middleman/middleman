@@ -3,11 +3,13 @@ require 'active_support/core_ext/string/output_safety'
 
 module Middleman
   class FileRenderer
+    extend Forwardable
+
     def self.cache
       @_cache ||= ::Tilt::Cache.new
     end
 
-    delegate :cache, to: :"self.class"
+    def_delegator :"self.class", :cache
 
     def initialize(app, path)
       @app = app

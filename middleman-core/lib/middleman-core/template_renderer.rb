@@ -5,11 +5,13 @@ require 'middleman-core/file_renderer'
 
 module Middleman
   class TemplateRenderer
+    extend Forwardable
+
     def self.cache
       @_cache ||= ::Tilt::Cache.new
     end
 
-    delegate :cache, to: :"self.class"
+    def_delegator :"self.class", :cache
 
     # Custom error class for handling
     class TemplateNotFound < RuntimeError; end

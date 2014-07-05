@@ -33,6 +33,8 @@ require 'middleman-core/core_extensions/extensions'
 # Core Middleman Class
 module Middleman
   class Application
+    extend Forwardable
+
     # Global configuration
     include Configuration::Global
 
@@ -57,13 +59,13 @@ module Middleman
     def self.root
       ENV['MM_ROOT'] || Dir.pwd
     end
-    delegate :root, to: :"self.class"
+    def_delegator :"self.class", :root
 
     # Pathname-addressed root
     def self.root_path
       Pathname(root)
     end
-    delegate :root_path, to: :"self.class"
+    def_delegator :"self.class", :root_path
 
     # Name of the source directory
     # @return [String]
@@ -180,7 +182,7 @@ module Middleman
     attr_reader :template_context_class
 
     attr_reader :generic_template_context
-    delegate :link_to, :image_tag, :asset_path, to: :generic_template_context
+    def_delegators :@generic_template_context, :link_to, :image_tag, :asset_path
 
     # Initialize the Middleman project
     def initialize
@@ -242,7 +244,7 @@ module Middleman
       File.join(root, config[:source])
     end
 
-    delegate :instrument, to: ::Middleman::Util
+    def_delegator ::Middleman::Util, :instrument
 
     # Work around this bug: http://bugs.ruby-lang.org/issues/4521
     # where Ruby will call to_s/inspect while printing exception
@@ -256,8 +258,6 @@ module Middleman
     # Hooks clones _hooks from the class to the instance.
     # https://github.com/apotonick/hooks/blob/master/lib/hooks/instance_hooks.rb#L10
     # Middleman expects the same list of hooks for class and instance hooks:
-    def _hooks
-      self.class._hooks
-    end
+    def_delegator :"self.class", :_hooks
   end
 end

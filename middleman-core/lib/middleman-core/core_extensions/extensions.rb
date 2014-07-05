@@ -16,7 +16,7 @@ module Middleman
         app.config[:autoload_sprockets] = (ENV['AUTOLOAD_SPROCKETS'] == 'true') if ENV['AUTOLOAD_SPROCKETS']
 
         app.extend ClassMethods
-        app.delegate :configure, to: :"self.class"
+        app.def_delegator :"self.class", :configure
       end
 
       module ClassMethods

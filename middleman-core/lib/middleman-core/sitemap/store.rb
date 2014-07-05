@@ -54,7 +54,7 @@ module Middleman
           register_resource_list_manipulator(k, m)
         end
 
-        @app.config_context.class.send :delegate, :sitemap, to: :app
+        @app.config_context.class.send :def_delegator, :app, :sitemap
       end
 
       # Register an object which can transform the sitemap resource list. Best to register

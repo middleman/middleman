@@ -53,9 +53,12 @@ module Middleman
 
       # Core File Change API class
       class API
+        extend Forwardable
+
         attr_reader :app
         attr_reader :known_paths
-        delegate :logger, to: :app
+
+        def_delegator :@app, :logger
 
         # Initialize api and internal path cache
         def initialize(app)

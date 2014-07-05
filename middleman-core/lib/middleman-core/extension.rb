@@ -1,4 +1,3 @@
-require 'active_support/core_ext/module/delegation'
 require 'active_support/core_ext/class/attribute'
 require 'middleman-core/configuration'
 
@@ -65,6 +64,8 @@ module Middleman
   #
   # @see http://middlemanapp.com/advanced/custom/ Middleman Custom Extensions Documentation
   class Extension
+    extend Forwardable
+
     # @!attribute supports_multiple_instances
     #   @!scope class
     #   @return [Boolean] whether or not an extension can be activated multiple times, generating multiple instances of the extension.
@@ -175,7 +176,7 @@ module Middleman
     #   @param [Symbol] name The name the extension was registered under
     #   @param [Proc] block A callback to run when the named extension is activated
     #   @return [void]
-    delegate :after_extension_activated, to: :"::Middleman::Extension"
+    def_delegator :"::Middleman::Extension", :after_extension_activated
 
     # Extensions are instantiated when they are activated.
     # @param [Class] klass The Middleman::Application class
