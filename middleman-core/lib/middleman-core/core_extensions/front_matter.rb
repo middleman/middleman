@@ -27,9 +27,8 @@ module Middleman::CoreExtensions
     end
 
     def before_configuration
-      ext = self
-      app.files.changed { |file| ext.clear_data(file) }
-      app.files.deleted { |file| ext.clear_data(file) }
+      file_watcher.changed(&method(:clear_data))
+      file_watcher.deleted(&method(:clear_data))
     end
 
     # Modify each resource to add data & options from frontmatter.
@@ -74,7 +73,7 @@ module Middleman::CoreExtensions
       @cache[p] ||= begin
         data, content = frontmatter_and_content(p)
 
-        if app.files.exists?("#{path}.frontmatter")
+        if file_watcher.exists?("#{path}.frontmatter")
           external_data, _ = frontmatter_and_content("#{p}.frontmatter")
           data = external_data.deep_merge(data)
         end
@@ -155,7 +154,7 @@ module Middleman::CoreExtensions
 
       data = {}
 
-      return [data, nil] if !app.files.exists?(full_path) || ::Middleman::Util.binary?(full_path)
+      return [data, nil] if !file_watcher.exists?(full_path) || ::Middleman::Util.binary?(full_path)
 
       content = File.read(full_path)
 

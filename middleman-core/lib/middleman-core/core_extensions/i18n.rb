@@ -27,7 +27,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
   end
 
   def after_configuration
-    app.files.reload_path(app.config[:locales_dir] || options[:data])
+    file_watcher.reload_path(app.config[:locales_dir] || options[:data])
 
     @locales_glob = File.join(app.config[:locales_dir] || options[:data], '**', '*.{rb,yml,yaml}')
     @locales_regex = convert_glob_to_regex(@locales_glob)
@@ -42,8 +42,8 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
     # Don't output localizable files
     app.ignore File.join(options[:templates_dir], '**')
 
-    app.files.changed(&method(:on_file_changed))
-    app.files.deleted(&method(:on_file_changed))
+    file_watcher.changed(&method(:on_file_changed))
+    file_watcher.deleted(&method(:on_file_changed))
   end
 
   helpers do
@@ -118,7 +118,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
     if options[:langs]
       Array(options[:langs]).map(&:to_sym)
     else
-      known_langs = app.files.known_paths.select do |p|
+      known_langs = file_watcher.known_paths.select do |p|
         p.to_s.match(@locales_regex) && (p.to_s.split(File::SEPARATOR).length == 2)
       end
 

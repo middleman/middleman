@@ -1,3 +1,9 @@
+# File Change Notifier
+Middleman::Extensions.register :file_watcher, auto_activate: :before_sitemap do
+  require 'middleman-core/core_extensions/file_watcher'
+  Middleman::CoreExtensions::FileWatcher
+end
+
 # Parse YAML from templates
 Middleman::Extensions.register :front_matter, auto_activate: :before_sitemap do
   require 'middleman-core/core_extensions/front_matter'
@@ -15,12 +21,6 @@ end
 Middleman::Extensions.register :show_exceptions, auto_activate: :before_configuration, modes: [:server] do
   require 'middleman-core/core_extensions/show_exceptions'
   Middleman::CoreExtensions::ShowExceptions
-end
-
-# File Change Notifier
-Middleman::Extensions.register :file_watcher, auto_activate: :before_sitemap do
-  require 'middleman-core/core_extensions/file_watcher'
-  Middleman::CoreExtensions::FileWatcher
 end
 
 # External helpers looks in the helpers/ folder for helper modules

@@ -24,31 +24,19 @@ module Middleman
         /^tmp\//
       ]
 
-      def initialize(app, options_hash={}, &block)
-        super
-
-        app.config.define_setting :file_watcher_ignore, IGNORE_LIST, 'Regexes for paths that should be ignored when they change.'
-
-        # Directly include the #files method instead of using helpers so that this is available immediately
-        app.send :include, InstanceMethods
-      end
+      attr_reader :api
 
       # Before parsing config, load the data/ directory
       def before_configuration
-        app.files.reload_path(app.config[:data_dir])
+        app.config.define_setting :file_watcher_ignore, IGNORE_LIST, 'Regexes for paths that should be ignored when they change.'
+
+        @api = API.new(app)
+        app.add_to_config_context :files, &method(:api)
       end
 
       def after_configuration
         app.config[:file_watcher_ignore] << %r{^#{app.config[:build_dir]}(\/|$)}
-        app.files.reload_path('.')
-      end
-
-      module InstanceMethods
-        # Access the file api
-        # @return [Middleman::CoreExtensions::FileWatcher::API]
-        def files
-          @files_api ||= API.new(self)
-        end
+        @api.reload_path('.')
       end
 
       # Core File Change API class

@@ -17,12 +17,12 @@ module Middleman
 
           @app.before_configuration do
             # Register file change callback
-            files.changed do |file|
+            extensions[:file_watcher].api.changed do |file|
               scoped_self.touch_file(file)
             end
 
             # Register file delete callback
-            files.deleted do |file|
+            extensions[:file_watcher].api.deleted do |file|
               scoped_self.remove_file(file)
             end
           end

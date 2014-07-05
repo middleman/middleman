@@ -6,30 +6,23 @@ module Middleman
     # The data extension parses YAML and JSON files in the `data/` directory
     # and makes them available to `config.rb`, templates and extensions
     class Data < Extension
-      # The regex which tells Middleman which files are for data
-      MATCHER = /[\w-]+\.(yml|yaml|json)$/
-
       attr_reader :data_store
 
-      def initialize(app, options_hash={}, &block)
-        super
-
-        @data_store = DataStore.new(app)
-      end
-
       def before_configuration
+        @data_store = DataStore.new(app)
         app.config.define_setting :data_dir, 'data', 'The directory data files are stored in'
+
         app.add_to_config_context :data, &method(:data_store)
+
+        # The regex which tells Middleman which files are for data
+        data_file_matcher = /#{app.config[:data_dir]}\/(.*?)[\w-]+\.(yml|yaml|json)$/
 
         # Setup data files before anything else so they are available when
         # parsing config.rb
-        app.files.changed MATCHER do |file|
-          extensions[:data].data_store.touch_file(file) if file.start_with?("#{config[:data_dir]}/")
-        end
+        file_watcher.changed(data_file_matcher, &app.extensions[:data].data_store.method(:touch_file))
+        file_watcher.deleted(data_file_matcher, &app.extensions[:data].data_store.method(:remove_file))
 
-        app.files.deleted MATCHER do |file|
-          extensions[:data].data_store.remove_file(file) if file.start_with?("#{config[:data_dir]}/")
-        end
+        file_watcher.reload_path(app.config[:data_dir])
       end
 
       helpers do

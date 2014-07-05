@@ -178,6 +178,8 @@ module Middleman
     #   @return [void]
     def_delegator :"::Middleman::Extension", :after_extension_activated
 
+    def_delegator :"@app.extensions[:file_watcher]", :api, :file_watcher
+
     # Extensions are instantiated when they are activated.
     # @param [Class] klass The Middleman::Application class
     # @param [Hash] options_hash The raw options hash. Subclasses should not manipulate this directly - it will be turned into {#options}.
