@@ -18,6 +18,8 @@ require 'middleman-core/logger'
 require 'middleman-core/sitemap/store'
 
 require 'middleman-core/configuration'
+
+require 'middleman-core/extension_manager'
 require 'middleman-core/core_extensions'
 
 require 'middleman-core/config_context'
@@ -26,9 +28,6 @@ require 'middleman-core/template_renderer'
 
 # Rack Request
 require 'middleman-core/core_extensions/request'
-
-# Custom Extension API and config.rb handling
-require 'middleman-core/core_extensions/extensions'
 
 # Core Middleman Class
 module Middleman
@@ -156,8 +155,13 @@ module Middleman
       }
     }, 'Callbacks that can exclude paths from the sitemap'
 
-    # Activate custom features and extensions
-    include Middleman::CoreExtensions::Extensions
+    define_hook :initialized
+    define_hook :instance_available
+    define_hook :after_configuration
+    define_hook :before_configuration
+
+    config.define_setting :autoload_sprockets, true, 'Automatically load sprockets at startup?'
+    config[:autoload_sprockets] = (ENV['AUTOLOAD_SPROCKETS'] == 'true') if ENV['AUTOLOAD_SPROCKETS']
 
     # Basic Rack Request Handling
     include Middleman::CoreExtensions::Request
@@ -166,9 +170,7 @@ module Middleman
     include Middleman::CoreExtensions::Rendering
 
     # Reference to Logger singleton
-    def logger
-      ::Middleman::Logger.singleton
-    end
+    def_delegator :"::Middleman::Logger", :singleton, :logger
 
     # New container for config.rb commands
     attr_reader :config_context
@@ -181,11 +183,19 @@ module Middleman
 
     attr_reader :template_context_class
 
+    # Hack to get a sandboxed copy of these helpers for overriding similar methods inside Markdown renderers.
     attr_reader :generic_template_context
     def_delegators :@generic_template_context, :link_to, :image_tag, :asset_path
 
+    attr_reader :extensions
+
     # Initialize the Middleman project
-    def initialize
+    def initialize(&block)
+      self.class.inst = self
+
+      # Search the root of the project for required files
+      $LOAD_PATH.unshift(root) unless $LOAD_PATH.include?(root)
+
       @template_context_class = Class.new(Middleman::TemplateContext)
       @generic_template_context = @template_context_class.new(self)
       @config_context = ConfigContext.new(self, @template_context_class)
@@ -196,7 +206,8 @@ module Middleman
       # Setup the default values from calls to set before initialization
       self.class.config.load_settings(self.class.superclass.config.all_settings)
 
-      ::Middleman::Extensions.auto_activate(:before_sitemap, self)
+      @extensions = ::Middleman::ExtensionManager.new(self)
+      @extensions.auto_activate(:before_sitemap)
 
       # Initialize the Sitemap
       @sitemap = ::Middleman::Sitemap::Store.new(self)
@@ -208,7 +219,60 @@ module Middleman
 
       config[:source] = ENV['MM_SOURCE'] if ENV['MM_SOURCE']
 
-      super
+      ::Middleman::Extension.clear_after_extension_callbacks
+
+      @extensions.auto_activate(:before_configuration)
+
+      if config[:autoload_sprockets]
+        begin
+          require 'middleman-sprockets'
+          activate :sprockets
+        rescue LoadError
+          # It's OK if somebody is using middleman-core without middleman-sprockets
+        end
+      end
+
+      run_hook :initialized
+
+      run_hook :before_configuration
+
+      evaluate_configuration(&block)
+
+      run_hook :instance_available
+
+      # This is for making the tests work - since the tests
+      # don't completely reload middleman, I18n.load_path can get
+      # polluted with paths from other test app directories that don't
+      # exist anymore.
+      if ENV['TEST']
+        ::I18n.load_path.delete_if { |path| path =~ %r{tmp/aruba} }
+        ::I18n.reload!
+      end
+
+      run_hook :after_configuration
+      config_context.execute_after_configuration_callbacks
+
+      @extensions.activate_all
+    end
+
+    def evaluate_configuration(&block)
+      # Evaluate a passed block if given
+      config_context.instance_exec(&block) if block_given?
+
+      # Check for and evaluate local configuration in `config.rb`
+      local_config = File.join(root, 'config.rb')
+      if File.exist? local_config
+        logger.debug '== Reading: Local config'
+        config_context.instance_eval File.read(local_config), local_config, 1
+      end
+
+      env_config = File.join(root, 'environments', "#{config[:environment]}.rb")
+      if File.exist? env_config
+        logger.debug "== Reading: #{config[:environment]} config"
+        config_context.instance_eval File.read(env_config), env_config, 1
+      end
+
+      config_context.execute_configure_callbacks(config[:environment])
     end
 
     def add_to_instance(name, &func)

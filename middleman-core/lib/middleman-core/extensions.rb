@@ -116,7 +116,7 @@ module Middleman
         @auto_activate[group].each do |descriptor|
           next unless descriptor[:modes] == :all || descriptor[:modes].include?(app.config[:mode])
 
-          app.activate descriptor[:name]
+          app.extensions.activate descriptor[:name]
         end
       end
     end
