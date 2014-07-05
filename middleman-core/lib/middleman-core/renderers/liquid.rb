@@ -11,11 +11,13 @@ module Middleman
       end
 
       def manipulate_resource_list(resources)
+        return resources unless app.extensions[:data]
+
         resources.each do |resource|
           next unless resource.source_file =~ %r{\.liquid$}
 
           # Convert data object into a hash for liquid
-          resource.add_metadata locals: { data: app.data.to_h }
+          resource.add_metadata locals: { data: app.extensions[:data].data_store.to_h }
         end
       end
     end

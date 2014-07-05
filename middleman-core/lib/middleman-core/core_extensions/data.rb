@@ -9,32 +9,32 @@ module Middleman
       # The regex which tells Middleman which files are for data
       MATCHER = /[\w-]+\.(yml|yaml|json)$/
 
+      attr_reader :data_store
+
       def initialize(app, options_hash={}, &block)
         super
-        app.config.define_setting :data_dir, 'data', 'The directory data files are stored in'
 
-        # Directly include the #data method instead of using helpers so that this is available immediately
-        app.send :include, InstanceMethods
+        @data_store = DataStore.new(app)
       end
 
       def before_configuration
+        app.config.define_setting :data_dir, 'data', 'The directory data files are stored in'
+        app.add_to_config_context :data, &method(:data_store)
+
         # Setup data files before anything else so they are available when
         # parsing config.rb
         app.files.changed MATCHER do |file|
-          data.touch_file(file) if file.start_with?("#{config[:data_dir]}/")
+          extensions[:data].data_store.touch_file(file) if file.start_with?("#{config[:data_dir]}/")
         end
 
         app.files.deleted MATCHER do |file|
-          data.remove_file(file) if file.start_with?("#{config[:data_dir]}/")
+          extensions[:data].data_store.remove_file(file) if file.start_with?("#{config[:data_dir]}/")
         end
       end
 
-      module InstanceMethods
-        # The data object
-        #
-        # @return [DataStore]
+      helpers do
         def data
-          @_data ||= DataStore.new(self)
+          extensions[:data].data_store
         end
       end
 
