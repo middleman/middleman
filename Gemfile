@@ -1,39 +1,37 @@
 source 'https://rubygems.org'
 
 # Build and doc tools
-gem 'rake',     '~> 10.0.3', require: false
-gem 'yard',     '~> 0.8.0', require: false
+gem 'rake', '~> 10.3', require: false
+gem 'yard', '~> 0.8', require: false
 
 # Test tools
-gem 'cucumber', '~> 1.3.1'
-gem 'fivemat',  '~> 1.2.1'
-gem 'aruba',    '~> 0.5.1'
-gem 'rspec',    '~> 2.12'
-gem 'simplecov'
+gem 'pry', '~> 0.10', group: :development
+gem 'aruba', '~> 0.6'
+gem 'rspec', '~> 3.0'
+gem 'fivemat', '~> 1.3'
+gem 'cucumber', '~> 1.3'
 
 # Optional middleman dependencies, included for tests
-gem 'sinatra', require: false
-gem 'slim', require: false
-gem 'liquid', require: false
-gem 'less', '~> 2.3.0', require: false
-gem 'stylus', require: false
-gem 'redcarpet', '~> 3.1', require: false
-gem 'asciidoctor', require: false
+gem 'less', '2.3.0', require: false
+gem 'slim', '~> 2.0', require: false
+gem 'liquid', '~> 2.6', require: false
+gem 'stylus', '~> 1.0', require: false
+gem 'sinatra','~> 1.4', require: false
+gem 'asciidoctor', '~> 0.1', require: false
 
-platforms :ruby do
-  gem 'therubyracer'
-  gem 'pry', require: false, group: :development
-end
+# For less, since it doesn't use ExecJS (which also means less wont work on windows)
+gem 'therubyracer', platforms: :ruby
+gem 'therubyrhino', platforms: :jruby
 
-platforms :jruby do
-  gem 'therubyrhino'
-end
+# Redcarpet doesn't work on JRuby
+gem 'redcarpet', '~> 3.1', require: false unless RUBY_ENGINE == 'jruby'
 
 # Code Quality
-gem 'coveralls', require: false
-gem 'rubocop', require: false
+gem 'rubocop', '~> 0.24', require: false
+gem 'simplecov', '0.7.1', require: false
+gem 'coveralls', '~> 0.7', require: false
 
 # Middleman itself
+gem 'middleman', path: 'middleman'
 gem 'middleman-core', path: 'middleman-core'
 gem 'middleman-sprockets', github: 'middleman/middleman-sprockets'
-gem 'middleman', path: 'middleman'
