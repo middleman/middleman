@@ -154,5 +154,17 @@ module Middleman
       file_renderer = ::Middleman::FileRenderer.new(@app, path)
       file_renderer.render(locs, opts, self, &block)
     end
+  
+    def current_path
+      @locs[:current_path]
+    end
+
+    # Get the resource object for the current path
+    # @return [Middleman::Sitemap::Resource]
+    def current_resource
+      return nil unless current_path
+      sitemap.find_resource_by_destination_path(current_path)
+    end
+    alias_method :current_page, :current_resource
   end
 end

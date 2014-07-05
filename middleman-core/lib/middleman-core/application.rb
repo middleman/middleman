@@ -15,7 +15,6 @@ require 'hooks'
 # Our custom logger
 require 'middleman-core/logger'
 
-require 'middleman-core/sitemap'
 require 'middleman-core/sitemap/store'
 
 require 'middleman-core/configuration'
@@ -134,6 +133,27 @@ module Middleman
     # @return [Boolean]
     config.define_setting :protect_from_csrf, false, 'Should Padrino include CRSF tag'
 
+    # Set to automatically convert some characters into a directory
+    config.define_setting :automatic_directory_matcher, nil, 'Set to automatically convert some characters into a directory'
+
+    # Setup callbacks which can exclude paths from the sitemap
+    config.define_setting :ignored_sitemap_matchers, {
+      # dotfiles and folders in the root
+      root_dotfiles: proc { |file| file.start_with?('.') },
+
+      # Files starting with an dot, but not .htaccess
+      source_dotfiles: proc { |file|
+        file =~ %r{/\.} && file !~ %r{/\.(htaccess|htpasswd|nojekyll)}
+      },
+
+      # Files starting with an underscore, but not a double-underscore
+      partials: proc { |file| file =~ %r{/_[^_]} },
+
+      layout: proc { |file, sitemap_app|
+        file.start_with?(File.join(sitemap_app.config[:source], 'layout.')) || file.start_with?(File.join(sitemap_app.config[:source], 'layouts/'))
+      }
+    }, 'Callbacks that can exclude paths from the sitemap'
+
     # Activate custom features and extensions
     include Middleman::CoreExtensions::Extensions
 
@@ -142,9 +162,6 @@ module Middleman
 
     # Setup custom rendering
     include Middleman::CoreExtensions::Rendering
-
-    # Sitemap Config options and public api
-    include Middleman::Sitemap
 
     # Reference to Logger singleton
     def logger
