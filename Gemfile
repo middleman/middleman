@@ -1,13 +1,13 @@
 source 'https://rubygems.org'
 
 # Build and doc tools
-gem 'rake', '~> 10.0.3', require: false
+gem 'rake', '~> 10.3.2', require: false
 gem 'yard', '~> 0.8.0', require: false
 
 # Test tools
 gem 'cucumber', '~> 1.3.15'
 gem 'fivemat', '~> 1.3.1'
-gem 'aruba', '~> 0.5.4'
+gem 'aruba', '~> 0.6.0'
 gem 'rspec', '~> 3.0'
 gem 'simplecov'
 
