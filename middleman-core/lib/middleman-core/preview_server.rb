@@ -127,7 +127,7 @@ module Middleman
 
           # See if the changed file is config.rb or lib/*.rb
           if needs_to_reload?(added_and_modified + removed)
-            @mm_reload = true
+            $mm_reload = true
             @webrick.stop
           else
             added_and_modified.each do |path|
@@ -213,9 +213,10 @@ module Middleman
       # @return [Boolean] Whether the server needs to reload
       def needs_to_reload?(paths)
         match_against = [
-          %r{^config\.rb},
-          %r{^lib/[^\.](.*)\.rb$},
-          %r{^helpers/[^\.](.*)\.rb$}
+          %r{^/config\.rb},
+          %r{^/environments/[^\.](.*)\.rb$},
+          %r{^/lib/[^\.](.*)\.rb$},
+          %r{^/#{@app.config[:helpers_dir]}/[^\.](.*)\.rb$}
         ]
 
         if @options[:reload_paths]
@@ -226,7 +227,7 @@ module Middleman
 
         paths.any? do |path|
           match_against.any? do |matcher|
-            path =~ matcher
+            path.sub(@app.root, '').match matcher
           end
         end
       end
