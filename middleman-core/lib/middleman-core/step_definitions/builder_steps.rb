@@ -71,3 +71,7 @@ end
 Then /^the file "([^"]*)" should contain '([^']*)'$/ do |file, partial_content|
   check_file_content(file, partial_content, true)
 end
+
+And /the file "(.*)" should be gzipped/ do |file|
+  expect(File.binread(File.join(current_dir, file), 2)).to eq(['1F8B'].pack('H*'))
+end
