@@ -1,4 +1,3 @@
-@nowindows
 Feature: GZIP assets during build
 
   Scenario: Built assets should be gzipped
@@ -10,8 +9,7 @@ Feature: GZIP assets during build
       | build/javascripts/test.js.gz |
       | build/stylesheets/test.css |
       | build/stylesheets/test.css.gz |
-    When I run `file build/javascripts/test.js.gz`
-    Then the output should contain "gzip"
+    And build/javascripts/test.js.gz should be binary
 
   Scenario: Preview server doesn't change
     Given the Server is running at "gzip-app"
