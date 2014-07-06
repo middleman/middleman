@@ -13,18 +13,16 @@ gem 'cucumber', '~> 1.3'
 
 # Optional middleman dependencies, included for tests
 gem 'less', '2.3.0', require: false
-gem 'slim', '~> 2.0', require: false
-gem 'liquid', '~> 2.6', require: false
-gem 'stylus', '~> 1.0', require: false
-gem 'sinatra','~> 1.4', require: false
-gem 'asciidoctor', '~> 0.1', require: false
+gem 'slim', '>= 2.0', require: false
+gem 'liquid', '>= 2.6', require: false
+gem 'stylus', '>= 1.0', require: false
+gem 'sinatra', '>= 1.4', require: false
+gem 'redcarpet', '>= 3.1', require: false unless RUBY_ENGINE == 'jruby'
+gem 'asciidoctor', '>= 0.1', require: false
 
-# For less, since it doesn't use ExecJS (which also means less wont work on windows)
-gem 'therubyracer', platforms: :ruby
-gem 'therubyrhino', platforms: :jruby
-
-# Redcarpet doesn't work on JRuby
-gem 'redcarpet', '~> 3.1', require: false unless RUBY_ENGINE == 'jruby'
+# For less, note there is no compatible JS runtime for windows
+gem 'therubyracer', '>= 0.12', platforms: :ruby
+gem 'therubyrhino', '>= 2.0', platforms: :jruby
 
 # Code Quality
 gem 'rubocop', '~> 0.24', require: false

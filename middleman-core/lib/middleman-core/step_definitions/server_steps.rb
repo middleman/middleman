@@ -68,7 +68,7 @@ When /^I go to "([^\"]*)"$/ do |url|
 end
 
 Then /^going to "([^\"]*)" should not raise an exception$/ do |url|
-  expect(lambda { @browser.get(URI.escape(url)) }).to_not raise_exception
+  expect{ @browser.get(URI.escape(url)) }.to_not raise_exception
 end
 
 Then /^the content type should be "([^\"]*)"$/ do |expected|

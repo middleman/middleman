@@ -62,11 +62,13 @@ Additionally, up-to-date generated code documentation is available on [RubyDoc].
 
 ## Build & Dependency Status
 
-[![Gem Version](https://badge.fury.io/rb/middleman.png)][gem]
-[![Build Status](https://travis-ci.org/middleman/middleman.png)][travis]
-[![Code Coverage](https://coveralls.io/repos/middleman/middleman/badge.png)][coveralls]
-[![Dependency Status](https://gemnasium.com/middleman/middleman.png?travis)][gemnasium]
-[![Code Quality](https://codeclimate.com/github/middleman/middleman.png)][codeclimate]
+[![Gem Version](http://img.shields.io/gem/v/middleman.svg?style=flat)][gem]
+[![License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)][license]
+[![Dependency Status](http://img.shields.io/gemnasium/middleman/middleman.svg?style=flat)][gemnasium]
+[![Build Status](http://img.shields.io/travis/middleman/middleman.svg?style=flat)][travis]
+[![Code Coverage](http://img.shields.io/coveralls/middleman/middleman.svg?style=flat)][coveralls]
+[![Code Quality](http://img.shields.io/codeclimate/github/middleman/middleman.svg?style=flat)][codeclimate]
+[![Gittip](http://img.shields.io/gittip/middleman.svg?style=flat)][gittip]
 
 ## Community
 
@@ -115,6 +117,7 @@ Copyright (c) 2010-2013 Thomas Reynolds. MIT Licensed, see [LICENSE] for details
 [coveralls]: https://coveralls.io/r/middleman/middleman
 [gemnasium]: https://gemnasium.com/middleman/middleman
 [codeclimate]: https://codeclimate.com/github/middleman/middleman
+[gittip]: https://www.gittip.com/middleman/
 [rubyinstaller]: http://rubyinstaller.org/
 [rubydoc]: http://rubydoc.info/github/middleman/middleman
 [LICENSE]: https://github.com/middleman/middleman/blob/master/LICENSE.md
