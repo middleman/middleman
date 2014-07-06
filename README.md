@@ -68,6 +68,7 @@ Additionally, up-to-date generated code documentation is available on [RubyDoc].
 [![Build Status](http://img.shields.io/travis/middleman/middleman.svg?style=flat)][travis]
 [![Code Coverage](http://img.shields.io/coveralls/middleman/middleman.svg?style=flat)][coveralls]
 [![Code Quality](http://img.shields.io/codeclimate/github/middleman/middleman.svg?style=flat)][codeclimate]
+[![Gittip](http://img.shields.io/gittip/middleman.svg?style=flat)][gittip]
 
 ## Community
 
@@ -116,6 +117,7 @@ Copyright (c) 2010-2013 Thomas Reynolds. MIT Licensed, see [LICENSE] for details
 [coveralls]: https://coveralls.io/r/middleman/middleman
 [gemnasium]: https://gemnasium.com/middleman/middleman
 [codeclimate]: https://codeclimate.com/github/middleman/middleman
+[gittip]: https://www.gittip.com/middleman/
 [rubyinstaller]: http://rubyinstaller.org/
 [rubydoc]: http://rubydoc.info/github/middleman/middleman
 [LICENSE]: https://github.com/middleman/middleman/blob/master/LICENSE.md
