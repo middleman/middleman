@@ -53,7 +53,6 @@ module Middleman
   # * {#after_configuration}
   # * {#after_build}
   # * {#before_build}
-  # * {#instance_available}
   #
   # There are also some less common hooks that can be listened to from within an extension's `initialize` method:
   #
@@ -181,16 +180,15 @@ module Middleman
     def_delegator :"@app.extensions[:file_watcher]", :api, :file_watcher
 
     # Extensions are instantiated when they are activated.
-    # @param [Class] klass The Middleman::Application class
+    # @param [Middleman::Application] app The Middleman::Application instance
     # @param [Hash] options_hash The raw options hash. Subclasses should not manipulate this directly - it will be turned into {#options}.
     # @yield An optional block that can be used to customize options before the extension is activated.
     # @yieldparam [Middleman::Configuration::ConfigurationManager] options Extension options
-    def initialize(klass, options_hash={}, &block)
+    def initialize(app, options_hash={}, &block)
       @_helpers = []
-      @klass = klass
+      @app = app
 
       setup_options(options_hash, &block)
-      setup_app_reference_when_available
 
       # Bind app hooks to local methods
       bind_before_configuration
@@ -216,10 +214,6 @@ module Middleman
     #   Respond to the `after_build` event.
     #   If an `after_build` method is implemented, that method will be run after the builder runs.
 
-    # @!method instance_available
-    #   Respond to the `instance_available` event.
-    #   If an `instance_available` method is implemented, that method will be run after `config.rb` is run and after environment-specific config blocks have been run, but before any `after_configuration` callbacks.
-
     # @!method manipulate_resource_list(resources)
     #   Manipulate the resource list by transforming or adding {Sitemap::Resource}s.
     #   Sitemap manipulation is a powerful way of interacting with a project, since it can modify each {Sitemap::Resource} or generate new {Sitemap::Resources}. This method is used in a pipeline where each sitemap manipulator is run in turn, with each one being fed the output of the previous manipulator. See the source of built-in Middleman extensions like {Middleman::Extensions::DirectoryIndexes} and {Middleman::Extensions::AssetHash} for examples of how to use this.
@@ -229,20 +223,6 @@ module Middleman
     #   @see Sitemap::Resource
     #   @param [Array<Sitemap::Resource>] resources A list of all the resources known to the sitemap.
     #   @return [Array<Sitemap::Resource>] The transformed list of resources.
-
-    # Assign the app instance. Used internally.
-    # @api private
-    def app=(app)
-      @app = app
-
-      ext = self
-
-      return unless ext.respond_to?(:instance_available)
-
-      @klass.instance_available do
-        ext.instance_available
-      end
-    end
 
     private
 
@@ -259,30 +239,14 @@ module Middleman
       yield @options if block_given?
     end
 
-    def setup_app_reference_when_available
-      ext = self
-
-      @klass.initialized do
-        ext.app = self
-      end
-
-      @klass.instance_available do
-        ext.app ||= self
-      end
-    end
-
     def bind_before_configuration
-      ext = self
-      return unless ext.respond_to?(:before_configuration)
-
-      @klass.before_configuration do
-        ext.before_configuration
-      end
+      return unless respond_to?(:before_configuration)
+      @app.before_configuration(&method(:before_configuration))
     end
 
     def bind_after_configuration
       ext = self
-      @klass.after_configuration do
+      @app.after_configuration do
         ext.after_configuration if ext.respond_to?(:after_configuration)
 
         if ext.respond_to?(:manipulate_resource_list)
@@ -295,7 +259,7 @@ module Middleman
       ext = self
       return unless ext.respond_to?(:before_build)
 
-      @klass.before_build do |builder|
+      @app.before_build do |builder|
         if ext.method(:before_build).arity == 1
           ext.before_build(builder)
         else
@@ -308,7 +272,7 @@ module Middleman
       ext = self
       return unless ext.respond_to?(:after_build)
 
-      @klass.after_build do |builder|
+      @app.after_build do |builder|
         if ext.method(:after_build).arity == 1
           ext.after_build(builder)
         else

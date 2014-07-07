@@ -1,6 +1,7 @@
 require 'webrick'
 require 'middleman-core/meta_pages'
 require 'middleman-core/logger'
+require 'middleman-core/rack'
 
 # rubocop:disable GlobalVars
 module Middleman
@@ -100,17 +101,17 @@ module Middleman
           opts[:instrumenting] || false
         )
 
-        server = ::Middleman::Application.server
+        app = ::Middleman::Application.new do
+          config[:environment] = opts[:environment].to_sym if opts[:environment]
+        end
 
         # Add in the meta pages application
-        meta_app = Middleman::MetaPages::Application.new(server)
-        server.map '/__middleman' do
+        meta_app = Middleman::MetaPages::Application.new(app)
+        app.map '/__middleman' do
           run meta_app
         end
 
-        @app = server.inst do
-          config[:environment] = opts[:environment].to_sym if opts[:environment]
-        end
+        app
       end
 
       def start_file_watcher
@@ -197,7 +198,7 @@ module Middleman
 
         start_file_watcher
 
-        rack_app = app.class.to_rack_app
+        rack_app = ::Middleman::Rack.new(@app).to_app
         @webrick.mount '/', ::Rack::Handler::WEBrick, rack_app
       end
 

@@ -26,20 +26,37 @@ require 'middleman-core/config_context'
 require 'middleman-core/file_renderer'
 require 'middleman-core/template_renderer'
 
-# Rack Request
-require 'middleman-core/core_extensions/request'
-
 # Core Middleman Class
 module Middleman
   class Application
     extend Forwardable
 
-    # Global configuration
-    include Configuration::Global
+    class << self
+      # Global configuration for the whole Middleman project.
+      # @return [ConfigurationManager]
+      def config
+        @config ||= ::Middleman::Configuration::ConfigurationManager.new
+      end
+
+      # Root project directory (overwritten in middleman build/server)
+      # @return [String]
+      def root
+        ENV['MM_ROOT'] || Dir.pwd
+      end
+
+      # Pathname-addressed root
+      def root_path
+        Pathname(root)
+      end
+    end
 
     # Uses callbacks
     include Hooks
     include Hooks::InstanceHooks
+
+    define_hook :initialized
+    define_hook :after_configuration
+    define_hook :before_configuration
 
     # Before request hook
     define_hook :before
@@ -55,19 +72,6 @@ module Middleman
 
     define_hook :before_render
     define_hook :after_render
-
-    # Root project directory (overwritten in middleman build/server)
-    # @return [String]
-    def self.root
-      ENV['MM_ROOT'] || Dir.pwd
-    end
-    def_delegator :"self.class", :root
-
-    # Pathname-addressed root
-    def self.root_path
-      Pathname(root)
-    end
-    def_delegator :"self.class", :root_path
 
     # Name of the source directory
     # @return [String]
@@ -158,43 +162,32 @@ module Middleman
       }
     }, 'Callbacks that can exclude paths from the sitemap'
 
-    define_hook :initialized
-    define_hook :instance_available
-    define_hook :after_configuration
-    define_hook :before_configuration
-
     config.define_setting :autoload_sprockets, true, 'Automatically load sprockets at startup?'
     config[:autoload_sprockets] = (ENV['AUTOLOAD_SPROCKETS'] == 'true') if ENV['AUTOLOAD_SPROCKETS']
 
-    # Basic Rack Request Handling
-    include Middleman::CoreExtensions::Request
+    attr_reader :config_context
+    attr_reader :sitemap
+    attr_reader :cache
+    attr_reader :template_context_class
+    attr_reader :config
+    attr_reader :generic_template_context
+    attr_reader :extensions
+    attr_reader :middleware
+    attr_reader :mappings
 
     # Reference to Logger singleton
     def_delegator :"::Middleman::Logger", :singleton, :logger
-
-    # New container for config.rb commands
-    attr_reader :config_context
-
-    # Reference to Sitemap
-    attr_reader :sitemap
-
-    # Template cache
-    attr_reader :cache
-
-    attr_reader :template_context_class
-
-    # Hack to get a sandboxed copy of these helpers for overriding similar methods inside Markdown renderers.
-    attr_reader :generic_template_context
+    def_delegator :"::Middleman::Util", :instrument
+    def_delegators :"self.class", :root, :root_path
     def_delegators :@generic_template_context, :link_to, :image_tag, :asset_path
-
-    attr_reader :extensions
-
+    
     # Initialize the Middleman project
     def initialize(&block)
-      self.class.inst = self
-
       # Search the root of the project for required files
       $LOAD_PATH.unshift(root) unless $LOAD_PATH.include?(root)
+
+      @middleware = []
+      @mappings = []
 
       @template_context_class = Class.new(Middleman::TemplateContext)
       @generic_template_context = @template_context_class.new(self)
@@ -204,7 +197,8 @@ module Middleman
       ::Middleman::TemplateRenderer.cache.clear
 
       # Setup the default values from calls to set before initialization
-      self.class.config.load_settings(self.class.superclass.config.all_settings)
+      @config = ::Middleman::Configuration::ConfigurationManager.new
+      @config.load_settings(self.class.config.all_settings)
 
       @extensions = ::Middleman::ExtensionManager.new(self)
       @extensions.auto_activate(:before_sitemap)
@@ -238,8 +232,6 @@ module Middleman
 
       evaluate_configuration(&block)
 
-      run_hook :instance_available
-
       # This is for making the tests work - since the tests
       # don't completely reload middleman, I18n.load_path can get
       # polluted with paths from other test app directories that don't
@@ -262,6 +254,9 @@ module Middleman
       config_context.execute_after_configuration_callbacks
 
       @extensions.activate_all
+
+      run_hook :ready
+      @config_context.execute_ready_callbacks
     end
 
     def evaluate_configuration(&block)
@@ -317,7 +312,21 @@ module Middleman
       File.join(root, config[:source])
     end
 
-    def_delegator ::Middleman::Util, :instrument
+    # Use Rack middleware
+    #
+    # @param [Class] middleware Middleware module
+    # @return [void]
+    def use(middleware, *args, &block)
+      @middleware << [middleware, args, block]
+    end
+
+    # Add Rack App mapped to specific path
+    #
+    # @param [String] map Path to map
+    # @return [void]
+    def map(map, &block)
+      @mappings << [map, block]
+    end
 
     # Work around this bug: http://bugs.ruby-lang.org/issues/4521
     # where Ruby will call to_s/inspect while printing exception
@@ -328,9 +337,5 @@ module Middleman
     end
     alias_method :inspect, :to_s # Ruby 2.0 calls inspect for NoMethodError instead of to_s
 
-    # Hooks clones _hooks from the class to the instance.
-    # https://github.com/apotonick/hooks/blob/master/lib/hooks/instance_hooks.rb#L10
-    # Middleman expects the same list of hooks for class and instance hooks:
-    def_delegator :"self.class", :_hooks
   end
 end
