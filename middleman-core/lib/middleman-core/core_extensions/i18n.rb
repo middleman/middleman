@@ -10,11 +10,6 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
   def_delegator :@app, :logger
 
   def after_configuration
-    # TODO
-    # If :directory_indexes is already active,
-    # throw a warning explaining the bug and telling the use
-    # to reverse the order.
-
     # See https://github.com/svenfuchs/i18n/wiki/Fallbacks
     unless options[:no_fallbacks]
       require 'i18n/backend/fallbacks'
