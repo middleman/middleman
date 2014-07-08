@@ -91,14 +91,13 @@ module Middleman
     # Sinatra/Padrino compatible render method signature referenced by some view
     # helpers. Especially partials.
     #
-    # @param [] _ Unused parameter.
     # @param [String, Symbol] name The partial to render.
     # @param [Hash] options
     # @return [String]
     def render(_, name, options={}, &block)
       name = name.to_s
 
-      partial_path = locate_partial_relative(name) || locate_partial_in_partials_dir(name)
+      partial_path = locate_partial(name)
 
       raise ::Middleman::TemplateRenderer::TemplateNotFound, "Could not locate partial: #{name}" unless partial_path
 
@@ -110,38 +109,28 @@ module Middleman
 
     protected
 
-    # Locate a partial reltive to the current path, given a name.
+    # Locate a partial relative to the current path or the source dir, given a partial's path.
     #
     # @api private
-    # @param [String] name
+    # @param [String] partial_path
     # @return [String]
-    def locate_partial_relative(name)
+    def locate_partial(partial_path)
       return unless resource = sitemap.find_resource_by_path(current_path)
 
       # Look for partials relative to the current path
       current_dir = File.dirname(resource.source_file)
-      relative_dir = File.join(current_dir.sub(%r{^#{Regexp.escape(source_dir)}/?}, ''), name)
+      relative_dir = File.join(current_dir.sub(%r{^#{Regexp.escape(source_dir)}/?}, ''), partial_path)
 
-      ::Middleman::TemplateRenderer.resolve_template(
+      partial = ::Middleman::TemplateRenderer.resolve_template(
         @app,
         relative_dir,
-        try_without_underscore: true,
         preferred_engine: File.extname(resource.source_file)[1..-1].to_sym
       )
-    end
 
-    # Locate a partial reltive to the partials dir, given a name.
-    #
-    # @api private
-    # @param [String] name
-    # @return [String]
-    def locate_partial_in_partials_dir(name)
-      partials_path = File.join(@app.config[:partials_dir], name)
-      ::Middleman::TemplateRenderer.resolve_template(
-        @app,
-        partials_path,
-        try_without_underscore: true
-      )
+      return partial if partial
+
+      # Try to find one relative to the source dir
+      ::Middleman::TemplateRenderer.resolve_template(@app, File.join('', partial_path))
     end
 
     # Render a path with locs, opts and contents block.
