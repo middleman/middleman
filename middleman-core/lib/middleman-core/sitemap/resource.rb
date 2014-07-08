@@ -1,5 +1,5 @@
+require 'rack/mime'
 require 'middleman-core/sitemap/extensions/traversal'
-require 'middleman-core/sitemap/extensions/content_type'
 require 'middleman-core/file_renderer'
 require 'middleman-core/template_renderer'
 
@@ -9,7 +9,6 @@ module Middleman
     # Sitemap Resource class
     class Resource
       include Middleman::Sitemap::Extensions::Traversal
-      include Middleman::Sitemap::Extensions::ContentType
 
       # The source path of this resource (relative to the source directory,
       # without template extensions)
@@ -19,6 +18,10 @@ module Middleman
       # The output path in the build directory for this resource
       # @return [String]
       attr_accessor :destination_path
+
+      # The on-disk source file for this resource, if there is one
+      # @return [String]
+      attr_reader :source_file
 
       # The path to use when requesting this resource. Normally it's
       # the same as {#destination_path} but it can be overridden in subclasses.
@@ -41,13 +44,6 @@ module Middleman
         # Page are data that is exposed through this resource's data member.
         # Note: It is named 'page' for backwards compatibility with older MM.
         @metadata = { options: {}, locals: {}, page: {} }
-      end
-
-      # Set the on-disk source file for this resource
-      # @return [String]
-      def source_file
-        # TODO: Make this work when get_source_file doesn't exist
-        @source_file || get_source_file
       end
 
       # Whether this resource has a template file
@@ -136,7 +132,30 @@ module Middleman
       #
       # @return [Boolean]
       def binary?
-        ::Middleman::Util.binary?(source_file)
+        source_file && ::Middleman::Util.binary?(source_file)
+      end
+
+      # Ignore a resource directly, without going through the whole
+      # ignore filter stuff.
+      # @return [void]
+      def ignore!
+        @ignored = true
+      end
+
+      # Whether the Resource is ignored
+      # @return [Boolean]
+      def ignored?
+        return true if @ignored
+        # Ignore based on the source path (without template extensions)
+        return true if @app.sitemap.ignored?(path)
+        # This allows files to be ignored by their source file name (with template extensions)
+        !self.is_a?(ProxyResource) && @app.sitemap.ignored?(source_file.sub("#{@app.source_dir}/", ''))
+      end
+
+      # The preferred MIME content type for this resource based on extension or metadata
+      # @return [String] MIME type for this resource
+      def content_type
+        options[:content_type] || ::Rack::Mime.mime_type(ext, nil)
       end
     end
   end

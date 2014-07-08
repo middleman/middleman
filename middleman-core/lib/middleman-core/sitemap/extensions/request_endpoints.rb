@@ -64,17 +64,8 @@ module Middleman
           return output.call if output
         end
 
-        def binary?
-          false
-        end
-
         def ignored?
           false
-        end
-
-        # rubocop:disable AccessorMethodName
-        def get_source_file
-          ''
         end
       end
     end

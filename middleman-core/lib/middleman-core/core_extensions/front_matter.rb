@@ -57,10 +57,6 @@ module Middleman::CoreExtensions
       end
     end
 
-    def after_configuration
-      app.ignore %r{\.frontmatter$}
-    end
-
     # Get the template data from a path
     # @param [String] path
     # @return [String]
@@ -70,16 +66,7 @@ module Middleman::CoreExtensions
 
     def data(path)
       p = normalize_path(path)
-      @cache[p] ||= begin
-        data, content = frontmatter_and_content(p)
-
-        if file_watcher.exists?("#{path}.frontmatter")
-          external_data, _ = frontmatter_and_content("#{p}.frontmatter")
-          data = external_data.deep_merge(data)
-        end
-
-        [data, content]
-      end
+      @cache[p] ||= frontmatter_and_content(p)
     end
 
     def clear_data(file)
@@ -88,9 +75,41 @@ module Middleman::CoreExtensions
       file = File.join(app.root, file)
       prefix = app.source_dir.sub(/\/$/, '') + '/'
       return unless file.include?(prefix)
-      path = file.sub(prefix, '').sub(/\.frontmatter$/, '')
+      path = file.sub(prefix, '')
 
       @cache.delete(path)
+    end
+
+    # Get the frontmatter and plain content from a file
+    # @param [String] path
+    # @return [Array<Middleman::Util::HashWithIndifferentAccess, String>]
+    def frontmatter_and_content(path)
+      full_path = if Pathname(path).relative?
+        File.join(app.source_dir, path)
+      else
+        path
+      end
+
+      data = {}
+
+      return [data, nil] if !file_watcher.exists?(full_path) || ::Middleman::Util.binary?(full_path)
+
+      content = File.read(full_path)
+
+      begin
+        if content =~ /\A.*coding:/
+          lines = content.split(/\n/)
+          lines.shift
+          content = lines.join("\n")
+        end
+
+        result = parse_yaml_front_matter(content, full_path) || parse_json_front_matter(content, full_path)
+        return result if result
+      rescue
+        # Probably a binary file, move on
+      end
+
+      [data, content]
     end
 
     private
@@ -140,38 +159,6 @@ module Middleman::CoreExtensions
       [data, content]
     rescue
       [{}, content]
-    end
-
-    # Get the frontmatter and plain content from a file
-    # @param [String] path
-    # @return [Array<Middleman::Util::HashWithIndifferentAccess, String>]
-    def frontmatter_and_content(path)
-      full_path = if Pathname(path).relative?
-        File.join(app.source_dir, path)
-      else
-        path
-      end
-
-      data = {}
-
-      return [data, nil] if !file_watcher.exists?(full_path) || ::Middleman::Util.binary?(full_path)
-
-      content = File.read(full_path)
-
-      begin
-        if content =~ /\A.*coding:/
-          lines = content.split(/\n/)
-          lines.shift
-          content = lines.join("\n")
-        end
-
-        result = parse_yaml_front_matter(content, full_path) || parse_json_front_matter(content, full_path)
-        return result if result
-      rescue
-        # Probably a binary file, move on
-      end
-
-      [data, content]
     end
 
     def normalize_path(path)
