@@ -92,7 +92,7 @@ module Middleman::CoreExtensions
 
       data = {}
 
-      return [data, nil] if !app.files.exists?(full_path) || ::Middleman::Util.binary?(full_path)
+      return [data, nil] if !file_watcher.exists?(full_path) || ::Middleman::Util.binary?(full_path)
 
       content = File.read(full_path)
 

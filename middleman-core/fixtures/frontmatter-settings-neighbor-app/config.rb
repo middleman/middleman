@@ -21,7 +21,7 @@ class NeighborFrontmatter < ::Middleman::Extension
         opts[:renderer_options].symbolize_keys! if opts.key?(:renderer_options)
         ignored = fmdata.delete(:ignored)
         resource.add_metadata options: opts, page: fmdata
-        resource.ignore! if ignored == true && !resource.proxy?
+        resource.ignore! if ignored == true && !resource.is_a?(::Middleman::Sitemap::ProxyResource)
       end
     end
   end

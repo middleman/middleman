@@ -119,8 +119,7 @@ module Middleman
         resource
       end
 
-      # rubocop:disable AccessorMethodName
-      def get_source_file
+      def source_file
         target_resource.source_file
       end
 
@@ -129,17 +128,6 @@ module Middleman
         return mime_type if mime_type
 
         target_resource.content_type
-      end
-
-      # Whether the Resource is ignored
-      # @return [Boolean]
-      def ignored?
-        return true if @ignored
-
-        # Ignore based on the source path (without template extensions)
-        return true if @app.sitemap.ignored?(path)
-
-        false
       end
     end
   end
