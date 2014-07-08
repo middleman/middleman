@@ -1,6 +1,8 @@
 master
 ===
 
+* Remove the `partials_dir` setting. Partials should live next to content, or be addressed with absolute paths.
+* Partials must be named with a leading underscore. `_my_snippet.html.erb`, not `my_snippet.html.erb`.
 * Removed the `proxy` and `ignore` options for the `page` command in `config.rb`. Use the `proxy` and `ignore` commands instead of passing these options to `page`.
 * The `page` command in `config.rb` can now be used to add data to the page via the `data` argument. It is accessed the same way as frontmatter data, via `current_resource.data`.
 * Add support for `environments` with the `-e` CLI flag. Loads additional config from `environments/envname.rb`. Removed `development?` helper in favor of `environment?(:development)`. Added `server?` helper to differentiate between build and server mode.

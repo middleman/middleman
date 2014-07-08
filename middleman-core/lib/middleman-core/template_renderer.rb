@@ -150,7 +150,6 @@ module Middleman
     # Find a template on disk given a output path
     # @param [String] request_path
     # @option options [Boolean] :preferred_engine If set, try this engine first, then fall back to any engine.
-    # @option options [Boolean] :try_without_underscore
     # @return [String, Boolean] Either the path to the template, or false
     def self.resolve_template(app, request_path, options={})
       # Find the path by searching or using the cache
@@ -177,13 +176,8 @@ module Middleman
           end
         end
 
-        search_paths = preferred_engines.flat_map do |preferred_engine|
-          path_with_ext = on_disk_path + '.' + preferred_engine
-          paths = [path_with_ext]
-          if options[:try_without_underscore]
-            paths << path_with_ext.sub(relative_path, relative_path.sub(/^_/, '').sub(/\/_/, '/'))
-          end
-          paths
+        search_paths = preferred_engines.map do |preferred_engine|
+          on_disk_path + '.' + preferred_engine
         end
 
         found_path = nil
