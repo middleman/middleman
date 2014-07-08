@@ -63,10 +63,10 @@ class Middleman::Extensions::Gzip < ::Middleman::Extension
 
       total_savings += (old_size - new_size)
       size_change_word = (old_size - new_size) > 0 ? 'smaller' : 'larger'
-      builder.say_status :gzip, "#{output_filename} (#{NumberHelpers.new.number_to_human_size((old_size - new_size).abs)} #{size_change_word})"
+      builder.trigger :gzip, "#{output_filename} (#{NumberHelpers.new.number_to_human_size((old_size - new_size).abs)} #{size_change_word})"
     end
 
-    builder.say_status :gzip, "Total gzip savings: #{NumberHelpers.new.number_to_human_size(total_savings)}", :blue
+    builder.trigger :gzip, "Total gzip savings: #{NumberHelpers.new.number_to_human_size(total_savings)}"
     I18n.locale = old_locale
   end
 

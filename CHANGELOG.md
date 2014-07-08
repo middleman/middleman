@@ -1,6 +1,7 @@
 master
 ===
 
+* Builder extracted from Thor. `after_build` hook now passes an instance of a Builder instead of the Thor CLI.
 * New FileWatcher API.
 * Remove the `partials_dir` setting. Partials should live next to content, or be addressed with absolute paths.
 * Partials must be named with a leading underscore. `_my_snippet.html.erb`, not `my_snippet.html.erb`.
