@@ -202,7 +202,7 @@ module Middleman
     # Useful for extensions implemented as Rack middleware.
     # @param response The response from #call
     # @return [String] The whole response as a string.
-    Contract IsA['Rack::BodyProxy'] => String
+    Contract Or[ArrayOf[String], IsA['Rack::BodyProxy']] => String
     def self.extract_response_text(response)
       # The rack spec states all response bodies must respond to each
       result = ''
