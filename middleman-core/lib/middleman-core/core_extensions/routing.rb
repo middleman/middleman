@@ -16,6 +16,8 @@ module Middleman
         app.add_to_config_context :page, &method(:page)
       end
 
+      # @return Array<Middleman::Sitemap::Resource>
+      Contract ResourceList => ResourceList
       def manipulate_resource_list(resources)
         resources.each do |resource|
           @page_configs.each do |matcher, metadata|

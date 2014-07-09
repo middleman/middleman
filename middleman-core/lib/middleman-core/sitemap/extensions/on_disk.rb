@@ -1,4 +1,5 @@
 require 'set'
+require 'middleman-core/contracts'
 
 module Middleman
   module Sitemap
@@ -21,6 +22,7 @@ module Middleman
           end
         end
 
+        Contract None => Any
         def before_configuration
           file_watcher.changed(&method(:touch_file))
           file_watcher.deleted(&method(:remove_file))
@@ -28,12 +30,16 @@ module Middleman
 
         # Update or add an on-disk file path
         # @param [String] file
-        # @return [Boolean]
+        # @return [void]
+        Contract String => Any
         def touch_file(file)
           return false if File.directory?(file)
 
-          path = @app.sitemap.file_to_path(file)
-          return false unless path
+          begin
+            @app.sitemap.file_to_path(file)
+          rescue
+            return
+          end
 
           ignored = @app.config[:ignored_sitemap_matchers].any? do |_, callback|
             if callback.arity == 1
@@ -59,6 +65,7 @@ module Middleman
         # Remove a file from the store
         # @param [String] file
         # @return [void]
+        Contract String => Any
         def remove_file(file)
           return unless @file_paths_on_disk.delete?(file)
 
@@ -70,7 +77,8 @@ module Middleman
         end
 
         # Update the main sitemap resource list
-        # @return [void]
+        # @return Array<Middleman::Sitemap::Resource>
+        Contract ResourceList => ResourceList
         def manipulate_resource_list(resources)
           resources + @file_paths_on_disk.map do |file|
             ::Middleman::Sitemap::Resource.new(

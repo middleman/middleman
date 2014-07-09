@@ -10,6 +10,8 @@ module Middleman
         ::Liquid::Template.file_system = ::Liquid::LocalFileSystem.new(app.source_dir)
       end
 
+      # @return Array<Middleman::Sitemap::Resource>
+      Contract ResourceList => ResourceList
       def manipulate_resource_list(resources)
         return resources unless app.extensions[:data]
 

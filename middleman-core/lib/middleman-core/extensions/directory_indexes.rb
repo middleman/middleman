@@ -5,7 +5,8 @@ class Middleman::Extensions::DirectoryIndexes < ::Middleman::Extension
   self.resource_list_manipulator_priority = 100
 
   # Update the main sitemap resource list
-  # @return [void]
+  # @return Array<Middleman::Sitemap::Resource>
+  Contract ResourceList => ResourceList
   def manipulate_resource_list(resources)
     index_file = app.config[:index_file]
     new_index_path = "/#{index_file}"

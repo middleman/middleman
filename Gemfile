@@ -10,6 +10,7 @@ gem 'fivemat', '~> 1.3.1'
 gem 'aruba', '~> 0.6.0'
 gem 'rspec', '~> 3.0'
 gem 'simplecov'
+gem 'contracts', require: false
 
 # Optional middleman dependencies, included for tests
 gem 'sinatra', require: false

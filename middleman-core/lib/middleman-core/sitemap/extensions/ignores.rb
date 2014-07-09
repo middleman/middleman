@@ -18,6 +18,7 @@ module Middleman
         # Ignore a path or add an ignore callback
         # @param [String, Regexp] path Path glob expression, or path regex
         # @return [void]
+        Contract Maybe[Or[String, Regexp]], Proc => Any
         def create_ignore(path=nil, &block)
           if path.is_a? Regexp
             @ignored_callbacks << proc { |p| p =~ path }
@@ -40,6 +41,7 @@ module Middleman
         # Whether a path is ignored
         # @param [String] path
         # @return [Boolean]
+        Contract String => Bool
         def ignored?(path)
           path_clean = ::Middleman::Util.normalize_path(path)
           @ignored_callbacks.any? { |b| b.call(path_clean) }

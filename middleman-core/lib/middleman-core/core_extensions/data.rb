@@ -1,5 +1,6 @@
 require 'yaml'
 require 'active_support/json'
+require 'middleman-core/contracts'
 
 module Middleman
   module CoreExtensions
@@ -33,11 +34,24 @@ module Middleman
 
       # The core logic behind the data extension.
       class DataStore
+        include Contracts
+
+        # Setup data store
+        #
+        # @param [Middleman::Application] app The current instance of Middleman
+        def initialize(app)
+          @app = app
+          @local_data = {}
+          @local_sources = {}
+          @callback_sources = {}
+        end
+
         # Store static data hash
         #
         # @param [Symbol] name Name of the data, used for namespacing
         # @param [Hash] content The content for this data
         # @return [Hash]
+        Contract Symbol, Hash => Hash
         def store(name=nil, content=nil)
           @local_sources[name.to_s] = content unless name.nil? || content.nil?
           @local_sources
@@ -48,19 +62,10 @@ module Middleman
         # @param [Symbol] name Name of the data, used for namespacing
         # @param [Proc] proc The callback which will return data
         # @return [Hash]
+        Contract Symbol, Proc => Hash
         def callbacks(name=nil, proc=nil)
           @callback_sources[name.to_s] = proc unless name.nil? || proc.nil?
           @callback_sources
-        end
-
-        # Setup data store
-        #
-        # @param [Middleman::Application] app The current instance of Middleman
-        def initialize(app)
-          @app = app
-          @local_data = {}
-          @local_sources = {}
-          @callback_sources = {}
         end
 
         # Update the internal cache for a given file path
@@ -91,7 +96,7 @@ module Middleman
             data_branch = data_branch[dir]
           end
 
-          data_branch[basename] = ::Middleman::Util.recursively_enhance(data)
+          data_branch[basename] = data && ::Middleman::Util.recursively_enhance(data)
         end
 
         # Remove a given file from the internal cache
@@ -120,6 +125,7 @@ module Middleman
         #
         # @param [String, Symbol] path The name of the data namespace
         # @return [Hash, nil]
+        Contract Or[String, Symbol] => Maybe[Hash]
         def data_for_path(path)
           response = nil
 
@@ -170,6 +176,7 @@ module Middleman
         # Convert all the data into a static hash
         #
         # @return [Hash]
+        Contract None => Hash
         def to_h
           data = {}
 

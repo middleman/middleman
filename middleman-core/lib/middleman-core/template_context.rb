@@ -1,6 +1,7 @@
 require 'pathname'
 require 'middleman-core/file_renderer'
 require 'middleman-core/template_renderer'
+require 'middleman-core/contracts'
 
 module Middleman
   # The TemplateContext Class
@@ -12,6 +13,7 @@ module Middleman
   # the request, passed from template, to layouts and partials.
   class TemplateContext
     extend Forwardable
+    include Contracts
 
     # Allow templates to directly access the current app instance.
     # @return [Middleman::Application]
@@ -94,6 +96,7 @@ module Middleman
     # @param [String, Symbol] name The partial to render.
     # @param [Hash] options
     # @return [String]
+    Contract Any, Or[Symbol, String], Hash => String
     def render(_, name, options={}, &block)
       name = name.to_s
 
@@ -114,6 +117,7 @@ module Middleman
     # @api private
     # @param [String] partial_path
     # @return [String]
+    Contract String => Maybe[String]
     def locate_partial(partial_path)
       return unless resource = sitemap.find_resource_by_path(current_path)
 
@@ -141,6 +145,7 @@ module Middleman
     # @param [Hash] opts Template options.
     # @param [Proc] block A block will be evaluated to return internal contents.
     # @return [String] The resulting content string.
+    Contract String, Hash, Hash, Proc => String
     def render_file(path, locs, opts, &block)
       file_renderer = ::Middleman::FileRenderer.new(@app, path)
       file_renderer.render(locs, opts, self, &block)

@@ -32,6 +32,8 @@ Middleman::Extensions.register :sitemap_redirects, auto_activate: :before_config
   Middleman::Sitemap::Extensions::Redirects
 end
 
+require 'middleman-core/contracts'
+
 module Middleman
   # Sitemap namespace
   module Sitemap
@@ -42,6 +44,8 @@ module Middleman
     # which is the path relative to the source directory, minus any template
     # extensions. All "path" parameters used in this class are source paths.
     class Store
+      include Contracts
+
       # @return [Middleman::Application]
       attr_reader :app
 
@@ -67,6 +71,7 @@ module Middleman
       # @param [#manipulate_resource_list] manipulator Resource list manipulator
       # @param [Numeric] priority Sets the order of this resource list manipulator relative to the rest. By default this is 50, and manipulators run in the order they are registered, but if a priority is provided then this will run ahead of or behind other manipulators.
       # @return [void]
+      Contract Symbol, RespondTo['manipulate_resource_list'], Maybe[Num] => Any
       def register_resource_list_manipulator(name, manipulator, priority=50)
         # The third argument used to be a boolean - handle those who still pass one
         priority = 50 unless priority.is_a? Numeric
@@ -92,6 +97,7 @@ module Middleman
       # Find a resource given its original path
       # @param [String] request_path The original path of a resource.
       # @return [Middleman::Sitemap::Resource]
+      Contract String => Maybe[IsA['Middleman::Sitemap::Resource']]
       def find_resource_by_path(request_path)
         @lock.synchronize do
           request_path = ::Middleman::Util.normalize_path(request_path)
@@ -103,6 +109,7 @@ module Middleman
       # Find a resource given its destination path
       # @param [String] request_path The destination (output) path of a resource.
       # @return [Middleman::Sitemap::Resource]
+      Contract String => Maybe[IsA['Middleman::Sitemap::Resource']]
       def find_resource_by_destination_path(request_path)
         @lock.synchronize do
           request_path = ::Middleman::Util.normalize_path(request_path)
@@ -114,6 +121,7 @@ module Middleman
       # Get the array of all resources
       # @param [Boolean] include_ignored Whether to include ignored resources
       # @return [Array<Middleman::Sitemap::Resource>]
+      Contract Bool => ResourceList
       def resources(include_ignored=false)
         @lock.synchronize do
           ensure_resource_list_updated!
@@ -134,11 +142,12 @@ module Middleman
       # Get the URL path for an on-disk file
       # @param [String] file
       # @return [String]
+      Contract String => String
       def file_to_path(file)
         file = File.join(@app.root, file)
 
         prefix = @app.source_dir.sub(/\/$/, '') + '/'
-        return false unless file.start_with?(prefix)
+        raise "'#{file}' not inside project folder '#{prefix}" unless file.start_with?(prefix)
 
         path = file.sub(prefix, '')
 
@@ -153,6 +162,7 @@ module Middleman
       # Get a path without templating extensions
       # @param [String] file
       # @return [String]
+      Contract String => String
       def extensionless_path(file)
         path = file.dup
         remove_templating_extensions(path)
@@ -197,6 +207,7 @@ module Middleman
       # Removes the templating extensions, while keeping the others
       # @param [String] path
       # @return [String]
+      Contract String => String
       def remove_templating_extensions(path)
         # Strip templating extensions as long as Tilt knows them
         path = path.sub(File.extname(path), '') while ::Tilt[path]
@@ -206,6 +217,7 @@ module Middleman
       # Remove the locale token from the end of the path
       # @param [String] path
       # @return [String]
+      Contract String => String
       def strip_away_locale(path)
         if @app.extensions[:i18n]
           path_bits = path.split('.')

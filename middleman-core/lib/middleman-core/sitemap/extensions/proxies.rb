@@ -24,6 +24,7 @@ module Middleman
         # @option opts [Hash] locals Local variables for the template. These will be available when the template renders.
         # @option opts [Hash] data Extra metadata to add to the page. This is the same as frontmatter, though frontmatter will take precedence over metadata defined here. Available via {Resource#data}.
         # @return [void]
+        Contract String, String, Maybe[Hash] => Any
         def create_proxy(path, target, opts={})
           options = opts.dup
 
@@ -41,7 +42,8 @@ module Middleman
         end
 
         # Update the main sitemap resource list
-        # @return [void]
+        # @return Array<Middleman::Sitemap::Resource>
+        Contract ResourceList => ResourceList
         def manipulate_resource_list(resources)
           resources + @proxy_configs.map do |config|
             p = ProxyResource.new(
@@ -108,6 +110,7 @@ module Middleman
       # The resource for the page this page is proxied to. Throws an exception
       # if there is no resource.
       # @return [Sitemap::Resource]
+      Contract None => IsA['Middleman::Sitemap::Resource']
       def target_resource
         resource = @store.find_resource_by_path(@target)
 
@@ -122,10 +125,12 @@ module Middleman
         resource
       end
 
+      Contract None => String
       def source_file
         target_resource.source_file
       end
 
+      Contract None => Maybe[String]
       def content_type
         mime_type = super
         return mime_type if mime_type

@@ -43,12 +43,14 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
     end
   end
 
+  Contract None => ArrayOf[Symbol]
   def langs
     @langs ||= known_languages
   end
 
   # Update the main sitemap resource list
-  # @return [void]
+  # @return Array<Middleman::Sitemap::Resource>
+  Contract ResourceList => ResourceList
   def manipulate_resource_list(resources)
     new_resources = []
 
@@ -87,6 +89,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
     ::I18n.reload!
   end
 
+  Contract String => Regexp
   def convert_glob_to_regex(glob)
     # File.fnmatch doesn't support brackets: {rb,yml,yaml}
     regex = glob.sub(/\./, '\.').sub(File.join('**', '*'), '.*').sub(/\//, '\/').sub('{rb,yml,yaml}', '(rb|ya?ml)')
@@ -103,6 +106,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
     ::I18n.fallbacks = ::I18n::Locale::Fallbacks.new if ::I18n.respond_to?(:fallbacks)
   end
 
+  Contract None => ArrayOf[Symbol]
   def known_languages
     if options[:langs]
       Array(options[:langs]).map(&:to_sym)
@@ -120,6 +124,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
   # Parse locale extension filename
   # @return [lang, path, basename]
   # will return +nil+ if no locale extension
+  Contract String => Maybe[[Symbol, String, String]]
   def parse_locale_extension(path)
     path_bits = path.split('.')
     return nil if path_bits.size < 3
@@ -132,6 +137,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
     [lang, path, basename]
   end
 
+  Contract String, String, String, Symbol => IsA['Middleman::Sitemap::Resource']
   def build_resource(path, source_path, page_id, lang)
     old_locale = ::I18n.locale
     ::I18n.locale = lang

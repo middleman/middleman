@@ -1,5 +1,6 @@
 require 'pathname'
 require 'set'
+require 'middleman-core/contracts'
 
 module Middleman
   module CoreExtensions
@@ -42,6 +43,7 @@ module Middleman
       # Core File Change API class
       class API
         extend Forwardable
+        include Contracts
 
         attr_reader :app
         attr_reader :known_paths
@@ -61,6 +63,7 @@ module Middleman
         #
         # @param [nil,Regexp] matcher A Regexp to match the change path against
         # @return [Array<Proc>]
+        Contract Or[Regexp, Proc] => ArrayOf[ArrayOf[Or[Proc, Regexp, nil]]]
         def changed(matcher=nil, &block)
           @_changed << [block, matcher] if block_given?
           @_changed
@@ -70,6 +73,7 @@ module Middleman
         #
         # @param [nil,Regexp] matcher A Regexp to match the deleted path against
         # @return [Array<Proc>]
+        Contract Or[Regexp, Proc] => ArrayOf[ArrayOf[Or[Proc, Regexp, nil]]]
         def deleted(matcher=nil, &block)
           @_deleted << [block, matcher] if block_given?
           @_deleted
@@ -130,6 +134,7 @@ module Middleman
           reload_path(path, true)
         end
 
+        Contract String => Bool
         def exists?(path)
           p = Pathname(path)
           p = p.relative_path_from(Pathname(@app.root)) unless p.relative?
@@ -139,6 +144,7 @@ module Middleman
         # Whether this path is ignored
         # @param [Pathname] path
         # @return [Boolean]
+        Contract Or[String, Pathname] => Bool
         def ignored?(path)
           path = path.to_s
           app.config[:file_watcher_ignore].any? { |r| path =~ r }
