@@ -5,12 +5,12 @@ gem 'rake', '~> 10.3', require: false
 gem 'yard', '~> 0.8', require: false
 
 # Test tools
-gem 'pry', '~> 0.10', group: :development
-gem 'aruba', '~> 0.6'
-gem 'rspec', '~> 3.0'
-gem 'fivemat', '~> 1.3'
-gem 'cucumber', '~> 1.3'
-gem 'contracts', '~> 0.4'
+gem 'pry', '~> 0.10', group: :development, require: false
+gem 'aruba', '~> 0.6', require: false
+gem 'rspec', '~> 3.0', require: false
+gem 'fivemat', '~> 1.3', require: false
+gem 'cucumber', '~> 1.3', require: false
+gem 'contracts', '~> 0.4', require: false
 
 # Optional middleman dependencies, included for tests
 gem 'haml', '>= 4.0.5', require: false
