@@ -158,9 +158,6 @@ module Middleman
       }
     }, 'Callbacks that can exclude paths from the sitemap'
 
-    config.define_setting :autoload_sprockets, true, 'Automatically load sprockets at startup?'
-    config[:autoload_sprockets] = (ENV['AUTOLOAD_SPROCKETS'] == 'true') if ENV['AUTOLOAD_SPROCKETS']
-
     attr_reader :config_context
     attr_reader :sitemap
     attr_reader :cache
@@ -212,15 +209,6 @@ module Middleman
       ::Middleman::Extension.clear_after_extension_callbacks
 
       @extensions.auto_activate(:before_configuration)
-
-      if config[:autoload_sprockets]
-        begin
-          require 'middleman-sprockets'
-          @extensions.activate :sprockets
-        rescue LoadError
-          # It's OK if somebody is using middleman-core without middleman-sprockets
-        end
-      end
 
       run_hook :initialized
 

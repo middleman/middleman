@@ -13,6 +13,9 @@ gem 'cucumber', '~> 1.3'
 gem 'contracts', '~> 0.4'
 
 # Optional middleman dependencies, included for tests
+gem 'haml', '>= 4.0.5', require: false
+gem 'coffee-script', '~> 2.2.0', require: false
+gem 'kramdown', '~> 1.2', require: false
 gem 'less', '2.3.0', require: false
 gem 'slim', '>= 2.0', require: false
 gem 'liquid', '>= 2.6', require: false
@@ -32,8 +35,5 @@ gem 'coveralls', '~> 0.7', require: false
 gem 'codeclimate-test-reporter', '~> 0.3', require: false, group: :test
 
 # Middleman itself
-gem 'middleman', path: 'middleman'
 gem 'middleman-cli', path: 'middleman-cli'
 gem 'middleman-core', path: 'middleman-core'
-gem 'middleman-compass',  github: 'middleman/middleman-compass', require: false
-gem 'middleman-sprockets', github: 'middleman/middleman-sprockets', require: false

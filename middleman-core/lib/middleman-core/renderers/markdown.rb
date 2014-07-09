@@ -39,7 +39,7 @@ module Middleman
         rescue LoadError
           # If they just left it at the default engine and don't happen to have it,
           # then they're using middleman-core bare and we shouldn't bother them.
-          if config.setting(:markdown_engine).value_set?
+          if app.config.setting(:markdown_engine).value_set?
             logger.warn "Requested Markdown engine (#{app.config[:markdown_engine]}) not found. Maybe the gem needs to be installed and required?"
           end
         end
