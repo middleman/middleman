@@ -19,13 +19,12 @@ module Middleman::Cli
     # The git task
     # @param [String] name
     def git(repo, target='.')
-      require 'rugged'
       require 'tmpdir'
 
       path = repository_path(repo)
 
       Dir.mktmpdir do |dir|
-        Rugged::Repository.clone_at(path, dir)
+        run("git clone #{path} #{dir}")
 
         source_paths << dir
 

@@ -1,44 +1,39 @@
 source 'https://rubygems.org'
 
 # Build and doc tools
-gem 'rake', '~> 10.3.2', require: false
-gem 'yard', '~> 0.8.0', require: false
+gem 'rake', '~> 10.3', require: false
+gem 'yard', '~> 0.8', require: false
 
 # Test tools
-gem 'cucumber', '~> 1.3.15'
-gem 'fivemat', '~> 1.3.1'
-gem 'aruba', '~> 0.6.0'
+gem 'pry', '~> 0.10', group: :development
+gem 'aruba', '~> 0.6'
 gem 'rspec', '~> 3.0'
-gem 'simplecov'
-gem 'contracts', require: false
+gem 'fivemat', '~> 1.3'
+gem 'cucumber', '~> 1.3'
+gem 'contracts', '~> 0.4'
 
 # Optional middleman dependencies, included for tests
-gem 'sinatra', require: false
-gem 'slim', require: false
-gem 'liquid', require: false
-gem 'less', '~> 2.3.0', require: false
-gem 'stylus', require: false
+gem 'less', '2.3.0', require: false
+gem 'slim', '>= 2.0', require: false
+gem 'liquid', '>= 2.6', require: false
+gem 'stylus', '>= 1.0', require: false
+gem 'sinatra', '>= 1.4', require: false
+gem 'redcarpet', '>= 3.1', require: false unless RUBY_ENGINE == 'jruby'
+gem 'asciidoctor', '>= 0.1', require: false
 
-platforms :ruby do
-  gem 'therubyracer'
-  gem 'redcarpet', '~> 3.1'
-  gem 'pry', require: false, group: :development
-  # gem 'pry-debugger', require: false, group: :development
-  # gem 'pry-stack_explorer', require: false, group: :development
-end
-
-platforms :jruby do
-  gem 'therubyrhino'
-end
+# For less, note there is no compatible JS runtime for windows
+gem 'therubyrhino', '>= 2.0', platforms: :jruby
+gem 'therubyracer', '>= 0.12', platforms: :ruby
 
 # Code Quality
-gem 'codeclimate-test-reporter', group: :test, require: nil
-gem 'coveralls', require: false
-gem 'rubocop', require: false
+gem 'rubocop', '~> 0.24', require: false
+gem 'simplecov', '0.7.1', require: false
+gem 'coveralls', '~> 0.7', require: false
+gem 'codeclimate-test-reporter', '~> 0.3', require: false, group: :test
 
 # Middleman itself
-gem 'middleman-core', path: 'middleman-core'
+gem 'middleman', path: 'middleman'
 gem 'middleman-cli', path: 'middleman-cli'
+gem 'middleman-core', path: 'middleman-core'
 gem 'middleman-compass',  github: 'middleman/middleman-compass', require: false
 gem 'middleman-sprockets', github: 'middleman/middleman-sprockets', require: false
-gem 'middleman', path: 'middleman'
