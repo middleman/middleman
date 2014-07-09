@@ -1,11 +1,14 @@
+require 'middleman-core/sitemap/resource'
+
 module Middleman
   module Sitemap
     module Extensions
       # Manages the list of proxy configurations and manipulates the sitemap
       # to include new resources based on those configurations
-      class Proxies
-        def initialize(app)
-          @app = app
+      class Proxies < Extension
+        def initialize(app, config={}, &block)
+          super
+
           @app.add_to_config_context :proxy, &method(:create_proxy)
           @app.define_singleton_method(:proxy, &method(:create_proxy))
 

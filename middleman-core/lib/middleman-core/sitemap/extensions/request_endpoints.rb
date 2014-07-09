@@ -1,11 +1,14 @@
+require 'middleman-core/sitemap/resource'
+
 module Middleman
   module Sitemap
     module Extensions
-      class RequestEndpoints
+      class RequestEndpoints < Extension
         # Manages the list of proxy configurations and manipulates the sitemap
         # to include new resources based on those configurations
-        def initialize(app)
-          @app = app
+        def initialize(app, config={}, &block)
+          super
+
           @app.add_to_config_context :endpoint, &method(:create_endpoint)
 
           @endpoints = {}

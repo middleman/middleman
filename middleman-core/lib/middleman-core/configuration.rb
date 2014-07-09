@@ -1,6 +1,5 @@
 module Middleman
   module Configuration
-
     # A class that manages a collection of documented settings.
     # Can be used by extensions as well as the main Middleman
     # application. Extensions should probably finalize their instance

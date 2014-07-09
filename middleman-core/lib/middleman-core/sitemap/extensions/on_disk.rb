@@ -3,29 +3,16 @@ require 'set'
 module Middleman
   module Sitemap
     module Extensions
-      class OnDisk
-        attr_accessor :sitemap
+      class OnDisk < Extension
         attr_accessor :waiting_for_ready
 
-        def initialize(app, sitemap)
-          @sitemap = sitemap
-          @app     = app
+        def initialize(app, config={}, &block)
+          super
+
           @file_paths_on_disk = Set.new
 
           scoped_self = self
           @waiting_for_ready = true
-
-          @app.before_configuration do
-            # Register file change callback
-            extensions[:file_watcher].api.changed do |file|
-              scoped_self.touch_file(file)
-            end
-
-            # Register file delete callback
-            extensions[:file_watcher].api.deleted do |file|
-              scoped_self.remove_file(file)
-            end
-          end
 
           @app.ready do
             scoped_self.waiting_for_ready = false
@@ -34,13 +21,18 @@ module Middleman
           end
         end
 
+        def before_configuration
+          file_watcher.changed(&method(:touch_file))
+          file_watcher.deleted(&method(:remove_file))
+        end
+
         # Update or add an on-disk file path
         # @param [String] file
         # @return [Boolean]
         def touch_file(file)
           return false if File.directory?(file)
 
-          path = @sitemap.file_to_path(file)
+          path = @app.sitemap.file_to_path(file)
           return false unless path
 
           ignored = @app.config[:ignored_sitemap_matchers].any? do |_, callback|
@@ -57,11 +49,11 @@ module Middleman
           # in case one of the other manipulators
           # (like asset_hash) cares about the contents of this file,
           # whether or not it belongs in the sitemap (like a partial)
-          @sitemap.rebuild_resource_list!(:touched_file)
+          @app.sitemap.rebuild_resource_list!(:touched_file)
 
           # Force sitemap rebuild so the next request is ready to go.
           # Skip this during build because the builder will control sitemap refresh.
-          @sitemap.ensure_resource_list_updated! unless waiting_for_ready || @app.build?
+          @app.sitemap.ensure_resource_list_updated! unless waiting_for_ready || @app.build?
         end
 
         # Remove a file from the store
@@ -70,11 +62,11 @@ module Middleman
         def remove_file(file)
           return unless @file_paths_on_disk.delete?(file)
 
-          @sitemap.rebuild_resource_list!(:removed_file)
+          @app.sitemap.rebuild_resource_list!(:removed_file)
 
           # Force sitemap rebuild so the next request is ready to go.
           # Skip this during build because the builder will control sitemap refresh.
-          @sitemap.ensure_resource_list_updated! unless waiting_for_ready || @app.build?
+          @app.sitemap.ensure_resource_list_updated! unless waiting_for_ready || @app.build?
         end
 
         # Update the main sitemap resource list
@@ -82,8 +74,8 @@ module Middleman
         def manipulate_resource_list(resources)
           resources + @file_paths_on_disk.map do |file|
             ::Middleman::Sitemap::Resource.new(
-              @sitemap,
-              @sitemap.file_to_path(file),
+              @app.sitemap,
+              @app.sitemap.file_to_path(file),
               File.join(@app.root, file)
             )
           end

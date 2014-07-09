@@ -176,7 +176,7 @@ module Middleman
     def_delegator :"::Middleman::Util", :instrument
     def_delegators :"self.class", :root, :root_path
     def_delegators :@generic_template_context, :link_to, :image_tag, :asset_path
-    
+
     # Initialize the Middleman project
     def initialize(&block)
       # Search the root of the project for required files
@@ -332,6 +332,5 @@ module Middleman
       "#<Middleman::Application:0x#{object_id}>"
     end
     alias_method :inspect, :to_s # Ruby 2.0 calls inspect for NoMethodError instead of to_s
-
   end
 end

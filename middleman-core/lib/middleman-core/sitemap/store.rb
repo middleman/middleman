@@ -2,12 +2,35 @@
 require 'active_support/core_ext/hash/deep_merge'
 require 'monitor'
 
-# Extensions
-require 'middleman-core/sitemap/extensions/on_disk'
-require 'middleman-core/sitemap/extensions/redirects'
-require 'middleman-core/sitemap/extensions/request_endpoints'
-require 'middleman-core/sitemap/extensions/proxies'
-require 'middleman-core/sitemap/extensions/ignores'
+# Ignores
+Middleman::Extensions.register :sitemap_ignore, auto_activate: :before_configuration do
+  require 'middleman-core/sitemap/extensions/ignores'
+  Middleman::Sitemap::Extensions::Ignores
+end
+
+# Files on Disk
+Middleman::Extensions.register :sitemap_ondisk, auto_activate: :before_configuration do
+  require 'middleman-core/sitemap/extensions/on_disk'
+  Middleman::Sitemap::Extensions::OnDisk
+end
+
+# Endpoints
+Middleman::Extensions.register :sitemap_endpoint, auto_activate: :before_configuration do
+  require 'middleman-core/sitemap/extensions/request_endpoints'
+  Middleman::Sitemap::Extensions::RequestEndpoints
+end
+
+# Proxies
+Middleman::Extensions.register :sitemap_proxies, auto_activate: :before_configuration do
+  require 'middleman-core/sitemap/extensions/proxies'
+  Middleman::Sitemap::Extensions::Proxies
+end
+
+# Redirects
+Middleman::Extensions.register :sitemap_redirects, auto_activate: :before_configuration do
+  require 'middleman-core/sitemap/extensions/redirects'
+  Middleman::Sitemap::Extensions::Redirects
+end
 
 module Middleman
   # Sitemap namespace
@@ -33,26 +56,6 @@ module Middleman
 
         @lock = Monitor.new
         reset_lookup_cache!
-
-        # Handle ignore commands
-        Middleman::Sitemap::Extensions::Ignores.new(@app, self)
-
-        # Extensions
-        {
-          # Register classes which can manipulate the main site map list
-          on_disk: Middleman::Sitemap::Extensions::OnDisk.new(@app, self),
-
-          # Request Endpoints
-          request_endpoints: Middleman::Sitemap::Extensions::RequestEndpoints.new(@app),
-
-          # Proxies
-          proxies: Middleman::Sitemap::Extensions::Proxies.new(@app),
-
-          # Redirects
-          redirects: Middleman::Sitemap::Extensions::Redirects.new(@app)
-        }.each do |k, m|
-          register_resource_list_manipulator(k, m)
-        end
 
         @app.config_context.class.send :def_delegator, :app, :sitemap
       end
