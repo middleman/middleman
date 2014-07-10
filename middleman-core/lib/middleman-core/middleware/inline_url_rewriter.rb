@@ -8,21 +8,31 @@ module Middleman
     class InlineURLRewriter
       include Contracts
 
+      IGNORE_DESCRIPTOR = Or[Regexp, RespondTo[:call], String]
+
+      Contract RespondTo[:call], ({
+        middleman_app: IsA['Middleman::Application'],
+        id: Maybe[Symbol],
+        proc: Or[Proc, Method],
+        url_extensions: ArrayOf[String],
+        source_extensions: ArrayOf[String],
+        ignore: ArrayOf[IGNORE_DESCRIPTOR]
+      }) => Any
       def initialize(app, options={})
         @rack_app = app
-        @middleman_app = options[:middleman_app]
+        @middleman_app = options.fetch(:middleman_app)
 
-        @uid = options[:id]
-        @proc = options[:proc]
+        @uid = options.fetch(:id, nil)
+        @proc = options.fetch(:proc)
 
         raise 'InlineURLRewriter requires a :proc to call with inline URL results' unless @proc
 
-        @exts = options[:url_extensions]
+        @exts = options.fetch(:url_extensions)
 
-        @source_exts = options[:source_extensions]
+        @source_exts = options.fetch(:source_extensions)
         @source_exts_regex_text = Regexp.union(@source_exts).to_s
 
-        @ignore = options[:ignore]
+        @ignore = options.fetch(:ignore)
       end
 
       def call(env)
@@ -66,7 +76,7 @@ module Middleman
         [status, headers, response]
       end
 
-      Contract Or[Regexp, RespondTo[:call], String] => Bool
+      Contract IGNORE_DESCRIPTOR => Bool
       def should_ignore?(validator, value)
         if validator.is_a? Regexp
           # Treat as Regexp

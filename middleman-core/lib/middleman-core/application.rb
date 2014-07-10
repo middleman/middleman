@@ -15,6 +15,8 @@ require 'hooks'
 # Our custom logger
 require 'middleman-core/logger'
 
+require 'middleman-core/contracts'
+
 require 'middleman-core/sitemap/store'
 
 require 'middleman-core/configuration'
@@ -30,6 +32,7 @@ require 'middleman-core/template_renderer'
 module Middleman
   class Application
     extend Forwardable
+    include Contracts
 
     class << self
       # Global configuration for the whole Middleman project.
@@ -165,7 +168,11 @@ module Middleman
     attr_reader :config
     attr_reader :generic_template_context
     attr_reader :extensions
+
+    Contract None => SetOf['Middleman::Application::MiddlewareDescriptor']
     attr_reader :middleware
+
+    Contract None => SetOf['Middleman::Application::MapDescriptor']
     attr_reader :mappings
 
     # Reference to Logger singleton
@@ -179,8 +186,8 @@ module Middleman
       # Search the root of the project for required files
       $LOAD_PATH.unshift(root) unless $LOAD_PATH.include?(root)
 
-      @middleware = []
-      @mappings = []
+      @middleware = Set.new
+      @mappings = Set.new
 
       @template_context_class = Class.new(Middleman::TemplateContext)
       @generic_template_context = @template_context_class.new(self)
@@ -296,20 +303,26 @@ module Middleman
       File.join(root, config[:source])
     end
 
+    MiddlewareDescriptor = Struct.new(:class, :options, :block)
+
     # Use Rack middleware
     #
     # @param [Class] middleware Middleware module
     # @return [void]
+    Contract Any, Args[Any], Proc => Any
     def use(middleware, *args, &block)
-      @middleware << [middleware, args, block]
+      @middleware << MiddlewareDescriptor.new(middleware, args, block)
     end
+
+    MapDescriptor = Struct.new(:path, :block)
 
     # Add Rack App mapped to specific path
     #
     # @param [String] map Path to map
     # @return [void]
+    Contract String, Proc => Any
     def map(map, &block)
-      @mappings << [map, block]
+      @mappings << MapDescriptor.new(map, block)
     end
 
     # Work around this bug: http://bugs.ruby-lang.org/issues/4521

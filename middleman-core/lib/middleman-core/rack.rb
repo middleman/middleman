@@ -23,15 +23,15 @@ module Middleman
       app.use ::Rack::Lint
       app.use ::Rack::Head
 
-      @middleman.middleware.each do |klass, options, middleware_block|
-        app.use(klass, *options, &middleware_block)
+      @middleman.middleware.each do |middleware|
+        app.use(middleware[:class], *middleware[:options], &middleware[:block])
       end
 
       inner_app = self
       app.map('/') { run inner_app }
 
-      @middleman.mappings.each do |path, map_block|
-        app.map(path, &map_block)
+      @middleman.mappings.each do |mapping|
+        app.map(mapping[:path], &mapping[:block])
       end
 
       app

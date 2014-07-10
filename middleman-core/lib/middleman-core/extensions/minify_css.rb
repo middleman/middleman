@@ -32,6 +32,11 @@ class Middleman::Extensions::MinifyCss < ::Middleman::Extension
     # Init
     # @param [Class] app
     # @param [Hash] options
+    Contract RespondTo[:call], ({
+      ignore: ArrayOf[PATH_MATCHER],
+      inline: Bool,
+      compressor: Or[Proc, RespondTo[:to_proc], RespondTo[:compress]]
+    }) => Any
     def initialize(app, options={})
       @app = app
       @ignore = options.fetch(:ignore)

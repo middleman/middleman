@@ -1,22 +1,56 @@
 if ENV['TEST'] || ENV['CONTRACTS'] == 'true'
   require 'contracts'
 
-  class IsA
-    def self.[](val)
-      @lookup ||= {}
-      @lookup[val] ||= new(val)
+  module Contracts
+    class IsA
+      def self.[](val)
+        @lookup ||= {}
+        @lookup[val] ||= new(val)
+      end
+
+      def initialize(val)
+        @val = val
+      end
+
+      def valid?(val)
+        val.is_a? @val.constantize
+      end
     end
 
-    def initialize(val)
-      @val = val
+    class ArrayOf
+      def initialize(contract)
+        @contract = contract.is_a?(String) ? IsA[contract] : contract
+      end
     end
 
-    def valid?(val)
-      val.is_a? @val.constantize
+    class SetOf < CallableClass
+      def initialize(contract)
+        @contract = contract.is_a?(String) ? IsA[contract] : contract
+      end
+
+      def valid?(vals)
+        return false unless vals.is_a?(Set)
+        vals.all? do |val|
+          res, _ = Contract.valid?(val, @contract)
+          res
+        end
+      end
+
+      def to_s
+        "a set of #{@contract}"
+      end
+
+      def testable?
+        Testable.testable? @contract
+      end
+
+      def test_data
+        Set.new([], [Testable.test_data(@contract)], [Testable.test_data(@contract), Testable.test_data(@contract)])
+      end
     end
+
+    ResourceList = Contracts::ArrayOf[IsA['Middleman::Sitemap::Resource']]
   end
-
-  ResourceList = Contracts::ArrayOf[IsA['Middleman::Sitemap::Resource']]
 else
   module Contracts
     def self.included(base)
@@ -91,5 +125,12 @@ else
 
     class IsA < Callable
     end
+
+    class SetOf < Callable
+    end
   end
+end
+
+module Contracts
+  PATH_MATCHER = Or[String, RespondTo[:match], RespondTo[:call], RespondTo[:to_s]]
 end

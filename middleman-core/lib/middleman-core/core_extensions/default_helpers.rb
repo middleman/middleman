@@ -140,7 +140,7 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
       path << index_file if path.end_with?('/')
       path = ::Middleman::Util.strip_leading_slash(path)
 
-      classes = []
+      classes = Set.new
       parts = path.split('.').first.split('/')
       parts.each_with_index { |_, i| classes << parts.first(i + 1).join('_') }
 

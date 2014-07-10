@@ -30,8 +30,11 @@ module Middleman
       # @return [String]
       alias_method :request_path, :destination_path
 
+      METADATA_HASH = ({ options: Maybe[Hash], locals: Maybe[Hash], page: Maybe[Hash] })
+
       # The metadata for this resource
       # @return [Hash]
+      Contract None => METADATA_HASH
       attr_reader :metadata
 
       # Initialize resource with parent store and URL
@@ -66,7 +69,7 @@ module Middleman
       #   Locals are local variables for rendering this resource's template
       #   Page are data that is exposed through this resource's data member.
       #   Note: It is named 'page' for backwards compatibility with older MM.
-      Contract Hash => Hash
+      Contract METADATA_HASH => METADATA_HASH
       def add_metadata(meta={})
         @metadata.deep_merge!(meta)
       end

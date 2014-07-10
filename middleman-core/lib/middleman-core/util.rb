@@ -124,7 +124,7 @@ module Middleman
     # @param [String, #match, #call] matcher A matcher String, RegExp, Proc, etc.
     # @param [String] path A path as a string
     # @return [Boolean] Whether the path matches the matcher
-    Contract Or[String, RespondTo[:match], RespondTo[:call], RespondTo[:to_s]], String => Bool
+    Contract PATH_MATCHER, String => Bool
     def self.path_match(matcher, path)
       case
       when matcher.is_a?(String)

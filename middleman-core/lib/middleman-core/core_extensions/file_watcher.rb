@@ -55,28 +55,30 @@ module Middleman
           @app = app
           @known_paths = Set.new
 
-          @_changed = []
-          @_deleted = []
+          @on_change_callbacks = Set.new
+          @on_delete_callbacks = Set.new
         end
+
+        CallbackDescriptor = Struct.new(:proc, :matcher)
 
         # Add callback to be run on file change
         #
         # @param [nil,Regexp] matcher A Regexp to match the change path against
         # @return [Array<Proc>]
-        Contract Or[Regexp, Proc] => ArrayOf[ArrayOf[Or[Proc, Regexp, nil]]]
+        Contract Or[Regexp, Proc] => SetOf['Middleman::CoreExtensions::FileWatcher::API::CallbackDescriptor']
         def changed(matcher=nil, &block)
-          @_changed << [block, matcher] if block_given?
-          @_changed
+          @on_change_callbacks << CallbackDescriptor.new(block, matcher) if block_given?
+          @on_change_callbacks
         end
 
         # Add callback to be run on file deletion
         #
         # @param [nil,Regexp] matcher A Regexp to match the deleted path against
         # @return [Array<Proc>]
-        Contract Or[Regexp, Proc] => ArrayOf[ArrayOf[Or[Proc, Regexp, nil]]]
+        Contract Or[Regexp, Proc] => SetOf['Middleman::CoreExtensions::FileWatcher::API::CallbackDescriptor']
         def deleted(matcher=nil, &block)
-          @_deleted << [block, matcher] if block_given?
-          @_deleted
+          @on_delete_callbacks << CallbackDescriptor.new(block, matcher) if block_given?
+          @on_delete_callbacks
         end
 
         # Notify callbacks that a file changed
@@ -159,9 +161,9 @@ module Middleman
         # @return [void]
         def run_callbacks(path, callbacks_name)
           path = path.to_s
-          send(callbacks_name).each do |callback, matcher|
-            next unless matcher.nil? || path.match(matcher)
-            @app.instance_exec(path, &callback)
+          send(callbacks_name).each do |callback|
+            next unless callback[:matcher].nil? || path.match(callback[:matcher])
+            @app.instance_exec(path, &callback[:proc])
           end
         end
       end
