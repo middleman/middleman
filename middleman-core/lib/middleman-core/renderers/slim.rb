@@ -21,6 +21,8 @@ module Middleman
     class Slim < ::Middleman::Extension
       # Setup extension
       def initialize(_app, _options={}, &_block)
+        super
+
         # Setup Slim options to work with partials
         ::Slim::Engine.set_default_options(
           buffer: '@_out_buf',
@@ -32,7 +34,7 @@ module Middleman
 
       def after_configuration
         context_hack = {
-          context: app.template_context_class.new(self)
+          context: app.template_context_class.new(app)
         }
 
         ::Slim::Embedded::SassEngine.disable_option_validator!
