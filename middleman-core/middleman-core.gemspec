@@ -48,6 +48,6 @@ Gem::Specification.new do |s|
   s.add_dependency('uglifier', ['~> 2.5'])
   s.add_dependency('execjs', ['~> 2.0'])
 
-  # Testings
-  s.add_development_dependency('contracts', ['~> 0.4'])
+  # Testing
+  s.add_dependency('contracts', ['~> 0.4'])
 end
