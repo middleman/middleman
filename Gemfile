@@ -10,7 +10,6 @@ gem 'aruba', '~> 0.6', require: false
 gem 'rspec', '~> 3.0', require: false
 gem 'fivemat', '~> 1.3', require: false
 gem 'cucumber', '~> 1.3', require: false
-gem 'contracts', '~> 0.4', require: false
 
 # Optional middleman dependencies, included for tests
 gem 'haml', '>= 4.0.5', require: false

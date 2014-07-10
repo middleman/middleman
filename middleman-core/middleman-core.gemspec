@@ -47,4 +47,7 @@ Gem::Specification.new do |s|
   # Minify JS
   s.add_dependency('uglifier', ['~> 2.5'])
   s.add_dependency('execjs', ['~> 2.0'])
+
+  # Testings
+  s.add_development_dependency('contracts', ['~> 0.4'])
 end
