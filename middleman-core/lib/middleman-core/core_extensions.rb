@@ -128,3 +128,8 @@ Middleman::Extensions.register :automatic_alt_tags do
   require 'middleman-core/extensions/automatic_alt_tags'
   Middleman::Extensions::AutomaticAltTags
 end
+
+Middleman::Extensions.register :external_pipeline do
+  require 'middleman-core/extensions/external_pipeline'
+  Middleman::Extensions::ExternalPipeline
+end

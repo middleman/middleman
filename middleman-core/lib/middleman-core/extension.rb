@@ -67,6 +67,8 @@ module Middleman
     extend Forwardable
     include Contracts
 
+    def_delegator :@app, :logger
+
     # @!attribute supports_multiple_instances
     #   @!scope class
     #   @return [Boolean] whether or not an extension can be activated multiple times, generating multiple instances of the extension.
