@@ -59,6 +59,10 @@ module Middleman
         require 'middleman-core/renderers/sass_functions'
       end
 
+      def before_configuration
+        app.files.watch :sass_cache, /(^|\/)\.sass-cache\//
+      end
+
       # A SassTemplate for Tilt which outputs debug messages
       class SassPlusCSSFilenameTemplate < ::Tilt::SassTemplate
         def initialize(*args, &block)

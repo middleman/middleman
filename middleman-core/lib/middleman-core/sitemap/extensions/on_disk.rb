@@ -24,8 +24,8 @@ module Middleman
 
         Contract None => Any
         def before_configuration
-          file_watcher.changed(&method(:touch_file))
-          file_watcher.deleted(&method(:remove_file))
+          app.files.changed(&method(:touch_file))
+          app.files.deleted(&method(:remove_file))
         end
 
         # Update or add an on-disk file path

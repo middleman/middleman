@@ -179,8 +179,6 @@ module Middleman
     #   @return [void]
     def_delegator :"::Middleman::Extension", :after_extension_activated
 
-    def_delegator :"@app.extensions[:file_watcher]", :api, :file_watcher
-
     # Extensions are instantiated when they are activated.
     # @param [Middleman::Application] app The Middleman::Application instance
     # @param [Hash] options_hash The raw options hash. Subclasses should not manipulate this directly - it will be turned into {#options}.
@@ -242,8 +240,7 @@ module Middleman
     end
 
     def bind_before_configuration
-      return unless respond_to?(:before_configuration)
-      @app.before_configuration(&method(:before_configuration))
+      @app.before_configuration(&method(:before_configuration)) if respond_to?(:before_configuration)
     end
 
     def bind_after_configuration
