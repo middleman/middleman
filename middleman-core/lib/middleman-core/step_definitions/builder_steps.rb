@@ -34,12 +34,12 @@ end
 
 Given /^a built app at "([^\"]*)"$/ do |path|
   step %Q{a fixture app "#{path}"}
-  step %Q{I run `middleman build`}
+  step %Q{I run `middleman build --verbose`}
 end
 
 Given /^was successfully built$/ do
-  step %Q{a directory named "build" should exist}
   step %Q{the exit status should be 0}
+  step %Q{a directory named "build" should exist}
 end
 
 Given /^a successfully built app at "([^\"]*)"$/ do |path|
