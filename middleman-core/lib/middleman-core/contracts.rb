@@ -17,6 +17,16 @@ if ENV['TEST'] || ENV['CONTRACTS'] == 'true'
       end
     end
 
+    class Frozen < CallableClass
+      def initialize(contract)
+        @contract = contract
+      end
+
+      def valid?(val)
+        val.frozen? && Contract.valid?(val, @contract)
+      end
+    end
+
     class ArrayOf
       def initialize(contract)
         @contract = contract.is_a?(String) ? IsA[contract] : contract
@@ -127,6 +137,9 @@ else
     end
 
     class SetOf < Callable
+    end
+
+    class Frozen < Callable
     end
   end
 end

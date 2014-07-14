@@ -30,10 +30,10 @@ module Middleman
     # @param [Middleman::Application] app
     # @param [Hash] locs
     # @param [Hash] opts
-    def initialize(app, locs={}, opts={})
+    def initialize(app, locs={}.freeze, opts={}.freeze)
       @app = app
-      @locs = locs.dup.freeze
-      @opts = opts.dup.freeze
+      @locs = locs
+      @opts = opts
     end
 
     # Return the current buffer to the caller and clear the value internally.

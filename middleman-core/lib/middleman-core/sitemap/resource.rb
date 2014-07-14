@@ -79,7 +79,7 @@ module Middleman
       Contract None => IsA['Middleman::Util::HashWithIndifferentAccess']
       def data
         # TODO: Should this really be a HashWithIndifferentAccess?
-        ::Middleman::Util.recursively_enhance(metadata[:page]).freeze
+        ::Middleman::Util.recursively_enhance(metadata[:page])
       end
 
       # Options about how this resource is rendered, such as its :layout,

@@ -31,16 +31,19 @@ module Middleman
     Contract Hash, Hash => String
     def render(locs={}, opts={})
       path = @path.dup
+      locals = locs.dup.freeze
+      options = opts.dup
+
       extension = File.extname(path)
       engine = extension[1..-1].to_sym
 
       if defined?(::I18n)
         old_locale = ::I18n.locale
-        ::I18n.locale = opts[:lang] if opts[:lang]
+        ::I18n.locale = options[:lang] if options[:lang]
       end
 
       # Sandboxed class for template eval
-      context = @app.template_context_class.new(@app, locs, opts)
+      context = @app.template_context_class.new(@app, locals, options)
 
       # TODO: Only for HAML files
       context.init_haml_helpers if context.respond_to?(:init_haml_helpers)
@@ -50,10 +53,10 @@ module Middleman
       content = nil
       while ::Tilt[path]
         begin
-          opts[:template_body] = content if content
+          options[:template_body] = content if content
 
           content_renderer = ::Middleman::FileRenderer.new(@app, path)
-          content = content_renderer.render(locs, opts, context)
+          content = content_renderer.render(locals, options, context)
 
           path = File.basename(path, File.extname(path))
         rescue LocalJumpError
@@ -62,9 +65,9 @@ module Middleman
       end
 
       # If we need a layout and have a layout, use it
-      if layout_path = fetch_layout(engine, opts)
+      if layout_path = fetch_layout(engine, options)
         layout_renderer = ::Middleman::FileRenderer.new(@app, layout_path)
-        content = layout_renderer.render(locs, opts, context) { content }
+        content = layout_renderer.render(locals, options, context) { content }
       end
 
       # Return result

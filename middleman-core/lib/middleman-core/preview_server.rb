@@ -17,7 +17,7 @@ module Middleman
       # Start an instance of Middleman::Application
       # @return [void]
       def start(opts={})
-        @options = opts
+        @options = opts.dup.freeze
         @host = @options[:host] || '0.0.0.0'
         @port = @options[:port] || DEFAULT_PORT
 
@@ -94,7 +94,7 @@ module Middleman
       private
 
       def new_app
-        opts = @options.dup
+        opts = @options
 
         ::Middleman::Logger.singleton(
           opts[:debug] ? 0 : 1,

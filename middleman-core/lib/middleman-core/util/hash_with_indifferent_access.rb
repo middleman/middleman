@@ -1,3 +1,5 @@
+require 'middleman-core/contracts'
+
 module Middleman
   module Util
     # A hash with indifferent access and magic predicates.
@@ -10,11 +12,17 @@ module Middleman
     #   hash.foo?   #=> true
     #
     class HashWithIndifferentAccess < ::Hash #:nodoc:
+      include Contracts
+
+      Contract Hash => Any
       def initialize(hash={})
         super()
-        hash.each do |key, value|
-          self[convert_key(key)] = value
+
+        hash.each do |key, val|
+          self[key] = recursively_enhance(val)
         end
+
+        freeze
       end
 
       def [](key)
@@ -71,6 +79,23 @@ module Middleman
           end
         else
           self[method]
+        end
+      end
+
+      private
+
+      Contract Any => Frozen[Any]
+      def recursively_enhance(data)
+        if data.is_a? HashWithIndifferentAccess
+          data
+        elsif data.is_a? Hash
+          self.class.new(data)
+        elsif data.is_a? Array
+          data.map(&method(:recursively_enhance)).freeze
+        elsif data.frozen?
+          data
+        else
+          data.dup.freeze
         end
       end
     end

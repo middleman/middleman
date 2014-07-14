@@ -51,7 +51,7 @@ module Middleman
 
       # Merge per-extension options from config
       extension = File.extname(path)
-      options = opts.dup.merge(options_for_ext(extension))
+      options = opts.merge(options_for_ext(extension))
       options[:outvar] ||= '@_out_buf'
       options.delete(:layout)
 

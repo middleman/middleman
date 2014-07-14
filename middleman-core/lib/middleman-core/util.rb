@@ -15,10 +15,10 @@ require 'rack/mime'
 require 'middleman-core/contracts'
 
 module Middleman
-
   module Util
-    extend self
     include Contracts
+
+    module_function
 
     # Whether the source file is binary.
     #
@@ -74,32 +74,16 @@ module Middleman
     # @private
     # @param [Hash] data Normal hash
     # @return [Middleman::Util::HashWithIndifferentAccess]
-    Contract Or[Hash, Array] => Or[HashWithIndifferentAccess, Array]
+    Contract Maybe[Or[Array, Hash, HashWithIndifferentAccess]] => Maybe[Frozen[Or[HashWithIndifferentAccess, Array]]]
     def recursively_enhance(data)
-      if data.is_a? Hash
-        enhanced = ::Middleman::Util::HashWithIndifferentAccess.new(data)
-
-        enhanced.each do |key, val|
-          enhanced[key] = if val.is_a?(Hash) || val.is_a?(Array)
-            recursively_enhance(val)
-          else
-            val
-          end
-        end
-
-        enhanced
+      if data.is_a? HashWithIndifferentAccess
+        data
+      elsif data.is_a? Hash
+        HashWithIndifferentAccess.new(data)
       elsif data.is_a? Array
-        enhanced = data.dup
-
-        enhanced.each_with_index do |val, i|
-          enhanced[i] = if val.is_a?(Hash) || val.is_a?(Array)
-            recursively_enhance(val)
-          else
-            val
-          end
-        end
-
-        enhanced
+        data.map(&method(:recursively_enhance))
+      else
+        nil
       end
     end
 

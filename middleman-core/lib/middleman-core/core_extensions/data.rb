@@ -97,11 +97,11 @@ module Middleman
 
           path = data_path.to_s.split(File::SEPARATOR)[0..-2]
           path.each do |dir|
-            data_branch[dir] ||= ::Middleman::Util.recursively_enhance({})
+            data_branch[dir] ||= {}
             data_branch = data_branch[dir]
           end
 
-          data_branch[basename] = data && ::Middleman::Util.recursively_enhance(data)
+          data_branch[basename] = data
         end
 
         # Remove a given file from the internal cache
@@ -132,14 +132,13 @@ module Middleman
         # @return [Hash, nil]
         Contract Or[String, Symbol] => Maybe[Hash]
         def data_for_path(path)
-          response = nil
-
-          if store.key?(path.to_s)
-            response = store[path.to_s]
+          response = if store.key?(path.to_s)
+            store[path.to_s]
           elsif callbacks.key?(path.to_s)
-            response = callbacks[path.to_s].call
+            callbacks[path.to_s].call
           end
 
+          response = ::Middleman::Util.recursively_enhance(response)
           response
         end
 
@@ -149,10 +148,11 @@ module Middleman
         # @return [Hash, nil]
         def method_missing(path)
           if @local_data.key?(path.to_s)
+            @local_data[path.to_s] = ::Middleman::Util.recursively_enhance(@local_data[path.to_s])
             return @local_data[path.to_s]
           else
             result = data_for_path(path)
-            return ::Middleman::Util.recursively_enhance(result) if result
+            return result if result
           end
 
           super
