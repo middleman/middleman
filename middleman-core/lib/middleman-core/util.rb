@@ -1,8 +1,8 @@
 # For instrumenting
 require 'active_support/notifications'
 
-# Using Thor's indifferent hash access
-require 'thor'
+# Indifferent hash access
+require 'middleman-core/util/hash_with_indifferent_access'
 
 # Core Pathname library used for traversal
 require 'pathname'
@@ -15,90 +15,17 @@ require 'rack/mime'
 require 'middleman-core/contracts'
 
 module Middleman
+
   module Util
+    extend self
     include Contracts
-
-    # A hash with indifferent access and magic predicates.
-    # Copied from Thor
-    #
-    #   hash = Middleman::Util::HashWithIndifferentAccess.new 'foo' => 'bar', 'baz' => 'bee', 'force' => true
-    #
-    #   hash[:foo]  #=> 'bar'
-    #   hash['foo'] #=> 'bar'
-    #   hash.foo?   #=> true
-    #
-    class HashWithIndifferentAccess < ::Hash #:nodoc:
-      def initialize(hash={})
-        super()
-        hash.each do |key, value|
-          self[convert_key(key)] = value
-        end
-      end
-
-      def [](key)
-        super(convert_key(key))
-      end
-
-      def []=(key, value)
-        super(convert_key(key), value)
-      end
-
-      def delete(key)
-        super(convert_key(key))
-      end
-
-      def values_at(*indices)
-        indices.map { |key| self[convert_key(key)] }
-      end
-
-      def merge(other)
-        dup.merge!(other)
-      end
-
-      def merge!(other)
-        other.each do |key, value|
-          self[convert_key(key)] = value
-        end
-        self
-      end
-
-      # Convert to a Hash with String keys.
-      def to_hash
-        Hash.new(default).merge!(self)
-      end
-
-      protected
-
-      def convert_key(key)
-        key.is_a?(Symbol) ? key.to_s : key
-      end
-
-      # Magic predicates. For instance:
-      #
-      #   options.force?                  # => !!options['force']
-      #   options.shebang                 # => "/usr/lib/local/ruby"
-      #   options.test_framework?(:rspec) # => options[:test_framework] == :rspec
-      # rubocop:disable DoubleNegation
-      def method_missing(method, *args)
-        method = method.to_s
-        if method =~ /^(\w+)\?$/
-          if args.empty?
-            !!self[$1]
-          else
-            self[$1] == args.first
-          end
-        else
-          self[method]
-        end
-      end
-    end
 
     # Whether the source file is binary.
     #
     # @param [String] filename The file to check.
     # @return [Boolean]
     Contract String => Bool
-    def self.binary?(filename)
+    def binary?(filename)
       ext = File.extname(filename)
 
       # We hardcode detecting of gzipped SVG files
@@ -125,7 +52,7 @@ module Middleman
     # @param [String] path A path as a string
     # @return [Boolean] Whether the path matches the matcher
     Contract PATH_MATCHER, String => Bool
-    def self.path_match(matcher, path)
+    def path_match(matcher, path)
       case
       when matcher.is_a?(String)
         if matcher.include? '*'
@@ -148,7 +75,7 @@ module Middleman
     # @param [Hash] data Normal hash
     # @return [Middleman::Util::HashWithIndifferentAccess]
     Contract Or[Hash, Array] => Or[HashWithIndifferentAccess, Array]
-    def self.recursively_enhance(data)
+    def recursively_enhance(data)
       if data.is_a? Hash
         enhanced = ::Middleman::Util::HashWithIndifferentAccess.new(data)
 
@@ -180,7 +107,7 @@ module Middleman
     # @param [String] path
     # @return [String]
     Contract String => String
-    def self.normalize_path(path)
+    def normalize_path(path)
       # The tr call works around a bug in Ruby's Unicode handling
       path.sub(%r{^/}, '').tr('', '')
     end
@@ -188,12 +115,12 @@ module Middleman
     # This is a separate method from normalize_path in case we
     # change how we normalize paths
     Contract String => String
-    def self.strip_leading_slash(path)
+    def strip_leading_slash(path)
       path.sub(%r{^/}, '')
     end
 
     # Facade for ActiveSupport/Notification
-    def self.instrument(name, payload={}, &block)
+    def instrument(name, payload={}, &block)
       suffixed_name = (name =~ /\.middleman$/) ? name.dup : "#{name}.middleman"
       ::ActiveSupport::Notifications.instrument(suffixed_name, payload, &block)
     end
@@ -203,7 +130,7 @@ module Middleman
     # @param response The response from #call
     # @return [String] The whole response as a string.
     Contract RespondTo[:each] => String
-    def self.extract_response_text(response)
+    def extract_response_text(response)
       # The rack spec states all response bodies must respond to each
       result = ''
       response.each do |part, _|
@@ -220,7 +147,7 @@ module Middleman
     #               is ignored, nothing below it will be searched either.
     # @return [Array<Pathname>] An array of Pathnames for each file (no directories)
     Contract Or[String, Pathname], Proc => ArrayOf[Pathname]
-    def self.all_files_under(path, &ignore)
+    def all_files_under(path, &ignore)
       path = Pathname(path)
 
       if path.directory?
@@ -246,7 +173,7 @@ module Middleman
     # @param [Hash] options Data to pass through.
     # @return [String]
     Contract IsA['Middleman::Application'], Symbol, Or[String, Symbol], Hash => String
-    def self.asset_path(app, kind, source, options={})
+    def asset_path(app, kind, source, options={})
       return source if source.to_s.include?('//') || source.to_s.start_with?('data:')
 
       asset_folder = case kind
@@ -277,7 +204,7 @@ module Middleman
     # @param [Hash] options Data to pass through.
     # @return [String] The fully qualified asset url
     Contract IsA['Middleman::Application'], String, String, Hash => String
-    def self.asset_url(app, path, prefix='', _options={})
+    def asset_url(app, path, prefix='', _options={})
       # Don't touch assets which already have a full path
       if path.include?('//') || path.start_with?('data:')
         path
@@ -299,7 +226,7 @@ module Middleman
     # or a Resource, this will produce the nice URL configured for that
     # path, respecting :relative_links, directory indexes, etc.
     Contract IsA['Middleman::Application'], Or[String, IsA['Middleman::Sitemap::Resource']], Hash => String
-    def self.url_for(app, path_or_resource, options={})
+    def url_for(app, path_or_resource, options={})
       # Handle Resources and other things which define their own url method
       url = if path_or_resource.respond_to?(:url)
         path_or_resource.url
@@ -372,7 +299,7 @@ module Middleman
     # @param [Middleman::Application] app The requesting app.
     # @return [String] Path with index file if necessary.
     Contract String, IsA['Middleman::Application'] => String
-    def self.full_path(path, app)
+    def full_path(path, app)
       resource = app.sitemap.find_resource_by_destination_path(path)
 
       unless resource
@@ -389,7 +316,7 @@ module Middleman
     end
 
     Contract String, String, ArrayOf[String], Proc => String
-    def self.rewrite_paths(body, _path, exts, &_block)
+    def rewrite_paths(body, _path, exts, &_block)
       body.dup.gsub(/([=\'\"\(]\s*)([^\s\'\"\)]+(#{Regexp.union(exts)}))/) do |match|
         opening_character = $1
         asset_path = $2
@@ -407,7 +334,7 @@ module Middleman
     # @param [String] mime The mimetype to check.
     # @return [Boolean]
     Contract String => Bool
-    def self.nonbinary_mime?(mime)
+    def nonbinary_mime?(mime)
       case
       when mime.start_with?('text/')
         true
@@ -427,7 +354,7 @@ module Middleman
     # @param [String] filename The file to check.
     # @return [Boolean]
     Contract String => Bool
-    def self.file_contents_include_binary_bytes?(filename)
+    def file_contents_include_binary_bytes?(filename)
       binary_bytes = [0, 1, 2, 3, 4, 5, 6, 11, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 28, 29, 30, 31]
       s = File.read(filename, 4096) || ''
       s.each_byte do |c|
@@ -444,7 +371,7 @@ module Middleman
     # @param [Boolean] relative If the path should be relative.
     # @return [String]
     Contract IsA['Middleman::Sitemap::Resource'], String, Bool => String
-    def self.relative_path_from_resource(curr_resource, resource_url, relative)
+    def relative_path_from_resource(curr_resource, resource_url, relative)
       # Switch to the relative path between resource and the given resource
       # if we've been asked to.
       if relative
