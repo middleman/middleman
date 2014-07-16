@@ -9,7 +9,7 @@ module Middleman
         def initialize(app, config={}, &block)
           super
 
-          @app.add_to_config_context :proxy, &method(:create_proxy)
+          @app.add_to_config_context(:proxy, &method(:create_proxy))
           @app.define_singleton_method(:proxy, &method(:create_proxy))
 
           @proxy_configs = Set.new
@@ -125,7 +125,7 @@ module Middleman
         resource
       end
 
-      Contract None => String
+      Contract None => IsA['Middleman::SourceFile']
       def source_file
         target_resource.source_file
       end

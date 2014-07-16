@@ -27,17 +27,16 @@ module Middleman::CoreExtensions
     end
 
     def before_configuration
-      app.files.changed(&method(:clear_data))
-      app.files.deleted(&method(:clear_data))
+      app.files.changed(:source, &method(:clear_data))
     end
 
     # @return Array<Middleman::Sitemap::Resource>
     Contract ResourceList => ResourceList
     def manipulate_resource_list(resources)
       resources.each do |resource|
-        next if resource.source_file.blank?
+        next if resource.source_file.nil?
 
-        fmdata = data(resource.source_file).first.dup
+        fmdata = data(resource.source_file[:full_path].to_s).first.dup
 
         # Copy over special options
         # TODO: Should we make people put these under "options" instead of having
@@ -61,42 +60,35 @@ module Middleman::CoreExtensions
     # Get the template data from a path
     # @param [String] path
     # @return [String]
-    Contract String => String
+    Contract String => Maybe[String]
     def template_data_for_file(path)
       data(path).last
     end
 
     Contract String => [Hash, Maybe[String]]
     def data(path)
-      p = normalize_path(path)
-      @cache[p] ||= frontmatter_and_content(p)
+      file = app.files.find(:source, path)
+
+      return [{}, nil] unless file
+
+      @cache[file[:full_path]] ||= frontmatter_and_content(file[:full_path])
     end
 
-    def clear_data(file)
-      # Copied from Sitemap::Store#file_to_path, but without
-      # removing the file extension
-      file = File.join(app.root, file)
-      prefix = app.source_dir.sub(/\/$/, '') + '/'
-      return unless file.include?(prefix)
-      path = file.sub(prefix, '')
-
-      @cache.delete(path)
+    Contract ArrayOf[IsA['Middleman::SourceFile']], ArrayOf[IsA['Middleman::SourceFile']] => Any
+    def clear_data(updated_files, removed_files)
+      (updated_files + removed_files).each do |file|
+        @cache.delete(file[:full_path])
+      end
     end
 
     # Get the frontmatter and plain content from a file
     # @param [String] path
     # @return [Array<Middleman::Util::HashWithIndifferentAccess, String>]
-    Contract String => [Hash, Maybe[String]]
-    def frontmatter_and_content(path)
-      full_path = if Pathname(path).relative?
-        File.join(app.source_dir, path)
-      else
-        path
-      end
-
+    Contract Pathname => [Hash, Maybe[String]]
+    def frontmatter_and_content(full_path)
       data = {}
 
-      return [data, nil] if !app.files.exists?(full_path) || ::Middleman::Util.binary?(full_path)
+      return [data, nil] if ::Middleman::Util.binary?(full_path)
 
       content = File.read(full_path)
 
@@ -121,7 +113,7 @@ module Middleman::CoreExtensions
     # Parse YAML frontmatter out of a string
     # @param [String] content
     # @return [Array<Hash, String>]
-    Contract String, String => Maybe[[Hash, String]]
+    Contract String, Pathname => Maybe[[Hash, String]]
     def parse_yaml_front_matter(content, full_path)
       yaml_regex = /\A(---\s*\n.*?\n?)^(---\s*$\n?)/m
       if content =~ yaml_regex
@@ -146,7 +138,7 @@ module Middleman::CoreExtensions
     # Parse JSON frontmatter out of a string
     # @param [String] content
     # @return [Array<Hash, String>]
-    Contract String, String => Maybe[[Hash, String]]
+    Contract String, Pathname => Maybe[[Hash, String]]
     def parse_json_front_matter(content, full_path)
       json_regex = /\A(;;;\s*\n.*?\n?)^(;;;\s*$\n?)/m
 
@@ -168,10 +160,6 @@ module Middleman::CoreExtensions
       [data, content]
     rescue
       [{}, content]
-    end
-
-    def normalize_path(path)
-      path.sub(%r{^#{Regexp.escape(app.source_dir)}\/}, '')
     end
   end
 end

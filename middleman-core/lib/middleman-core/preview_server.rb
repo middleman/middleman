@@ -58,10 +58,6 @@ module Middleman
           # if the user closed their terminal STDOUT/STDERR won't exist
         end
 
-        if @listener
-          @listener.stop
-          @listener = nil
-        end
         unmount_instance
       end
 
@@ -103,6 +99,30 @@ module Middleman
 
         app = ::Middleman::Application.new do
           config[:environment] = opts[:environment].to_sym if opts[:environment]
+          config[:watcher_disable] = opts[:disable_watcher]
+          config[:watcher_force_polling] = opts[:force_polling]
+          config[:watcher_latency] = opts[:latency]
+
+          ready do
+            match_against = [
+              %r{^config\.rb$},
+              %r{^environments/[^\.](.*)\.rb$},
+              %r{^lib/[^\.](.*)\.rb$},
+              %r{^#{@app.config[:helpers_dir]}/[^\.](.*)\.rb$}
+            ]
+
+            # config.rb
+            files.watch :reload,
+                        path: root,
+                        ignored: proc { |file|
+                          match_against.none? { |m| file[:relative_path].to_s.match(m) }
+                        }
+          end
+        end
+
+        app.files.changed :reload do
+          $mm_reload = true
+          @webrick.stop
         end
 
         # Add in the meta pages application
@@ -112,41 +132,6 @@ module Middleman
         end
 
         app
-      end
-
-      def start_file_watcher
-        return if @listener || @options[:disable_watcher]
-
-        # Watcher Library
-        require 'listen'
-
-        options = { force_polling: @options[:force_polling] }
-        options[:latency] = @options[:latency] if @options[:latency]
-
-        @listener = Listen.to(Dir.pwd, options) do |modified, added, removed|
-          added_and_modified = (modified + added)
-
-          # See if the changed file is config.rb or lib/*.rb
-          if needs_to_reload?(added_and_modified + removed)
-            $mm_reload = true
-            @webrick.stop
-          else
-            added_and_modified.each do |path|
-              relative_path = Pathname(path).relative_path_from(Pathname(Dir.pwd)).to_s
-              next if app.files.ignored?(relative_path)
-              app.files.did_change(relative_path)
-            end
-
-            removed.each do |path|
-              relative_path = Pathname(path).relative_path_from(Pathname(Dir.pwd)).to_s
-              next if app.files.ignored?(relative_path)
-              app.files.did_delete(relative_path)
-            end
-          end
-        end
-
-        # Don't block this thread
-        @listener.start
       end
 
       # Trap some interupt signals and shut down smoothly
@@ -196,8 +181,6 @@ module Middleman
 
         @webrick ||= setup_webrick(@options[:debug] || false)
 
-        start_file_watcher
-
         rack_app = ::Middleman::Rack.new(@app).to_app
         @webrick.mount '/', ::Rack::Handler::WEBrick, rack_app
       end
@@ -206,31 +189,10 @@ module Middleman
       # @return [void]
       def unmount_instance
         @webrick.unmount '/'
+
+        @app.shutdown!
+
         @app = nil
-      end
-
-      # Whether the passed files are config.rb, lib/*.rb or helpers
-      # @param [Array<String>] paths Array of paths to check
-      # @return [Boolean] Whether the server needs to reload
-      def needs_to_reload?(paths)
-        match_against = [
-          %r{^/config\.rb},
-          %r{^/environments/[^\.](.*)\.rb$},
-          %r{^/lib/[^\.](.*)\.rb$},
-          %r{^/#{@app.config[:helpers_dir]}/[^\.](.*)\.rb$}
-        ]
-
-        if @options[:reload_paths]
-          @options[:reload_paths].split(',').each do |part|
-            match_against << %r{^#{part}}
-          end
-        end
-
-        paths.any? do |path|
-          match_against.any? do |matcher|
-            path.sub(@app.root, '').match matcher
-          end
-        end
       end
 
       # Returns the URI the preview server will run on

@@ -23,7 +23,7 @@ module Middleman
     attr_accessor :current_engine
 
     # Shorthand references to global values on the app instance.
-    def_delegators :@app, :config, :logger, :sitemap, :server?, :build?, :environment?, :data, :extensions, :source_dir, :root
+    def_delegators :@app, :config, :logger, :sitemap, :server?, :build?, :environment?, :data, :extensions, :root
 
     # Initialize a context with the current app and predefined locals and options hashes.
     #
@@ -64,10 +64,10 @@ module Middleman
       buf_was = save_buffer
 
       # Find a layout for this file
-      layout_path = ::Middleman::TemplateRenderer.locate_layout(@app, layout_name, current_engine)
+      layout_file = ::Middleman::TemplateRenderer.locate_layout(@app, layout_name, current_engine)
 
       # Get the layout engine
-      extension = File.extname(layout_path)
+      extension = File.extname(layout_file[:relative_path])
       engine = extension[1..-1].to_sym
 
       # Store last engine for later (could be inside nested renders)
@@ -84,7 +84,7 @@ module Middleman
         restore_buffer(buf_was)
       end
       # Render the layout, with the contents of the block inside.
-      concat_safe_content render_file(layout_path, @locs, @opts) { content }
+      concat_safe_content render_file(layout_file, @locs, @opts) { content }
     ensure
       # Reset engine back to template's value, regardless of success
       self.current_engine = engine_was
@@ -100,19 +100,19 @@ module Middleman
     def render(_, name, options={}, &block)
       name = name.to_s
 
-      partial_path = locate_partial(name)
+      partial_file = locate_partial(name)
 
-      raise ::Middleman::TemplateRenderer::TemplateNotFound, "Could not locate partial: #{name}" unless partial_path
+      raise ::Middleman::TemplateRenderer::TemplateNotFound, "Could not locate partial: #{name}" unless partial_file
 
-      r = sitemap.find_resource_by_path(sitemap.file_to_path(partial_path))
+      r = sitemap.find_resource_by_path(sitemap.file_to_path(partial_file))
 
       if r && !r.template?
-        File.read(r.source_file)
+        File.read(r.source_file[:full_path])
       else
         opts = options.dup
         locs = opts.delete(:locals)
 
-        render_file(partial_path, locs.freeze, opts.freeze, &block)
+        render_file(partial_file, locs.freeze, opts.freeze, &block)
       end
     end
 
@@ -123,43 +123,44 @@ module Middleman
     # @api private
     # @param [String] partial_path
     # @return [String]
-    Contract String => Maybe[String]
+    Contract String => Maybe[IsA['Middleman::SourceFile']]
     def locate_partial(partial_path)
       return unless resource = sitemap.find_resource_by_path(current_path)
 
       # Look for partials relative to the current path
-      current_dir = File.dirname(resource.source_file)
-      relative_dir = File.join(current_dir.sub(%r{^#{Regexp.escape(source_dir)}/?}, ''), partial_path)
+      current_dir = resource.source_file[:relative_path].dirname
+      non_root = partial_path.to_s.sub(/^\//, '')
+      relative_dir = current_dir + Pathname(non_root)
 
-      partial_path_no_underscore = partial_path.sub(/^_/, '').sub(/\/_/, '/')
-      relative_dir_no_underscore = File.join(current_dir.sub(%r{^#{Regexp.escape(source_dir)}/?}, ''), partial_path_no_underscore)
+      non_root_no_underscore = non_root.sub(/^_/, '').sub(/\/_/, '/')
+      relative_dir_no_underscore = current_dir + Pathname(non_root_no_underscore)
 
-      partial = nil
+      partial_file = nil
 
       [
-        [relative_dir, { preferred_engine: File.extname(resource.source_file)[1..-1].to_sym }],
-        [File.join('', partial_path)],
-        [relative_dir_no_underscore, { try_static: true }],
-        [File.join('', partial_path_no_underscore), { try_static: true }]
+        [relative_dir.to_s, { preferred_engine: resource.source_file[:relative_path].extname[1..-1].to_sym }],
+        [non_root],
+        [relative_dir_no_underscore.to_s, { try_static: true }],
+        [non_root_no_underscore, { try_static: true }]
       ].each do |args|
-        partial = ::Middleman::TemplateRenderer.resolve_template(@app, *args)
-        break if partial
+        partial_file = ::Middleman::TemplateRenderer.resolve_template(@app, *args)
+        break if partial_file
       end
 
-      partial
+      partial_file
     end
 
     # Render a path with locs, opts and contents block.
     #
     # @api private
-    # @param [String] path The file path.
+    # @param [Middleman::SourceFile] file The file.
     # @param [Hash] locs Template locals.
     # @param [Hash] opts Template options.
     # @param [Proc] block A block will be evaluated to return internal contents.
     # @return [String] The resulting content string.
-    Contract String, Hash, Hash, Proc => String
-    def render_file(path, locs, opts, &block)
-      file_renderer = ::Middleman::FileRenderer.new(@app, path)
+    Contract IsA['Middleman::SourceFile'], Hash, Hash, Proc => String
+    def render_file(file, locs, opts, &block)
+      file_renderer = ::Middleman::FileRenderer.new(@app, file[:relative_path].to_s)
       file_renderer.render(locs, opts, self, &block)
     end
 

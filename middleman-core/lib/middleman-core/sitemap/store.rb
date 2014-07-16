@@ -142,21 +142,16 @@ module Middleman
       # Get the URL path for an on-disk file
       # @param [String] file
       # @return [String]
-      Contract String => String
+      Contract IsA['Middleman::SourceFile'] => String
       def file_to_path(file)
-        file = File.expand_path(file, @app.root)
-
-        prefix = @app.source_dir.sub(/\/$/, '') + '/'
-        raise "'#{file}' not inside project folder '#{prefix}" unless file.start_with?(prefix)
-
-        path = file.sub(prefix, '')
+        relative_path = file[:relative_path].to_s
 
         # Replace a file name containing automatic_directory_matcher with a folder
         unless @app.config[:automatic_directory_matcher].nil?
-          path = path.gsub(@app.config[:automatic_directory_matcher], '/')
+          relative_path = relative_path.gsub(@app.config[:automatic_directory_matcher], '/')
         end
 
-        extensionless_path(path)
+        extensionless_path(relative_path)
       end
 
       # Get a path without templating extensions

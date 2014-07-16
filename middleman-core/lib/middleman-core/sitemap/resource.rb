@@ -23,6 +23,7 @@ module Middleman
 
       # The on-disk source file for this resource, if there is one
       # @return [String]
+      Contract None => Maybe[IsA['Middleman::SourceFile']]
       attr_reader :source_file
 
       # The path to use when requesting this resource. Normally it's
@@ -41,6 +42,7 @@ module Middleman
       # @param [Middleman::Sitemap::Store] store
       # @param [String] path
       # @param [String] source_file
+      Contract IsA['Middleman::Sitemap::Store'], String, Maybe[IsA['Middleman::SourceFile']] => Any
       def initialize(store, path, source_file=nil)
         @store       = store
         @app         = @store.app
@@ -60,7 +62,7 @@ module Middleman
       Contract None => Bool
       def template?
         return false if source_file.nil?
-        !::Tilt[source_file].nil?
+        !::Tilt[source_file[:full_path].to_s].nil?
       end
 
       # Merge in new metadata specific to this resource.
@@ -108,11 +110,9 @@ module Middleman
       # @return [String]
       Contract Hash, Hash => String
       def render(opts={}, locs={})
-        return ::Middleman::FileRenderer.new(@app, source_file).template_data_for_file unless template?
+        return ::Middleman::FileRenderer.new(@app, source_file[:full_path].to_s).template_data_for_file unless template?
 
-        relative_source = Pathname(source_file).relative_path_from(Pathname(@app.root))
-
-        ::Middleman::Util.instrument 'render.resource', path: relative_source, destination_path: destination_path do
+        ::Middleman::Util.instrument 'render.resource', path: source_file[:full_path].to_s, destination_path: destination_path do
           md   = metadata
           opts = md[:options].deep_merge(opts)
           locs = md[:locals].deep_merge(locs)
@@ -123,7 +123,7 @@ module Middleman
             opts[:layout] = false if %w(.js .json .css .txt).include?(ext)
           end
 
-          renderer = ::Middleman::TemplateRenderer.new(@app, source_file)
+          renderer = ::Middleman::TemplateRenderer.new(@app, source_file[:full_path].to_s)
           renderer.render(locs, opts)
         end
       end
@@ -146,7 +146,7 @@ module Middleman
       # @return [Boolean]
       Contract None => Bool
       def binary?
-        !source_file.nil? && ::Middleman::Util.binary?(source_file)
+        !source_file.nil? && ::Middleman::Util.binary?(source_file[:full_path].to_s)
       end
 
       # Ignore a resource directly, without going through the whole
@@ -165,7 +165,7 @@ module Middleman
         # Ignore based on the source path (without template extensions)
         return true if @app.sitemap.ignored?(path)
         # This allows files to be ignored by their source file name (with template extensions)
-        !self.is_a?(ProxyResource) && @app.sitemap.ignored?(source_file.sub("#{@app.source_dir}/", ''))
+        !self.is_a?(ProxyResource) && @app.sitemap.ignored?(source_file[:relative_path].to_s)
       end
 
       # The preferred MIME content type for this resource based on extension or metadata

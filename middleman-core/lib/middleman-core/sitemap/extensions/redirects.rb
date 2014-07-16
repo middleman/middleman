@@ -10,7 +10,7 @@ module Middleman
         def initialize(app, config={}, &block)
           super
 
-          @app.add_to_config_context :redirect, &method(:create_redirect)
+          @app.add_to_config_context(:redirect, &method(:create_redirect))
 
           @redirects = {}
         end

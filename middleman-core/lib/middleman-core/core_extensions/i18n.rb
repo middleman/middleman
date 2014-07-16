@@ -18,28 +18,24 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
 
     locales_file_path = options[:data]
 
-    # Tell the file watcher to observe the :locales_dir
-    app.files.watch :locales do |path, _app|
-      path.match(/^#{locales_file_path}\/.*(yml|yaml)$/)
-    end
+    # Tell the file watcher to observe the :data_dir
+    app.files.watch :locales,
+                    path: File.join(app.root, locales_file_path),
+                    ignore: proc { |f| !(/.*(rb|yml|yaml)$/.match(f[:relative_path])) }
 
-    app.files.reload_path(locales_file_path)
-
-    @locales_glob = File.join(locales_file_path, '**', '*.{rb,yml,yaml}')
-    @locales_regex = convert_glob_to_regex(@locales_glob)
+    # Setup data files before anything else so they are available when
+    # parsing config.rb
+    app.files.changed(:locales, &method(:on_file_changed))
 
     @maps = {}
     @mount_at_root = options[:mount_at_root].nil? ? langs.first : options[:mount_at_root]
 
-    configure_i18n
-
-    logger.info "== Locales: #{langs.join(', ')} (Default #{@mount_at_root})"
-
     # Don't output localizable files
     app.ignore File.join(options[:templates_dir], '**')
 
-    app.files.changed(&method(:on_file_changed))
-    app.files.deleted(&method(:on_file_changed))
+    configure_i18n
+
+    logger.info "== Locales: #{langs.join(', ')} (Default #{@mount_at_root})"
   end
 
   helpers do
@@ -87,22 +83,16 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
 
   private
 
-  def on_file_changed(file)
-    return unless @locales_regex =~ file
-
+  Contract Any, Any => Any
+  def on_file_changed(_updated_files, _removed_files)
     @_langs = nil # Clear langs cache
+
+    # TODO, add new file to ::I18n.load_path
     ::I18n.reload!
   end
 
-  Contract String => Regexp
-  def convert_glob_to_regex(glob)
-    # File.fnmatch doesn't support brackets: {rb,yml,yaml}
-    regex = glob.sub(/\./, '\.').sub(File.join('**', '*'), '.*').sub(/\//, '\/').sub('{rb,yml,yaml}', '(rb|ya?ml)')
-    %r{^#{regex}}
-  end
-
   def configure_i18n
-    ::I18n.load_path += Dir[File.join(app.root, @locales_glob)]
+    ::I18n.load_path += app.files.by_type(:locales).files.map { |p| p[:full_path].to_s }
     ::I18n.reload!
 
     ::I18n.default_locale = @mount_at_root
@@ -116,12 +106,12 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
     if options[:langs]
       Array(options[:langs]).map(&:to_sym)
     else
-      known_langs = app.files.known_paths.select do |p|
-        p.to_s.match(@locales_regex) && (p.to_s.split(File::SEPARATOR).length == 2)
+      known_langs = app.files.by_type(:locales).files.select do |p|
+        p[:relative_path].to_s.split(File::SEPARATOR).length == 1
       end
 
       known_langs.map { |p|
-        File.basename(p.to_s).sub(/\.ya?ml$/, '').sub(/\.rb$/, '')
+        File.basename(p[:relative_path].to_s).sub(/\.ya?ml$/, '').sub(/\.rb$/, '')
       }.sort.map(&:to_sym)
     end
   end

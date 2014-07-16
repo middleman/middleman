@@ -76,8 +76,9 @@ module Middleman
             return true
           end
 
-          full_path = File.join(@app.source_dir, eponymous_directory_path)
-          File.exist?(full_path) && File.directory?(full_path)
+          @app.files.by_type(:source).watchers.any? do |source|
+            (source.directory + Pathname(eponymous_directory_path)).directory?
+          end
         end
 
         # The path for this resource if it were a directory, and not a file

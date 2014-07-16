@@ -100,12 +100,13 @@ module Middleman
     # Get the template data from a path
     # @param [String] path
     # @return [String]
-    Contract String => String
+    Contract None => String
     def template_data_for_file
       if @app.extensions[:front_matter]
-        @app.extensions[:front_matter].template_data_for_file(@path)
+        @app.extensions[:front_matter].template_data_for_file(@path) || ''
       else
-        File.read(File.expand_path(@path, source_dir))
+        file = @app.files.find(:source, @path)
+        file.read if file
       end
     end
 

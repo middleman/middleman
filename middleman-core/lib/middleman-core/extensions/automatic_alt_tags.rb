@@ -12,13 +12,14 @@ class Middleman::Extensions::AutomaticAltTags < ::Middleman::Extension
       unless path.include?('://')
         params[:alt] ||= ''
 
-        real_path = path
+        real_path = path.dup
         real_path = File.join(images_dir, real_path) unless real_path.start_with?('/')
-        full_path = File.join(source_dir, real_path)
 
-        if File.exist?(full_path)
+        file = app.files.find(:source, real_path)
+
+        if file && file[:full_path].exist?
           begin
-            alt_text = File.basename(full_path, '.*')
+            alt_text = File.basename(file[:full_path].to_s, '.*')
             alt_text.capitalize!
             params[:alt] = alt_text
           end

@@ -42,9 +42,11 @@ Given /^the Server is running$/ do
   ENV['MM_ROOT'] = root_dir
 
   initialize_commands = @initialize_commands || []
-  initialize_commands.unshift lambda { config[:show_exceptions] = false }
 
   @server_inst = ::Middleman::Application.new do
+    config[:watcher_disable] = true
+    config[:show_exceptions] = false
+
     initialize_commands.each do |p|
       instance_exec(&p)
     end

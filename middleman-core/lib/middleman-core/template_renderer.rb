@@ -65,8 +65,8 @@ module Middleman
       end
 
       # If we need a layout and have a layout, use it
-      if layout_path = fetch_layout(engine, options)
-        layout_renderer = ::Middleman::FileRenderer.new(@app, layout_path)
+      if layout_file = fetch_layout(engine, options)
+        layout_renderer = ::Middleman::FileRenderer.new(@app, layout_file[:relative_path].to_s)
         content = layout_renderer.render(locals, options, context) { content }
       end
 
@@ -85,11 +85,11 @@ module Middleman
     # @param [Symbol] engine
     # @param [Hash] opts
     # @return [String, Boolean]
-    Contract Symbol, Hash => Or[String, Bool]
+    Contract Symbol, Hash => Maybe[IsA['Middleman::SourceFile']]
     def fetch_layout(engine, opts)
       # The layout name comes from either the system default or the options
       local_layout = opts.key?(:layout) ? opts[:layout] : @app.config[:layout]
-      return false unless local_layout
+      return unless local_layout
 
       # Look for engine-specific options
       engine_options = @app.config.respond_to?(engine) ? @app.config.send(engine) : {}
@@ -108,12 +108,12 @@ module Middleman
       if local_layout == :_auto_layout
         # Look for :layout of any extension
         # If found, use it. If not, continue
-        locate_layout(:layout, layout_engine) || false
+        locate_layout(:layout, layout_engine)
       else
         # Look for specific layout
         # If found, use it. If not, error.
-        if layout_path = locate_layout(local_layout, layout_engine)
-          layout_path
+        if layout_file = locate_layout(local_layout, layout_engine)
+          layout_file
         else
           raise ::Middleman::TemplateRenderer::TemplateNotFound, "Could not locate layout: #{local_layout}"
         end
@@ -124,7 +124,7 @@ module Middleman
     # @param [String] name
     # @param [Symbol] preferred_engine
     # @return [String]
-    Contract Or[String, Symbol], Symbol => Maybe[String]
+    Contract Or[String, Symbol], Symbol => Maybe[IsA['Middleman::SourceFile']]
     def locate_layout(name, preferred_engine=nil)
       self.class.locate_layout(@app, name, preferred_engine)
     end
@@ -133,19 +133,19 @@ module Middleman
     # @param [String] name
     # @param [Symbol] preferred_engine
     # @return [String]
-    Contract IsA['Middleman::Application'], Or[String, Symbol], Symbol => Maybe[String]
+    Contract IsA['Middleman::Application'], Or[String, Symbol], Symbol => Maybe[IsA['Middleman::SourceFile']]
     def self.locate_layout(app, name, preferred_engine=nil)
       resolve_opts = {}
       resolve_opts[:preferred_engine] = preferred_engine unless preferred_engine.nil?
 
       # Check layouts folder
-      layout_path = resolve_template(app, File.join(app.config[:layouts_dir], name.to_s), resolve_opts)
+      layout_file = resolve_template(app, File.join(app.config[:layouts_dir], name.to_s), resolve_opts)
 
       # If we didn't find it, check root
-      layout_path = resolve_template(app, name, resolve_opts) unless layout_path
+      layout_file = resolve_template(app, name, resolve_opts) unless layout_file
 
       # Return the path
-      layout_path
+      layout_file
     end
 
     # Find a template on disk given a output path
@@ -161,72 +161,53 @@ module Middleman
     # @param [String] request_path
     # @option options [Boolean] :preferred_engine If set, try this engine first, then fall back to any engine.
     # @return [String, Boolean] Either the path to the template, or false
-    Contract IsA['Middleman::Application'], Or[Symbol, String], Maybe[Hash] => Maybe[String]
+    Contract IsA['Middleman::Application'], Or[Symbol, String], Maybe[Hash] => Maybe[IsA['Middleman::SourceFile']]
     def self.resolve_template(app, request_path, options={})
       # Find the path by searching or using the cache
-      request_path = request_path.to_s
+      relative_path = Util.strip_leading_slash(request_path.to_s)
 
       # Cache lookups in build mode only
       if app.build?
-        cache.fetch(:resolve_template, request_path, options) do
-          uncached_resolve_template(app, request_path, options)
+        cache.fetch(:resolve_template, relative_path, options) do
+          uncached_resolve_template(app, relative_path, options)
         end
       else
-        uncached_resolve_template(app, request_path, options)
+        uncached_resolve_template(app, relative_path, options)
       end
     end
 
-    Contract IsA['Middleman::Application'], String, Hash => Maybe[String]
-    def self.uncached_resolve_template(app, request_path, options)
-      relative_path = Util.strip_leading_slash(request_path)
-      on_disk_path  = File.expand_path(relative_path, app.source_dir)
-
+    Contract IsA['Middleman::Application'], Or[Symbol, String], Hash => Maybe[IsA['Middleman::SourceFile']]
+    def self.uncached_resolve_template(app, relative_path, options)
       # By default, any engine will do
-      preferred_engines = ['*']
-      preferred_engines << nil if options[:try_static]
+      preferred_engines = []
 
       # If we're specifically looking for a preferred engine
       if options.key?(:preferred_engine)
         extension_class = ::Tilt[options[:preferred_engine]]
 
         # Get a list of extensions for a preferred engine
-        matched_exts = ::Tilt.mappings.select do |_, engines|
+        preferred_engines += ::Tilt.mappings.select do |_, engines|
           engines.include? extension_class
         end.keys
-
-        # Prefer to look for the matched extensions
-        unless matched_exts.empty?
-          preferred_engines.unshift('{' + matched_exts.join(',') + '}')
-        end
       end
 
-      search_paths = preferred_engines.map do |preferred_engine|
-        path_with_ext = on_disk_path.dup
+      preferred_engines << '*'
+      preferred_engines << nil if options[:try_static]
+
+      found_template = nil
+
+      preferred_engines.each do |preferred_engine|
+        path_with_ext = relative_path.dup
         path_with_ext << ('.' + preferred_engine) unless preferred_engine.nil?
-        path_with_ext
-      end
 
-      found_path = nil
-      search_paths.each do |path_with_ext|
-        found_path = Dir[path_with_ext].find do |path|
-          ::Tilt[path]
-        end
+        file = app.files.find(:source, path_with_ext, preferred_engine == '*')
 
-        unless found_path
-          found_path = path_with_ext if File.exist?(path_with_ext)
-        end
-
-        break if found_path
+        found_template = file if file && (preferred_engine.nil? || ::Tilt[file[:full_path]])
+        break if found_template
       end
 
       # If we found one, return it
-      if found_path
-        found_path
-      elsif File.exist?(on_disk_path)
-        on_disk_path
-      else
-        nil
-      end
+      found_template
     end
   end
 end

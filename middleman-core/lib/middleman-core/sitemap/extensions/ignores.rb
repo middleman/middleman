@@ -6,13 +6,13 @@ module Middleman
         def initialize(app, config={}, &block)
           super
 
-          @app.add_to_config_context :ignore, &method(:create_ignore)
-          @app.define_singleton_method :ignore, &method(:create_ignore)
+          @app.add_to_config_context(:ignore, &method(:create_ignore))
+          @app.define_singleton_method(:ignore, &method(:create_ignore))
 
           # Array of callbacks which can ass ignored
           @ignored_callbacks = Set.new
 
-          @app.sitemap.define_singleton_method :ignored?, &method(:ignored?)
+          @app.sitemap.define_singleton_method(:ignored?, &method(:ignored?))
         end
 
         # Ignore a path or add an ignore callback

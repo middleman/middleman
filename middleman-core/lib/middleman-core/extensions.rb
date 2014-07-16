@@ -10,6 +10,7 @@ module Middleman
     @auto_activate = {
       # Activate before the Sitemap is instantiated
       before_sitemap: Set.new,
+
       # Activate the extension before `config.rb` and the `:before_configuration` hook.
       before_configuration: Set.new
     }

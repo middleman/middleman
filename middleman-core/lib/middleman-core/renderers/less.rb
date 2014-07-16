@@ -10,13 +10,15 @@ module Middleman
         # Default less options
         app.config.define_setting :less, {}, 'LESS compiler options'
 
-        app.after_configuration do
-          ::Less.paths << File.join(source_dir, config[:css_dir])
-        end
-
         # Tell Tilt to use it as well (for inline sass blocks)
         ::Tilt.register 'less', LocalLoadingLessTemplate
         ::Tilt.prefer(LocalLoadingLessTemplate)
+      end
+
+      def after_configuration
+        app.files.by_type(:source).watchers.each do |source|
+          ::Less.paths << (source.directory + app.config[:css_dir]).to_s
+        end
       end
 
       # A SassTemplate for Tilt which outputs debug messages
