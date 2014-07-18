@@ -174,7 +174,7 @@ module Middleman
       # @param [String] file
       # @return [String]
       def file_to_path(file)
-        file = File.join(@app.root, file)
+        file = File.expand_path(file, @app.root)
 
         prefix = @app.source_dir.sub(/\/$/, '') + '/'
         return false unless file.start_with?(prefix)

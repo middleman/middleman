@@ -111,12 +111,12 @@ module Middleman
       end
 
       def start_file_watcher
-        return if @listener or @options[:disable_watcher]
+        return if @listener || @options[:disable_watcher]
 
         # Watcher Library
         require 'listen'
 
-        options = {force_polling: @options[:force_polling]}
+        options = { force_polling: @options[:force_polling] }
         options[:latency] = @options[:latency] if @options[:latency]
 
         @listener = Listen.to(Dir.pwd, options) do |modified, added, removed|

@@ -44,3 +44,8 @@ Feature: Provide Sane Defaults for Partial Behavior
     When I go to "/index.html"
     Then I should see "ERb Header"
     And I should see "Str Footer"
+
+  Scenario: Works with non-template content (svg)
+    Given the Server is running at "partials-app"
+    When I go to "/svg.html"
+    Then I should see "<svg"

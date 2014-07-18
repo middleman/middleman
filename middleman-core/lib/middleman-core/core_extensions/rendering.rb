@@ -188,7 +188,7 @@ module Middleman
           locals = options[:locals]
 
           found_partial = false
-          resolve_opts = { try_without_underscore: true }
+          resolve_opts = { try_without_underscore: true, try_static: true }
 
           # If the path is known to the sitemap
           if resource = sitemap.find_resource_by_path(current_path)
@@ -209,8 +209,14 @@ module Middleman
 
           raise ::Middleman::CoreExtensions::Rendering::TemplateNotFound, "Could not locate partial: #{data}" unless found_partial
 
-          # Render the partial if found, otherwide throw exception
-          render_individual_file(found_partial, locals, options, self, &block)
+          r = sitemap.find_resource_by_path(sitemap.file_to_path(found_partial))
+
+          if r && !r.template?
+            File.read(r.source_file)
+          else
+            # Render the partial if found, otherwide throw exception
+            render_individual_file(found_partial, locals, options, self, &block)
+          end
         end
 
         # Render an on-disk file. Used for everything, including layouts.
@@ -428,6 +434,7 @@ module Middleman
         # @param [String] request_path
         # @option options [Boolean] :preferred_engine If set, try this engine first, then fall back to any engine.
         # @option options [Boolean] :try_without_underscore
+        # @option options [Boolean] :try_static
         # @return [Array<String, Symbol>, Boolean]
         def resolve_template(request_path, options={})
           # Find the path by searching or using the cache
@@ -438,6 +445,7 @@ module Middleman
 
             # By default, any engine will do
             preferred_engines = ['*']
+            preferred_engines << nil if options[:try_static]
 
             # If we're specifically looking for a preferred engine
             if options.key?(:preferred_engine)
@@ -455,7 +463,9 @@ module Middleman
             end
 
             search_paths = preferred_engines.flat_map do |preferred_engine|
-              path_with_ext = on_disk_path + '.' + preferred_engine
+              path_with_ext = on_disk_path.dup
+              path_with_ext << ('.' + preferred_engine) unless preferred_engine.nil?
+
               paths = [path_with_ext]
               if options[:try_without_underscore]
                 paths << path_with_ext.sub(relative_path, relative_path.sub(/^_/, '').sub(/\/_/, '/'))
@@ -468,10 +478,15 @@ module Middleman
               found_path = Dir[path_with_ext].find do |path|
                 ::Tilt[path]
               end
+
+              unless found_path
+                found_path = path_with_ext if File.exist?(path_with_ext)
+              end
+
               break if found_path
             end
 
-            # If we found one, return it and the found engine
+            # If we found one, return it
             if found_path
               found_path
             elsif File.exist?(on_disk_path)
