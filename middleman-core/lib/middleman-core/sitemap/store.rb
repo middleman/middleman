@@ -144,7 +144,7 @@ module Middleman
       # @return [String]
       Contract String => String
       def file_to_path(file)
-        file = File.join(@app.root, file)
+        file = File.expand_path(file, @app.root)
 
         prefix = @app.source_dir.sub(/\/$/, '') + '/'
         raise "'#{file}' not inside project folder '#{prefix}" unless file.start_with?(prefix)

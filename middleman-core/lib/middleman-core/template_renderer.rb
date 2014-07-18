@@ -171,6 +171,7 @@ module Middleman
 
         # By default, any engine will do
         preferred_engines = ['*']
+        preferred_engines << nil if options[:try_static]
 
         # If we're specifically looking for a preferred engine
         if options.key?(:preferred_engine)
@@ -188,7 +189,9 @@ module Middleman
         end
 
         search_paths = preferred_engines.map do |preferred_engine|
-          on_disk_path + '.' + preferred_engine
+          path_with_ext = on_disk_path.dup
+          path_with_ext << ('.' + preferred_engine) unless preferred_engine.nil?
+          path_with_ext
         end
 
         found_path = nil
@@ -196,6 +199,11 @@ module Middleman
           found_path = Dir[path_with_ext].find do |path|
             ::Tilt[path]
           end
+
+          unless found_path
+            found_path = path_with_ext if File.exist?(path_with_ext)
+          end
+
           break if found_path
         end
 

@@ -104,10 +104,16 @@ module Middleman
 
       raise ::Middleman::TemplateRenderer::TemplateNotFound, "Could not locate partial: #{name}" unless partial_path
 
-      opts = options.dup
-      locs = opts.delete(:locals)
+      r = sitemap.find_resource_by_path(sitemap.file_to_path(partial_path))
 
-      render_file(partial_path, locs.freeze, opts.freeze, &block)
+      if r && !r.template?
+        File.read(r.source_file)
+      else
+        opts = options.dup
+        locs = opts.delete(:locals)
+
+        render_file(partial_path, locs.freeze, opts.freeze, &block)
+      end
     end
 
     protected
@@ -125,16 +131,22 @@ module Middleman
       current_dir = File.dirname(resource.source_file)
       relative_dir = File.join(current_dir.sub(%r{^#{Regexp.escape(source_dir)}/?}, ''), partial_path)
 
-      partial = ::Middleman::TemplateRenderer.resolve_template(
-        @app,
-        relative_dir,
-        preferred_engine: File.extname(resource.source_file)[1..-1].to_sym
-      )
+      partial_path_no_underscore = partial_path.sub(/^_/, '').sub(/\/_/, '/')
+      relative_dir_no_underscore = File.join(current_dir.sub(%r{^#{Regexp.escape(source_dir)}/?}, ''), partial_path_no_underscore)
 
-      return partial if partial
+      partial = nil
 
-      # Try to find one relative to the source dir
-      ::Middleman::TemplateRenderer.resolve_template(@app, File.join('', partial_path))
+      [
+        [relative_dir, { preferred_engine: File.extname(resource.source_file)[1..-1].to_sym }],
+        [File.join('', partial_path)],
+        [relative_dir_no_underscore, { try_static: true }],
+        [File.join('', partial_path_no_underscore), { try_static: true }]
+      ].each do |args|
+        partial = ::Middleman::TemplateRenderer.resolve_template(@app, *args)
+        break if partial
+      end
+
+      partial
     end
 
     # Render a path with locs, opts and contents block.
