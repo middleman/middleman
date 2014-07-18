@@ -12,7 +12,7 @@ gem 'fivemat', '~> 1.3'
 gem 'cucumber', '~> 1.3'
 
 # Optional middleman dependencies, included for tests
-gem 'less', '2.3.0', require: false
+gem 'less', '2.3', require: false
 gem 'slim', '>= 2.0', require: false
 gem 'liquid', '>= 2.6', require: false
 gem 'stylus', '>= 1.0', require: false
@@ -26,7 +26,7 @@ gem 'therubyrhino', '>= 2.0', platforms: :jruby
 
 # Code Quality
 gem 'rubocop', '~> 0.24', require: false
-gem 'simplecov', '0.7.1', require: false
+gem 'simplecov', '0.9', require: false
 gem 'coveralls', '~> 0.7', require: false
 
 # Middleman itself
