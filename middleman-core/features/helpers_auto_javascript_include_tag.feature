@@ -6,6 +6,11 @@ Feature: Built-in auto_javascript_include_tag view helper
     When I go to "/auto-js.html"
     Then I should see "javascripts/auto-js.js"
 
+  Scenario: Viewing the root path (directory index)
+    Given the Server is running at "auto-js-directory-index-app"
+    When I go to "/auto-js/index.html"
+    Then I should see "javascripts/auto-js.js"
+
   Scenario: Viewing the root path (build mode)
     Given a successfully built app at "auto-js-app"
     When I cd to "build"
