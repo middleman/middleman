@@ -161,60 +161,71 @@ module Middleman
     # @param [String] request_path
     # @option options [Boolean] :preferred_engine If set, try this engine first, then fall back to any engine.
     # @return [String, Boolean] Either the path to the template, or false
-    Contract IsA['Middleman::Application'], Or[Symbol, String], Hash => Maybe[String]
+    Contract IsA['Middleman::Application'], Or[Symbol, String], Maybe[Hash] => Maybe[String]
     def self.resolve_template(app, request_path, options={})
       # Find the path by searching or using the cache
       request_path = request_path.to_s
-      cache.fetch(:resolve_template, request_path, options) do
-        relative_path = Util.strip_leading_slash(request_path)
-        on_disk_path  = File.expand_path(relative_path, app.source_dir)
 
-        # By default, any engine will do
-        preferred_engines = ['*']
-        preferred_engines << nil if options[:try_static]
+      # Cache lookups in build mode only
+      if app.build?
+        cache.fetch(:resolve_template, request_path, options) do
+          uncached_resolve_template(app, request_path, options)
+        end
+      else
+        uncached_resolve_template(app, request_path, options)
+      end
+    end
 
-        # If we're specifically looking for a preferred engine
-        if options.key?(:preferred_engine)
-          extension_class = ::Tilt[options[:preferred_engine]]
+    Contract IsA['Middleman::Application'], String, Hash => Maybe[String]
+    def self.uncached_resolve_template(app, request_path, options)
+      relative_path = Util.strip_leading_slash(request_path)
+      on_disk_path  = File.expand_path(relative_path, app.source_dir)
 
-          # Get a list of extensions for a preferred engine
-          matched_exts = ::Tilt.mappings.select do |_, engines|
-            engines.include? extension_class
-          end.keys
+      # By default, any engine will do
+      preferred_engines = ['*']
+      preferred_engines << nil if options[:try_static]
 
-          # Prefer to look for the matched extensions
-          unless matched_exts.empty?
-            preferred_engines.unshift('{' + matched_exts.join(',') + '}')
-          end
+      # If we're specifically looking for a preferred engine
+      if options.key?(:preferred_engine)
+        extension_class = ::Tilt[options[:preferred_engine]]
+
+        # Get a list of extensions for a preferred engine
+        matched_exts = ::Tilt.mappings.select do |_, engines|
+          engines.include? extension_class
+        end.keys
+
+        # Prefer to look for the matched extensions
+        unless matched_exts.empty?
+          preferred_engines.unshift('{' + matched_exts.join(',') + '}')
+        end
+      end
+
+      search_paths = preferred_engines.map do |preferred_engine|
+        path_with_ext = on_disk_path.dup
+        path_with_ext << ('.' + preferred_engine) unless preferred_engine.nil?
+        path_with_ext
+      end
+
+      found_path = nil
+      search_paths.each do |path_with_ext|
+        found_path = Dir[path_with_ext].find do |path|
+          ::Tilt[path]
         end
 
-        search_paths = preferred_engines.map do |preferred_engine|
-          path_with_ext = on_disk_path.dup
-          path_with_ext << ('.' + preferred_engine) unless preferred_engine.nil?
-          path_with_ext
+        unless found_path
+          found_path = path_with_ext if File.exist?(path_with_ext)
         end
 
-        found_path = nil
-        search_paths.each do |path_with_ext|
-          found_path = Dir[path_with_ext].find do |path|
-            ::Tilt[path]
-          end
+        break if found_path
+      end
 
-          unless found_path
-            found_path = path_with_ext if File.exist?(path_with_ext)
-          end
-
-          break if found_path
-        end
-
-        # If we found one, return it
-        if found_path
-          found_path
-        elsif File.exist?(on_disk_path)
-          on_disk_path
-        else
-          nil
-        end
+      # If we found one, return it
+      if found_path
+        found_path
+      elsif File.exist?(on_disk_path)
+        on_disk_path
+      else
+        nil
       end
     end
   end
