@@ -1,6 +1,5 @@
 # Core Pathname library used for traversal
 require 'pathname'
-require 'middleman-core/auto_gem_extensions'
 
 module Middleman
   class << self
@@ -13,13 +12,7 @@ module Middleman
         end
 
         # If we've found the root, try to setup Bundler
-        if ENV['MM_ROOT']
-          setup_bundler
-        else
-          # Automatically discover extensions in RubyGems
-          require 'middleman-core/extensions'
-          ::Middleman.load_extensions_in_path
-        end
+        setup_bundler if ENV['MM_ROOT']
 
         true
       end

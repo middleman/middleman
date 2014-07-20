@@ -1,48 +1,70 @@
-require 'middleman-templates'
-
 # CLI Module
 module Middleman::Cli
   # A thor task for creating new projects
   class Init < Thor
+    include Thor::Actions
     check_unknown_options!
 
     namespace :init
 
-    desc 'init NAME [options]', 'Create new project NAME'
-    available_templates = ::Middleman::Templates.registered.keys.join(', ')
+    desc 'init TARGET [options]', 'Create new project at TARGET'
     method_option 'template',
                   aliases: '-T',
-                  default: 'default',
-                  desc: "Use a project template: #{available_templates}"
-    method_option 'css_dir',
-                  desc: 'The path to the css files'
-    method_option 'js_dir',
-                  desc: 'The path to the javascript files'
-    method_option 'images_dir',
-                  desc: 'The path to the image files'
-    method_option 'rack',
-                  type: :boolean,
-                  default: false,
-                  desc: 'Include a config.ru file'
+                  default: 'middleman/middleman-templates-default',
+                  desc: 'Use a project template'
+
+    # Do not run bundle install
     method_option 'skip-bundle',
                   type: :boolean,
                   aliases: '-B',
                   default: false,
-                  desc: "Don't run bundle install"
-    method_option 'skip-git',
-                  type: :boolean,
-                  default: false,
-                  desc: 'Skip Git ignores and keeps'
+                  desc: 'Skip bundle install'
+
     # The init task
     # @param [String] name
-    def init(name='.')
-      key = options[:template].to_sym
-      unless ::Middleman::Templates.registered.key?(key)
-        raise Thor::Error, "Unknown project template '#{key}'"
+    def init(target='.')
+      require 'tmpdir'
+
+      repo = if shortname?(options[:template])
+        require 'open-uri'
+        require 'json'
+
+        api = 'http://directory.middlemanapp.com/api'
+        uri = ::URI.parse("#{api}/#{options[:template]}.json")
+
+        begin
+          data = ::JSON.parse(uri.read)
+          data['links']['github']
+        rescue ::OpenURI::HTTPError
+          puts "Template `#{options[:template]}` not found in Middleman Directory."
+          puts 'Did you mean to use a full `user/repo` path?'
+          exit
+        end
+      else
+        repository_path(options[:template])
       end
 
-      thor_group = ::Middleman::Templates.registered[key]
-      thor_group.new([name], options).invoke_all
+      Dir.mktmpdir do |dir|
+        run("git clone #{repo} #{dir}")
+
+        source_paths << dir
+
+        directory dir, target, exclude_pattern: /\.git\/|\.gitignore$/
+
+        inside(target) do
+          run('bundle install')
+        end unless ENV['TEST'] || options[:'skip-bundle']
+      end
+    end
+
+    protected
+
+    def shortname?(repo)
+      repo.split('/').length != 2
+    end
+
+    def repository_path(repo)
+      "git://github.com/#{repo}.git"
     end
   end
 
