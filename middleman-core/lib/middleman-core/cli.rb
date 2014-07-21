@@ -1,6 +1,7 @@
 # Require thor since that's what the who CLI is built around
 require 'thor'
 require 'thor/group'
+require 'thor/middleman_exts'
 
 # CLI Module
 module Middleman
