@@ -32,4 +32,4 @@ gem 'coveralls', '~> 0.7', require: false
 # Middleman itself
 gem 'middleman', path: 'middleman'
 gem 'middleman-core', path: 'middleman-core'
-gem 'middleman-sprockets', github: 'middleman/middleman-sprockets', branch: 'v3-stable'
+gem 'middleman-sprockets', git: 'https://github.com/middleman/middleman-sprockets', branch: 'v3-stable'
