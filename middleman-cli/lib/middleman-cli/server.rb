@@ -36,10 +36,6 @@ module Middleman::Cli
                   type: :boolean,
                   default: false,
                   desc: 'Generate profiling report for server startup'
-    method_option :reload_paths,
-                  type: :string,
-                  default: false,
-                  desc: 'Additional paths to auto-reload when files change'
     method_option :force_polling,
                   type: :boolean,
                   default: false,

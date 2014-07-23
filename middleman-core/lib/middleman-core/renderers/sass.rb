@@ -38,6 +38,8 @@ module Middleman
       def initialize(app, options={}, &block)
         super
 
+        app.files.ignore :sass_cache, :source, /(^|\/)\.sass-cache\//
+
         opts = { output_style: :nested }
         opts[:line_comments] = false if ENV['TEST']
 
@@ -57,10 +59,6 @@ module Middleman
         ::Compass::ImportOnce.activate!
 
         require 'middleman-core/renderers/sass_functions'
-      end
-
-      def before_configuration
-        app.files.watch :sass_cache, /(^|\/)\.sass-cache\//
       end
 
       # A SassTemplate for Tilt which outputs debug messages
@@ -111,11 +109,7 @@ module Middleman
           }
 
           if ctx.is_a?(::Middleman::TemplateContext) && file
-            location_of_sass_file = ctx.source_dir
-
-            parts = basename.split('.')
-            parts.pop
-            more_opts[:css_filename] = File.join(location_of_sass_file, ctx.config[:css_dir], parts.join('.'))
+            more_opts[:css_filename] = file.sub(/\.s[ac]ss$/, '')
           end
 
           options.merge(more_opts)

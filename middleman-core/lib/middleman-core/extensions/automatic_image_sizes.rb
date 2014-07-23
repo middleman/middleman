@@ -18,13 +18,14 @@ class Middleman::Extensions::AutomaticImageSizes < ::Middleman::Extension
       if !params.key?(:width) && !params.key?(:height) && !path.include?('://')
         params[:alt] ||= ''
 
-        real_path = path
+        real_path = path.dup
         real_path = File.join(config[:images_dir], real_path) unless real_path.start_with?('/')
-        full_path = File.join(source_dir, real_path)
 
-        if File.exist?(full_path)
+        file = app.files.find(:source, real_path)
+
+        if file && file[:full_path].exist?
           begin
-            width, height = ::FastImage.size(full_path, raise_on_failure: true)
+            width, height = ::FastImage.size(file[:full_path].to_s, raise_on_failure: true)
             params[:width]  = width
             params[:height] = height
           rescue FastImage::UnknownImageType

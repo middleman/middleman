@@ -6,6 +6,8 @@ module Middleman::CoreExtensions
     def initialize(app, options_hash={}, &block)
       super
 
+      return if app.config.defines_setting? :show_exceptions
+
       app.config.define_setting :show_exceptions, !!ENV['TEST'], 'Whether to catch and display exceptions'
     end
 

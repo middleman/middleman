@@ -24,9 +24,10 @@ module Middleman
     #
     # @param [String] filename The file to check.
     # @return [Boolean]
-    Contract String => Bool
+    Contract Or[String, Pathname] => Bool
     def binary?(filename)
-      ext = File.extname(filename)
+      path = Pathname(filename)
+      ext = path.extname
 
       # We hardcode detecting of gzipped SVG files
       return true if ext == '.svgz'
@@ -38,7 +39,7 @@ module Middleman
       if mime = ::Rack::Mime.mime_type(dot_ext, nil)
         !nonbinary_mime?(mime)
       else
-        file_contents_include_binary_bytes?(filename)
+        file_contents_include_binary_bytes?(path.to_s)
       end
     end
 
@@ -74,14 +75,15 @@ module Middleman
     # @private
     # @param [Hash] data Normal hash
     # @return [Middleman::Util::HashWithIndifferentAccess]
-    Contract Maybe[Or[Array, Hash, HashWithIndifferentAccess]] => Maybe[Frozen[Or[HashWithIndifferentAccess, Array]]]
+    FrozenDataStructure = Frozen[Or[HashWithIndifferentAccess, Array]]
+    Contract Maybe[Or[Array, Hash, HashWithIndifferentAccess]] => Maybe[FrozenDataStructure]
     def recursively_enhance(data)
       if data.is_a? HashWithIndifferentAccess
         data
       elsif data.is_a? Hash
         HashWithIndifferentAccess.new(data)
       elsif data.is_a? Array
-        data.map(&method(:recursively_enhance))
+        data.map(&method(:recursively_enhance)).freeze
       else
         nil
       end

@@ -23,7 +23,7 @@ module Middleman
     # @param [Hash] opts The builder options
     def initialize(app, opts={})
       @app = app
-      @source_dir = Pathname(@app.source_dir)
+      @source_dir = Pathname(File.join(@app.root, @app.config[:source]))
       @build_dir = Pathname(@app.config[:build_dir])
 
       if @build_dir.expand_path.relative_path_from(@source_dir).to_s =~ /\A[.\/]+\Z/
@@ -83,7 +83,7 @@ module Middleman
       logger.debug '== Checking for Compass sprites'
 
       # Double-check for compass sprites
-      @app.files.find_new_files((@source_dir + @app.config[:images_dir]).relative_path_from(@app.root_path))
+      @app.files.find_new_files!
       @app.sitemap.ensure_resource_list_updated!
 
       css_files
@@ -170,7 +170,7 @@ module Middleman
 
       begin
         if resource.binary?
-          export_file!(output_file, Pathname(resource.source_file))
+          export_file!(output_file, resource.source_file[:full_path])
         else
           response = @rack.get(URI.escape(resource.request_path))
 

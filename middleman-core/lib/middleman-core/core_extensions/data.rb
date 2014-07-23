@@ -9,26 +9,37 @@ module Middleman
     class Data < Extension
       attr_reader :data_store
 
-      def before_configuration
-        @data_store = DataStore.new(app)
-        app.config.define_setting :data_dir, 'data', 'The directory data files are stored in'
-
-        app.add_to_config_context :data, &method(:data_store)
+      def initialize(app, config={}, &block)
+        super
 
         # The regex which tells Middleman which files are for data
-        data_file_matcher = /#{app.config[:data_dir]}\/(.*?)[\w-]+\.(yml|yaml|json)$/
+        data_file_matcher = /^(.*?)[\w-]+\.(yml|yaml|json)$/
+
+        @data_store = DataStore.new(app, data_file_matcher)
+        app.config.define_setting :data_dir, 'data', 'The directory data files are stored in'
+
+        app.add_to_config_context(:data, &method(:data_store))
+
+        start_watching(app.config[:data_dir])
+      end
+
+      def start_watching(dir)
+        @original_data_dir = dir
+
+        # Tell the file watcher to observe the :data_dir
+        @watcher = app.files.watch :data,
+                                   path: File.join(app.root, dir),
+                                   ignore: proc { |f| !data_file_matcher.match(f[:relative_path]) }
 
         # Setup data files before anything else so they are available when
         # parsing config.rb
-        app.files.changed(data_file_matcher, &app.extensions[:data].data_store.method(:touch_file))
-        app.files.deleted(data_file_matcher, &app.extensions[:data].data_store.method(:remove_file))
+        app.files.changed(:data, &@data_store.method(:update_files))
+      end
 
-        # Tell the file watcher to observe the :data_dir
-        app.files.watch :data do |path, _app|
-          path.match data_file_matcher
-        end
+      def after_configuration
+        return unless @original_data_dir != app.config[:data_dir]
 
-        app.files.reload_path(app.config[:data_dir])
+        @watcher.update_path(app.config[:data_dir])
       end
 
       helpers do
@@ -44,8 +55,9 @@ module Middleman
         # Setup data store
         #
         # @param [Middleman::Application] app The current instance of Middleman
-        def initialize(app)
+        def initialize(app, data_file_matcher)
           @app = app
+          @data_file_matcher = data_file_matcher
           @local_data = {}
           @local_sources = {}
           @callback_sources = {}
@@ -73,22 +85,26 @@ module Middleman
           @callback_sources
         end
 
+        Contract ArrayOf[IsA['Middleman::SourceFile']], ArrayOf[IsA['Middleman::SourceFile']] => Any
+        def update_files(updated_files, removed_files)
+          updated_files.each(&method(:touch_file))
+          removed_files.each(&method(:remove_file))
+        end
+
         # Update the internal cache for a given file path
         #
         # @param [String] file The file to be re-parsed
         # @return [void]
+        Contract IsA['Middleman::SourceFile'] => Any
         def touch_file(file)
-          root = Pathname(@app.root)
-          full_path = root + file
-          extension = File.extname(file)
-          basename  = File.basename(file, extension)
-
-          data_path = full_path.relative_path_from(root + @app.config[:data_dir])
+          data_path = file[:relative_path]
+          extension = File.extname(data_path)
+          basename  = File.basename(data_path, extension)
 
           if %w(.yaml .yml).include?(extension)
-            data = YAML.load_file(full_path)
+            data = YAML.load_file(file[:full_path])
           elsif extension == '.json'
-            data = ActiveSupport::JSON.decode(full_path.read)
+            data = ActiveSupport::JSON.decode(file[:full_path].read)
           else
             return
           end
@@ -108,13 +124,11 @@ module Middleman
         #
         # @param [String] file The file to be cleared
         # @return [void]
+        Contract IsA['Middleman::SourceFile'] => Any
         def remove_file(file)
-          root = Pathname(@app.root)
-          full_path = root + file
-          extension = File.extname(file)
-          basename  = File.basename(file, extension)
-
-          data_path = full_path.relative_path_from(root + @app.config[:data_dir])
+          data_path = file[:relative_path]
+          extension = File.extname(data_path)
+          basename  = File.basename(data_path, extension)
 
           data_branch = @local_data
 

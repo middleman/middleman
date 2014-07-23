@@ -9,7 +9,7 @@ module Middleman
         def initialize(app, config={}, &block)
           super
 
-          @app.add_to_config_context :endpoint, &method(:create_endpoint)
+          @app.add_to_config_context(:endpoint, &method(:create_endpoint))
 
           @endpoints = {}
         end

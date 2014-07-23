@@ -13,7 +13,7 @@ module Middleman
       end
 
       def before_configuration
-        app.add_to_config_context :page, &method(:page)
+        app.add_to_config_context(:page, &method(:page))
       end
 
       # @return Array<Middleman::Sitemap::Resource>
@@ -59,7 +59,7 @@ module Middleman
         if path.is_a?(String) && !path.include?('*')
           # Normalize path
           path = Middleman::Util.normalize_path(path)
-          if path.end_with?('/') || File.directory?(File.join(@app.source_dir, path))
+          if path.end_with?('/') || app.files.by_type(:source).watchers.any? { |w| (w.directory + Pathname(path)).directory? }
             path = File.join(path, @app.config[:index_file])
           end
         end
