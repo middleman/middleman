@@ -176,7 +176,7 @@ module Middleman
       end
     end
 
-    Contract IsA['Middleman::Application'], Or[Symbol, String], Hash => Maybe[IsA['Middleman::SourceFile']]
+    Contract IsA['Middleman::Application'], String, Hash => Maybe[IsA['Middleman::SourceFile']]
     def self.uncached_resolve_template(app, relative_path, options)
       # By default, any engine will do
       preferred_engines = []

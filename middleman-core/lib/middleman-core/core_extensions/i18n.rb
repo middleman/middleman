@@ -7,8 +7,6 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
   option :mount_at_root, nil, 'Mount a specific language at the root of the site'
   option :data, 'locales', 'The directory holding your locale configurations'
 
-  def_delegator :@app, :logger
-
   def after_configuration
     # See https://github.com/svenfuchs/i18n/wiki/Fallbacks
     unless options[:no_fallbacks]
