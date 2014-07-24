@@ -183,12 +183,33 @@ module Middleman
         # @param [Hash] options
         # @return [String]
         def render(_, data, options={}, &block)
-          data = data.to_s
+          partial_name = data.to_s
+          found_partial = locate_partial(partial_name, false) || locate_partial(partial_name, true)
+
+          # Look in the partials_dir for the partial with the current engine
+          unless found_partial
+            partials_path = File.join(config[:partials_dir], partial_name)
+            found_partial = locate_partial(partials_path, false) || locate_partial(partials_path, true)
+          end
+
+          raise ::Middleman::CoreExtensions::Rendering::TemplateNotFound, "Could not locate partial: #{data}" unless found_partial
 
           locals = options[:locals]
 
-          found_partial = false
-          resolve_opts = { try_without_underscore: true, try_static: true }
+          if ::Tilt[found_partial]
+            # Render the partial if found, otherwide throw exception
+            render_individual_file(found_partial, locals, options, self, &block)
+          else
+            File.read(found_partial)
+          end
+        end
+
+        # Partial locator.
+        #
+        # @param [String] partial_name
+        # @return [String]
+        def locate_partial(partial_name, try_static=true)
+          resolve_opts = { try_without_underscore: true, try_static: try_static }
 
           # If the path is known to the sitemap
           if resource = sitemap.find_resource_by_path(current_path)
@@ -196,26 +217,11 @@ module Middleman
             resolve_opts[:preferred_engine] = File.extname(resource.source_file)[1..-1].to_sym
 
             # Look for partials relative to the current path
-            relative_dir = File.join(current_dir.sub(%r{^#{Regexp.escape(source_dir)}/?}, ''), data)
+            relative_dir = File.join(current_dir.sub(%r{^#{Regexp.escape(source_dir)}/?}, ''), partial_name)
 
-            found_partial = resolve_template(relative_dir, resolve_opts)
-          end
-
-          # Look in the partials_dir for the partial with the current engine
-          unless found_partial
-            partials_path = File.join(config[:partials_dir], data)
-            found_partial = resolve_template(partials_path, resolve_opts)
-          end
-
-          raise ::Middleman::CoreExtensions::Rendering::TemplateNotFound, "Could not locate partial: #{data}" unless found_partial
-
-          r = sitemap.find_resource_by_path(sitemap.file_to_path(found_partial))
-
-          if r && !r.template?
-            File.read(r.source_file)
+            resolve_template(relative_dir, resolve_opts) || resolve_template(partial_name, resolve_opts)
           else
-            # Render the partial if found, otherwide throw exception
-            render_individual_file(found_partial, locals, options, self, &block)
+            resolve_template(partial_name, resolve_opts)
           end
         end
 
@@ -259,7 +265,7 @@ module Middleman
           # Overwrite with frontmatter options
           options = options.deep_merge(options[:renderer_options]) if options[:renderer_options]
 
-          template_class = Tilt[path]
+          template_class = ::Tilt[path]
           # Allow hooks to manipulate the template before render
           self.class.callbacks_for_hook(:before_render).each do |callback|
             # Uber::Options::Value doesn't respond to call
@@ -443,23 +449,27 @@ module Middleman
             relative_path = Util.strip_leading_slash(request_path)
             on_disk_path  = File.expand_path(relative_path, source_dir)
 
-            # By default, any engine will do
-            preferred_engines = ['*']
-            preferred_engines << nil if options[:try_static]
+            preferred_engines = if options[:try_static]
+              [nil]
+            else
+              possible_engines = ['*'] # By default, any engine will do
 
-            # If we're specifically looking for a preferred engine
-            if options.key?(:preferred_engine)
-              extension_class = ::Tilt[options[:preferred_engine]]
+              # If we're specifically looking for a preferred engine
+              if options.key?(:preferred_engine)
+                extension_class = ::Tilt[options[:preferred_engine]]
 
-              # Get a list of extensions for a preferred engine
-              matched_exts = ::Tilt.mappings.select do |_, engines|
-                engines.include? extension_class
-              end.keys
+                # Get a list of extensions for a preferred engine
+                matched_exts = ::Tilt.mappings.select do |_, engines|
+                  engines.include? extension_class
+                end.keys
 
-              # Prefer to look for the matched extensions
-              unless matched_exts.empty?
-                preferred_engines.unshift('{' + matched_exts.join(',') + '}')
+                # Prefer to look for the matched extensions
+                unless matched_exts.empty?
+                  possible_engines.unshift('{' + matched_exts.join(',') + '}')
+                end
               end
+
+              possible_engines
             end
 
             search_paths = preferred_engines.flat_map do |preferred_engine|
