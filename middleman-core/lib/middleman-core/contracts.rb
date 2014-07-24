@@ -23,7 +23,7 @@ if ENV['TEST'] || ENV['CONTRACTS'] == 'true'
       end
 
       def valid?(val)
-        val.frozen? && Contract.valid?(val, @contract)
+        (val.frozen? || val.nil?) && Contract.valid?(val, @contract)
       end
     end
 

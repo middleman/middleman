@@ -92,7 +92,7 @@ module Middleman
           self.class.new(data)
         elsif data.is_a? Array
           data.map(&method(:recursively_enhance)).freeze
-        elsif data.frozen?
+        elsif data.frozen? || data.nil?
           data
         else
           data.dup.freeze
