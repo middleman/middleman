@@ -106,8 +106,8 @@ module Middleman
       # @param [Symbol] key The name of the option
       # @param [Object] default The default value for the option
       # @param [String] description A human-readable description of what the option does
-      def option(key, default=nil, description=nil)
-        config.define_setting(key, default, description)
+      def option(key, default=nil, description=nil, options={})
+        config.define_setting(key, default, description, options)
       end
 
       # Declare helpers to be added the global Middleman application.
@@ -239,6 +239,13 @@ module Middleman
       end
 
       yield @options if block_given?
+
+      @options.all_settings.each do |o|
+        next unless o.options[:required] && !o.value_set?
+
+        logger.error "The `:#{o.key}` option of the `#{self.class.ext_name}` extension is required." 
+        exit(1)
+      end
     end
 
     def bind_before_configuration

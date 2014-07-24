@@ -70,13 +70,14 @@ module Middleman
       # @param [Symbol] key The name of the option
       # @param [Object] default The default value for the option
       # @param [String] description A human-readable description of what the option does
+      # @param [Hash] options Additional options.
       # @return [ConfigSetting]
-      def define_setting(key, default=nil, description=nil)
+      def define_setting(key, default=nil, description=nil, options={})
         raise "Setting #{key} doesn't exist" if @finalized
         raise "Setting #{key} already defined" if @settings.key?(key)
         raise 'Setting key must be a Symbol' unless key.is_a? Symbol
 
-        @settings[key] = ConfigSetting.new(key, default, description)
+        @settings[key] = ConfigSetting.new(key, default, description, options)
       end
 
       # Switch the configuration manager is finalized, it switches to read-only
@@ -94,7 +95,7 @@ module Middleman
       # Load in a list of settings
       def load_settings(other_settings)
         other_settings.each do |setting|
-          new_setting = define_setting(setting.key, setting.default, setting.description)
+          new_setting = define_setting(setting.key, setting.default, setting.description, setting.options)
           new_setting.value = setting.value if setting.value_set?
         end
       end
@@ -124,11 +125,15 @@ module Middleman
       # A human-friendly description of the setting
       attr_accessor :description
 
-      def initialize(key, default, description)
+      # Additional config.
+      attr_accessor :options
+
+      def initialize(key, default, description, options={})
         @value_set = false
         self.key = key
         self.default = default
         self.description = description
+        self.options = options
       end
 
       # The user-supplied value for this setting, overriding the default
