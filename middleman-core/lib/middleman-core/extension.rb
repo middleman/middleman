@@ -243,7 +243,7 @@ module Middleman
       @options.all_settings.each do |o|
         next unless o.options[:required] && !o.value_set?
 
-        logger.error "The `:#{o.key}` option of the `#{self.class.ext_name}` extension is required." 
+        logger.error "The `:#{o.key}` option of the `#{self.class.ext_name}` extension is required."
         exit(1)
       end
     end

@@ -293,7 +293,7 @@ module Middleman
     Contract ArrayOf[CallbackDescriptor], ArrayOf[SourceFile], ArrayOf[SourceFile] => Any
     def run_callbacks(callback_descriptors, updated_files, removed_files)
       callback_descriptors.each do |callback|
-        if callback[:type] != :all
+        if callback[:type] == :all
           callback[:proc].call(updated_files, removed_files)
         else
           valid_updated = updated_files.select { |f| callback[:type] == f[:type] }

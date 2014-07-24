@@ -9,13 +9,12 @@ module Middleman
     class Data < Extension
       attr_reader :data_store
 
+      # The regex which tells Middleman which files are for data
+      DATA_FILE_MATCHER = /^(.*?)[\w-]+\.(yml|yaml|json)$/
+
       def initialize(app, config={}, &block)
         super
-
-        # The regex which tells Middleman which files are for data
-        data_file_matcher = /^(.*?)[\w-]+\.(yml|yaml|json)$/
-
-        @data_store = DataStore.new(app, data_file_matcher)
+        @data_store = DataStore.new(app, DATA_FILE_MATCHER)
         app.config.define_setting :data_dir, 'data', 'The directory data files are stored in'
 
         app.add_to_config_context(:data, &method(:data_store))
@@ -29,7 +28,7 @@ module Middleman
         # Tell the file watcher to observe the :data_dir
         @watcher = app.files.watch :data,
                                    path: File.join(app.root, dir),
-                                   ignore: proc { |f| !data_file_matcher.match(f[:relative_path]) }
+                                   ignore: proc { |f| !DATA_FILE_MATCHER.match(f[:relative_path]) }
 
         # Setup data files before anything else so they are available when
         # parsing config.rb
