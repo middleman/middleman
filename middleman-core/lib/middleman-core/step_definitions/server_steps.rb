@@ -91,6 +91,10 @@ Then /^I should not see "([^\"]*)"$/ do |expected|
   expect(@browser.last_response.body).to_not include(expected)
 end
 
+Then /^I should not see:$/ do |expected|
+  expect(@browser.last_response.body).to_not include(expected.chomp)
+end
+
 Then /^I should see "([^\"]*)" lines$/ do |lines|
   expect(@browser.last_response.body.chomp.split($/).length).to eq(lines.to_i)
 end
