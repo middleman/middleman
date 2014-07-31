@@ -176,10 +176,10 @@ module Middleman
               opts[:template_body] = content if content
 
               content = if block_given?
-                          render_individual_file(path, locs, opts, context, &block)
-                        else
-                          render_individual_file(path, locs, opts, context)
-                        end
+                render_individual_file(path, locs, opts, context, &block)
+              else
+                render_individual_file(path, locs, opts, context)
+              end
 
               path = File.basename(path, File.extname(path))
             rescue LocalJumpError
