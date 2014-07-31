@@ -207,5 +207,32 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
     def langs
       extensions[:i18n].langs
     end
+
+    def locate_partial(partial_name, try_static=false)
+      locals_dir = extensions[:i18n].options[:templates_dir]
+
+      # Try /localizable
+      partials_path = File.join(locals_dir, partial_name)
+
+      lang_suffix = current_resource.metadata[:locals] && current_resource.metadata[:locals][:lang]
+
+      extname = File.extname(partial_name)
+      maybe_static = extname.length > 0
+      suffixed_partial_name = if maybe_static
+        partial_name.sub(extname, ".#{lang_suffix}#{extname}")
+      else
+        "#{partial_name}.#{lang_suffix}"
+      end
+
+      if lang_suffix
+        super(suffixed_partial_name, maybe_static) ||
+        super(File.join(locals_dir, suffixed_partial_name), maybe_static) ||
+        super(partials_path, try_static) ||
+        super
+      else
+        super(partials_path, try_static) ||
+        super
+      end
+    end
   end
 end
