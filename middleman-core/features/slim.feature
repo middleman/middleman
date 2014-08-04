@@ -23,9 +23,10 @@ Feature: Support slim templating language
   Scenario: Slim Content For
     Given the Server is running at "slim-content-for-app"
     When I go to "/index.html"
+    Then I should not see "Content AContent B"
     Then I should see "Content for A:Content A"
     Then I should see "Content for main:Content Main"
-    Then I should see "Content for B:Content AContent B"
+    Then I should see "Content for B:Content B"
 
   Scenario: Rendering Scss in a Slim filter
     Given an empty app

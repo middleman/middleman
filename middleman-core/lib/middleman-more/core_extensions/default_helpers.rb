@@ -73,7 +73,6 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
 
     def auto_find_proper_handler(&block)
       engine = block_given? ? File.extname(block.source_location[0])[1..-1].to_sym : current_engine
-      return if engine == :slim && engine == current_engine
       handler_class = ::Padrino::Helpers::OutputHelpers.handlers[engine]
       handler_class && handler_class.new(self)
     end
