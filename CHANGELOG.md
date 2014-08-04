@@ -1,6 +1,15 @@
 master
 ===
 
+3.3.4
+===
+
+* Fix `automatic_alt_tags` error. #1341
+* `partial` now looks for i18n suffixed filenames. #1333
+* Allow excluding paths from `gzip`. #1268
+* Let LiveReload work on 404 pages.
+* Update `listen` dependency.
+
 3.3.3
 ===
 
