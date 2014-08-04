@@ -20,6 +20,13 @@ Feature: Support slim templating language
     When I go to "/slim.html"
     Then I should see "<h1>Welcome to Slim</h1>"
 
+  Scenario: Slim Content For
+    Given the Server is running at "slim-content-for-app"
+    When I go to "/index.html"
+    Then I should see "Content for A:Content A"
+    Then I should see "Content for main:Content Main"
+    Then I should see "Content for B:Content AContent B"
+
   Scenario: Rendering Scss in a Slim filter
     Given an empty app
     And a file named "config.rb" with:
