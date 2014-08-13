@@ -20,7 +20,7 @@ module Middleman
             config[:asciidoc][:base_dir] = source_dir
             config[:asciidoc][:attributes].concat(config[:asciidoc_attributes] || [])
             # set imagesdir unless already defined
-            unless config[:asciidoc][:attributes].find{|e| e =~ /imagesdir=.*/}.any?
+            unless config[:asciidoc][:attributes].find{|e| e =~ /imagesdir=.*/}
               config[:asciidoc][:attributes] << %(imagesdir=#{File.join((config[:http_prefix] || '/').chomp('/'), config[:images_dir])})
             end
             sitemap.provides_metadata(/\.adoc$/) do |path|
