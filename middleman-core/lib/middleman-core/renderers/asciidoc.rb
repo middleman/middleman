@@ -19,7 +19,10 @@ module Middleman
             # QUESTION should base_dir be equal to docdir instead?
             config[:asciidoc][:base_dir] = source_dir
             config[:asciidoc][:attributes].concat(config[:asciidoc_attributes] || [])
-            config[:asciidoc][:attributes] << %(imagesdir=#{File.join((config[:http_prefix] || '/').chomp('/'), config[:images_dir])})
+            # set imagesdir unless already defined
+            unless config[:asciidoc][:attributes].find{|e| e =~ /imagesdir=.*/}.any?
+              config[:asciidoc][:attributes] << %(imagesdir=#{File.join((config[:http_prefix] || '/').chomp('/'), config[:images_dir])})
+            end
             sitemap.provides_metadata(/\.adoc$/) do |path|
               # read the AsciiDoc header only to set page options and data
               # header values can be accessed via app.data.page.<name> in the layout
