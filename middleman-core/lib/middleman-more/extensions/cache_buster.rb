@@ -24,7 +24,7 @@ class Middleman::Extensions::CacheBuster < ::Middleman::Extension
     def asset_url(path, prefix='')
       http_path = super
 
-      if http_path.include?('://') || !%w(.css .png .jpg .jpeg .svg .svgz .js .gif).include?(File.extname(http_path))
+      if http_path.include?('://') || !%w(.css .png .jpg .jpeg .svg .svgz .webp .js .gif).include?(File.extname(http_path))
         http_path
       else
         if respond_to?(:http_images_path) && prefix == http_images_path
