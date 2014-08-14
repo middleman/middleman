@@ -1,6 +1,13 @@
 master
 ===
 
+3.3.5
+===
+
+* Update Padrino to ~> 0.12.3 (removed breadcrumb helper)
+* Update compass-import-once to 1.0.5
+* Fix issue with Slim partials. #1327
+
 3.3.4
 ===
 
