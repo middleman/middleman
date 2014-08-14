@@ -1,19 +1,15 @@
 # Automatic Image alt tags from image names extension
 class Middleman::Extensions::AutomaticAltTags < ::Middleman::Extension
-  def initialize(app, options_hash={}, &block)
-    super
-  end
-
   helpers do
     # Override default image_tag helper to automatically insert alt tag
     # containing image name.
 
-    def image_tag(path)
+    def image_tag(path, params={})
       unless path.include?('://')
         params[:alt] ||= ''
 
         real_path = path.dup
-        real_path = File.join(images_dir, real_path) unless real_path.start_with?('/')
+        real_path = File.join(config[:images_dir], real_path) unless real_path.start_with?('/')
 
         file = app.files.find(:source, real_path)
 
@@ -26,7 +22,7 @@ class Middleman::Extensions::AutomaticAltTags < ::Middleman::Extension
         end
       end
 
-      super(path)
+      super(path, params)
     end
   end
 end

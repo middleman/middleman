@@ -1,7 +1,7 @@
 require 'middleman-core/util'
 
 class Middleman::Extensions::AssetHash < ::Middleman::Extension
-  option :exts, %w(.jpg .jpeg .png .gif .js .css .otf .woff .eot .ttf .svg), 'List of extensions that get asset hashes appended to them.'
+  option :exts, %w(.jpg .jpeg .png .gif .webp .js .css .otf .woff .eot .ttf .svg), 'List of extensions that get asset hashes appended to them.'
   option :ignore, [], 'Regexes of filenames to skip adding asset hashes to'
 
   def initialize(app, options_hash={}, &block)

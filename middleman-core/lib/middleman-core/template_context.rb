@@ -104,10 +104,11 @@ module Middleman
 
       raise ::Middleman::TemplateRenderer::TemplateNotFound, "Could not locate partial: #{name}" unless partial_file
 
-      r = sitemap.find_resource_by_path(sitemap.file_to_path(partial_file))
+      source_path = sitemap.file_to_path(partial_file)
+      r = sitemap.find_resource_by_path(source_path)
 
-      if r && !r.template?
-        File.read(r.source_file[:full_path])
+      if (r && !r.template?) || (Tilt[partial_file[:full_path]].nil? && partial_file[:full_path].exist?)
+        File.read(partial_file[:full_path])
       else
         opts = options.dup
         locs = opts.delete(:locals)
@@ -115,8 +116,6 @@ module Middleman
         render_file(partial_file, locs.freeze, opts.freeze, &block)
       end
     end
-
-    protected
 
     # Locate a partial relative to the current path or the source dir, given a partial's path.
     #
@@ -140,6 +139,7 @@ module Middleman
       [
         [relative_dir.to_s, { preferred_engine: resource.source_file[:relative_path].extname[1..-1].to_sym }],
         [non_root],
+        [non_root, { try_static: true }],
         [relative_dir_no_underscore.to_s, { try_static: true }],
         [non_root_no_underscore, { try_static: true }]
       ].each do |args|
@@ -147,8 +147,10 @@ module Middleman
         break if partial_file
       end
 
-      partial_file
+      partial_file || nil
     end
+
+    protected
 
     # Render a path with locs, opts and contents block.
     #

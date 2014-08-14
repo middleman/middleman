@@ -29,7 +29,6 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
     ::Middleman::TemplateContext.send :include, ::Padrino::Helpers::RenderHelpers
     ::Middleman::TemplateContext.send :include, ::Padrino::Helpers::NumberHelpers
     # ::Middleman::TemplateContext.send :include, ::Padrino::Helpers::TranslationHelpers
-    ::Middleman::TemplateContext.send :include, ::Padrino::Helpers::Breadcrumbs
 
     app.config.define_setting :relative_links, false, 'Whether to generate relative links instead of absolute ones'
   end

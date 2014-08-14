@@ -2,7 +2,7 @@ require 'middleman-core/middleware/inline_url_rewriter'
 
 class Middleman::Extensions::AssetHost < ::Middleman::Extension
   option :host, nil, 'The asset host to use or a Proc to determine asset host', required: true
-  option :exts, %w(.css .png .jpg .jpeg .svg .svgz .js .gif), 'List of extensions that get cache busters strings appended to them.'
+  option :exts, %w(.css .png .jpg .jpeg .webp .svg .svgz .js .gif), 'List of extensions that get cache busters strings appended to them.'
   option :sources, %w(.htm .html .php .css .js), 'List of extensions that are searched for bustable assets.'
   option :ignore, [], 'Regexes of filenames to skip adding query strings to'
 

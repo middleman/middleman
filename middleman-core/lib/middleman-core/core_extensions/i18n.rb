@@ -40,6 +40,33 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
     def t(*args)
       ::I18n.t(*args)
     end
+
+    def locate_partial(partial_name)
+      locals_dir = extensions[:i18n].options[:templates_dir]
+
+      # Try /localizable
+      partials_path = File.join(locals_dir, partial_name)
+
+      lang_suffix = current_resource.metadata[:locals] && current_resource.metadata[:locals][:lang]
+
+      extname = File.extname(partial_name)
+      maybe_static = extname.length > 0
+      suffixed_partial_name = if maybe_static
+        partial_name.sub(extname, ".#{lang_suffix}#{extname}")
+      else
+        "#{partial_name}.#{lang_suffix}"
+      end
+
+      if lang_suffix
+        super(suffixed_partial_name) ||
+        super(File.join(locals_dir, suffixed_partial_name)) ||
+        super(partials_path) ||
+        super
+      else
+        super(partials_path) ||
+        super
+      end
+    end
   end
 
   Contract None => ArrayOf[Symbol]
