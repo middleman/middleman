@@ -39,4 +39,4 @@ gem 'codeclimate-test-reporter', '~> 0.3', require: false, group: :test
 gem 'middleman-cli', path: 'middleman-cli'
 gem 'middleman-core', path: 'middleman-core'
 gem 'middleman-compass', github: 'middleman/middleman-compass', require: false
-gem 'middleman-sprockets', github: 'middleman/middleman-sprockets', require: false
+# gem 'middleman-sprockets', github: 'middleman/middleman-sprockets', require: false
