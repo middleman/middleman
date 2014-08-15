@@ -21,6 +21,17 @@ Feature: YAML Front Matter
     Then I should see "<?php"
     Then I should not see "---"
 
+  Scenario: Rendering markdown (template-less) (yaml)
+    Given the Server is running at "frontmatter-app"
+    When I go to "/front-matter-pandoc.html"
+    Then I should see ">This is a document</h1>"
+    Then I should see "<p>To be or not to be</p>"
+    Then I should see "The meaning of life is 42"
+    Then I should not see "..."
+    Then I should not see "layout: false"
+    Then I should not see "title: Pandoc likes trailing dots..."
+
+
   Scenario: YAML not on first line, no encoding
     Given the Server is running at "frontmatter-app"
     When I go to "/front-matter-line-2.html"
