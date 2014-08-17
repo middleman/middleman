@@ -23,7 +23,7 @@ Gem::Specification.new do |s|
   s.add_dependency("haml", [">= 4.0.5"])
   s.add_dependency("sass", [">= 3.2.17", "< 4.0"])
   s.add_dependency("compass-import-once", ["1.0.5"])
-  s.add_dependency("compass", [">= 0.12.4"])
+  s.add_dependency("compass", [">= 1.0.0", "< 2.0.0"])
   s.add_dependency("uglifier", ["~> 2.5"])
   s.add_dependency("coffee-script", ["~> 2.2"])
   s.add_dependency("execjs", ["~> 2.0"])
