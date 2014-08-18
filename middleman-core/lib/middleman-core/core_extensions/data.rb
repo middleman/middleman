@@ -17,6 +17,7 @@ module Middleman
         @data_store = DataStore.new(app, DATA_FILE_MATCHER)
         app.config.define_setting :data_dir, 'data', 'The directory data files are stored in'
 
+        app.add_to_instance(:data, &method(:data_store))
         app.add_to_config_context(:data, &method(:data_store))
 
         start_watching(app.config[:data_dir])
