@@ -6,8 +6,6 @@ gem 'yard', '~> 0.8', require: false
 
 # Test tools
 gem 'pry', '~> 0.10', group: :development, require: false
-gem 'pry-debugger', platforms: [:ruby_19, :ruby_20], require: false
-gem 'pry-stack_explorer', platforms: [:ruby_19, :ruby_20], require: false
 gem 'aruba', '~> 0.6', require: false
 gem 'rspec', '~> 3.0', require: false
 gem 'fivemat', '~> 1.3', require: false
@@ -38,5 +36,5 @@ gem 'codeclimate-test-reporter', '~> 0.3', require: false, group: :test
 # Middleman itself
 gem 'middleman-cli', path: 'middleman-cli'
 gem 'middleman-core', path: 'middleman-core'
-gem 'middleman-compass', github: 'middleman/middleman-compass', require: false
+# gem 'middleman-compass', github: 'middleman/middleman-compass', require: false
 # gem 'middleman-sprockets', github: 'middleman/middleman-sprockets', require: false
