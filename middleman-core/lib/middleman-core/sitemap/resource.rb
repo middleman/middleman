@@ -80,10 +80,6 @@ module Middleman
         @local_metadata[:blocks] += [block] if block_given?
       end
 
-      # The output/preview URL for this resource
-      # @return [String]
-      attr_accessor :destination_path
-
       # Extension of the path (i.e. '.js')
       # @return [String]
       def ext
