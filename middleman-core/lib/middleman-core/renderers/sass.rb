@@ -86,7 +86,7 @@ module Middleman
           begin
             @engine.render
           rescue ::Sass::SyntaxError => e
-            ::Sass::SyntaxError.exception_to_css(e, full_exception: true)
+            ::Sass::SyntaxError.exception_to_css(e)
           end
         end
 
