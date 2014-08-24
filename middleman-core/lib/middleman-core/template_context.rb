@@ -124,7 +124,7 @@ module Middleman
     # @return [String]
     Contract String => Maybe[IsA['Middleman::SourceFile']]
     def locate_partial(partial_path)
-      return unless resource = sitemap.find_resource_by_path(current_path)
+      return unless resource = sitemap.find_resource_by_destination_path(current_path)
 
       # Look for partials relative to the current path
       current_dir = resource.source_file[:relative_path].dirname
