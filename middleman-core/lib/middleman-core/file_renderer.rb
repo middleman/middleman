@@ -75,7 +75,9 @@ module Middleman
       end
 
       # Render using Tilt
-      content = template.render(context, locs, &block)
+      content = ::Middleman::Util.instrument 'render.tilt', path: path do
+        template.render(context, locs, &block)
+      end
 
       # Allow hooks to manipulate the result after render
       @app.class.callbacks_for_hook(:after_render).each do |callback|

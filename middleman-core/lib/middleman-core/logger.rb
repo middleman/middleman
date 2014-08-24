@@ -40,7 +40,7 @@ module Middleman
       return if @instrumenting.is_a?(String) && @instrumenting != 'instrument' && !message.include?(@instrumenting)
 
       evt = ActiveSupport::Notifications::Event.new(message, *args)
-      info "== Instrument (#{evt.name.sub(/.middleman$/, '')}): #{evt.duration}ms"
+      info "== Instrument (#{evt.name.sub(/.middleman$/, '')}): #{evt.duration}ms\n#{args.last}"
     end
   end
 end
