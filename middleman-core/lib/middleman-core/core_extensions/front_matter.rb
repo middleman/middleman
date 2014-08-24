@@ -115,7 +115,7 @@ module Middleman::CoreExtensions
     # @return [Array<Hash, String>]
     Contract String, Pathname => Maybe[[Hash, String]]
     def parse_yaml_front_matter(content, full_path)
-      yaml_regex = /\A(---\s*\n.*?\n?)^(---\s*$\n?)/m
+      yaml_regex = /\A(---\s*\n.*?\n?)^((---|\.\.\.)\s*$\n?)/m
       if content =~ yaml_regex
         content = content.sub(yaml_regex, '')
 

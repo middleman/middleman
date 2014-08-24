@@ -16,8 +16,6 @@ class Middleman::Extensions::AutomaticImageSizes < ::Middleman::Extension
     # @return [String]
     def image_tag(path, params={})
       if !params.key?(:width) && !params.key?(:height) && !path.include?('://')
-        params[:alt] ||= ''
-
         real_path = path.dup
         real_path = File.join(config[:images_dir], real_path) unless real_path.start_with?('/')
 
