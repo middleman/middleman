@@ -1,30 +1,21 @@
 language: ruby
 cache: bundler
-env: TEST=true
 bundler_args: --without development
 before_install: git submodule update --init --recursive
 rvm:
   - ruby-head
-  - ruby
-  - jruby-head
-  - jruby
   - jruby-19mode
+  - 2.1.2
   - 2.1.1
   - 2.1.0
   - 2.0.0
   - 1.9.3
-  - rbx-2
 matrix:
   fast_finish: true
   allow_failures:
     - rvm: ruby-head
-    - rvm: ruby
-    - rvm: jruby-head
-    - rvm: jruby
     - rvm: jruby-19mode
-    - rvm: rbx-2
 env: TEST=true CODECLIMATE_REPO_TOKEN=81787f7b1c3bfa937edadcafbc94f807bf5af5c1142c7b793f2d9969a271de1f 
-before_install: git submodule update --init --recursive
 script: bundle exec rake test
 notifications:
   slack: middleman:JW9OvXmn1m3XrSERe8866nBR
