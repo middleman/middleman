@@ -168,7 +168,6 @@ module Middleman
     Contract Symbol, String, Maybe[Bool] => Maybe[SourceFile]
     def find(type, path, glob=false)
       watchers
-          .lazy
           .select { |d| d.type == type }
           .map { |d| d.find(path, glob) }
           .reject { |d| d.nil? }
@@ -183,7 +182,6 @@ module Middleman
     Contract Symbol, String => Bool
     def exists?(type, path)
       watchers
-          .lazy
           .select { |d| d.type == type }
           .any? { |d| d.exists?(path) }
     end
@@ -196,7 +194,6 @@ module Middleman
     Contract Symbol, String => Maybe[HANDLER]
     def watcher_for_path(type, path)
       watchers
-          .lazy
           .select { |d| d.type == type }
           .find { |d| d.exists?(path) }
     end
