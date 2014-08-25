@@ -82,8 +82,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
 
     resources.each do |resource|
       # If it uses file extension localization
-      if parse_locale_extension(resource.path)
-        result = parse_locale_extension(resource.path)
+      if result = parse_locale_extension(resource.path)
         ext_lang, path, page_id = result
         new_resources << build_resource(path, resource.path, page_id, ext_lang)
       # If it's a "localizable template"

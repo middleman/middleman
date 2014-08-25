@@ -9,11 +9,24 @@ module Middleman
     extend Forwardable
     include Contracts
 
-    def self.cache
-      @_cache ||= ::Tilt::Cache.new
+    class Cache
+      def initialize
+        @cache = {}
+      end
+
+      def fetch(*key)
+        @cache[key] = yield unless @cache.key?(key)
+        @cache[key]
+      end
+
+      def clear
+        @cache = {}
+      end
     end
 
-    def_delegator :"self.class", :cache
+    def self.cache
+      @_cache ||= Cache.new
+    end
 
     # Custom error class for handling
     class TemplateNotFound < RuntimeError; end
@@ -163,21 +176,9 @@ module Middleman
     # @return [String, Boolean] Either the path to the template, or false
     Contract IsA['Middleman::Application'], Or[Symbol, String], Maybe[Hash] => Maybe[IsA['Middleman::SourceFile']]
     def self.resolve_template(app, request_path, options={})
-      # Find the path by searching or using the cache
+      # Find the path by searching
       relative_path = Util.strip_leading_slash(request_path.to_s)
 
-      # Cache lookups in build mode only
-      if app.build?
-        cache.fetch(:resolve_template, relative_path, options) do
-          uncached_resolve_template(app, relative_path, options)
-        end
-      else
-        uncached_resolve_template(app, relative_path, options)
-      end
-    end
-
-    Contract IsA['Middleman::Application'], String, Hash => Maybe[IsA['Middleman::SourceFile']]
-    def self.uncached_resolve_template(app, relative_path, options)
       # By default, any engine will do
       preferred_engines = []
 
@@ -200,7 +201,16 @@ module Middleman
         path_with_ext = relative_path.dup
         path_with_ext << ('.' + preferred_engine) unless preferred_engine.nil?
 
-        file = app.files.find(:source, path_with_ext, preferred_engine == '*')
+        globbing = preferred_engine == '*'
+
+        # Cache lookups in build mode only
+        file = if app.build?
+          cache.fetch(path_with_ext, preferred_engine) do
+            app.files.find(:source, path_with_ext, globbing)
+          end
+        else
+          app.files.find(:source, path_with_ext, globbing)
+        end
 
         found_template = file if file && (preferred_engine.nil? || ::Tilt[file[:full_path]])
         break if found_template

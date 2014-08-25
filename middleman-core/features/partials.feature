@@ -11,11 +11,6 @@ Feature: Provide Sane Defaults for Partial Behavior
     When I go to "/sub/index.html"
     Then I should see "Header"
     And I should see "Footer"
-
-  Scenario: Finds shared partials without _ prefix
-    Given the Server is running at "partials-app"
-    When I go to "/using_snippet.html"
-    Then I should see "Snippet"
     
   Scenario: Prefers partials of the same engine type
     Given the Server is running at "partials-app"

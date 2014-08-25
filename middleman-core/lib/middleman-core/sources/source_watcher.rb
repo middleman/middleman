@@ -43,6 +43,7 @@ module Middleman
       @directory = Pathname(directory)
 
       @files = {}
+      @extensionless_files = {}
 
       @validator = options.fetch(:validator, proc { true })
       @ignored = options.fetch(:ignored, proc { false })
@@ -105,8 +106,7 @@ module Middleman
       p = @directory + p if p.relative?
 
       if glob
-        found = @files.find { |_, v| v[:relative_path].fnmatch(path) }
-        found ? found.last : nil
+        @extensionless_files[p]
       else
         @files[p]
       end
@@ -215,7 +215,7 @@ module Middleman
           .select(&method(:valid?))
 
       valid_updates.each do |f|
-        @files[f[:full_path]] = f
+        add_file_to_cache(f)
         logger.debug "== Change (#{f[:type]}): #{f[:relative_path]}"
       end
 
@@ -225,11 +225,21 @@ module Middleman
           .select(&method(:valid?))
 
       valid_removes.each do |f|
-        @files.delete(f[:full_path])
+        remove_file_from_cache(f)
         logger.debug "== Deletion (#{f[:type]}): #{f[:relative_path]}"
       end
 
       run_callbacks(@on_change_callbacks, valid_updates, valid_removes) unless valid_updates.empty? && valid_removes.empty?
+    end
+
+    def add_file_to_cache(f)
+      @files[f[:full_path]] = f
+      @extensionless_files[f[:full_path].sub_ext('.*')] = f
+    end
+
+    def remove_file_from_cache(f)
+      @files.delete(f[:full_path])
+      @extensionless_files.delete(f[:full_path].sub_ext('.*'))
     end
 
     # Check if this watcher should care about a file.

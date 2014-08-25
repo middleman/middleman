@@ -50,7 +50,9 @@ module Middleman
 
       queue_current_paths if @cleaning
       prerender_css
+
       output_files
+
       clean if @cleaning
 
       ::Middleman::Profiling.report('build')

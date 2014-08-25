@@ -156,7 +156,7 @@ module Middleman
     # @return [Array<Middleman::SourceFile>]
     Contract None => ArrayOf[SourceFile]
     def files
-      watchers.map(&:files).flatten.uniq { |f| f[:relative_path] }
+      watchers.flat_map(&:files).uniq { |f| f[:relative_path] }
     end
 
     # Find a file given a type and path.
@@ -168,9 +168,10 @@ module Middleman
     Contract Symbol, String, Maybe[Bool] => Maybe[SourceFile]
     def find(type, path, glob=false)
       watchers
+          .lazy
           .select { |d| d.type == type }
           .map { |d| d.find(path, glob) }
-          .compact
+          .reject { |d| d.nil? }
           .first
     end
 
@@ -182,6 +183,7 @@ module Middleman
     Contract Symbol, String => Bool
     def exists?(type, path)
       watchers
+          .lazy
           .select { |d| d.type == type }
           .any? { |d| d.exists?(path) }
     end
@@ -194,6 +196,7 @@ module Middleman
     Contract Symbol, String => Maybe[HANDLER]
     def watcher_for_path(type, path)
       watchers
+          .lazy
           .select { |d| d.type == type }
           .find { |d| d.exists?(path) }
     end

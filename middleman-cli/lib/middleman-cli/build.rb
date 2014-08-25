@@ -60,7 +60,8 @@ module Middleman::Cli
 
       builder = Middleman::Builder.new(@app,
                                        glob: options['glob'],
-                                       clean: options['clean'])
+                                       clean: options['clean'],
+                                       parallel: options['parallel'])
 
       builder.on_build_event(&method(:on_event))
 
