@@ -176,7 +176,14 @@ module Middleman::CoreExtensions
 
       return [data, nil] if !app.files.exists?(full_path) || ::Middleman::Util.binary?(full_path)
 
-      content = File.read(full_path)
+      # Avoid weird race condition when a file is renamed.
+      content = begin
+        File.read(full_path)
+      rescue ::EOFError
+      rescue ::IOError
+      rescue ::Errno::ENOENT
+        ""
+      end
 
       begin
         if content =~ /\A.*coding:/
