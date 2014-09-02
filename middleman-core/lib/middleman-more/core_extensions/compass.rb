@@ -27,6 +27,7 @@ class Middleman::CoreExtensions::Compass < ::Middleman::Extension
       compass_config.images_dir      = app.config[:images_dir]
       compass_config.http_path       = app.config[:http_prefix]
 
+      compass_config.additional_import_paths = []
       app.config[:sass_assets_paths].each do |path|
         compass_config.add_import_path path
       end
