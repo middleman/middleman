@@ -13,8 +13,8 @@ class Middleman::Templates::Empty < Middleman::Templates::Base
   # Actually output the files
   # @return [void]
   def build_scaffold!
-    create_file File.join(location, 'config.rb'), "\n"
-    empty_directory File.join(location, 'source')
+    create_file File.join(location, 'config.rb'), "\n", force: options[:force]
+    empty_directory File.join(location, 'source'), force: options[:force]
   end
 end
 

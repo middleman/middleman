@@ -40,6 +40,11 @@ module Middleman::Cli
                   type: :boolean,
                   default: false,
                   desc: 'Skip Git ignores and keeps'
+    method_option 'force',
+                  type: :boolean,
+                  default: false,
+                  desc: 'Overwrite existing files without any question'
+
     # The init task
     # @param [String] name
     def init(name='.')
