@@ -182,7 +182,7 @@ module Middleman::CoreExtensions
       rescue ::EOFError
       rescue ::IOError
       rescue ::Errno::ENOENT
-        ""
+        ''
       end
 
       begin
