@@ -98,3 +98,54 @@ Feature: Middleman CLI
       | config.rb                                     |
       | config.ru                                     |
       | Gemfile                                       |
+
+  Scenario: Enforce creation of Mobile HTML5 project
+    When I run `middleman init MY_PROJECT --template=mobile`
+    When I run `middleman init MY_PROJECT --template=mobile --force`
+    Then a directory named "MY_PROJECT" should exist
+    And the output should contain:
+    """
+    identical
+    """
+    And the output should contain:
+    """
+    exist
+    """
+  Scenario: Enforce creation of HTML5 project
+    When I run `middleman init MY_PROJECT --template=html5`
+    When I run `middleman init MY_PROJECT --template=html5 --force`
+    Then a directory named "MY_PROJECT" should exist
+    And the output should contain:
+    """
+    identical
+    """
+    And the output should contain:
+    """
+    exist
+    """
+
+  Scenario: Enforce creation of default project
+    When I run `middleman init MY_PROJECT --template=default`
+    When I run `middleman init MY_PROJECT --template=default --force`
+    Then a directory named "MY_PROJECT" should exist
+    And the output should contain:
+    """
+    identical
+    """
+    And the output should contain:
+    """
+    exist
+    """
+
+  Scenario: Enforce creation of empty project
+    When I run `middleman init MY_PROJECT --template=empty`
+    When I run `middleman init MY_PROJECT --template=empty --force`
+    Then a directory named "MY_PROJECT" should exist
+    And the output should contain:
+    """
+    identical
+    """
+    And the output should contain:
+    """
+    exist
+    """
