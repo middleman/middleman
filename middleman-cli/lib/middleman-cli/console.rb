@@ -29,7 +29,7 @@ module Middleman::Cli
         debug: options['verbose']
       }
 
-      @app = ::Middleman::Application.server.inst do
+      @app = ::Middleman::Application.new do
         config[:environment] = opts[:environment].to_sym if opts[:environment]
 
         ::Middleman::Logger.singleton(opts[:debug] ? 0 : 1, opts[:instrumenting] || false)
