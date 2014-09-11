@@ -286,7 +286,11 @@ module Middleman
         config_context.instance_eval File.read(env_config), env_config, 1
       end
 
+      # Run any `configure` blocks for the current environment.
       config_context.execute_configure_callbacks(config[:environment])
+
+      # Run any `configure` blocks for the current mode.
+      config_context.execute_configure_callbacks(config[:mode])
     end
 
     def add_to_instance(name, &func)

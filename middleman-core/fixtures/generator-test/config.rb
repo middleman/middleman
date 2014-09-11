@@ -51,12 +51,12 @@
 # Change the images directory
 # set :images_dir, "alternative_image_directory"
 
-# Production build configuration
+# Production configuration
 configure :production do
   # For example, change the Compass output style for deployment
   # activate :minify_css
 
-  # Minify Javascript on build
+  # Minify Javascript
   # activate :minify_javascript
 
   # Enable cache buster
@@ -64,11 +64,6 @@ configure :production do
 
   # Use relative URLs
   # activate :relative_assets
-
-  # Compress PNGs after build
-  # First: gem install middleman-smusher
-  # require "middleman-smusher"
-  # activate :smusher
 
   # Or use a different image path
   # set :http_prefix, "/Content/images/"
