@@ -208,8 +208,12 @@ module Middleman
       # @param [Array<String>] paths Array of paths to check
       # @return [Boolean] Whether the server needs to reload
       def needs_to_reload?(paths)
+        relative_paths = paths.map do |p|
+          Pathname(p).relative_path_from(Pathname(app.root)).to_s
+        end
+
         match_against = [
-          %r{^config\.rb},
+          %r{^config\.rb$},
           %r{^lib/[^\.](.*)\.rb$},
           %r{^helpers/[^\.](.*)\.rb$}
         ]
@@ -220,7 +224,7 @@ module Middleman
           end
         end
 
-        paths.any? do |path|
+        relative_paths.any? do |path|
           match_against.any? do |matcher|
             path =~ matcher
           end
