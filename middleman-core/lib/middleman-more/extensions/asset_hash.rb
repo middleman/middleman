@@ -75,7 +75,7 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
 
       path = ::Middleman::Util.full_path(env['PATH_INFO'], @middleman_app)
 
-      if path =~ /(^\/$)|(\.(htm|html|php|css|js)$)/
+      if path =~ /(^\/$)|(\.(htm|html|php|css|js|json)$)/
         body = ::Middleman::Util.extract_response_text(response)
         if body
           status, headers, response = Rack::Response.new(rewrite_paths(body, path), status, headers).finish
