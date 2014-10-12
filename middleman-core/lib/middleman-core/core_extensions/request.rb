@@ -24,6 +24,9 @@ module Middleman
           # Sourcemap format
           ::Rack::Mime::MIME_TYPES['.map'] = 'application/json; charset=utf-8'
 
+          # Create a MIME type for PHP files (for detection by extensions)
+          ::Rack::Mime::MIME_TYPES['.php'] = 'text/php'
+
           app.extend ClassMethods
           app.extend ServerMethods
 

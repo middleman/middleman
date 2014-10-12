@@ -12,6 +12,8 @@ Feature: Setting the right content type for files
     Then the content type should be "text/css"
     When I go to "/README"
     Then the content type should be "text/plain"
+    When I go to "/index.php"
+    Then the content type should be "text/php"
 
   Scenario: Content type can be set explicitly via page or proxy or frontmatter
     Given a fixture app "content-type-app"
@@ -31,6 +33,7 @@ Feature: Setting the right content type for files
     When I go to "/override.html"
     Then the content type should be "text/neato"
 
+  @preserve_mime_types
   Scenario: Content types can be overridden with mime_type
     Given a fixture app "content-type-app"
     And a file named "config.rb" with:
