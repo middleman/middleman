@@ -1,6 +1,8 @@
 master
 ===
 
+* Update new project template Gemfile to use HTTPS by default. #1372
+
 3.3.5
 ===
 
