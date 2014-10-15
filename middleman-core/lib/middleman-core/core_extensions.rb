@@ -52,6 +52,11 @@ Middleman::Extensions.register :routing, auto_activate: :before_configuration do
   Middleman::CoreExtensions::Routing
 end
 
+Middleman::Extensions.register :collections, auto_activate: :before_configuration do
+  require 'middleman-core/core_extensions/collections'
+  Middleman::CoreExtensions::Collections::CollectionsExtension
+end
+
 ###
 # Setup Optional Extensions
 ###

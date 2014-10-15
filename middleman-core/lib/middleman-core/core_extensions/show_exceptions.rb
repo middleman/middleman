@@ -12,7 +12,7 @@ module Middleman::CoreExtensions
     end
 
     def after_configuration
-      app.use ::Rack::ShowExceptions if app.config[:show_exceptions]
+      app.use ::Rack::ShowExceptions if !app.build? && app.config[:show_exceptions]
     end
   end
 end

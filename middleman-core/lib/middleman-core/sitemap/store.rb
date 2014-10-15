@@ -49,11 +49,15 @@ module Middleman
       # @return [Middleman::Application]
       attr_reader :app
 
+      attr_reader :update_count
+
       # Initialize with parent app
       # @param [Middleman::Application] app
       def initialize(app)
         @app = app
         @resources = []
+        @update_count = 0
+
         # TODO: Should this be a set or hash?
         @resource_list_manipulators = []
         @needs_sitemap_rebuild = true
@@ -187,6 +191,7 @@ module Middleman
           end
 
           invalidate_resources_not_ignored_cache!
+          @update_count += 1
         end
       end
 
