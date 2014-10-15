@@ -1,7 +1,7 @@
 # Watcher Library
 require 'listen'
-
 require 'middleman-core/contracts'
+require 'backports/2.0.0/enumerable/lazy'
 
 module Middleman
   # The default source watcher implementation. Watches a directory on disk
@@ -211,25 +211,31 @@ module Middleman
     Contract ArrayOf[Pathname], ArrayOf[Pathname] => Any
     def update(updated_paths, removed_paths)
       valid_updates = updated_paths
+          .lazy
           .map(&method(:path_to_source_file))
           .select(&method(:valid?))
-
-      valid_updates.each do |f|
-        add_file_to_cache(f)
-        logger.debug "== Change (#{f[:type]}): #{f[:relative_path]}"
-      end
+          .to_a
+          .each do |f|
+            add_file_to_cache(f)
+            logger.debug "== Change (#{f[:type]}): #{f[:relative_path]}"
+          end
 
       valid_removes = removed_paths
+          .lazy
           .select(&@files.method(:key?))
           .map(&@files.method(:[]))
           .select(&method(:valid?))
+          .to_a
+          .each do |f|
+            remove_file_from_cache(f)
+            logger.debug "== Deletion (#{f[:type]}): #{f[:relative_path]}"
+          end
 
-      valid_removes.each do |f|
-        remove_file_from_cache(f)
-        logger.debug "== Deletion (#{f[:type]}): #{f[:relative_path]}"
-      end
-
-      run_callbacks(@on_change_callbacks, valid_updates, valid_removes) unless valid_updates.empty? && valid_removes.empty?
+      run_callbacks(
+        @on_change_callbacks,
+        valid_updates,
+        valid_removes
+      ) unless valid_updates.empty? && valid_removes.empty?
     end
 
     def add_file_to_cache(f)
@@ -260,7 +266,7 @@ module Middleman
     Contract Pathname => IsA['Middleman::SourceFile']
     def path_to_source_file(path)
       ::Middleman::SourceFile.new(
-        path.relative_path_from(@directory), path, @directory, @type)
+          path.relative_path_from(@directory), path, @directory, @type)
     end
 
     # Notify callbacks for a file given an array of callbacks
