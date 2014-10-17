@@ -8,6 +8,8 @@ class Middleman::Extensions::MinifyCss < ::Middleman::Extension
     super
 
     app.config.define_setting :css_compressor, nil, 'Set the CSS compressor to use. Deprecated in favor of the :compressor option when activating :minify_css'
+
+    require 'oga'
   end
 
   def after_configuration
@@ -29,8 +31,6 @@ class Middleman::Extensions::MinifyCss < ::Middleman::Extension
 
   # Rack middleware to look for CSS and compress it
   class Rack
-    INLINE_CSS_REGEX = /(<style[^>]*>\s*(?:\/\*<!\[CDATA\[\*\/\n)?)(.*?)((?:(?:\n\s*)?\/\*\]\]>\*\/)?\s*<\/style>)/m
-
     # Init
     # @param [Class] app
     # @param [Hash] options
@@ -48,10 +48,7 @@ class Middleman::Extensions::MinifyCss < ::Middleman::Extension
       status, headers, response = @app.call(env)
 
       if inline_html_content?(env['PATH_INFO'])
-        minified = ::Middleman::Util.extract_response_text(response)
-        minified.gsub!(INLINE_CSS_REGEX) do
-          $1 << @compressor.compress($2) << $3
-        end
+        minified = minify_inline(::Middleman::Util.extract_response_text(response))
 
         headers['Content-Length'] = ::Rack::Utils.bytesize(minified).to_s
         response = [minified]
@@ -73,6 +70,20 @@ class Middleman::Extensions::MinifyCss < ::Middleman::Extension
 
     def standalone_css_content?(path)
       path.end_with?('.css') && @ignore.none? { |ignore| Middleman::Util.path_match(ignore, path) }
+    end
+
+    # Detect and minify inline content
+    # @param [String] content
+    # @return [String]
+    def minify_inline(content)
+      document = Oga.parse_html(content)
+
+      # NOTE: not(ancestor::script) is a workaround for YorickPeterse/oga#22.
+      document.xpath('descendant-or-self::style[not(ancestor::script)]').each do |style|
+        style.inner_text = @compressor.compress(style.inner_text)
+      end
+
+      document.to_xml
     end
   end
 end

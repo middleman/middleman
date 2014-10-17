@@ -40,4 +40,7 @@ Gem::Specification.new do |s|
 
   # i18n
   s.add_dependency("i18n", ["~> 0.7.0"])
+
+  # Extensions
+  s.add_dependency("oga", ["~> 0.2.0"])
 end
