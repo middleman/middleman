@@ -220,7 +220,7 @@ module Middleman
           .to_a
           .each do |f|
             add_file_to_cache(f)
-            logger.debug "== Change (#{f[:types]}): #{f[:relative_path]}"
+            logger.debug "== Change (#{f[:types].inspect}): #{f[:relative_path]}"
           end
 
       valid_removes = removed_paths
@@ -231,7 +231,7 @@ module Middleman
           .to_a
           .each do |f|
             remove_file_from_cache(f)
-            logger.debug "== Deletion (#{f[:types]}): #{f[:relative_path]}"
+            logger.debug "== Deletion (#{f[:types].inspect}): #{f[:relative_path]}"
           end
 
       run_callbacks(
