@@ -28,9 +28,6 @@ module Middleman
     Contract None => Hash
     attr_reader :options
 
-    IMAGE_EXTENSIONS = %w(.png .jpg .jpeg .webp .svg .svgz .gif)
-    FONT_EXTENSIONS = %w(.otf .woff .eot .ttf)
-
     # Construct a new SourceWatcher
     #
     # @param [Middleman::Sources] parent The parent collection.
@@ -269,11 +266,6 @@ module Middleman
     Contract Pathname => IsA['Middleman::SourceFile']
     def path_to_source_file(path)
       types = Set.new([@type])
-
-      if @type == :source
-        types << :image if IMAGE_EXTENSIONS.include?(path.extname)
-        types << :font if FONT_EXTENSIONS.include?(path.extname)
-      end
 
       ::Middleman::SourceFile.new(
           path.relative_path_from(@directory), path, @directory, types)
