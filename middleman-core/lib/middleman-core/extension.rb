@@ -238,7 +238,7 @@ module Middleman
         @options[k] = v
       end
 
-      yield @options if block_given?
+      yield @options, self if block_given?
 
       @options.all_settings.each do |o|
         next unless o.options[:required] && !o.value_set?
