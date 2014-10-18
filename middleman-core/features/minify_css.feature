@@ -102,9 +102,7 @@ Feature: Minify CSS
     When I go to "/inline-css.html"
     Then I should see:
     """
-    <style>
-      Hello
-    </style>
+    <style>Hello</style>
     """
     
   Scenario: Rendering inline css with the feature enabled
@@ -117,7 +115,5 @@ Feature: Minify CSS
     When I go to "/inline-css.html"
     Then I should see:
     """
-    <style>
-      body{test:style;good:deal}
-    </style>
+    <style>body{test:style;good:deal}</style>
     """

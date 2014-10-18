@@ -9,6 +9,12 @@ class Middleman::Extensions::MinifyJavascript < ::Middleman::Extension
     ::Uglifier.new
   }, 'Set the JS compressor to use.'
 
+  def initialize(app, options_hash={}, &block)
+    super
+
+    require 'oga'
+  end
+
   def after_configuration
     # Setup Rack middleware to minify CSS
     app.use Rack, compressor: options[:compressor],
@@ -50,7 +56,7 @@ class Middleman::Extensions::MinifyJavascript < ::Middleman::Extension
         if @inline && (path.end_with?('.html') || path.end_with?('.php'))
           uncompressed_source = ::Middleman::Util.extract_response_text(response)
 
-          minified = minify_inline_content(uncompressed_source)
+          minified = minify_inline(uncompressed_source)
 
           headers['Content-Length'] = ::Rack::Utils.bytesize(minified).to_s
           response = [minified]
@@ -71,23 +77,20 @@ class Middleman::Extensions::MinifyJavascript < ::Middleman::Extension
     private
 
     Contract String => String
-    def minify_inline_content(uncompressed_source)
-      uncompressed_source.gsub(/(<script[^>]*>\s*(?:\/\/(?:(?:<!--)|(?:<!\[CDATA\[))\n)?)(.*?)((?:(?:\n\s*)?\/\/(?:(?:-->)|(?:\]\]>)))?\s*<\/script>)/m) do |match|
-        first = $1
-        javascript = $2
-        last = $3
+    def minify_inline(content)
+      document = Oga.parse_html(content)
 
-        # Only compress script tags that contain JavaScript (as opposed
-        # to something like jQuery templates, identified with a "text/html"
-        # type.
-        if first =~ /<script>/ || first.include?('text/javascript')
-          minified_js = @compressor.compress(javascript)
-
-          first << minified_js << last
+      document.xpath('//script[@type="text/javascript" or not(@type)]').each do |script|
+        if comment = script.at_xpath('comment()')
+          comment.text = comment.text.sub(%r{^(\s*)(.*?)(\s*//\s*)$}m) do
+            $1 + @compressor.compress($2) + $3
+          end
         else
-          match
+          script.inner_text = @compressor.compress(script.inner_text)
         end
       end
+
+      document.to_xml
     end
   end
 end

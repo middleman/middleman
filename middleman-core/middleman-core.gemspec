@@ -37,6 +37,9 @@ Gem::Specification.new do |s|
   # i18n
   s.add_dependency('i18n', ['~> 0.7.0'])
 
+  # HTML-parsing extensions
+  s.add_dependency('oga', ['~> 0.2.0'])
+
   # Automatic Image Sizes
   s.add_dependency('fastimage', ['~> 1.6.2'])
 
