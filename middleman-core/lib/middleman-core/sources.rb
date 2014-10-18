@@ -3,7 +3,7 @@ require 'backports/2.0.0/enumerable/lazy'
 
 module Middleman
   # The standard "record" that contains information about a file on disk.
-  SourceFile = Struct.new :relative_path, :full_path, :directory, :type
+  SourceFile = Struct.new :relative_path, :full_path, :directory, :types
 
   # Sources handle multiple on-disk collections of files which make up
   # a Middleman project. They are separated by `type` which can then be
@@ -83,7 +83,7 @@ module Middleman
     Contract SourceFile => Bool
     def globally_ignored?(file)
       @ignores.values.any? do |descriptor|
-        ((descriptor[:type] == :all) || (file[:type] == descriptor[:type])) &&
+        ((descriptor[:type] == :all) || file[:types].include?(descriptor[:type])) &&
         matches?(descriptor[:validator], file)
       end
     end
@@ -194,10 +194,10 @@ module Middleman
     # @param [Symbol] type The file "type".
     # @param [String] path The file path relative to it's source root.
     # @return [Boolean]
-    Contract Symbol, String => Maybe[HANDLER]
-    def watcher_for_path(type, path)
+    Contract SetOf[Symbol], String => Maybe[HANDLER]
+    def watcher_for_path(types, path)
       watchers
-          .select { |d| d.type == type }
+          .select { |d| types.include?(d.type) }
           .find { |d| d.exists?(path) }
     end
 
@@ -275,11 +275,11 @@ module Middleman
     Contract ArrayOf[SourceFile], ArrayOf[SourceFile], HANDLER => Any
     def did_change(updated_files, removed_files, watcher)
       valid_updated = updated_files.select do |file|
-        watcher_for_path(file[:type], file[:relative_path].to_s) == watcher
+        watcher_for_path(file[:types], file[:relative_path].to_s) == watcher
       end
 
       valid_removed = removed_files.select do |file|
-        watcher_for_path(file[:type], file[:relative_path].to_s).nil?
+        watcher_for_path(file[:types], file[:relative_path].to_s).nil?
       end
 
       return if valid_updated.empty? && valid_removed.empty?
@@ -299,8 +299,8 @@ module Middleman
         if callback[:type] == :all
           callback[:proc].call(updated_files, removed_files)
         else
-          valid_updated = updated_files.select { |f| callback[:type] == f[:type] }
-          valid_removed = removed_files.select { |f| callback[:type] == f[:type] }
+          valid_updated = updated_files.select { |f| f[:types].include?(callback[:type]) }
+          valid_removed = removed_files.select { |f| f[:types].include?(callback[:type]) }
 
           callback[:proc].call(valid_updated, valid_removed)
         end

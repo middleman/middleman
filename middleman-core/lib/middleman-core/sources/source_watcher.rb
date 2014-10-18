@@ -28,6 +28,9 @@ module Middleman
     Contract None => Hash
     attr_reader :options
 
+    IMAGE_EXTENSIONS = %w(.png .jpg .jpeg .webp .svg .svgz .gif)
+    FONT_EXTENSIONS = %w(.otf .woff .eot .ttf)
+
     # Construct a new SourceWatcher
     #
     # @param [Middleman::Sources] parent The parent collection.
@@ -217,7 +220,7 @@ module Middleman
           .to_a
           .each do |f|
             add_file_to_cache(f)
-            logger.debug "== Change (#{f[:type]}): #{f[:relative_path]}"
+            logger.debug "== Change (#{f[:types]}): #{f[:relative_path]}"
           end
 
       valid_removes = removed_paths
@@ -228,7 +231,7 @@ module Middleman
           .to_a
           .each do |f|
             remove_file_from_cache(f)
-            logger.debug "== Deletion (#{f[:type]}): #{f[:relative_path]}"
+            logger.debug "== Deletion (#{f[:types]}): #{f[:relative_path]}"
           end
 
       run_callbacks(
@@ -265,8 +268,15 @@ module Middleman
     # @return [Middleman::SourceFile]
     Contract Pathname => IsA['Middleman::SourceFile']
     def path_to_source_file(path)
+      types = Set.new([@type])
+
+      if @type == :source
+        types << :image if IMAGE_EXTENSIONS.include?(path.extname)
+        types << :font if FONT_EXTENSIONS.include?(path.extname)
+      end
+
       ::Middleman::SourceFile.new(
-          path.relative_path_from(@directory), path, @directory, @type)
+          path.relative_path_from(@directory), path, @directory, types)
     end
 
     # Notify callbacks for a file given an array of callbacks
