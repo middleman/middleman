@@ -5,7 +5,7 @@ module Middleman
   module Pagination
     module ArrayHelpers
       def per_page(per_page)
-        return enum_for(:per_page, per_page) unless block_given?
+        return to_enum(__method__, per_page) unless block_given?
 
         parts = if per_page.respond_to? :call
           per_page.call(dup)
