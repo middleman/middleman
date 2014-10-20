@@ -66,6 +66,10 @@ module Middleman
             super(store, path)
           end
 
+          def get_source_file
+            nil
+          end
+
           def template?
             true
           end
