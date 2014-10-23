@@ -63,6 +63,10 @@ Given /^the Server is running at "([^\"]*)"$/ do |app_path|
   step %Q{the Server is running}
 end
 
+Given /^a template named "([^\"]*)" with:$/ do |name, string|
+  step %Q{a file named "source/#{name}" with:}, string
+end
+
 When /^I go to "([^\"]*)"$/ do |url|
   @browser.get(URI.escape(url))
 end

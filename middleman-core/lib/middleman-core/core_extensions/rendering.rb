@@ -146,18 +146,7 @@ module Middleman
           @current_locs = locs
           @current_opts = opts
 
-          # Keep rendering template until we've used up all extensions. This
-          # handles cases like `style.css.sass.erb`
-          content = nil
-          while ::Tilt[path]
-            begin
-              opts[:template_body] = content if content
-              content = render_individual_file(path, locs, opts, context)
-              path = File.basename(path, File.extname(path))
-            rescue LocalJumpError
-              raise "Tried to render a layout (calls yield) at #{path} like it was a template. Non-default layouts need to be in #{source}/#{config[:layouts_dir]}."
-            end
-          end
+          content = _render_with_all_renderers(path, locs, context, opts)
 
           # If we need a layout and have a layout, use it
           if layout_path = fetch_layout(engine, opts)
@@ -174,6 +163,34 @@ module Middleman
           @current_locs = nil
           @current_opts = nil
         end
+
+        private
+
+        def _render_with_all_renderers(path, locs, context, opts, &block)
+          # Keep rendering template until we've used up all extensions. This
+          # handles cases like `style.css.sass.erb`
+          content = nil
+
+          while ::Tilt[path]
+            begin
+              opts[:template_body] = content if content
+
+              content = if block_given?
+                render_individual_file(path, locs, opts, context, &block)
+              else
+                render_individual_file(path, locs, opts, context)
+              end
+
+              path = File.basename(path, File.extname(path))
+            rescue LocalJumpError
+              raise "Tried to render a layout (calls yield) at #{path} like it was a template. Non-default layouts need to be in #{source}/#{config[:layouts_dir]}."
+            end
+          end
+
+          content
+        end
+
+        public
 
         # Sinatra/Padrino compatible render method signature referenced by some view
         # helpers. Especially partials.
@@ -198,7 +215,7 @@ module Middleman
 
           if ::Tilt[found_partial]
             # Render the partial if found, otherwide throw exception
-            render_individual_file(found_partial, locals, options, self, &block)
+            _render_with_all_renderers(found_partial, locals, self, options, &block)
           else
             File.read(found_partial)
           end
