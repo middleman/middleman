@@ -34,6 +34,7 @@ end
 Given /^the Server is running$/ do
   root_dir = File.expand_path(current_dir)
 
+
   if File.exists?(File.join(root_dir, 'source'))
     ENV['MM_SOURCE'] = 'source'
   else
@@ -48,9 +49,11 @@ Given /^the Server is running$/ do
     set :show_exceptions, false
   }
 
-  @server_inst = Middleman::Application.server.inst do
-    initialize_commands.each do |p|
-      instance_exec(&p)
+  in_current_dir do
+    @server_inst = Middleman::Application.server.inst do
+      initialize_commands.each do |p|
+        instance_exec(&p)
+      end
     end
   end
 
@@ -68,41 +71,61 @@ Given /^a template named "([^\"]*)" with:$/ do |name, string|
 end
 
 When /^I go to "([^\"]*)"$/ do |url|
-  @browser.get(URI.escape(url))
+  in_current_dir do
+    @browser.get(URI.escape(url))
+  end
 end
 
 Then /^going to "([^\"]*)" should not raise an exception$/ do |url|
-  expect{ @browser.get(URI.escape(url)) }.to_not raise_exception
+  in_current_dir do
+    expect{ @browser.get(URI.escape(url)) }.to_not raise_exception
+  end
 end
 
 Then /^the content type should be "([^\"]*)"$/ do |expected|
-  expect(@browser.last_response.content_type).to start_with(expected)
+  in_current_dir do
+    expect(@browser.last_response.content_type).to start_with(expected)
+  end
 end
 
 Then /^I should see "([^\"]*)"$/ do |expected|
-  expect(@browser.last_response.body).to include(expected)
+  in_current_dir do
+    expect(@browser.last_response.body).to include(expected)
+  end
 end
 
 Then /^I should see '([^\']*)'$/ do |expected|
-  expect(@browser.last_response.body).to include(expected)
+  in_current_dir do
+    expect(@browser.last_response.body).to include(expected)
+  end
 end
 
 Then /^I should see:$/ do |expected|
-  expect(@browser.last_response.body).to include(expected)
+  in_current_dir do
+    expect(@browser.last_response.body).to include(expected)
+  end
 end
 
 Then /^I should not see "([^\"]*)"$/ do |expected|
-  expect(@browser.last_response.body).to_not include(expected)
+  in_current_dir do
+    expect(@browser.last_response.body).to_not include(expected)
+  end
 end
 
 Then /^I should not see:$/ do |expected|
-  expect(@browser.last_response.body).to_not include(expected.chomp)
+  in_current_dir do
+    expect(@browser.last_response.body).to_not include(expected.chomp)
+  end
 end
 
 Then /^the status code should be "([^\"]*)"$/ do |expected|
-  expect(@browser.last_response.status).to eq expected.to_i
+  in_current_dir do
+    expect(@browser.last_response.status).to eq expected.to_i
+  end
 end
 
 Then /^I should see "([^\"]*)" lines$/ do |lines|
-  expect(@browser.last_response.body.chomp.split($/).length).to eq(lines.to_i)
+  in_current_dir do
+    expect(@browser.last_response.body.chomp.split($/).length).to eq(lines.to_i)
+  end
 end
