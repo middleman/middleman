@@ -38,7 +38,7 @@ module Middleman
 
     # Recursive method to find a file in parent directories
     def findup(filename, cwd=Pathname.new(Dir.pwd))
-      return cwd.to_s if (cwd + filename).exist?
+      return cwd.to_s if Pathname.new(cwd + filename).exist?
       return false if cwd.root?
       findup(filename, cwd.parent)
     end
