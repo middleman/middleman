@@ -8,6 +8,8 @@ Feature: Assets get a file hash appended to their and references to them are upd
       | favicon.ico |
       | images/100px-1242c368.png |
       | images/100px-5fd6fb90.jpg |
+      | images/200px-c11eb203.jpg |
+      | images/300px-59adce76.jpg |
       | images/100px-5fd6fb90.gif |
       | javascripts/application-1d8d5276.js |
       | stylesheets/site-50eaa978.css |
@@ -29,6 +31,9 @@ Feature: Assets get a file hash appended to their and references to them are upd
     And the file "index.html" should contain 'href="stylesheets/site-50eaa978.css"'
     And the file "index.html" should contain 'src="javascripts/application-1d8d5276.js"'
     And the file "index.html" should contain 'src="images/100px-5fd6fb90.jpg"'
+    And the file "index.html" should contain 'srcset="images/100px-5fd6fb90.jpg 1x, images/200px-c11eb203.jpg 2x, images/300px-59adce76.jpg 3x"'
+    And the file "index.html" should contain 'src="images/100px-5fd6fb90.gif"'
+    And the file "index.html" should contain 'src="images/100px-1242c368.png"'
     And the file "subdir/index.html" should contain 'href="../stylesheets/site-50eaa978.css"'
     And the file "subdir/index.html" should contain 'src="../javascripts/application-1d8d5276.js"'
     And the file "subdir/index.html" should contain 'src="../images/100px-5fd6fb90.jpg"'
@@ -49,6 +54,7 @@ Feature: Assets get a file hash appended to their and references to them are upd
     And I should see 'href="stylesheets/site-50eaa978.css"'
     And I should see 'src="javascripts/application-1d8d5276.js"'
     And I should see 'src="images/100px-5fd6fb90.jpg"'
+    And I should see 'srcset="images/100px-5fd6fb90.jpg 1x, images/200px-c11eb203.jpg 2x, images/300px-59adce76.jpg 3x"'
     When I go to "/subdir/"
     Then I should see 'href="../stylesheets/site-50eaa978.css"'
     And I should see 'src="../javascripts/application-1d8d5276.js"'
