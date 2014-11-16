@@ -9,7 +9,7 @@ class Middleman::Templates::Local < Middleman::Templates::Base
   # Just copy from the template path
   # @return [void]
   def build_scaffold!
-    directory options[:template].to_s, location, force: options[:force]
+    directory options[:template].to_s, location, force: options[:force], exclude_pattern: /\.git\/.*/
   end
 end
 
