@@ -3,7 +3,7 @@
 <% end %>
 
 <h2>Image url:</h2>
-<img src="<%= image_path('100px.jpg') %>">
+<img src="<%= image_path('100px.jpg') %>" srcset="<%= image_path('100px.jpg') %> 1x, <%= image_path('200px.jpg') %> 2x, <%= image_path('300px.jpg') %> 3x">
 
 <h2>Ignored path:</h2>
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
