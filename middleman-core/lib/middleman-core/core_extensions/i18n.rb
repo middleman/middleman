@@ -59,12 +59,12 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
 
       if lang_suffix
         super(suffixed_partial_name) ||
-        super(File.join(locals_dir, suffixed_partial_name)) ||
-        super(partials_path) ||
-        super
+          super(File.join(locals_dir, suffixed_partial_name)) ||
+          super(partials_path) ||
+          super
       else
         super(partials_path) ||
-        super
+          super
       end
     end
   end

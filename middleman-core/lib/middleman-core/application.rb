@@ -163,7 +163,7 @@ module Middleman
 
       layout: proc { |file, _sitemap_app|
         file[:relative_path].to_s.start_with?('layout.') ||
-        file[:relative_path].to_s.start_with?('layouts/')
+          file[:relative_path].to_s.start_with?('layouts/')
       }
     }, 'Callbacks that can exclude paths from the sitemap'
 

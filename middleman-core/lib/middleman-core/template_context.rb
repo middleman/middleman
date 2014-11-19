@@ -30,7 +30,7 @@ module Middleman
     # @param [Middleman::Application] app
     # @param [Hash] locs
     # @param [Hash] opts
-    def initialize(app, locs={}.freeze, opts={}.freeze)
+    def initialize(app, locs={}, opts={})
       @app = app
       @locs = locs
       @opts = opts
@@ -114,7 +114,7 @@ module Middleman
         opts = options.dup
         locs = opts.delete(:locals)
 
-        render_file(partial_file, locs.freeze, opts.freeze, &block)
+        render_file(partial_file, locs, opts, &block)
       end
     end
 
@@ -163,8 +163,28 @@ module Middleman
     # @return [String] The resulting content string.
     Contract IsA['Middleman::SourceFile'], Hash, Hash, Proc => String
     def render_file(file, locs, opts, &block)
-      file_renderer = ::Middleman::FileRenderer.new(@app, file[:relative_path].to_s)
-      file_renderer.render(locs, opts, self, &block)
+      _render_with_all_renderers(file[:relative_path].to_s, locs, self, opts, &block)
+    end
+
+    def _render_with_all_renderers(path, locs, context, opts, &block)
+      # Keep rendering template until we've used up all extensions. This
+      # handles cases like `style.css.sass.erb`
+      content = nil
+
+      while ::Tilt[path]
+        begin
+          opts[:template_body] = content if content
+
+          content_renderer = ::Middleman::FileRenderer.new(@app, path)
+          content = content_renderer.render(locs, opts, context, &block)
+
+          path = File.basename(path, File.extname(path))
+        rescue LocalJumpError
+          raise "Tried to render a layout (calls yield) at #{path} like it was a template. Non-default layouts need to be in #{@app.config[:source]}/#{@app.config[:layouts_dir]}."
+        end
+      end
+
+      content
     end
 
     def current_path

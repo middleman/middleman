@@ -84,7 +84,7 @@ module Middleman
     def globally_ignored?(file)
       @ignores.values.any? do |descriptor|
         ((descriptor[:type] == :all) || file[:types].include?(descriptor[:type])) &&
-        matches?(descriptor[:validator], file)
+          matches?(descriptor[:validator], file)
       end
     end
 
@@ -169,11 +169,11 @@ module Middleman
     Contract Symbol, String, Maybe[Bool] => Maybe[SourceFile]
     def find(type, path, glob=false)
       watchers
-          .lazy
-          .select { |d| d.type == type }
-          .map { |d| d.find(path, glob) }
-          .reject(&:nil?)
-          .first
+        .lazy
+        .select { |d| d.type == type }
+        .map { |d| d.find(path, glob) }
+        .reject(&:nil?)
+        .first
     end
 
     # Check if a file for a given type exists.
@@ -184,9 +184,9 @@ module Middleman
     Contract Symbol, String => Bool
     def exists?(type, path)
       watchers
-          .lazy
-          .select { |d| d.type == type }
-          .any? { |d| d.exists?(path) }
+        .lazy
+        .select { |d| d.type == type }
+        .any? { |d| d.exists?(path) }
     end
 
     # Check if a file for a given type exists.
@@ -197,8 +197,8 @@ module Middleman
     Contract SetOf[Symbol], String => Maybe[HANDLER]
     def watcher_for_path(types, path)
       watchers
-          .select { |d| types.include?(d.type) }
-          .find { |d| d.exists?(path) }
+        .select { |d| types.include?(d.type) }
+        .find { |d| d.exists?(path) }
     end
 
     # Manually poll all watchers for new content.

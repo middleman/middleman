@@ -104,7 +104,6 @@ module Middleman
       return nil if p.absolute? && !p.to_s.start_with?(@directory.to_s)
 
       p = @directory + p if p.relative?
-
       if glob
         @extensionless_files[p]
       else
@@ -211,25 +210,25 @@ module Middleman
     Contract ArrayOf[Pathname], ArrayOf[Pathname] => Any
     def update(updated_paths, removed_paths)
       valid_updates = updated_paths
-          .lazy
-          .map(&method(:path_to_source_file))
-          .select(&method(:valid?))
-          .to_a
-          .each do |f|
-            add_file_to_cache(f)
-            logger.debug "== Change (#{f[:types].inspect}): #{f[:relative_path]}"
-          end
+                      .lazy
+                      .map(&method(:path_to_source_file))
+                      .select(&method(:valid?))
+                      .to_a
+                      .each do |f|
+                        add_file_to_cache(f)
+                        logger.debug "== Change (#{f[:types].inspect}): #{f[:relative_path]}"
+                      end
 
       valid_removes = removed_paths
-          .lazy
-          .select(&@files.method(:key?))
-          .map(&@files.method(:[]))
-          .select(&method(:valid?))
-          .to_a
-          .each do |f|
-            remove_file_from_cache(f)
-            logger.debug "== Deletion (#{f[:types].inspect}): #{f[:relative_path]}"
-          end
+                      .lazy
+                      .select(&@files.method(:key?))
+                      .map(&@files.method(:[]))
+                      .select(&method(:valid?))
+                      .to_a
+                      .each do |f|
+                        remove_file_from_cache(f)
+                        logger.debug "== Deletion (#{f[:types].inspect}): #{f[:relative_path]}"
+                      end
 
       run_callbacks(
         @on_change_callbacks,
@@ -240,12 +239,19 @@ module Middleman
 
     def add_file_to_cache(f)
       @files[f[:full_path]] = f
-      @extensionless_files[f[:full_path].sub_ext('.*')] = f
+      @extensionless_files[strip_extensions(f[:full_path])] = f
     end
 
     def remove_file_from_cache(f)
       @files.delete(f[:full_path])
-      @extensionless_files.delete(f[:full_path].sub_ext('.*'))
+      @extensionless_files.delete(strip_extensions(f[:full_path]))
+    end
+
+    def strip_extensions(p)
+      while ::Tilt[p.to_s] || p.extname === '.html'
+        p = p.sub_ext('')
+      end
+      Pathname(p.to_s + '.*')
     end
 
     # Check if this watcher should care about a file.
@@ -255,8 +261,8 @@ module Middleman
     Contract IsA['Middleman::SourceFile'] => Bool
     def valid?(file)
       @validator.call(file) &&
-      !globally_ignored?(file) &&
-      !@ignored.call(file)
+        !globally_ignored?(file) &&
+        !@ignored.call(file)
     end
 
     # Convert a path to a file resprentation.

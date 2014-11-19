@@ -41,6 +41,8 @@ AssignmentInCondition:
   Enabled: false
 CyclomaticComplexity:
   Enabled: false
+AbcSize:
+  Enabled: false
 HandleExceptions:
   Enabled: false
 EndAlignment:

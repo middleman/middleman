@@ -42,7 +42,7 @@ module Middleman
     # @param [Hash] opts
     # @return [String]
     Contract Hash, Hash => String
-    def render(locs={}, opts={})
+    def render(locs={}, opts={}, &block)
       path = @path.dup
       locals = locs.dup.freeze
       options = opts.dup
@@ -61,21 +61,7 @@ module Middleman
       # TODO: Only for HAML files
       context.init_haml_helpers if context.respond_to?(:init_haml_helpers)
 
-      # Keep rendering template until we've used up all extensions. This
-      # handles cases like `style.css.sass.erb`
-      content = nil
-      while ::Tilt[path]
-        begin
-          options[:template_body] = content if content
-
-          content_renderer = ::Middleman::FileRenderer.new(@app, path)
-          content = content_renderer.render(locals, options, context)
-
-          path = File.basename(path, File.extname(path))
-        rescue LocalJumpError
-          raise "Tried to render a layout (calls yield) at #{path} like it was a template. Non-default layouts need to be in #{source}/#{@app.config[:layouts_dir]}."
-        end
-      end
+      content = _render_with_all_renderers(path, locs, context, opts, &block)
 
       # If we need a layout and have a layout, use it
       if layout_file = fetch_layout(engine, options)
@@ -92,6 +78,27 @@ module Middleman
     end
 
     protected
+
+    def _render_with_all_renderers(path, locs, context, opts, &block)
+      # Keep rendering template until we've used up all extensions. This
+      # handles cases like `style.css.sass.erb`
+      content = nil
+
+      while ::Tilt[path]
+        begin
+          opts[:template_body] = content if content
+
+          content_renderer = ::Middleman::FileRenderer.new(@app, path)
+          content = content_renderer.render(locs, opts, context, &block)
+
+          path = File.basename(path, File.extname(path))
+        rescue LocalJumpError
+          raise "Tried to render a layout (calls yield) at #{path} like it was a template. Non-default layouts need to be in #{@app.config[:source]}/#{@app.config[:layouts_dir]}."
+        end
+      end
+
+      content
+    end
 
     # Find a layout for a given engine
     #

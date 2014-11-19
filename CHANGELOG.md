@@ -29,6 +29,23 @@ master
 * Remove old module-style extension support
 * Placed all `config.rb` evaluation inside the `ConfigContext` class
 
+3.3.7
+===
+* Update new project template Gemfile to use HTTPS by default. #1372
+
+3.3.6
+===
+
+* Use full paths instead of relative for `listen` gem. Fixes #1374
+* Add force option to "middleman init". #1369
+* Configuration addition for compass 1 compatibility.
+* Catch File read exceptions in frontmatter.
+* Remove duplicate attr_accessor. Closes #1352
+* Update sass dependency to >= 3.4.0.
+* Update compass dependency to >= 1.0.0, < 2.0.0
+* Accept pandoc-style YAML frontmatter. #1350
+* Add webp to image type lists.
+
 3.3.5
 ===
 

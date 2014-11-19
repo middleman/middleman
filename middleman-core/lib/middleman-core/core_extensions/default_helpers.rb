@@ -11,7 +11,7 @@ class Padrino::Helpers::OutputHelpers::ErbHandler
     raw = block.call(*args)
     captured = template.instance_variable_get(:@_out_buf)
     self.output_buffer = buf_was
-    engine_matches?(block) ? captured : raw
+    engine_matches?(block) && !captured.empty? ? captured : raw
   end
 end
 
