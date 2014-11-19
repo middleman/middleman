@@ -72,13 +72,13 @@ end
 
 When /^I go to "([^\"]*)"$/ do |url|
   in_current_dir do
-    @browser.get(URI.escape(url))
+    @browser.get(URI.encode(url))
   end
 end
 
 Then /^going to "([^\"]*)" should not raise an exception$/ do |url|
   in_current_dir do
-    expect{ @browser.get(URI.escape(url)) }.to_not raise_exception
+    expect{ @browser.get(URI.encode(url)) }.to_not raise_exception
   end
 end
 

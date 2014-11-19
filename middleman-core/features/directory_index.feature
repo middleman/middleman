@@ -25,8 +25,7 @@ Feature: Directory Index
     And the file "a_folder/needs_index/index.html" should contain "Indexable"
     And the file "leave_me_alone.html" should contain "Stay away"
     And the file "regular/index.html" should contain "Regular"
-    And the file "evil spaces/index.html" should contain "Spaces"
-
+    And the file "evil spaces/index.html" should contain "Filled with Evil Spaces"
     
   Scenario: Preview normal file
     Given the Server is running at "indexable-app"
@@ -35,8 +34,8 @@ Feature: Directory Index
     
   Scenario: Preview normal file with spaces in filename
     Given the Server is running at "indexable-app"
-    When I go to "/evil%20spaces/"
-    Then I should see "Spaces"
+    When I go to "/evil spaces/"
+    Then I should see "Filled with Evil Spaces"
 
   Scenario: Preview normal file subdirectory
     Given the Server is running at "indexable-app"

@@ -68,7 +68,7 @@ module Middleman
       # @return [String]
       def normalize_path(path)
         # The tr call works around a bug in Ruby's Unicode handling
-        path.sub(%r{^/}, '').tr('', '')
+        URI.decode(path).sub(%r{^/}, '').tr('', '')
       end
 
       # This is a separate method from normalize_path in case we
@@ -144,7 +144,7 @@ module Middleman
           path_or_resource.url
         else
           path_or_resource.dup
-        end.gsub(' ', '%20')
+        end
 
         # Try to parse URL
         begin
@@ -182,7 +182,7 @@ module Middleman
         end
 
         if resource
-          uri.path = relative_path_from_resource(this_resource, resource_url, effective_relative)
+          uri.path = URI.encode(relative_path_from_resource(this_resource, resource_url, effective_relative))
         else
           # If they explicitly asked for relative links but we can't find a resource...
           raise "No resource exists at #{url}" if relative

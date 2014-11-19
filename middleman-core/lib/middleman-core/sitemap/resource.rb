@@ -40,7 +40,7 @@ module Middleman
       def initialize(store, path, source_file=nil)
         @store       = store
         @app         = @store.app
-        @path        = path.gsub(' ', '%20') # handle spaces in filenames
+        @path        = path
         @source_file = source_file
         @destination_path = @path
 

@@ -9,7 +9,6 @@ Feature: Builder
       | static.html                                   |
       | services/index.html                           |
       | stylesheets/static.css                        |
-      | spaces in file.html                           |
       | images/blank.gif                              |
       | images/Read me (example).txt                  |
       | images/Child folder/regular_file(example).txt |
@@ -27,7 +26,6 @@ Feature: Builder
     And the file "static.html" should contain "Static, no code!"
     And the file "services/index.html" should contain "Services"
     And the file "stylesheets/static.css" should contain "body"
-    And the file "spaces in file.html" should contain "spaces"
     
   Scenario: Build glob
     Given a successfully built app at "glob-app" with flags "--glob '*.css'"
