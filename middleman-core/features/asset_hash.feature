@@ -76,21 +76,6 @@ Feature: Assets get a file hash appended to their and references to them are upd
     And I should see 'images/100px-5fd6fb90.jpg'
     And I should see 'images/100px-1242c368.png'
 
-  Scenario: Enabling an asset host still produces hashed files and references
-    Given the Server is running at "asset-hash-host-app"
-    When I go to "/"
-    Then I should see 'href="http://middlemanapp.com/stylesheets/site-54baaf3a.css"'
-    And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg"'
-    When I go to "/subdir/"
-    Then I should see 'href="http://middlemanapp.com/stylesheets/site-54baaf3a.css"'
-    And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg"'
-    When I go to "/other/"
-    Then I should see 'href="http://middlemanapp.com/stylesheets/site-54baaf3a.css"'
-    And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg"'
-    # Asset helpers don't appear to work from Compass right now
-    # When I go to "/stylesheets/site-e5a31a3e.css"
-    # Then I should see "background-image: url('http://middlemanapp.com/images/100px-5fd6fb90.jpg')"
-
   Scenario: The asset hash should change when a SASS partial changes
     Given the Server is running at "asset-hash-app"
     And the file "source/stylesheets/_partial.sass" has the contents
@@ -158,16 +143,20 @@ Feature: Assets get a file hash appended to their and references to them are upd
       | javascripts/application-1d8d5276.js |
       | stylesheets/site.css |
 
-  # @wip Currently broken, we should move all asset-host functionality out of Compass and into something more similar to asset_hash with Rack-based rewrites
-  # Scenario: Enabling an asset host and referencing assets in CSS with URL fragments are rewritten correctly
-  #   Given a successfully built app at "asset-hash-host-app"
-  #   When I cd to "build"
-
-  #   Then the following files should exist:
-  #     | images/100px-5fd6fb90.jpg |
-  #     | stylesheets/fragment-c058ecb2.css |
-  #   And the following files should not exist:
-  #     | images/100px.jpg |
-
-  #   And the file "stylesheets/fragment-c058ecb2.css" should contain "http://middlemanapp.com/images/100px-5fd6fb90.jpg#test"
-  #   And the file "stylesheets/fragment-c058ecb2.css" should not contain "http://middlemanapp.com/images/100px.jpg#test"
+  Scenario: Enabling an asset host still produces hashed files and references
+    Given the Server is running at "asset-hash-host-app"
+    When I go to "/"
+    Then I should see 'href="http://middlemanapp.com/stylesheets/site-54baaf3a.css"'
+    And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg"'
+    And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg?test"'
+    And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg?#test"'
+    And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg#test"'
+    When I go to "/subdir/"
+    Then I should see 'href="http://middlemanapp.com/stylesheets/site-54baaf3a.css"'
+    And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg"'
+    When I go to "/other/"
+    Then I should see 'href="http://middlemanapp.com/stylesheets/site-54baaf3a.css"'
+    And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg"'
+    And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg?test"'
+    And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg?#test"'
+    And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg#test"'
