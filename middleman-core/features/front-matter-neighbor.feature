@@ -149,3 +149,22 @@ Feature: Neighboring YAML Front Matter
     Then I should see "Layout in use: Override"
     When I go to "/page_mentioned.html.erb.frontmatter"
     Then I should see "File Not Found"
+
+  Scenario: Neighbor frontmatter for destination of proxy resources
+    Given the Server is running at "frontmatter-settings-neighbor-app"
+    And the file "source/proxied_with_frontmatter.html.frontmatter" has the contents
+      """
+      ---
+      title: Proxied title
+      ---
+      """
+    And the file "source/ignored.html.erb" has the contents
+      """
+      ---
+      ignored: true
+      ---
+
+      <%= current_resource.data.title %>
+      """
+    When I go to "/proxied_with_frontmatter.html"
+    Then I should see "Proxied title"
