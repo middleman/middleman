@@ -64,8 +64,8 @@ module Middleman
           block
         elsif extension_class && extension_class.ancestors.include?(::Middleman::Extension)
           extension_class
-                           else
-                             raise 'You must provide a Middleman::Extension or a block that returns a Middleman::Extension'
+        else
+          raise 'You must provide a Middleman::Extension or a block that returns a Middleman::Extension'
         end
 
         return unless options[:auto_activate]

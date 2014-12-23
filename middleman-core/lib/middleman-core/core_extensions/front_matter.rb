@@ -27,7 +27,7 @@ module Middleman::CoreExtensions
     end
 
     def before_configuration
-      app.files.changed(:source, &method(:clear_data))
+      app.files.on_change(:source, &method(:clear_data))
     end
 
     # @return Array<Middleman::Sitemap::Resource>

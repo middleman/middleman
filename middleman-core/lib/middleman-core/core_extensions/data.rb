@@ -33,7 +33,7 @@ module Middleman
 
         # Setup data files before anything else so they are available when
         # parsing config.rb
-        app.files.changed(:data, &@data_store.method(:update_files))
+        app.files.on_change(:data, &@data_store.method(:update_files))
       end
 
       def after_configuration

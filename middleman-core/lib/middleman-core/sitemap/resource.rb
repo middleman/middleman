@@ -42,12 +42,22 @@ module Middleman
       # @param [Middleman::Sitemap::Store] store
       # @param [String] path
       # @param [String] source_file
-      Contract IsA['Middleman::Sitemap::Store'], String, Maybe[IsA['Middleman::SourceFile']] => Any
+      Contract IsA['Middleman::Sitemap::Store'], String, Maybe[Or[IsA['Middleman::SourceFile'], String]] => Any
       def initialize(store, path, source_file=nil)
         @store       = store
         @app         = @store.app
         @path        = path.gsub(' ', '%20') # handle spaces in filenames
-        @source_file = source_file
+
+        if source_file && source_file.is_a?(String)
+          source_file = Pathname(source_file)
+        end
+
+        if source_file && source_file.is_a?(Pathname)
+          @source_file = ::Middleman::SourceFile.new(source_file.relative_path_from(@app.source_dir), source_file, @app.source_dir, Set.new([:source]))
+        else
+          @source_file = source_file
+        end
+
         @destination_path = @path
 
         # Options are generally rendering/sitemap options

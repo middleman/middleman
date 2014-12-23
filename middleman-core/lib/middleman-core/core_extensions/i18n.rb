@@ -23,7 +23,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
 
     # Setup data files before anything else so they are available when
     # parsing config.rb
-    app.files.changed(:locales, &method(:on_file_changed))
+    app.files.on_change(:locales, &method(:on_file_changed))
 
     @maps = {}
     @mount_at_root = options[:mount_at_root].nil? ? langs.first : options[:mount_at_root]

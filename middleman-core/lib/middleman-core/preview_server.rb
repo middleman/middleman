@@ -120,7 +120,7 @@ module Middleman
           end
         end
 
-        app.files.changed :reload do
+        app.files.on_change :reload do
           $mm_reload = true
           @webrick.stop
         end

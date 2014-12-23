@@ -24,7 +24,7 @@ module Middleman
 
         Contract None => Any
         def before_configuration
-          app.files.changed(:source, &method(:update_files))
+          app.files.on_change(:source, &method(:update_files))
         end
 
         def ignored?(file)

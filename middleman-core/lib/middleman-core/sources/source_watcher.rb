@@ -172,7 +172,7 @@ module Middleman
     # @param [Proc] matcher A Regexp to match the change path against
     # @return [Set<Proc>]
     Contract Proc => SetOf[Proc]
-    def changed(&block)
+    def on_change(&block)
       @on_change_callbacks << block
       @on_change_callbacks
     end

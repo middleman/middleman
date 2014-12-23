@@ -84,7 +84,6 @@ module Middleman::Cli
     end
 
     no_tasks do
-
       # Handles incoming events from the builder.
       # @param [Symbol] event_type The type of event.
       # @param [String] contents The event contents.

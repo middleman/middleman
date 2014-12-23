@@ -19,7 +19,7 @@ module Middleman
     attr_reader :app
 
     # Duck-typed definition of a valid source watcher
-    HANDLER = RespondTo[:changed]
+    HANDLER = RespondTo[:on_change]
 
     # Config
     Contract None => Hash
@@ -114,7 +114,7 @@ module Middleman
         [priority, n]
       end.reverse.freeze
 
-      handler.changed(&method(:did_change))
+      handler.on_change(&method(:did_change))
 
       if @running
         handler.poll_once!
@@ -134,7 +134,7 @@ module Middleman
     #
     # @param [SourceWatcher] watcher The watcher to remove.
     # @return [void]
-    Contract RespondTo[:changed] => Any
+    Contract RespondTo[:on_change] => Any
     def unwatch(watcher)
       @watchers.delete(watcher)
 
@@ -233,14 +233,51 @@ module Middleman
     # A callback requires a type and the proc to execute.
     CallbackDescriptor = Struct.new :type, :proc
 
-    # Add callback to be run on file change
+    # Add callback to be run on file change or deletion
     #
-    # @param [nil,Regexp] matcher A Regexp to match the change path against
+    # @param [Symbol] type The change type.
     # @return [Set<CallbackDescriptor>]
     Contract Symbol, Proc => ArrayOf[CallbackDescriptor]
-    def changed(type, &block)
+    def on_change(type, &block)
       @on_change_callbacks << CallbackDescriptor.new(type, block)
       @on_change_callbacks
+    end
+
+    # Backwards compatible change handler.
+    #
+    # @param [nil,Regexp] matcher A Regexp to match the change path against
+    # Contract Maybe[Regexp] => Any
+    def changed(matcher=nil, &block)
+      on_change :source do |updated, _removed|
+        updated.select { |f|
+          matcher.nil? ? true : matches?(matcher, f)
+        }.each do |f|
+          block.call(f[:relative_path])
+        end
+      end
+    end
+
+    # Backwards compatible delete handler.
+    #
+    # @param [nil,Regexp] matcher A Regexp to match the change path against
+    # Contract Maybe[Regexp] => Any
+    def deleted(matcher=nil, &block)
+      on_change :source do |_updated, removed|
+        removed.select { |f|
+          matcher.nil? ? true : matches?(matcher, f)
+        }.each do |f|
+          block.call(f[:relative_path])
+        end
+      end
+    end
+
+    # Backwards compatible ignored check.
+    #
+    # @param [Pathname,String] path The path to check.
+    Contract Or[Pathname, String] => Bool
+    def ignored?(path)
+      descriptor = find(:source, path)
+      !descriptor || globally_ignored?(descriptor)
     end
 
     protected

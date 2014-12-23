@@ -319,6 +319,29 @@ module Middleman
       config[:environment] == key
     end
 
+    # Backwards compatible helper. What the current environment is.
+    # @return [Symbol]
+    def environment
+      config[:environment]
+    end
+
+    # Backwards compatible helper. Whether we're in dev mode.
+    # @return [Boolean]
+    def development?
+      environment?(:development)
+    end
+
+    # Backwards compatible helper. Whether we're in production mode.
+    # @return [Boolean]
+    def production?
+      environment?(:production)
+    end
+
+    # Backwards compatible helper. The full path to the default source dir.
+    def source_dir
+      Pathname(File.join(root, config[:source]))
+    end
+
     MiddlewareDescriptor = Struct.new(:class, :options, :block)
 
     # Use Rack middleware

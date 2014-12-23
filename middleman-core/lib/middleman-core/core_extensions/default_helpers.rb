@@ -35,7 +35,6 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
 
   # The helpers
   helpers do
-
     # Make all block content html_safe
     def content_tag(name, content=nil, options=nil, &block)
       # safe_content_tag(name, content, options, &block)

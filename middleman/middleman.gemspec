@@ -20,8 +20,8 @@ Gem::Specification.new do |s|
 
   s.add_dependency('middleman-core', Middleman::VERSION)
   s.add_dependency('middleman-cli', Middleman::VERSION)
-  # s.add_dependency('middleman-sprockets', '>= 3.1.2') Disabled in alphas
-  # s.add_dependency('middleman-compass', '4.0.0.alpha.2')
+  s.add_dependency('middleman-sprockets', '>= 3.4.0')
+  s.add_dependency('middleman-compass', '4.0.0.alpha.3')
   s.add_dependency('sass', ['>= 3.4.0', '< 4.0'])
   s.add_dependency('compass-import-once', ['1.0.5'])
   s.add_dependency('haml', ['>= 4.0.5'])
