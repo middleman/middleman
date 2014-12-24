@@ -80,7 +80,7 @@ module Middleman
 
     # Name of the source directory
     # @return [String]
-    config.define_setting :source,      'source', 'Name of the source directory'
+    config.define_setting :source, 'source', 'Name of the source directory'
 
     # Middleman mode. Defaults to :server, set to :build by the build process
     # @return [String]
@@ -255,11 +255,11 @@ module Middleman
           Tilt.mappings.delete(key)
         end
       end
+      
+      @extensions.activate_all
 
       run_hook :after_configuration
       config_context.execute_after_configuration_callbacks
-
-      @extensions.activate_all
 
       run_hook :ready
       @config_context.execute_ready_callbacks

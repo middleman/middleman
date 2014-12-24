@@ -39,7 +39,11 @@ module Middleman
 
       def evaluate(scope, _)
         @output ||= begin
-          MiddlemanRedcarpetHTML.scope = ::Middleman::Renderers::Haml.last_haml_scope || scope
+          if defined?(::Middleman::Renderers::Haml)
+            MiddlemanRedcarpetHTML.scope = ::Middleman::Renderers::Haml.last_haml_scope || scope
+          else
+            MiddlemanRedcarpetHTML.scope = scope
+          end
 
           @engine.render(data)
         end

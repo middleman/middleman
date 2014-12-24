@@ -11,7 +11,7 @@ module Middleman::Cli
     desc 'build [options]', 'Builds the static site for deployment'
     method_option :environment,
                   aliases: '-e',
-                  default: ENV['MM_ENV'] || ENV['RACK_ENV'] || 'development',
+                  default: ENV['MM_ENV'] || ENV['RACK_ENV'] || 'production',
                   desc: 'The environment Middleman will run under'
     method_option :clean,
                   type: :boolean,
