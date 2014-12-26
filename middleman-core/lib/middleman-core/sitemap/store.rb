@@ -146,9 +146,9 @@ module Middleman
       # Get the URL path for an on-disk file
       # @param [String] file
       # @return [String]
-      Contract IsA['Middleman::SourceFile'] => String
+      Contract Or[Pathname, IsA['Middleman::SourceFile']] => String
       def file_to_path(file)
-        relative_path = file[:relative_path].to_s
+        relative_path = file.is_a?(Pathname) ? file.to_s : file[:relative_path].to_s
 
         # Replace a file name containing automatic_directory_matcher with a folder
         unless @app.config[:automatic_directory_matcher].nil?

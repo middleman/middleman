@@ -339,7 +339,7 @@ module Middleman
           valid_updated = updated_files.select { |f| f[:types].include?(callback[:type]) }
           valid_removed = removed_files.select { |f| f[:types].include?(callback[:type]) }
 
-          callback[:proc].call(valid_updated, valid_removed)
+          callback[:proc].call(valid_updated, valid_removed) unless valid_updated.empty? && valid_removed.empty?
         end
       end
     end
