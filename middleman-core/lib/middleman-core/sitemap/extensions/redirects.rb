@@ -66,9 +66,11 @@ module Middleman
             super(store, path)
           end
 
+          # rubocop:disable Style/AccessorMethodName
           def get_source_file
             nil
           end
+          # rubocop:enable Style/AccessorMethodName
 
           def template?
             true
