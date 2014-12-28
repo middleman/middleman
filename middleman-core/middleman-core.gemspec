@@ -39,5 +39,5 @@ Gem::Specification.new do |s|
   s.add_dependency("listen", [">= 2.7.9", "< 3.0"])
 
   # i18n
-  s.add_dependency("i18n", ["~> 0.6.9"])
+  s.add_dependency("i18n", ["~> 0.7.0"])
 end
