@@ -64,7 +64,7 @@ module Middleman::CoreExtensions
         data = app.extensions[:frontmatter].data(source_file).first
 
         if proxy?
-          url_data = app.extensions[:frontmatter].data( File.join( app.source_dir, url ).chomp('/') ).first
+          url_data = app.extensions[:frontmatter].data(File.join(app.source_dir, url).chomp('/')).first
           data     = data.deep_merge(url_data)
         end
 
