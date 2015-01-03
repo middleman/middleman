@@ -138,7 +138,7 @@ Feature: Minify Javascript
     </script>
     <script type='text/javascript'>
       //<!--
-    !function(){line(),here()}();
+    !function(){one,line(),here()}();
       //-->
     </script>
     <script type='text/html'>
