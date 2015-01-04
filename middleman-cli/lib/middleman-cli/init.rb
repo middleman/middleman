@@ -22,6 +22,7 @@ module Middleman::Cli
 
     # The init task
     def init
+      require 'fileutils'
       require 'tmpdir'
 
       repo_path, repo_branch = if shortname?(options[:template])
@@ -45,10 +46,12 @@ module Middleman::Cli
         [repository_path(repo_name), repo_branch]
       end
 
-      Dir.mktmpdir do |dir|
-        cmd = repo_branch ? "clone -b #{repo_branch}" : 'clone'
+      dir = Dir.mktmpdir
+      
+      begin
+        branch_cmd = repo_branch ? "-b #{repo_branch} " : ''
 
-        run("git #{cmd} #{repo_path} #{dir}")
+        run("git clone --depth 1 #{branch_cmd}#{repo_path} #{dir}")
 
         inside(target) do
           thorfile = File.join(dir, 'Thorfile')
@@ -64,6 +67,8 @@ module Middleman::Cli
 
           run('bundle install') unless ENV['TEST'] || options[:'skip-bundle']
         end
+      ensure
+        FileUtils.remove_entry(dir)
       end
     end
 

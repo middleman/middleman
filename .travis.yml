@@ -11,6 +11,9 @@ rvm:
   - 2.1
   - 2.0
   - 1.9.3
+os:
+  - linux
+  - osx
 matrix:
   fast_finish: true
   allow_failures:
