@@ -5,8 +5,8 @@ before_script:
   - bundle update
 rvm:
   - ruby-head
+  - jruby-head
   - jruby-19mode
-  - rbx-2
   - 2.2
   - 2.1
   - 2.0
@@ -19,7 +19,7 @@ matrix:
   allow_failures:
     - rvm: ruby-head
     - rvm: jruby-19mode
-    - rvm: rbx-2
+    - rvm: jruby-head
 env:
   global:
     - JRUBY_OPTS='-J-Xmx1024M'
