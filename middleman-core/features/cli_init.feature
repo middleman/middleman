@@ -21,7 +21,7 @@ Feature: Middleman CLI
   Scenario: Create a new project in the current directory
     Given a directory named "MY_PROJECT"
     When I cd to "MY_PROJECT"
-    And I run `middleman init --default` interactively
+    And I run `middleman init` interactively
     And I type "y"
     And I type "y"
     And I type "y"
