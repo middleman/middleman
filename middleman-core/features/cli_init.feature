@@ -1,7 +1,11 @@
 Feature: Middleman CLI
 
   Scenario: Create a new project
-    Given I run `middleman init --default MY_PROJECT`
+    When I run `middleman init MY_PROJECT` interactively
+    And I type "y"
+    And I type "y"
+    And I type "y"
+    And I type "y"
     Then the exit status should be 0
     When I cd to "MY_PROJECT"
     Then the following files should exist:
@@ -17,7 +21,11 @@ Feature: Middleman CLI
   Scenario: Create a new project in the current directory
     Given a directory named "MY_PROJECT"
     When I cd to "MY_PROJECT"
-    And I run `middleman init --default`
+    And I run `middleman init --default` interactively
+    And I type "y"
+    And I type "y"
+    And I type "y"
+    And I type "y"
     Then the exit status should be 0
     And the following files should exist:
       | Gemfile                                       |
@@ -25,13 +33,25 @@ Feature: Middleman CLI
       | source/index.html.erb                         |
 
   Scenario: Create a new project (alias i)
-    When I run `middleman i --default MY_PROJECT`
+    When I run `middleman i MY_PROJECT` interactively
+    And I type "y"
+    And I type "y"
+    And I type "y"
+    And I type "y"
     Then a directory named "MY_PROJECT" should exist
 
   Scenario: Create a new project (alias new)
-    When I run `middleman new --default MY_PROJECT`
+    When I run `middleman new MY_PROJECT` interactively
+    And I type "y"
+    And I type "y"
+    And I type "y"
+    And I type "y"
     Then a directory named "MY_PROJECT" should exist
 
   Scenario: Create a new project (alias n)
-    When I run `middleman n --default MY_PROJECT`
+    When I run `middleman n MY_PROJECT` interactively
+    And I type "y"
+    And I type "y"
+    And I type "y"
+    And I type "y"
     Then a directory named "MY_PROJECT" should exist
