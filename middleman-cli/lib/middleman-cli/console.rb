@@ -1,25 +1,19 @@
 # CLI Module
 module Middleman::Cli
-  # Alias "c" to "console"
-  Base.map(c: 'console')
-
   # The CLI Console class
-  class Console < Thor
+  class Console < Thor::Group
     include Thor::Actions
 
     check_unknown_options!
 
-    namespace :console
-
-    desc 'console [options]', 'Start an interactive console in the context of your Middleman application'
-    method_option :environment,
-                  aliases: '-e',
-                  default: ENV['MM_ENV'] || ENV['RACK_ENV'] || 'development',
-                  desc: 'The environment Middleman will run under'
-    method_option :verbose,
-                  type: :boolean,
-                  default: false,
-                  desc: 'Print debug messages'
+    class_option :environment,
+                 aliases: '-e',
+                 default: ENV['MM_ENV'] || ENV['RACK_ENV'] || 'development',
+                 desc: 'The environment Middleman will run under'
+    class_option :verbose,
+                 type: :boolean,
+                 default: false,
+                 desc: 'Print debug messages'
     def console
       require 'middleman-core'
       require 'irb'
@@ -42,5 +36,11 @@ module Middleman::Cli
       require 'irb/ext/multi-irb'
       IRB.irb nil, @app
     end
+
+    # Add to CLI
+    Base.register(self, 'console', 'console [options]', 'Start an interactive console in the context of your Middleman application')
+
+    # Map "c" to "console"
+    Base.map('c' => 'console')
   end
 end

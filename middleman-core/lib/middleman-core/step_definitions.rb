@@ -17,5 +17,5 @@ end
 World(ArubaMonkeypatch)
 
 Before do
-  @aruba_timeout_seconds = RUBY_PLATFORM == 'java' ? 120 : 60
+  @aruba_timeout_seconds = RUBY_PLATFORM == 'java' ? 240 : 120
 end

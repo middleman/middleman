@@ -24,7 +24,7 @@ class MyExtension < ::Middleman::Extension
   # def manipulate_resource_list(resources)
   # end
 
-  # module do
+  # helpers do
   #   def a_helper
   #   end
   # end

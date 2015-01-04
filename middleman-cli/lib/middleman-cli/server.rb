@@ -1,50 +1,47 @@
 # CLI Module
 module Middleman::Cli
   # Server thor task
-  class Server < Thor
+  class Server < Thor::Group
     check_unknown_options!
 
-    namespace :server
-
-    desc 'server [options]', 'Start the preview server'
-    method_option :environment,
-                  aliases: '-e',
-                  default: ENV['MM_ENV'] || ENV['RACK_ENV'] || 'development',
-                  desc: 'The environment Middleman will run under'
-    method_option :host,
-                  type: :string,
-                  aliases: '-h',
-                  default: '0.0.0.0',
-                  desc: 'Bind to HOST address'
-    method_option :port,
-                  aliases: '-p',
-                  default: '4567',
-                  desc: 'The port Middleman will listen on'
-    method_option :verbose,
-                  type: :boolean,
-                  default: false,
-                  desc: 'Print debug messages'
-    method_option :instrument,
-                  type: :string,
-                  default: false,
-                  desc: 'Print instrument messages'
-    method_option :disable_watcher,
-                  type: :boolean,
-                  default: false,
-                  desc: 'Disable the file change and delete watcher process'
-    method_option :profile,
-                  type: :boolean,
-                  default: false,
-                  desc: 'Generate profiling report for server startup'
-    method_option :force_polling,
-                  type: :boolean,
-                  default: false,
-                  desc: 'Force file watcher into polling mode'
-    method_option :latency,
-                  type: :numeric,
-                  aliases: '-l',
-                  default: 0.25,
-                  desc: 'Set file watcher latency, in seconds'
+    class_option :environment,
+                 aliases: '-e',
+                 default: ENV['MM_ENV'] || ENV['RACK_ENV'] || 'development',
+                 desc: 'The environment Middleman will run under'
+    class_option :host,
+                 type: :string,
+                 aliases: '-h',
+                 default: '0.0.0.0',
+                 desc: 'Bind to HOST address'
+    class_option :port,
+                 aliases: '-p',
+                 default: '4567',
+                 desc: 'The port Middleman will listen on'
+    class_option :verbose,
+                 type: :boolean,
+                 default: false,
+                 desc: 'Print debug messages'
+    class_option :instrument,
+                 type: :string,
+                 default: false,
+                 desc: 'Print instrument messages'
+    class_option :disable_watcher,
+                 type: :boolean,
+                 default: false,
+                 desc: 'Disable the file change and delete watcher process'
+    class_option :profile,
+                 type: :boolean,
+                 default: false,
+                 desc: 'Generate profiling report for server startup'
+    class_option :force_polling,
+                 type: :boolean,
+                 default: false,
+                 desc: 'Force file watcher into polling mode'
+    class_option :latency,
+                 type: :numeric,
+                 aliases: '-l',
+                 default: 0.25,
+                 desc: 'Set file watcher latency, in seconds'
 
     # Start the server
     def server
@@ -71,12 +68,11 @@ module Middleman::Cli
       puts '== The Middleman is loading'
       ::Middleman::PreviewServer.start(params)
     end
-  end
 
-  def self.exit_on_failure?
-    true
-  end
+    # Add to CLI
+    Base.register(self, 'server', 'server [options]', 'Start the preview server')
 
-  # Map "s" to "server"
-  Base.map('s' => 'server')
+    # Map "s" to "server"
+    Base.map('s' => 'server')
+  end
 end

@@ -1,12 +1,10 @@
 # CLI Module
 module Middleman::Cli
   # A thor task for creating new projects
-  class Extension < Thor
+  class Extension < Thor::Group
     include Thor::Actions
 
     check_unknown_options!
-
-    namespace :extension
 
     # Required path for the new project to be generated
     argument :name, type: :string
@@ -17,11 +15,13 @@ module Middleman::Cli
       File.join(File.dirname(__FILE__), 'templates')
     end
 
-    desc 'extension [options]', 'Create Middleman extension scaffold NAME'
-    method_option 'skip-git',
-                  type: :boolean,
-                  default: false,
-                  desc: 'Skip Git ignores and keeps'
+    class_option 'skip-git',
+                 type: :boolean,
+                 default: false,
+                 desc: 'Skip Git ignores and keeps'
+
+    # Output a .gitignore file
+    class_option :git, type: :boolean, default: true
 
     # The extension task
     # @param [String] name
@@ -36,7 +36,7 @@ module Middleman::Cli
       empty_directory File.join(name, 'fixtures')
     end
 
-    # Output a .gitignore file
-    class_option :git, type: :boolean, default: true
+    # Add to CLI
+    Base.register(self, 'extension', 'extension [options]', 'Create a new Middleman extension')
   end
 end

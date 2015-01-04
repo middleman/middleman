@@ -1,6 +1,7 @@
 master
 ===
 
+* Remove side-loading of CLI tasks from `tasks/`
 * Add the option of naming `config.rb` as `middleman.rb`.
 * Builder extracted from Thor. `after_build` hook now passes an instance of a Builder instead of the Thor CLI.
 * New FileWatcher API.

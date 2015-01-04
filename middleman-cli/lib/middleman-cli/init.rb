@@ -1,28 +1,27 @@
 # CLI Module
 module Middleman::Cli
   # A thor task for creating new projects
-  class Init < Thor
+  class Init < Thor::Group
     include Thor::Actions
+
     check_unknown_options!
 
-    namespace :init
+    argument :target, type: :string, default: '.'
 
-    desc 'init TARGET [options]', 'Create new project at TARGET'
-    method_option 'template',
-                  aliases: '-T',
-                  default: 'middleman/middleman-templates-default',
-                  desc: 'Use a project template'
+    class_option 'template',
+                 aliases: '-T',
+                 default: 'middleman/middleman-templates-default',
+                 desc: 'Use a project template'
 
     # Do not run bundle install
-    method_option 'skip-bundle',
-                  type: :boolean,
-                  aliases: '-B',
-                  default: false,
-                  desc: 'Skip bundle install'
+    class_option 'skip-bundle',
+                 type: :boolean,
+                 aliases: '-B',
+                 default: false,
+                 desc: 'Skip bundle install'
 
     # The init task
-    # @param [String] name
-    def init(target='.')
+    def init
       require 'tmpdir'
 
       repo_path, repo_branch = if shortname?(options[:template])
@@ -37,8 +36,8 @@ module Middleman::Cli
           data['links']['github']
           data['links']['github'].split('#')
         rescue ::OpenURI::HTTPError
-          puts "Template `#{options[:template]}` not found in Middleman Directory."
-          puts 'Did you mean to use a full `user/repo` path?'
+          say "Template `#{options[:template]}` not found in Middleman Directory."
+          say 'Did you mean to use a full `user/repo` path?'
           exit
         end
       else
@@ -51,13 +50,20 @@ module Middleman::Cli
 
         run("git #{cmd} #{repo_path} #{dir}")
 
-        source_paths << dir
-
-        directory dir, target, exclude_pattern: /\.git\/|\.gitignore$/
-
         inside(target) do
-          run('bundle install')
-        end unless ENV['TEST'] || options[:'skip-bundle']
+          thorfile = File.join(dir, 'Thorfile')
+
+          if File.exist?(thorfile)
+            ::Thor::Util.load_thorfile(thorfile)
+
+            invoke 'middleman:generator'
+          else
+            source_paths << dir
+            directory dir, '.', exclude_pattern: /\.git\/|\.gitignore$/
+          end
+
+          run('bundle install') unless ENV['TEST'] || options[:'skip-bundle']
+        end
       end
     end
 
@@ -70,16 +76,15 @@ module Middleman::Cli
     def repository_path(repo)
       "git://github.com/#{repo}.git"
     end
-  end
 
-  def self.exit_on_failure?
-    true
-  end
+    # Add to CLI
+    Base.register(self, 'init', 'init TARGET [options]', 'Create new project at TARGET')
 
-  # Map "i", "new" and "n" to "init"
-  Base.map(
-    'i' => 'init',
-    'new' => 'init',
-    'n' => 'init'
-  )
+    # Map "i", "new" and "n" to "init"
+    Base.map(
+      'i' => 'init',
+      'new' => 'init',
+      'n' => 'init'
+    )
+  end
 end

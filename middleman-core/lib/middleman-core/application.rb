@@ -255,7 +255,7 @@ module Middleman
           Tilt.mappings.delete(key)
         end
       end
-      
+
       @extensions.activate_all
 
       run_hook :after_configuration
