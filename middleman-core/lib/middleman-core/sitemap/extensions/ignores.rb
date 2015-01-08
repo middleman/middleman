@@ -21,9 +21,9 @@ module Middleman
           # @return [Boolean]
           def ignored?
             @app.ignore_manager.ignored?(path) ||
-            (!proxy? &&
-              @app.ignore_manager.ignored?(source_file.sub("#{@app.source_dir}/", ''))
-            )
+              (!proxy? &&
+                @app.ignore_manager.ignored?(source_file.sub("#{@app.source_dir}/", ''))
+              )
           end
         end
 

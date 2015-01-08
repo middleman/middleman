@@ -36,7 +36,6 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
 
   # The helpers
   helpers do
-
     # Make all block content html_safe
     # rubocop:disable Semicolon
     def content_tag(name, content=nil, options=nil, &block)
