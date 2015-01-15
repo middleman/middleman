@@ -19,7 +19,7 @@ module Middleman
         super()
 
         hash.each do |key, val|
-          self[key] = recursively_enhance(val)
+          self[key] = Util.recursively_enhance(val)
         end
 
         freeze
@@ -82,22 +82,6 @@ module Middleman
         end
       end
 
-      private
-
-      Contract Any => Frozen[Any]
-      def recursively_enhance(data)
-        if data.is_a? HashWithIndifferentAccess
-          data
-        elsif data.is_a? Hash
-          self.class.new(data)
-        elsif data.is_a? Array
-          data.map(&method(:recursively_enhance)).freeze
-        elsif data.frozen? || data.nil? || [::TrueClass, ::FalseClass, ::Fixnum].include?(data.class)
-          data
-        else
-          data.dup.freeze
-        end
-      end
     end
   end
 end

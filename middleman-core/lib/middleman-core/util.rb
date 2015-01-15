@@ -80,8 +80,8 @@ module Middleman
     # @private
     # @param [Hash] data Normal hash
     # @return [Middleman::Util::HashWithIndifferentAccess]
-    FrozenDataStructure = Frozen[Or[HashWithIndifferentAccess, Array]]
-    Contract Maybe[Or[Array, Hash, HashWithIndifferentAccess]] => Maybe[FrozenDataStructure]
+    FrozenDataStructure = Frozen[Or[HashWithIndifferentAccess, Array, String, TrueClass, FalseClass, Fixnum]]
+    Contract Maybe[Or[String, Array, Hash, HashWithIndifferentAccess]] => Maybe[FrozenDataStructure]
     def recursively_enhance(data)
       if data.is_a? HashWithIndifferentAccess
         data
@@ -89,8 +89,10 @@ module Middleman
         HashWithIndifferentAccess.new(data)
       elsif data.is_a? Array
         data.map(&method(:recursively_enhance)).freeze
+      elsif data.frozen? || data.nil? || [::TrueClass, ::FalseClass, ::Fixnum].include?(data.class)
+        data
       else
-        nil
+        data.dup.freeze
       end
     end
 
