@@ -69,7 +69,7 @@ end
 
 # Provide this Aruba overload in case we're matching something with quotes in it
 Then /^the file "([^"]*)" should contain '([^']*)'$/ do |file, partial_content|
-  check_file_content(file, partial_content, true)
+  check_file_content(file, Regexp.new(Regexp.escape(partial_content)), true)
 end
 
 And /the file "(.*)" should be gzipped/ do |file|
