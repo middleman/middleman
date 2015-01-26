@@ -82,6 +82,7 @@ module Middleman
         request_path.force_encoding('UTF-8')
       end
       request_path = ::Middleman::Util.full_path(request_path, @middleman)
+      full_request_path = File.join(env['SCRIPT_NAME'], request_path) # Path including rack mount
 
       # Run before callbacks
       @middleman.run_hook :before
@@ -90,7 +91,7 @@ module Middleman
       resource = @middleman.sitemap.find_resource_by_destination_path(request_path.gsub(' ', '%20'))
 
       # Return 404 if not in sitemap
-      return not_found(res, request_path) unless resource && !resource.ignored?
+      return not_found(res, full_request_path) unless resource && !resource.ignored?
 
       # If this path is a binary file, send it immediately
       return send_file(resource, env) if resource.binary?
