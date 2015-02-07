@@ -47,7 +47,7 @@ module Middleman::Cli
       end
 
       dir = Dir.mktmpdir
-      
+
       begin
         branch_cmd = repo_branch ? "-b #{repo_branch} " : ''
 

@@ -187,7 +187,7 @@ module Middleman
         end
 
         def key?(key)
-          ( @local_data.keys + @local_sources.keys + @callback_sources.keys ).include?(key.to_s)
+          (@local_data.keys + @local_sources.keys + @callback_sources.keys).include?(key.to_s)
         end
 
         alias_method :has_key?, :key?

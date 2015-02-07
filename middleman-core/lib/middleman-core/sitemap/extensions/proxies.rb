@@ -71,9 +71,9 @@ module Middleman
           ProxyResource.new(app.sitemap, path, target).tap do |p|
             md = metadata.dup
             p.add_metadata(
-                             locals: md.delete(:locals) || {},
-                             page: md.delete(:data) || {},
-                             options: md
+              locals: md.delete(:locals) || {},
+              page: md.delete(:data) || {},
+              options: md
                            )
           end
         end

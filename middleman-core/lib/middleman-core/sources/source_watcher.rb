@@ -274,7 +274,7 @@ module Middleman
       types = Set.new([@type])
 
       ::Middleman::SourceFile.new(
-          path.relative_path_from(@directory), path, @directory, types)
+        path.relative_path_from(@directory), path, @directory, types)
     end
 
     # Notify callbacks for a file given an array of callbacks

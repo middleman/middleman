@@ -81,7 +81,6 @@ module Middleman
           self[method]
         end
       end
-
     end
   end
 end
