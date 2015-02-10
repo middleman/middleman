@@ -16,7 +16,7 @@ module Middleman
     def_delegator :@app, :logger
 
     # Sort order, images, fonts, js/css and finally everything else.
-    SORT_ORDER = %w(.png .jpeg .jpg .gif .bmp .svg .svgz .webp .ico .woff .otf .ttf .eot .js .css)
+    SORT_ORDER = %w(.png .jpeg .jpg .gif .bmp .svg .svgz .webp .ico .woff .woff2 .otf .ttf .eot .js .css)
 
     # Create a new Builder instance.
     # @param [Middleman::Application] app The app to build.
