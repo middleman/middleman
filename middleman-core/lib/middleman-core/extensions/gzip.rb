@@ -12,6 +12,7 @@
 class Middleman::Extensions::Gzip < ::Middleman::Extension
   option :exts, %w(.js .css .html .htm), 'File extensions to Gzip when building.'
   option :ignore, [], 'Patterns to avoid gzipping'
+  option :overwrite, false, 'Overwrite original files instead of adding .gz extension.'
 
   class NumberHelpers
     include ::Padrino::Helpers::NumberHelpers
@@ -73,11 +74,11 @@ class Middleman::Extensions::Gzip < ::Middleman::Extension
   Contract String => [Maybe[String], Maybe[Num], Maybe[Num]]
   def gzip_file(path)
     input_file = File.open(path, 'rb').read
-    output_filename = path + '.gz'
+    output_filename = options.overwrite ? path : path + '.gz'
     input_file_time = File.mtime(path)
 
     # Check if the right file's already there
-    if File.exist?(output_filename) && File.mtime(output_filename) == input_file_time
+    if !options.overwrite && File.exist?(output_filename) && File.mtime(output_filename) == input_file_time
       return [nil, nil, nil]
     end
 
