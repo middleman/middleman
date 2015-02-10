@@ -105,7 +105,7 @@ module Middleman
             filename: eval_file,
             line: line,
             syntax: syntax,
-            custom: (options[:custom] || {}).merge(middleman_context: ctx.app)
+            custom: (options[:custom] || {}).merge(middleman_context: ctx.app)
           }
 
           if ctx.is_a?(::Middleman::TemplateContext) && file
