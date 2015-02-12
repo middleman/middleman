@@ -53,6 +53,11 @@ module Middleman::Cli
 
         run("git clone --depth 1 #{branch_cmd}#{repo_path} #{dir}")
 
+        unless File.directory?(dir)
+          say 'Git clone failed, maybe the url is invalid or you don\'t have the permissions?', :red
+          exit
+        end
+
         inside(target) do
           thorfile = File.join(dir, 'Thorfile')
 
@@ -68,18 +73,18 @@ module Middleman::Cli
           run('bundle install') unless ENV['TEST'] || options[:'skip-bundle']
         end
       ensure
-        FileUtils.remove_entry(dir)
+        FileUtils.remove_entry(dir) if File.directory?(dir)
       end
     end
 
     protected
 
     def shortname?(repo)
-      repo.split('/').length != 2
+      repo.split('/').length == 1
     end
 
     def repository_path(repo)
-      "git://github.com/#{repo}.git"
+      repo.include?('://') ? repo : "git://github.com/#{repo}.git"
     end
 
     # Add to CLI
