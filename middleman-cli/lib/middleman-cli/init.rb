@@ -84,7 +84,7 @@ module Middleman::Cli
     end
 
     def repository_path(repo)
-      repo.include?('://') ? repo : "git://github.com/#{repo}.git"
+      repo.include?('://') || repo.include?('git@') ? repo : "git://github.com/#{repo}.git"
     end
 
     # Add to CLI
