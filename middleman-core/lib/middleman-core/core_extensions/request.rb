@@ -21,6 +21,9 @@ module Middleman
           ::Rack::Mime::MIME_TYPES['.html'] = 'text/html; charset=utf-8'
           ::Rack::Mime::MIME_TYPES['.htm'] = 'text/html; charset=utf-8'
 
+          # Sourcemap format
+          ::Rack::Mime::MIME_TYPES['.map'] = 'application/json; charset=utf-8'
+
           app.extend ClassMethods
           app.extend ServerMethods
 
