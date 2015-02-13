@@ -1,6 +1,16 @@
 master
 ===
 
+3.3.8
+===
+* Define a mime type for sourcemaps. #1451
+* Asset hashing for image references in srcset 
+* Import patch to bugfix from Padrino Helpers #1401
+* Better URI encoding and decoding #1406
+* Update version of i18n
+
+3.3.7
+===
 * Update new project template Gemfile to use HTTPS by default. #1372
 
 3.3.6
