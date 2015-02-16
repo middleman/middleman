@@ -13,4 +13,4 @@ end
 require 'middleman-core/version'
 require 'middleman-core/util'
 require 'middleman-core/extensions'
-require 'middleman-core/application'
+require 'middleman-core/application' unless defined?(::Middleman::Application)
