@@ -28,7 +28,7 @@ module Middleman
           end
 
           # Setup Slim options to work with partials
-          ::Slim::Engine.set_default_options(
+          ::Slim::Engine.set_options(
             buffer: '@_out_buf',
             use_html_safe: true,
             generator: ::Temple::Generators::RailsOutputBuffer,
@@ -42,7 +42,7 @@ module Middleman
 
             ::Slim::Embedded::SassEngine.disable_option_validator!
             %w(sass scss markdown).each do |engine|
-              ::Slim::Embedded.default_options[engine.to_sym] = context_hack
+              ::Slim::Embedded.options[engine.to_sym] = context_hack
             end
           end
         end
