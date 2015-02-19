@@ -226,12 +226,12 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
 
       if lang_suffix
         super(suffixed_partial_name, maybe_static) ||
-        super(File.join(locals_dir, suffixed_partial_name), maybe_static) ||
-        super(partials_path, try_static) ||
-        super
+          super(File.join(locals_dir, suffixed_partial_name), maybe_static) ||
+          super(partials_path, try_static) ||
+          super
       else
         super(partials_path, try_static) ||
-        super
+          super
       end
     end
   end

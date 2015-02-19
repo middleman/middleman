@@ -61,7 +61,7 @@ module Middleman
           middleman_app.image_tag(link, title: title, alt: alt_text)
         else
           link_string = link.dup
-          link_string << %Q("#{title}") if title && title.length > 0 && title != alt_text
+          link_string << %("#{title}") if title && title.length > 0 && title != alt_text
           "![#{alt_text}](#{link_string})"
         end
       end
@@ -74,7 +74,7 @@ module Middleman
           middleman_app.link_to(content, link, attributes)
         else
           link_string = link.dup
-          link_string << %Q("#{title}") if title && title.length > 0 && title != alt_text
+          link_string << %("#{title}") if title && title.length > 0 && title != alt_text
           "[#{content}](#{link_string})"
         end
       end

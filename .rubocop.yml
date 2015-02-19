@@ -50,3 +50,7 @@ FormatString:
   Enabled: false
 CaseIndentation:
   IndentWhenRelativeTo: end
+Metrics/AbcSize:
+  Enabled: false
+Metrics/PerceivedComplexity:
+  Enabled: false

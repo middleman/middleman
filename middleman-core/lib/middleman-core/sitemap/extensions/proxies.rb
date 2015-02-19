@@ -53,7 +53,7 @@ module Middleman
             proxy_resource
           end
 
-          # rubocop:disable AccessorMethodName
+          # rubocop:disable Style/AccessorMethodName
           def get_source_file
             if proxy?
               proxied_to_resource.source_file
@@ -61,16 +61,15 @@ module Middleman
               super
             end
           end
+          # rubocop:enable Style/AccessorMethodName
 
           def content_type
             mime_type = super
             return mime_type if mime_type
 
-            if proxy?
-              proxied_to_resource.content_type
-            else
-              nil
-            end
+            return proxied_to_resource.content_type if proxy?
+
+            nil
           end
         end
 

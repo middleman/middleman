@@ -31,7 +31,7 @@ module Middleman
           mail_addr = el.attr['href'].sub(/\Amailto:/, '')
           href = obfuscate('mailto') << ':' << obfuscate(mail_addr)
           content = obfuscate(content) if content == mail_addr
-          return %Q(<a href="#{href}">#{content}</a>)
+          return %(<a href="#{href}">#{content}</a>)
         end
 
         attr = el.attr.dup
