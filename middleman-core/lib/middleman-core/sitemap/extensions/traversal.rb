@@ -9,7 +9,9 @@ module Middleman
           tail = parts.pop
           is_index = (tail == app.index_file)
 
-          return nil if is_index && parts.length < 1
+          if parts.empty?
+            return is_index ? nil : store.find_resource_by_path(app.index_file)
+          end
 
           test_expr = parts.join('\\/')
           # A makeshift for eponymous reverse-lookup
