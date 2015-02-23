@@ -55,3 +55,35 @@ Feature: Middleman CLI
     And I type "y"
     And I type "y"
     Then a directory named "MY_PROJECT" should exist
+
+  Scenario: Create a new project using Middleman directory
+    When I run `middleman init MY_PROJECT -T amicus`
+    Then a directory named "MY_PROJECT" should exist
+    When I cd to "MY_PROJECT"
+    And the file "README.md" should contain "Amicus"
+    And the file ".gitignore" should not exist
+
+  Scenario: Create a new project using github(user/repository)
+    When I run `middleman init MY_PROJECT -T middleman/middleman-templates-default` interactively
+    And I type "y"
+    And I type "y"
+    And I type "y"
+    And I type "y"
+    Then a directory named "MY_PROJECT" should exist
+
+  Scenario: Create a new project using github(user/repository#branch)
+    When I run `middleman init MY_PROJECT -T middleman/middleman-templates-default#master` interactively
+    And I type "y"
+    And I type "y"
+    And I type "y"
+    And I type "y"
+    Then a directory named "MY_PROJECT" should exist
+    And the output should contain "-b master"
+
+  Scenario: Create a new project using full path(://)
+    When I run `middleman init MY_PROJECT -T https://github.com/middleman/middleman-templates-default.git` interactively
+    And I type "y"
+    And I type "y"
+    And I type "y"
+    And I type "y"
+    Then a directory named "MY_PROJECT" should exist
