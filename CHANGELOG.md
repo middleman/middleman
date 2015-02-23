@@ -1,6 +1,15 @@
 master
 ===
 
+3.3.10
+===
+* Fixes #1469, missing `cattr_accessor` in Redcarpet support.
+* Fix slim >= 3.0.0 deprecation warning
+
+3.3.9
+===
+* Moved main `Application` from requiring to autoloading to work around some double-loading issues in Docker.
+
 3.3.8
 ===
 * Define a mime type for sourcemaps. #1451
