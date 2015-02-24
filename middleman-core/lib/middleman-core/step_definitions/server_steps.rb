@@ -70,7 +70,7 @@ end
 
 When /^I go to "([^\"]*)"$/ do |url|
   in_current_dir do
-    @last_response = @browser.get(URI.escape(url))
+    @last_response = @browser.get(URI.encode(url))
   end
 end
 
@@ -78,8 +78,8 @@ Then /^going to "([^\"]*)" should not raise an exception$/ do |url|
   in_current_dir do
     last_response = nil
     expect {
-      last_response = @browser.get(URI.escape(url))
-    }.to_not raise_error
+      last_response = @browser.get(URI.encode(url))
+    }.to_not raise_exception
     @last_response = last_response
   end
 end

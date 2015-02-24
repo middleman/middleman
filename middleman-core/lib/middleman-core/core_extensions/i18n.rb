@@ -41,7 +41,13 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
       ::I18n.t(*args)
     end
 
-    def locate_partial(partial_name)
+    # Access the list of languages supported by this Middleman application
+    # @return [Array<Symbol>]
+    def langs
+      extensions[:i18n].langs
+    end
+
+    def locate_partial(partial_name, try_static=false)
       locals_dir = extensions[:i18n].options[:templates_dir]
 
       # Try /localizable
@@ -58,12 +64,12 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
       end
 
       if lang_suffix
-        super(suffixed_partial_name) ||
-          super(File.join(locals_dir, suffixed_partial_name)) ||
-          super(partials_path) ||
+        super(suffixed_partial_name, maybe_static) ||
+          super(File.join(locals_dir, suffixed_partial_name), maybe_static) ||
+          super(partials_path, try_static) ||
           super
       else
-        super(partials_path) ||
+        super(partials_path, try_static) ||
           super
       end
     end
@@ -107,7 +113,6 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
 
   private
 
-  Contract Any, Any => Any
   def on_file_changed(_updated_files, _removed_files)
     @_langs = nil # Clear langs cache
 

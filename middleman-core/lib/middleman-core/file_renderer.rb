@@ -28,7 +28,7 @@ module Middleman
     # @param [Hash] opts
     # @param [Class] context
     # @return [String]
-    Contract Hash, Hash, Any, Proc => String
+    Contract Hash, Hash, Any, Maybe[Proc] => String
     def render(locs={}, opts={}, context, &block)
       path = @path.dup
 

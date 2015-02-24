@@ -145,7 +145,7 @@ Feature: Minify Javascript
       I'm a jQuery {{template}}.
     </script>
     """
-    
+
   Scenario: Rendering external js with the feature enabled
     Given a fixture app "minify-js-app"
     And a file named "config.rb" with:

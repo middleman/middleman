@@ -154,7 +154,7 @@ module Middleman::CoreExtensions
 
         begin
           json = ($1 + $2).sub(';;;', '{').sub(';;;', '}')
-          data = ActiveSupport::JSON.decode(json).symbolize_keys
+          data = ::ActiveSupport::JSON.decode(json).symbolize_keys
         rescue => e
           app.logger.error "JSON Exception parsing #{full_path}: #{e.message}"
           return nil

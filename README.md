@@ -1,5 +1,7 @@
 # Middleman - Makes developing websites simple
 
+[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/middleman/middleman?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 **Middleman** is a static site generator using all the shortcuts and tools in modern web development. Check out [middlemanapp.com](http://middlemanapp.com/) for detailed tutorials, including a [getting started guide](http://middlemanapp.com/basics/getting-started/). You can also follow [@middlemanapp](https://twitter.com/middlemanapp) for updates.
 
 ## Why Middleman?
@@ -105,11 +107,11 @@ Constraint][pvc] with two digits of precision. For example:
     spec.add_dependency 'middleman-core', '~> 4.0'
 
 [semver]: http://semver.org/
-[pvc]: http://docs.rubygems.org/read/chapter/16#page74
+[pvc]: http://guides.rubygems.org/patterns/#pessimistic-version-constraint
 
 ## License
 
-Copyright (c) 2010-2014 Thomas Reynolds. MIT Licensed, see [LICENSE] for details.
+Copyright (c) 2010-2015 Thomas Reynolds. MIT Licensed, see [LICENSE] for details.
 
 [middleman]: http://middlemanapp.com
 [gem]: https://rubygems.org/gems/middleman

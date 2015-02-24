@@ -8,9 +8,10 @@ $LOAD_PATH.unshift(libdir) unless $LOAD_PATH.include?(libdir)
 module Middleman
   # Backwards compatibility namespace
   module Features; end
+
+  autoload :Application, 'middleman-core/application'
 end
 
 require 'middleman-core/version'
 require 'middleman-core/util'
 require 'middleman-core/extensions'
-require 'middleman-core/application'

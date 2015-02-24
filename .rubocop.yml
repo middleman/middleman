@@ -57,5 +57,7 @@ CaseIndentation:
   IndentWhenRelativeTo: end
 TrivialAccessors:
   ExactNameMatch: true
-PerceivedComplexity:
+Metrics/AbcSize:
+  Enabled: false
+Metrics/PerceivedComplexity:
   Enabled: false

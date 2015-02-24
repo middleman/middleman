@@ -68,7 +68,7 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
         block.call(*args)
       end
 
-      ActiveSupport::SafeBuffer.new.safe_concat(result)
+      ::ActiveSupport::SafeBuffer.new.safe_concat(result)
     end
 
     def auto_find_proper_handler(&block)

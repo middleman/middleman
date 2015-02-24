@@ -18,7 +18,7 @@ module Middleman
         # Setup a redirect from a path to a target
         # @param [String] path
         # @param [Hash] opts The :to value gives a target path
-        Contract String, ({ to: Or[String, IsA['Middleman::Sitemap::Resource']] }), Proc => Any
+        Contract String, ({ to: Or[String, IsA['Middleman::Sitemap::Resource']] }), Maybe[Proc] => Any
         def create_redirect(path, opts={}, &block)
           opts[:template] = block if block_given?
 

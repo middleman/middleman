@@ -247,10 +247,9 @@ module Middleman
       @extensionless_files.delete(strip_extensions(f[:full_path]))
     end
 
+    Contract Pathname => Pathname
     def strip_extensions(p)
-      while ::Tilt[p.to_s] || p.extname === '.html'
-        p = p.sub_ext('')
-      end
+      p = p.sub_ext('') while ::Tilt[p.to_s] || p.extname === '.html'
       Pathname(p.to_s + '.*')
     end
 

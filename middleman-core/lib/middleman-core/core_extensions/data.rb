@@ -79,7 +79,7 @@ module Middleman
         # @param [Symbol] name Name of the data, used for namespacing
         # @param [Proc] proc The callback which will return data
         # @return [Hash]
-        Contract Symbol, Proc => Hash
+        Contract Maybe[Symbol], Maybe[Proc] => Hash
         def callbacks(name=nil, proc=nil)
           @callback_sources[name.to_s] = proc unless name.nil? || proc.nil?
           @callback_sources
@@ -102,9 +102,9 @@ module Middleman
           basename  = File.basename(data_path, extension)
 
           if %w(.yaml .yml).include?(extension)
-            data = YAML.load_file(file[:full_path])
+            data = ::YAML.load_file(file[:full_path])
           elsif extension == '.json'
-            data = ActiveSupport::JSON.decode(file[:full_path].read)
+            data = ::ActiveSupport::JSON.decode(file[:full_path].read)
           else
             return
           end

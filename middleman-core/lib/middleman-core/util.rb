@@ -102,7 +102,7 @@ module Middleman
     Contract String => String
     def normalize_path(path)
       # The tr call works around a bug in Ruby's Unicode handling
-      path.sub(%r{^/}, '').tr('', '')
+      URI.decode(path).sub(%r{^/}, '').tr('', '')
     end
 
     # This is a separate method from normalize_path in case we
@@ -225,7 +225,7 @@ module Middleman
         path_or_resource.url
       else
         path_or_resource.dup
-      end.gsub(' ', '%20')
+      end
 
       # Try to parse URL
       begin
@@ -273,7 +273,7 @@ module Middleman
 
       if resource
         uri.path = if this_resource
-          relative_path_from_resource(this_resource, resource_url, effective_relative)
+          URI.encode(relative_path_from_resource(this_resource, resource_url, effective_relative))
         else
           resource_url
         end

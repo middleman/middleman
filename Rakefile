@@ -22,7 +22,7 @@ desc 'Pushes repository to GitHub'
 task :push do
   puts 'Pushing to github...'
   sh "git tag v#{Middleman::VERSION}"
-  sh 'git push origin master'
+  sh 'git push'
   sh "git push origin v#{Middleman::VERSION}"
 end
 

@@ -1,32 +1,37 @@
 # Proxy ignored.html, which should ignore itself through a frontmatter
 proxy 'proxied.html', 'ignored.html'
+proxy 'proxied_with_frontmatter.html', 'ignored.html'
 page 'override_layout.html', layout: :alternate
 page 'page_mentioned.html'
 
 ignore '*.frontmatter'
 
 # Reads neighbor for every file on every refresh.
-# TODO: Optimize
 class NeighborFrontmatter < ::Middleman::Extension
   self.resource_list_manipulator_priority = 81
 
   def manipulate_resource_list(resources)
     resources.each do |resource|
       next unless resource.source_file
+      next if resource.source_file[:relative_path].extname == '.frontmatter'
 
-      neighbor = "#{resource.source_file[:relative_path]}.frontmatter"
-
-      file = app.files.find(:source, neighbor)
-
-      next unless file
-
-      fmdata = app.extensions[:front_matter].frontmatter_and_content(file[:full_path]).first
-      opts = fmdata.extract!(:layout, :layout_engine, :renderer_options, :directory_index, :content_type)
-      opts[:renderer_options].symbolize_keys! if opts.key?(:renderer_options)
-      ignored = fmdata.delete(:ignored)
-      resource.add_metadata options: opts, page: fmdata
-      resource.ignore! if ignored == true && !resource.is_a?(::Middleman::Sitemap::ProxyResource)
+      [
+        "#{resource.url.sub(/^\//, '')}.frontmatter",
+        "#{resource.source_file[:relative_path]}.frontmatter"
+      ].each do |n|
+        file = app.files.find(:source, n)
+        apply_neighbor_data(resource, file) if file
+      end
     end
+  end
+
+  def apply_neighbor_data(resource, file)
+    fmdata = app.extensions[:front_matter].frontmatter_and_content(file[:full_path]).first
+    opts = fmdata.extract!(:layout, :layout_engine, :renderer_options, :directory_index, :content_type)
+    opts[:renderer_options].symbolize_keys! if opts.key?(:renderer_options)
+    ignored = fmdata.delete(:ignored)
+    resource.add_metadata options: opts, page: fmdata
+    resource.ignore! if ignored == true && !resource.is_a?(::Middleman::Sitemap::ProxyResource)
   end
 end
 

@@ -348,7 +348,7 @@ module Middleman
     #
     # @param [Class] middleware Middleware module
     # @return [void]
-    Contract Any, Args[Any], Proc => Any
+    Contract Any, Args[Any], Maybe[Proc] => Any
     def use(middleware, *args, &block)
       @middleware << MiddlewareDescriptor.new(middleware, args, block)
     end

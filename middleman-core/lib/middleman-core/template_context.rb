@@ -100,7 +100,7 @@ module Middleman
     def render(_, name, options={}, &block)
       name = name.to_s
 
-      partial_file = locate_partial(name)
+      partial_file = locate_partial(name, false) || locate_partial(name, true)
 
       return '' unless partial_file
       raise ::Middleman::TemplateRenderer::TemplateNotFound, "Could not locate partial: #{name}" unless partial_file
@@ -123,8 +123,8 @@ module Middleman
     # @api private
     # @param [String] partial_path
     # @return [String]
-    Contract String => Maybe[IsA['Middleman::SourceFile']]
-    def locate_partial(partial_path)
+    Contract String, Maybe[Bool] => Maybe[IsA['Middleman::SourceFile']]
+    def locate_partial(partial_path, try_static=true)
       return unless resource = sitemap.find_resource_by_destination_path(current_path)
 
       # Look for partials relative to the current path
@@ -140,9 +140,9 @@ module Middleman
       [
         [relative_dir.to_s, { preferred_engine: resource.source_file[:relative_path].extname[1..-1].to_sym }],
         [non_root],
-        [non_root, { try_static: true }],
-        [relative_dir_no_underscore.to_s, { try_static: true }],
-        [non_root_no_underscore, { try_static: true }]
+        [non_root, { try_static: try_static }],
+        [relative_dir_no_underscore.to_s, { try_static: try_static }],
+        [non_root_no_underscore, { try_static: try_static }]
       ].each do |args|
         partial_file = ::Middleman::TemplateRenderer.resolve_template(@app, *args)
         break if partial_file
@@ -161,11 +161,12 @@ module Middleman
     # @param [Hash] opts Template options.
     # @param [Proc] block A block will be evaluated to return internal contents.
     # @return [String] The resulting content string.
-    Contract IsA['Middleman::SourceFile'], Hash, Hash, Proc => String
+    Contract IsA['Middleman::SourceFile'], Hash, Hash, Maybe[Proc] => String
     def render_file(file, locs, opts, &block)
       _render_with_all_renderers(file[:relative_path].to_s, locs, self, opts, &block)
     end
 
+    Contract String, Hash, Any, Hash, Maybe[Proc] => String
     def _render_with_all_renderers(path, locs, context, opts, &block)
       # Keep rendering template until we've used up all extensions. This
       # handles cases like `style.css.sass.erb`
