@@ -178,7 +178,7 @@ module Middleman::Cli
     # @return [void]
     def execute!
       # Sort order, images, fonts, js/css and finally everything else.
-      sort_order = %w(.png .jpeg .jpg .gif .bmp .svg .svgz .ico .webp .woff .otf .ttf .eot .js .css)
+      sort_order = %w(.png .jpeg .jpg .gif .bmp .svg .svgz .ico .webp .woff .woff2 .otf .ttf .eot .js .css)
 
       # Pre-request CSS to give Compass a chance to build sprites
       logger.debug '== Prerendering CSS'
