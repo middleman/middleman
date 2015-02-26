@@ -189,7 +189,7 @@ module Middleman
       def mount_instance(app)
         @app = app
 
-        @webrick ||= setup_webrick(@options[:debug] || false)
+        @webrick = setup_webrick(@options[:debug] || false)
 
         start_file_watcher
 
