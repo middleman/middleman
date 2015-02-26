@@ -34,10 +34,19 @@ module Middleman::Cli
 
       # TODO: get file watcher / reload! working in console
 
+      interact_with @app
+    end
+
+    private
+
+    # Start an interactive console in the context of the provided object.
+    # @param [Object] context
+    # @return [void]
+    def interact_with(context)
       IRB.setup nil
       IRB.conf[:MAIN_CONTEXT] = IRB::Irb.new.context
       require 'irb/ext/multi-irb'
-      IRB.irb nil, @app
+      IRB.irb nil, context
     end
   end
 end
