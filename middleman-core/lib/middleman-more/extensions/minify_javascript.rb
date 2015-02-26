@@ -8,6 +8,8 @@ class Middleman::Extensions::MinifyJavascript < ::Middleman::Extension
     super
 
     app.config.define_setting :js_compressor, nil, 'Set the JS compressor to use. Deprecated in favor of the :compressor option when activating :minify_js'
+
+    require 'oga'
   end
 
   def after_configuration
@@ -46,7 +48,7 @@ class Middleman::Extensions::MinifyJavascript < ::Middleman::Extension
         if @inline && (path.end_with?('.html') || path.end_with?('.php'))
           uncompressed_source = ::Middleman::Util.extract_response_text(response)
 
-          minified = minify_inline_content(uncompressed_source)
+          minified = minify_inline(uncompressed_source)
 
           headers['Content-Length'] = ::Rack::Utils.bytesize(minified).to_s
           response = [minified]
@@ -66,23 +68,36 @@ class Middleman::Extensions::MinifyJavascript < ::Middleman::Extension
 
     private
 
-    def minify_inline_content(uncompressed_source)
-      uncompressed_source.gsub(/(<script[^>]*>\s*(?:\/\/(?:(?:<!--)|(?:<!\[CDATA\[))\n)?)(.*?)((?:(?:\n\s*)?\/\/(?:(?:-->)|(?:\]\]>)))?\s*<\/script>)/m) do |match|
-        first = $1
-        javascript = $2
-        last = $3
+    # Return those of a document's script tags that contain JavaScript
+    # @param [Oga::XML::Document] document
+    # @return [Oga::XML::NodeSet]
+    def javascript_tags(document)
+      document.xpath('descendant-or-self::script').reject do |script|
+        # Only compress script tags that contain JavaScript (as opposed to
+        # something like jQuery templates, identified with a "text/html" type).
+        type = script.get('type')
+        type && type != 'text/javascript'
+      end
+    end
 
-        # Only compress script tags that contain JavaScript (as opposed
-        # to something like jQuery templates, identified with a "text/html"
-        # type.
-        if first =~ /<script>/ || first.include?('text/javascript')
-          minified_js = @compressor.compress(javascript)
+    # Detect and minify inline content
+    # @param [String] content
+    # @return [String]
+    def minify_inline(content)
+      document = Oga.parse_html(content)
 
-          first << minified_js << last
+      javascript_tags(document).each do |script|
+        comment = script.at_xpath('comment()')
+        if comment
+          comment.text = comment.text.sub(%r{^(\s*)(.*?)(\s*//\s*)$}m) do |_match|
+            $1 + @compressor.compress($2) + $3
+          end
         else
-          match
+          script.inner_text = @compressor.compress(script.inner_text)
         end
       end
+
+      document.to_xml
     end
   end
 end
