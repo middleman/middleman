@@ -19,7 +19,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
     # Tell the file watcher to observe the :data_dir
     app.files.watch :locales,
                     path: File.join(app.root, locales_file_path),
-                    ignore: proc { |f| !(/.*(rb|yml|yaml)$/.match(f[:relative_path])) }
+                    only: /.*(rb|yml|yaml)$/
 
     # Setup data files before anything else so they are available when
     # parsing config.rb

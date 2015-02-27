@@ -114,9 +114,7 @@ module Middleman
             # config.rb
             files.watch :reload,
                         path: root,
-                        ignored: proc { |file|
-                          match_against.none? { |m| file[:relative_path].to_s.match(m) }
-                        }
+                        only: match_against
           end
         end
 

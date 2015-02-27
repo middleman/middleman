@@ -283,6 +283,8 @@ module Middleman
       @app.after_build do |builder|
         if ext.method(:after_build).arity == 1
           ext.after_build(builder)
+        elsif ext.method(:after_build).arity == 2
+          ext.after_build(builder, builder.thor)
         else
           ext.after_build
         end

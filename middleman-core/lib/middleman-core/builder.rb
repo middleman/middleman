@@ -12,6 +12,9 @@ module Middleman
     # Make app & events available to `after_build` callbacks.
     attr_reader :app, :events
 
+    # Reference to the Thor class.
+    attr_accessor :thor
+
     # Logger comes from App.
     def_delegator :@app, :logger
 
@@ -130,7 +133,8 @@ module Middleman
     def write_tempfile(output_file, contents)
       file = Tempfile.new([
         File.basename(output_file),
-        File.extname(output_file)])
+        File.extname(output_file)
+      ])
       file.binmode
       file.write(contents)
       file.close

@@ -59,7 +59,7 @@ module Middleman::Cli
                                        glob: options['glob'],
                                        clean: options['clean'],
                                        parallel: options['parallel'])
-
+      builder.thor = self
       builder.on_build_event(&method(:on_event))
 
       if builder.run!

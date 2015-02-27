@@ -47,6 +47,7 @@ module Middleman
 
       @validator = options.fetch(:validator, proc { true })
       @ignored = options.fetch(:ignored, proc { false })
+      @only = Array(options.fetch(:only, []))
 
       @disable_watcher = app.build? || @parent.options.fetch(:disable_watcher, false)
       @force_polling = @parent.options.fetch(:force_polling, false)
@@ -132,6 +133,8 @@ module Middleman
 
       @listener = ::Listen.to(@directory.to_s, config, &method(:on_listener_change))
       @listener.start
+
+      @listener.only(@only) unless @only.empty?
     end
 
     # Stop the listener.
@@ -259,9 +262,13 @@ module Middleman
     # @return [Boolean]
     Contract IsA['Middleman::SourceFile'] => Bool
     def valid?(file)
-      @validator.call(file) &&
-        !globally_ignored?(file) &&
+      globally_valid = @validator.call(file) && !globally_ignored?(file)
+
+      globally_valid && if @only.empty?
         !@ignored.call(file)
+      else
+        @only.any? { |reg| reg.match(file[:relative_path].to_s) }
+      end
     end
 
     # Convert a path to a file resprentation.
