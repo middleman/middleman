@@ -14,11 +14,9 @@ module Middleman::Cli
     method_option :host,
                   type: :string,
                   aliases: '-h',
-                  default: '0.0.0.0',
                   desc: 'Bind to HOST address'
     method_option :port,
                   aliases: '-p',
-                  default: '4567',
                   desc: 'The port Middleman will listen on'
     method_option :verbose,
                   type: :boolean,
