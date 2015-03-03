@@ -169,14 +169,14 @@ module Middleman
         if path_or_resource.is_a?(::Middleman::Sitemap::Resource)
           resource = path_or_resource
           resource_url = url
-        elsif this_resource && uri.path
+        elsif this_resource && uri.path && !uri.host
           # Handle relative urls
           url_path = Pathname(uri.path)
           current_source_dir = Pathname('/' + this_resource.path).dirname
           url_path = current_source_dir.join(url_path) if url_path.relative?
           resource = app.sitemap.find_resource_by_path(url_path.to_s)
           resource_url = resource.url if resource
-        elsif options[:find_resource] && uri.path
+        elsif options[:find_resource] && uri.path && !uri.host
           resource = app.sitemap.find_resource_by_path(uri.path)
           resource_url = resource.url if resource
         end
