@@ -1,3 +1,4 @@
+require 'forwardable'
 require 'active_support/core_ext/class/attribute'
 require 'middleman-core/configuration'
 require 'middleman-core/contracts'
