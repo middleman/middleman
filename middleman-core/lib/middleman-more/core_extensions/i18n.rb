@@ -178,6 +178,15 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
     ::I18n.locale = lang
     localized_page_id = ::I18n.t("paths.#{page_id}", default: page_id, fallback: [])
 
+    localized_path = ""
+
+    File.dirname(path).split('/').each do |path_sub|
+      next if path_sub == ""
+      localized_path = "#{localized_path}/#{(::I18n.t("paths.#{path_sub}", default: path_sub).to_s)}"
+    end
+
+    path = "#{localized_path}/#{File.basename(path)}"
+
     prefix = if (options[:mount_at_root] == lang) || (options[:mount_at_root].nil? && langs[0] == lang)
       '/'
     else
