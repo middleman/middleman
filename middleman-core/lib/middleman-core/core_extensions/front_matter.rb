@@ -83,7 +83,7 @@ module Middleman::CoreExtensions
 
     # Get the frontmatter and plain content from a file
     # @param [String] path
-    # @return [Array<Middleman::Util::HashWithIndifferentAccess, String>]
+    # @return [Array<Middleman::Util::IndifferentHash, String>]
     Contract Pathname => [Hash, Maybe[String]]
     def frontmatter_and_content(full_path)
       data = {}

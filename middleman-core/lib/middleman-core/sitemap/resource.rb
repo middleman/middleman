@@ -87,10 +87,9 @@ module Middleman
       end
 
       # Data about this resource, populated from frontmatter or extensions.
-      # @return [HashWithIndifferentAccess]
-      Contract IsA['Middleman::Util::HashWithIndifferentAccess']
+      # @return [IndifferentHash]
+      Contract IsA['Middleman::Util::IndifferentHash']
       def data
-        # TODO: Should this really be a HashWithIndifferentAccess?
         ::Middleman::Util.recursively_enhance(metadata[:page])
       end
 

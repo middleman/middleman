@@ -1,9 +1,6 @@
 # For instrumenting
 require 'active_support/notifications'
 
-# Indifferent hash access
-require 'middleman-core/util/hash_with_indifferent_access'
-
 # Core Pathname library used for traversal
 require 'pathname'
 
@@ -13,6 +10,9 @@ require 'rack/mime'
 
 # DbC
 require 'middleman-core/contracts'
+
+# Immutable Data
+require 'hamster'
 
 # For URI templating
 require 'addressable/uri'
@@ -76,26 +76,47 @@ module Middleman
       end
     end
 
-    # Recursively convert a normal Hash into a HashWithIndifferentAccess
+    class IndifferentHash < ::Hamster::Hash
+      def get(key)
+        key?(key.to_s) ? super(key.to_s) : super(key.to_sym)
+      end
+
+      alias_method :method_missing, :get
+    end
+
+    # Recursively convert a normal Hash into a IndifferentHash
     #
     # @private
     # @param [Hash] data Normal hash
-    # @return [Middleman::Util::HashWithIndifferentAccess]
-    FrozenDataStructure = Frozen[Or[HashWithIndifferentAccess, Array, String, TrueClass, FalseClass, Fixnum]]
-    Contract Maybe[Or[String, Array, Hash, HashWithIndifferentAccess]] => Maybe[FrozenDataStructure]
-    def recursively_enhance(data)
-      if data.is_a? HashWithIndifferentAccess
-        data
-      elsif data.is_a? Hash
-        HashWithIndifferentAccess.new(data)
-      elsif data.is_a? Array
-        data.map(&method(:recursively_enhance)).freeze
-      elsif data.frozen? || data.nil? || [::TrueClass, ::FalseClass, ::Fixnum].include?(data.class)
-        data
+    # @return [Middleman::Util::IndifferentHash]
+    FrozenDataStructure = Frozen[Or[IndifferentHash, Array, String, TrueClass, FalseClass, Fixnum]]
+    Contract Maybe[Or[String, Array, Hash, IndifferentHash]] => Maybe[FrozenDataStructure]
+    def recursively_enhance(obj)
+      case obj
+      when ::Hash
+        res = obj.map { |key, value| [recursively_enhance(key), recursively_enhance(value)] }
+        IndifferentHash.new(res)
+      when IndifferentHash
+        obj.map { |key, value| [recursively_enhance(key), recursively_enhance(value)] }
+      when ::Array
+        res = obj.map { |element| recursively_enhance(element) }
+        Hamster::Vector.new(res)
+      when ::SortedSet
+        # This clause must go before ::Set clause, since ::SortedSet is a ::Set.
+        res = obj.map { |element| recursively_enhance(element) }
+        Hamster::SortedSet.new(res)
+      when ::Set
+        res = obj.map { |element| recursively_enhance(element) }
+        Hamster::Set.new(res)
+      when Hamster::Vector, Hamster::Set, Hamster::SortedSet
+        obj.map { |element| recursively_enhance(element) }
+      when ::TrueClass, ::FalseClass, ::Fixnum, ::Symbol
+        obj
       else
-        data.dup.freeze
+        obj.dup.freeze
       end
     end
+
 
     # Normalize a path to not include a leading slash
     # @param [String] path

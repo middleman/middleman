@@ -52,4 +52,7 @@ Gem::Specification.new do |s|
 
   # Testing
   s.add_dependency('contracts', ['~> 0.9.0'])
+
+  # Immutability
+  s.add_dependency('hamster', ['~> 1.0'])
 end

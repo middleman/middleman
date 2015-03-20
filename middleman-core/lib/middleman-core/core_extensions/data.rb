@@ -162,8 +162,8 @@ module Middleman
         # @return [Hash, nil]
         def method_missing(path)
           if @local_data.key?(path.to_s)
-            @local_data[path.to_s] = ::Middleman::Util.recursively_enhance(@local_data[path.to_s])
-            return @local_data[path.to_s]
+            # Any way to cache this?
+            return ::Middleman::Util.recursively_enhance(@local_data[path.to_s])
           else
             result = data_for_path(path)
             return result if result
