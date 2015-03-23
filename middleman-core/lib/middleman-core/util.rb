@@ -77,11 +77,25 @@ module Middleman
     end
 
     class IndifferentHash < ::Hamster::Hash
-      def get(key)
-        key?(key.to_s) ? super(key.to_s) : super(key.to_sym)
+      def [](key)
+        if key?(key.to_sym)
+          super(key.to_sym)
+        elsif key?(key.to_s)
+          super(key.to_s)
+        else
+          super
+        end
       end
 
-      alias_method :method_missing, :get
+      def method_missing(key, *args)
+        if key?(key.to_sym)
+          self[key.to_sym]
+        elsif key?(key.to_s)
+          self[key.to_s]
+        else
+          super
+        end
+      end
     end
 
     # Recursively convert a normal Hash into a IndifferentHash
