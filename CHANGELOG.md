@@ -1,6 +1,13 @@
 master
 ===
 
+3.3.11
+===
+* Add jruby to the list of envs requiring tzinfo-data.
+* Don't lookup resource for path if the path is absolute. Fixes #1195
+* Make preview host and port configurable in config.rb and also expose those variables to extensions which are curious. Closes #1477
+* Append assets hash to .woff2 files
+
 3.3.10
 ===
 * Fixes #1469, missing `cattr_accessor` in Redcarpet support.
