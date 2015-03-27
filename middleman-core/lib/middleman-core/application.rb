@@ -191,6 +191,7 @@ module Middleman
     def_delegator :"::Middleman::Util", :instrument
     def_delegators :"self.class", :root, :root_path
     def_delegators :@generic_template_context, :link_to, :image_tag, :asset_path
+    def_delegators :@extensions, :activate
 
     # Initialize the Middleman project
     def initialize(&block)
