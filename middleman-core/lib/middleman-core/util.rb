@@ -103,7 +103,7 @@ module Middleman
     # @private
     # @param [Hash] data Normal hash
     # @return [Middleman::Util::IndifferentHash]
-    FrozenDataStructure = Frozen[Or[IndifferentHash, Array, String, TrueClass, FalseClass, Fixnum]]
+    FrozenDataStructure = Frozen[Or[IndifferentHash, Array, String, TrueClass, FalseClass, Fixnum, NilClass]]
     Contract Maybe[Or[String, Array, Hash, IndifferentHash]] => Maybe[FrozenDataStructure]
     def recursively_enhance(obj)
       case obj
@@ -124,7 +124,7 @@ module Middleman
         Hamster::Set.new(res)
       when Hamster::Vector, Hamster::Set, Hamster::SortedSet
         obj.map { |element| recursively_enhance(element) }
-      when ::TrueClass, ::FalseClass, ::Fixnum, ::Symbol
+      when ::TrueClass, ::FalseClass, ::Fixnum, ::Symbol, ::NilClass
         obj
       else
         obj.dup.freeze
