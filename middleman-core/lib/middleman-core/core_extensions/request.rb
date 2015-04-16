@@ -4,6 +4,7 @@ require 'rack/file'
 require 'rack/lint'
 require 'rack/head'
 
+require 'middleman-core/application'
 require 'middleman-core/util'
 
 module Middleman
