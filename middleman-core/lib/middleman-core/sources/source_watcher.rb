@@ -279,8 +279,11 @@ module Middleman
     def path_to_source_file(path)
       types = Set.new([@type])
 
-      ::Middleman::SourceFile.new(
-        path.relative_path_from(@directory), path, @directory, types)
+      relative_path   = path.relative_path_from(@directory)
+      destination_dir = @options.fetch(:destination_dir, false)
+      relative_path   = File.join(destination_dir, relative_path) if destination_dir
+
+      ::Middleman::SourceFile.new(Pathname(relative_path), path, @directory, types)
     end
 
     # Notify callbacks for a file given an array of callbacks

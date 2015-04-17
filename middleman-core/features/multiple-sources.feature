@@ -25,3 +25,11 @@ Feature: Allow multiple sources to be setup.
     Then I should see "Data 2: Data 2"
     Then I should see "Override in Two: Overridden 2"
     Then I should see "Override in One: Opposite 2"
+
+  Scenario: Set source with destination_dir
+    Given the Server is running at "multiple-sources-with-duplicate-file-names-app"
+    When I go to "/index.html"
+    Then I should see "Default Source"
+
+    When I go to "/source2/index.html"
+    Then I should see "Second Source"
