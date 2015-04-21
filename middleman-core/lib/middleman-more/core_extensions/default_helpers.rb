@@ -190,8 +190,18 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
           resource.url
         else
           path = File.join(prefix, path)
+
+          # remove any queries and fragments in the path
+          uri = URI(path)
+          path = uri.path
+
           if resource = sitemap.find_resource_by_path(path)
-            resource.url
+            # construct url with any queries and fragments from the original uri
+            resource_uri = URI(resource.url)
+            resource_uri.query = uri.query
+            resource_uri.fragment = uri.fragment
+
+            resource_uri.to_s
           else
             File.join(config[:http_prefix], path)
           end
