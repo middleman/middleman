@@ -15,6 +15,7 @@ require 'rack/mime'
 require 'middleman-core/contracts'
 
 # For URI templating
+require 'addressable/uri'
 require 'addressable/template'
 require 'active_support/inflector'
 require 'active_support/inflector/transliterate'
@@ -323,9 +324,15 @@ module Middleman
         opening_character = $1
         asset_path = $2
 
-        if result = yield(asset_path)
-          "#{opening_character}#{result}"
-        else
+        begin
+          uri = ::Addressable::URI.parse(asset_path)
+
+          if uri.relative? && result = yield(asset_path)
+            "#{opening_character}#{result}"
+          else
+            match
+          end
+        rescue
           match
         end
       end
