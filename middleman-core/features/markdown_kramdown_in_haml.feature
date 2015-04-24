@@ -33,9 +33,10 @@ Feature: Markdown support in Haml (Kramdown)
       :markdown
         [A link](/link_target.html)
 
-        ![image](blank.gif)
+        ![image](blank.gif){: srcset="image_2x.jpg 2x"}
       """
     Given the Server is running at "markdown-in-haml-app"
     When I go to "/link_and_image/"
     Then I should see "/link_target/"
+    Then I should see "/images/image_2x.jpg 2x"
     Then I should see 'src="/images/blank.gif"'
