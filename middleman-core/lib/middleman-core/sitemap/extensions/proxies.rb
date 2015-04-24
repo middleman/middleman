@@ -96,7 +96,7 @@ module Middleman
       # The resource for the page this page is proxied to. Throws an exception
       # if there is no resource.
       # @return [Sitemap::Resource]
-      Contract None => IsA['Middleman::Sitemap::Resource']
+      Contract IsA['Middleman::Sitemap::Resource']
       def target_resource
         resource = @store.find_resource_by_path(@target)
 
@@ -111,12 +111,12 @@ module Middleman
         resource
       end
 
-      Contract None => IsA['Middleman::SourceFile']
+      Contract IsA['Middleman::SourceFile']
       def source_file
         target_resource.source_file
       end
 
-      Contract None => Maybe[String]
+      Contract Maybe[String]
       def content_type
         mime_type = super
         return mime_type if mime_type

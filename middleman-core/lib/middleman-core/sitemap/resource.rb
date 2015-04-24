@@ -23,7 +23,7 @@ module Middleman
 
       # The on-disk source file for this resource, if there is one
       # @return [String]
-      Contract None => Maybe[IsA['Middleman::SourceFile']]
+      Contract Maybe[IsA['Middleman::SourceFile']]
       attr_reader :source_file
 
       # The path to use when requesting this resource. Normally it's
@@ -35,7 +35,7 @@ module Middleman
 
       # The metadata for this resource
       # @return [Hash]
-      Contract None => METADATA_HASH
+      Contract METADATA_HASH
       attr_reader :metadata
 
       # Initialize resource with parent store and URL
@@ -69,7 +69,7 @@ module Middleman
 
       # Whether this resource has a template file
       # @return [Boolean]
-      Contract None => Bool
+      Contract Bool
       def template?
         return false if source_file.nil?
         !::Tilt[source_file[:full_path].to_s].nil?
@@ -88,7 +88,7 @@ module Middleman
 
       # Data about this resource, populated from frontmatter or extensions.
       # @return [HashWithIndifferentAccess]
-      Contract None => IsA['Middleman::Util::HashWithIndifferentAccess']
+      Contract IsA['Middleman::Util::HashWithIndifferentAccess']
       def data
         # TODO: Should this really be a HashWithIndifferentAccess?
         ::Middleman::Util.recursively_enhance(metadata[:page])
@@ -97,21 +97,21 @@ module Middleman
       # Options about how this resource is rendered, such as its :layout,
       # :renderer_options, and whether or not to use :directory_indexes.
       # @return [Hash]
-      Contract None => Hash
+      Contract Hash
       def options
         metadata[:options]
       end
 
       # Local variable mappings that are used when rendering the template for this resource.
       # @return [Hash]
-      Contract None => Hash
+      Contract Hash
       def locals
         metadata[:locals]
       end
 
       # Extension of the path (i.e. '.js')
       # @return [String]
-      Contract None => String
+      Contract String
       def ext
         File.extname(path)
       end
@@ -141,7 +141,7 @@ module Middleman
       # A path without the directory index - so foo/index.html becomes
       # just foo. Best for linking.
       # @return [String]
-      Contract None => String
+      Contract String
       def url
         url_path = destination_path
         if @app.config[:strip_index_file]
@@ -154,7 +154,7 @@ module Middleman
       # Whether the source file is binary.
       #
       # @return [Boolean]
-      Contract None => Bool
+      Contract Bool
       def binary?
         !source_file.nil? && ::Middleman::Util.binary?(source_file[:full_path].to_s)
       end
@@ -162,14 +162,14 @@ module Middleman
       # Ignore a resource directly, without going through the whole
       # ignore filter stuff.
       # @return [void]
-      Contract None => Any
+      Contract Any
       def ignore!
         @ignored = true
       end
 
       # Whether the Resource is ignored
       # @return [Boolean]
-      Contract None => Bool
+      Contract Bool
       def ignored?
         return true if @ignored
         # Ignore based on the source path (without template extensions)
@@ -184,7 +184,7 @@ module Middleman
 
       # The preferred MIME content type for this resource based on extension or metadata
       # @return [String] MIME type for this resource
-      Contract None => Maybe[String]
+      Contract Maybe[String]
       def content_type
         options[:content_type] || ::Rack::Mime.mime_type(ext, nil)
       end

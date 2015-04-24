@@ -15,14 +15,14 @@ module Middleman
     include Contracts
 
     # A reference to the current app.
-    Contract None => IsA['Middleman::Application']
+    Contract IsA['Middleman::Application']
     attr_reader :app
 
     # Duck-typed definition of a valid source watcher
     HANDLER = RespondTo[:on_change]
 
     # Config
-    Contract None => Hash
+    Contract Hash
     attr_reader :options
 
     # Reference to the global logger.
@@ -125,7 +125,7 @@ module Middleman
     end
 
     # A list of registered watchers
-    Contract None => ArrayOf[HANDLER]
+    Contract ArrayOf[HANDLER]
     def watchers
       @sorted_watchers
     end
@@ -155,7 +155,7 @@ module Middleman
     # Get all files for this collection of watchers.
     #
     # @return [Array<Middleman::SourceFile>]
-    Contract None => ArrayOf[SourceFile]
+    Contract ArrayOf[SourceFile]
     def files
       watchers.flat_map(&:files).uniq { |f| f[:relative_path] }
     end
@@ -204,7 +204,7 @@ module Middleman
     # Manually poll all watchers for new content.
     #
     # @return [void]
-    Contract None => Any
+    Contract Any
     def find_new_files!
       return unless @update_count != @last_update_count
 
@@ -215,7 +215,7 @@ module Middleman
     # Start up all listeners.
     #
     # @return [void]
-    Contract None => Any
+    Contract Any
     def start!
       watchers.each(&:listen!)
       @running = true
@@ -224,7 +224,7 @@ module Middleman
     # Stop the watchers.
     #
     # @return [void]
-    Contract None => Any
+    Contract Any
     def stop!
       watchers.each(&:stop_listener!)
       @running = false
@@ -300,7 +300,7 @@ module Middleman
     # Increment the internal counter for changes.
     #
     # @return [void]
-    Contract None => Any
+    Contract Any
     def bump_count
       @update_count += 1
     end

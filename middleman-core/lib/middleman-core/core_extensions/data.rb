@@ -195,7 +195,7 @@ module Middleman
         # Convert all the data into a static hash
         #
         # @return [Hash]
-        Contract None => Hash
+        Contract Hash
         def to_h
           data = {}
 

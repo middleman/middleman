@@ -75,7 +75,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
     end
   end
 
-  Contract None => ArrayOf[Symbol]
+  Contract ArrayOf[Symbol]
   def langs
     @langs ||= known_languages
   end
@@ -130,7 +130,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
     ::I18n.fallbacks = ::I18n::Locale::Fallbacks.new if ::I18n.respond_to?(:fallbacks)
   end
 
-  Contract None => ArrayOf[Symbol]
+  Contract ArrayOf[Symbol]
   def known_languages
     if options[:langs]
       Array(options[:langs]).map(&:to_sym)

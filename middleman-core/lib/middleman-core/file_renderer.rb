@@ -102,7 +102,7 @@ module Middleman
     # Get the template data from a path
     # @param [String] path
     # @return [String]
-    Contract None => String
+    Contract String
     def template_data_for_file
       if @app.extensions[:front_matter]
         @app.extensions[:front_matter].template_data_for_file(@path) || ''

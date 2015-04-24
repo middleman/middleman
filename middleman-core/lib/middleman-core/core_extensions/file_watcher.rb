@@ -6,7 +6,7 @@ module Middleman
     # API for watching file change events
     class FileWatcher < Extension
       # All defined sources.
-      Contract None => IsA['Middleman::Sources']
+      Contract IsA['Middleman::Sources']
       attr_reader :sources
 
       # The default list of ignores.
@@ -43,7 +43,7 @@ module Middleman
       # Before we config, find initial files.
       #
       # @return [void]
-      Contract None => Any
+      Contract Any
       def before_configuration
         @sources.find_new_files!
       end
@@ -51,7 +51,7 @@ module Middleman
       # After we config, find new files since config can change paths.
       #
       # @return [void]
-      Contract None => Any
+      Contract Any
       def after_configuration
         if @original_source_dir != app.config[:source]
           @watcher.update_path(app.config[:source])

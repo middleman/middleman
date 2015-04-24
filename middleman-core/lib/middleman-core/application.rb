@@ -30,6 +30,9 @@ require 'middleman-core/template_renderer'
 
 # Core Middleman Class
 module Middleman
+  MiddlewareDescriptor = Struct.new(:class, :options, :block)
+  MapDescriptor = Struct.new(:path, :block)
+
   class Application
     extend Forwardable
     include Contracts
@@ -180,10 +183,10 @@ module Middleman
     attr_reader :extensions
     attr_reader :sources
 
-    Contract None => SetOf['Middleman::Application::MiddlewareDescriptor']
+    Contract SetOf[MiddlewareDescriptor]
     attr_reader :middleware
 
-    Contract None => SetOf['Middleman::Application::MapDescriptor']
+    Contract SetOf[MapDescriptor]
     attr_reader :mappings
 
     # Reference to Logger singleton
@@ -343,18 +346,14 @@ module Middleman
       Pathname(File.join(root, config[:source]))
     end
 
-    MiddlewareDescriptor = Struct.new(:class, :options, :block)
-
     # Use Rack middleware
     #
     # @param [Class] middleware Middleware module
     # @return [void]
-    Contract Any, Args[Any], Maybe[Proc] => Any
+    # Contract Any, Args[Any], Maybe[Proc] => Any
     def use(middleware, *args, &block)
       @middleware << MiddlewareDescriptor.new(middleware, args, block)
     end
-
-    MapDescriptor = Struct.new(:path, :block)
 
     # Add Rack App mapped to specific path
     #

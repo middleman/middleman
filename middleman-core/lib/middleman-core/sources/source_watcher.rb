@@ -17,15 +17,15 @@ module Middleman
     def_delegator :app, :logger
 
     # The type this watcher is representing
-    Contract None => Symbol
+    Contract Symbol
     attr_reader :type
 
     # The directory that is being watched
-    Contract None => Pathname
+    Contract Pathname
     attr_reader :directory
 
     # Options for configuring the watcher
-    Contract None => Hash
+    Contract Hash
     attr_reader :options
 
     # Construct a new SourceWatcher
@@ -80,7 +80,7 @@ module Middleman
     # Stop watching.
     #
     # @return [void]
-    Contract None => Any
+    Contract Any
     def unwatch
       stop_listener!
     end
@@ -88,7 +88,7 @@ module Middleman
     # All the known files in this watcher.
     #
     # @return [Array<Middleman::SourceFile>]
-    Contract None => ArrayOf[IsA['Middleman::SourceFile']]
+    Contract ArrayOf[IsA['Middleman::SourceFile']]
     def files
       @files.values
     end
@@ -124,7 +124,7 @@ module Middleman
     # Start the `listen` gem Listener.
     #
     # @return [void]
-    Contract None => Any
+    Contract Any
     def listen!
       return if @disable_watcher || @listener || @waiting_for_existence
 
@@ -140,7 +140,7 @@ module Middleman
     # Stop the listener.
     #
     # @return [void]
-    Contract None => Any
+    Contract Any
     def stop_listener!
       return unless @listener
 
@@ -151,7 +151,7 @@ module Middleman
     # Manually trigger update events.
     #
     # @return [void]
-    Contract None => Any
+    Contract Any
     def poll_once!
       removed = @files.keys
 

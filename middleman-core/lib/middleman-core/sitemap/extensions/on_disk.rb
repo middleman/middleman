@@ -22,7 +22,7 @@ module Middleman
           end
         end
 
-        Contract None => Any
+        Contract Any
         def before_configuration
           app.files.on_change(:source, &method(:update_files))
         end

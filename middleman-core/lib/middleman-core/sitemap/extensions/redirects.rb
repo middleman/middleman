@@ -44,7 +44,7 @@ module Middleman
       end
 
       class RedirectResource < ::Middleman::Sitemap::Resource
-        Contract None => Maybe[Proc]
+        Contract Maybe[Proc]
         attr_accessor :output
 
         def initialize(store, path, target)
@@ -53,7 +53,7 @@ module Middleman
           super(store, path)
         end
 
-        Contract None => Bool
+        Contract Bool
         def template?
           true
         end
@@ -82,7 +82,7 @@ module Middleman
           end
         end
 
-        Contract None => Bool
+        Contract Bool
         def ignored?
           false
         end

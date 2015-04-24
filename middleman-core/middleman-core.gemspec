@@ -51,5 +51,5 @@ Gem::Specification.new do |s|
   s.add_dependency('execjs', ['~> 2.0'])
 
   # Testing
-  s.add_dependency('contracts', ['~> 0.7.0'])
+  s.add_dependency('contracts', ['~> 0.9.0'])
 end

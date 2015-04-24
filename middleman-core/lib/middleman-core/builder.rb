@@ -44,7 +44,7 @@ module Middleman
 
     # Run the build phase.
     # @return [Boolean] Whether the build was successful.
-    Contract None => Bool
+    Contract Bool
     def run!
       @has_error = false
       @events = {}
@@ -77,7 +77,7 @@ module Middleman
 
     # Pre-request CSS to give Compass a chance to build sprites
     # @return [Array<Resource>] List of css resources that were output.
-    Contract None => ResourceList
+    Contract ResourceList
     def prerender_css
       logger.debug '== Prerendering CSS'
 
@@ -96,7 +96,7 @@ module Middleman
 
     # Find all the files we need to output and do so.
     # @return [Array<Resource>] List of resources that were output.
-    Contract None => ResourceList
+    Contract ResourceList
     def output_files
       logger.debug '== Building files'
 
@@ -209,7 +209,7 @@ module Middleman
     # Get a list of all the paths in the destination folder and save them
     # for comparison against the files we build in this cycle
     # @return [void]
-    Contract None => Any
+    Contract Any
     def queue_current_paths
       @to_clean = []
 
@@ -234,7 +234,7 @@ module Middleman
     end
 
     # Remove files which were not built in this cycle
-    Contract None => ArrayOf[Pathname]
+    Contract ArrayOf[Pathname]
     def clean
       @to_clean.each do |f|
         FileUtils.rm(f)

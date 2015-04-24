@@ -27,38 +27,6 @@ if ENV['TEST'] || ENV['CONTRACTS'] == 'true'
       end
     end
 
-    class ArrayOf
-      def initialize(contract)
-        @contract = contract.is_a?(String) ? IsA[contract] : contract
-      end
-    end
-
-    class SetOf < CallableClass
-      def initialize(contract)
-        @contract = contract.is_a?(String) ? IsA[contract] : contract
-      end
-
-      def valid?(vals)
-        return false unless vals.is_a?(Set)
-        vals.all? do |val|
-          res, _ = Contract.valid?(val, @contract)
-          res
-        end
-      end
-
-      def to_s
-        "a set of #{@contract}"
-      end
-
-      def testable?
-        Testable.testable? @contract
-      end
-
-      def test_data
-        Set.new([], [Testable.test_data(@contract)], [Testable.test_data(@contract), Testable.test_data(@contract)])
-      end
-    end
-
     # class MethodDefined
     #   def self.[](val)
     #     @lookup ||= {}

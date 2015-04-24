@@ -28,7 +28,7 @@ module Middleman
           @root_collector = LazyCollectorRoot.new(self)
         end
 
-        Contract None => Any
+        Contract Any
         def before_configuration
           @leaves.clear
 

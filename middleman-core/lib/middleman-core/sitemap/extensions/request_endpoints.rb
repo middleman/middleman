@@ -52,7 +52,7 @@ module Middleman
       end
 
       class EndpointResource < ::Middleman::Sitemap::Resource
-        Contract None => Maybe[Proc]
+        Contract Maybe[Proc]
         attr_accessor :output
 
         def initialize(store, path, request_path)
@@ -60,10 +60,10 @@ module Middleman
           @request_path = ::Middleman::Util.normalize_path(request_path)
         end
 
-        Contract None => String
+        Contract String
         attr_reader :request_path
 
-        Contract None => Bool
+        Contract Bool
         def template?
           true
         end
@@ -73,7 +73,7 @@ module Middleman
           return output.call if output
         end
 
-        Contract None => Bool
+        Contract Bool
         def ignored?
           false
         end
