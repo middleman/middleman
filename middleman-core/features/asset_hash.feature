@@ -79,6 +79,7 @@ Feature: Assets get a file hash appended to their and references to them are upd
   Scenario: Hashed assets work with Slim
     Given the Server is running at "asset-hash-app"
     When I go to "/slim.html"
+    And I should see 'src="images/300px-59adce76.jpg"'
     And I should see 'src="images/100px-5fd6fb90.jpg"'
     And I should see 'srcset="images/100px-5fd6fb90.jpg 1x, images/200px-c11eb203.jpg 2x, images/300px-59adce76.jpg 3x"'
 
