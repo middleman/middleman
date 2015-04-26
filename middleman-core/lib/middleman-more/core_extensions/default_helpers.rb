@@ -262,8 +262,16 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
       params.symbolize_keys!
       
       if params.key?(:srcset)
-        images = params[:srcset].split(',').map {|size| (size.include?('//') ? size : asset_url("images/#{size.strip}")) }
-        params[:srcset] = images.join(', ')
+        images_sources = params[:srcset].split(',').map do |src_def|
+          if src_def.include?('//')
+            src_def
+          else
+            image_def, size_def = src_def.strip.split(/\s+/)
+            asset_path(:images, image_def) + ' ' + size_def
+          end
+        end
+
+        params[:srcset] = images_sources.join(', ')
       end
 
       super(path, params)
