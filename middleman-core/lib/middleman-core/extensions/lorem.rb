@@ -152,8 +152,8 @@ class Middleman::Extensions::Lorem < ::Middleman::Extension
         color            = options[:color]
 
         if options[:random_color]
-          background_color = hex.shuffle[0...6].join
-          color = hex.shuffle[0...6].join
+          background_color = hex.sample(6).join
+          color = hex.sample(6).join
         end
 
         src << "/#{background_color.sub(/^#/, '')}" if background_color

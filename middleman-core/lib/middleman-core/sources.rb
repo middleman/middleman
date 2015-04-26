@@ -14,6 +14,8 @@ module Middleman
     extend Forwardable
     include Contracts
 
+    Matcher = Or[Regexp, RespondTo[:call]]
+
     # A reference to the current app.
     Contract IsA['Middleman::Application']
     attr_reader :app
@@ -246,28 +248,24 @@ module Middleman
     # Backwards compatible change handler.
     #
     # @param [nil,Regexp] matcher A Regexp to match the change path against
-    # Contract Maybe[Regexp] => Any
+    Contract Maybe[Matcher] => Any
     def changed(matcher=nil, &block)
       on_change :source do |updated, _removed|
-        updated.select { |f|
-          matcher.nil? ? true : matches?(matcher, f)
-        }.each do |f|
-          block.call(f[:relative_path])
-        end
+        updated
+          .select { |f| matcher.nil? ? true : matches?(matcher, f) }
+          .each { |f| block.call(f[:relative_path]) }
       end
     end
 
     # Backwards compatible delete handler.
     #
     # @param [nil,Regexp] matcher A Regexp to match the change path against
-    # Contract Maybe[Regexp] => Any
+    Contract Maybe[Matcher] => Any
     def deleted(matcher=nil, &block)
       on_change :source do |_updated, removed|
-        removed.select { |f|
-          matcher.nil? ? true : matches?(matcher, f)
-        }.each do |f|
-          block.call(f[:relative_path])
-        end
+        removed
+          .select { |f| matcher.nil? ? true : matches?(matcher, f) }
+          .each { |f| block.call(f[:relative_path]) }
       end
     end
 
@@ -287,7 +285,7 @@ module Middleman
     # @param [Regexp, #call] validator The match validator.
     # @param [Middleman::SourceFile] file The file to check.
     # @return [Boolean]
-    Contract Or[Regexp, RespondTo[:call]], SourceFile => Bool
+    Contract Matcher, SourceFile => Bool
     def matches?(validator, file)
       path = file[:relative_path]
       if validator.is_a? Regexp

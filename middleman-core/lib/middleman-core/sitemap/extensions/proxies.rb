@@ -74,7 +74,7 @@ module Middleman
               locals: md.delete(:locals) || {},
               page: md.delete(:data) || {},
               options: md
-                           )
+            )
           end
         end
       end

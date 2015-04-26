@@ -252,7 +252,7 @@ module Middleman
 
     Contract Pathname => Pathname
     def strip_extensions(p)
-      p = p.sub_ext('') while ::Tilt[p.to_s] || p.extname === '.html'
+      p = p.sub_ext('') while ::Tilt[p.to_s] || p.extname == '.html'
       Pathname(p.to_s + '.*')
     end
 
@@ -262,9 +262,9 @@ module Middleman
     # @return [Boolean]
     Contract IsA['Middleman::SourceFile'] => Bool
     def valid?(file)
-      globally_valid = @validator.call(file) && !globally_ignored?(file)
+      return false unless @validator.call(file) && !globally_ignored?(file)
 
-      globally_valid && if @only.empty?
+      if @only.empty?
         !@ignored.call(file)
       else
         @only.any? { |reg| reg.match(file[:relative_path].to_s) }

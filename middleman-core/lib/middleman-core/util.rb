@@ -87,13 +87,11 @@ module Middleman
         end
       end
 
-      def method_missing(key, *args)
+      def method_missing(key, *_args)
         if key?(key.to_sym)
           self[key.to_sym]
         elsif key?(key.to_s)
           self[key.to_s]
-        else
-          super
         end
       end
     end
@@ -130,7 +128,6 @@ module Middleman
         obj.dup.freeze
       end
     end
-
 
     # Normalize a path to not include a leading slash
     # @param [String] path

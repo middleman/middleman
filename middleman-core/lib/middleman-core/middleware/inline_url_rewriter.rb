@@ -89,6 +89,7 @@ module Middleman
           File.fnmatch(value, validator)
         else
           # If some unknown thing, don't ignore
+          false
         end
       end
     end

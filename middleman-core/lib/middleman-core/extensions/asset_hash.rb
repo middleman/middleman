@@ -75,7 +75,7 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
     # Render through the Rack interface so middleware and mounted apps get a shot
     response = @rack_client.get(URI.escape(resource.destination_path),
                                 'bypass_inline_url_rewriter_asset_hash' => 'true'
-                                )
+                               )
 
     raise "#{resource.path} should be in the sitemap!" unless response.status == 200
 

@@ -31,7 +31,7 @@ HashSyntax:
   EnforcedStyle: ruby19
 SpaceAroundEqualsInParameterDefault:
   EnforcedStyle: no_space
-Blocks:
+BlockDelimiters:
   Enabled: false
 PerlBackrefs:
   Enabled: false
