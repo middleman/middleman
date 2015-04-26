@@ -143,3 +143,53 @@ Feature: Collections
     When I go to "index.html"
     And I should see 'Article: Blog3 Another Article'
     And I should see 'Article: Blog2 Yet Another Article'
+
+
+  Scenario: Collected data update with file changes
+    Given a fixture app "collections-app"
+    And a file named "config.rb" with:
+      """
+      data.articles.each_with_index do |a, i|
+        proxy "/#{i}.html", a
+      end
+      """
+    And a file named "data/articles.yaml" with:
+      """
+      ---
+      - "/blog1/2011-01-01-new-article.html"
+      - "/blog2/2011-01-02-another-article.html"
+      """
+    Given the Server is running at "collections-app"
+    When I go to "0.html"
+    Then I should see 'Newer Article Content'
+    When I go to "1.html"
+    Then I should see 'Another Article Content'
+    When I go to "2.html"
+    Then I should see 'Not Found'
+
+    When the file "data/articles.yaml" has the contents
+      """
+      ---
+      - "/blog1/2011-01-01-new-article.html"
+      """
+    When I go to "0.html"
+    Then I should see 'Newer Article Content'
+    When I go to "1.html"
+    Then I should see 'Not Found'
+    When I go to "2.html"
+    Then I should see 'Not Found'
+
+    When the file "data/articles.yaml" has the contents
+      """
+      ---
+      - "/blog2/2011-01-02-another-article.html"
+      - "/blog1/2011-01-01-new-article.html"
+      - "/blog2/2011-01-01-new-article.html"
+      """
+    When I go to "0.html"
+    Then I should see 'Another Article Content'
+    When I go to "1.html"
+    Then I should see 'Newer Article Content'
+    When I go to "2.html"
+    Then I should see 'Again'
+    

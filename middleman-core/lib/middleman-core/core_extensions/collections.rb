@@ -16,7 +16,7 @@ module Middleman
         # gets a chance to modify any new resources that get added.
         self.resource_list_manipulator_priority = 110
 
-        attr_accessor :root_collector, :leaves
+        attr_accessor :sitemap_collector, :data_collector, :leaves
 
         def initialize(app, options_hash={}, &block)
           super
@@ -25,14 +25,16 @@ module Middleman
           @collectors_by_name = {}
           @values_by_name = {}
 
-          @root_collector = LazyCollectorRoot.new(self)
+          @sitemap_collector = LazyCollectorRoot.new(self)
+          @data_collector = LazyCollectorRoot.new(self)
         end
 
         Contract Any
         def before_configuration
           @leaves.clear
 
-          app.add_to_config_context :resources, &method(:root_collector)
+          app.add_to_config_context :resources, &method(:sitemap_collector)
+          app.add_to_config_context :data, &method(:data_collector)
           app.add_to_config_context :collection, &method(:register_collector)
         end
 
@@ -48,7 +50,8 @@ module Middleman
 
         Contract ResourceList => ResourceList
         def manipulate_resource_list(resources)
-          @root_collector.realize!(resources)
+          @sitemap_collector.realize!(resources)
+          @data_collector.realize!(app.data)
 
           ctx = StepContext.new
           leaves = @leaves.dup

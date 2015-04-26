@@ -24,6 +24,7 @@ module Middleman
         super
 
         # Setup Slim options to work with partials
+        ::Slim::Engine.disable_option_validator!
         ::Slim::Engine.set_options(
           buffer: '@_out_buf',
           use_html_safe: true,
