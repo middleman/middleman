@@ -128,7 +128,11 @@ module Middleman
     def listen!
       return if @disable_watcher || @listener || @waiting_for_existence
 
-      config = { force_polling: @force_polling }
+      config = {
+        force_polling: @force_polling,
+        wait_for_delay: 0.5
+      }
+
       config[:latency] = @latency if @latency
 
       @listener = ::Listen.to(@directory.to_s, config, &method(:on_listener_change))

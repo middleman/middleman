@@ -6,8 +6,6 @@ require 'middleman-core/rack'
 # rubocop:disable GlobalVars
 module Middleman
   module PreviewServer
-    DEFAULT_PORT = 4567
-
     class << self
       extend Forwardable
 
@@ -17,9 +15,7 @@ module Middleman
       # Start an instance of Middleman::Application
       # @return [void]
       def start(opts={})
-        @options = opts.dup.freeze
-        @host = @options[:host] || '0.0.0.0'
-        @port = @options[:port] || DEFAULT_PORT
+        @options = opts
 
         mount_instance(new_app)
         logger.info "== The Middleman is standing watch at #{uri}"
@@ -90,7 +86,7 @@ module Middleman
       private
 
       def new_app
-        opts = @options
+        opts = @options.dup
 
         ::Middleman::Logger.singleton(
           opts[:debug] ? 0 : 1,
@@ -102,6 +98,9 @@ module Middleman
           config[:watcher_disable] = opts[:disable_watcher]
           config[:watcher_force_polling] = opts[:force_polling]
           config[:watcher_latency] = opts[:latency]
+
+          config[:host] = opts[:host] if opts[:host]
+          config[:port] = opts[:port] if opts[:port]
 
           ready do
             match_against = [
@@ -117,6 +116,9 @@ module Middleman
                         only: match_against
           end
         end
+
+        @host = app.config[:host]
+        @port = app.config[:port]
 
         app.files.on_change :reload do
           $mm_reload = true

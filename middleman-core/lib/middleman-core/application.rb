@@ -81,6 +81,14 @@ module Middleman
     define_hook :before_render
     define_hook :after_render
 
+    # Which host preview should start on.
+    # @return [Fixnum]
+    config.define_setting :host, '0.0.0.0', 'The preview server host'
+
+    # Which port preview should start on.
+    # @return [Fixnum]
+    config.define_setting :port, 4567, 'The preview server port'
+
     # Name of the source directory
     # @return [String]
     config.define_setting :source, 'source', 'Name of the source directory'

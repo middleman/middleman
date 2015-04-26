@@ -221,5 +221,26 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
       url = url_for(url, options)
       super
     end
+    
+    # Modified Padrino image_tag so that it finds the paths for srcset
+    # using asset_path for the images listed in the srcset param
+    def image_tag(path, params={})
+      params.symbolize_keys!
+      
+      if params.key?(:srcset)
+        images_sources = params[:srcset].split(',').map do |src_def|
+          if src_def.include?('//')
+            src_def
+          else
+            image_def, size_def = src_def.strip.split(/\s+/)
+            asset_path(:images, image_def) + ' ' + size_def
+          end
+        end
+
+        params[:srcset] = images_sources.join(', ')
+      end
+
+      super(path, params)
+    end
   end
 end

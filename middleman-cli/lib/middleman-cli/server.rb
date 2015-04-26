@@ -11,11 +11,9 @@ module Middleman::Cli
     class_option :host,
                  type: :string,
                  aliases: '-h',
-                 default: '0.0.0.0',
                  desc: 'Bind to HOST address'
     class_option :port,
                  aliases: '-p',
-                 default: '4567',
                  desc: 'The port Middleman will listen on'
     class_option :verbose,
                  type: :boolean,
@@ -40,7 +38,7 @@ module Middleman::Cli
     class_option :latency,
                  type: :numeric,
                  aliases: '-l',
-                 default: 0.25,
+                 default: 0.5,
                  desc: 'Set file watcher latency, in seconds'
 
     # Start the server

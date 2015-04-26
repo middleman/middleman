@@ -5,6 +5,24 @@ Feature: link_to helper
     When I go to "/link_to_erb.html"
     Then I should see "erb <s>with html tags</s>"
 
+  Scenario: link_to works with absolute URLs (where the relative part matches a local path)
+    Given a fixture app "link-to-app"
+    And a file named "config.rb" with:
+    """
+    set :relative_links, true
+    """
+    And a file named "source/test.html.erb" with:
+    """
+    Hello
+    """
+    And a file named "source/link_to_absolute.html.erb" with:
+    """
+    <%= link_to "test", "http://google.com/test.html" %>
+    """
+    And the Server is running at "link-to-app"
+    When I go to "/link_to_absolute.html"
+    Then I should see '<a href="http://google.com/test.html">test</a>'
+
   Scenario: link_to works with blocks (slim)
     Given the Server is running at "link-to-app"
     When I go to "/link_to_slim.html"
