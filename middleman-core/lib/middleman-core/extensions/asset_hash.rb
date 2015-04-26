@@ -1,3 +1,4 @@
+require 'addressable/uri'
 require 'middleman-core/util'
 
 class Middleman::Extensions::AssetHash < ::Middleman::Extension
@@ -9,7 +10,6 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
 
     require 'digest/sha1'
     require 'rack/mock'
-    require 'uri'
     require 'middleman-core/middleware/inline_url_rewriter'
   end
 
@@ -28,7 +28,8 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
 
   Contract String, Or[String, Pathname], Any => Maybe[String]
   def rewrite_url(asset_path, dirpath, _request_path)
-    relative_path = Pathname.new(asset_path).relative?
+    uri = ::Addressable::URI.parse(asset_path)
+    relative_path = uri.path[0..0] != '/'
 
     full_asset_path = if relative_path
       dirpath.join(asset_path).to_s
@@ -36,10 +37,11 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
       asset_path
     end
 
-    return unless asset_page = app.sitemap.find_resource_by_path(full_asset_path)
+    return unless asset_page = app.sitemap.find_resource_by_destination_path(full_asset_path) || app.sitemap.find_resource_by_path(full_asset_path)
 
     replacement_path = "/#{asset_page.destination_path}"
     replacement_path = Pathname.new(replacement_path).relative_path_from(dirpath).to_s if relative_path
+
     replacement_path
   end
 
@@ -56,7 +58,7 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
     # This is so by the time we get around to the text files (which may reference
     # images and fonts) the static assets' hashes are already calculated.
     resources.sort_by do |a|
-      if %w(.svg).include? a.ext
+      if %w(.svg .svgz).include? a.ext
         0
       elsif %w(.js .css).include? a.ext
         1
@@ -73,9 +75,10 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
     return if resource.ignored?
 
     # Render through the Rack interface so middleware and mounted apps get a shot
-    response = @rack_client.get(URI.escape(resource.destination_path),
-                                'bypass_inline_url_rewriter_asset_hash' => 'true'
-                               )
+    response = @rack_client.get(
+      URI.escape(resource.destination_path),
+      'bypass_inline_url_rewriter_asset_hash' => 'true'
+    )
 
     raise "#{resource.path} should be in the sitemap!" unless response.status == 200
 
@@ -87,6 +90,8 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
 
   Contract IsA['Middleman::Sitemap::Resource'] => Bool
   def ignored_resource?(resource)
-    @ignore.any? { |ignore| Middleman::Util.path_match(ignore, resource.destination_path) }
+    @ignore.any? do |ignore|
+      Middleman::Util.path_match(ignore, resource.destination_path)
+    end
   end
 end

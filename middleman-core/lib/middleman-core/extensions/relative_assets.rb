@@ -1,3 +1,5 @@
+require 'addressable/uri'
+
 # Relative Assets extension
 class Middleman::Extensions::RelativeAssets < ::Middleman::Extension
   option :exts, %w(.css .png .jpg .jpeg .webp .svg .svgz .js .gif .ttf .otf .woff .woff2), 'List of extensions that get cache busters strings appended to them.'
@@ -22,7 +24,11 @@ class Middleman::Extensions::RelativeAssets < ::Middleman::Extension
 
   Contract String, Or[String, Pathname], Any => Maybe[String]
   def rewrite_url(asset_path, dirpath, request_path)
-    relative_path = Pathname.new(asset_path).relative?
+    uri = ::Addressable::URI.parse(asset_path)
+
+    return if uri.path[0..0] != '/'
+
+    relative_path = uri.host.nil?
 
     full_asset_path = if relative_path
       dirpath.join(asset_path).to_s
@@ -30,9 +36,9 @@ class Middleman::Extensions::RelativeAssets < ::Middleman::Extension
       asset_path
     end
 
-    return unless !full_asset_path.include?('//') && !asset_path.start_with?('data:')
-
     current_dir = Pathname(request_path).dirname
-    Pathname(full_asset_path).relative_path_from(current_dir).to_s
+    result = Pathname(full_asset_path).relative_path_from(current_dir).to_s
+
+    result
   end
 end

@@ -356,15 +356,10 @@ module Middleman
         opening_character = $1
         asset_path = $2
 
-        begin
-          uri = ::Addressable::URI.parse(asset_path)
-
-          if uri.relative? && result = yield(asset_path)
-            "#{opening_character}#{result}"
-          else
-            match
-          end
-        rescue
+        uri = ::Addressable::URI.parse(asset_path)
+        if uri.relative? && result = yield(asset_path)
+          "#{opening_character}#{result}"
+        else
           match
         end
       end

@@ -1,7 +1,8 @@
-require 'middleman-core/util'
-require 'middleman-core/contracts'
 require 'rack'
 require 'rack/response'
+require 'addressable/uri'
+require 'middleman-core/util'
+require 'middleman-core/contracts'
 
 module Middleman
   module Middleware
@@ -51,10 +52,13 @@ module Middleman
 
         if path =~ /(^\/$)|(#{@source_exts_regex_text}$)/
           if body = ::Middleman::Util.extract_response_text(response)
+
             dirpath = Pathname.new(File.dirname(path))
 
             rewritten = ::Middleman::Util.rewrite_paths(body, path, @exts) do |asset_path|
-              relative_path = Pathname.new(asset_path).relative?
+              uri = ::Addressable::URI.parse(asset_path)
+
+              relative_path = uri.host.nil?
 
               full_asset_path = if relative_path
                 dirpath.join(asset_path).to_s
@@ -76,7 +80,7 @@ module Middleman
         [status, headers, response]
       end
 
-      Contract IGNORE_DESCRIPTOR => Bool
+      Contract IGNORE_DESCRIPTOR, String => Bool
       def should_ignore?(validator, value)
         if validator.is_a? Regexp
           # Treat as Regexp

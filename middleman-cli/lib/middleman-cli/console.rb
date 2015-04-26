@@ -29,13 +29,13 @@ module Middleman::Cli
         ::Middleman::Logger.singleton(opts[:debug] ? 0 : 1, opts[:instrumenting] || false)
       end
 
-      interact_with @app
+      self.class.interact_with @app
     end
 
     # Start an interactive console in the context of the provided object.
     # @param [Object] context
     # @return [void]
-    def interact_with(context)
+    def self.interact_with(context)
       IRB.setup nil
       IRB.conf[:MAIN_CONTEXT] = IRB::Irb.new.context
       require 'irb/ext/multi-irb'

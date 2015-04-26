@@ -1,3 +1,4 @@
+require 'addressable/uri'
 require 'middleman-core/middleware/inline_url_rewriter'
 
 class Middleman::Extensions::AssetHost < ::Middleman::Extension
@@ -18,7 +19,8 @@ class Middleman::Extensions::AssetHost < ::Middleman::Extension
 
   Contract String, Or[String, Pathname], Any => String
   def rewrite_url(asset_path, dirpath, _request_path)
-    relative_path = Pathname.new(asset_path).relative?
+    uri = ::Addressable::URI.parse(asset_path)
+    relative_path = uri.path[0..0] != '/'
 
     full_asset_path = if relative_path
       dirpath.join(asset_path).to_s
