@@ -71,6 +71,10 @@ module Middleman
         end
 
         unmount_instance
+
+        @webrick.shutdown
+        @webrick = nil
+
         mount_instance(app)
 
         logger.info '== The Middleman has reloaded'
