@@ -55,7 +55,7 @@ module Middleman
 
     def activate_all
       logger.debug 'Loaded extensions:'
-      instances = @activated.each_with_object([]) do |(ext_name, ext), sum|
+      @instances = @activated.each_with_object([]) do |(ext_name, ext), sum|
         if ext.is_a?(Hash)
           ext.each do |instance_key, instance|
             logger.debug "== Extension: #{ext_name} #{instance_key}"
@@ -67,16 +67,15 @@ module Middleman
         end
       end
 
-      instances.each do |ext|
+      @instances.each do |ext|
         ::Middleman::Extension.activated_extension(ext)
       end
     end
 
     def add_exposed_to_context(context)
-      @activated.each do |(_, ext)|
+      @instances.each do |ext|
         ext.add_exposed_to_context(context)
       end
     end
-
   end
 end

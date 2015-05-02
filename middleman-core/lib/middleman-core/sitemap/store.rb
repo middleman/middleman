@@ -74,12 +74,13 @@ module Middleman
       # @param [Symbol] name Name of the manipulator for debugging
       # @param [#manipulate_resource_list] manipulator Resource list manipulator
       # @param [Numeric] priority Sets the order of this resource list manipulator relative to the rest. By default this is 50, and manipulators run in the order they are registered, but if a priority is provided then this will run ahead of or behind other manipulators.
+      # @param [Symbol] custom_name The method name to execute.
       # @return [void]
-      Contract Symbol, RespondTo['manipulate_resource_list'], Maybe[Num] => Any
-      def register_resource_list_manipulator(name, manipulator, priority=50)
+      Contract Symbol, RespondTo['manipulate_resource_list'], Maybe[Num], Maybe[Symbol] => Any
+      def register_resource_list_manipulator(name, manipulator, priority=50, custom_name=nil)
         # The third argument used to be a boolean - handle those who still pass one
         priority = 50 unless priority.is_a? Numeric
-        @resource_list_manipulators << [name, manipulator, priority]
+        @resource_list_manipulators << [name, manipulator, priority, custom_name]
         # The index trick is used so that the sort is stable - manipulators with the same priority
         # will always be ordered in the same order as they were registered.
         n = 0
@@ -177,8 +178,8 @@ module Middleman
 
           @app.logger.debug '== Rebuilding resource list'
 
-          @resources = @resource_list_manipulators.reduce([]) do |result, (_, manipulator, _)|
-            newres = manipulator.manipulate_resource_list(result)
+          @resources = @resource_list_manipulators.reduce([]) do |result, (_, manipulator, _, custom_name)|
+            newres = manipulator.send(custom_name || :manipulate_resource_list, result)
 
             # Reset lookup cache
             reset_lookup_cache!

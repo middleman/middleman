@@ -100,6 +100,12 @@ module Middleman
     #   @return [Hash<Symbol, Symbol>] a list of all the methods modules this extension exposes to templates. Set these using {#expose_to_template}.
     class_attribute :exposed_to_template, instance_reader: false, instance_writer: false
 
+    # @!attribute exposed_to_template
+    #   @!scope class
+    #   @api private
+    #   @return [Array<Any>] a list of method generators.
+    class_attribute :resources_generators, instance_reader: false, instance_writer: false
+
     # @!attribute ext_name
     #   @!scope class
     #   @return [Symbol] the name this extension is registered under. This is the symbol used to activate the extension.
@@ -127,6 +133,19 @@ module Middleman
       # @param [String] description A human-readable description of what the option does
       def option(key, default=nil, description=nil, options={})
         config.define_setting(key, default, description, options)
+      end
+
+      # Short-hand for simple Sitemap manipulation
+      # @example A generator which returns an array of resources
+      #   resources :make_resources
+      # @example A generator which maps a path to a method
+      #   resources make_resource: :make_it
+      # @example A generator which maps a path to a string
+      #   resources make_resource: 'Hello'
+      # @param [Array] generators The generator definitions
+      def resources(*generators)
+        self.resources_generators ||= []
+        self.resources_generators += generators
       end
 
       # Declare helpers to be added the global Middleman application.
@@ -279,6 +298,7 @@ module Middleman
       bind_after_configuration
       bind_before_build
       bind_after_build
+      bind_ready
     end
 
     # @!method before_configuration
@@ -297,6 +317,10 @@ module Middleman
     # @!method after_build
     #   Respond to the `after_build` event.
     #   If an `after_build` method is implemented, that method will be run after the builder runs.
+
+    # @!method ready
+    #   Respond to the `ready` event.
+    #   If an `ready` method is implemented, that method will be run after the app has finished booting up.
 
     # @!method manipulate_resource_list(resources)
     #   Manipulate the resource list by transforming or adding {Sitemap::Resource}s.
@@ -362,6 +386,53 @@ module Middleman
         if ext.respond_to?(:manipulate_resource_list)
           ext.app.sitemap.register_resource_list_manipulator(ext.class.ext_name, ext, ext.class.resource_list_manipulator_priority)
         end
+
+        if ext.class.resources_generators && !ext.class.resources_generators.empty?
+          ext.app.sitemap.register_resource_list_manipulator(
+            :"#{ext.class.ext_name}_generator",
+            ext,
+            ext.class.resource_list_manipulator_priority,
+            :generate_resources
+          )
+        end
+      end
+    end
+
+    def generate_resources(resources)
+      generator_defs = self.class.resources_generators.reduce({}) do |sum, g|
+        resource_definitions = if g.is_a? Hash
+          g
+        elsif g.is_a? Symbol
+          definition = method(g)
+
+          if definition.arity === 0
+            send(g)
+          else
+            send(g, resources)
+          end
+        else
+          {}
+        end
+
+        sum.merge(resource_definitions)
+      end
+
+      resources + generator_defs.map do |path, g|
+        if g.is_a? Symbol
+          definition = method(g)
+
+          g = if definition.arity === 0
+            send(g)
+          else
+            send(g, resources)
+          end
+        end
+
+        ::Middleman::Sitemap::StringResource.new(
+          app.sitemap,
+          path,
+          g
+        )
       end
     end
 
@@ -391,6 +462,10 @@ module Middleman
           ext.after_build
         end
       end
+    end
+
+    def bind_ready
+      @app.ready(&method(:ready)) if respond_to?(:ready)
     end
   end
 end
