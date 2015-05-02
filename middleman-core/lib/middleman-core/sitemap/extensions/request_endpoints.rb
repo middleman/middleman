@@ -4,7 +4,6 @@ module Middleman
   module Sitemap
     module Extensions
       class RequestEndpoints < Extension
-
         # Expose `create_endpoint` to config as `endpoint`
         expose_to_config endpoint: :create_endpoint
 

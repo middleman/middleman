@@ -6,7 +6,7 @@ module Middleman
     class KramdownTemplate < ::Tilt::KramdownTemplate
       def evaluate(scope, *)
         @output ||= begin
-          MiddlemanKramdownHTML.scope = ::Middleman::Renderers::Haml.last_haml_scope || scope
+          MiddlemanKramdownHTML.scope = (defined?(::Middleman::Renderers::Haml) && ::Middleman::Renderers::Haml.last_haml_scope) ? ::Middleman::Renderers::Haml.last_haml_scope : scope
 
           output, warnings = MiddlemanKramdownHTML.convert(@engine.root, @engine.options)
           @engine.warnings.concat(warnings)

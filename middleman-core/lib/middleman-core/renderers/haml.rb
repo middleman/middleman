@@ -51,10 +51,9 @@ module Middleman
 
       def add_exposed_to_context(context)
         super
-        
+
         context.init_haml_helpers if context.respond_to?(:init_haml_helpers)
       end
-
     end
   end
 end

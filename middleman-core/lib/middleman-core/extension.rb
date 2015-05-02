@@ -198,7 +198,7 @@ module Middleman
       end
 
       # Takes a method within this extension and exposes it inside the scope
-      # of the config.rb sandbox. 
+      # of the config.rb sandbox.
       # @example with Hash:
       #   expose_to_config global_name: :local_name
       # @example with Array:
@@ -405,7 +405,7 @@ module Middleman
         elsif g.is_a? Symbol
           definition = method(g)
 
-          if definition.arity === 0
+          if definition.arity == 0
             send(g)
           else
             send(g, resources)
@@ -421,7 +421,7 @@ module Middleman
         if g.is_a? Symbol
           definition = method(g)
 
-          g = if definition.arity === 0
+          g = if definition.arity == 0
             send(g)
           else
             send(g, resources)

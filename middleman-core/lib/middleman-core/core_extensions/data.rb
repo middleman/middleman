@@ -11,7 +11,7 @@ module Middleman
 
       # Make the internal `data_store` method available as `app.data`
       expose_to_application data: :data_store
-    
+
       # Exposes `data` to templates
       expose_to_template data: :data_store
 
