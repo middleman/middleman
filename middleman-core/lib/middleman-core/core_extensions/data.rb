@@ -9,6 +9,12 @@ module Middleman
     class Data < Extension
       attr_reader :data_store
 
+      # Make the internal `data_store` method available as `app.data`
+      expose_to_application data: :data_store
+    
+      # Exposes `data` to templates
+      expose_to_template data: :data_store
+
       # The regex which tells Middleman which files are for data
       DATA_FILE_MATCHER = /^(.*?)[\w-]+\.(yml|yaml|json)$/
 
@@ -17,8 +23,6 @@ module Middleman
 
         @data_store = DataStore.new(app, DATA_FILE_MATCHER)
         app.config.define_setting :data_dir, 'data', 'The directory data files are stored in'
-
-        app.add_to_instance(:data, &method(:data_store))
 
         start_watching(app.config[:data_dir])
       end
@@ -40,12 +44,6 @@ module Middleman
         return unless @original_data_dir != app.config[:data_dir]
 
         @watcher.update_path(app.config[:data_dir])
-      end
-
-      helpers do
-        def data
-          extensions[:data].data_store
-        end
       end
 
       # The core logic behind the data extension.

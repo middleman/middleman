@@ -18,6 +18,20 @@ module Middleman
 
         attr_accessor :sitemap_collector, :data_collector, :leaves
 
+        # Expose `resources`, `data`, and `collection` to config.
+        expose_to_config resources: :sitemap_collector,
+                         data: :data_collector,
+                         collection: :register_collector
+
+        # Exposes `collection` to templates
+        expose_to_template collection: :collector_value
+
+        helpers do
+          def pagination
+            current_resource.data.pagination
+          end
+        end
+
         def initialize(app, options_hash={}, &block)
           super
 
@@ -29,13 +43,8 @@ module Middleman
           @data_collector = LazyCollectorRoot.new(self)
         end
 
-        Contract Any
         def before_configuration
           @leaves.clear
-
-          app.add_to_config_context :resources, &method(:sitemap_collector)
-          app.add_to_config_context :data, &method(:data_collector)
-          app.add_to_config_context :collection, &method(:register_collector)
         end
 
         Contract Symbol, LazyCollectorStep => Any
@@ -68,16 +77,6 @@ module Middleman
 
           # Inject descriptors
           resources + ctx.descriptors.map { |d| d.to_resource(app) }
-        end
-
-        helpers do
-          def collection(label)
-            extensions[:collections].collector_value(label)
-          end
-
-          def pagination
-            current_resource.data.pagination
-          end
         end
       end
     end

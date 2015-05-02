@@ -7,10 +7,12 @@ module Middleman
       # Manages the list of proxy configurations and manipulates the sitemap
       # to include new resources based on those configurations
       class Redirects < Extension
+
+        # Expose `create_redirect` to config as `redirect`
+        expose_to_config redirect: :create_redirect
+
         def initialize(app, config={}, &block)
           super
-
-          @app.add_to_config_context(:redirect, &method(:create_redirect))
 
           @redirects = {}
         end

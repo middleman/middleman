@@ -7,11 +7,14 @@ module Middleman
       # Manages the list of proxy configurations and manipulates the sitemap
       # to include new resources based on those configurations
       class Proxies < Extension
+        # Expose `create_proxy` as `app.proxy`
+        expose_to_application proxy: :create_proxy
+
+        # Expose `create_proxy` to config as `proxy`
+        expose_to_config proxy: :create_proxy
+
         def initialize(app, config={}, &block)
           super
-
-          @app.add_to_config_context(:proxy, &method(:create_proxy))
-          @app.define_singleton_method(:proxy, &method(:create_proxy))
 
           @proxy_configs = Set.new
           @post_config = false

@@ -82,6 +82,24 @@ module Middleman
     #   @return [Array<Module>] a list of all the helper modules this extension provides. Set these using {#helpers}.
     class_attribute :defined_helpers, instance_reader: false, instance_writer: false
 
+    # @!attribute exposed_to_application
+    #   @!scope class
+    #   @api private
+    #   @return [Hash<Symbol, Symbol>] a list of all the methods modules this extension exposes to app. Set these using {#expose_to_application}.
+    class_attribute :exposed_to_application, instance_reader: false, instance_writer: false
+
+    # @!attribute exposed_to_config
+    #   @!scope class
+    #   @api private
+    #   @return [Hash<Symbol, Symbol>] a list of all the methods modules this extension exposes to config. Set these using {#expose_to_config}.
+    class_attribute :exposed_to_config, instance_reader: false, instance_writer: false
+
+    # @!attribute exposed_to_template
+    #   @!scope class
+    #   @api private
+    #   @return [Hash<Symbol, Symbol>] a list of all the methods modules this extension exposes to templates. Set these using {#expose_to_template}.
+    class_attribute :exposed_to_template, instance_reader: false, instance_writer: false
+
     # @!attribute ext_name
     #   @!scope class
     #   @return [Symbol] the name this extension is registered under. This is the symbol used to activate the extension.
@@ -138,6 +156,68 @@ module Middleman
         self.defined_helpers += modules
       end
 
+      # Takes a method within this extension and exposes it globally
+      # on the main `app` instance. Used for very low-level extensions
+      # which many other extensions depend upon. Such as Data and
+      # File watching.
+      # @example with Hash:
+      #   expose_to_application global_name: :local_name
+      # @example with Array:
+      #   expose_to_application :method1, :method2
+      # @param [Array<Sumbol>, Hash<Symbol, Symbol>] symbols An optional list of symbols representing instance methods to exposed.
+      # @return [void]
+      def expose_to_application(*symbols)
+        self.exposed_to_application ||= {}
+
+        if symbols.first && symbols.first.is_a?(Hash)
+          self.exposed_to_application.merge!(symbols.first)
+        elsif symbols.is_a? Array
+          symbols.each do |sym|
+            self.exposed_to_application[sym] = sym
+          end
+        end
+      end
+
+      # Takes a method within this extension and exposes it inside the scope
+      # of the config.rb sandbox. 
+      # @example with Hash:
+      #   expose_to_config global_name: :local_name
+      # @example with Array:
+      #   expose_to_config :method1, :method2
+      # @param [Array<Sumbol>, Hash<Symbol, Symbol>] symbols An optional list of symbols representing instance methods to exposed.
+      # @return [void]
+      def expose_to_config(*symbols)
+        self.exposed_to_config ||= {}
+
+        if symbols.first && symbols.first.is_a?(Hash)
+          self.exposed_to_config.merge!(symbols.first)
+        elsif symbols.is_a? Array
+          symbols.each do |sym|
+            self.exposed_to_config[sym] = sym
+          end
+        end
+      end
+
+      # Takes a method within this extension and exposes it inside the scope
+      # of the templating engine. Like `helpers`, but scoped.
+      # @example with Hash:
+      #   expose_to_template global_name: :local_name
+      # @example with Array:
+      #   expose_to_template :method1, :method2
+      # @param [Array<Sumbol>, Hash<Symbol, Symbol>] symbols An optional list of symbols representing instance methods to exposed.
+      # @return [void]
+      def expose_to_template(*symbols)
+        self.exposed_to_template ||= {}
+
+        if symbols.first && symbols.first.is_a?(Hash)
+          self.exposed_to_template.merge!(symbols.first)
+        elsif symbols.is_a? Array
+          symbols.each do |sym|
+            self.exposed_to_template[sym] = sym
+          end
+        end
+      end
+
       # Reset all {Extension.after_extension_activated} callbacks.
       # @api private
       # @return [void]
@@ -191,6 +271,7 @@ module Middleman
       @_helpers = []
       @app = app
 
+      expose_methods
       setup_options(options_hash, &block)
 
       # Bind app hooks to local methods
@@ -227,7 +308,27 @@ module Middleman
     #   @param [Array<Sitemap::Resource>] resources A list of all the resources known to the sitemap.
     #   @return [Array<Sitemap::Resource>] The transformed list of resources.
 
+    def add_exposed_to_context(context)
+      (self.class.exposed_to_template || {}).each do |k, v|
+        context.define_singleton_method(k, &method(v))
+      end
+    end
+
     private
+
+    def expose_methods
+      (self.class.exposed_to_application || {}).each do |k, v|
+        app.define_singleton_method(k, &method(v))
+      end
+
+      (self.class.exposed_to_config || {}).each do |k, v|
+        app.config_context.define_singleton_method(k, &method(v))
+      end
+
+      (self.class.defined_helpers || []).each do |m|
+        app.template_context_class.send(:include, m)
+      end
+    end
 
     # @yield An optional block that can be used to customize options before the extension is activated.
     # @yieldparam Middleman::Configuration::ConfigurationManager] options Extension options

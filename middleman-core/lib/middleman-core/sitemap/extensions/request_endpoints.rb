@@ -4,12 +4,14 @@ module Middleman
   module Sitemap
     module Extensions
       class RequestEndpoints < Extension
+
+        # Expose `create_endpoint` to config as `endpoint`
+        expose_to_config endpoint: :create_endpoint
+
         # Manages the list of proxy configurations and manipulates the sitemap
         # to include new resources based on those configurations
         def initialize(app, config={}, &block)
           super
-
-          @app.add_to_config_context(:endpoint, &method(:create_endpoint))
 
           @endpoints = {}
         end

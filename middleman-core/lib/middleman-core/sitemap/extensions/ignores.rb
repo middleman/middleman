@@ -3,11 +3,14 @@ module Middleman
     module Extensions
       # Class to handle managing ignores
       class Ignores < Extension
+        # Expose `create_ignore` as `app.ignore`
+        expose_to_application ignore: :create_ignore
+
+        # Expose `create_ignore` to config as `ignore`
+        expose_to_config ignore: :create_ignore
+
         def initialize(app, config={}, &block)
           super
-
-          @app.add_to_config_context(:ignore, &method(:create_ignore))
-          @app.define_singleton_method(:ignore, &method(:create_ignore))
 
           # Array of callbacks which can ass ignored
           @ignored_callbacks = Set.new

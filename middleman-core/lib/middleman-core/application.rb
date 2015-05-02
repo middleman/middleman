@@ -305,14 +305,6 @@ module Middleman
       config_context.execute_configure_callbacks(config[:mode])
     end
 
-    def add_to_instance(name, &func)
-      define_singleton_method(name, &func)
-    end
-
-    def add_to_config_context(name, &func)
-      @config_context.define_singleton_method(name, &func)
-    end
-
     # Whether we're in server mode
     # @return [Boolean] If we're in dev mode
     def server?

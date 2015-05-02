@@ -9,6 +9,12 @@ module Middleman
       Contract IsA['Middleman::Sources']
       attr_reader :sources
 
+      # Make the internal `sources` method available as `app.files`
+      expose_to_application files: :sources
+
+      # Make the internal `sources` method available in config as `files`
+      expose_to_config files: :sources
+
       # The default list of ignores.
       IGNORES = {
         emacs_files: /(^|\/)\.?#/,
@@ -34,10 +40,6 @@ module Middleman
 
         # Watch current source.
         start_watching(app.config[:source])
-
-        # Expose API to app and config.
-        app.add_to_instance(:files, &method(:sources))
-        app.add_to_config_context(:files, &method(:sources))
       end
 
       # Before we config, find initial files.

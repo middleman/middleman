@@ -58,8 +58,8 @@ module Middleman
       # Sandboxed class for template eval
       context = @app.template_context_class.new(@app, locals, options)
 
-      # TODO: Only for HAML files
-      context.init_haml_helpers if context.respond_to?(:init_haml_helpers)
+      # Add extension helpers to context.
+      @app.extensions.add_exposed_to_context(context)
 
       content = _render_with_all_renderers(path, locs, context, opts, &block)
 

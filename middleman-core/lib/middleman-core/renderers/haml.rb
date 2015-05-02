@@ -48,6 +48,13 @@ module Middleman
         # Add haml helpers to context
         ::Middleman::TemplateContext.send :include, ::Haml::Helpers
       end
+
+      def add_exposed_to_context(context)
+        super
+        
+        context.init_haml_helpers if context.respond_to?(:init_haml_helpers)
+      end
+
     end
   end
 end

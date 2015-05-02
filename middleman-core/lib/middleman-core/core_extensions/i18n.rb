@@ -7,6 +7,9 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
   option :mount_at_root, nil, 'Mount a specific language at the root of the site'
   option :data, 'locales', 'The directory holding your locale configurations'
 
+  # Exposes `langs` to templates
+  expose_to_template :langs
+
   def after_configuration
     # See https://github.com/svenfuchs/i18n/wiki/Fallbacks
     unless options[:no_fallbacks]
@@ -39,12 +42,6 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
   helpers do
     def t(*args)
       ::I18n.t(*args)
-    end
-
-    # Access the list of languages supported by this Middleman application
-    # @return [Array<Symbol>]
-    def langs
-      extensions[:i18n].langs
     end
 
     def locate_partial(partial_name, try_static=false)

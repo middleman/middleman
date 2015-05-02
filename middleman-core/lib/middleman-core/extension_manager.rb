@@ -68,13 +68,15 @@ module Middleman
       end
 
       instances.each do |ext|
-        # Forward Extension helpers to TemplateContext
-        Array(ext.class.defined_helpers).each do |m|
-          @app.template_context_class.send(:include, m)
-        end
-
         ::Middleman::Extension.activated_extension(ext)
       end
     end
+
+    def add_exposed_to_context(context)
+      @activated.each do |(_, ext)|
+        ext.add_exposed_to_context(context)
+      end
+    end
+
   end
 end
