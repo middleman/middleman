@@ -26,6 +26,18 @@ Feature: Minify CSS
     When I go to "/stylesheets/report.css"
     Then I should see "p{border:1px solid #ff6600}"
     
+  Scenario: Rendering external css in a proxied resource
+    Given a fixture app "minify-css-app"
+    And a file named "config.rb" with:
+      """
+      activate :minify_css
+      proxy '/css-proxy', '/stylesheets/site.css', ignore: true
+      """
+    And the Server is running at "minify-css-app"
+    When I go to "/css-proxy"
+    Then I should see "1" lines
+    And I should see "only screen and (device-width"
+
   Scenario: Rendering external css with passthrough compressor
     Given a fixture app "passthrough-app"
     And a file named "config.rb" with:
@@ -125,3 +137,53 @@ Feature: Minify CSS
       body{test:style;good:deal}
     </style>
     """
+
+  Scenario: Rendering inline css in a PHP document
+    Given a fixture app "minify-css-app"
+    And a file named "config.rb" with:
+      """
+      activate :minify_css, :inline => true
+      """
+    And the Server is running at "minify-css-app"
+    When I go to "/inline-css.php"
+    Then I should see:
+    """
+    <?='Hello'?>
+
+    <style>
+      body{test:style;good:deal}
+    </style>
+    """
+
+  Scenario: Rendering inline css in a proxied resource
+    Given a fixture app "minify-css-app"
+    And a file named "config.rb" with:
+      """
+      activate :minify_css, :inline => true
+      proxy '/inline-css-proxy', '/inline-css.html', ignore: true
+      """
+    And the Server is running at "minify-css-app"
+    When I go to "/inline-css-proxy"
+    Then I should see:
+    """
+    <style>
+      body{test:style;good:deal}
+    </style>
+    """
+
+  @preserve_mime_types
+  Scenario: Configuring content types of resources to be minified
+    Given a fixture app "minify-css-app"
+    And a file named "config.rb" with:
+      """
+      mime_type('.xcss', 'text/x-css')
+      activate :minify_css, content_types: ['text/x-css'],
+                            inline: true,
+                            inline_content_types: ['text/html']
+      """
+    And the Server is running at "minify-css-app"
+    When I go to "/stylesheets/site.xcss"
+    Then I should see "1" lines
+    And I should see "only screen and (device-width"
+    When I go to "/inline-css.php"
+    Then I should see "8" lines
