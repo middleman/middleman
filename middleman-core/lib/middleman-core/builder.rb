@@ -62,7 +62,7 @@ module Middleman
 
       # Run hooks
       @app.run_hook :after_build, self
-      @app.config_context.execute_after_build_callbacks(self)
+      @app.config_context.execute_callbacks(:after_build, [self])
 
       !@has_error
     end

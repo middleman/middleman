@@ -271,10 +271,10 @@ module Middleman
       @extensions.activate_all
 
       run_hook :after_configuration
-      config_context.execute_after_configuration_callbacks
+      config_context.execute_callbacks(:after_configuration)
 
       run_hook :ready
-      @config_context.execute_ready_callbacks
+      @config_context.execute_callbacks(:ready)
     end
 
     def evaluate_configuration
@@ -299,10 +299,10 @@ module Middleman
       end
 
       # Run any `configure` blocks for the current environment.
-      config_context.execute_configure_callbacks(config[:environment])
+      config_context.execute_callbacks([:configure, config[:environment]])
 
       # Run any `configure` blocks for the current mode.
-      config_context.execute_configure_callbacks(config[:mode])
+      config_context.execute_callbacks([:configure, config[:mode]])
     end
 
     # Whether we're in server mode

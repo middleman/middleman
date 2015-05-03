@@ -1,4 +1,5 @@
 require 'rack/mime'
+require 'middleman-core/callback_manager'
 
 module Middleman
   class ConfigContext
@@ -14,10 +15,8 @@ module Middleman
       @app = app
       @template_context_class = template_context_class
 
-      @ready_callbacks = []
-      @after_build_callbacks = []
-      @after_configuration_callbacks = []
-      @configure_callbacks = {}
+      @callbacks = ::Middleman::CallbackManager.new
+      @callbacks.install_methods!(self, [:ready, :after_build, :after_configuration, :configure])
     end
 
     def helpers(*helper_modules, &block)
@@ -41,48 +40,6 @@ module Middleman
       return unless File.exist? other_config
 
       instance_eval File.read(other_config), other_config, 1
-    end
-
-    def ready(&block)
-      @ready_callbacks << block
-    end
-
-    def execute_ready_callbacks
-      @ready_callbacks.each do |b|
-        instance_exec(&b)
-      end
-    end
-
-    def after_build(&block)
-      @after_build_callbacks << block
-    end
-
-    def execute_after_build_callbacks(*args)
-      @after_build_callbacks.each do |b|
-        instance_exec(*args, &b)
-      end
-    end
-
-    def after_configuration(&block)
-      @after_configuration_callbacks << block
-    end
-
-    def execute_after_configuration_callbacks
-      @after_configuration_callbacks.each do |b|
-        instance_exec(&b)
-      end
-    end
-
-    def configure(key, &block)
-      @configure_callbacks[key] ||= []
-      @configure_callbacks[key] << block
-    end
-
-    def execute_configure_callbacks(key)
-      @configure_callbacks[key] ||= []
-      @configure_callbacks[key].each do |b|
-        instance_exec(&b)
-      end
     end
 
     def set(key, default=nil, &block)
