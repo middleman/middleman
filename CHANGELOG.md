@@ -2,6 +2,7 @@ master
 ===
 
 * The preview server can now serve over HTTPS using the `--https` flag. It will use an automatic self-signed cert which can be overridden using `--ssl_certificate` and `--ssl_private_key`. These settings can also be set in `config.rb`
+* The preview server URL will use 'localhost' rather than '0.0.0.0'.
 
 3.3.11
 ===

@@ -267,7 +267,7 @@ module Middleman
       # Returns the URI the preview server will run on
       # @return [URI]
       def uri
-        host = @host.eql?('0.0.0.0') ? 'localhost' : @host
+        host = @host == '0.0.0.0' ? 'localhost' : @host
         scheme = https? ? 'https' : 'http'
         URI("#{scheme}://#{host}:#{@port}")
       end
