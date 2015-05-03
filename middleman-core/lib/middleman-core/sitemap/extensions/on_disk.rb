@@ -5,21 +5,18 @@ module Middleman
   module Sitemap
     module Extensions
       class OnDisk < Extension
-        attr_accessor :waiting_for_ready
-
         def initialize(app, config={}, &block)
           super
 
           @file_paths_on_disk = Set.new
-
-          scoped_self = self
           @waiting_for_ready = true
+        end
 
-          @app.ready do
-            scoped_self.waiting_for_ready = false
-            # Make sure the sitemap is ready for the first request
-            sitemap.ensure_resource_list_updated!
-          end
+        def ready
+          @waiting_for_ready = false
+
+          # Make sure the sitemap is ready for the first request
+          app.sitemap.ensure_resource_list_updated!
         end
 
         Contract Any
@@ -27,6 +24,7 @@ module Middleman
           app.files.on_change(:source, &method(:update_files))
         end
 
+        Contract IsA['Middleman::SourceFile'] => Bool
         def ignored?(file)
           @app.config[:ignored_sitemap_matchers].any? do |_, callback|
             callback.call(file, @app)
@@ -48,9 +46,10 @@ module Middleman
 
           # Force sitemap rebuild so the next request is ready to go.
           # Skip this during build because the builder will control sitemap refresh.
-          @app.sitemap.ensure_resource_list_updated! unless waiting_for_ready || @app.build?
+          @app.sitemap.ensure_resource_list_updated! unless @waiting_for_ready || @app.build?
         end
 
+        Contract ArrayOf[IsA['Middleman::SourceFile']]
         def files_for_sitemap
           @app.files.by_type(:source).files.reject(&method(:ignored?))
         end
