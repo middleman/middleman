@@ -1,4 +1,6 @@
 require 'webrick'
+require 'webrick/https'
+require 'openssl'
 require 'middleman-core/meta_pages'
 require 'middleman-core/logger'
 require 'middleman-core/rack'
@@ -9,8 +11,12 @@ module Middleman
     class << self
       extend Forwardable
 
-      attr_reader :app, :host, :port
+      attr_reader :app, :host, :port, :ssl_certificate, :ssl_private_key
       def_delegator :app, :logger
+
+      def https?
+        @https
+      end
 
       # Start an instance of Middleman::Application
       # @return [void]
@@ -105,6 +111,8 @@ module Middleman
 
           config[:host] = opts[:host] if opts[:host]
           config[:port] = opts[:port] if opts[:port]
+          config[:ssl_certificate] = opts[:ssl_certificate] if opts[:ssl_certificate]
+          config[:ssl_private_key] = opts[:ssl_private_key] if opts[:ssl_private_key]
 
           ready do
             match_against = [
@@ -123,6 +131,10 @@ module Middleman
 
         @host = app.config[:host]
         @port = app.config[:port]
+        @https = @app.config[:https]
+
+        @ssl_certificate = @app.config[:ssl_certificate]
+        @ssl_private_key = @app.config[:ssl_private_key]
 
         app.files.on_change :reload do
           $mm_reload = true
@@ -162,6 +174,22 @@ module Middleman
           AccessLog: [],
           DoNotReverseLookup: true
         }
+
+        if https?
+          http_opts[:SSLEnable] = true
+
+          if ssl_certificate || ssl_private_key
+            raise "You must provide both :ssl_certificate and :ssl_private_key" unless ssl_private_key && ssl_certificate
+            http_opts[:SSLCertificate] = OpenSSL::X509::Certificate.new File.read ssl_certificate
+            http_opts[:SSLPrivateKey] = OpenSSL::PKey::RSA.new File.read ssl_private_key
+          else
+            # use a generated self-signed cert
+            http_opts[:SSLCertName] = [
+                                       %w(CN localhost),
+                                       %w(CN #{host})
+                                      ].uniq
+          end
+        end
 
         if is_logging
           http_opts[:Logger] = FilteredWebrickLog.new
@@ -203,7 +231,8 @@ module Middleman
       # @return [URI]
       def uri
         host = (@host == '0.0.0.0') ? 'localhost' : @host
-        URI("http://#{host}:#{@port}")
+        scheme = https? ? 'https' : 'http'
+        URI("#{scheme}://#{host}:#{@port}")
       end
     end
 

@@ -33,3 +33,4 @@ master
 * Remove deprecated `request` instance
 * Remove old module-style extension support
 * Placed all `config.rb` evaluation inside the `ConfigContext` class
+* The preview server can now serve over HTTPS using the `--https` flag. It will use an automatic self-signed cert which can be overridden using `--ssl_certificate` and `--ssl_private_key`. These settings can also be set in `config.rb`

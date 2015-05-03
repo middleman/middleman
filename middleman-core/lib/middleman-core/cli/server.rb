@@ -18,6 +18,13 @@ module Middleman::Cli
     method_option :port,
                   aliases: '-p',
                   desc: 'The port Middleman will listen on'
+    method_option :https,
+                  type: :boolean,
+                  desc: 'Serve the preview server over SSL/TLS'
+    method_option :ssl_certificate,
+                  desc: 'Path to an X.509 certificate to use for the preview server'
+    method_option :ssl_private_key,
+                  desc: "Path to an RSA private key for the preview server's certificate"
     method_option :verbose,
                   type: :boolean,
                   default: false,
@@ -63,6 +70,9 @@ module Middleman::Cli
       params = {
         port: options['port'],
         host: options['host'],
+        https: options['https'],
+        ssl_certificate: options['ssl_certificate'],
+        ssl_private_key: options['ssl_private_key'],
         environment: options['environment'],
         debug: options['verbose'],
         instrumenting: options['instrument'],
