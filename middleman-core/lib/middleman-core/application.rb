@@ -75,6 +75,18 @@ module Middleman
     # @return [Fixnum]
     config.define_setting :port, 4567, 'The preview server port'
 
+    # Whether to serve the preview server over HTTPS.
+    # @return [Boolean]
+    config.define_setting :https, false, 'Serve the preview server over SSL/TLS'
+
+    # The (optional) path to the SSL cert to use for the preview server.
+    # @return [String]
+    config.define_setting :ssl_certificate, nil, 'Path to an X.509 certificate to use for the preview server'
+
+    # The (optional) private key for the certificate in :ssl_certificate.
+    # @return [String]
+    config.define_setting :ssl_private_key, nil, "Path to an RSA private key for the preview server's certificate"
+
     # Name of the source directory
     # @return [String]
     config.define_setting :source,      'source', 'Name of the source directory'

@@ -1,6 +1,8 @@
 master
 ===
 
+* The preview server can now serve over HTTPS using the `--https` flag. It will use an automatic self-signed cert which can be overridden using `--ssl_certificate` and `--ssl_private_key`. These settings can also be set in `config.rb`
+
 3.3.11
 ===
 * Add `srcset` option to `image_tag`. Also enables them in Markdown.
@@ -22,7 +24,7 @@ master
 3.3.8
 ===
 * Define a mime type for sourcemaps. #1451
-* Asset hashing for image references in srcset 
+* Asset hashing for image references in srcset
 * Import patch to bugfix from Padrino Helpers #1401
 * Better URI encoding and decoding #1406
 * Update version of i18n
