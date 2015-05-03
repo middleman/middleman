@@ -1,4 +1,6 @@
 require 'webrick'
+require 'webrick/https'
+require 'openssl'
 require 'middleman-core/meta_pages'
 require 'middleman-core/logger'
 
@@ -6,8 +8,12 @@ require 'middleman-core/logger'
 module Middleman
   module PreviewServer
     class << self
-      attr_reader :app, :host, :port
+      attr_reader :app, :host, :port, :ssl_certificate, :ssl_private_key
       delegate :logger, to: :app
+
+      def https?
+        @https
+      end
 
       # Start an instance of Middleman::Application
       # @return [void]
@@ -15,8 +21,9 @@ module Middleman
         @options = opts
 
         mount_instance(new_app)
-        logger.info "== The Middleman is standing watch at http://#{host}:#{port}"
-        logger.info "== Inspect your site configuration at http://#{host}:#{port}/__middleman/"
+        scheme = https? ? 'https' : 'http'
+        logger.info "== The Middleman is standing watch at #{scheme}://#{host}:#{port}"
+        logger.info "== Inspect your site configuration at #{scheme}://#{host}:#{port}/__middleman/"
 
         @initialized ||= false
         return if @initialized
@@ -106,10 +113,17 @@ module Middleman
           config[:environment] = opts[:environment].to_sym if opts[:environment]
           config[:host] = opts[:host] if opts[:host]
           config[:port] = opts[:port] if opts[:port]
+          config[:https] = opts[:https] unless opts[:https].nil?
+          config[:ssl_certificate] = opts[:ssl_certificate] if opts[:ssl_certificate]
+          config[:ssl_private_key] = opts[:ssl_private_key] if opts[:ssl_private_key]
         end
 
         @host = @app.config[:host]
         @port = @app.config[:port]
+        @https = @app.config[:https]
+
+        @ssl_certificate = @app.config[:ssl_certificate]
+        @ssl_private_key = @app.config[:ssl_private_key]
 
         @app
       end
@@ -172,6 +186,22 @@ module Middleman
           AccessLog: [],
           DoNotReverseLookup: true
         }
+
+        if https?
+          http_opts[:SSLEnable] = true
+
+          if ssl_certificate || ssl_private_key
+            raise "You must provide both :ssl_certificate and :ssl_private_key" unless ssl_private_key && ssl_certificate
+            http_opts[:SSLCertificate] = OpenSSL::X509::Certificate.new File.read ssl_certificate
+            http_opts[:SSLPrivateKey] = OpenSSL::PKey::RSA.new File.read ssl_private_key
+          else
+            # use a generated self-signed cert
+            http_opts[:SSLCertName] = [
+                                       %w(CN localhost),
+                                       %w(CN #{host})
+                                      ].uniq
+          end
+        end
 
         if is_logging
           http_opts[:Logger] = FilteredWebrickLog.new
