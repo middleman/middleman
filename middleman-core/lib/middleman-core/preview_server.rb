@@ -21,9 +21,8 @@ module Middleman
         @options = opts
 
         mount_instance(new_app)
-        scheme = https? ? 'https' : 'http'
-        logger.info "== The Middleman is standing watch at #{scheme}://#{host}:#{port}"
-        logger.info "== Inspect your site configuration at #{scheme}://#{host}:#{port}/__middleman/"
+        logger.info "== The Middleman is standing watch at #{uri}"
+        logger.info "== Inspect your site configuration at #{uri + '__middleman'}"
 
         @initialized ||= false
         return if @initialized
@@ -264,6 +263,15 @@ module Middleman
           end
         end
       end
+
+      # Returns the URI the preview server will run on
+      # @return [URI]
+      def uri
+        host = @host == '0.0.0.0' ? 'localhost' : @host
+        scheme = https? ? 'https' : 'http'
+        URI("#{scheme}://#{host}:#{@port}")
+      end
+
     end
 
     class FilteredWebrickLog < ::WEBrick::Log
