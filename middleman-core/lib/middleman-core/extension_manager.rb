@@ -8,6 +8,17 @@ module Middleman
     def initialize(app)
       @app = app
       @activated = {}
+
+      manager = self
+      {
+        before_sitemap: :before_sitemap,
+        initialized: :before_configuration
+      }.each do |key, value|
+        cb = proc { manager.auto_activate(value) }
+        @app.send(key, &cb)
+      end
+
+      @app.after_configuration_eval(&method(:activate_all))
     end
 
     def auto_activate(key)

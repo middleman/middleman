@@ -380,6 +380,7 @@ module Middleman
 
     def bind_after_configuration
       ext = self
+
       @app.after_configuration do
         ext.after_configuration if ext.respond_to?(:after_configuration)
 

@@ -10,6 +10,25 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
   # Exposes `langs` to templates
   expose_to_template :langs
 
+  def initialize(*)
+    super
+        
+    require 'i18n'
+
+    # Don't fail on invalid locale, that's not what our current
+    # users expect.
+    ::I18n.enforce_available_locales = false
+
+    # This is for making the tests work - since the tests
+    # don't completely reload middleman, I18n.load_path can get
+    # polluted with paths from other test app directories that don't
+    # exist anymore.
+    app.after_configuration_eval do
+      ::I18n.load_path.delete_if { |path| path =~ %r{tmp/aruba} }
+      ::I18n.reload!
+    end if ENV['TEST']
+  end
+
   def after_configuration
     # See https://github.com/svenfuchs/i18n/wiki/Fallbacks
     unless options[:no_fallbacks]

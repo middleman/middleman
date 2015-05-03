@@ -13,9 +13,7 @@ module Middleman
         ::Tilt.register 'coffee', DebuggingCoffeeScriptTemplate
         ::Tilt.prefer(DebuggingCoffeeScriptTemplate)
 
-        app.before_configuration do
-          DebuggingCoffeeScriptTemplate.middleman_app = self
-        end
+        DebuggingCoffeeScriptTemplate.middleman_app = app
       end
 
       # A Template for Tilt which outputs debug messages

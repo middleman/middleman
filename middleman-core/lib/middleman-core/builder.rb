@@ -2,6 +2,7 @@ require 'pathname'
 require 'fileutils'
 require 'tempfile'
 require 'middleman-core/rack'
+require 'middleman-core/callback_manager'
 require 'middleman-core/contracts'
 
 module Middleman
@@ -36,10 +37,11 @@ module Middleman
       @glob = opts.fetch(:glob)
       @cleaning = opts.fetch(:clean)
 
-      @_event_callbacks = []
-
       rack_app = ::Middleman::Rack.new(@app).to_app
       @rack = ::Rack::MockRequest.new(rack_app)
+
+      @callbacks = ::Middleman::CallbackManager.new
+      @callbacks.install_methods!(self, [:on_build_event])
     end
 
     # Run the build phase.
@@ -49,7 +51,7 @@ module Middleman
       @has_error = false
       @events = {}
 
-      @app.run_hook :before_build, self
+      @app.execute_callbacks(:before_build, [self])
 
       queue_current_paths if @cleaning
       prerender_css
@@ -60,19 +62,9 @@ module Middleman
 
       ::Middleman::Profiling.report('build')
 
-      # Run hooks
-      @app.run_hook :after_build, self
-      @app.config_context.execute_callbacks(:after_build, [self])
+      @app.execute_callbacks(:after_build, [self])
 
       !@has_error
-    end
-
-    # Attach callbacks for build events.
-    # @return [Array<Proc>] All the attached events.
-    Contract Proc => ArrayOf[Proc]
-    def on_build_event(&block)
-      @_event_callbacks << block if block_given?
-      @_event_callbacks
     end
 
     # Pre-request CSS to give Compass a chance to build sprites
@@ -253,9 +245,7 @@ module Middleman
       @events[event_type] ||= []
       @events[event_type] << target
 
-      @_event_callbacks.each do |callback|
-        callback.call(event_type, target, extra)
-      end
+      execute_callbacks(:on_build_event, [event_type, target, extra])
     end
   end
 end

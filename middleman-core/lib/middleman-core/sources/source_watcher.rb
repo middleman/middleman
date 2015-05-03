@@ -1,6 +1,7 @@
 # Watcher Library
 require 'listen'
 require 'middleman-core/contracts'
+require 'middleman-core/contracts'
 require 'backports/2.0.0/enumerable/lazy'
 
 module Middleman
@@ -55,7 +56,8 @@ module Middleman
 
       @listener = nil
 
-      @on_change_callbacks = Set.new
+      @callbacks = ::Middleman::CallbackManager.new
+      @callbacks.install_methods!(self, [:on_change])
 
       @waiting_for_existence = !@directory.exist?
     end
@@ -174,16 +176,6 @@ module Middleman
       listen!
     end
 
-    # Add callback to be run on file change
-    #
-    # @param [Proc] matcher A Regexp to match the change path against
-    # @return [Set<Proc>]
-    Contract Proc => SetOf[Proc]
-    def on_change(&block)
-      @on_change_callbacks << block
-      @on_change_callbacks
-    end
-
     # Work around this bug: http://bugs.ruby-lang.org/issues/4521
     # where Ruby will call to_s/inspect while printing exception
     # messages, which can take a long time (minutes at full CPU)
@@ -237,11 +229,11 @@ module Middleman
                         logger.debug "== Deletion (#{f[:types].inspect}): #{f[:relative_path]}"
                       end
 
-      run_callbacks(
-        @on_change_callbacks,
+      execute_callbacks(:on_change, [
         valid_updates,
-        valid_removes
-      ) unless valid_updates.empty? && valid_removes.empty?
+        valid_removes,
+        self
+      ]) unless valid_updates.empty? && valid_removes.empty?
     end
 
     def add_file_to_cache(f)
@@ -288,18 +280,6 @@ module Middleman
       relative_path   = File.join(destination_dir, relative_path) if destination_dir
 
       ::Middleman::SourceFile.new(Pathname(relative_path), path, @directory, types)
-    end
-
-    # Notify callbacks for a file given an array of callbacks
-    #
-    # @param [Pathname] path The file that was changed
-    # @param [Symbol] callbacks_name The name of the callbacks method
-    # @return [void]
-    Contract Set, ArrayOf[IsA['Middleman::SourceFile']], ArrayOf[IsA['Middleman::SourceFile']] => Any
-    def run_callbacks(callbacks, updated_files, removed_files)
-      callbacks.each do |callback|
-        callback.call(updated_files, removed_files, self)
-      end
     end
   end
 end

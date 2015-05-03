@@ -12,7 +12,7 @@ module Middleman
         def initialize(app, config={}, &block)
           super
 
-          # Array of callbacks which can ass ignored
+          # Array of callbacks which can assign ignored
           @ignored_callbacks = Set.new
 
           @app.sitemap.define_singleton_method(:ignored?, &method(:ignored?))

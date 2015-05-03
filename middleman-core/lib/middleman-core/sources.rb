@@ -345,4 +345,4 @@ module Middleman
 end
 
 # And, require the actual default implementation for a watcher.
-require 'middleman-core/sources/source_watcher.rb'
+require 'middleman-core/sources/source_watcher'

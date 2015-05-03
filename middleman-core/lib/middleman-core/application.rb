@@ -1,29 +1,14 @@
-# i18n Built-in
-require 'i18n'
-
-# Don't fail on invalid locale, that's not what our current
-# users expect.
-::I18n.enforce_available_locales = false
-
 # Use ActiveSupport JSON
 require 'active_support/json'
 require 'active_support/core_ext/integer/inflections'
 
-# Simple callback library
-require 'hooks'
-
-# Our custom logger
-require 'middleman-core/logger'
-
 require 'middleman-core/contracts'
-
+require 'middleman-core/callback_manager'
+require 'middleman-core/logger'
 require 'middleman-core/sitemap/store'
-
 require 'middleman-core/configuration'
-
 require 'middleman-core/extension_manager'
 require 'middleman-core/core_extensions'
-
 require 'middleman-core/config_context'
 require 'middleman-core/file_renderer'
 require 'middleman-core/template_renderer'
@@ -38,6 +23,9 @@ module Middleman
     include Contracts
 
     class << self
+      extend Forwardable
+      def_delegator :config, :define_setting
+
       # Global configuration for the whole Middleman project.
       # @return [ConfigurationManager]
       def config
@@ -56,38 +44,37 @@ module Middleman
       end
     end
 
-    # Uses callbacks
-    include Hooks
-    include Hooks::InstanceHooks
+    Contract ::Middleman::ConfigContext
+    attr_reader :config_context
 
-    define_hook :initialized
-    define_hook :after_configuration
-    define_hook :before_configuration
+    Contract ::Middleman::Sitemap::Store
+    attr_reader :sitemap
 
-    # Before request hook
-    define_hook :before
+    # An anonymous subclass of ::Middleman::TemplateContext
+    attr_reader :template_context_class
 
-    # Ready (all loading and parsing of extensions complete) hook
-    define_hook :ready
+    # An instance of the above anonymouse class.
+    attr_reader :generic_template_context
 
-    # Runs before the build is started
-    define_hook :before_build
+    Contract ::Middleman::Configuration::ConfigurationManager
+    attr_reader :config
 
-    # Runs after the build is finished
-    define_hook :after_build
+    Contract ::Middleman::ExtensionManager
+    attr_reader :extensions
 
-    define_hook :before_shutdown
+    Contract SetOf[MiddlewareDescriptor]
+    attr_reader :middleware
 
-    define_hook :before_render
-    define_hook :after_render
+    Contract SetOf[MapDescriptor]
+    attr_reader :mappings
 
     # Which host preview should start on.
     # @return [Fixnum]
-    config.define_setting :host, '0.0.0.0', 'The preview server host'
+    define_setting :host, '0.0.0.0', 'The preview server host'
 
     # Which port preview should start on.
     # @return [Fixnum]
-    config.define_setting :port, 4567, 'The preview server port'
+    define_setting :port, 4567, 'The preview server port'
 
     # Whether to serve the preview server over HTTPS.
     # @return [Boolean]
@@ -103,73 +90,73 @@ module Middleman
 
     # Name of the source directory
     # @return [String]
-    config.define_setting :source, 'source', 'Name of the source directory'
+    define_setting :source, 'source', 'Name of the source directory'
 
     # Middleman mode. Defaults to :server, set to :build by the build process
     # @return [String]
-    config.define_setting :mode, ((ENV['MM_ENV'] && ENV['MM_ENV'].to_sym) || :server), 'Middleman mode. Defaults to :server'
+    define_setting :mode, ((ENV['MM_ENV'] && ENV['MM_ENV'].to_sym) || :server), 'Middleman mode. Defaults to :server'
 
     # Middleman environment. Defaults to :development
     # @return [String]
-    config.define_setting :environment, :development, 'Middleman environment. Defaults to :development'
+    define_setting :environment, :development, 'Middleman environment. Defaults to :development'
 
     # Which file should be used for directory indexes
     # @return [String]
-    config.define_setting :index_file,  'index.html', 'Which file should be used for directory indexes'
+    define_setting :index_file,  'index.html', 'Which file should be used for directory indexes'
 
     # Whether to strip the index file name off links to directory indexes
     # @return [Boolean]
-    config.define_setting :strip_index_file, true, 'Whether to strip the index file name off links to directory indexes'
+    define_setting :strip_index_file, true, 'Whether to strip the index file name off links to directory indexes'
 
     # Whether to include a trailing slash when stripping the index file
     # @return [Boolean]
-    config.define_setting :trailing_slash, true, 'Whether to include a trailing slash when stripping the index file'
+    define_setting :trailing_slash, true, 'Whether to include a trailing slash when stripping the index file'
 
     # Location of javascripts within source.
     # @return [String]
-    config.define_setting :js_dir,      'javascripts', 'Location of javascripts within source'
+    define_setting :js_dir,      'javascripts', 'Location of javascripts within source'
 
     # Location of stylesheets within source. Used by Compass.
     # @return [String]
-    config.define_setting :css_dir,     'stylesheets', 'Location of stylesheets within source'
+    define_setting :css_dir,     'stylesheets', 'Location of stylesheets within source'
 
     # Location of images within source. Used by HTML helpers and Compass.
     # @return [String]
-    config.define_setting :images_dir,  'images', 'Location of images within source'
+    define_setting :images_dir,  'images', 'Location of images within source'
 
     # Location of fonts within source. Used by Compass.
     # @return [String]
-    config.define_setting :fonts_dir,   'fonts', 'Location of fonts within source'
+    define_setting :fonts_dir,   'fonts', 'Location of fonts within source'
 
     # Location of layouts within source. Used by renderers.
     # @return [String]
-    config.define_setting :layouts_dir, 'layouts', 'Location of layouts within source'
+    define_setting :layouts_dir, 'layouts', 'Location of layouts within source'
 
     # Where to build output files
     # @return [String]
-    config.define_setting :build_dir,   'build', 'Where to build output files'
+    define_setting :build_dir,   'build', 'Where to build output files'
 
     # Default prefix for building paths. Used by HTML helpers and Compass.
     # @return [String]
-    config.define_setting :http_prefix, '/', 'Default prefix for building paths'
+    define_setting :http_prefix, '/', 'Default prefix for building paths'
 
     # Default layout name
     # @return [String, Symbold]
-    config.define_setting :layout, :_auto_layout, 'Default layout name'
+    define_setting :layout, :_auto_layout, 'Default layout name'
 
     # Default string encoding for templates and output.
     # @return [String]
-    config.define_setting :encoding, 'utf-8', 'Default string encoding for templates and output'
+    define_setting :encoding, 'utf-8', 'Default string encoding for templates and output'
 
     # Should Padrino include CRSF tag
     # @return [Boolean]
-    config.define_setting :protect_from_csrf, false, 'Should Padrino include CRSF tag'
+    define_setting :protect_from_csrf, false, 'Should Padrino include CRSF tag'
 
     # Set to automatically convert some characters into a directory
-    config.define_setting :automatic_directory_matcher, nil, 'Set to automatically convert some characters into a directory'
+    define_setting :automatic_directory_matcher, nil, 'Set to automatically convert some characters into a directory'
 
     # Setup callbacks which can exclude paths from the sitemap
-    config.define_setting :ignored_sitemap_matchers, {
+    define_setting :ignored_sitemap_matchers, {
       # Files starting with an underscore, but not a double-underscore
       partials: proc { |file|
         ignored = false
@@ -190,36 +177,39 @@ module Middleman
       }
     }, 'Callbacks that can exclude paths from the sitemap'
 
-    config.define_setting :watcher_disable, false, 'If the Listen watcher should not run'
-    config.define_setting :watcher_force_polling, false, 'If the Listen watcher should run in polling mode'
-    config.define_setting :watcher_latency, nil, 'The Listen watcher latency'
+    define_setting :watcher_disable, false, 'If the Listen watcher should not run'
+    define_setting :watcher_force_polling, false, 'If the Listen watcher should run in polling mode'
+    define_setting :watcher_latency, nil, 'The Listen watcher latency'
 
-    attr_reader :config_context
-    attr_reader :sitemap
-    attr_reader :cache
-    attr_reader :template_context_class
-    attr_reader :config
-    attr_reader :generic_template_context
-    attr_reader :extensions
-    attr_reader :sources
-
-    Contract SetOf[MiddlewareDescriptor]
-    attr_reader :middleware
-
-    Contract SetOf[MapDescriptor]
-    attr_reader :mappings
-
-    # Reference to Logger singleton
+    # Delegate convenience methods off to their implementations
     def_delegator :"::Middleman::Logger", :singleton, :logger
     def_delegator :"::Middleman::Util", :instrument
     def_delegators :"self.class", :root, :root_path
     def_delegators :@generic_template_context, :link_to, :image_tag, :asset_path
     def_delegators :@extensions, :activate
+    def_delegators :config, :define_setting
 
     # Initialize the Middleman project
     def initialize(&block)
       # Search the root of the project for required files
       $LOAD_PATH.unshift(root) unless $LOAD_PATH.include?(root)
+
+      @callbacks = ::Middleman::CallbackManager.new
+      @callbacks.install_methods!(self, [
+        :initialized,
+        :configure,
+        :before_sitemap,
+        :before_configuration,
+        :after_configuration,
+        :after_configuration_eval,
+        :ready,
+        :before_build,
+        :after_build,
+        :before_shutdown,
+        :before, # Before Rack requests
+        :before_render,
+        :after_render
+      ])
 
       @middleware = Set.new
       @mappings = Set.new
@@ -228,21 +218,22 @@ module Middleman
       @generic_template_context = @template_context_class.new(self)
       @config_context = ConfigContext.new(self, @template_context_class)
 
-      ::Middleman::FileRenderer.cache.clear
-      ::Middleman::TemplateRenderer.cache.clear
-
       # Setup the default values from calls to set before initialization
       @config = ::Middleman::Configuration::ConfigurationManager.new
       @config.load_settings(self.class.config.all_settings)
 
       config[:source] = ENV['MM_SOURCE'] if ENV['MM_SOURCE']
 
+      # TODO, make this less global
+      ::Middleman::FileRenderer.cache.clear
+      ::Middleman::TemplateRenderer.cache.clear
+
       @extensions = ::Middleman::ExtensionManager.new(self)
 
       # Evaluate a passed block if given
       config_context.instance_exec(&block) if block_given?
 
-      @extensions.auto_activate(:before_sitemap)
+      execute_callbacks(:before_sitemap)
 
       # Initialize the Sitemap
       @sitemap = ::Middleman::Sitemap::Store.new(self)
@@ -254,42 +245,34 @@ module Middleman
 
       ::Middleman::Extension.clear_after_extension_callbacks
 
-      @extensions.auto_activate(:before_configuration)
+      after_configuration_eval(&method(:prune_tilt_templates))
 
-      run_hook :initialized
-
-      run_hook :before_configuration
-
-      evaluate_configuration
-
-      # This is for making the tests work - since the tests
-      # don't completely reload middleman, I18n.load_path can get
-      # polluted with paths from other test app directories that don't
-      # exist anymore.
-      if ENV['TEST']
-        ::I18n.load_path.delete_if { |path| path =~ %r{tmp/aruba} }
-        ::I18n.reload!
-      end
-
-      # Clean up missing Tilt exts
-      Tilt.mappings.each do |key, _|
-        begin
-          Tilt[".#{key}"]
-        rescue LoadError, NameError
-          Tilt.mappings.delete(key)
-        end
-      end
-
-      @extensions.activate_all
-
-      run_hook :after_configuration
-      config_context.execute_callbacks(:after_configuration)
-
-      run_hook :ready
-      @config_context.execute_callbacks(:ready)
+      start_lifecycle
     end
 
-    def evaluate_configuration
+    # Boot the app.
+    def start_lifecycle
+      # Before config is parsed, before extensions get to it.
+      execute_callbacks(:initialized)
+
+      # Before config is parsed. Mostly used for extensions.
+      execute_callbacks(:before_configuration)
+
+      # Eval config.
+      evaluate_configuration!
+
+      # Post parsing, pre-extension callback
+      execute_callbacks(:after_configuration_eval)
+
+      # After extensions have worked after_config
+      execute_callbacks(:after_configuration)
+
+      # Everything is stable
+      execute_callbacks(:ready)
+    end
+
+    # Eval config
+    def evaluate_configuration!
       # Check for and evaluate local configuration in `config.rb`
       config_rb = File.join(root, 'config.rb')
       if File.exist? config_rb
@@ -311,49 +294,67 @@ module Middleman
       end
 
       # Run any `configure` blocks for the current environment.
-      config_context.execute_callbacks([:configure, config[:environment]])
+      execute_callbacks([:configure, config[:environment]])
 
       # Run any `configure` blocks for the current mode.
-      config_context.execute_callbacks([:configure, config[:mode]])
+      execute_callbacks([:configure, config[:mode]])
+    end
+
+    # Clean up missing Tilt exts
+    def prune_tilt_templates
+      ::Tilt.mappings.each do |key, _|
+        begin
+          ::Tilt[".#{key}"]
+        rescue LoadError, NameError
+          ::Tilt.mappings.delete(key)
+        end
+      end
     end
 
     # Whether we're in server mode
     # @return [Boolean] If we're in dev mode
+    Contract Bool
     def server?
       config[:mode] == :server
     end
 
     # Whether we're in build mode
     # @return [Boolean] If we're in dev mode
+    Contract Bool
     def build?
       config[:mode] == :build
     end
 
     # Whether we're in a specific environment
     # @return [Boolean]
+    Contract Bool
     def environment?(key)
       config[:environment] == key
     end
 
     # Backwards compatible helper. What the current environment is.
     # @return [Symbol]
+    Contract Symbol
     def environment
       config[:environment]
     end
 
     # Backwards compatible helper. Whether we're in dev mode.
     # @return [Boolean]
+    Contract Bool
     def development?
       environment?(:development)
     end
 
     # Backwards compatible helper. Whether we're in production mode.
     # @return [Boolean]
+    Contract Bool
     def production?
       environment?(:production)
     end
 
     # Backwards compatible helper. The full path to the default source dir.
+    Contract Pathname
     def source_dir
       Pathname(File.join(root, config[:source]))
     end
@@ -376,8 +377,9 @@ module Middleman
       @mappings << MapDescriptor.new(map, block)
     end
 
+    # Let everyone know we're shutting down.
     def shutdown!
-      run_hook :before_shutdown
+      execute_callbacks(:before_shutdown)
     end
 
     # Work around this bug: http://bugs.ruby-lang.org/issues/4521
