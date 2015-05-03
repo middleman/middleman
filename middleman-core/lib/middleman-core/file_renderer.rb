@@ -59,14 +59,10 @@ module Middleman
       options = options.deep_merge(options[:renderer_options]) if options[:renderer_options]
 
       template_class = ::Tilt[path]
+
       # Allow hooks to manipulate the template before render
-      @app.class.callbacks_for_hook(:before_render).each do |callback|
-        newbody = if callback.respond_to?(:call)
-          callback.call(body, path, locs, template_class)
-        elsif callback.respond_to?(:evaluate)
-          callback.evaluate(self, body, path, locs, template_class)
-        end
-        body = newbody if newbody # Allow the callback to return nil to skip it
+      content = @app.callbacks_for(:before_render).reduce(content) do |sum, callback|
+        callback.call(content, path, locs, template_class) || sum
       end
 
       # Read compiled template from disk or cache
@@ -80,14 +76,8 @@ module Middleman
       end
 
       # Allow hooks to manipulate the result after render
-      @app.class.callbacks_for_hook(:after_render).each do |callback|
-        # Uber::Options::Value doesn't respond to call
-        newcontent = if callback.respond_to?(:call)
-          callback.call(content, path, locs, template_class)
-        elsif callback.respond_to?(:evaluate)
-          callback.evaluate(self, content, path, locs, template_class)
-        end
-        content = newcontent if newcontent # Allow the callback to return nil to skip it
+      content = @app.callbacks_for(:after_render).reduce(content) do |sum, callback|
+        callback.call(content, path, locs, template_class) || sum
       end
 
       output = ::ActiveSupport::SafeBuffer.new ''

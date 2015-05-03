@@ -25,8 +25,10 @@ module Middleman
       end
 
       install_target.define_singleton_method(:execute_callbacks) do |keys, *args|
-        manager.execute(keys, args, self)
+        manager.execute(keys, args[0], self)
       end
+
+      install_target.define_singleton_method(:callbacks_for, &method(:callbacks_for))
     end
 
     Contract Or[Symbol, ArrayOf[Symbol]], Proc => Any
@@ -40,10 +42,13 @@ module Middleman
 
     Contract Or[Symbol, ArrayOf[Symbol]], Maybe[ArrayOf[Any]], Maybe[RespondTo[:instance_exec]] => Any
     def execute(keys, args=[], scope=self)
-      immutable_keys = keys.is_a?(Symbol) ? keys : ::Hamster::Vector.new(keys)
+      callbacks_for(keys).each { |b| scope.instance_exec(*args, &b) }
+    end
 
-      callbacks = @callbacks.get(immutable_keys)
-      callbacks && callbacks.each { |b| scope.instance_exec(*args, &b) }
+    Contract Or[Symbol, ArrayOf[Symbol]] => ::Hamster::Set
+    def callbacks_for(keys)
+      immutable_keys = keys.is_a?(Symbol) ? keys : ::Hamster::Vector.new(keys)
+      @callbacks.get(immutable_keys) || ::Hamster.set
     end
   end
 end

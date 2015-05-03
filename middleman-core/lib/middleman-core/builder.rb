@@ -49,7 +49,7 @@ module Middleman
       @has_error = false
       @events = {}
 
-      @app.run_hook :before_build, self
+      @app.execute_callbacks :before_build, [self]
 
       queue_current_paths if @cleaning
       prerender_css
@@ -61,7 +61,7 @@ module Middleman
       ::Middleman::Profiling.report('build')
 
       # Run hooks
-      @app.run_hook :after_build, self
+      @app.execute_callbacks :after_build, [self]
       @app.config_context.execute_callbacks(:after_build, [self])
 
       !@has_error

@@ -9,9 +9,6 @@ require 'i18n'
 require 'active_support/json'
 require 'active_support/core_ext/integer/inflections'
 
-# Simple callback library
-require 'hooks'
-
 # Our custom logger
 require 'middleman-core/logger'
 
@@ -21,6 +18,7 @@ require 'middleman-core/sitemap/store'
 
 require 'middleman-core/configuration'
 
+require 'middleman-core/callback_manager'
 require 'middleman-core/extension_manager'
 require 'middleman-core/core_extensions'
 
@@ -55,31 +53,6 @@ module Middleman
         Pathname(root)
       end
     end
-
-    # Uses callbacks
-    include Hooks
-    include Hooks::InstanceHooks
-
-    define_hook :initialized
-    define_hook :after_configuration
-    define_hook :before_configuration
-
-    # Before request hook
-    define_hook :before
-
-    # Ready (all loading and parsing of extensions complete) hook
-    define_hook :ready
-
-    # Runs before the build is started
-    define_hook :before_build
-
-    # Runs after the build is finished
-    define_hook :after_build
-
-    define_hook :before_shutdown
-
-    define_hook :before_render
-    define_hook :after_render
 
     # Which host preview should start on.
     # @return [Fixnum]
@@ -209,6 +182,20 @@ module Middleman
       # Search the root of the project for required files
       $LOAD_PATH.unshift(root) unless $LOAD_PATH.include?(root)
 
+      @callbacks = ::Middleman::CallbackManager.new
+      @callbacks.install_methods!(self, [
+        :initialized,
+        :after_configuration,
+        :before_configuration,
+        :before,
+        :ready,
+        :before_build,
+        :after_build,
+        :before_shutdown,
+        :before_render,
+        :after_render
+      ])
+
       @middleware = Set.new
       @mappings = Set.new
 
@@ -244,9 +231,9 @@ module Middleman
 
       @extensions.auto_activate(:before_configuration)
 
-      run_hook :initialized
+      execute_callbacks :initialized
 
-      run_hook :before_configuration
+      execute_callbacks :before_configuration
 
       evaluate_configuration
 
@@ -270,10 +257,10 @@ module Middleman
 
       @extensions.activate_all
 
-      run_hook :after_configuration
+      execute_callbacks :after_configuration
       config_context.execute_callbacks(:after_configuration)
 
-      run_hook :ready
+      execute_callbacks :ready
       @config_context.execute_callbacks(:ready)
     end
 
@@ -365,7 +352,7 @@ module Middleman
     end
 
     def shutdown!
-      run_hook :before_shutdown
+      execute_callbacks :before_shutdown
     end
 
     # Work around this bug: http://bugs.ruby-lang.org/issues/4521
