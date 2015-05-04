@@ -1,6 +1,7 @@
 # Used for merging results of metadata callbacks
 require 'active_support/core_ext/hash/deep_merge'
 require 'monitor'
+require 'hamster'
 
 # Ignores
 Middleman::Extensions.register :sitemap_ignore, auto_activate: :before_configuration do
@@ -37,6 +38,8 @@ require 'middleman-core/contracts'
 module Middleman
   # Sitemap namespace
   module Sitemap
+    ManipulatorDescriptor = Struct.new :name, :manipulator, :priority, :custom_name
+
     # The Store class
     #
     # The Store manages a collection of Resource objects, which represent
@@ -46,20 +49,21 @@ module Middleman
     class Store
       include Contracts
 
-      # @return [Middleman::Application]
+      Contract IsA['Middleman::Application']
       attr_reader :app
 
+      Contract Num
       attr_reader :update_count
 
       # Initialize with parent app
       # @param [Middleman::Application] app
+      Contract IsA['Middleman::Application'] => Any
       def initialize(app)
         @app = app
         @resources = []
         @update_count = 0
 
-        # TODO: Should this be a set or hash?
-        @resource_list_manipulators = []
+        @resource_list_manipulators = ::Hamster.vector
         @needs_sitemap_rebuild = true
 
         @lock = Monitor.new
@@ -76,24 +80,29 @@ module Middleman
       # @param [Numeric] priority Sets the order of this resource list manipulator relative to the rest. By default this is 50, and manipulators run in the order they are registered, but if a priority is provided then this will run ahead of or behind other manipulators.
       # @param [Symbol] custom_name The method name to execute.
       # @return [void]
-      Contract Symbol, RespondTo['manipulate_resource_list'], Maybe[Num], Maybe[Symbol] => Any
+      Contract Symbol, RespondTo[:manipulate_resource_list], Maybe[Num], Maybe[Symbol] => Any
       def register_resource_list_manipulator(name, manipulator, priority=50, custom_name=nil)
         # The third argument used to be a boolean - handle those who still pass one
         priority = 50 unless priority.is_a? Numeric
-        @resource_list_manipulators << [name, manipulator, priority, custom_name]
+        @resource_list_manipulators = @resource_list_manipulators.push(
+          ManipulatorDescriptor.new(name, manipulator, priority, custom_name)
+        )
+
         # The index trick is used so that the sort is stable - manipulators with the same priority
         # will always be ordered in the same order as they were registered.
         n = 0
         @resource_list_manipulators = @resource_list_manipulators.sort_by do |m|
           n += 1
-          [m[2], n]
+          [m[:priority], n]
         end
+
         rebuild_resource_list!(:registered_new)
       end
 
       # Rebuild the list of resources from scratch, using registed manipulators
       # @return [void]
-      def rebuild_resource_list!(_=nil)
+      Contract Maybe[Symbol] => Any
+      def rebuild_resource_list!(_name=nil)
         @lock.synchronize do
           @needs_sitemap_rebuild = true
         end
@@ -178,11 +187,13 @@ module Middleman
 
           @app.logger.debug '== Rebuilding resource list'
 
-          @resources = @resource_list_manipulators.reduce([]) do |result, (_, manipulator, _, custom_name)|
-            newres = manipulator.send(custom_name || :manipulate_resource_list, result)
+          @resources = @resource_list_manipulators.reduce([]) do |result, m|
+            newres = m[:manipulator].send(m[:custom_name] || :manipulate_resource_list, result)
 
             # Reset lookup cache
             reset_lookup_cache!
+
+            # Rebuild cache
             newres.each do |resource|
               @_lookup_by_path[resource.path] = resource
               @_lookup_by_destination_path[resource.destination_path] = resource

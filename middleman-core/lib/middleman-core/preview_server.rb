@@ -179,15 +179,15 @@ module Middleman
           http_opts[:SSLEnable] = true
 
           if ssl_certificate || ssl_private_key
-            raise "You must provide both :ssl_certificate and :ssl_private_key" unless ssl_private_key && ssl_certificate
+            raise 'You must provide both :ssl_certificate and :ssl_private_key' unless ssl_private_key && ssl_certificate
             http_opts[:SSLCertificate] = OpenSSL::X509::Certificate.new File.read ssl_certificate
             http_opts[:SSLPrivateKey] = OpenSSL::PKey::RSA.new File.read ssl_private_key
           else
             # use a generated self-signed cert
             http_opts[:SSLCertName] = [
-                                       %w(CN localhost),
-                                       %w(CN #{host})
-                                      ].uniq
+              %w(CN localhost),
+              %w(CN #{host})
+            ].uniq
           end
         end
 

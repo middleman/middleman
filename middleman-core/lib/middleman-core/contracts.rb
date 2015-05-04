@@ -1,5 +1,6 @@
 if ENV['TEST'] || ENV['CONTRACTS'] == 'true'
   require 'contracts'
+  require 'hamster'
 
   module Contracts
     class IsA
@@ -27,21 +28,7 @@ if ENV['TEST'] || ENV['CONTRACTS'] == 'true'
       end
     end
 
-    # class MethodDefined
-    #   def self.[](val)
-    #     @lookup ||= {}
-    #     @lookup[val] ||= new(val)
-    #   end
-
-    #   def initialize(val)
-    #     @val = val
-    #   end
-
-    #   def valid?(val)
-    #     val.method_defined? @val
-    #   end
-    # end
-
+    VectorOf = Contracts::CollectionOf::Factory.new(::Hamster::Vector)
     ResourceList = Contracts::ArrayOf[IsA['Middleman::Sitemap::Resource']]
   end
 else
@@ -125,8 +112,8 @@ else
     class Frozen < Callable
     end
 
-    # class MethodDefined < Callable
-    # end
+    class VectorOf < Callable
+    end
   end
 end
 

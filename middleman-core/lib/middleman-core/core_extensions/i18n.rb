@@ -12,7 +12,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
 
   def initialize(*)
     super
-        
+
     require 'i18n'
 
     # Don't fail on invalid locale, that's not what our current

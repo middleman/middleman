@@ -1,3 +1,4 @@
+require 'hamster'
 require 'middleman-core/contracts'
 require 'backports/2.0.0/enumerable/lazy'
 
@@ -47,10 +48,10 @@ module Middleman
       @options = options
 
       # Set of procs wanting to be notified of changes
-      @on_change_callbacks = []
+      @on_change_callbacks = ::Hamster.vector
 
       # Global ignores
-      @ignores = {}
+      @ignores = ::Hamster.hash
 
       # Whether we're "running", which means we're in a stable
       # watch state after all initialization and config.
@@ -72,7 +73,8 @@ module Middleman
     # @return [void]
     Contract Symbol, Symbol, Or[Regexp, Proc] => Any
     def ignore(name, type, regex=nil, &block)
-      @ignores[name] = { type: type, validator: (block_given? ? block : regex) }
+      @ignores = @ignores.put(name, type: type,
+                                    validator: (block_given? ? block : regex))
 
       bump_count
       find_new_files! if @running
@@ -238,11 +240,10 @@ module Middleman
     # Add callback to be run on file change or deletion
     #
     # @param [Symbol] type The change type.
-    # @return [Set<CallbackDescriptor>]
-    Contract Symbol, Proc => ArrayOf[CallbackDescriptor]
+    # @return [void]
+    Contract Symbol, Proc => Any
     def on_change(type, &block)
-      @on_change_callbacks << CallbackDescriptor.new(type, block)
-      @on_change_callbacks
+      @on_change_callbacks = @on_change_callbacks.push(CallbackDescriptor.new(type, block))
     end
 
     # Backwards compatible change handler.
@@ -328,7 +329,7 @@ module Middleman
     # @param [Set] callback_descriptors The registered callbacks.
     # @param [Array<Middleman::SourceFile>] files The files that were changed.
     # @return [void]
-    Contract ArrayOf[CallbackDescriptor], ArrayOf[SourceFile], ArrayOf[SourceFile] => Any
+    Contract VectorOf[CallbackDescriptor], ArrayOf[SourceFile], ArrayOf[SourceFile] => Any
     def run_callbacks(callback_descriptors, updated_files, removed_files)
       callback_descriptors.each do |callback|
         if callback[:type] == :all
