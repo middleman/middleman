@@ -272,7 +272,8 @@ module Middleman
       # An IPv4 address on this machine which should be externally addressable.
       # @return [String]
       def public_ip
-        Socket.ip_address_list.find { |ai| ai.ipv4? && !ai.ipv4_loopback? }.ip_address
+        ip = Socket.ip_address_list.find { |ai| ai.ipv4? && !ai.ipv4_loopback? }
+        ip ? ip.ip_address : '127.0.0.1'
       end
 
     end
