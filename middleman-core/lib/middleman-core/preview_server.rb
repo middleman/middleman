@@ -1,6 +1,7 @@
 require 'webrick'
 require 'webrick/https'
 require 'openssl'
+require 'socket'
 require 'middleman-core/meta_pages'
 require 'middleman-core/logger'
 
@@ -21,7 +22,7 @@ module Middleman
         @options = opts
 
         mount_instance(new_app)
-        logger.info "== The Middleman is standing watch at #{uri}"
+        logger.info "== The Middleman is standing watch at #{uri} (#{uri(public_ip)})"
         logger.info "== Inspect your site configuration at #{uri + '__middleman'}"
 
         @initialized ||= false
@@ -110,14 +111,12 @@ module Middleman
           )
 
           config[:environment] = opts[:environment].to_sym if opts[:environment]
-          config[:host] = opts[:host] if opts[:host]
           config[:port] = opts[:port] if opts[:port]
           config[:https] = opts[:https] unless opts[:https].nil?
           config[:ssl_certificate] = opts[:ssl_certificate] if opts[:ssl_certificate]
           config[:ssl_private_key] = opts[:ssl_private_key] if opts[:ssl_private_key]
         end
 
-        @host = @app.config[:host]
         @port = @app.config[:port]
         @https = @app.config[:https]
 
@@ -180,7 +179,6 @@ module Middleman
       # @return [void]
       def setup_webrick(is_logging)
         http_opts = {
-          BindAddress: host,
           Port: port,
           AccessLog: [],
           DoNotReverseLookup: true
@@ -197,7 +195,7 @@ module Middleman
             # use a generated self-signed cert
             http_opts[:SSLCertName] = [
                                        %w(CN localhost),
-                                       %w(CN #{host})
+                                       %w(CN #{Socket.gethostname})
                                       ].uniq
           end
         end
@@ -266,10 +264,15 @@ module Middleman
 
       # Returns the URI the preview server will run on
       # @return [URI]
-      def uri
-        host = @host == '0.0.0.0' ? 'localhost' : @host
+      def uri(host = Socket.gethostname)
         scheme = https? ? 'https' : 'http'
-        URI("#{scheme}://#{host}:#{@port}")
+        URI("#{scheme}://#{host}:#{@port}/")
+      end
+
+      # An IPv4 address on this machine which should be externally addressable.
+      # @return [String]
+      def public_ip
+        Socket.ip_address_list.find { |ai| ai.ipv4? && !ai.ipv4_loopback? }.ip_address
       end
 
     end

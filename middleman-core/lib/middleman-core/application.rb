@@ -1,5 +1,3 @@
-require 'socket'
-
 # Using Tilt for templating
 require 'tilt'
 
@@ -68,10 +66,6 @@ module Middleman
       Pathname(root)
     end
     delegate :root_path, to: :"self.class"
-
-    # Which host preview should start on.
-    # @return [Fixnum]
-    config.define_setting :host, Socket.gethostname, 'The preview server host'
 
     # Which port preview should start on.
     # @return [Fixnum]
