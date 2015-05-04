@@ -11,10 +11,6 @@ module Middleman::Cli
                   aliases: '-e',
                   default: ENV['MM_ENV'] || ENV['RACK_ENV'] || 'development',
                   desc: 'The environment Middleman will run under'
-    method_option :host,
-                  type: :string,
-                  aliases: '-h',
-                  desc: 'Bind to HOST address'
     method_option :port,
                   aliases: '-p',
                   desc: 'The port Middleman will listen on'
@@ -69,7 +65,6 @@ module Middleman::Cli
 
       params = {
         port: options['port'],
-        host: options['host'],
         https: options['https'],
         ssl_certificate: options['ssl_certificate'],
         ssl_private_key: options['ssl_private_key'],
