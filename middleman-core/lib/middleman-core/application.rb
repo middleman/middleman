@@ -261,6 +261,12 @@ module Middleman
       # Eval config.
       evaluate_configuration!
 
+      # Run any `configure` blocks for the current environment.
+      execute_callbacks([:configure, config[:environment]])
+
+      # Run any `configure` blocks for the current mode.
+      execute_callbacks([:configure, config[:mode]])
+
       # Post parsing, pre-extension callback
       execute_callbacks(:after_configuration_eval)
 
@@ -292,12 +298,6 @@ module Middleman
         logger.debug "== Reading: #{config[:environment]} config"
         config_context.instance_eval File.read(env_config), env_config, 1
       end
-
-      # Run any `configure` blocks for the current environment.
-      execute_callbacks([:configure, config[:environment]])
-
-      # Run any `configure` blocks for the current mode.
-      execute_callbacks([:configure, config[:mode]])
     end
 
     # Clean up missing Tilt exts

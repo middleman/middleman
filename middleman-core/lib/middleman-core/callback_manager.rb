@@ -9,6 +9,7 @@ module Middleman
     Contract Any
     def initialize
       @callbacks = ::Hamster.hash
+      @subscribers = ::Hamster.vector
     end
 
     Contract RespondTo[:define_singleton_method], ArrayOf[Symbol] => Any
@@ -28,6 +29,7 @@ module Middleman
       end
 
       install_target.define_singleton_method(:callbacks_for, &method(:callbacks_for))
+      install_target.define_singleton_method(:subscribe_to_callbacks, &method(:subscribe))
     end
 
     Contract Or[Symbol, ArrayOf[Symbol]], Proc => Any
@@ -39,9 +41,15 @@ module Middleman
       end
     end
 
+    Contract Proc => Any
+    def subscribe(&block)
+      @subscribers = @subscribers.push(block)
+    end
+
     Contract Or[Symbol, ArrayOf[Symbol]], Maybe[ArrayOf[Any]], Maybe[RespondTo[:instance_exec]] => Any
     def execute(keys, args=[], scope=self)
       callbacks_for(keys).each { |b| scope.instance_exec(*args, &b) }
+      @subscribers.each { |b| scope.instance_exec(keys, *args, &b) }
     end
 
     Contract Or[Symbol, ArrayOf[Symbol]] => ::Hamster::Vector

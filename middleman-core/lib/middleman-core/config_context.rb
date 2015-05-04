@@ -15,19 +15,11 @@ module Middleman
       @app = app
       @template_context_class = template_context_class
 
-      sub_callbacks = [:before_build, :after_build, :configure, :after_configuration, :ready]
-
       @callbacks = ::Middleman::CallbackManager.new
-      @callbacks.install_methods!(self, sub_callbacks)
+      @callbacks.install_methods!(self, [:before_build, :after_build, :configure, :after_configuration, :ready])
 
       # Trigger internal callbacks when app level are executed.
-      self_context = self
-
-      sub_callbacks.each do |key|
-        app.send(key) do |*args|
-          self_context.execute_callbacks(key, args)
-        end
-      end
+      app.subscribe_to_callbacks(&method(:execute_callbacks))
     end
 
     def helpers(*helper_modules, &block)
