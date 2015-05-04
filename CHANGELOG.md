@@ -1,6 +1,8 @@
 master
 ===
 
+3.3.12
+===
 * The preview server can now serve over HTTPS using the `--https` flag. It will use an automatic self-signed cert which can be overridden using `--ssl_certificate` and `--ssl_private_key`. These settings can also be set in `config.rb`
 * The preview server URL will use the local hostname rather than '0.0.0.0'. It will also print out a URL based on the host's public IP in case that's useful.
 * The `--host` flag and `config.rb` setting have been removed - the preview server will always bind to all interfaces.
