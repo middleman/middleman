@@ -294,10 +294,10 @@ module Middleman
       end
 
       env_config = File.join(root, 'environments', "#{config[:environment]}.rb")
-      if File.exist? env_config
-        logger.debug "== Reading: #{config[:environment]} config"
-        config_context.instance_eval File.read(env_config), env_config, 1
-      end
+      return unless File.exist? env_config
+
+      logger.debug "== Reading: #{config[:environment]} config"
+      config_context.instance_eval File.read(env_config), env_config, 1
     end
 
     # Clean up missing Tilt exts

@@ -1,6 +1,14 @@
 master
 ===
 
+# 4.0.0.beta.2
+
+* Fixed regression causing exceptions to be silently thrown away outside of `--verbose` mode in the dev server.
+* Pull in `--ssl` option from stable.
+* Replace `hooks` gem with custom callback solution.
+
+# 4.0.0.beta.1
+
 * Add `resources` class method to extensions to allow simple string-based resource generation.
 * rename `app.add_to_instance` to `Extension.expose_to_application` for adding extension-local methods to the shared app instance.
 * rename `app.add_to_config_context` to `Extension.expose_to_config` for adding extension-local methods to the sandboxed scope of `config.rb`

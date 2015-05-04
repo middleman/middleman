@@ -1,6 +1,5 @@
 require 'rack/showexceptions'
 
-
 # Support rack/showexceptions during development
 module Middleman::CoreExtensions
   class ShowExceptions < ::Middleman::Extension
