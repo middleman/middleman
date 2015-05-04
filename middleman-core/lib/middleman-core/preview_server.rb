@@ -131,10 +131,10 @@ module Middleman
 
         @host = app.config[:host]
         @port = app.config[:port]
-        @https = @app.config[:https]
+        @https = app.config[:https]
 
-        @ssl_certificate = @app.config[:ssl_certificate]
-        @ssl_private_key = @app.config[:ssl_private_key]
+        @ssl_certificate = app.config[:ssl_certificate]
+        @ssl_private_key = app.config[:ssl_private_key]
 
         app.files.on_change :reload do
           $mm_reload = true
