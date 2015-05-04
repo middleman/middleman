@@ -49,7 +49,7 @@ module Middleman
     Contract Or[Symbol, ArrayOf[Symbol]], Maybe[ArrayOf[Any]], Maybe[RespondTo[:instance_exec]] => Any
     def execute(keys, args=[], scope=self)
       callbacks_for(keys).each { |b| scope.instance_exec(*args, &b) }
-      @subscribers.each { |b| scope.instance_exec(keys, *args, &b) }
+      @subscribers.each { |b| scope.instance_exec(keys, args, &b) }
     end
 
     Contract Or[Symbol, ArrayOf[Symbol]] => ::Hamster::Vector
