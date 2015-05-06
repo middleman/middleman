@@ -117,6 +117,7 @@ module Middleman
           config[:ssl_private_key] = opts[:ssl_private_key] if opts[:ssl_private_key]
         end
 
+        @host = Socket.gethostname.tr(' ', '+')
         @port = @app.config[:port]
         @https = @app.config[:https]
 
@@ -193,10 +194,7 @@ module Middleman
             http_opts[:SSLPrivateKey] = OpenSSL::PKey::RSA.new File.read ssl_private_key
           else
             # use a generated self-signed cert
-            http_opts[:SSLCertName] = [
-                                       %w(CN localhost),
-                                       %w(CN #{Socket.gethostname})
-                                      ].uniq
+            http_opts[:SSLCertName] = [%w(CN localhost), %W(CN #{host})].uniq
           end
         end
 
@@ -264,7 +262,7 @@ module Middleman
 
       # Returns the URI the preview server will run on
       # @return [URI]
-      def uri(host = Socket.gethostname)
+      def uri(host=@host)
         scheme = https? ? 'https' : 'http'
         URI("#{scheme}://#{host}:#{@port}/")
       end
