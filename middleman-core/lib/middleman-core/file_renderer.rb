@@ -76,7 +76,7 @@ module Middleman
       end
 
       # Allow hooks to manipulate the result after render
-      content = @app.callbacks_for(:before_render).reduce(content) do |sum, callback|
+      content = @app.callbacks_for(:after_render).reduce(content) do |sum, callback|
         callback.call(sum, path, locs, template_class) || sum
       end
 
