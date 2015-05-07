@@ -47,3 +47,11 @@ Feature: Builder
     Given a fixture app "large-build-app"
     When I run `middleman b`
     Then was successfully built
+
+  Scenario: Builded text file(ex: html, css, xml, txt)'s permission is 0644
+    Given a successfully built app at "large-build-app"
+    When I cd to "build"
+    Then the mode of filesystem object "index.html" should match "0644"
+    And the mode of filesystem object "stylesheets/static.css" should match "0644"
+    And the mode of filesystem object "feed.xml" should match "0644"
+    And the mode of filesystem object ".htaccess" should match "0644"
