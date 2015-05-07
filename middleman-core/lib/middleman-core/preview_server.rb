@@ -207,9 +207,26 @@ module Middleman
         end
 
         begin
+          tries ||= 4
+          tried_ports ||= []
+
           ::WEBrick::HTTPServer.new(http_opts)
         rescue Errno::EADDRINUSE
-          logger.error "== Port #{port} is unavailable. Either close the instance of Middleman already running on #{port} or start this Middleman on a new port with: --port=#{port.to_i + 1}"
+          tries -= 1
+
+          tried_ports << port
+
+          if tries > 0
+            logger.error %(== Port #{port} is unavailable. Trying port #{port + 1} next.)
+
+            @port += 1
+            http_opts[:Port] = @port
+
+            retry
+          end
+
+          logger.error %(== Ports #{tried_ports.to_sentence} are unavailable. Either close the instances of "Middleman" already running on Ports #{tried_ports.to_sentence} or start this "Middleman"-instance on a another port with: "middleman server --port=#{port + 1}".)
+
           exit(1)
         end
       end
