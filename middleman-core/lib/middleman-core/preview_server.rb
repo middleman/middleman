@@ -112,12 +112,13 @@ module Middleman
 
           config[:environment] = opts[:environment].to_sym if opts[:environment]
           config[:port] = opts[:port] if opts[:port]
+          config[:host] = opts[:host].presence || Socket.gethostname.tr(' ', '+')
           config[:https] = opts[:https] unless opts[:https].nil?
           config[:ssl_certificate] = opts[:ssl_certificate] if opts[:ssl_certificate]
           config[:ssl_private_key] = opts[:ssl_private_key] if opts[:ssl_private_key]
         end
 
-        @host = Socket.gethostname.tr(' ', '+')
+        @host = @app.config[:host]
         @port = @app.config[:port]
         @https = @app.config[:https]
 
@@ -182,6 +183,7 @@ module Middleman
         http_opts = {
           Port: port,
           AccessLog: [],
+          ServerName: host,
           DoNotReverseLookup: true
         }
 

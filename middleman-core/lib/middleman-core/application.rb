@@ -71,6 +71,10 @@ module Middleman
     # @return [Fixnum]
     config.define_setting :port, 4567, 'The preview server port'
 
+    # Which server name should be used
+    # @return [NilClass, String]
+    config.define_setting :host, nil , 'The preview host name'
+
     # Whether to serve the preview server over HTTPS.
     # @return [Boolean]
     config.define_setting :https, false, 'Serve the preview server over SSL/TLS'
