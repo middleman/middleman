@@ -194,7 +194,9 @@ module Middleman
             http_opts[:SSLPrivateKey] = OpenSSL::PKey::RSA.new File.read ssl_private_key
           else
             # use a generated self-signed cert
-            http_opts[:SSLCertName] = [%w(CN localhost), %W(CN #{host})].uniq
+            cert, key = create_self_signed_cert(1024, [["CN", host]], "Middleman Preview Server")
+            http_opts[:SSLCertificate] = cert
+            http_opts[:SSLPrivateKey] = key
           end
         end
 
@@ -210,6 +212,38 @@ module Middleman
           logger.error "== Port #{port} is unavailable. Either close the instance of Middleman already running on #{port} or start this Middleman on a new port with: --port=#{port.to_i + 1}"
           exit(1)
         end
+      end
+
+      # Copy of https://github.com/nahi/ruby/blob/webrick_trunk/lib/webrick/ssl.rb#L39
+      # that uses a different serial number each time the cert is generated in order to
+      # avoid errors in Firefox. Also doesn't print out stuff to $stderr unnecessarily.
+      def create_self_signed_cert(bits, cn, comment)
+        rsa = OpenSSL::PKey::RSA.new(bits)
+        cert = OpenSSL::X509::Certificate.new
+        cert.version = 2
+        cert.serial = Time.now.to_i % (1 << 20)
+        name = OpenSSL::X509::Name.new(cn)
+        cert.subject = name
+        cert.issuer = name
+        cert.not_before = Time.now
+        cert.not_after = Time.now + (365*24*60*60)
+        cert.public_key = rsa.public_key
+
+        ef = OpenSSL::X509::ExtensionFactory.new(nil,cert)
+        ef.issuer_certificate = cert
+        cert.extensions = [
+                           ef.create_extension("basicConstraints","CA:FALSE"),
+                           ef.create_extension("keyUsage", "keyEncipherment"),
+                           ef.create_extension("subjectKeyIdentifier", "hash"),
+                           ef.create_extension("extendedKeyUsage", "serverAuth"),
+                           ef.create_extension("nsComment", comment),
+                          ]
+        aki = ef.create_extension("authorityKeyIdentifier",
+                                  "keyid:always,issuer:always")
+        cert.add_extension(aki)
+        cert.sign(rsa, OpenSSL::Digest::SHA1.new)
+
+        return [ cert, rsa ]
       end
 
       # Attach a new Middleman::Application instance
@@ -273,7 +307,6 @@ module Middleman
         ip = Socket.ip_address_list.find { |ai| ai.ipv4? && !ai.ipv4_loopback? }
         ip ? ip.ip_address : '127.0.0.1'
       end
-
     end
 
     class FilteredWebrickLog < ::WEBrick::Log
