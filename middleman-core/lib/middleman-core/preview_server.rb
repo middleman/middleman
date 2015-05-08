@@ -9,7 +9,7 @@ require 'middleman-core/logger'
 module Middleman
   module PreviewServer
     class << self
-      attr_reader :app, :host, :port, :ssl_certificate, :ssl_private_key
+      attr_reader :app, :host, :port, :ssl_certificate, :ssl_private_key, :environment
       delegate :logger, to: :app
 
       def https?
@@ -22,6 +22,8 @@ module Middleman
         @options = opts
 
         mount_instance(new_app)
+
+        logger.debug %(== The Middleman is running in "#{environment}" environment)
         logger.info "== The Middleman is standing watch at #{uri} (#{uri(public_ip)})"
         logger.info "== Inspect your site configuration at #{uri + '__middleman'}"
 
@@ -112,14 +114,16 @@ module Middleman
 
           config[:environment] = opts[:environment].to_sym if opts[:environment]
           config[:port] = opts[:port] if opts[:port]
+          config[:host] = opts[:host].presence || Socket.gethostname.tr(' ', '+')
           config[:https] = opts[:https] unless opts[:https].nil?
           config[:ssl_certificate] = opts[:ssl_certificate] if opts[:ssl_certificate]
           config[:ssl_private_key] = opts[:ssl_private_key] if opts[:ssl_private_key]
         end
 
-        @host = Socket.gethostname.tr(' ', '+')
-        @port = @app.config[:port]
-        @https = @app.config[:https]
+        @host        = @app.config[:host]
+        @port        = @app.config[:port]
+        @https       = @app.config[:https]
+        @environment = @app.config[:environment]
 
         @ssl_certificate = @app.config[:ssl_certificate]
         @ssl_private_key = @app.config[:ssl_private_key]
@@ -182,6 +186,7 @@ module Middleman
         http_opts = {
           Port: port,
           AccessLog: [],
+          ServerName: host,
           DoNotReverseLookup: true
         }
 
@@ -207,9 +212,26 @@ module Middleman
         end
 
         begin
+          tries ||= 4
+          tried_ports ||= []
+
           ::WEBrick::HTTPServer.new(http_opts)
         rescue Errno::EADDRINUSE
-          logger.error "== Port #{port} is unavailable. Either close the instance of Middleman already running on #{port} or start this Middleman on a new port with: --port=#{port.to_i + 1}"
+          tries -= 1
+
+          tried_ports << port
+
+          if tries > 0
+            logger.error %(== Port #{port} is unavailable. Trying port #{port + 1} next.)
+
+            @port += 1
+            http_opts[:Port] = @port
+
+            retry
+          end
+
+          logger.error %(== Ports #{tried_ports.to_sentence} are unavailable. Either close the instances of "Middleman" already running on Ports #{tried_ports.to_sentence} or start this "Middleman"-instance on a another port with: "middleman server --port=#{port + 1}".)
+
           exit(1)
         end
       end
