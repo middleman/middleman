@@ -211,17 +211,15 @@ module Middleman
           http_opts[:Logger] = ::WEBrick::Log.new(nil, 0)
         end
 
+        attempts_left = 4
+        tried_ports = []
         begin
-          tries ||= 4
-          tried_ports ||= []
-
           ::WEBrick::HTTPServer.new(http_opts)
         rescue Errno::EADDRINUSE
-          tries -= 1
-
+          attempts_left -= 1
           tried_ports << port
 
-          if tries > 0
+          if attempts_left > 0
             logger.error %(== Port #{port} is unavailable. Trying port #{port + 1} next.)
 
             @port += 1
@@ -230,7 +228,8 @@ module Middleman
             retry
           end
 
-          logger.error %(== Ports #{tried_ports.to_sentence} are unavailable. Either close the instances of "Middleman" already running on Ports #{tried_ports.to_sentence} or start this "Middleman"-instance on a another port with: "middleman server --port=#{port + 1}".)
+          ports_sentence = tried_ports.to_sentence
+          logger.error %(== Ports #{ports_sentence} are unavailable. Either close the Middleman servers already running on ports #{ports_sentence} or start this Middleman server on a another port with: "middleman server --port=#{port + 1}".)
 
           exit(1)
         end
