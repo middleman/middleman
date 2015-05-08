@@ -9,7 +9,7 @@ require 'middleman-core/logger'
 module Middleman
   module PreviewServer
     class << self
-      attr_reader :app, :host, :port, :ssl_certificate, :ssl_private_key
+      attr_reader :app, :host, :port, :ssl_certificate, :ssl_private_key, :environment
       delegate :logger, to: :app
 
       def https?
@@ -22,6 +22,8 @@ module Middleman
         @options = opts
 
         mount_instance(new_app)
+
+        logger.debug %(== The Middleman is running in "#{environment}" environment)
         logger.info "== The Middleman is standing watch at #{uri} (#{uri(public_ip)})"
         logger.info "== Inspect your site configuration at #{uri + '__middleman'}"
 
@@ -118,9 +120,10 @@ module Middleman
           config[:ssl_private_key] = opts[:ssl_private_key] if opts[:ssl_private_key]
         end
 
-        @host = @app.config[:host]
-        @port = @app.config[:port]
-        @https = @app.config[:https]
+        @host        = @app.config[:host]
+        @port        = @app.config[:port]
+        @https       = @app.config[:https]
+        @environment = @app.config[:environment]
 
         @ssl_certificate = @app.config[:ssl_certificate]
         @ssl_private_key = @app.config[:ssl_private_key]
