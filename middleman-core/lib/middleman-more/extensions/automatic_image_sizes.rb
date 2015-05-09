@@ -23,6 +23,13 @@ class Middleman::Extensions::AutomaticImageSizes < ::Middleman::Extension
         if File.exist?(full_path)
           begin
             width, height = ::FastImage.size(full_path, raise_on_failure: true)
+            # Check for @2x and @3x image
+            retina = full_path.match(/@(\d)x\.[a-zA-Z]{3,4}$/)
+            if retina
+              factor  = retina[1].to_i
+              width   = width / factor
+              height  = height / factor
+            end
             params[:width]  = width
             params[:height] = height
           rescue FastImage::UnknownImageType
