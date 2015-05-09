@@ -24,7 +24,7 @@ class Middleman::Extensions::AutomaticImageSizes < ::Middleman::Extension
           begin
             width, height = ::FastImage.size(full_path, raise_on_failure: true)
             # Check for @2x and @3x image
-            retina = full_path.match/(@(\d)x\.[a-zA-Z]{3,4}$/)
+            retina = full_path.match(/@(\d)x\.[a-zA-Z]{3,4}$/)
             if retina
               factor  = retina[1].to_i
               width   = width / factor
