@@ -7,8 +7,12 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
   option :mount_at_root, nil, 'Mount a specific language at the root of the site'
   option :data, 'locales', 'The directory holding your locale configurations'
 
+  attr_reader :lookup
+
   def initialize(app, options_hash={}, &block)
     super
+
+    @lookup = {}
 
     # TODO
     # If :directory_indexes is already active,
@@ -27,9 +31,9 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
   end
 
   def after_configuration
-    app.files.reload_path(app.config[:locals_dir] || options[:data])
+    app.files.reload_path(app.config[:locales_dir] || options[:data])
 
-    @locales_glob = File.join(app.config[:locals_dir] || options[:data], '**', '*.{rb,yml,yaml}')
+    @locales_glob = File.join(app.config[:locales_dir] || options[:data], '**', '*.{rb,yml,yaml}')
     @locales_regex = convert_glob_to_regex(@locales_glob)
 
     @maps = {}
@@ -52,6 +56,11 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
   helpers do
     def t(*args)
       ::I18n.t(*args)
+    end
+
+    def link_to(text, target, lang=::I18n.locale)
+      url = extensions[:i18n].localized_path(target, lang)
+      url ? super(text, url) : super(text, target)
     end
   end
 
@@ -85,7 +94,17 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
       end
     end
 
-    resources + new_resources
+    @lookup = new_resources.each_with_object({}) do |desc, sum|
+      abs_path = desc.source_path.sub(options[:templates_dir], '')
+      sum[abs_path] ||= {}
+      sum[abs_path][desc.lang] = '/' + desc.path
+    end
+
+    resources + new_resources.map { |r| r.to_resource(app) }
+  end
+
+  def localized_path(path, lang)
+    @lookup[path] && @lookup[path][lang]
   end
 
   private
@@ -173,6 +192,14 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
     [lang, path, basename]
   end
 
+  LocalizedPageDescriptor = Struct.new(:path, :source_path, :lang) do
+    def to_resource(app)
+      p = ::Middleman::Sitemap::Resource.new(app.sitemap, path)
+      p.proxy_to(source_path)
+      p
+    end
+  end
+
   def build_resource(path, source_path, page_id, lang)
     old_locale = ::I18n.locale
     ::I18n.locale = lang
@@ -194,11 +221,9 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
 
     @_localization_data[path] = [lang, path, localized_page_id]
 
-    p = ::Middleman::Sitemap::Resource.new(app.sitemap, path)
-    p.proxy_to(source_path)
-
     ::I18n.locale = old_locale
-    p
+
+    LocalizedPageDescriptor.new(path, source_path, lang)
   end
 
   module LocaleHelpers
@@ -209,10 +234,10 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
     end
 
     def locate_partial(partial_name, try_static=false)
-      locals_dir = extensions[:i18n].options[:templates_dir]
+      locales_dir = extensions[:i18n].options[:templates_dir]
 
       # Try /localizable
-      partials_path = File.join(locals_dir, partial_name)
+      partials_path = File.join(locales_dir, partial_name)
 
       lang_suffix = current_resource.metadata[:locals] && current_resource.metadata[:locals][:lang]
 
@@ -226,7 +251,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
 
       if lang_suffix
         super(suffixed_partial_name, maybe_static) ||
-          super(File.join(locals_dir, suffixed_partial_name), maybe_static) ||
+          super(File.join(locales_dir, suffixed_partial_name), maybe_static) ||
           super(partials_path, try_static) ||
           super
       else
