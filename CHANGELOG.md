@@ -1,6 +1,13 @@
 master
 ===
 
+3.3.13
+===
+
+* Fix webrick restarts on Ruby 2.2
+* Empower link_to in a i18n context
+* Add retina files support on automatic_image_sizes
+
 3.3.12
 ===
 * The preview server can now serve over HTTPS using the `--https` flag. It will use an automatic self-signed cert which can be overridden using `--ssl_certificate` and `--ssl_private_key`. These settings can also be set in `config.rb`
