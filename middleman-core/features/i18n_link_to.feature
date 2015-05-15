@@ -25,7 +25,7 @@ Feature: i18n Links
       Page: <%= t(:msg) %>
       <% data.pages.each_with_index do |p, i| %>
         <%= link_to "Current #{p}", "/#{p}" %>
-        <%= link_to "Other #{p}", "/#{p}", ::I18n.locale == :en ? :es : :en %>
+        <%= link_to "Other #{p}", "/#{p}", lang: ::I18n.locale == :en ? :es : :en %>
       <% end %>
       """
     And a file named "config.rb" with:

@@ -58,9 +58,20 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
       ::I18n.t(*args)
     end
 
-    def link_to(text, target, lang=::I18n.locale)
-      url = extensions[:i18n].localized_path(target, lang)
-      url ? super(text, url) : super(text, target)
+    def link_to(*args, &block)
+      options  = args.extract_options!
+      name = block_given? ? '' : args.shift
+      href = args.first
+
+      lang = options.delete(:lang) || ::I18n.locale
+      
+      url = extensions[:i18n].localized_path(href, lang)
+      new_args = []
+      new_args << name unless block_given?
+      new_args << url || href
+      new_args << options
+
+      super(*new_args, &block)
     end
   end
 
