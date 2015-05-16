@@ -58,20 +58,11 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
       ::I18n.t(*args)
     end
 
-    def link_to(*args, &block)
-      options  = args.extract_options!
-      name = block_given? ? '' : args.shift
-      href = args.first
-
+    def url_for(path_or_resource, options={})
       locale = options.delete(:locale) || ::I18n.locale
-      
-      url = extensions[:i18n].localized_path(href, locale)
-      new_args = []
-      new_args << name unless block_given?
-      new_args << url || href
-      new_args << options
 
-      super(*new_args, &block)
+      href = super(path_or_resource, options)
+      extensions[:i18n].localized_path(href, locale) || href
     end
   end
 
@@ -177,9 +168,9 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
         p.to_s.match(@locales_regex) && (p.to_s.split(File::SEPARATOR).length == 2)
       end
 
-      known_langs.map { |p|
+      known_langs.map do |p|
         File.basename(p.to_s).sub(/\.ya?ml$/, '').sub(/\.rb$/, '')
-      }.sort.map(&:to_sym)
+      end.sort.map(&:to_sym)
     end
   end
 

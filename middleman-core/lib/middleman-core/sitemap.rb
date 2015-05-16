@@ -28,16 +28,16 @@ module Middleman
           root_dotfiles: proc { |file| file.start_with?('.') },
 
           # Files starting with an dot, but not .htaccess
-          source_dotfiles: proc { |file|
+          source_dotfiles: proc do |file|
             file =~ %r{/\.} && file !~ %r{/\.(htaccess|htpasswd|nojekyll)}
-          },
+          end,
 
           # Files starting with an underscore, but not a double-underscore
           partials: proc { |file| file =~ %r{/_[^_]} },
 
-          layout: proc { |file, sitemap_app|
+          layout: proc do |file, sitemap_app|
             file.start_with?(File.join(sitemap_app.config[:source], 'layout.')) || file.start_with?(File.join(sitemap_app.config[:source], 'layouts/'))
-          }
+          end
         }, 'Callbacks that can exclude paths from the sitemap'
 
         # Include instance methods

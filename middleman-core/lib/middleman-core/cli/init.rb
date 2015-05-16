@@ -64,8 +64,8 @@ module Middleman::Cli
 
   # Map "i", "new" and "n" to "init"
   Base.map(
-             'i'   => 'init',
-             'new' => 'init',
-             'n'   => 'init'
+    'i'   => 'init',
+    'new' => 'init',
+    'n'   => 'init'
   )
 end

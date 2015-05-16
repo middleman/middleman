@@ -125,7 +125,8 @@ module Middleman
           unless VALID_OPERATORS.include? opts[:operator]
             raise OperatorNotSupportedError
           end
-          @attribute, @operator = opts[:attribute], opts[:operator]
+          @attribute = opts[:attribute]
+          @operator = opts[:operator]
         end
       end
     end

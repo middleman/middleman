@@ -27,8 +27,8 @@ class Middleman::Extensions::AutomaticImageSizes < ::Middleman::Extension
             retina = full_path.match(/@(\d)x\.[a-zA-Z]{3,4}$/)
             if retina
               factor  = retina[1].to_i
-              width   = width / factor
-              height  = height / factor
+              width /= factor
+              height /= factor
             end
             params[:width]  = width
             params[:height] = height

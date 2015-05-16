@@ -34,6 +34,6 @@ module Middleman::Cli
 
   # Map "u" to "upgrade"
   Base.map(
-             'u' => 'upgrade'
+    'u' => 'upgrade'
   )
 end

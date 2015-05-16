@@ -101,7 +101,7 @@ module Middleman::CoreExtensions
         data, content = frontmatter_and_content(p)
 
         if app.files.exists?("#{path}.frontmatter")
-          external_data, _ = frontmatter_and_content("#{p}.frontmatter")
+          external_data, = frontmatter_and_content("#{p}.frontmatter")
           data = external_data.deep_merge(data)
         end
 

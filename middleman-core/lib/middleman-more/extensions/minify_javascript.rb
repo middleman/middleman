@@ -103,7 +103,9 @@ class Middleman::Extensions::MinifyJavascript < ::Middleman::Extension
     # @return [String]
     def minify_inline(content)
       content.gsub(INLINE_JS_REGEX) do |match|
-        first, inline_content, last = $1, $2, $3
+        first = $1
+        inline_content = $2
+        last = $3
 
         # Only compress script tags that contain JavaScript (as opposed to
         # something like jQuery templates, identified with a "text/html" type).

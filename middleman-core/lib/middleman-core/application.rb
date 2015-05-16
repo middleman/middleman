@@ -73,7 +73,7 @@ module Middleman
 
     # Which server name should be used
     # @return [NilClass, String]
-    config.define_setting :host, nil , 'The preview host name'
+    config.define_setting :host, nil, 'The preview host name'
 
     # Whether to serve the preview server over HTTPS.
     # @return [Boolean]

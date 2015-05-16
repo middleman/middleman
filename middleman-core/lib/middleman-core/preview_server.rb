@@ -198,12 +198,12 @@ module Middleman
           http_opts[:SSLEnable] = true
 
           if ssl_certificate || ssl_private_key
-            raise "You must provide both :ssl_certificate and :ssl_private_key" unless ssl_private_key && ssl_certificate
+            raise 'You must provide both :ssl_certificate and :ssl_private_key' unless ssl_private_key && ssl_certificate
             http_opts[:SSLCertificate] = OpenSSL::X509::Certificate.new File.read ssl_certificate
             http_opts[:SSLPrivateKey] = OpenSSL::PKey::RSA.new File.read ssl_private_key
           else
             # use a generated self-signed cert
-            cert, key = create_self_signed_cert(1024, [["CN", host]], "Middleman Preview Server")
+            cert, key = create_self_signed_cert(1024, [['CN', host]], 'Middleman Preview Server')
             http_opts[:SSLCertificate] = cert
             http_opts[:SSLPrivateKey] = key
           end
@@ -251,24 +251,24 @@ module Middleman
         cert.subject = name
         cert.issuer = name
         cert.not_before = Time.now
-        cert.not_after = Time.now + (365*24*60*60)
+        cert.not_after = Time.now + (365 * 24 * 60 * 60)
         cert.public_key = rsa.public_key
 
-        ef = OpenSSL::X509::ExtensionFactory.new(nil,cert)
+        ef = OpenSSL::X509::ExtensionFactory.new(nil, cert)
         ef.issuer_certificate = cert
         cert.extensions = [
-                           ef.create_extension("basicConstraints","CA:FALSE"),
-                           ef.create_extension("keyUsage", "keyEncipherment"),
-                           ef.create_extension("subjectKeyIdentifier", "hash"),
-                           ef.create_extension("extendedKeyUsage", "serverAuth"),
-                           ef.create_extension("nsComment", comment),
-                          ]
-        aki = ef.create_extension("authorityKeyIdentifier",
-                                  "keyid:always,issuer:always")
+          ef.create_extension('basicConstraints', 'CA:FALSE'),
+          ef.create_extension('keyUsage', 'keyEncipherment'),
+          ef.create_extension('subjectKeyIdentifier', 'hash'),
+          ef.create_extension('extendedKeyUsage', 'serverAuth'),
+          ef.create_extension('nsComment', comment)
+        ]
+        aki = ef.create_extension('authorityKeyIdentifier',
+                                  'keyid:always,issuer:always')
         cert.add_extension(aki)
         cert.sign(rsa, OpenSSL::Digest::SHA1.new)
 
-        return [ cert, rsa ]
+        [cert, rsa]
       end
 
       # Attach a new Middleman::Application instance

@@ -173,8 +173,8 @@ module Middleman
         def current_path=(path)
           Thread.current[:current_path] = path
           Thread.current[:legacy_request] = ::Thor::CoreExt::HashWithIndifferentAccess.new(
-                                                                                             path: path,
-                                                                                             params: req ? ::Thor::CoreExt::HashWithIndifferentAccess.new(req.params) : {}
+            path: path,
+            params: req ? ::Thor::CoreExt::HashWithIndifferentAccess.new(req.params) : {}
           )
         end
 

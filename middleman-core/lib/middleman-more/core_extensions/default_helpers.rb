@@ -8,7 +8,8 @@ class Padrino::Helpers::OutputHelpers::ErbHandler
   # Force Erb capture not to use safebuffer
   # rubocop:disable UnderscorePrefixedVariableName
   def capture_from_template(*args, &block)
-    self.output_buffer, _buf_was = '', output_buffer
+    self.output_buffer = ''
+    _buf_was = output_buffer
     raw = block.call(*args)
     captured = template.instance_variable_get(:@_out_buf)
     self.output_buffer = _buf_was
@@ -255,12 +256,12 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
       url = url_for(url, options)
       super
     end
-    
+
     # Modified Padrino image_tag so that it finds the paths for srcset
     # using asset_path for the images listed in the srcset param
     def image_tag(path, params={})
       params.symbolize_keys!
-      
+
       if params.key?(:srcset)
         images_sources = params[:srcset].split(',').map do |src_def|
           if src_def.include?('//')
