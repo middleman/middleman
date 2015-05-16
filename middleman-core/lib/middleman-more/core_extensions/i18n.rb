@@ -79,21 +79,29 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
 
     new_resources = []
 
-    resources.each do |resource|
-      # If it uses file extension localization
-      if parse_locale_extension(resource.path)
-        result = parse_locale_extension(resource.path)
-        ext_lang, path, page_id = result
-        new_resources << build_resource(path, resource.path, page_id, ext_lang)
-      # If it's a "localizable template"
-      elsif File.fnmatch?(File.join(options[:templates_dir], '**'), resource.path)
-        page_id = File.basename(resource.path, File.extname(resource.path))
-        langs.each do |lang|
-          # Remove folder name
-          path = resource.path.sub(options[:templates_dir], '')
-          new_resources << build_resource(path, resource.path, page_id, lang)
-        end
+    file_extension_resources = resources.select do |resource|
+      parse_locale_extension(resource.path)
+    end
+
+    localizable_folder_resources = resources.select do |resource|
+      !file_extension_resources.include?(resource) && File.fnmatch?(File.join(options[:templates_dir], '**'), resource.path)
+    end
+
+    # If it's a "localizable template"
+    localizable_folder_resources.map do |resource|
+      page_id = File.basename(resource.path, File.extname(resource.path))
+      langs.each do |lang|
+        # Remove folder name
+        path = resource.path.sub(options[:templates_dir], '')
+        new_resources << build_resource(path, resource.path, page_id, lang)
       end
+    end
+
+    # If it uses file extension localization
+    file_extension_resources.map do |resource|
+      result = parse_locale_extension(resource.path)
+      ext_lang, path, page_id = result
+      new_resources << build_resource(path, resource.path, page_id, ext_lang)
     end
 
     @lookup = new_resources.each_with_object({}) do |desc, sum|

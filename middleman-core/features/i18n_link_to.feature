@@ -53,6 +53,7 @@ Feature: i18n Paths
     And a file named "data/pages.yml" with:
       """
       - hello.html 
+      - article.html
       """
     And a file named "locales/en.yml" with:
       """
@@ -76,6 +77,20 @@ Feature: i18n Paths
         Other: <%= url_for "/#{p}", locale: ::I18n.locale == :en ? :es : :en %>
       <% end %>
       """
+    And a file named "source/localizable/article.html.erb" with:
+      """
+      Page Lang: Default
+
+      Current: <%= url_for "/article.html" %>
+      Other: <%= url_for "/article.html", locale: ::I18n.locale == :en ? :es : :en %>
+      """
+    And a file named "source/localizable/article.es.html.erb" with:
+      """
+      Page Lang: Spanish
+
+      Current: <%= url_for "/article.html" %>
+      Other: <%= url_for "/article.html", locale: :en %>
+      """
     And a file named "config.rb" with:
       """
       activate :i18n
@@ -89,3 +104,11 @@ Feature: i18n Paths
     Then I should see "Page: Hola"
     Then I should see 'Current: /es/hola.html'
     Then I should see 'Other: /hello.html'
+    When I go to "/article.html"
+    Then I should see "Page Lang: Default"
+    Then I should see 'Current: /article.html'
+    Then I should see 'Other: /es/article.html'
+    When I go to "/es/article.html"
+    Then I should see "Page Lang: Spanish"
+    Then I should see 'Current: /es/article.html'
+    Then I should see 'Other: /article.html'
