@@ -1,11 +1,11 @@
 master
 ===
 
-3.3.13
+3.4.0
 ===
 
 * Fix webrick restarts on Ruby 2.2
-* Empower link_to in a i18n context
+* Empower link_to in a i18n context.
 * Add retina files support on automatic_image_sizes
 
 3.3.12

@@ -63,9 +63,9 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
       name = block_given? ? '' : args.shift
       href = args.first
 
-      lang = options.delete(:lang) || ::I18n.locale
+      locale = options.delete(:locale) || ::I18n.locale
       
-      url = extensions[:i18n].localized_path(href, lang)
+      url = extensions[:i18n].localized_path(href, locale)
       new_args = []
       new_args << name unless block_given?
       new_args << url || href
