@@ -57,7 +57,9 @@ module Middleman
     # Root project directory (overwritten in middleman build/server)
     # @return [String]
     def self.root
-      ENV['MM_ROOT'] || Dir.pwd
+      r = ENV['MM_ROOT'] ? ENV['MM_ROOT'].dup : ::Middleman::Util.current_directory
+      r.encode!('UTF-8', 'UTF-8-MAC') if RUBY_PLATFORM =~ /darwin/
+      r
     end
     delegate :root, to: :"self.class"
 

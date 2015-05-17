@@ -62,7 +62,7 @@ module Middleman::Cli
       unless ENV['MM_ROOT']
         puts '== Could not find a Middleman project config.rb'
         puts '== Treating directory as a static site to be served'
-        ENV['MM_ROOT'] = Dir.pwd
+        ENV['MM_ROOT'] = ::Middleman::Util.current_directory
         ENV['MM_SOURCE'] = ''
       end
 

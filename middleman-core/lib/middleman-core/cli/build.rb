@@ -138,7 +138,9 @@ module Middleman::Cli
         base.remove_file f, force: true
       end
 
-      Dir[@build_dir.join('**', '*')].select { |d| File.directory?(d) }.each do |d|
+      ::Middleman::Util.glob_directory(@build_dir.join('**', '*'))
+        .select { |d| File.directory?(d) }
+        .each do |d|
         base.remove_file d, force: true if directory_empty? d
       end
     end

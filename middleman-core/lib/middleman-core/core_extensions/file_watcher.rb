@@ -95,6 +95,8 @@ module Middleman
         # @param [Pathname] path The file that changed
         # @return [void]
         def did_change(path)
+          path = path.to_s.encode!('UTF-8', 'UTF-8-MAC') if RUBY_PLATFORM =~ /darwin/
+
           path = Pathname(path)
           logger.debug "== File Change: #{path}"
           @known_paths << path
@@ -106,6 +108,8 @@ module Middleman
         # @param [Pathname] path The file that was deleted
         # @return [void]
         def did_delete(path)
+          path = path.to_s.encode!('UTF-8', 'UTF-8-MAC') if RUBY_PLATFORM =~ /darwin/
+
           path = Pathname(path)
           logger.debug "== File Deletion: #{path}"
           @known_paths.delete(path)
@@ -146,7 +150,10 @@ module Middleman
         end
 
         def exists?(path)
+          path = path.to_s.encode!('UTF-8', 'UTF-8-MAC') if RUBY_PLATFORM =~ /darwin/
+
           p = Pathname(path)
+
           p = p.relative_path_from(Pathname(@app.root)) unless p.relative?
           @known_paths.include?(p)
         end

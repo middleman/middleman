@@ -133,7 +133,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
   end
 
   def configure_i18n
-    ::I18n.load_path += Dir[File.join(app.root, @locales_glob)]
+    ::I18n.load_path += ::Middleman::Util.glob_directory(File.join(app.root, @locales_glob))
     ::I18n.reload!
 
     ::I18n.default_locale = @mount_at_root

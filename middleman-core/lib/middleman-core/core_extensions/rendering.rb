@@ -503,7 +503,7 @@ module Middleman
 
             found_path = nil
             search_paths.each do |path_with_ext|
-              found_path = Dir[path_with_ext].find do |path|
+              found_path = ::Middleman::Util.glob_directory(path_with_ext).find do |path|
                 ::Tilt[path]
               end
 

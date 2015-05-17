@@ -144,7 +144,7 @@ module Middleman
         options = { force_polling: @options[:force_polling] }
         options[:latency] = @options[:latency] if @options[:latency]
 
-        @listener = Listen.to(Dir.pwd, options) do |modified, added, removed|
+        @listener = Listen.to(::Middleman::Util.current_directory, options) do |modified, added, removed|
           added_and_modified = (modified + added)
 
           # See if the changed file is config.rb or lib/*.rb
@@ -152,14 +152,16 @@ module Middleman
             $mm_reload = true
             @webrick.stop
           else
+            wd = Pathname(::Middleman::Util.current_directory)
+
             added_and_modified.each do |path|
-              relative_path = Pathname(path).relative_path_from(Pathname(Dir.pwd)).to_s
+              relative_path = Pathname(path).relative_path_from(wd).to_s
               next if app.files.ignored?(relative_path)
               app.files.did_change(relative_path)
             end
 
             removed.each do |path|
-              relative_path = Pathname(path).relative_path_from(Pathname(Dir.pwd)).to_s
+              relative_path = Pathname(path).relative_path_from(wd).to_s
               next if app.files.ignored?(relative_path)
               app.files.did_delete(relative_path)
             end
