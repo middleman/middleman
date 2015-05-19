@@ -49,11 +49,11 @@ class Middleman::Extensions::MinifyJavascript < ::Middleman::Extension
       status, headers, response = @app.call(env)
 
       type = headers['Content-Type'].try(:slice, /^[^;]*/)
-      path = env['PATH_INFO']
+      @path = env['PATH_INFO']
 
       minified = if @inline && minifiable_inline?(type)
         minify_inline(::Middleman::Util.extract_response_text(response))
-      elsif minifiable?(type) && !ignore?(path)
+      elsif minifiable?(type) && !ignore?(@path)
         minify(::Middleman::Util.extract_response_text(response))
       end
 
@@ -94,7 +94,7 @@ class Middleman::Extensions::MinifyJavascript < ::Middleman::Extension
     def minify(content)
       @compressor.compress(content)
     rescue ExecJS::ProgramError => e
-      warn "WARNING: Couldn't compress JavaScript in #{path}: #{e.message}"
+      warn "WARNING: Couldn't compress JavaScript in #{@path}: #{e.message}"
       content
     end
 
