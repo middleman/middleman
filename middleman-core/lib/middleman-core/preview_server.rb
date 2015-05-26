@@ -1,6 +1,7 @@
 require 'webrick'
 require 'webrick/https'
 require 'openssl'
+require 'socket'
 require 'middleman-core/meta_pages'
 require 'middleman-core/logger'
 require 'middleman-core/rack'
@@ -200,7 +201,7 @@ module Middleman
         begin
           ::WEBrick::HTTPServer.new(http_opts)
         rescue Errno::EADDRINUSE
-          logger.error "== Port #{port} is unavailable. Either close the instance of Middleman already running on #{port} or start this Middleman on a new port with: --port=#{port.to_i + 1}"
+          logger.error "== Port #{port} is unavailable. Either close the instance of Middleman already running on #{port} or start this Middleman on a new port with: --port=#{unused_tcp_port}"
           exit(1)
         end
       end
@@ -233,6 +234,15 @@ module Middleman
         host = (@host == '0.0.0.0') ? 'localhost' : @host
         scheme = https? ? 'https' : 'http'
         URI("#{scheme}://#{host}:#{@port}")
+      end
+
+      # Returns unused TCP port
+      # @return [Fixnum]
+      def unused_tcp_port
+        server = TCPServer.open(0)
+        port = server.addr[1]
+        server.close
+        port
       end
     end
 
