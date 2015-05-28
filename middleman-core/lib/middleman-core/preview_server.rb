@@ -222,21 +222,7 @@ module Middleman
         begin
           ::WEBrick::HTTPServer.new(http_opts)
         rescue Errno::EADDRINUSE
-          attempts_left -= 1
-          tried_ports << port
-
-          if attempts_left > 0
-            logger.error %(== Port #{port} is unavailable. Trying port #{port + 1} next.)
-
-            @port += 1
-            http_opts[:Port] = @port
-
-            retry
-          end
-
-          ports_sentence = tried_ports.to_sentence
-          logger.error %(== Ports #{ports_sentence} are unavailable. Either close the Middleman servers already running on ports #{ports_sentence} or start this Middleman server on a another port with: "middleman server --port=#{port + 1}".)
-
+          logger.error "== Port #{port} is unavailable. Either close the instance of Middleman already running on #{port} or start this Middleman on a new port with: --port=#{unused_tcp_port}"
           exit(1)
         end
       end
@@ -333,6 +319,15 @@ module Middleman
       def public_ip
         ip = Socket.ip_address_list.find { |ai| ai.ipv4? && !ai.ipv4_loopback? }
         ip ? ip.ip_address : '127.0.0.1'
+      end
+
+      # Returns unused TCP port
+      # @return [Fixnum]
+      def unused_tcp_port
+        server = TCPServer.open(0)
+        port = server.addr[1]
+        server.close
+        port
       end
     end
 
