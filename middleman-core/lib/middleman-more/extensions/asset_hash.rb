@@ -63,7 +63,7 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
       @rack_app        = app
       @exts            = options[:exts]
       @ignore          = options[:ignore]
-      @exts_regex_text = @exts.map { |e| Regexp.escape(e) }.join('|')
+      @exts_regex_text = @exts.map { |e| Regexp.escape(e) }.sort.reverse.join('|')
       @middleman_app   = options[:middleman_app]
     end
 
