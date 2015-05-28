@@ -47,6 +47,15 @@ Feature: Assets get a file hash appended to their and references to them are upd
     And the file "subdir/api.json" should contain 'images/100px-5fd6fb90.jpg'
     And the file "subdir/api.json" should contain 'images/100px-1242c368.png'
 
+  Scenario: Hashed fonts assets work with woff and woff2 extension
+    Given a successfully built app at "asset-hash-app"
+    When I cd to "build"
+    Then the following files should exist:
+      | fonts/fontawesome-webfont-56ce13e7.woff |
+      | fonts/fontawesome-webfont-10752316.woff2 |
+    And the file "stylesheets/uses_fonts-88aa3e2b.css" should contain "src: url('../fonts/fontawesome-webfont-10752316.woff2')"
+    And the file "stylesheets/uses_fonts-88aa3e2b.css" should contain "url('../fonts/fontawesome-webfont-56ce13e7.woff')"
+
   Scenario: Hashed assets work in preview server
     Given the Server is running at "asset-hash-app"
     When I go to "/"
