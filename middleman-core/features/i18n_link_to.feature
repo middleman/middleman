@@ -11,6 +11,7 @@ Feature: i18n Paths
       ---
       en:
         msg: Hello
+        home: Home
       """
     And a file named "locales/es.yml" with:
       """
@@ -19,10 +20,21 @@ Feature: i18n Paths
         paths:
           hello: "hola"
         msg: Hola
+        home: Casa
+      """
+    And a file named "source/localizable/index.html.erb" with:
+      """
+      Page: <%= t(:hom) %>
       """
     And a file named "source/localizable/hello.html.erb" with:
       """
       Page: <%= t(:msg) %>
+
+      <%= link_to "Current Home", "/index.html", class: 'current' %>
+      <%= link_to "Other Home", "/index.html", title: "Other Home", locale: ::I18n.locale == :en ? :es : :en %>
+      <% link_to "/index.html", class: 'current' do %><span>Home: Current Block</span><% end %>
+      <% link_to "/index.html", title: "Other Home", locale: ::I18n.locale == :en ? :es : :en do %><span>Home: Other Block</span><% end %>
+
       <% data.pages.each_with_index do |p, i| %>
         <%= link_to "Current #{p}", "/#{p}", class: 'current' %>
         <%= link_to "Other #{p}", "/#{p}", title: "Other #{p}", locale: ::I18n.locale == :en ? :es : :en %>
@@ -32,17 +44,26 @@ Feature: i18n Paths
       """
     And a file named "config.rb" with:
       """
-      activate :i18n
+      activate :i18n, mount_at_root: :en
       """
     Given the Server is running at "empty-app"
     When I go to "/hello.html"
     Then I should see "Page: Hello"
+    Then I should see '<a class="current" href="/index.html">Current Home</a>'
+    Then I should see '<a title="Other Home" href="/es/index.html">Other Home</a>'
+    Then I should see '<a class="current" href="/index.html"><span>Home: Current Block</span></a>'
+    Then I should see '<a title="Other Home" href="/es/index.html"><span>Home: Other Block</span></a>'
     Then I should see '<a class="current" href="/hello.html">Current hello.html</a>'
     Then I should see '<a title="Other hello.html" href="/es/hola.html">Other hello.html</a>'
     Then I should see '<a class="current" href="/hello.html"><span>Current Block</span></a>'
     Then I should see '<a title="Other hello.html" href="/es/hola.html"><span>Other Block</span></a>'
     When I go to "/es/hola.html"
     Then I should see "Page: Hola"
+    Then I should see '<a class="current" href="/es/index.html">Current Home</a>'
+    Then I should see '<a title="Other Home" href="/index.html">Other Home</a>'
+    Then I should see '<a class="current" href="/es/index.html"><span>Home: Current Block</span></a>'
+    Then I should see '<a title="Other Home" href="/index.html"><span>Home: Other Block</span></a>'
+
     Then I should see '<a class="current" href="/es/hola.html">Current hello.html</a>'
     Then I should see '<a title="Other hello.html" href="/hello.html">Other hello.html</a>'
     Then I should see '<a class="current" href="/es/hola.html"><span>Current Block</span></a>'
@@ -93,7 +114,7 @@ Feature: i18n Paths
       """
     And a file named "config.rb" with:
       """
-      activate :i18n
+      activate :i18n, mount_at_root: :en
       """
     Given the Server is running at "empty-app"
     When I go to "/hello.html"
