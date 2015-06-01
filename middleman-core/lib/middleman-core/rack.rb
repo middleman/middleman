@@ -73,8 +73,9 @@ module Middleman
     # message.
     #
     # @param env
+    # @param [Rack::Request] req
     # @param [Rack::Response] res
-    def process_request(env, _, res)
+    def process_request(env, req, res)
       start_time = Time.now
 
       request_path = URI.decode(env['PATH_INFO'].dup)
@@ -100,7 +101,7 @@ module Middleman
 
       begin
         # Write out the contents of the page
-        res.write resource.render
+        res.write resource.render({}, { rack: { request: req } })
 
         # Valid content is a 200 status
         res.status = 200
