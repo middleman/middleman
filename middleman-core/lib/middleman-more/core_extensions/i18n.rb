@@ -63,14 +63,21 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
     def url_for(path_or_resource, options={})
       locale = options.delete(:locale) || ::I18n.locale
 
+      should_relativize = options.key?(:relative) ? options[:relative] : config[:relative_links]
+
+      options[:relative] = false
+
       href = super(path_or_resource, options)
 
-      if result = extensions[:i18n].localized_path(href, locale)
+      final_path = if result = extensions[:i18n].localized_path(href, locale)
         result
       else
         # Should we log the missing file?
         href
       end
+
+      options[:relative] = should_relativize
+      super(final_path, options)
     end
   end
 
