@@ -27,6 +27,8 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
 
     app.config.define_setting :locales_dir, 'locales', 'The directory holding your locale configurations'
 
+    ::Middleman::Sitemap::Resource.send :attr_accessor, :locale_root_path
+
     app.send :include, LocaleHelpers
   end
 
@@ -206,6 +208,11 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
     def to_resource(app)
       p = ::Middleman::Sitemap::Resource.new(app.sitemap, path)
       p.proxy_to(source_path)
+
+      templates_dir = app.extensions[:i18n].options[:templates_dir]
+
+      p.locale_root_path = source_path.gsub(templates_dir, '')
+
       p
     end
   end
