@@ -7,6 +7,7 @@ master
 * Fix webrick restarts on Ruby 2.2
 * Empower link_to in a i18n context.
 * Add retina files support on automatic_image_sizes
+* Fix woff/woff2 confusion in asset hashing.
 
 3.3.12
 ===
