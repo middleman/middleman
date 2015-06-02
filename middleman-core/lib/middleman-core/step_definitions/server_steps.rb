@@ -33,7 +33,6 @@ end
 Given /^the Server is running$/ do
   root_dir = File.expand_path(current_dir)
 
-
   if File.exists?(File.join(root_dir, 'source'))
     ENV['MM_SOURCE'] = 'source'
   else
@@ -53,10 +52,10 @@ Given /^the Server is running$/ do
         instance_exec(&p)
       end
     end
-  end
 
-  rack = ::Middleman::Rack.new(@server_inst)
-  @browser = ::Rack::MockRequest.new(rack.to_app)
+    rack = ::Middleman::Rack.new(@server_inst)
+    @browser = ::Rack::MockRequest.new(rack.to_app)
+  end
 end
 
 Given /^the Server is running at "([^\"]*)"$/ do |app_path|

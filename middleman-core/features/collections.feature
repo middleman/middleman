@@ -192,4 +192,45 @@ Feature: Collections
     Then I should see 'Newer Article Content'
     When I go to "2.html"
     Then I should see 'Again'
-    
+
+  Scenario: Arbitrary live datasets
+    Given a fixture app "collections-app"
+    And a file named "config.rb" with:
+      """
+      live {
+        Dir["descriptions/*.txt"]
+      }.each do |description_name|
+        base = File.basename(description_name, '.txt')
+        proxy "#{base}.html", "/description_template.html", locals: {
+          contents: File.read(description_name)
+        }, ignore: true
+      end
+      """
+    And a file named "source/description_template.html.erb" with:
+      """
+      <%= contents %>
+      """
+    And a file named "descriptions/test1.txt" with:
+      """
+      Test1
+      """
+    Given the Server is running at "collections-app"
+    When I go to "test1.html"
+    Then I should see 'Test1'
+    When I go to "test2.html"
+    Then I should see 'Not Found'
+
+    When the file "descriptions/test2.txt" has the contents
+      """
+      Test2
+      """
+    When I go to "test1.html"
+    Then I should see 'Test1'
+    When I go to "test2.html"
+    Then I should see 'Test2'
+
+    When the file "descriptions/test1.txt" is removed
+    When I go to "test1.html"
+    Then I should see 'Not Found'
+    When I go to "test2.html"
+    Then I should see 'Test2'

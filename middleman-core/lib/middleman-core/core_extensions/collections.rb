@@ -16,12 +16,13 @@ module Middleman
         # gets a chance to modify any new resources that get added.
         self.resource_list_manipulator_priority = 110
 
-        attr_accessor :sitemap_collector, :data_collector, :leaves
+        attr_accessor :leaves
 
         # Expose `resources`, `data`, and `collection` to config.
         expose_to_config resources: :sitemap_collector,
                          data: :data_collector,
-                         collection: :register_collector
+                         collection: :register_collector,
+                         live: :live_collector
 
         # Exposes `collection` to templates
         expose_to_template collection: :collector_value
@@ -39,8 +40,7 @@ module Middleman
           @collectors_by_name = {}
           @values_by_name = {}
 
-          @sitemap_collector = LazyCollectorRoot.new(self)
-          @data_collector = LazyCollectorRoot.new(self)
+          @collector_roots = []
         end
 
         def before_configuration
@@ -52,6 +52,28 @@ module Middleman
           @collectors_by_name[label] = endpoint
         end
 
+        Contract LazyCollectorRoot
+        def sitemap_collector
+          live_collector { |_, resources| resources }
+        end
+
+        Contract LazyCollectorRoot
+        def data_collector
+          live_collector { |app, _| app.data }
+        end
+
+        Contract Proc => LazyCollectorRoot
+        def live_collector(&block)
+          root = LazyCollectorRoot.new(self)
+
+          @collector_roots << {
+            root: root,
+            block: block
+          }
+
+          root
+        end
+
         Contract Symbol => Any
         def collector_value(label)
           @values_by_name[label]
@@ -59,8 +81,10 @@ module Middleman
 
         Contract ResourceList => ResourceList
         def manipulate_resource_list(resources)
-          @sitemap_collector.realize!(resources)
-          @data_collector.realize!(app.data)
+          @collector_roots.each do |pair|
+            dataset = pair[:block].call(app, resources)
+            pair[:root].realize!(dataset)
+          end
 
           ctx = StepContext.new
           leaves = @leaves.dup
