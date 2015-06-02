@@ -87,9 +87,15 @@ Feature: i18n Paths
         msg: Hola
         home: Casa
       """
+    And a file named "source/assets/css/main.css.scss" with:
+      """
+      $color: red;
+      body { background: $color; }
+      """
     And a file named "source/localizable/index.html.erb" with:
       """
       Page: <%= t(:home) %>
+      <%= stylesheet_link_tag :main %>
       """
     And a file named "source/localizable/hello.html.erb" with:
       """
@@ -107,11 +113,15 @@ Feature: i18n Paths
       """
     And a file named "config.rb" with:
       """
+      set :css_dir, 'assets/css'
       set :relative_links, true
       set :strip_index_file, false
       activate :i18n, mount_at_root: :en
+      activate :relative_assets
       """
     Given the Server is running at "empty-app"
+    When I go to "/index.html"
+    Then I should see "assets/css/main.css"
     When I go to "/hello.html"
     Then I should see "Page: Hello"
     Then I should see '<a class="current" href="index.html">Current Home</a>'

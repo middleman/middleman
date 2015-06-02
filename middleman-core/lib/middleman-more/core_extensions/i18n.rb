@@ -63,11 +63,13 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
     def url_for(path_or_resource, options={})
       locale = options.delete(:locale) || ::I18n.locale
 
-      should_relativize = options.key?(:relative) ? options[:relative] : config[:relative_links]
+      opts = options.dup
 
-      options[:relative] = false
+      should_relativize = opts.key?(:relative) ? opts[:relative] : config[:relative_links]
 
-      href = super(path_or_resource, options)
+      opts[:relative] = false
+
+      href = super(path_or_resource, opts)
 
       final_path = if result = extensions[:i18n].localized_path(href, locale)
         result
@@ -76,8 +78,13 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
         href
       end
 
-      options[:relative] = should_relativize
-      super(final_path, options)
+      opts[:relative] = should_relativize
+
+      begin
+        super(final_path, opts)
+      rescue RuntimeError
+        super(path_or_resource, options)
+      end
     end
   end
 
