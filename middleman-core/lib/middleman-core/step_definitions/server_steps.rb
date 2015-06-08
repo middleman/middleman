@@ -1,6 +1,7 @@
 # encoding: UTF-8
 
-require 'rack/test'
+require 'rspec/expectations'
+require 'capybara/cucumber'
 
 Given /^a clean server$/ do
   @initialize_commands = []
@@ -57,8 +58,7 @@ Given /^the Server is running$/ do
     end
   end
 
-  app_rack = @server_inst.class.to_rack_app
-  @browser = ::Rack::Test::Session.new(::Rack::MockSession.new(app_rack))
+  Capybara.app =  @server_inst.class.to_rack_app
 end
 
 Given /^the Server is running at "([^\"]*)"$/ do |app_path|
@@ -72,60 +72,61 @@ end
 
 When /^I go to "([^\"]*)"$/ do |url|
   in_current_dir do
-    @browser.get(URI.encode(url))
+    visit(URI.encode(url).to_s)
   end
 end
 
 Then /^going to "([^\"]*)" should not raise an exception$/ do |url|
   in_current_dir do
-    expect{ @browser.get(URI.encode(url)) }.to_not raise_exception
+    
+    expect{ visit(URI.encode(url).to_s) }.to_not raise_exception
   end
 end
 
 Then /^the content type should be "([^\"]*)"$/ do |expected|
   in_current_dir do
-    expect(@browser.last_response.content_type).to start_with(expected)
+    expect(page.response_headers['Content-Type']).to start_with expected
   end
 end
 
 Then /^I should see "([^\"]*)"$/ do |expected|
   in_current_dir do
-    expect(@browser.last_response.body).to include(expected)
+    expect(page.body).to include expected
   end
 end
 
 Then /^I should see '([^\']*)'$/ do |expected|
   in_current_dir do
-    expect(@browser.last_response.body).to include(expected)
+    expect(page.body).to include expected
   end
 end
 
 Then /^I should see:$/ do |expected|
   in_current_dir do
-    expect(@browser.last_response.body).to include(expected)
+    expect(page.body).to include expected
   end
 end
 
 Then /^I should not see "([^\"]*)"$/ do |expected|
   in_current_dir do
-    expect(@browser.last_response.body).to_not include(expected)
+    expect(page.body).not_to include expected
   end
 end
 
 Then /^I should not see:$/ do |expected|
   in_current_dir do
-    expect(@browser.last_response.body).to_not include(expected.chomp)
+    expect(page.body).not_to include expected
   end
 end
 
 Then /^the status code should be "([^\"]*)"$/ do |expected|
   in_current_dir do
-    expect(@browser.last_response.status).to eq expected.to_i
+    expect(page.status_code).to eq expected.to_i
   end
 end
 
 Then /^I should see "([^\"]*)" lines$/ do |lines|
   in_current_dir do
-    expect(@browser.last_response.body.chomp.split($/).length).to eq(lines.to_i)
+    expect(page.body.chomp.split($/).length).to eq lines.to_i
   end
 end

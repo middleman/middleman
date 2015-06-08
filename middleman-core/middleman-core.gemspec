@@ -26,7 +26,7 @@ Gem::Specification.new do |s|
   s.add_dependency("hooks", ["~> 0.3"])
 
   # Builder
-  s.add_dependency("rack-test", ["~> 0.6.2"])
+  s.add_dependency("capybara", ["~> 2.4.4"])
 
   # CLI
   s.add_dependency("thor", [">= 0.15.2", "< 2.0"])
