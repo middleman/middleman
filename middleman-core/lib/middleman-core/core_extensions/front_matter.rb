@@ -185,7 +185,7 @@ module Middleman::CoreExtensions
 
       # Avoid weird race condition when a file is renamed.
       content = begin
-        File.read(full_path)
+        read_data_file(full_path)
       rescue ::EOFError
       rescue ::IOError
       rescue ::Errno::ENOENT
@@ -206,6 +206,15 @@ module Middleman::CoreExtensions
       end
 
       [data, content]
+    end
+
+    def read_data_file(path)
+      data = File.open(path, 'rb') { |io| io.read }
+      if data.respond_to?(:force_encoding)
+        # Set it to the default external (without verifying)
+        data.force_encoding(Encoding.default_external) if Encoding.default_external
+      end
+      data
     end
 
     def normalize_path(path)

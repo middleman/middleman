@@ -217,8 +217,17 @@ module Middleman
             # Render the partial if found, otherwide throw exception
             _render_with_all_renderers(found_partial, locals, self, options, &block)
           else
-            File.read(found_partial)
+            read_template_file(found_partial)
           end
+        end
+
+        def read_template_file(path)
+          data = ::File.open(path, 'rb') { |io| io.read }
+          if data.respond_to?(:force_encoding)
+            # Set it to the default external (without verifying)
+            data.force_encoding(::Encoding.default_external) if ::Encoding.default_external
+          end
+          data
         end
 
         # Partial locator.
@@ -277,6 +286,7 @@ module Middleman
           extension = File.extname(path)
           options = opts.dup.merge(options_for_ext(extension))
           options[:outvar] ||= '@_out_buf'
+          options[:default_encoding] ||= 'UTF-8'
           options.delete(:layout)
 
           # Overwrite with frontmatter options
@@ -298,6 +308,8 @@ module Middleman
           template = cache.fetch(:compiled_template, extension, options, body) do
             ::Tilt.new(path, 1, options) { body }
           end
+
+          ', :default_encoding => 'Big5'
 
           # Render using Tilt
           content = template.render(context || ::Object.new, locs, &block)
@@ -326,7 +338,7 @@ module Middleman
         # @param [String] path
         # @return [String]
         def template_data_for_file(path)
-          File.read(File.expand_path(path, source_dir))
+          read_template_file(File.expand_path(path, source_dir))
         end
 
         # Get a hash of configuration options for a given file extension, from
