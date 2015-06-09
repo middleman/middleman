@@ -309,8 +309,6 @@ module Middleman
             ::Tilt.new(path, 1, options) { body }
           end
 
-          ', :default_encoding => 'Big5'
-
           # Render using Tilt
           content = template.render(context || ::Object.new, locs, &block)
 
