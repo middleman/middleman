@@ -20,6 +20,9 @@ gem 'sinatra', '>= 1.4', require: false
 gem 'redcarpet', '>= 3.1', require: false unless RUBY_ENGINE == 'jruby'
 gem 'asciidoctor', '~> 0.1', require: false
 
+# To test javascript
+gem 'poltergeist', '~> 1.6.0', require: false
+
 # For less, note there is no compatible JS runtime for windows
 gem 'therubyracer', '>= 0.12', platforms: :ruby
 gem 'therubyrhino', '>= 2.0', platforms: :jruby
