@@ -122,7 +122,7 @@ module Middleman
         Hamster::Set.new(res)
       when Hamster::Vector, Hamster::Set, Hamster::SortedSet
         obj.map { |element| recursively_enhance(element) }
-      when ::TrueClass, ::FalseClass, ::Fixnum, ::Symbol, ::NilClass
+      when ::TrueClass, ::FalseClass, ::Fixnum, ::Symbol, ::NilClass, ::Float
         obj
       else
         obj.dup.freeze
