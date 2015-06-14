@@ -59,7 +59,11 @@ module Middleman
             elsif path.is_a? String
               path_clean = ::Middleman::Util.normalize_path(path)
               if path_clean.include?('*') # It's a glob
-                @ignored_callbacks << proc { |p| File.fnmatch(path_clean, p) }
+                if defined? File::FNM_EXTGLOB
+                  @ignored_callbacks << proc { |p| File.fnmatch(path_clean, p, File::FNM_EXTGLOB) }
+                else
+                  @ignored_callbacks << proc { |p| File.fnmatch(path_clean, p) }
+                end
               else
                 # Add a specific-path ignore unless that path is already covered
                 return if ignored?(path_clean)
