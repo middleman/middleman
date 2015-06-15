@@ -428,6 +428,10 @@ module Middleman
 
           layout_path = locate_layout(layout_name, current_engine)
 
+          if !layout_path
+            raise ::Middleman::CoreExtensions::Rendering::TemplateNotFound, "Could not locate layout: #{layout_name}"
+          end
+
           extension = File.extname(layout_path)
           engine = extension[1..-1].to_sym
 
