@@ -7,8 +7,23 @@ module SafeTemplate
   end
 end
 
-class Slim::Template
+class ::Slim::Template
   include SafeTemplate
+
+  def initialize(file, line, opts, &block)
+    if opts.key?(:context)
+      context_hack = {
+        context: opts[:context]
+      }
+
+      ::Slim::Embedded::SassEngine.disable_option_validator!
+      %w(sass scss markdown).each do |engine|
+        ::Slim::Embedded.options[engine.to_sym] = context_hack
+      end
+    end
+
+    super
+  end
 
   def precompiled_preamble(locals)
     "__in_slim_template = true\n" << super
@@ -31,17 +46,6 @@ module Middleman
           generator: ::Temple::Generators::RailsOutputBuffer,
           disable_escape: true
         )
-      end
-
-      def after_configuration
-        context_hack = {
-          context: app.template_context_class.new(app)
-        }
-
-        ::Slim::Embedded::SassEngine.disable_option_validator!
-        %w(sass scss markdown).each do |engine|
-          ::Slim::Embedded.options[engine.to_sym] = context_hack
-        end
       end
     end
   end

@@ -53,6 +53,7 @@ module Middleman
       extension = File.extname(path)
       options = opts.merge(options_for_ext(extension))
       options[:outvar] ||= '@_out_buf'
+      options[:context] = context
       options.delete(:layout)
 
       # Overwrite with frontmatter options
@@ -66,9 +67,10 @@ module Middleman
       end
 
       # Read compiled template from disk or cache
-      template = cache.fetch(:compiled_template, extension, options, body) do
-        ::Tilt.new(path, 1, options) { body }
-      end
+      template = ::Tilt.new(path, 1, options) { body }
+      # template = cache.fetch(:compiled_template, extension, options, body) do
+      #   ::Tilt.new(path, 1, options) { body }
+      # end
 
       # Render using Tilt
       content = ::Middleman::Util.instrument 'render.tilt', path: path do

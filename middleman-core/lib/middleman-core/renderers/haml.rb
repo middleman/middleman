@@ -20,17 +20,19 @@ module Middleman
     # thus making it impossible to pass our Middleman instance
     # in. So we have to resort to heavy hackery :(
     class HamlTemplate < ::Tilt::HamlTemplate
+      def initialize(*args, &block)
+        super
+
+        @context = @options[:context] if @options.key?(:context)
+      end
+
       def prepare
       end
 
       def evaluate(scope, locals, &block)
-        ::Middleman::Renderers::Haml.last_haml_scope = scope
-
-        options = @options.merge(filename: eval_file, line: line)
+        options = @options.merge(filename: eval_file, line: line, context: @context || scope)
         @engine = ::Haml::Engine.new(data, options)
         output = @engine.render(scope, locals, &block)
-
-        ::Middleman::Renderers::Haml.last_haml_scope = nil
 
         output
       end
@@ -38,10 +40,24 @@ module Middleman
 
     # Haml Renderer
     class Haml < ::Middleman::Extension
-      cattr_accessor :last_haml_scope
 
       def initialize(app, options={}, &block)
         super
+
+        ::Haml::Options.defaults[:context] = nil
+        ::Haml::Options.send :attr_accessor, :context
+
+        [::Haml::Filters::Sass, ::Haml::Filters::Scss, ::Haml::Filters::Markdown].each do |f|
+          f.class_exec do
+            def self.render_with_options(text, compiler_options)
+              modified_options = options.dup
+              modified_options[:context] = compiler_options[:context]
+
+              text = template_class.new(nil, 1, modified_options) {text}.render
+              super(text, compiler_options)
+            end
+          end
+        end
 
         ::Tilt.prefer(::Middleman::Renderers::HamlTemplate, :haml)
 

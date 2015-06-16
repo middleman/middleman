@@ -10,6 +10,12 @@ module Middleman
         escape_html: :filter_html
       }
 
+      def initialize(*args, &block)
+        super
+
+        @context = @options[:context] if @options.key?(:context)
+      end
+
       # Overwrite built-in Tilt version.
       # Don't overload :renderer option with smartypants
       # Support renderer-level options
@@ -40,11 +46,7 @@ module Middleman
 
       def evaluate(scope, _)
         @output ||= begin
-          if defined?(::Middleman::Renderers::Haml)
-            MiddlemanRedcarpetHTML.scope = ::Middleman::Renderers::Haml.last_haml_scope || scope
-          else
-            MiddlemanRedcarpetHTML.scope = scope
-          end
+          MiddlemanRedcarpetHTML.scope = @context || scope
 
           @engine.render(data)
         end

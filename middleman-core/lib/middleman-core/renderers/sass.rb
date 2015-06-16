@@ -94,11 +94,7 @@ module Middleman
         # Change Sass path, for url functions, to the build folder if we're building
         # @return [Hash]
         def sass_options
-          ctx = if defined?(::Middleman::Renderers::Haml)
-            ::Middleman::Renderers::Haml.last_haml_scope || @context
-          else
-            @context
-          end
+          ctx = @context
 
           more_opts = {
             load_paths: ctx.config[:sass_assets_paths],

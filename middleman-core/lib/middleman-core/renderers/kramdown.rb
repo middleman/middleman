@@ -4,10 +4,16 @@ module Middleman
   module Renderers
     # Our own Kramdown Tilt template that simply uses our custom renderer.
     class KramdownTemplate < ::Tilt::KramdownTemplate
-      def evaluate(scope, *)
-        @output ||= begin
-          MiddlemanKramdownHTML.scope = (defined?(::Middleman::Renderers::Haml) && ::Middleman::Renderers::Haml.last_haml_scope) ? ::Middleman::Renderers::Haml.last_haml_scope : scope
+      def initialize(*args, &block)
+        super
 
+        @context = @options[:context] if @options.key?(:context)
+      end
+
+      def evaluate(context, *)
+        MiddlemanKramdownHTML.scope = @context || context
+
+        @output ||= begin
           output, warnings = MiddlemanKramdownHTML.convert(@engine.root, @engine.options)
           @engine.warnings.concat(warnings)
           output
@@ -38,6 +44,7 @@ module Middleman
 
         attr = el.attr.dup
         link = attr.delete('href')
+
         scope.link_to(content, link, attr)
       end
     end
