@@ -1,6 +1,9 @@
 master
 ===
 
+* Removed ability to use JSON as frontmatter. Still allowed in data/ folder.
+* Added YAML data postscript. Like frontmatter, but reversed. Attach content after the key/value data as a `:postscript` key to the data structure (if Hash).
+
 # 4.0.0.beta.2
 
 * Fixed regression causing exceptions to be silently thrown away outside of `--verbose` mode in the dev server.

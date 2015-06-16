@@ -1,24 +1,18 @@
-require 'active_support/core_ext/hash/keys'
+# Core Pathname library used for traversal
 require 'pathname'
 
-# Parsing YAML frontmatter
-require 'yaml'
+# DbC
+require 'middleman-core/contracts'
 
-# Parsing JSON frontmatter
-require 'active_support/json'
+require 'active_support/core_ext/hash/keys'
+
+require 'middleman-core/util/data'
 
 # Extensions namespace
 module Middleman::CoreExtensions
   class FrontMatter < ::Middleman::Extension
     # Try to run after routing but before directory_indexes
     self.resource_list_manipulator_priority = 90
-
-    YAML_ERRORS = [StandardError]
-
-    # https://github.com/tenderlove/psych/issues/23
-    if defined?(Psych) && defined?(Psych::SyntaxError)
-      YAML_ERRORS << Psych::SyntaxError
-    end
 
     def initialize(app, options_hash={}, &block)
       super
@@ -71,7 +65,7 @@ module Middleman::CoreExtensions
 
       return [{}, nil] unless file
 
-      @cache[file[:full_path]] ||= frontmatter_and_content(file[:full_path])
+      @cache[file[:full_path]] ||= ::Middleman::Util::Data.parse(file[:full_path])
     end
 
     Contract ArrayOf[IsA['Middleman::SourceFile']], ArrayOf[IsA['Middleman::SourceFile']] => Any
@@ -79,94 +73,6 @@ module Middleman::CoreExtensions
       (updated_files + removed_files).each do |file|
         @cache.delete(file[:full_path])
       end
-    end
-
-    # Get the frontmatter and plain content from a file
-    # @param [String] path
-    # @return [Array<Middleman::Util::IndifferentHash, String>]
-    Contract Pathname => [Hash, Maybe[String]]
-    def frontmatter_and_content(full_path)
-      data = {}
-
-      return [data, nil] if ::Middleman::Util.binary?(full_path)
-
-      # Avoid weird race condition when a file is renamed.
-      content = begin
-        File.read(full_path)
-      rescue ::EOFError
-      rescue ::IOError
-      rescue ::Errno::ENOENT
-        ''
-      end
-
-      begin
-        if content =~ /\A.*coding:/
-          lines = content.split(/\n/)
-          lines.shift
-          content = lines.join("\n")
-        end
-
-        result = parse_yaml_front_matter(content, full_path) || parse_json_front_matter(content, full_path)
-        return result if result
-      rescue
-        # Probably a binary file, move on
-      end
-
-      [data, content]
-    end
-
-    private
-
-    # Parse YAML frontmatter out of a string
-    # @param [String] content
-    # @return [Array<Hash, String>]
-    Contract String, Pathname => Maybe[[Hash, String]]
-    def parse_yaml_front_matter(content, full_path)
-      yaml_regex = /\A(---\s*\n.*?\n?)^((---|\.\.\.)\s*$\n?)/m
-      if content =~ yaml_regex
-        content = content.sub(yaml_regex, '')
-
-        begin
-          data = YAML.load($1) || {}
-          data = data.symbolize_keys
-        rescue *YAML_ERRORS => e
-          app.logger.error "YAML Exception parsing #{full_path}: #{e.message}"
-          return nil
-        end
-      else
-        return nil
-      end
-
-      [data, content]
-    rescue
-      [{}, content]
-    end
-
-    # Parse JSON frontmatter out of a string
-    # @param [String] content
-    # @return [Array<Hash, String>]
-    Contract String, Pathname => Maybe[[Hash, String]]
-    def parse_json_front_matter(content, full_path)
-      json_regex = /\A(;;;\s*\n.*?\n?)^(;;;\s*$\n?)/m
-
-      if content =~ json_regex
-        content = content.sub(json_regex, '')
-
-        begin
-          json = ($1 + $2).sub(';;;', '{').sub(';;;', '}')
-          data = ::ActiveSupport::JSON.decode(json).symbolize_keys
-        rescue => e
-          app.logger.error "JSON Exception parsing #{full_path}: #{e.message}"
-          return nil
-        end
-
-      else
-        return nil
-      end
-
-      [data, content]
-    rescue
-      [{}, content]
     end
   end
 end

@@ -33,7 +33,6 @@ module Middleman
       # Set the value of a setting by key. Creates the setting if it doesn't exist.
       # @param [Symbol] key
       # @param [Object] val
-      # rubocop:disable UselessSetterCall
       def []=(key, val)
         setting_obj = setting(key) || define_setting(key)
         setting_obj.value = val

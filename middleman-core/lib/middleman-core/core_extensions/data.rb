@@ -1,6 +1,5 @@
-require 'yaml'
-require 'active_support/json'
 require 'middleman-core/contracts'
+require 'middleman-core/util/data'
 
 module Middleman
   module CoreExtensions
@@ -100,9 +99,10 @@ module Middleman
           basename  = File.basename(data_path, extension)
 
           if %w(.yaml .yml).include?(extension)
-            data = ::YAML.load_file(file[:full_path])
+            data, postscript = ::Middleman::Util::Data.parse(file[:full_path], :yaml)
+            data[:postscript] = postscript if !postscript.nil? && data.is_a?(Hash)
           elsif extension == '.json'
-            data = ::ActiveSupport::JSON.decode(file[:full_path].read)
+            data, _postscript = ::Middleman::Util::Data.parse(file[:full_path], :json)
           else
             return
           end

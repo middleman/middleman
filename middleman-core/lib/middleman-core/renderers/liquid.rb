@@ -27,7 +27,26 @@ module Middleman
           next unless resource.source_file[:relative_path].to_s =~ %r{\.liquid$}
 
           # Convert data object into a hash for liquid
-          resource.add_metadata locals: { data: app.extensions[:data].data_store.to_h }
+          resource.add_metadata locals: {
+            data: stringify_recursive(app.extensions[:data].data_store.to_h)
+          }
+        end
+      end
+
+      def stringify_recursive(hash)
+        {}.tap do |h|
+          hash.each { |key, value| h[key.to_s] = map_value(value) }
+        end
+      end
+
+      def map_value(thing)
+        case thing
+        when Hash
+          stringify_recursive(thing)
+        when Array
+          thing.map { |v| map_value(v) }
+        else
+          thing
         end
       end
     end

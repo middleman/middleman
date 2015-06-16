@@ -30,17 +30,6 @@ Feature: Neighboring YAML Front Matter
     Then I should not see "---"
     When I go to "/front-matter-encoding.html.erb.frontmatter"
     Then I should see "File Not Found"
-    
-  Scenario: Rendering html (json)
-    Given the Server is running at "frontmatter-neighbor-app"
-    When I go to "/json-front-matter.html.erb.frontmatter"
-    Then I should see "File Not Found"
-    When I go to "/json-front-matter-2.php"
-    Then I should see "<h1>This is the title</h1>"
-    Then I should see "<?php"
-    Then I should not see ";;;"
-    When I go to "/json-front-matter-2.php.erb.frontmatter"
-    Then I should see "File Not Found"
 
   Scenario: A template changes frontmatter during preview
     Given the Server is running at "frontmatter-neighbor-app"

@@ -51,3 +51,10 @@ Feature: Local Data API
     Then I should see "title1:Hello"
     Then I should see "title2:More"
     Then I should see "title3:Stuff"
+
+  Scenario: Using data postscript
+    Given the Server is running at "nested-data-app"
+    When I go to "/extracontent.html"
+    Then I should see "<h1>With Content</h1>"
+    Then I should see '<h2 id="header-2">Header 2</h2>'
+    Then I should see "<p>Paragraph 1</p>"

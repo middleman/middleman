@@ -40,28 +40,6 @@ Feature: YAML Front Matter
     When I go to "/front-matter-encoding.html"
     Then I should see "<h1>This is the title</h1>"
     Then I should not see "---"
-    
-  Scenario: Rendering html (json)
-    Given the Server is running at "frontmatter-app"
-    When I go to "/json-front-matter.html"
-    Then I should see "<h1>This is the title</h1>"
-    Then I should not see ";;;"
-    When I go to "/json-front-matter-2.php"
-    Then I should see "<h1>This is the title</h1>"
-    Then I should see "<?php"
-    Then I should not see ";;;"
-
-  Scenario: JSON not on first line, no encoding
-    Given the Server is running at "frontmatter-app"
-    When I go to "/json-front-matter-line-2.html"
-    Then I should see "<h1></h1>"
-    Then I should see ";;;"
-    
-  Scenario: JSON not on first line, with encoding
-    Given the Server is running at "frontmatter-app"
-    When I go to "/json-front-matter-encoding.html"
-    Then I should see "<h1>This is the title</h1>"
-    Then I should not see ";;;"
 
   Scenario: A template changes frontmatter during preview
     Given the Server is running at "frontmatter-app"

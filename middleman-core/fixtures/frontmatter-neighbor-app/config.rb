@@ -15,7 +15,7 @@ class NeighborFrontmatter < ::Middleman::Extension
 
       next unless file
 
-      fmdata = app.extensions[:front_matter].frontmatter_and_content(file[:full_path]).first
+      fmdata = ::Middleman::Util::Data.parse(file[:full_path], :yaml).first
       opts = fmdata.extract!(:layout, :layout_engine, :renderer_options, :directory_index, :content_type)
       opts[:renderer_options].symbolize_keys! if opts.key?(:renderer_options)
       ignored = fmdata.delete(:ignored)
