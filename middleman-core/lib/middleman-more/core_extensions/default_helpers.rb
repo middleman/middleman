@@ -99,6 +99,36 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
       end
     end
 
+    # Override helper to add `relative` opt-out.
+    def stylesheet_link_tag(*sources)
+      options = {
+        :rel => 'stylesheet'
+      }.update(sources.extract_options!.symbolize_keys)
+
+      path_options = {}
+      path_options[:relative] = options.delete(:relative) if options.key?(:relative)
+
+      sources.flatten.inject(ActiveSupport::SafeBuffer.new) do |all,source|
+        all << tag(:link, {
+          href: asset_path(:css, source, path_options)
+        }.update(options))
+      end
+    end
+
+    # Override helper to add `relative` opt-out.
+    def javascript_include_tag(*sources)
+      options = sources.extract_options!.symbolize_keys
+
+      path_options = {}
+      path_options[:relative] = options.delete(:relative) if options.key?(:relative)
+
+      sources.flatten.inject(::ActiveSupport::SafeBuffer.new) do |all,source|
+        all << content_tag(:script, nil, {
+          src: asset_path(:js, source, path_options)
+        }.update(options))
+      end
+    end
+
     # Output a stylesheet link tag based on the current path
     #
     # @param [Symbol] asset_ext The type of asset
@@ -153,8 +183,9 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
     #
     # @param [Symbol] kind The type of file
     # @param [String] source The path to the file
+    # @param [Hash] options Additional options.
     # @return [String]
-    def asset_path(kind, source)
+    def asset_path(kind, source, options={})
       return source if source.to_s.include?('//') || source.to_s.start_with?('data:')
       asset_folder = case kind
       when :css
@@ -174,28 +205,37 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
       source << ".#{kind}" unless ignore_extension || source.end_with?(".#{kind}")
       asset_folder = '' if source.start_with?('/') # absolute path
 
-      asset_url(source, asset_folder)
+      asset_url(source, asset_folder, options)
     end
 
     # Get the URL of an asset given a type/prefix
     #
     # @param [String] path The path (such as "photo.jpg")
     # @param [String] prefix The type prefix (such as "images")
+    # @param [Hash] options Additional options.
     # @return [String] The fully qualified asset url
-    def asset_url(path, prefix='')
+    def asset_url(path, prefix='', options={})
       # Don't touch assets which already have a full path
-      if path.include?('//') || path.start_with?('data:')
+      if path.include?('//') || path.start_with?('data:') || !current_resource
         path
       else # rewrite paths to use their destination path
-        if resource = sitemap.find_resource_by_destination_path(url_for(path))
+        result = if resource = sitemap.find_resource_by_destination_path(url_for(path))
           resource.url
         else
           path = File.join(prefix, path)
+
           if resource = sitemap.find_resource_by_path(path)
             resource.url
           else
             File.join(config[:http_prefix], path)
           end
+        end
+
+        if options[:relative] != true
+          result
+        else
+          current_dir = Pathname('/' + current_resource.destination_path)
+          Pathname(result).relative_path_from(current_dir.dirname).to_s
         end
       end
     end

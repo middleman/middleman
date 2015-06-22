@@ -8,6 +8,7 @@ master
 * Empower link_to in a i18n context.
 * Add retina files support on automatic_image_sizes
 * Fix woff/woff2 confusion in asset hashing.
+* Support `relative: false` on `stylesheet_link_tag` and `javascript_include_tag`
 
 3.3.12
 ===

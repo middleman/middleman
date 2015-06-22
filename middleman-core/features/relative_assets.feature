@@ -21,6 +21,12 @@ Feature: Relative Assets
     Given "relative_assets" feature is "disabled"
     And the Server is running at "relative-assets-app"
     When I go to "/relative_image.html"
+    Then I should see '"/stylesheets/relative_assets.css"'
+    Then I should see '"/javascripts/app.js"'
+    Then I should see "/images/blank.gif"
+    When I go to "/absolute_image_relative_css.html"
+    Then I should see '"stylesheets/relative_assets.css"'
+    Then I should see '"javascripts/app.js"'
     Then I should see "/images/blank.gif"
 
   Scenario: Rendering css with the feature enabled
@@ -54,6 +60,11 @@ Feature: Relative Assets
     Given "relative_assets" feature is "enabled"
     And the Server is running at "relative-assets-app"
     When I go to "/relative_image.html"
+    Then I should see '"stylesheets/relative_assets.css"'
+    Then I should see '"javascripts/app.js"'
+    When I go to "/relative_image_absolute_css.html"
+    Then I should see '"/stylesheets/relative_assets.css"'
+    Then I should see '"/javascripts/app.js"'
     Then I should not see "/images/blank.gif"
     And I should see "images/blank.gif"
 
