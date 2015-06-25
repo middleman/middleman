@@ -14,6 +14,7 @@ AllCops:
     - 'middleman-core/fixtures/**/*'
     - 'middleman-core/features/**/*'
     - 'middleman-core/spec/**/*'
+  DisplayCopNames: true
 LineLength:
   Enabled: false
 MethodLength:

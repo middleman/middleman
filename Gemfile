@@ -9,7 +9,7 @@ gem 'pry', '~> 0.10', group: :development
 gem 'aruba', '~> 0.6'
 gem 'rspec', '~> 3.0'
 gem 'fivemat', '~> 1.3'
-gem 'cucumber', '~> 1.3'
+gem 'cucumber', '~> 2.0'
 
 # Optional middleman dependencies, included for tests
 gem 'less', '2.3', require: false
