@@ -20,6 +20,9 @@ gem 'sinatra', '>= 1.4', require: false
 gem 'redcarpet', '>= 3.1', require: false unless RUBY_ENGINE == 'jruby'
 gem 'asciidoctor', '~> 0.1', require: false
 
+# Dns server to test preview server
+gem 'rubydns', '~> 1.0.1', require: false
+
 # To test javascript
 gem 'poltergeist', '~> 1.6.0', require: false
 

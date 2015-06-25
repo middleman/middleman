@@ -14,9 +14,12 @@ module Middleman::Cli
     method_option :port,
                   aliases: '-p',
                   desc: 'The port Middleman will listen on'
-    method_option :host,
-                  aliases: '-h',
-                  desc: 'The host name Middleman will use'
+    method_option :server_name,
+                  aliases: '-s',
+                  desc: 'The server name name Middleman will use'
+    method_option :bind_address,
+                  aliases: '-b',
+                  desc: 'The bind address Middleman will listen on'
     method_option :https,
                   type: :boolean,
                   desc: 'Serve the preview server over SSL/TLS'
@@ -68,8 +71,9 @@ module Middleman::Cli
 
       params = {
         port: options['port'],
+        bind_address: options['bind_address'],
         https: options['https'],
-        host: options['host'],
+        server_name: options['server_name'],
         ssl_certificate: options['ssl_certificate'],
         ssl_private_key: options['ssl_private_key'],
         environment: options['environment'],
