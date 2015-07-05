@@ -8,7 +8,7 @@ module Middleman
           app.config.define_setting :asciidoc, {
             safe: :safe,
             backend: :html5,
-            attributes: %W(showtitle env=middleman env-middleman middleman-version=#{::Middleman::VERSION})
+            attributes: %W(env=middleman env-middleman middleman-version=#{::Middleman::VERSION})
           }, 'AsciiDoc engine options (Hash)'
           app.config.define_setting :asciidoc_attributes, [], 'AsciiDoc custom attributes (Array)'
           app.before_configuration do
