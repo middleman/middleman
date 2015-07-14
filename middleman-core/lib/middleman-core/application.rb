@@ -8,10 +8,6 @@ require 'i18n'
 # users expect.
 ::I18n.enforce_available_locales = false
 
-# Use ActiveSupport JSON
-require 'active_support/json'
-require 'active_support/core_ext/integer/inflections'
-
 # Simple callback library
 require 'hooks'
 
