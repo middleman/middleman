@@ -6,7 +6,7 @@ gem 'yard', '~> 0.8', require: false
 
 # Test tools
 gem 'pry', '~> 0.10', group: :development
-gem 'aruba', '~> 0.6'
+gem 'aruba', '~> 0.7.4'
 gem 'rspec', '~> 3.0'
 gem 'fivemat', '~> 1.3'
 gem 'cucumber', '~> 1.3'
