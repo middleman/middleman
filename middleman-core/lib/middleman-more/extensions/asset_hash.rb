@@ -91,7 +91,7 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
       dirpath = Pathname.new(File.dirname(path))
 
       # TODO: This regex will change some paths in plan HTML (not in a tag) - is that OK?
-      body.gsub(/([=\'\"\(,]\s*)([^\s\'\"\)]{1,255}#{@exts_regex_text})/) do |match|
+      body.gsub(/([=\'\"\(,]\s*)([^\s\'\"\)]+(#{@exts_regex_text}))/) do |match|
         opening_character = $1
         asset_path = $2
 
