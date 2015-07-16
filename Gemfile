@@ -9,7 +9,7 @@ gem 'pry', '~> 0.10', group: :development
 gem 'aruba', '~> 0.7.4'
 gem 'rspec', '~> 3.0'
 gem 'fivemat', '~> 1.3'
-gem 'cucumber', '~> 1.3'
+gem 'cucumber', '~> 2.0'
 
 # Optional middleman dependencies, included for tests
 gem 'less', '2.3', require: false
@@ -19,6 +19,9 @@ gem 'stylus', '>= 1.0', require: false
 gem 'sinatra', '>= 1.4', require: false
 gem 'redcarpet', '>= 3.1', require: false unless RUBY_ENGINE == 'jruby'
 gem 'asciidoctor', '~> 0.1', require: false
+
+# Dns server to test preview server
+gem 'rubydns', '~> 1.0.1', require: false
 
 # To test javascript
 gem 'poltergeist', '~> 1.6.0', require: false
