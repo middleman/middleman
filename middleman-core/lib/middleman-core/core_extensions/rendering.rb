@@ -428,7 +428,7 @@ module Middleman
 
           layout_path = locate_layout(layout_name, current_engine)
 
-          if !layout_path
+          unless layout_path
             raise ::Middleman::CoreExtensions::Rendering::TemplateNotFound, "Could not locate layout: #{layout_name}"
           end
 
@@ -462,7 +462,6 @@ module Middleman
         end
 
         # The currently rendering engine
-        # rubocop:disable TrivialAccessors
         # @return [Symbol, nil]
         def current_engine=(v)
           @_current_engine = v

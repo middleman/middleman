@@ -130,7 +130,6 @@ module Middleman
       @klass.after_configuration do
         ext.after_configuration if ext.respond_to?(:after_configuration)
 
-        # rubocop:disable IfUnlessModifier
         if ext.respond_to?(:manipulate_resource_list)
           ext.app.sitemap.register_resource_list_manipulator(ext.class.extension_name, ext)
         end

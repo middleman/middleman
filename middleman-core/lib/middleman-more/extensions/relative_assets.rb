@@ -18,7 +18,7 @@ class Middleman::Extensions::RelativeAssets < ::Middleman::Extension
     def asset_url(path, prefix='', options={})
       options[:relative] = true unless options.key?(:relative)
 
-      path = super(path, prefix, options)
+      super(path, prefix, options)
     end
   end
 end

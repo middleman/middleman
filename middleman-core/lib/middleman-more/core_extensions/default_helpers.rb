@@ -102,13 +102,13 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
     # Override helper to add `relative` opt-out.
     def stylesheet_link_tag(*sources)
       options = {
-        :rel => 'stylesheet'
+        rel: 'stylesheet'
       }.update(sources.extract_options!.symbolize_keys)
 
       path_options = {}
       path_options[:relative] = options.delete(:relative) if options.key?(:relative)
 
-      sources.flatten.inject(ActiveSupport::SafeBuffer.new) do |all,source|
+      sources.flatten.inject(ActiveSupport::SafeBuffer.new) do |all, source|
         all << tag(:link, {
           href: asset_path(:css, source, path_options)
         }.update(options))
@@ -122,7 +122,7 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
       path_options = {}
       path_options[:relative] = options.delete(:relative) if options.key?(:relative)
 
-      sources.flatten.inject(::ActiveSupport::SafeBuffer.new) do |all,source|
+      sources.flatten.inject(::ActiveSupport::SafeBuffer.new) do |all, source|
         all << content_tag(:script, nil, {
           src: asset_path(:js, source, path_options)
         }.update(options))
