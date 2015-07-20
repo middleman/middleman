@@ -13,10 +13,13 @@ Feature: Templates should be chainable
     When I cd to "build"
     Then the following files should exist:
       | index.html                                    |
-
+      | test.html.combobreaker                        |
     And the file "index.html" should contain "Title</h1>"
     And the file "index.html" should contain "Subtitle</h2>"
     And the file "index.html" should contain "Sup</h3>"
+    And the file "test.html.combobreaker.html" should contain "Title</h1>"
+    And the file "test.html.combobreaker.html" should contain "Subtitle</h2>"
+    And the file "test.html.combobreaker.html" should contain "Sup</h3>"
 
   Scenario: Partials are parsed by multiple template engines: Outer template has .erb and inner .md.erb
     Given a fixture app "partial-chained_templates-app"
