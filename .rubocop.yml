@@ -23,14 +23,10 @@ ClassLength:
   Enabled: false
 Documentation:
   Enabled: false
-Encoding:
-  Enabled: false
 HashSyntax:
   EnforcedStyle: ruby19
 SpaceAroundEqualsInParameterDefault:
   EnforcedStyle: no_space
-Blocks:
-  Enabled: false
 PerlBackrefs:
   Enabled: false
 ClassAndModuleChildren:

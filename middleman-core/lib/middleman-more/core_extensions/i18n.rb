@@ -245,10 +245,10 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
     ::I18n.locale = lang
     localized_page_id = ::I18n.t("paths.#{page_id}", default: page_id, fallback: [])
 
-    partially_localized_path = ""
+    partially_localized_path = ''
 
     File.dirname(path).split('/').each do |path_sub|
-      next if path_sub == ""
+      next if path_sub == ''
       partially_localized_path = "#{partially_localized_path}/#{(::I18n.t("paths.#{path_sub}", default: path_sub).to_s)}"
     end
 

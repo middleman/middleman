@@ -118,7 +118,6 @@ module Middleman
       # Set the value of a setting by key. Creates the setting if it doesn't exist.
       # @param [Symbol] key
       # @param [Object] val
-      # rubocop:disable UselessSetterCall
       def []=(key, val)
         setting_obj = setting(key) || define_setting(key)
         setting_obj.value = val
@@ -228,7 +227,6 @@ module Middleman
       end
 
       # Whether or not there has been a value set beyond the default
-      # rubocop:disable TrivialAccessors
       def value_set?
         @value_set
       end

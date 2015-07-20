@@ -35,13 +35,13 @@ module Middleman::Cli
     # Output a .gitignore file
     class_option :git, type: :boolean, default: true
 
-    no_tasks {
+    no_tasks do
       # Write a .gitignore file for project
       # @return [void]
       def generate_gitignore!
         return unless options[:git]
         copy_file 'gitignore', File.join(name, '.gitignore')
       end
-    }
+    end
   end
 end
