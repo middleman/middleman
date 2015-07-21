@@ -3,7 +3,7 @@ module Middleman
     class ServerHostname
       class ServerFullHostname < SimpleDelegator
         def to_s
-          __getobj__
+          __getobj__.gsub(/\s/, '+')
         end
 
         def self.match?(*)
@@ -15,7 +15,7 @@ module Middleman
 
       class ServerPlainHostname < SimpleDelegator
         def to_s
-          __getobj__ + '.local'
+          __getobj__.gsub(/\s/, '+') + '.local'
         end
 
         def self.match?(name)
