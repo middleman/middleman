@@ -75,7 +75,6 @@ end
 
 Then /^going to "([^\"]*)" should not raise an exception$/ do |url|
   in_current_directory do
-
     expect{ visit(URI.encode(url).to_s) }.to_not raise_exception
   end
 end

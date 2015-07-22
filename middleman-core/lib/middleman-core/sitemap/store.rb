@@ -242,7 +242,7 @@ module Middleman
       # @return [String]
       def remove_templating_extensions(path)
         # Strip templating extensions as long as Tilt knows them
-        path = path.sub(File.extname(path), '') while ::Tilt[path]
+        path = path.sub(/#{::Regexp.escape(File.extname(path))}$/, '') while ::Tilt[path]
         path
       end
 
