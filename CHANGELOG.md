@@ -9,6 +9,7 @@ master
 * Add retina files support on automatic_image_sizes
 * Fix woff/woff2 confusion in asset hashing.
 * Support `relative: false` on `stylesheet_link_tag` and `javascript_include_tag`
+* New host detection in preview server. Provides better externally accessible host/ip information for connecting from mobile devices and virtual machines.
 
 3.3.12
 ===
