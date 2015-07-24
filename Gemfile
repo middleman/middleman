@@ -32,8 +32,8 @@ gem 'therubyrhino', '>= 2.0', platforms: :jruby
 
 # Code Quality
 gem 'rubocop', '~> 0.24', require: false
-gem 'simplecov', '0.9', require: false
-gem 'coveralls', '~> 0.7', require: false
+gem 'simplecov', '~> 0.10', require: false
+gem 'coveralls', '~> 0.8', require: false
 
 # Middleman itself
 gem 'middleman', path: 'middleman'
