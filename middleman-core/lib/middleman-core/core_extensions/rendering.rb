@@ -316,9 +316,9 @@ module Middleman
           self.class.callbacks_for_hook(:after_render).each do |callback|
             # Uber::Options::Value doesn't respond to call
             newcontent = if callback.respond_to?(:call)
-              content = callback.call(content, path, locs, template_class)
+              callback.call(content, path, locs, template_class)
             elsif callback.respond_to?(:evaluate)
-              content = callback.evaluate(self, content, path, locs, template_class)
+              callback.evaluate(self, content, path, locs, template_class)
             end
             content = newcontent if newcontent # Allow the callback to return nil to skip it
           end
