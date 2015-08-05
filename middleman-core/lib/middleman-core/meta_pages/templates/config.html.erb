@@ -29,22 +29,22 @@
 
     <h2 id="extensions">Extensions</h2>
     <ul class="extensions">
-      <% extension_config.each do |ext_name, configs| %>
-      <li>
-        <% registered_extensions.delete(ext_name) %>
+      <% [extension_config, auto_activated_config].each do |extensions| %>
+        <% extensions.each do |ext_name, configs| %>
+        <li>
+          <% registered_extensions.delete(ext_name) %>
 
-        <span class="extension active">:<%= ext_name %></span>
+          <span class="extension active">:<%= ext_name %></span>
 
-
-        <% if configs && !configs.empty? %>
-        <ul class="settings">
-          <% configs.each do |setting| %>
-          <li class="setting"><%= setting.render %></li>
+          <% if configs && !configs.empty? %>
+          <ul class="settings">
+            <% configs.each do |setting| %>
+            <li class="setting"><%= setting.render %></li>
+            <% end %>
+          </ul>
           <% end %>
-        </ul>
+        </li>
         <% end %>
-      </li>
-
       <% end %>
 
       <% registered_extensions.keys.each do |ext_name| %>

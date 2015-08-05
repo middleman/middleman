@@ -61,9 +61,13 @@ module Middleman
       def config(_)
         global_config = @middleman.config.all_settings.map { |c| ConfigSetting.new(c) }
         extension_config = {}
+        auto_activated_config = {}
 
         @middleman.extensions.each do |ext_name, extension|
-          next if ::Middleman::Extension.auto_activated.include? ext_name
+          if ::Middleman::Extensions.auto_activated.include? ext_name
+            auto_activated_config[ext_name] = extension_options(extension)
+            next
+          end
 
           if extension.is_a?(Hash)
             # Multiple instance extension
@@ -82,6 +86,7 @@ module Middleman
         template('config.html.erb',
                  global_config: global_config,
                  extension_config: extension_config,
+                 auto_activated_config: auto_activated_config,
                  registered_extensions: Middleman::Extensions.registered.dup)
       end
 

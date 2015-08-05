@@ -3,13 +3,14 @@ module Middleman
     extend Forwardable
 
     def_delegator :@app, :logger
-    def_delegators :@activated, :[]
+    def_delegators :@activated, :[], :each
 
     def initialize(app)
       @app = app
       @activated = {}
 
       manager = self
+
       {
         before_sitemap: :before_sitemap,
         initialized: :before_configuration
