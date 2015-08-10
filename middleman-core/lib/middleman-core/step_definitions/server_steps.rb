@@ -31,7 +31,7 @@ Given /^"([^\"]*)" is set to "([^\"]*)"$/ do |variable, value|
 end
 
 Given /^the Server is running$/ do
-  root_dir = File.expand_path(current_dir)
+  root_dir = File.expand_path(expand_path("."))
 
   if File.exists?(File.join(root_dir, 'source'))
     ENV['MM_SOURCE'] = 'source'
@@ -43,7 +43,7 @@ Given /^the Server is running$/ do
 
   initialize_commands = @initialize_commands || []
 
-  in_current_dir do
+  cd(".") do
     @server_inst = ::Middleman::Application.new do
       config[:watcher_disable] = true
       config[:show_exceptions] = false
@@ -68,13 +68,13 @@ Given /^a template named "([^\"]*)" with:$/ do |name, string|
 end
 
 When /^I go to "([^\"]*)"$/ do |url|
-  in_current_dir do
+  cd(".") do
     @last_response = @browser.get(URI.encode(url))
   end
 end
 
 Then /^going to "([^\"]*)" should not raise an exception$/ do |url|
-  in_current_dir do
+  cd(".") do
     last_response = nil
     expect {
       last_response = @browser.get(URI.encode(url))
@@ -84,61 +84,61 @@ Then /^going to "([^\"]*)" should not raise an exception$/ do |url|
 end
 
 Then /^the content type should be "([^\"]*)"$/ do |expected|
-  in_current_dir do
+  cd(".") do
     expect(@last_response.content_type).to start_with(expected)
   end
 end
 
 Then /^I should see "([^\"]*)"$/ do |expected|
-  in_current_dir do
+  cd(".") do
     expect(@last_response.body).to include(expected)
   end
 end
 
 Then /^I should see '([^\']*)'$/ do |expected|
-  in_current_dir do
+  cd(".") do
     expect(@last_response.body).to include(expected)
   end
 end
 
 Then /^I should see:$/ do |expected|
-  in_current_dir do
+  cd(".") do
     expect(@last_response.body).to include(expected)
   end
 end
 
 Then /^I should not see "([^\"]*)"$/ do |expected|
-  in_current_dir do
+  cd(".") do
     expect(@last_response.body).to_not include(expected)
   end
 end
 
 Then /^I should see content matching %r{(.*)}$/ do |expected|
-  in_current_dir do
+  cd(".") do
     expect(@last_response.body).to match(expected)
   end
 end
 
 Then /^I should not see content matching %r{(.*)}$/ do |expected|
-  in_current_dir do
+  cd(".") do
     expect(@last_response.body).to_not match(expected)
   end
 end
 
 Then /^I should not see:$/ do |expected|
-  in_current_dir do
+  cd(".") do
     expect(@browser.last_response.body).to_not include(expected.chomp)
   end
 end
 
 Then /^the status code should be "([^\"]*)"$/ do |expected|
-  in_current_dir do
+  cd(".") do
     expect(@browser.last_response.status).to eq expected.to_i
   end
 end
 
 Then /^I should see "([^\"]*)" lines$/ do |lines|
-  in_current_dir do
+  cd(".") do
     expect(@last_response.body.chomp.split($/).length).to eq(lines.to_i)
   end
 end

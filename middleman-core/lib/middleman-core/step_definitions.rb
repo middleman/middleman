@@ -1,5 +1,4 @@
 require 'aruba/cucumber'
-require 'aruba/jruby'
 require 'middleman-core/step_definitions/middleman_steps'
 require 'middleman-core/step_definitions/builder_steps'
 require 'middleman-core/step_definitions/server_steps'

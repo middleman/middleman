@@ -6,8 +6,8 @@ end
 
 Given /^app "([^\"]*)" is using config "([^\"]*)"$/ do |path, config_name|
   target = File.join(PROJECT_ROOT_PATH, 'fixtures', path)
-  config_path = File.join(current_dir, "config-#{config_name}.rb")
-  config_dest = File.join(current_dir, 'config.rb')
+  config_path = File.join(expand_path("."), "config-#{config_name}.rb")
+  config_dest = File.join(expand_path("."), 'config.rb')
   FileUtils.cp(config_path, config_dest)
 end
 
@@ -22,12 +22,12 @@ Given /^a fixture app "([^\"]*)"$/ do |path|
 
   # This step can be reentered from several places but we don't want
   # to keep re-copying and re-cd-ing into ever-deeper directories
-  next if File.basename(current_dir) == path
+  next if File.basename(expand_path(".")) == path
 
   step %Q{a directory named "#{path}"}
 
   target_path = File.join(PROJECT_ROOT_PATH, 'fixtures', path)
-  FileUtils.cp_r(target_path, current_dir)
+  FileUtils.cp_r(target_path, expand_path("."))
 
   step %Q{I cd to "#{path}"}
 end
@@ -58,20 +58,20 @@ Given /^a successfully built app at "([^\"]*)" with flags "([^\"]*)"$/ do |path,
 end
 
 Given /^a modification time for a file named "([^\"]*)"$/ do |file|
-  target = File.join(current_dir, file)
+  target = File.join(expand_path("."), file)
   @modification_times[target] = File.mtime(target)
 end
 
 Then /^the file "([^\"]*)" should not have been updated$/ do |file|
-  target = File.join(current_dir, file)
+  target = File.join(expand_path("."), file)
   expect(File.mtime(target)).to eq(@modification_times[target])
 end
 
 # Provide this Aruba overload in case we're matching something with quotes in it
 Then /^the file "([^"]*)" should contain '([^']*)'$/ do |file, partial_content|
-  check_file_content(file, Regexp.new(Regexp.escape(partial_content)), true)
+  expect(file).to have_file_content(Regexp.new(Regexp.escape(partial_content)), true)
 end
 
 And /the file "(.*)" should be gzipped/ do |file|
-  expect(File.binread(File.join(current_dir, file), 2)).to eq(['1F8B'].pack('H*'))
+  expect(File.binread(File.join(expand_path("."), file), 2)).to eq(['1F8B'].pack('H*'))
 end
