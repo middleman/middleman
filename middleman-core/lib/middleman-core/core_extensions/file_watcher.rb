@@ -30,7 +30,7 @@ module Middleman
         # Setup source collection.
         @sources = ::Middleman::Sources.new(app,
                                             disable_watcher: app.config[:watcher_disable],
-                                            force_polling: app.config[:force_polling],
+                                            force_polling: app.config[:watcher_force_polling],
                                             latency: app.config[:watcher_latency])
 
         # Add default ignores.
