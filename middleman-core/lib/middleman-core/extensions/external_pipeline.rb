@@ -33,5 +33,8 @@ class Middleman::Extensions::ExternalPipeline < ::Middleman::Extension
         logger.info "== External: #{without_newline}" if without_newline.length > 0
       end
     end
+  rescue ::Errno::ENOENT => e
+    logger.error "== External: Command failed with message: #{e.message}"
+    exit(1)
   end
 end
