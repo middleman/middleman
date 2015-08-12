@@ -54,42 +54,22 @@ describe Middleman::Util do
   end
 
   describe "::recursively_enhance" do
-    it "returns IndifferentHash if given one" do
-      input   = Middleman::Util::IndifferentHash.new({test: "subject"})
-      subject = Middleman::Util.recursively_enhance input
-
-      expect( subject ).to be_a Middleman::Util::IndifferentHash
-      expect( subject.test ).to eq "subject"
-    end
-
-    it "returns IndifferentHash if given a hash" do
+    it "returns Hashie extended Hash if given a hash" do
       input   = {test: "subject"}
       subject = Middleman::Util.recursively_enhance input
-
-      expect( subject ).to be_a Middleman::Util::IndifferentHash
+      
       expect( subject.test ).to eq "subject"
     end
 
     it "returns Array with strings, or IndifferentHash, true, false" do
-      indifferent_hash = Middleman::Util::IndifferentHash.new({test: "subject"})
+      indifferent_hash = {test: "subject"}
       regular_hash     = {regular: "hash"}
       input   = [ indifferent_hash, regular_hash, true, false ]
       subject = Middleman::Util.recursively_enhance input
 
-      expect( subject[0] ).to be_a Middleman::Util::IndifferentHash
-      expect( subject[1] ).to be_a Middleman::Util::IndifferentHash
       expect( subject[1].regular ).to eq "hash"
       expect( subject[2] ).to eq true
       expect( subject[3] ).to eq false
-    end
-
-    it "returns duplicated & frozen original object if not special cased" do
-      input   = "foo"
-      subject = Middleman::Util.recursively_enhance input
-
-      expect( subject ).to eq input
-      expect( subject.object_id ).not_to eq input.object_id
-      expect( subject ).to be_frozen
     end
   end
 

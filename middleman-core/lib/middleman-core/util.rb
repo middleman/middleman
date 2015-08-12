@@ -11,8 +11,8 @@ require 'rack/mime'
 # DbC
 require 'middleman-core/contracts'
 
-# Immutable Data
-require 'hamster'
+# Indifferent Access
+require 'hashie'
 
 # For URI templating
 require 'addressable/uri'
@@ -76,56 +76,25 @@ module Middleman
       end
     end
 
-    class IndifferentHash < ::Hamster::Hash
-      def [](key)
-        if key?(key.to_sym)
-          super(key.to_sym)
-        elsif key?(key.to_s)
-          super(key.to_s)
-        else
-          super
-        end
-      end
-
-      def method_missing(key, *_args)
-        if key?(key.to_sym)
-          self[key.to_sym]
-        elsif key?(key.to_s)
-          self[key.to_s]
-        end
-      end
+    class EnhancedHash < ::Hash
+      include ::Hashie::Extensions::MergeInitializer
+      include ::Hashie::Extensions::MethodReader
+      include ::Hashie::Extensions::IndifferentAccess
     end
 
-    # Recursively convert a normal Hash into a IndifferentHash
+    # Recursively convert a normal Hash into a EnhancedHash
     #
     # @private
     # @param [Hash] data Normal hash
-    # @return [Middleman::Util::IndifferentHash]
-    FrozenDataStructure = Frozen[Or[IndifferentHash, Array, String, TrueClass, FalseClass, Fixnum, NilClass]]
-    Contract Maybe[Or[String, Array, Hash, IndifferentHash]] => Maybe[FrozenDataStructure]
+    # @return [Hash]
+    Contract Maybe[Hash] => Maybe[Or[Array, EnhancedHash]]
     def recursively_enhance(obj)
-      case obj
-      when ::Hash
-        res = obj.map { |key, value| [recursively_enhance(key), recursively_enhance(value)] }
-        IndifferentHash.new(res)
-      when IndifferentHash
-        obj.map { |key, value| [recursively_enhance(key), recursively_enhance(value)] }
-      when ::Array
-        res = obj.map { |element| recursively_enhance(element) }
-        Hamster::Vector.new(res)
-      when ::SortedSet
-        # This clause must go before ::Set clause, since ::SortedSet is a ::Set.
-        res = obj.map { |element| recursively_enhance(element) }
-        Hamster::SortedSet.new(res)
-      when ::Set
-        res = obj.map { |element| recursively_enhance(element) }
-        Hamster::Set.new(res)
-      when Hamster::Vector, Hamster::Set, Hamster::SortedSet
-        obj.map { |element| recursively_enhance(element) }
-      when ::TrueClass, ::FalseClass, ::Fixnum, ::Symbol, ::NilClass, ::Float
-        obj
+      if obj.is_a? ::Array
+        obj.map { |e| recursively_enhance(e) }.freeze
+      elsif obj.is_a? ::Hash
+        EnhancedHash.new(obj).freeze
       else
-        obj.dup.freeze
+        obj
       end
     end
 

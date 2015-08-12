@@ -29,7 +29,7 @@ module Middleman
 
       # Get the frontmatter and plain content from a file
       # @param [String] path
-      # @return [Array<Middleman::Util::IndifferentHash, String>]
+      # @return [Array<Hash, String>]
       Contract Pathname, Maybe[Symbol] => [Hash, Maybe[String]]
       def parse(full_path, known_type=nil)
         data = {}

@@ -18,16 +18,6 @@ if ENV['TEST'] || ENV['CONTRACTS'] == 'true'
       end
     end
 
-    class Frozen < CallableClass
-      def initialize(contract)
-        @contract = contract
-      end
-
-      def valid?(val)
-        (val.frozen? || val.nil? || [::TrueClass, ::FalseClass, ::Fixnum].include?(val.class)) && Contract.valid?(val, @contract)
-      end
-    end
-
     VectorOf = Contracts::CollectionOf::Factory.new(::Hamster::Vector)
     ResourceList = Contracts::ArrayOf[IsA['Middleman::Sitemap::Resource']]
   end
