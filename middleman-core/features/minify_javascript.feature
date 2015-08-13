@@ -26,7 +26,7 @@ Feature: Minify Javascript
       })();
     </script>
     <script type='text/javascript'>
-      //<!--
+      <!--
       ;(function() {
         one;
         line();
@@ -72,8 +72,8 @@ Feature: Minify Javascript
         too();
       })();
     </script>
-    <script type='text/javascript'>
-      //<!--
+    <script type="text/javascript">
+      <!--
       ;(function() {
         one;
         line();
@@ -81,7 +81,7 @@ Feature: Minify Javascript
       })();
       //-->
     </script>
-    <script type='text/html'>
+    <script type="text/html">
       I'm a jQuery {{template}}.
     </script>
     """
@@ -104,18 +104,14 @@ Feature: Minify Javascript
     When I go to "/inline-js.html"
     Then I should see:
     """
-    <script>
+    <script>Hello</script>
+    <script>Hello</script>
+    <script type="text/javascript">
+      <!--
       Hello
-    </script>
-    <script>
-      Hello
-    </script>
-    <script type='text/javascript'>
-      //<!--
-    Hello
       //-->
     </script>
-    <script type='text/html'>
+    <script type="text/html">
       I'm a jQuery {{template}}.
     </script>
     """
@@ -130,18 +126,14 @@ Feature: Minify Javascript
     When I go to "/inline-js.html"
     Then I should see:
     """
-    <script>
-      !function(){should(),all.be(),on={one:line}}();
-    </script>
-    <script>
-      !function(){should(),too()}();
-    </script>
-    <script type='text/javascript'>
-      //<!--
-    !function(){one,line(),here()}();
+    <script>!function(){should(),all.be(),on={one:line}}();</script>
+    <script>!function(){should(),too()}();</script>
+    <script type="text/javascript">
+      <!--
+      !function(){one,line(),here()}();
       //-->
     </script>
-    <script type='text/html'>
+    <script type="text/html">
       I'm a jQuery {{template}}.
     </script>
     """
@@ -171,7 +163,7 @@ Feature: Minify Javascript
       """
     And the Server is running at "minify-js-app"
     When I go to "/inline-coffeescript.html"
-    Then I should see "3" lines
+    Then I should see "1" lines
   
   Scenario: Rendering external js (coffeescript) with the feature enabled
     Given a fixture app "minify-js-app"
