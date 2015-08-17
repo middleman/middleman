@@ -4,6 +4,26 @@ require 'middleman-core/contracts'
 require 'middleman-core/contracts'
 require 'backports/2.0.0/enumerable/lazy'
 
+# Monkey patch Listen silencer so `only` works on directories too
+module Listen
+  class Silencer
+    # TODO: switch type and path places - and verify
+    def silenced?(relative_path, type)
+      path = relative_path.to_s
+
+      # if only_patterns && type == :file
+      #   return true unless only_patterns.any? { |pattern| path =~ pattern }
+      # end
+
+      if only_patterns
+        return !only_patterns.any? { |pattern| path =~ pattern }
+      end
+
+      ignore_patterns.any? { |pattern| path =~ pattern }
+    end
+  end
+end
+
 module Middleman
   # The default source watcher implementation. Watches a directory on disk
   # and responds to events on changes.
@@ -28,6 +48,9 @@ module Middleman
     # Options for configuring the watcher
     Contract Hash
     attr_reader :options
+
+    # Reference to lower level listener
+    attr_reader :listener
 
     # Construct a new SourceWatcher
     #
@@ -138,9 +161,11 @@ module Middleman
       config[:latency] = @latency if @latency
 
       @listener = ::Listen.to(@directory.to_s, config, &method(:on_listener_change))
-      @listener.start
 
+      @listener.ignore(/^\.sass-cache/)
       @listener.only(@only) unless @only.empty?
+
+      @listener.start
     end
 
     # Stop the listener.

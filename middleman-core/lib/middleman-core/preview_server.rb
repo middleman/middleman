@@ -124,9 +124,12 @@ module Middleman
             ]
 
             # config.rb
-            files.watch :reload,
+            watcher = files.watch :reload,
                         path: root,
                         only: match_against
+
+            # Hack around node_modules in root.
+            watcher.listener.ignore(/^node_modules/)
           end
         end
 
