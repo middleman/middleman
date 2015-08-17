@@ -1,5 +1,6 @@
 require 'addressable/uri'
 require 'middleman-core/util'
+require 'middleman-core/rack'
 
 class Middleman::Extensions::AssetHash < ::Middleman::Extension
   option :exts, %w(.jpg .jpeg .png .gif .webp .js .css .otf .woff .woff2 .eot .ttf .svg), 'List of extensions that get asset hashes appended to them.'
