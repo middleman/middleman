@@ -31,7 +31,7 @@ Gem::Specification.new do |s|
   s.add_dependency("addressable", ["~> 2.3.5"])
 
   # Watcher
-  s.add_dependency('listen', ['>= 2.7.9', '< 3.0'])
+  s.add_dependency('listen', ['~> 3.0'])
 
   # i18n
   s.add_dependency('i18n', ['~> 0.7.0'])
