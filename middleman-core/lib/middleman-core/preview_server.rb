@@ -130,6 +130,9 @@ module Middleman
 
             # Hack around node_modules in root.
             watcher.listener.ignore(/^node_modules/)
+
+            # Hack around sass cache in root.
+            watcher.listener.ignore(/^\.sass-cache/)
           end
         end
 
