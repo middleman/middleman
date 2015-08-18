@@ -76,10 +76,10 @@ module Middleman
       end
     end
 
-    class EnhancedHash < ::Hash
-      include ::Hashie::Extensions::MergeInitializer
-      include ::Hashie::Extensions::MethodReader
-      include ::Hashie::Extensions::IndifferentAccess
+    class EnhancedHash < ::Hashie::Mash
+      # include ::Hashie::Extensions::MergeInitializer
+      # include ::Hashie::Extensions::MethodReader
+      # include ::Hashie::Extensions::IndifferentAccess
     end
 
     # Recursively convert a normal Hash into a EnhancedHash
@@ -90,9 +90,9 @@ module Middleman
     Contract Maybe[Hash] => Maybe[Or[Array, EnhancedHash]]
     def recursively_enhance(obj)
       if obj.is_a? ::Array
-        obj.map { |e| recursively_enhance(e) }.freeze
+        obj.map { |e| recursively_enhance(e) }
       elsif obj.is_a? ::Hash
-        EnhancedHash.new(obj).freeze
+        ::Hashie::Mash.new(obj)
       else
         obj
       end
