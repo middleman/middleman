@@ -7,7 +7,7 @@ class Middleman::Extensions::AssetHost < ::Middleman::Extension
   option :sources, %w(.htm .html .php .css .js), 'List of extensions that are searched for bustable assets.'
   option :ignore, [], 'Regexes of filenames to skip adding query strings to'
 
-  def after_configuration
+  def ready
     app.use ::Middleman::Middleware::InlineURLRewriter,
             id: :asset_host,
             url_extensions: options.exts,

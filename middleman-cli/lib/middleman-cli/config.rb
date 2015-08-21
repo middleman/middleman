@@ -13,12 +13,17 @@ module Middleman::Cli
     def console
       require 'json'
       require 'middleman-core'
+      require 'middleman-core/logger'
 
       opts = {
         environment: options['environment']
       }
 
+      # Don't output info messages
+      ::Middleman::Logger.singleton(2, false)
+
       app = ::Middleman::Application.new do
+        config[:exit_before_ready] = true
         config[:environment] = opts[:environment].to_sym if opts[:environment]
       end
 

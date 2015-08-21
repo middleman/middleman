@@ -11,7 +11,7 @@ module Middleman::CoreExtensions
       app.config.define_setting :show_exceptions, ENV['TEST'] ? false : true, 'Whether to catch and display exceptions'
     end
 
-    def after_configuration
+    def ready
       app.use ::Rack::ShowExceptions if !app.build? && app.config[:show_exceptions]
     end
   end

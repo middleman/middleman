@@ -12,7 +12,7 @@ class Middleman::Extensions::RelativeAssets < ::Middleman::Extension
     require 'middleman-core/middleware/inline_url_rewriter'
   end
 
-  def after_configuration
+  def ready
     app.use ::Middleman::Middleware::InlineURLRewriter,
             id: :asset_hash,
             url_extensions: options.exts,

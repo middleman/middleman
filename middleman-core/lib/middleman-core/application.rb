@@ -92,6 +92,10 @@ module Middleman
     # @return [String]
     define_setting :source, 'source', 'Name of the source directory'
 
+    # If we should exit before ready event.
+    # @return [Boolean]
+    define_setting :exit_before_ready, false, 'If we should exit before ready event.'
+
     # Middleman mode. Defaults to :server, set to :build by the build process
     # @return [String]
     define_setting :mode, ((ENV['MM_ENV'] && ENV['MM_ENV'].to_sym) || :server), 'Middleman mode. Defaults to :server'
@@ -274,7 +278,7 @@ module Middleman
       execute_callbacks(:after_configuration)
 
       # Everything is stable
-      execute_callbacks(:ready)
+      execute_callbacks(:ready) unless config[:exit_before_ready]
     end
 
     # Eval config

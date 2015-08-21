@@ -9,7 +9,7 @@ class Middleman::Extensions::MinifyCss < ::Middleman::Extension
     SassCompressor
   }, 'Set the CSS compressor to use.'
 
-  def after_configuration
+  def ready
     # Setup Rack middleware to minify CSS
     app.use Rack, compressor: options[:compressor],
                   ignore: Array(options[:ignore]) + [/\.min\./],

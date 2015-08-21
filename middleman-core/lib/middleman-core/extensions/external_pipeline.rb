@@ -16,7 +16,7 @@ class Middleman::Extensions::ExternalPipeline < ::Middleman::Extension
                     latency: options[:latency]
   end
 
-  def after_configuration
+  def ready
     if app.build?
       logger.info "== Executing: `#{options[:command]}`"
       watch_command!
