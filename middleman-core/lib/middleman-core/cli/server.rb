@@ -16,7 +16,7 @@ module Middleman::Cli
                   desc: 'The port Middleman will listen on'
     method_option :server_name,
                   aliases: '-s',
-                  desc: 'The server name name Middleman will use'
+                  desc: 'The server name Middleman will use'
     method_option :bind_address,
                   aliases: '-b',
                   desc: 'The bind address Middleman will listen on'
