@@ -4,6 +4,7 @@ require 'rack/lint'
 require 'rack/head'
 
 require 'middleman-core/util'
+require 'middleman-core/logger'
 require 'middleman-core/template_renderer'
 
 # CSSPIE HTC File
