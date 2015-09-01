@@ -98,11 +98,11 @@ module Middleman
 
     # Middleman mode. Defaults to :server, set to :build by the build process
     # @return [String]
-    define_setting :mode, ((ENV['MM_ENV'] && ENV['MM_ENV'].to_sym) || :server), 'Middleman mode. Defaults to :server'
+    define_setting :mode, :server, 'Middleman mode. Defaults to :server'
 
     # Middleman environment. Defaults to :development
     # @return [String]
-    define_setting :environment, :development, 'Middleman environment. Defaults to :development'
+    define_setting :environment, ((ENV['MM_ENV'] && ENV['MM_ENV'].to_sym) || :development), 'Middleman environment. Defaults to :development'
 
     # Which file should be used for directory indexes
     # @return [String]
