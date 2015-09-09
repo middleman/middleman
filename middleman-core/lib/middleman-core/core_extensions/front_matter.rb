@@ -28,9 +28,9 @@ module Middleman::CoreExtensions
     Contract ResourceList => ResourceList
     def manipulate_resource_list(resources)
       resources.each do |resource|
-        next if resource.source_file.nil?
+        next if resource.file_descriptor.nil?
 
-        fmdata = data(resource.source_file[:full_path].to_s).first.dup
+        fmdata = data(resource.file_descriptor[:full_path].to_s).first.dup
 
         # Copy over special options
         # TODO: Should we make people put these under "options" instead of having

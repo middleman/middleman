@@ -98,7 +98,7 @@ Feature: Collections
     And a file named "source/index.html.erb" with:
       """
       <% collection(:articles).each do |article| %>
-        Article: <%= article.data.title || article.source_file[:relative_path] %>
+        Article: <%= article.data.title || article.file_descriptor[:relative_path] %>
       <% end %>
       """
     Given the Server is running at "collections-app"

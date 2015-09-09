@@ -7,9 +7,9 @@ class NeighborFrontmatter < ::Middleman::Extension
 
   def manipulate_resource_list(resources)
     resources.each do |resource|
-      next unless resource.source_file
+      next unless resource.file_descriptor
 
-      neighbor = "#{resource.source_file[:relative_path]}.frontmatter"
+      neighbor = "#{resource.file_descriptor[:relative_path]}.frontmatter"
 
       file = app.files.find(:source, neighbor)
 

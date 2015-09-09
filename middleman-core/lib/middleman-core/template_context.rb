@@ -128,7 +128,7 @@ module Middleman
       return unless resource = sitemap.find_resource_by_destination_path(current_path)
 
       # Look for partials relative to the current path
-      current_dir = resource.source_file[:relative_path].dirname
+      current_dir = resource.file_descriptor[:relative_path].dirname
       non_root = partial_path.to_s.sub(/^\//, '')
       relative_dir = current_dir + Pathname(non_root)
 
@@ -138,7 +138,7 @@ module Middleman
       partial_file = nil
 
       [
-        [relative_dir.to_s, { preferred_engine: resource.source_file[:relative_path].extname[1..-1].to_sym }],
+        [relative_dir.to_s, { preferred_engine: resource.file_descriptor[:relative_path].extname[1..-1].to_sym }],
         [non_root],
         [non_root, { try_static: try_static }],
         [relative_dir_no_underscore.to_s, { try_static: try_static }],

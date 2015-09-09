@@ -169,7 +169,7 @@ module Middleman
 
       begin
         if resource.binary?
-          export_file!(output_file, resource.source_file[:full_path])
+          export_file!(output_file, resource.file_descriptor[:full_path])
         else
           response = @rack.get(URI.escape(resource.request_path))
 

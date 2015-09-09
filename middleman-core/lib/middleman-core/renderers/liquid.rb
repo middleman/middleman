@@ -23,8 +23,8 @@ module Middleman
         return resources unless app.extensions[:data]
 
         resources.each do |resource|
-          next if resource.source_file.nil?
-          next unless resource.source_file[:relative_path].to_s =~ %r{\.liquid$}
+          next if resource.file_descriptor.nil?
+          next unless resource.file_descriptor[:relative_path].to_s =~ %r{\.liquid$}
 
           # Convert data object into a hash for liquid
           resource.add_metadata locals: {

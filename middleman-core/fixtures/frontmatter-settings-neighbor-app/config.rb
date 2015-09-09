@@ -12,12 +12,12 @@ class NeighborFrontmatter < ::Middleman::Extension
 
   def manipulate_resource_list(resources)
     resources.each do |resource|
-      next unless resource.source_file
-      next if resource.source_file[:relative_path].extname == '.frontmatter'
+      next unless resource.file_descriptor
+      next if resource.file_descriptor[:relative_path].extname == '.frontmatter'
 
       [
         "#{resource.url.sub(/^\//, '')}.frontmatter",
-        "#{resource.source_file[:relative_path]}.frontmatter"
+        "#{resource.file_descriptor[:relative_path]}.frontmatter"
       ].each do |n|
         file = app.files.find(:source, n)
         apply_neighbor_data(resource, file) if file

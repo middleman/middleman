@@ -87,7 +87,7 @@ module Middleman
       # Initialize resource with parent store and URL
       # @param [Middleman::Sitemap::Store] store
       # @param [String] path
-      # @param [String] source_file
+      # @param [String] target
       def initialize(store, path, target)
         super(store, path)
 
@@ -115,8 +115,8 @@ module Middleman
       end
 
       Contract IsA['Middleman::SourceFile']
-      def source_file
-        target_resource.source_file
+      def file_descriptor
+        target_resource.file_descriptor
       end
 
       Contract Maybe[String]

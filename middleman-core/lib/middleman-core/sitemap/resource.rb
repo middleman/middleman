@@ -24,7 +24,7 @@ module Middleman
       # The on-disk source file for this resource, if there is one
       # @return [String]
       Contract Maybe[IsA['Middleman::SourceFile']]
-      attr_reader :source_file
+      attr_reader :file_descriptor
 
       # The path to use when requesting this resource. Normally it's
       # the same as {#destination_path} but it can be overridden in subclasses.
@@ -41,21 +41,21 @@ module Middleman
       # Initialize resource with parent store and URL
       # @param [Middleman::Sitemap::Store] store
       # @param [String] path
-      # @param [String] source_file
+      # @param [String] source
       Contract IsA['Middleman::Sitemap::Store'], String, Maybe[Or[IsA['Middleman::SourceFile'], String]] => Any
-      def initialize(store, path, source_file=nil)
+      def initialize(store, path, source=nil)
         @store       = store
         @app         = @store.app
         @path        = path
 
-        if source_file && source_file.is_a?(String)
-          source_file = Pathname(source_file)
+        if source && source.is_a?(String)
+          source = Pathname(source)
         end
 
-        if source_file && source_file.is_a?(Pathname)
-          @source_file = ::Middleman::SourceFile.new(source_file.relative_path_from(@app.source_dir), source_file, @app.source_dir, Set.new([:source]))
+        if source && source.is_a?(Pathname)
+          @file_descriptor = ::Middleman::SourceFile.new(source.relative_path_from(@app.source_dir), source, @app.source_dir, Set.new([:source]))
         else
-          @source_file = source_file
+          @file_descriptor = source
         end
 
         @destination_path = @path
@@ -71,8 +71,15 @@ module Middleman
       # @return [Boolean]
       Contract Bool
       def template?
-        return false if source_file.nil?
-        !::Tilt[source_file[:full_path].to_s].nil?
+        return false if file_descriptor.nil?
+        !::Tilt[file_descriptor[:full_path].to_s].nil?
+      end
+
+      # Backwards compatible method for turning descriptor into a string.
+      # @return [String]
+      Contract String
+      def source_file
+        file_descriptor && file_descriptor[:full_path].to_s
       end
 
       # Merge in new metadata specific to this resource.
@@ -119,9 +126,9 @@ module Middleman
       # @return [String]
       Contract Hash, Hash => String
       def render(opts={}, locs={})
-        return ::Middleman::FileRenderer.new(@app, source_file[:full_path].to_s).template_data_for_file unless template?
+        return ::Middleman::FileRenderer.new(@app, file_descriptor[:full_path].to_s).template_data_for_file unless template?
 
-        ::Middleman::Util.instrument 'render.resource', path: source_file[:full_path].to_s, destination_path: destination_path do
+        ::Middleman::Util.instrument 'render.resource', path: file_descriptor[:full_path].to_s, destination_path: destination_path do
           md   = metadata
           opts = md[:options].deep_merge(opts)
           locs = md[:locals].deep_merge(locs)
@@ -132,7 +139,7 @@ module Middleman
             opts[:layout] = false if %w(.js .json .css .txt).include?(ext)
           end
 
-          renderer = ::Middleman::TemplateRenderer.new(@app, source_file[:full_path].to_s)
+          renderer = ::Middleman::TemplateRenderer.new(@app, file_descriptor[:full_path].to_s)
           renderer.render(locs, opts)
         end
       end
@@ -155,7 +162,7 @@ module Middleman
       # @return [Boolean]
       Contract Bool
       def binary?
-        !source_file.nil? && ::Middleman::Util.binary?(source_file[:full_path].to_s)
+        !file_descriptor.nil? && ::Middleman::Util.binary?(file_descriptor[:full_path].to_s)
       end
 
       # Ignore a resource directly, without going through the whole
@@ -174,7 +181,7 @@ module Middleman
         # Ignore based on the source path (without template extensions)
         return true if @app.sitemap.ignored?(path)
         # This allows files to be ignored by their source file name (with template extensions)
-        if !self.is_a?(ProxyResource) && source_file && @app.sitemap.ignored?(source_file[:relative_path].to_s)
+        if !self.is_a?(ProxyResource) && file_descriptor && @app.sitemap.ignored?(file_descriptor[:relative_path].to_s)
           true
         else
           false

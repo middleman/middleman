@@ -126,7 +126,7 @@ module Middleman
     # Immediately send static file
     def send_file(resource, env)
       file      = ::Rack::File.new nil
-      file.path = resource.source_file[:full_path]
+      file.path = resource.file_descriptor[:full_path]
       response = file.serving(env)
       status = response[0]
       response[1]['Content-Encoding'] = 'gzip' if %w(.svgz .gz).include?(resource.ext)
