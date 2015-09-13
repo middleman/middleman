@@ -18,4 +18,4 @@
 .DS_Store
 
 # Ignore gems installed in local directory
-vendor/bundle/
+/vendor/bundle/
