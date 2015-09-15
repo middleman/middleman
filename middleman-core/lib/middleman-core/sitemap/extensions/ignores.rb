@@ -3,6 +3,8 @@ module Middleman
     module Extensions
       # Class to handle managing ignores
       class Ignores < Extension
+        self.resource_list_manipulator_priority = 0
+
         # Expose `create_ignore` as `app.ignore`
         expose_to_application ignore: :create_ignore
 

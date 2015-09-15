@@ -4,6 +4,8 @@ module Middleman
   module Sitemap
     module Extensions
       class RequestEndpoints < Extension
+        self.resource_list_manipulator_priority = 0
+
         # Expose `create_endpoint` to config as `endpoint`
         expose_to_config endpoint: :create_endpoint
 

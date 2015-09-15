@@ -7,6 +7,8 @@ module Middleman
       # Manages the list of proxy configurations and manipulates the sitemap
       # to include new resources based on those configurations
       class Redirects < Extension
+        self.resource_list_manipulator_priority = 0
+
         # Expose `create_redirect` to config as `redirect`
         expose_to_config redirect: :create_redirect
 

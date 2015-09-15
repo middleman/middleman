@@ -5,6 +5,8 @@ module Middleman
   module Sitemap
     module Extensions
       class OnDisk < Extension
+        self.resource_list_manipulator_priority = 0
+
         def initialize(app, config={}, &block)
           super
 

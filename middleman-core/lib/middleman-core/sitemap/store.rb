@@ -188,6 +188,7 @@ module Middleman
           @app.logger.debug '== Rebuilding resource list'
 
           @resources = @resource_list_manipulators.reduce([]) do |result, m|
+            @app.logger.debug "== Running manipulator: #{m[:name]}"
             newres = m[:manipulator].send(m[:custom_name] || :manipulate_resource_list, result)
 
             # Reset lookup cache

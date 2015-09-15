@@ -7,6 +7,8 @@ module Middleman
       # Manages the list of proxy configurations and manipulates the sitemap
       # to include new resources based on those configurations
       class Proxies < Extension
+        self.resource_list_manipulator_priority = 0
+
         # Expose `create_proxy` as `app.proxy`
         expose_to_application proxy: :create_proxy
 
@@ -83,7 +85,16 @@ module Middleman
       end
     end
 
+    class Resource
+      def proxy_to(path)
+        throw "Resource#proxy_to has been removed. Use ProxyResource class instead."
+      end
+    end
+
     class ProxyResource < ::Middleman::Sitemap::Resource
+      Contract String
+      attr_reader :target
+
       # Initialize resource with parent store and URL
       # @param [Middleman::Sitemap::Store] store
       # @param [String] path
@@ -117,6 +128,10 @@ module Middleman
       Contract IsA['Middleman::SourceFile']
       def file_descriptor
         target_resource.file_descriptor
+      end
+
+      def metadata
+        target_resource.metadata.deep_merge super
       end
 
       Contract Maybe[String]
