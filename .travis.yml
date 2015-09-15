@@ -7,7 +7,7 @@ rvm:
   - ruby-head
   - jruby-head
   - jruby-19mode
-  - 2.2
+  - 2.2.2
   - 2.1
   - 2.0
 os:
