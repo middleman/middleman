@@ -71,7 +71,8 @@ module Middleman
       engine = extension[1..-1].to_sym
 
       # Store last engine for later (could be inside nested renders)
-      self.current_engine, engine_was = engine, current_engine
+      self.current_engine = engine
+      engine_was = current_engine
 
       # By default, no content is captured
       content = ''

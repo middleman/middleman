@@ -40,7 +40,6 @@ module Middleman
 
     # Haml Renderer
     class Haml < ::Middleman::Extension
-
       def initialize(app, options={}, &block)
         super
 
@@ -53,7 +52,7 @@ module Middleman
               modified_options = options.dup
               modified_options[:context] = compiler_options[:context]
 
-              text = template_class.new(nil, 1, modified_options) {text}.render
+              text = template_class.new(nil, 1, modified_options) { text }.render
               super(text, compiler_options)
             end
           end

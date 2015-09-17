@@ -8,16 +8,14 @@ require 'backports/2.0.0/enumerable/lazy'
 module Listen
   class Silencer
     # TODO: switch type and path places - and verify
-    def silenced?(relative_path, type)
+    def silenced?(relative_path, _type)
       path = relative_path.to_s
 
       # if only_patterns && type == :file
       #   return true unless only_patterns.any? { |pattern| path =~ pattern }
       # end
 
-      if only_patterns
-        return !only_patterns.any? { |pattern| path =~ pattern }
-      end
+      return !only_patterns.any? { |pattern| path =~ pattern } if only_patterns
 
       ignore_patterns.any? { |pattern| path =~ pattern }
     end

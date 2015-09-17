@@ -7,7 +7,8 @@ require 'padrino-helpers'
 class Padrino::Helpers::OutputHelpers::ErbHandler
   # Force Erb capture not to use safebuffer
   def capture_from_template(*args, &block)
-    self.output_buffer, buf_was = '', output_buffer
+    self.output_buffer = ''
+    buf_was = output_buffer
     raw = block.call(*args)
     captured = template.instance_variable_get(:@_out_buf)
     self.output_buffer = buf_was

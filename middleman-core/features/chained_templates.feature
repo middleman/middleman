@@ -7,19 +7,19 @@ Feature: Templates should be chainable
     Then I should see "Title</h1>"
     And I should see "Subtitle</h2>"
     And I should see "Sup</h3>"
-    
+
   Scenario: Build chained template
     Given a successfully built app at "chained-app"
     When I cd to "build"
     Then the following files should exist:
       | index.html                                    |
-      | test.html.combobreaker                        |
+      | test.erb.combobreaker                         |
     And the file "index.html" should contain "Title</h1>"
     And the file "index.html" should contain "Subtitle</h2>"
     And the file "index.html" should contain "Sup</h3>"
-    And the file "test.html.combobreaker.html" should contain "Title</h1>"
-    And the file "test.html.combobreaker.html" should contain "Subtitle</h2>"
-    And the file "test.html.combobreaker.html" should contain "Sup</h3>"
+    And the file "test.erb.combobreaker" should contain "Title</h1>"
+    And the file "test.erb.combobreaker" should contain "Subtitle</h2>"
+    And the file "test.erb.combobreaker" should contain "Sup</h3>"
 
   Scenario: Partials are parsed by multiple template engines: Outer template has .erb and inner .md.erb
     Given a fixture app "partial-chained_templates-app"
@@ -32,7 +32,7 @@ Feature: Templates should be chainable
     And a template named "my_partial.html.md.erb" with:
     """
     ## My Partial
-    
+
     <%= 'hello world' %>
     """
     And the Server is running
@@ -61,7 +61,7 @@ Feature: Templates should be chainable
     And a template named "my_partial.html.md.erb" with:
     """
     ## My Partial
-    
+
     <%= 'hello world' %>
     """
     And the Server is running
@@ -90,7 +90,7 @@ Feature: Templates should be chainable
     And a template named "my_partial.html.erb" with:
     """
     <h2>My Partial</h2>
-    
+
     <%= 'hello world' %>
     """
     And the Server is running

@@ -11,11 +11,11 @@ require 'middleman-core/util'
 require 'yaml'
 
 # Parsing JSON data
-require 'active_support/json'
+require 'json'
 
 module Middleman
   module Util
-    module Data      
+    module Data
       include Contracts
 
       module_function
@@ -121,7 +121,7 @@ module Middleman
       Contract String, Pathname => Maybe[[Hash, String]]
       def parse_json(content, full_path)
         begin
-          data = map_value(::ActiveSupport::JSON.decode(content))
+          data = map_value(::JSON.parse(content))
         rescue => e
           $stderr.puts "JSON Exception parsing #{full_path}: #{e.message}"
           return nil

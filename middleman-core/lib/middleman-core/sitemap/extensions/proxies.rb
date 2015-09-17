@@ -86,8 +86,8 @@ module Middleman
     end
 
     class Resource
-      def proxy_to(path)
-        throw "Resource#proxy_to has been removed. Use ProxyResource class instead."
+      def proxy_to(_path)
+        throw 'Resource#proxy_to has been removed. Use ProxyResource class instead.'
       end
     end
 

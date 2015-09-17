@@ -1,5 +1,3 @@
-# Use ActiveSupport JSON
-require 'active_support/json'
 require 'active_support/core_ext/integer/inflections'
 
 require 'middleman-core/contracts'

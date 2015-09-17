@@ -17,7 +17,7 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
   def after_configuration
     # Allow specifying regexes to ignore, plus always ignore apple touch icons
     @ignore = Array(options.ignore) + [/^apple-touch-icon/]
-    
+
     app.use ::Middleman::Middleware::InlineURLRewriter,
             id: :asset_hash,
             url_extensions: options.exts,
