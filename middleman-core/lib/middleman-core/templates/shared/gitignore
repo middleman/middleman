@@ -16,3 +16,6 @@
 
 # Ignore .DS_store file
 .DS_Store
+
+# Ignore gems installed in local directory
+/vendor/bundle/
