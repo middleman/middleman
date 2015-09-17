@@ -14,7 +14,6 @@ module Middleman
       extend Forwardable
 
       attr_reader :app, :ssl_certificate, :ssl_private_key, :environment, :server_information
-      def_delegator :app, :logger
 
       def https?
         @https == true
@@ -43,11 +42,11 @@ module Middleman
 
         mount_instance(the_app)
 
-        logger.debug %(== Server information is provided by #{server_information.handler})
-        logger.debug %(== The Middleman is running in "#{environment}" environment)
-        logger.debug format('== The Middleman preview server is bound to %s', ServerUrl.new(hosts: server_information.listeners, port: server_information.port, https: https?).to_bind_addresses.join(', '))
-        logger.info format('== View your site at %s', ServerUrl.new(hosts: server_information.site_addresses, port: server_information.port, https: https?).to_urls.join(', '))
-        logger.info format('== Inspect your site configuration at %s', ServerUrl.new(hosts: server_information.site_addresses, port: server_information.port, https: https?).to_config_urls.join(', '))
+        app.logger.debug %(== Server information is provided by #{server_information.handler})
+        app.logger.debug %(== The Middleman is running in "#{environment}" environment)
+        app.logger.debug format('== The Middleman preview server is bound to %s', ServerUrl.new(hosts: server_information.listeners, port: server_information.port, https: https?).to_bind_addresses.join(', '))
+        app.logger.info format('== View your site at %s', ServerUrl.new(hosts: server_information.site_addresses, port: server_information.port, https: https?).to_urls.join(', '))
+        app.logger.info format('== Inspect your site configuration at %s', ServerUrl.new(hosts: server_information.site_addresses, port: server_information.port, https: https?).to_config_urls.join(', '))
 
         @initialized ||= false
         return if @initialized
@@ -77,7 +76,7 @@ module Middleman
       # @return [void]
       def stop
         begin
-          logger.info '== The Middleman is shutting down'
+          app.logger.info '== The Middleman is shutting down'
         rescue
           # if the user closed their terminal STDOUT/STDERR won't exist
         end
@@ -88,13 +87,13 @@ module Middleman
       # Simply stop, then start the server
       # @return [void]
       def reload
-        logger.info '== The Middleman is reloading'
+        app.logger.info '== The Middleman is reloading'
 
         begin
           app = initialize_new_app
         rescue => e
-          logger.error "Error reloading Middleman: #{e}\n#{e.backtrace.join("\n")}"
-          logger.info '== The Middleman is still running the application from before the error'
+          $stderr.puts "Error reloading Middleman: #{e}\n#{e.backtrace.join("\n")}"
+          app.logger.info '== The Middleman is still running the application from before the error'
           return
         end
 
@@ -105,7 +104,7 @@ module Middleman
 
         mount_instance(app)
 
-        logger.info '== The Middleman has reloaded'
+        app.logger.info '== The Middleman has reloaded'
       end
 
       # Stop the current instance, exit Webrick
@@ -143,7 +142,7 @@ module Middleman
               %r{^config\.rb$},
               %r{^environments/[^\.](.*)\.rb$},
               %r{^lib/[^\.](.*)\.rb$},
-              %r{^#{@app.config[:helpers_dir]}/[^\.](.*)\.rb$}
+              %r{^#{config[:helpers_dir]}/[^\.](.*)\.rb$}
             ]
 
             # config.rb
@@ -169,7 +168,7 @@ module Middleman
         # `server_information`
         server_information.use app.config
 
-        logger.warn format('== The Middleman uses a different port "%s" then the configured one "%s" because some other server is listening on that port.', server_information.port, configured_port) unless app.config[:port] == configured_port
+        app.logger.warn format('== The Middleman uses a different port "%s" then the configured one "%s" because some other server is listening on that port.', server_information.port, configured_port) unless app.config[:port] == configured_port
 
         @https        = app.config[:https]
         @environment  = app.config[:environment]
@@ -245,7 +244,7 @@ module Middleman
         begin
           ::WEBrick::HTTPServer.new(http_opts)
         rescue Errno::EADDRINUSE
-          logger.error %(== Port "#{http_opts[:Port]}" is in use. This should not have happened. Please start "middleman server" again.)
+          $stderr.puts %(== Port "#{http_opts[:Port]}" is in use. This should not have happened. Please start "middleman server" again.)
         end
       end
 
