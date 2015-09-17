@@ -63,6 +63,33 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
       ::I18n.t(*args)
     end
 
+    def url_for(path_or_resource, options={})
+      locale = options.delete(:locale) || ::I18n.locale
+
+      opts = options.dup
+
+      should_relativize = opts.key?(:relative) ? opts[:relative] : config[:relative_links]
+
+      opts[:relative] = false
+
+      href = super(path_or_resource, opts)
+
+      final_path = if result = extensions[:i18n].localized_path(href, locale)
+        result
+      else
+        # Should we log the missing file?
+        href
+      end
+
+      opts[:relative] = should_relativize
+
+      begin
+        super(final_path, opts)
+      rescue RuntimeError
+        super(path_or_resource, options)
+      end
+    end
+
     def locate_partial(partial_name, try_static=false)
       locals_dir = extensions[:i18n].options[:templates_dir]
 
@@ -102,19 +129,21 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
   def manipulate_resource_list(resources)
     new_resources = []
 
-    resources.each do |resource|
-      # If it uses file extension localization
-      if result = parse_locale_extension(resource.path)
-        ext_lang, path, page_id = result
-        new_resources << build_resource(path, resource.path, page_id, ext_lang)
-      # If it's a "localizable template"
-      elsif File.fnmatch?(File.join(options[:templates_dir], '**'), resource.path)
-        page_id = File.basename(resource.path, File.extname(resource.path))
-        langs.each do |lang|
-          # Remove folder name
-          path = resource.path.sub(options[:templates_dir], '')
-          new_resources << build_resource(path, resource.path, page_id, lang)
-        end
+    file_extension_resources = resources.select do |resource|
+      parse_locale_extension(resource.path)
+    end
+
+    localizable_folder_resources = resources.select do |resource|
+      !file_extension_resources.include?(resource) && File.fnmatch?(File.join(options[:templates_dir], '**'), resource.path)
+    end
+
+    # If it's a "localizable template"
+    localizable_folder_resources.map do |resource|
+      page_id = File.basename(resource.path, File.extname(resource.path))
+      langs.each do |lang|
+        # Remove folder name
+        path = resource.path.sub(options[:templates_dir], '')
+        new_resources << build_resource(path, resource.path, page_id, lang)
       end
 
       # This is for backwards compatibility with the old provides_metadata-based code
@@ -124,7 +153,27 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
       resource.add_metadata options: { lang: @mount_at_root }, locals: { lang: @mount_at_root }
     end
 
-    resources + new_resources
+    # If it uses file extension localization
+    file_extension_resources.map do |resource|
+      result = parse_locale_extension(resource.path)
+      ext_lang, path, page_id = result
+      new_resources << build_resource(path, resource.path, page_id, ext_lang)
+    end
+
+    @lookup = new_resources.each_with_object({}) do |desc, sum|
+      abs_path = desc.source_path.sub(options[:templates_dir], '')
+      sum[abs_path] ||= {}
+      sum[abs_path][desc.lang] = '/' + desc.path
+    end
+
+    resources + new_resources.map { |r| r.to_resource(app) }
+  end
+
+  def localized_path(path, lang)
+    lookup_path = path.dup
+    lookup_path << app.config[:index_file] if lookup_path.end_with?('/')
+
+    @lookup[lookup_path] && @lookup[lookup_path][lang]
   end
 
   private
@@ -155,9 +204,9 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
         p[:relative_path].to_s.split(File::SEPARATOR).length == 1
       end
 
-      known_langs.map { |p|
+      known_langs.map do |p|
         File.basename(p[:relative_path].to_s).sub(/\.ya?ml$/, '').sub(/\.rb$/, '')
-      }.sort.map(&:to_sym)
+      end.sort.map(&:to_sym)
     end
   end
 
@@ -177,11 +226,28 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
     [lang, path, basename]
   end
 
-  Contract String, String, String, Symbol => IsA['Middleman::Sitemap::Resource']
+  LocalizedPageDescriptor = Struct.new(:path, :source_path, :lang) do
+    def to_resource(app)
+      r = ::Middleman::Sitemap::ProxyResource.new(app.sitemap, path, source_path)
+      r.add_metadata options: { lang: lang }
+      r
+    end
+  end
+
+  Contract String, String, String, Symbol => LocalizedPageDescriptor
   def build_resource(path, source_path, page_id, lang)
     old_locale = ::I18n.locale
     ::I18n.locale = lang
     localized_page_id = ::I18n.t("paths.#{page_id}", default: page_id, fallback: [])
+
+    partially_localized_path = ''
+
+    File.dirname(path).split('/').each do |path_sub|
+      next if path_sub == ''
+      partially_localized_path = "#{partially_localized_path}/#{(::I18n.t("paths.#{path_sub}", default: path_sub).to_s)}"
+    end
+
+    path = "#{partially_localized_path}/#{File.basename(path)}"
 
     prefix = if (options[:mount_at_root] == lang) || (options[:mount_at_root].nil? && langs[0] == lang)
       '/'
@@ -197,10 +263,8 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
 
     path = path.sub(options[:templates_dir] + '/', '')
 
-    p = ::Middleman::Sitemap::ProxyResource.new(app.sitemap, path, source_path)
-    p.add_metadata locals: { lang: lang, page_id: path }, options: { lang: lang }
-
     ::I18n.locale = old_locale
-    p
+
+    LocalizedPageDescriptor.new(path, source_path, lang)
   end
 end

@@ -104,6 +104,36 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
       end
     end
 
+    # Override helper to add `relative` opt-out.
+    def stylesheet_link_tag(*sources)
+      options = {
+        rel: 'stylesheet'
+      }.update(sources.extract_options!.symbolize_keys)
+
+      path_options = {}
+      path_options[:relative] = options.delete(:relative) if options.key?(:relative)
+
+      sources.flatten.inject(::ActiveSupport::SafeBuffer.new) do |all, source|
+        all << tag(:link, {
+          href: asset_path(:css, source, path_options)
+        }.update(options))
+      end
+    end
+
+    # Override helper to add `relative` opt-out.
+    def javascript_include_tag(*sources)
+      options = sources.extract_options!.symbolize_keys
+
+      path_options = {}
+      path_options[:relative] = options.delete(:relative) if options.key?(:relative)
+
+      sources.flatten.inject(::ActiveSupport::SafeBuffer.new) do |all, source|
+        all << content_tag(:script, nil, {
+          src: asset_path(:js, source, path_options)
+        }.update(options))
+      end
+    end
+
     # Output a stylesheet link tag based on the current path
     #
     # @param [Symbol] asset_ext The type of asset
@@ -161,16 +191,19 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
     # @param [Hash] options Data to pass through.
     # @return [String]
     def asset_path(kind, source, options={})
-      ::Middleman::Util.asset_path(app, kind, source, options)
+      options_with_resource = options.merge(current_resource: current_resource)
+      ::Middleman::Util.asset_path(app, kind, source, options_with_resource)
     end
 
     # Get the URL of an asset given a type/prefix
     #
     # @param [String] path The path (such as "photo.jpg")
     # @param [String] prefix The type prefix (such as "images")
+    # @param [Hash] options Additional options.
     # @return [String] The fully qualified asset url
     def asset_url(_path, prefix='', options={})
-      ::Middleman::Util.asset_url(app, prefix, options)
+      options_with_resource = options.merge(current_resource: current_resource)
+      ::Middleman::Util.asset_url(app, prefix, options_with_resource)
     end
 
     # Given a source path (referenced either absolutely or relatively)

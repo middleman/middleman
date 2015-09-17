@@ -33,7 +33,9 @@ module Middleman
       # Root project directory (overwritten in middleman build/server)
       # @return [String]
       def root
-        ENV['MM_ROOT'] || Dir.pwd
+        r = ENV['MM_ROOT'] ? ENV['MM_ROOT'].dup : ::Middleman::Util.current_directory
+        r.encode!('UTF-8', 'UTF-8-MAC') if RUBY_PLATFORM =~ /darwin/
+        r
       end
 
       # Pathname-addressed root
@@ -66,13 +68,17 @@ module Middleman
     Contract SetOf[MapDescriptor]
     attr_reader :mappings
 
-    # Which host preview should start on.
-    # @return [Fixnum]
-    define_setting :host, '0.0.0.0', 'The preview server host'
-
     # Which port preview should start on.
     # @return [Fixnum]
-    define_setting :port, 4567, 'The preview server port'
+    config.define_setting :port, 4567, 'The preview server port'
+
+    # Which server name should be used
+    # @return [NilClass, String]
+    config.define_setting :server_name, nil, 'The server name of preview server'
+
+    # Which bind address the preview server should use
+    # @return [NilClass, String]
+    config.define_setting :bind_address, nil, 'The bind address of the preview server'
 
     # Whether to serve the preview server over HTTPS.
     # @return [Boolean]
@@ -160,7 +166,7 @@ module Middleman
     # Setup callbacks which can exclude paths from the sitemap
     define_setting :ignored_sitemap_matchers, {
       # Files starting with an underscore, but not a double-underscore
-      partials: proc { |file|
+      partials: proc do |file|
         ignored = false
 
         file[:relative_path].ascend do |f|
@@ -171,12 +177,12 @@ module Middleman
         end
 
         ignored
-      },
+      end,
 
-      layout: proc { |file, _sitemap_app|
+      layout: proc do |file, _sitemap_app|
         file[:relative_path].to_s.start_with?('layout.') ||
           file[:relative_path].to_s.start_with?('layouts/')
-      }
+      end
     }, 'Callbacks that can exclude paths from the sitemap'
 
     define_setting :watcher_disable, false, 'If the Listen watcher should not run'

@@ -12,7 +12,7 @@ Feature: Assets get file hashes appended to them and references to them are upda
       | images/300px-59adce76.jpg |
       | images/100px-5fd6fb90.gif |
       | javascripts/application-1d8d5276.js |
-      | stylesheets/site-7474cadd.css |
+      | stylesheets/site-8bc55985.css |
       | index.html |
       | subdir/index.html |
       | other/index.html |
@@ -26,21 +26,21 @@ Feature: Assets get file hashes appended to them and references to them are upda
       | stylesheets/site.css |
 
     And the file "javascripts/application-1d8d5276.js" should contain "img.src = '/images/100px-5fd6fb90.jpg'"
-    And the file "stylesheets/site-7474cadd.css" should contain:
+    And the file "stylesheets/site-8bc55985.css" should contain:
       """
       background-image: url("../images/100px-5fd6fb90.jpg")
       """
     And the file "index.html" should contain 'href="apple-touch-icon.png"'
-    And the file "index.html" should contain 'href="stylesheets/site-7474cadd.css"'
+    And the file "index.html" should contain 'href="stylesheets/site-8bc55985.css"'
     And the file "index.html" should contain 'src="javascripts/application-1d8d5276.js"'
     And the file "index.html" should contain 'src="images/100px-5fd6fb90.jpg"'
-    And the file "subdir/index.html" should contain 'href="../stylesheets/site-7474cadd.css"'
+    And the file "subdir/index.html" should contain 'href="../stylesheets/site-8bc55985.css"'
     And the file "index.html" should contain 'srcset="images/100px-5fd6fb90.jpg 1x, images/200px-c11eb203.jpg 2x, images/300px-59adce76.jpg 3x"'
     And the file "index.html" should contain 'src="images/100px-5fd6fb90.gif"'
     And the file "index.html" should contain 'src="images/100px-1242c368.png"'
     And the file "subdir/index.html" should contain 'src="../javascripts/application-1d8d5276.js"'
     And the file "subdir/index.html" should contain 'src="../images/100px-5fd6fb90.jpg"'
-    And the file "other/index.html" should contain 'href="../stylesheets/site-7474cadd.css"'
+    And the file "other/index.html" should contain 'href="../stylesheets/site-8bc55985.css"'
     And the file "other/index.html" should contain 'src="../javascripts/application-1d8d5276.js"'
     And the file "other/index.html" should contain 'src="../images/100px-5fd6fb90.jpg"'
     And the file "api.json" should contain 'images/100px-5fd6fb90.gif'
@@ -49,6 +49,15 @@ Feature: Assets get file hashes appended to them and references to them are upda
     And the file "subdir/api.json" should contain 'images/100px-5fd6fb90.gif'
     And the file "subdir/api.json" should contain 'images/100px-5fd6fb90.jpg'
     And the file "subdir/api.json" should contain 'images/100px-1242c368.png'
+
+  Scenario: Hashed fonts assets work with woff and woff2 extension
+    Given a successfully built app at "asset-hash-app"
+    When I cd to "build"
+    Then the following files should exist:
+      | fonts/fontawesome-webfont-56ce13e7.woff |
+      | fonts/fontawesome-webfont-10752316.woff2 |
+    And the file "stylesheets/uses_fonts-88aa3e2b.css" should contain "src: url('../fonts/fontawesome-webfont-10752316.woff2')"
+    And the file "stylesheets/uses_fonts-88aa3e2b.css" should contain "url('../fonts/fontawesome-webfont-56ce13e7.woff')"
 
   Scenario: Hashed assets work in preview server
     Given the Server is running at "asset-hash-app"

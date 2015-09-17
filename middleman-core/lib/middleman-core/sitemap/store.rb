@@ -212,10 +212,10 @@ module Middleman
       private
 
       def reset_lookup_cache!
-        @lock.synchronize {
+        @lock.synchronize do
           @_lookup_by_path = {}
           @_lookup_by_destination_path = {}
-        }
+        end
       end
 
       # Removes the templating extensions, while keeping the others

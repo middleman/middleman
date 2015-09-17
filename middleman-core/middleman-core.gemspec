@@ -16,11 +16,10 @@ Gem::Specification.new do |s|
   s.files        = `git ls-files -z`.split("\0")
   s.test_files   = `git ls-files -z -- {fixtures,features}/*`.split("\0")
   s.require_path = 'lib'
-  s.required_ruby_version = '>= 1.9.3'
+  s.required_ruby_version = '>= 2.0.0'
 
   # Core
   s.add_dependency('bundler', ['~> 1.1'])
-  s.add_dependency('backports', ['~> 3.6'])
   s.add_dependency('rack', ['>= 1.4.5', '< 2.0'])
   s.add_dependency('tilt', ['~> 1.4.1'])
   s.add_dependency('erubis')
@@ -32,6 +31,9 @@ Gem::Specification.new do |s|
 
   # Watcher
   s.add_dependency('listen', ['~> 3.0'])
+
+  # Tests
+  s.add_dependency("capybara", ["~> 2.4.4"])
 
   # i18n
   s.add_dependency('i18n', ['~> 0.7.0'])

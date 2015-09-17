@@ -86,7 +86,7 @@ Feature: Minify Javascript
     </script>
     """
 
-  Scenario: Rendering inline css with a passthrough minifier using activate-style compressor
+  Scenario: Rendering inline JS with a passthrough minifier using activate-style compressor
     Given a fixture app "passthrough-app"
     And a file named "config.rb" with:
       """
@@ -146,6 +146,42 @@ Feature: Minify Javascript
     </script>
     """
 
+  Scenario: Rendering inline js in a PHP document
+    Given a fixture app "minify-js-app"
+    And a file named "config.rb" with:
+      """
+      activate :minify_javascript, :inline => true
+      """
+    And the Server is running at "minify-js-app"
+    When I go to "/inline-js.php"
+    Then I should see:
+    """
+    <?='Hello'?>
+
+    <script>
+      !function(){should(),all.be(),on={one:line}}();
+    </script>
+    <script type='text/javascript'>
+      //<!--
+    !function(){one,line(),here()}();
+      //-->
+    </script>
+    <script type='text/html'>
+      I'm a jQuery {{template}}.
+    </script>
+    """
+
+  Scenario: Rendering inline js in a proxied resource
+    Given a fixture app "minify-js-app"
+    And a file named "config.rb" with:
+      """
+      activate :minify_javascript, :inline => true
+      proxy '/inline-js-proxy', '/inline-js.html', ignore: true
+      """
+    And the Server is running at "minify-js-app"
+    When I go to "/inline-js-proxy"
+    Then I should see "14" lines
+
   Scenario: Rendering external js with the feature enabled
     Given a fixture app "minify-js-app"
     And a file named "config.rb" with:
@@ -158,6 +194,17 @@ Feature: Minify Javascript
     When I go to "/more-js/other.js"
     Then I should see "1" lines
     
+  Scenario: Rendering external js in a proxied resource
+    Given a fixture app "minify-js-app"
+    And a file named "config.rb" with:
+      """
+      activate :minify_javascript
+      proxy '/js-proxy', '/javascripts/js_test.js', ignore: true
+      """
+    And the Server is running at "minify-js-app"
+    When I go to "/js-proxy"
+    Then I should see "1" lines
+
   Scenario: Rendering external js with a passthrough minifier
     And the Server is running at "passthrough-app"
     When I go to "/javascripts/js_test.js"

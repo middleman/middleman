@@ -199,12 +199,12 @@ module Middleman
     # @param [Hash] options Data to pass through.
     # @return [String] The fully qualified asset url
     Contract IsA['Middleman::Application'], String, String, Hash => String
-    def asset_url(app, path, prefix='', _options={})
+    def asset_url(app, path, prefix='', options={})
       # Don't touch assets which already have a full path
-      if path.include?('//') || path.start_with?('data:')
+      if path.include?('//') || path.start_with?('data:') || !options[:current_resource]
         path
       else # rewrite paths to use their destination path
-        if resource = app.sitemap.find_resource_by_destination_path(url_for(app, path))
+        result = if resource = app.sitemap.find_resource_by_destination_path(url_for(app, path))
           resource.url
         else
           path = File.join(prefix, path)
@@ -213,6 +213,13 @@ module Middleman
           else
             File.join(app.config[:http_prefix], path)
           end
+        end
+
+        if options[:relative] != true
+          result
+        else
+          current_dir = Pathname('/' + options[:current_resource].destination_path)
+          Pathname(result).relative_path_from(current_dir.dirname).to_s
         end
       end
     end
@@ -367,6 +374,30 @@ module Middleman
       end
 
       false
+    end
+
+    # Glob a directory and try to keep path encoding consistent.
+    #
+    # @param [String] path The glob path.
+    # @return [Array<String>]
+    def glob_directory(path)
+      results = ::Dir[path]
+
+      return results unless RUBY_PLATFORM =~ /darwin/
+
+      results.map { |r| r.encode('UTF-8', 'UTF-8-MAC') }
+    end
+
+    # Get the PWD and try to keep path encoding consistent.
+    #
+    # @param [String] path The glob path.
+    # @return [Array<String>]
+    def current_directory
+      result = ::Dir.pwd
+
+      return result unless RUBY_PLATFORM =~ /darwin/
+
+      result.encode('UTF-8', 'UTF-8-MAC')
     end
 
     # Get a relative path to a resource.

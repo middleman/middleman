@@ -19,7 +19,8 @@ module Middleman
 
         return unless File.exist?(helpers_path)
 
-        Dir[File.join(helpers_path, app.config[:helpers_filename_glob])].each do |filename|
+        glob = File.join(helpers_path, app.config[:helpers_filename_glob])
+        ::Middleman::Util.glob_directory(glob).each do |filename|
           module_name = app.config[:helpers_filename_to_module_name_proc].call(filename)
           next unless module_name
 

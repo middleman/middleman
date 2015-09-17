@@ -5,8 +5,6 @@ before_script:
   - bundle update
 rvm:
   - ruby-head
-  - jruby-head
-  - jruby-19mode
   - 2.2.2
   - 2.1
   - 2.0
@@ -17,13 +15,10 @@ matrix:
   fast_finish: true
   allow_failures:
     - rvm: ruby-head
-    - rvm: jruby-19mode
-    - rvm: jruby-head
 env:
   global:
-    - JRUBY_OPTS='-J-Xmx1024M'
     - TEST=true
-    - CODECLIMATE_REPO_TOKEN=81787f7b1c3bfa937edadcafbc94f807bf5af5c1142c7b793f2d9969a271de1f 
+    - CODECLIMATE_REPO_TOKEN=81787f7b1c3bfa937edadcafbc94f807bf5af5c1142c7b793f2d9969a271de1f
 script: bundle exec rake test
 notifications:
   slack: middleman:JW9OvXmn1m3XrSERe8866nBR

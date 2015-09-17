@@ -95,7 +95,7 @@ module Middleman
       # Render a template with the given name and locals
       def template(template_name, locals={})
         template_path = File.join(File.dirname(__FILE__), 'meta_pages', 'templates', template_name)
-        content = Tilt.new(template_path).render(nil, locals)
+        content = Tilt.new(template_path).render(::Object.new, locals)
         response(content)
       end
 

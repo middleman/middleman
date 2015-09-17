@@ -74,6 +74,7 @@ module Middleman
             <<-END
               <html>
                 <head>
+                  <link rel="canonical" href="#{url}" />
                   <meta http-equiv=refresh content="0; url=#{url}" />
                   <meta name="robots" content="noindex,follow" />
                   <meta http-equiv="cache-control" content="no-cache" />

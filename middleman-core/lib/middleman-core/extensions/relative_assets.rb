@@ -22,6 +22,19 @@ class Middleman::Extensions::RelativeAssets < ::Middleman::Extension
             proc: method(:rewrite_url)
   end
 
+  helpers do
+    # asset_url override for relative assets
+    # @param [String] path
+    # @param [String] prefix
+    # @param [Hash] options Additional options.
+    # @return [String]
+    def asset_url(path, prefix='', options={})
+      options[:relative] = true unless options.key?(:relative)
+
+      super(path, prefix, options)
+    end
+  end
+
   Contract String, Or[String, Pathname], Any => Maybe[String]
   def rewrite_url(asset_path, dirpath, request_path)
     uri = ::Addressable::URI.parse(asset_path)

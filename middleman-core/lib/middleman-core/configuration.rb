@@ -150,7 +150,7 @@ module Middleman
 
       # Whether or not there has been a value set beyond the default
       def value_set?
-        @value_set
+        @value_set == true
       end
     end
   end

@@ -1,4 +1,3 @@
-@nojava
 Feature: Markdown support in Haml
   In order to test support of the Haml markdown filter
 

@@ -3,7 +3,7 @@ require 'middleman-core/util'
 require 'middleman-core/rack'
 
 class Middleman::Extensions::AssetHash < ::Middleman::Extension
-  option :exts, %w(.jpg .jpeg .png .gif .webp .js .css .otf .woff .woff2 .eot .ttf .svg), 'List of extensions that get asset hashes appended to them.'
+  option :exts, %w(.jpg .jpeg .png .gif .webp .js .css .otf .woff .woff2 .eot .ttf .svg .svgz), 'List of extensions that get asset hashes appended to them.'
   option :ignore, [], 'Regexes of filenames to skip adding asset hashes to'
 
   def initialize(app, options_hash={}, &block)
@@ -20,7 +20,7 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
 
     app.use ::Middleman::Middleware::InlineURLRewriter,
             id: :asset_hash,
-            url_extensions: options.exts,
+            url_extensions: options.exts.sort.reverse,
             source_extensions: %w(.htm .html .php .css .js),
             ignore: @ignore,
             middleman_app: app,

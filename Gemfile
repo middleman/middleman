@@ -6,6 +6,7 @@ gem 'yard', '~> 0.8', require: false
 
 # Test tools
 gem 'pry', '~> 0.10', group: :development, require: false
+gem 'pry-byebug'
 gem 'aruba', '~> 0.7.4', require: false
 gem 'rspec', '~> 3.0', require: false
 gem 'cucumber', '~> 2.0', require: false
@@ -22,18 +23,25 @@ gem 'sinatra', '>= 1.4', require: false
 gem 'redcarpet', '>= 3.1', require: false unless RUBY_ENGINE == 'jruby'
 gem 'asciidoctor', '~> 0.1', require: false
 
+# Dns server to test preview server
+gem 'rubydns', '~> 1.0.1', require: false
+
+# To test javascript
+gem 'poltergeist', '~> 1.6.0', require: false
+
 # For less, note there is no compatible JS runtime for windows
 gem 'therubyrhino', '>= 2.0', platforms: :jruby
 gem 'therubyracer', '>= 0.12', platforms: :ruby
 
 # Code Quality
 gem 'rubocop', '~> 0.24', require: false
-gem 'simplecov', '~> 0.9', require: false
+gem 'simplecov', '~> 0.10', require: false
 gem 'coveralls', '~> 0.8', require: false
 gem 'codeclimate-test-reporter', '~> 0.3', require: false, group: :test
 
 # Middleman itself
 gem 'middleman-cli', path: 'middleman-cli'
 gem 'middleman-core', path: 'middleman-core'
+
 # gem 'middleman-compass', github: 'middleman/middleman-compass', require: false
 # gem 'middleman-sprockets', github: 'middleman/middleman-sprockets', require: false

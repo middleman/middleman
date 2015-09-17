@@ -1,6 +1,5 @@
 require 'hamster'
 require 'middleman-core/contracts'
-require 'backports/2.0.0/enumerable/lazy'
 
 module Middleman
   # The standard "record" that contains information about a file on disk.

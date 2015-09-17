@@ -1,32 +1,53 @@
 require 'webrick'
 require 'webrick/https'
 require 'openssl'
-require 'socket'
 require 'middleman-core/meta_pages'
 require 'middleman-core/logger'
 require 'middleman-core/rack'
+require 'middleman-core/preview_server/server_information'
+require 'middleman-core/preview_server/server_url'
 
 # rubocop:disable GlobalVars
 module Middleman
-  module PreviewServer
+  class PreviewServer
     class << self
       extend Forwardable
 
-      attr_reader :app, :host, :port, :ssl_certificate, :ssl_private_key
+      attr_reader :app, :ssl_certificate, :ssl_private_key, :environment, :server_information
       def_delegator :app, :logger
 
       def https?
-        @https
+        @https == true
       end
 
       # Start an instance of Middleman::Application
       # @return [void]
       def start(opts={})
-        @options = opts
+        # Do not buffer output, otherwise testing of output does not work
+        $stdout.sync = true
+        $stderr.sync = true
 
-        mount_instance(new_app)
-        logger.info "== The Middleman is standing watch at #{uri}"
-        logger.info "== Inspect your site configuration at #{uri + '__middleman'}"
+        @options = opts
+        @server_information = ServerInformation.new
+
+        # New app evaluates the middleman configuration. Since this can be
+        # invalid as well, we need to evaluate the configuration BEFORE
+        # checking for validity
+        the_app = initialize_new_app
+
+        # And now comes the check
+        unless server_information.valid?
+          $stderr.puts %(== Running Middleman failed: #{server_information.reason}. Please fix that and try again.)
+          exit 1
+        end
+
+        mount_instance(the_app)
+
+        logger.debug %(== Server information is provided by #{server_information.handler})
+        logger.debug %(== The Middleman is running in "#{environment}" environment)
+        logger.debug format('== The Middleman preview server is bound to %s', ServerUrl.new(hosts: server_information.listeners, port: server_information.port, https: https?).to_bind_addresses.join(', '))
+        logger.info format('== View your site at %s', ServerUrl.new(hosts: server_information.site_addresses, port: server_information.port, https: https?).to_urls.join(', '))
+        logger.info format('== Inspect your site configuration at %s', ServerUrl.new(hosts: server_information.site_addresses, port: server_information.port, https: https?).to_config_urls.join(', '))
 
         @initialized ||= false
         return if @initialized
@@ -70,7 +91,7 @@ module Middleman
         logger.info '== The Middleman is reloading'
 
         begin
-          app = new_app
+          app = initialize_new_app
         rescue => e
           logger.error "Error reloading Middleman: #{e}\n#{e.backtrace.join("\n")}"
           logger.info '== The Middleman is still running the application from before the error'
@@ -96,7 +117,7 @@ module Middleman
 
       private
 
-      def new_app
+      def initialize_new_app
         opts = @options.dup
 
         ::Middleman::Logger.singleton(
@@ -110,8 +131,10 @@ module Middleman
           config[:watcher_force_polling] = opts[:force_polling]
           config[:watcher_latency] = opts[:latency]
 
-          config[:host] = opts[:host] if opts[:host]
           config[:port] = opts[:port] if opts[:port]
+          config[:bind_address]    = opts[:bind_address]
+          config[:server_name]     = opts[:server_name]
+          config[:https]           = opts[:https] unless opts[:https].nil?
           config[:ssl_certificate] = opts[:ssl_certificate] if opts[:ssl_certificate]
           config[:ssl_private_key] = opts[:ssl_private_key] if opts[:ssl_private_key]
 
@@ -139,9 +162,17 @@ module Middleman
           end
         end
 
-        @host = app.config[:host]
-        @port = app.config[:port]
-        @https = app.config[:https]
+        # store configured port to make a check later on possible
+        configured_port = app.config[:port]
+
+        # Use configuration values to set `bind_address` etc. in
+        # `server_information`
+        server_information.use app.config
+
+        logger.warn format('== The Middleman uses a different port "%s" then the configured one "%s" because some other server is listening on that port.', server_information.port, configured_port) unless app.config[:port] == configured_port
+
+        @https        = app.config[:https]
+        @environment  = app.config[:environment]
 
         @ssl_certificate = app.config[:ssl_certificate]
         @ssl_private_key = app.config[:ssl_private_key]
@@ -179,9 +210,10 @@ module Middleman
       # @return [void]
       def setup_webrick(is_logging)
         http_opts = {
-          BindAddress: host,
-          Port: port,
+          Port: server_information.port,
           AccessLog: [],
+          ServerName: server_information.server_name,
+          BindAddress: server_information.bind_address.to_s,
           DoNotReverseLookup: true
         }
 
@@ -198,6 +230,9 @@ module Middleman
               %w(CN localhost),
               %w(CN #{host})
             ].uniq
+            cert, key = create_self_signed_cert(1024, [['CN', server_information.server_name]], server_information.site_addresses, 'Middleman Preview Server')
+            http_opts[:SSLCertificate] = cert
+            http_opts[:SSLPrivateKey] = key
           end
         end
 
@@ -210,9 +245,42 @@ module Middleman
         begin
           ::WEBrick::HTTPServer.new(http_opts)
         rescue Errno::EADDRINUSE
-          logger.error "== Port #{port} is unavailable. Either close the instance of Middleman already running on #{port} or start this Middleman on a new port with: --port=#{unused_tcp_port}"
-          exit(1)
+          logger.error %(== Port "#{http_opts[:Port]}" is in use. This should not have happened. Please start "middleman server" again.)
         end
+      end
+
+      # Copy of https://github.com/nahi/ruby/blob/webrick_trunk/lib/webrick/ssl.rb#L39
+      # that uses a different serial number each time the cert is generated in order to
+      # avoid errors in Firefox. Also doesn't print out stuff to $stderr unnecessarily.
+      def create_self_signed_cert(bits, cn, aliases, comment)
+        rsa = OpenSSL::PKey::RSA.new(bits)
+        cert = OpenSSL::X509::Certificate.new
+        cert.version = 2
+        cert.serial = Time.now.to_i % (1 << 20)
+        name = OpenSSL::X509::Name.new(cn)
+        cert.subject = name
+        cert.issuer = name
+        cert.not_before = Time.now
+        cert.not_after = Time.now + (365 * 24 * 60 * 60)
+        cert.public_key = rsa.public_key
+
+        ef = OpenSSL::X509::ExtensionFactory.new(nil, cert)
+        ef.issuer_certificate = cert
+        cert.extensions = [
+          ef.create_extension('basicConstraints', 'CA:FALSE'),
+          ef.create_extension('keyUsage', 'keyEncipherment'),
+          ef.create_extension('subjectKeyIdentifier', 'hash'),
+          ef.create_extension('extendedKeyUsage', 'serverAuth'),
+          ef.create_extension('nsComment', comment)
+        ]
+        aki = ef.create_extension('authorityKeyIdentifier',
+                                  'keyid:always,issuer:always')
+        cert.add_extension(aki)
+        cert.add_extension ef.create_extension('subjectAltName', aliases.map { |d| "DNS: #{d}" }.join(','))
+
+        cert.sign(rsa, OpenSSL::Digest::SHA1.new)
+
+        [cert, rsa]
       end
 
       # Attach a new Middleman::Application instance
@@ -235,23 +303,6 @@ module Middleman
         @app.shutdown!
 
         @app = nil
-      end
-
-      # Returns the URI the preview server will run on
-      # @return [URI]
-      def uri
-        host = (@host == '0.0.0.0') ? 'localhost' : @host
-        scheme = https? ? 'https' : 'http'
-        URI("#{scheme}://#{host}:#{@port}")
-      end
-
-      # Returns unused TCP port
-      # @return [Fixnum]
-      def unused_tcp_port
-        server = TCPServer.open(0)
-        port = server.addr[1]
-        server.close
-        port
       end
     end
 

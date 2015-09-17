@@ -1,4 +1,3 @@
-@nojava
 Feature: Markdown (Redcarpet) support
   In order to test included Redcarpet support
 

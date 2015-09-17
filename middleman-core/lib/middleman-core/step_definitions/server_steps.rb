@@ -1,7 +1,5 @@
-# encoding: UTF-8
-
-require 'rack/mock'
-require 'middleman-core/rack'
+require 'rspec/expectations'
+require 'capybara/cucumber'
 
 Given /^a clean server$/ do
   @initialize_commands = []
@@ -54,7 +52,7 @@ Given /^the Server is running$/ do
     end
 
     rack = ::Middleman::Rack.new(@server_inst)
-    @browser = ::Rack::MockRequest.new(rack.to_app)
+    Capybara.app = rack.to_app
   end
 end
 
@@ -69,76 +67,72 @@ end
 
 When /^I go to "([^\"]*)"$/ do |url|
   cd(".") do
-    @last_response = @browser.get(URI.encode(url))
+    visit(URI.encode(url).to_s)
   end
 end
 
 Then /^going to "([^\"]*)" should not raise an exception$/ do |url|
   cd(".") do
-    last_response = nil
-    expect {
-      last_response = @browser.get(URI.encode(url))
-    }.to_not raise_exception
-    @last_response = last_response
+    expect{ visit(URI.encode(url).to_s) }.to_not raise_exception
   end
 end
 
 Then /^the content type should be "([^\"]*)"$/ do |expected|
   cd(".") do
-    expect(@last_response.content_type).to start_with(expected)
+    expect(page.response_headers['Content-Type']).to start_with expected
   end
 end
 
 Then /^I should see "([^\"]*)"$/ do |expected|
   cd(".") do
-    expect(@last_response.body).to include(expected)
+    expect(page.body).to include expected
   end
 end
 
 Then /^I should see '([^\']*)'$/ do |expected|
   cd(".") do
-    expect(@last_response.body).to include(expected)
+    expect(page.body).to include expected
   end
 end
 
 Then /^I should see:$/ do |expected|
   cd(".") do
-    expect(@last_response.body).to include(expected)
+    expect(page.body).to include expected
   end
 end
 
 Then /^I should not see "([^\"]*)"$/ do |expected|
   cd(".") do
-    expect(@last_response.body).to_not include(expected)
+    expect(page.body).not_to include expected
   end
 end
 
 Then /^I should see content matching %r{(.*)}$/ do |expected|
   cd(".") do
-    expect(@last_response.body).to match(expected)
+    expect(page.body).to match(expected)
   end
 end
 
 Then /^I should not see content matching %r{(.*)}$/ do |expected|
   cd(".") do
-    expect(@last_response.body).to_not match(expected)
+    expect(page.body).to_not match(expected)
   end
 end
 
 Then /^I should not see:$/ do |expected|
   cd(".") do
-    expect(@browser.last_response.body).to_not include(expected.chomp)
+    expect(page.body).not_to include expected
   end
 end
 
 Then /^the status code should be "([^\"]*)"$/ do |expected|
   cd(".") do
-    expect(@browser.last_response.status).to eq expected.to_i
+    expect(page.status_code).to eq expected.to_i
   end
 end
 
 Then /^I should see "([^\"]*)" lines$/ do |lines|
   cd(".") do
-    expect(@last_response.body.chomp.split($/).length).to eq(lines.to_i)
+    expect(page.body.chomp.split($/).length).to eq lines.to_i
   end
 end

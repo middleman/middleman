@@ -8,13 +8,22 @@ module Middleman::Cli
                  aliases: '-e',
                  default: ENV['MM_ENV'] || ENV['RACK_ENV'] || 'development',
                  desc: 'The environment Middleman will run under'
-    class_option :host,
-                 type: :string,
-                 aliases: '-h',
-                 desc: 'Bind to HOST address'
     class_option :port,
                  aliases: '-p',
                  desc: 'The port Middleman will listen on'
+    class_option :server_name,
+                 aliases: '-s',
+                 desc: 'The server name Middleman will use'
+    class_option :bind_address,
+                 aliases: '-b',
+                 desc: 'The bind address Middleman will listen on'
+    class_option :https,
+                 type: :boolean,
+                 desc: 'Serve the preview server over SSL/TLS'
+    class_option :ssl_certificate,
+                 desc: 'Path to an X.509 certificate to use for the preview server'
+    class_option :ssl_private_key,
+                 desc: "Path to an RSA private key for the preview server's certificate"
     class_option :verbose,
                  type: :boolean,
                  default: false,
@@ -53,7 +62,11 @@ module Middleman::Cli
 
       params = {
         port: options['port'],
-        host: options['host'],
+        bind_address: options['bind_address'],
+        https: options['https'],
+        server_name: options['server_name'],
+        ssl_certificate: options['ssl_certificate'],
+        ssl_private_key: options['ssl_private_key'],
         environment: options['environment'],
         debug: options['verbose'],
         instrumenting: options['instrument'],

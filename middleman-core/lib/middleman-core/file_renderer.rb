@@ -29,7 +29,7 @@ module Middleman
     # @param [Class] context
     # @return [String]
     Contract Hash, Hash, Any, Maybe[Proc] => String
-    def render(locs={}, opts={}, context, &block)
+    def render(locs, opts, context, &block)
       path = @path.dup
 
       # Detect the remdering engine from the extension

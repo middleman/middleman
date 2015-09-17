@@ -8,6 +8,7 @@ Feature: Meta redirects
     """
     And the Server is running at "large-build-app"
     When I go to "/hello.html"
+    Then I should see '<link rel="canonical" href="world.html"'
     Then I should see '<meta http-equiv=refresh content="0; url=world.html"'
 
   Scenario: Redirect to external site
