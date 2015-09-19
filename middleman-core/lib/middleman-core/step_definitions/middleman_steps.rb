@@ -1,15 +1,11 @@
 Then /^the file "([^\"]*)" has the contents$/ do |path, contents|
-  write_file(path, contents)
+  File.write(File.expand_path(path), contents)
 
-  # cd(".") do
-    @server_inst.files.find_new_files!
-  # end
+  @server_inst.files.find_new_files!
 end
 
 Then /^the file "([^\"]*)" is removed$/ do |path|
-  step %Q{I remove the file "#{path}"}
+  File.delete(File.expand_path(path))
 
-  # cd(".") do
-    @server_inst.files.find_new_files!
-  # end
+  @server_inst.files.find_new_files!
 end
