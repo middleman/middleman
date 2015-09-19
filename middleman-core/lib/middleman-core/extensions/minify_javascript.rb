@@ -13,7 +13,7 @@ class Middleman::Extensions::MinifyJavascript < ::Middleman::Extension
 
   def ready
     # Setup Rack middleware to minify JS
-    app.use Rack, compressor: chosen_compressor,
+    app.use Rack, compressor: options[:compressor],
                   ignore: Array(options[:ignore]) + [/\.min\./],
                   inline: options[:inline],
                   content_types: options[:content_types],

@@ -12,7 +12,7 @@ require 'middleman-core/util/data'
 module Middleman::CoreExtensions
   class FrontMatter < ::Middleman::Extension
     # Try to run after routing but before directory_indexes
-    self.resource_list_manipulator_priority = 10
+    self.resource_list_manipulator_priority = 20
 
     def initialize(app, options_hash={}, &block)
       super

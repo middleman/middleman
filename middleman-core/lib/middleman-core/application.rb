@@ -334,8 +334,9 @@ module Middleman
     end
 
     # Whether we're in a specific environment
+    # @param [Symbol] key
     # @return [Boolean]
-    Contract Bool
+    Contract Symbol => Bool
     def environment?(key)
       config[:environment] == key
     end

@@ -1,3 +1,4 @@
+require 'middleman-core/rack'
 require 'rspec/expectations'
 require 'capybara/cucumber'
 
@@ -41,7 +42,7 @@ Given /^the Server is running$/ do
 
   initialize_commands = @initialize_commands || []
 
-  cd(".") do
+  # cd(".") do
     @server_inst = ::Middleman::Application.new do
       config[:watcher_disable] = true
       config[:show_exceptions] = false
@@ -51,9 +52,8 @@ Given /^the Server is running$/ do
       end
     end
 
-    rack = ::Middleman::Rack.new(@server_inst)
-    Capybara.app = rack.to_app
-  end
+    Capybara.app = ::Middleman::Rack.new(@server_inst).to_app
+  # end
 end
 
 Given /^the Server is running at "([^\"]*)"$/ do |app_path|
@@ -66,73 +66,73 @@ Given /^a template named "([^\"]*)" with:$/ do |name, string|
 end
 
 When /^I go to "([^\"]*)"$/ do |url|
-  cd(".") do
+  # cd(".") do
     visit(URI.encode(url).to_s)
-  end
+  # end
 end
 
 Then /^going to "([^\"]*)" should not raise an exception$/ do |url|
-  cd(".") do
+  # cd(".") do
     expect{ visit(URI.encode(url).to_s) }.to_not raise_exception
-  end
+  # end
 end
 
 Then /^the content type should be "([^\"]*)"$/ do |expected|
-  cd(".") do
+  # cd(".") do
     expect(page.response_headers['Content-Type']).to start_with expected
-  end
+  # end
 end
 
 Then /^I should see "([^\"]*)"$/ do |expected|
-  cd(".") do
+  # cd(".") do
     expect(page.body).to include expected
-  end
+  # end
 end
 
 Then /^I should see '([^\']*)'$/ do |expected|
-  cd(".") do
+  # cd(".") do
     expect(page.body).to include expected
-  end
+  # end
 end
 
 Then /^I should see:$/ do |expected|
-  cd(".") do
+  # cd(".") do
     expect(page.body).to include expected
-  end
+  # end
 end
 
 Then /^I should not see "([^\"]*)"$/ do |expected|
-  cd(".") do
+  # cd(".") do
     expect(page.body).not_to include expected
-  end
+  # end
 end
 
 Then /^I should see content matching %r{(.*)}$/ do |expected|
-  cd(".") do
+  # cd(".") do
     expect(page.body).to match(expected)
-  end
+  # end
 end
 
 Then /^I should not see content matching %r{(.*)}$/ do |expected|
-  cd(".") do
+  # cd(".") do
     expect(page.body).to_not match(expected)
-  end
+  # end
 end
 
 Then /^I should not see:$/ do |expected|
-  cd(".") do
+  # cd(".") do
     expect(page.body).not_to include expected
-  end
+  # end
 end
 
 Then /^the status code should be "([^\"]*)"$/ do |expected|
-  cd(".") do
+  # cd(".") do
     expect(page.status_code).to eq expected.to_i
-  end
+  # end
 end
 
 Then /^I should see "([^\"]*)" lines$/ do |lines|
-  cd(".") do
+  # cd(".") do
     expect(page.body.chomp.split($/).length).to eq lines.to_i
-  end
+  # end
 end
