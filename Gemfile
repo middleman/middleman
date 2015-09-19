@@ -15,7 +15,6 @@ gem 'cucumber', '~> 2.0', require: false
 gem 'haml', '>= 4.0.5', require: false
 gem 'coffee-script', '~> 2.2', require: false
 gem 'kramdown', '~> 1.2', require: false
-gem 'less', '2.3', require: false
 gem 'slim', '>= 2.0', require: false
 gem 'liquid', '>= 2.6', require: false
 gem 'stylus', '>= 1.0', require: false
