@@ -59,15 +59,15 @@ Feature: Relative Assets
     When I cd to "build"
     Then the file "relative_image/index.html" should contain "../stylesheets/relative_assets.css"
 
-  Scenario: Rendering html with the feature enabled
+  Scenario: Rendering html with the feature enabled (overrides relative option on helpers)
     Given "relative_assets" feature is "enabled"
     And the Server is running at "relative-assets-app"
     When I go to "/relative_image.html"
     Then I should see '"stylesheets/relative_assets.css"'
     Then I should see '"javascripts/app.js"'
     When I go to "/relative_image_absolute_css.html"
-    Then I should see '"/stylesheets/relative_assets.css"'
-    Then I should see '"/javascripts/app.js"'
+    Then I should see '"stylesheets/relative_assets.css"'
+    Then I should see '"javascripts/app.js"'
     Then I should not see "/images/blank.gif"
     And I should see "images/blank.gif"
 

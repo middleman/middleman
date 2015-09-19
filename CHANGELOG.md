@@ -1,6 +1,10 @@
 master
 ===
 
+* `relative_assets` extension overrides local `relative: false` option to stylesheet/javascript tag helpers.
+
+# 4.0.0.rc.1
+
 * Removed ability to use JSON as frontmatter. Still allowed in data/ folder.
 * Added YAML data postscript. Like frontmatter, but reversed. Attach content after the key/value data as a `:postscript` key to the data structure (if Hash).
 
