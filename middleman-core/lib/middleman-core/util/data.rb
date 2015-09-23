@@ -41,9 +41,9 @@ module Middleman::Util::Data
     end
 
     case [start, stop]
-    when %w[--- ---], %w[--- ...]
+    when %w(--- ---), %w(--- ...)
       [parse_yaml(frontmatter, full_path), additional_content]
-    when %w[;;; ;;;]
+    when %w(;;; ;;;)
       [parse_json(frontmatter, full_path), additional_content]
     else
       [{}, content]
