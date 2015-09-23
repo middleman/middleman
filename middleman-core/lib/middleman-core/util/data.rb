@@ -23,19 +23,22 @@ module Middleman::Util::Data
       return [{}, nil]
     end
 
-    case known_type
-    when :yaml
-      return [parse_yaml(content, full_path), nil]
-    when :json
-      return [parse_json(content, full_path), nil]
-    end
-
     /
-      (?<start>^[-;]{3})[ ]*\r?\n
-      (?<frontmatter>.*?)[ ]*\r?\n
-      (?<stop>^[-.;]{3})[ ]*\r?\n?
+      \A(.*?coding:.*?\n)?
+      (?<start>[-;]{3})[ ]*\r?\n
+      (?<frontmatter>.*?)[ ]*\r?\n?
+      (?<stop>[-.;]{3})[ ]*\r?\n?
       (?<additional_content>.*)
     /mx =~ content
+
+    unless frontmatter
+      case known_type
+      when :yaml
+        return [parse_yaml(content, full_path), nil]
+      when :json
+        return [parse_json(content, full_path), nil]
+      end
+    end
 
     case [start, stop]
     when %w[--- ---], %w[--- ...]
@@ -49,10 +52,10 @@ module Middleman::Util::Data
 
   # Parse YAML frontmatter out of a string
   # @param [String] content
-  # @return [Array<Hash, String>]
+  # @return [Hash]
   Contract String, Pathname, Bool => Hash
   def parse_yaml(content, full_path)
-    symbolize_recursive(YAML.load(content))
+    symbolize_recursive(YAML.load(content) || {})
   rescue StandardError, Psych::SyntaxError => error
     warn "YAML Exception parsing #{full_path}: #{error.message}"
     {}
@@ -60,10 +63,10 @@ module Middleman::Util::Data
 
   # Parse JSON frontmatter out of a string
   # @param [String] content
-  # @return [Array<Hash, String>]
+  # @return [Hash]
   Contract String, Pathname => Hash
   def parse_json(content, full_path)
-    symbolize_recursive(JSON.parse(content))
+    symbolize_recursive(JSON.parse(content) || {})
   rescue StandardError => error
     warn "JSON Exception parsing #{full_path}: #{error.message}"
     {}
