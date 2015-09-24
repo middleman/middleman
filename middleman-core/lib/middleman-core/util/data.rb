@@ -24,7 +24,7 @@ module Middleman::Util::Data
     end
 
     /
-      \A(.*?coding:.*?\n)?
+      \A(.*?coding:.*?\r?\n)?
       (?<start>[-;]{3})[ ]*\r?\n
       (?<frontmatter>.*?)[ ]*\r?\n?
       (?<stop>^[-.;]{3})[ ]*\r?\n?
@@ -44,7 +44,7 @@ module Middleman::Util::Data
     when %w(--- ---), %w(--- ...)
       [parse_yaml(frontmatter, full_path), additional_content]
     when %w(;;; ;;;)
-      [parse_json(frontmatter, full_path), additional_content]
+      [parse_json("{#{frontmatter}}", full_path), additional_content]
     else
       [{}, content]
     end
