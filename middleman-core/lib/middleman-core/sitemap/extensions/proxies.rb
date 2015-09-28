@@ -141,6 +141,11 @@ module Middleman
 
         target_resource.content_type
       end
+
+      def to_s
+        "#<#{self.class.to_s} path=#{@path} target=#{@target}>"
+      end
+      alias_method :inspect, :to_s
     end
   end
 end

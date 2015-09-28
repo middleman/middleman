@@ -50,9 +50,6 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
     @maps = {}
     @mount_at_root = options[:mount_at_root].nil? ? langs.first : options[:mount_at_root]
 
-    # Don't output localizable files
-    app.ignore File.join(options[:templates_dir], '**')
-
     configure_i18n
 
     logger.info "== Locales: #{langs.join(', ')} (Default #{@mount_at_root})"
@@ -96,7 +93,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
       # Try /localizable
       partials_path = File.join(locals_dir, partial_name)
 
-      lang_suffix = current_resource.metadata[:locals] && current_resource.metadata[:locals][:lang]
+      lang_suffix = ::I18n.locale
 
       extname = File.extname(partial_name)
       maybe_static = extname.length > 0
@@ -138,7 +135,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
     end
 
     # If it's a "localizable template"
-    localizable_folder_resources.map do |resource|
+    localizable_folder_resources.each do |resource|
       page_id = File.basename(resource.path, File.extname(resource.path))
       langs.each do |lang|
         # Remove folder name
@@ -146,18 +143,23 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
         new_resources << build_resource(path, resource.path, page_id, lang)
       end
 
+      resource.ignore!
+
       # This is for backwards compatibility with the old provides_metadata-based code
       # that used to be in this extension, but I don't know how much sense it makes.
-      next if resource.options[:lang]
+      # next if resource.options[:lang]
 
-      resource.add_metadata options: { lang: @mount_at_root }, locals: { lang: @mount_at_root }
+      # $stderr.puts "Defaulting #{resource.path} to #{@mount_at_root}"
+      # resource.add_metadata options: { lang: @mount_at_root }, locals: { lang: @mount_at_root }
     end
 
     # If it uses file extension localization
-    file_extension_resources.map do |resource|
+    file_extension_resources.each do |resource|
       result = parse_locale_extension(resource.path)
       ext_lang, path, page_id = result
       new_resources << build_resource(path, resource.path, page_id, ext_lang)
+
+      resource.ignore!
     end
 
     @lookup = new_resources.each_with_object({}) do |desc, sum|
