@@ -5,16 +5,19 @@ Feature: Minify CSS
     Given a fixture app "minify-css-app"
     And a file named "config.rb" with:
       """
+      config[:sass_source_maps] = false
       """
     And the Server is running at "minify-css-app"
     When I go to "/stylesheets/site.css"
     Then I should see "7" lines
     And I should see "only screen and (device-width"
-    
+
   Scenario: Rendering external css with the feature enabled
     Given a fixture app "minify-css-app"
     And a file named "config.rb" with:
       """
+      config[:sass_source_maps] = false
+
       activate :minify_css
       """
     And the Server is running at "minify-css-app"
@@ -25,11 +28,13 @@ Feature: Minify CSS
     Then I should see "1" lines
     When I go to "/stylesheets/report.css"
     Then I should see "p{border:1px solid #ff6600}"
-    
+
   Scenario: Rendering external css in a proxied resource
     Given a fixture app "minify-css-app"
     And a file named "config.rb" with:
       """
+      config[:sass_source_maps] = false
+
       activate :minify_css
       proxy '/css-proxy', '/stylesheets/site.css', ignore: true
       """
@@ -42,6 +47,8 @@ Feature: Minify CSS
     Given a fixture app "passthrough-app"
     And a file named "config.rb" with:
       """
+      config[:sass_source_maps] = false
+
       module ::PassThrough
         def self.compress(data)
           data
@@ -58,6 +65,7 @@ Feature: Minify CSS
     Given a fixture app "minify-css-app"
     And a file named "config.rb" with:
       """
+      config[:sass_source_maps] = false
       """
     And the Server is running at "minify-css-app"
     When I go to "/inline-css.html"
@@ -70,11 +78,13 @@ Feature: Minify CSS
       }
     </style>
     """
-   
+
   Scenario: Rendering inline css with a passthrough minifier
     Given a fixture app "passthrough-app"
     And a file named "config.rb" with:
       """
+      config[:sass_source_maps] = false
+
       module ::PassThrough
         def self.compress(data)
           data
@@ -100,6 +110,8 @@ Feature: Minify CSS
     Given a fixture app "passthrough-app"
     And a file named "config.rb" with:
       """
+      config[:sass_source_maps] = false
+
       module ::HelloCompressor
         def self.compress(data)
           "Hello"
@@ -118,11 +130,13 @@ Feature: Minify CSS
       Hello
     </style>
     """
-    
+
   Scenario: Rendering inline css with the feature enabled
     Given a fixture app "minify-css-app"
     And a file named "config.rb" with:
       """
+      config[:sass_source_maps] = false
+
       activate :minify_css, inline: true
       """
     And the Server is running at "minify-css-app"
@@ -138,6 +152,8 @@ Feature: Minify CSS
     Given a fixture app "minify-css-app"
     And a file named "config.rb" with:
       """
+      config[:sass_source_maps] = false
+
       activate :minify_css, :inline => true
       """
     And the Server is running at "minify-css-app"
@@ -155,6 +171,8 @@ Feature: Minify CSS
     Given a fixture app "minify-css-app"
     And a file named "config.rb" with:
       """
+      config[:sass_source_maps] = false
+
       activate :minify_css, :inline => true
       proxy '/inline-css-proxy', '/inline-css.html', ignore: true
       """
@@ -172,6 +190,8 @@ Feature: Minify CSS
     Given a fixture app "minify-css-app"
     And a file named "config.rb" with:
       """
+      config[:sass_source_maps] = false
+
       mime_type('.xcss', 'text/x-css')
       activate :minify_css, content_types: ['text/x-css'],
                             inline: true,
