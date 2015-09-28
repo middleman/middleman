@@ -1,6 +1,7 @@
 master
 ===
 
+* Switch from Ruby Sass to SassC.
 * `relative_assets` extension overrides local `relative: false` option to stylesheet/javascript tag helpers.
 
 # 4.0.0.rc.1

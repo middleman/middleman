@@ -1,33 +1,10 @@
 require 'sass'
-require 'compass/import-once'
 
-GLOB = /\*|\[.+\]/
-
-# Hack around broken sass globs when combined with import-once
-# Targets compass-import-once 1.0.4
-# Tracking issue: https://github.com/chriseppstein/compass/issues/1529
-module Compass
-  module ImportOnce
-    module Importer
-      def find_relative(uri, base, options, *args)
-        if uri =~ GLOB
-          force_import = true
-        else
-          uri, force_import = handle_force_import(uri)
-        end
-        maybe_replace_with_dummy_engine(super(uri, base, options, *args), options, force_import)
-      end
-
-      def find(uri, options, *args)
-        if uri =~ GLOB
-          force_import = true
-        else
-          uri, force_import = handle_force_import(uri)
-        end
-        maybe_replace_with_dummy_engine(super(uri, options, *args), options, force_import)
-      end
-    end
-  end
+SASS_MODULE = begin
+  require 'sassc'
+  ::SassC
+rescue LoadError => e
+  ::Sass
 end
 
 module Middleman
@@ -47,6 +24,7 @@ module Middleman
         app.config.define_setting :sass, opts, 'Sass engine options'
 
         app.config.define_setting :sass_assets_paths, [], 'Paths to extra SASS/SCSS files'
+        app.config.define_setting :sass_source_maps, app.development?, 'Whether to inline sourcemap into Sass'
 
         # Tell Tilt to use it as well (for inline sass blocks)
         ::Tilt.register 'sass', SassPlusCSSFilenameTemplate
@@ -55,8 +33,6 @@ module Middleman
         # Tell Tilt to use it as well (for inline scss blocks)
         ::Tilt.register 'scss', ScssPlusCSSFilenameTemplate
         ::Tilt.prefer(ScssPlusCSSFilenameTemplate)
-
-        ::Compass::ImportOnce.activate!
 
         require 'middleman-core/renderers/sass_functions'
       end
@@ -82,11 +58,12 @@ module Middleman
         # @return [String]
         def evaluate(context, _)
           @context ||= context
-          @engine = ::Sass::Engine.new(data, sass_options)
+
+          @engine = SASS_MODULE::Engine.new(data, sass_options)
 
           begin
             @engine.render
-          rescue ::Sass::SyntaxError => e
+          rescue SASS_MODULE::SyntaxError => e
             ::Sass::SyntaxError.exception_to_css(e)
           end
         end
@@ -103,6 +80,12 @@ module Middleman
             syntax: syntax,
             custom: (options[:custom] || {}).merge(middleman_context: ctx.app)
           }
+
+          if ctx.config[:sass_source_maps]
+            more_opts[:source_map_file] = "."
+            more_opts[:source_map_embed] = true
+            more_opts[:source_map_contents] = true
+          end
 
           if ctx.is_a?(::Middleman::TemplateContext) && file
             more_opts[:css_filename] = file.sub(/\.s[ac]ss$/, '')

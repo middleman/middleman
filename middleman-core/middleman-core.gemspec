@@ -25,7 +25,7 @@ Gem::Specification.new do |s|
   s.add_dependency('erubis')
 
   # Helpers
-  s.add_dependency('activesupport', ['~> 4.2.0'])
+  s.add_dependency('activesupport', ['~> 4.2'])
   s.add_dependency('padrino-helpers', ['~> 0.12.3'])
   s.add_dependency("addressable", ["~> 2.3.5"])
 
@@ -42,17 +42,14 @@ Gem::Specification.new do |s|
   s.add_dependency('fastimage', ['~> 1.6.2'])
 
   # Minify CSS
-  s.add_dependency('sass', ['>= 3.3.4'])
-
-  # Work around Sass performance
-  s.add_dependency('compass-import-once', ['~> 1.0.4'])
+  s.add_dependency('sassc', ['>= 1.6.0'])
 
   # Minify JS
   s.add_dependency('uglifier', ['~> 2.6'])
   s.add_dependency('execjs', ['~> 2.0'])
 
   # Testing
-  s.add_dependency('contracts', ['~> 0.11.0'])
+  s.add_dependency('contracts', ['~> 0.12.0'])
 
   # Hash stuff
   s.add_dependency('hashie', ['~> 3.4'])
