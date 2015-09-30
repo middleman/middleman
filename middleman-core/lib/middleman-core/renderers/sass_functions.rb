@@ -1,6 +1,11 @@
 module Middleman
   module Sass
     module Functions
+      def asset_path(source, options)
+        # current_resource
+
+      end
+
       # Using Middleman::Util#asset_path, return the full path
       # for the given +source+ as a Sass String. This supports keyword
       # arguments that mirror the +options+.
@@ -81,36 +86,47 @@ module Middleman
         options[:custom][:middleman_context]
       end
 
+      # Returns a reference to Middleman's current resource.
+      def current_resource # :nodoc:
+        options[:custom][:current_resource]
+      end
+
       # Returns an options hash where the keys are symbolized
       # and the values are unwrapped Sass literals.
       def map_options(options={}) # :nodoc:
         ::Sass::Util.map_hash(options) do |key, value|
           [key.to_sym, value.respond_to?(:value) ? value.value : value]
         end
+
+        options[:current_resource] = current_resource
+
+        options
       end
     end
   end
 end
 
-module ::Sass::Script::Functions
-  include ::Middleman::Sass::Functions
+::SassC::Script::Functions.send :include, ::Middleman::Sass::Functions
 
-  # # Hack to ensure previous API declarations (by Compass or whatever)
-  # # don't take precedence.
-  # [:asset_path, :asset_url, :image_path, :image_url, :font_path, :font_url, :asset_data_uri].each do |method|
-  #   defined?(@signatures) && @signatures.delete(method)
-  # end
+# module SASS_MODULE::Script::Functions
+#   include ::Middleman::Sass::Functions
 
-  # declare :asset_path,     [:source], var_kwargs: true
-  # declare :asset_path,     [:source, :kind]
-  # declare :asset_url,      [:source], var_kwargs: true
-  # declare :asset_url,      [:source, :kind]
-  # declare :image_path,     [:source], var_kwargs: true
-  # declare :image_url,      [:source], var_kwargs: true
-  # declare :image_url,      [:source, :only_path]
-  # declare :image_url,      [:source, :only_path, :cache_buster]
-  # declare :font_path,      [:source], var_kwargs: true
-  # declare :font_url,       [:source], var_kwargs: true
-  # declare :font_url,       [:source, :only_path]
-  # declare :asset_data_uri, [:source]
-end
+#   # # Hack to ensure previous API declarations (by Compass or whatever)
+#   # # don't take precedence.
+#   # [:asset_path, :asset_url, :image_path, :image_url, :font_path, :font_url, :asset_data_uri].each do |method|
+#   #   defined?(@signatures) && @signatures.delete(method)
+#   # end
+
+#   # declare :asset_path,     [:source], var_kwargs: true
+#   # declare :asset_path,     [:source, :kind]
+#   # declare :asset_url,      [:source], var_kwargs: true
+#   # declare :asset_url,      [:source, :kind]
+#   # declare :image_path,     [:source], var_kwargs: true
+#   # declare :image_url,      [:source], var_kwargs: true
+#   # declare :image_url,      [:source, :only_path]
+#   # declare :image_url,      [:source, :only_path, :cache_buster]
+#   # declare :font_path,      [:source], var_kwargs: true
+#   # declare :font_url,       [:source], var_kwargs: true
+#   # declare :font_url,       [:source, :only_path]
+#   # declare :asset_data_uri, [:source]
+# end

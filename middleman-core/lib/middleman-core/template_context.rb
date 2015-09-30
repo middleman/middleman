@@ -152,6 +152,18 @@ module Middleman
       partial_file || nil
     end
 
+    def current_path
+      @locs[:current_path]
+    end
+
+    # Get the resource object for the current path
+    # @return [Middleman::Sitemap::Resource]
+    def current_resource
+      return nil unless current_path
+      sitemap.find_resource_by_destination_path(current_path)
+    end
+    alias_method :current_page, :current_resource
+
     protected
 
     # Render a path with locs, opts and contents block.
@@ -188,17 +200,5 @@ module Middleman
 
       content
     end
-
-    def current_path
-      @locs[:current_path]
-    end
-
-    # Get the resource object for the current path
-    # @return [Middleman::Sitemap::Resource]
-    def current_resource
-      return nil unless current_path
-      sitemap.find_resource_by_destination_path(current_path)
-    end
-    alias_method :current_page, :current_resource
   end
 end

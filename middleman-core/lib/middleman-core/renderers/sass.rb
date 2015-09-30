@@ -78,7 +78,10 @@ module Middleman
             filename: eval_file,
             line: line,
             syntax: syntax,
-            custom: (options[:custom] || {}).merge(middleman_context: ctx.app)
+            custom: (options[:custom] || {}).merge(
+              middleman_context: ctx.app,
+              current_resource: ctx.current_resource
+            )
           }
 
           if ctx.config[:sass_source_maps]
