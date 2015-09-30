@@ -42,3 +42,21 @@ Feature: Build Clean
     Then the following files should not exist:
       | sub/dir/about.html         |
       | sub/dir/nested/nested.html |
+
+  Scenario: Build and clean an app under a hidden directory
+    Given a fixture app "clean-app"
+    And app "clean-app" is using config "hidden-dir-before"
+    And a built app at "clean-app"
+    Then the following files should exist:
+      | .build/index.html              |
+      | .build/should_be_ignored.html  |
+      | .build/should_be_ignored2.html |
+      | .build/should_be_ignored3.html |
+    Given app "clean-app" is using config "hidden-dir-after"
+    And a built app at "clean-app"
+    Then the following files should exist:
+      | .build/index.html              |
+    And the following files should not exist:
+      | .build/should_be_ignored.html  |
+      | .build/should_be_ignored2.html |
+      | .build/should_be_ignored3.html |
