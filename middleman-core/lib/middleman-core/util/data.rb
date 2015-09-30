@@ -24,10 +24,10 @@ module Middleman::Util::Data
     end
 
     /
-      \A(.*?coding:.*?\r?\n)?
-      (?<start>[-;]{3})[ ]*\r?\n
+      \A(?:[^\r\n]*coding:[^\r\n]*\r?\n)?
+      (?<start>---|;;;)[ ]*\r?\n
       (?<frontmatter>.*?)[ ]*\r?\n?
-      (?<stop>^[-.;]{3})[ ]*\r?\n?
+      ^(?<stop>---|\.\.\.|;;;)[ ]*\r?\n?
       \r?\n?
       (?<additional_content>.*)
     /mx =~ content
