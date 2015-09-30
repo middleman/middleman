@@ -213,7 +213,7 @@ module Middleman
       end
 
       @to_clean = paths.select do |path|
-        path.to_s !~ /\/\./ || path.to_s =~ /\.(htaccess|htpasswd)/
+        path.realpath.relative_path_from(@build_dir.realpath).to_s !~ /\/\./ || path.to_s =~ /\.(htaccess|htpasswd)/
       end
 
       # handle UTF-8-MAC filename on MacOS
