@@ -3,6 +3,7 @@ require 'json'
 require 'pathname'
 require 'middleman-core/util'
 require 'middleman-core/contracts'
+require 'backports/2.1.0/array/to_h'
 
 module Middleman::Util::Data
   include Contracts

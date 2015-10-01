@@ -54,4 +54,5 @@ Gem::Specification.new do |s|
   # Hash stuff
   s.add_dependency('hashie', ['~> 3.4'])
   s.add_dependency('hamster', ['~> 1.0'])
+  s.add_dependency('backports', ['~> 3.6'])
 end
