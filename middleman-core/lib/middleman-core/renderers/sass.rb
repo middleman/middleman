@@ -85,7 +85,7 @@ module Middleman
           }
 
           if ctx.config[:sass_source_maps]
-            more_opts[:source_map_file] = "."
+            more_opts[:source_map_file] = '.'
             more_opts[:source_map_embed] = true
             more_opts[:source_map_contents] = true
           end

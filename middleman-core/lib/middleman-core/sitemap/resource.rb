@@ -194,7 +194,7 @@ module Middleman
       end
 
       def to_s
-        "#<#{self.class.to_s} path=#{@path}>"
+        "#<#{self.class} path=#{@path}>"
       end
       alias_method :inspect, :to_s # Ruby 2.0 calls inspect for NoMethodError instead of to_s
     end

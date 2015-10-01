@@ -1,9 +1,8 @@
 module Middleman
   module Sass
     module Functions
-      def asset_path(source, options)
+      def asset_path(_source, _options)
         # current_resource
-
       end
 
       # Using Middleman::Util#asset_path, return the full path
