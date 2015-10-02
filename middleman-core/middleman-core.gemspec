@@ -1,5 +1,7 @@
-# -*- encoding: utf-8 -*-
-require File.expand_path("../lib/middleman-core/version", __FILE__)
+lib = File.expand_path("../lib", __FILE__)
+$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+
+require "middleman-core/version"
 
 Gem::Specification.new do |s|
   s.name        = "middleman-core"

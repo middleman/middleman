@@ -35,6 +35,6 @@ gem 'simplecov', '~> 0.10', require: false
 gem 'coveralls', '~> 0.8', require: false
 
 # Middleman itself
-gem 'middleman', path: 'middleman'
 gem 'middleman-core', path: 'middleman-core'
+gem 'middleman', path: 'middleman'
 gem 'middleman-sprockets', github: 'middleman/middleman-sprockets', branch: 'v3-stable-real'
