@@ -4,7 +4,7 @@ require 'tilt-mustache'
 module Middleman
   module Renderers
     # Liquid Renderer
-    module MiddlemanMustache
+    module Mustache
       # Setup extension
       class << self
         # Once registerd
@@ -17,7 +17,7 @@ module Middleman
 
           # After config, setup liquid partial paths
           app.after_configuration do
-            Mustache.template_path = source_dir
+            ::Mustache.template_path = source_dir
 
             # Convert data object into a hash for mustache
             sitemap.provides_metadata %r{\.mustache$} do
@@ -31,4 +31,3 @@ module Middleman
     end
   end
 end
-::Middleman::Extensions.register(:mustache, Middleman::Renderers::MiddlemanMustache)

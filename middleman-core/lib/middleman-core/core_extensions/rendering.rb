@@ -68,6 +68,13 @@ module Middleman
           rescue LoadError
           end
 
+          # Mustache Support
+          begin
+            require 'middleman-core/renderers/mustache'
+            app.register Middleman::Renderers::Mustache
+          rescue LoadError
+          end
+
           # Slim Support
           begin
             require 'middleman-core/renderers/slim'
