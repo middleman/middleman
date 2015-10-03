@@ -38,3 +38,6 @@ gem 'coveralls', '~> 0.8', require: false
 gem 'middleman', path: 'middleman'
 gem 'middleman-core', path: 'middleman-core'
 gem 'middleman-sprockets', github: 'middleman/middleman-sprockets', branch: 'v3-stable-real'
+
+gem 'tilt-mustache'
+gem 'mustache'
