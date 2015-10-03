@@ -56,8 +56,6 @@ module Middleman
     #
     # @private
     def load_extensions_in_path
-      require 'rubygems'
-
       extensions = rubygems_latest_specs.select do |spec|
         spec_has_file?(spec, EXTENSION_FILE)
       end
