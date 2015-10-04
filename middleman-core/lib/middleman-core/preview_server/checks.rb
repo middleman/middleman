@@ -31,7 +31,7 @@ module Middleman
         # @param [Information] information
         #   The information to be validated
         def validate(information)
-          return if  resolver.ips_for(information.server_name).include? information.bind_address
+          return if resolver.ips_for(information.server_name).include? information.bind_address
 
           information.valid = false
           information.reason = format('Server name "%s" does not resolve to bind address "%s"', information.server_name, information.bind_address)

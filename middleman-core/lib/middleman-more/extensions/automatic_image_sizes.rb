@@ -26,7 +26,7 @@ class Middleman::Extensions::AutomaticImageSizes < ::Middleman::Extension
             # Check for @2x and @3x image
             retina = full_path.match(/@(\d)x\.[a-zA-Z]{3,4}$/)
             if retina
-              factor  = retina[1].to_i
+              factor = retina[1].to_i
               width /= factor
               height /= factor
             end

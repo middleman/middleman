@@ -209,7 +209,7 @@ module Middleman::CoreExtensions
     end
 
     def read_data_file(path)
-      data = File.open(path, 'rb') { |io| io.read }
+      data = File.open(path, 'rb', &:read)
       if data.respond_to?(:force_encoding)
         # Set it to the default external (without verifying)
         data.force_encoding(Encoding.default_external) if Encoding.default_external
