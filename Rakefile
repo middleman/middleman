@@ -1,4 +1,3 @@
-require 'rubygems' unless defined?(Gem)
 require 'rake'
 
 require File.expand_path('../middleman-core/lib/middleman-core/version.rb', __FILE__)

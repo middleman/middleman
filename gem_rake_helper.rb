@@ -1,4 +1,3 @@
-require 'rubygems' unless defined?(Gem)
 require 'rake'
 require 'yard'
 
