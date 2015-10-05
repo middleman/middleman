@@ -218,7 +218,7 @@ module Middleman
 
             # Reset lookup cache
             reset_lookup_cache!
-            
+
             @resources.each do |resource|
               @_lookup_by_path[resource.path] = resource
               @_lookup_by_destination_path[resource.destination_path] = resource

@@ -111,23 +111,23 @@ module Middleman
 
     # Location of javascripts within source.
     # @return [String]
-    config.define_setting :js_dir,      'javascripts', 'Location of javascripts within source'
+    config.define_setting :js_dir, 'javascripts', 'Location of javascripts within source'
 
     # Location of stylesheets within source. Used by Compass.
     # @return [String]
-    config.define_setting :css_dir,     'stylesheets', 'Location of stylesheets within source'
+    config.define_setting :css_dir, 'stylesheets', 'Location of stylesheets within source'
 
     # Location of images within source. Used by HTML helpers and Compass.
     # @return [String]
-    config.define_setting :images_dir,  'images', 'Location of images within source'
+    config.define_setting :images_dir, 'images', 'Location of images within source'
 
     # Location of fonts within source. Used by Compass.
     # @return [String]
-    config.define_setting :fonts_dir,   'fonts', 'Location of fonts within source'
+    config.define_setting :fonts_dir, 'fonts', 'Location of fonts within source'
 
     # Location of partials within source. Used by renderers.
     # @return [String]
-    config.define_setting :partials_dir,   '', 'Location of partials within source'
+    config.define_setting :partials_dir, '', 'Location of partials within source'
 
     # Location of layouts within source. Used by renderers.
     # @return [String]

@@ -1,10 +1,10 @@
 module Middleman
   module Profiling
     # The profiler instance. There can only be one!
-    # rubocop:disable TrivialAccessors
     def self.profiler=(prof)
       @profiler = prof
     end
+
     def self.profiler
       @profiler ||= NullProfiler.new
     end

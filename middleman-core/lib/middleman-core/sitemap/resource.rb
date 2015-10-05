@@ -97,7 +97,7 @@ module Middleman
 
         relative_source = Pathname(source_file).relative_path_from(Pathname(app.root))
 
-        instrument 'render.resource', path: relative_source, destination_path: destination_path  do
+        instrument 'render.resource', path: relative_source, destination_path: destination_path do
           md   = metadata.dup
           opts = md[:options].deep_merge(opts)
 
