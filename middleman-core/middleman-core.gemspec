@@ -39,7 +39,7 @@ Gem::Specification.new do |s|
   s.add_dependency('i18n', ['~> 0.7.0'])
 
   # Automatic Image Sizes
-  s.add_dependency('fastimage', ['~> 1.6.2'])
+  s.add_dependency('fastimage', ['~> 1.7.0'])
 
   # Minify CSS
   s.add_dependency('sassc', ['>= 1.6.0'])
