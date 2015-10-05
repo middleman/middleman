@@ -48,7 +48,7 @@ module Middleman
         self.class.config
       end
 
-      # Backwards compatibilty with old Sinatra template interface
+      # Backwards compatibility with old Sinatra template interface
       #
       # @deprecated Prefer accessing settings through "config".
       #

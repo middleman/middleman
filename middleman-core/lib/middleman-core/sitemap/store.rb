@@ -54,7 +54,7 @@ module Middleman
         rebuild_resource_list!(:registered_new)
       end
 
-      # Rebuild the list of resources from scratch, using registed manipulators
+      # Rebuild the list of resources from scratch, using registered manipulators
       # rubocop:disable UnusedMethodArgument
       # @return [void]
       def rebuild_resource_list!(reason=nil)
@@ -99,7 +99,7 @@ module Middleman
         end
       end
 
-      # Invalidate our cached view of resource that are not ingnored. If your extension
+      # Invalidate our cached view of resource that are not ignored. If your extension
       # adds ways to ignore files, you should call this to make sure #resources works right.
       def invalidate_resources_not_ignored_cache!
         @resources_not_ignored = nil

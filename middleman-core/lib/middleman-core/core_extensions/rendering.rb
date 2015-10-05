@@ -214,7 +214,7 @@ module Middleman
           locals = options[:locals]
 
           if ::Tilt[found_partial]
-            # Render the partial if found, otherwide throw exception
+            # Render the partial if found, otherwise throw exception
             _render_with_all_renderers(found_partial, locals, self, options, &block)
           else
             read_template_file(found_partial)
@@ -265,7 +265,7 @@ module Middleman
           # Try to work around: https://github.com/middleman/middleman/issues/501
           locs = locs.dup
 
-          # Detect the remdering engine from the extension
+          # Detect the rendering engine from the extension
           extension = File.extname(path)
           engine = extension[1..-1].to_sym
 
