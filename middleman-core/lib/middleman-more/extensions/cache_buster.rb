@@ -43,7 +43,7 @@ class Middleman::Extensions::CacheBuster < ::Middleman::Extension
           else
             # It's a template, possible with partials. We can't really
             # know when it's updated, so generate fresh cache buster every
-            # time during developement
+            # time during development
             http_path << '?' + Time.now.strftime('%s')
           end
         end

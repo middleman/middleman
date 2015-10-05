@@ -5,7 +5,7 @@ require 'thor/group'
 # CLI Module
 module Middleman
   module Cli
-    # The base task from which everything else etends
+    # The base task from which everything else extends
     class Base < Thor
       class << self
         def start(*args)
