@@ -70,7 +70,7 @@ module Middleman
         config[:server_name] = server_name
       end
 
-      # Make information of internal server class avaible to make debugging
+      # Make information of internal server class available to make debugging
       # easier. This can be used to log the class which was used to determine
       # the preview server settings
       #

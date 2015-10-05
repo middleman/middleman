@@ -7,7 +7,7 @@ module Middleman
     module Liquid
       # Setup extension
       class << self
-        # Once registerd
+        # Once registered
         def registered(app)
           app.before_configuration do
             template_extensions liquid: :html
