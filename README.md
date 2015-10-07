@@ -100,6 +100,14 @@ To create a new Middleman project using the base image:
 
     $ docker run -v /path/to/project/:/project/ middleman middleman init
 
+`Dockerfile.dev` is provided for building and running the Middleman development
+server.  `Dockerfile` itself doesn't install the gem packages required to run
+your site.  To launch the development server for a new project:
+
+    $ cp /path/to/middleman-src/Dockerfile.dev /path/to/project/
+    $ docker build -f Dockerfile.dev -t middleman-dev .
+    $ docker run -p 4567:4567 -v /path/to/project/:/project/ middleman-dev
+
 ## Donate
 
 [Click here to lend your support to Middleman](https://spacebox.io/s/4dXbHBorC3)
