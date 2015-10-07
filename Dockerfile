@@ -7,10 +7,10 @@ RUN apt-get update \
 
 COPY . /src/
 RUN gem build /src/middleman/middleman.gemspec \
-  && gem install ./middleman-*.gem \
+  && gem install --quiet ./middleman-*.gem \
   && rm -Rf /src/
 
 VOLUME /project/
 WORKDIR /project/
 
-EXPOSE 4567
+CMD ["/usr/local/bundle/bin/middleman"]
