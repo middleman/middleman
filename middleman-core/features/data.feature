@@ -51,3 +51,31 @@ Feature: Local Data API
     Then I should see "title1:Hello"
     Then I should see "title2:More"
     Then I should see "title3:Stuff"
+
+  Scenario: Invalid YAML
+    Given a fixture app "basic-data-app"
+    And the default aruba timeout is 30 seconds
+    And a file named "data/test.yml" with:
+      """
+      'ASDSFDa:
+       -asdf asdf
+      """
+    When I run `middleman build`
+    Then the output should contain:
+    """
+    failed due to an error:
+    """
+
+  Scenario: Invalid JSON
+    Given a fixture app "basic-data-app"
+    And the default aruba timeout is 30 seconds
+    And a file named "data/test.json" with:
+      """
+      'ASDSFDa:
+       -asdf asdf
+      """
+    When I run `middleman build`
+    Then the output should contain:
+    """
+    failed due to an error:
+    """
