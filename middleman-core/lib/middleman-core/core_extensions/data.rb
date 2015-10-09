@@ -7,9 +7,7 @@ module Middleman
       class << self
         # @private
         def registered(app)
-          # Data formats
-          require 'yaml'
-          require 'json'
+          require 'middleman-core/core_extensions/data/file_loader'
 
           app.config.define_setting :data_dir, 'data', 'The directory data files are stored in'
           app.send :include, InstanceMethods
@@ -95,11 +93,9 @@ module Middleman
 
           data_path = full_path.relative_path_from(root + @app.config[:data_dir])
 
-          if %w(.yaml .yml).include?(extension)
-            data = YAML.load_file(full_path)
-          elsif extension == '.json'
-            data = JSON.parse(full_path.read)
-          else
+          begin
+            data = FileLoader.new.load(full_path)
+          rescue FileLoader::NoFileLoaderFoundError
             return
           end
 
