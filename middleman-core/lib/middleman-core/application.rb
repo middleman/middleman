@@ -391,6 +391,21 @@ module Middleman
       execute_callbacks(:before_shutdown)
     end
 
+
+    # Set attributes (global variables)
+    #
+    # @deprecated Prefer accessing settings through "config".
+    #
+    # @param [Symbol] key Name of the attribue
+    # @param value Attribute value
+    # @return [void]
+    def set(key, value=nil, &block)
+      logger.warn "Warning: `set :#{key}` is deprecated. Use `config[:#{key}] =` instead."
+
+      value = block if block_given?
+      config[key] = value
+    end
+
     # Work around this bug: http://bugs.ruby-lang.org/issues/4521
     # where Ruby will call to_s/inspect while printing exception
     # messages, which can take a long time (minutes at full CPU)
