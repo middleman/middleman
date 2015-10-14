@@ -30,7 +30,7 @@ Feature: YAML Front Matter
 
   Scenario: Rendering Haml (yaml)
     Given the Server is running at "frontmatter-app"
-    When I go to "/front-matter.haml"
+    When I go to "/front-matter-haml.html"
     Then I should see "<h1>This is the title</h1>"
     Then I should not see "---"
 

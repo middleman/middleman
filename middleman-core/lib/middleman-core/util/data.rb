@@ -57,7 +57,6 @@ module Middleman::Util::Data
   # @return [Hash]
   Contract String, Pathname, Bool => Hash
   def parse_yaml(content, full_path)
-    content.sub!(/\\---/, '---')
     symbolize_recursive(YAML.load(content) || {})
   rescue StandardError, Psych::SyntaxError => error
     warn "YAML Exception parsing #{full_path}: #{error.message}"
