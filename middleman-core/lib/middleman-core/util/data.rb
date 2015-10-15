@@ -26,9 +26,9 @@ module Middleman::Util::Data
 
     /
       \A(?:[^\r\n]*coding:[^\r\n]*\r?\n)?
-      (?<start>\\?---|;;;)[ ]*\r?\n
+      \\?(?<start>---|;;;)[ ]*\r?\n
       (?<frontmatter>.*?)[ ]*\r?\n?
-      ^(?<stop>\\?---|\.\.\.|;;;)[ ]*\r?\n?
+      ^\\?(?<stop>---|\.\.\.|;;;)[ ]*\r?\n?
       \r?\n?
       (?<additional_content>.*)
     /mx =~ content
@@ -43,7 +43,7 @@ module Middleman::Util::Data
     end
 
     case [start, stop]
-    when %w(--- ---), %w(--- ...), %(\\--- \\---), %w(\\--- ...)
+    when %w(--- ---), %w(--- ...)
       [parse_yaml(frontmatter, full_path), additional_content]
     when %w(;;; ;;;)
       [parse_json("{#{frontmatter}}", full_path), additional_content]
