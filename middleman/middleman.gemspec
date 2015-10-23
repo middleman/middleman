@@ -1,6 +1,7 @@
-# -*- encoding: utf-8 -*-
-$:.push File.expand_path("../lib", __FILE__)
-require File.expand_path("../../middleman-core/lib/middleman-core/version.rb", __FILE__)
+lib = File.expand_path('../lib', __FILE__)
+$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+
+require "middleman-core/version"
 
 Gem::Specification.new do |s|
   s.name        = "middleman"
@@ -14,7 +15,6 @@ Gem::Specification.new do |s|
   s.description = "A static site generator. Provides dozens of templating languages (Haml, Sass, Compass, Slim, CoffeeScript, and more). Makes minification, compression, cache busting, Yaml data (and more) an easy part of your development cycle."
 
   s.files         = `git ls-files -z`.split("\0")
-  s.test_files    = `git ls-files -z -- {fixtures,features}/*`.split("\0")
   s.require_paths = ["lib"]
   s.required_ruby_version = '>= 1.9.3'
 
