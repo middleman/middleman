@@ -16,3 +16,7 @@ Dir.chdir(ENV["MM_ROOT"]) if ENV["MM_ROOT"]
 
 # Start the CLI
 Middleman::Cli::Base.start
+
+if ARGV.include? '--daemonize'
+  Process.daemon
+end
