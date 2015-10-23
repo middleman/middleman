@@ -33,6 +33,12 @@ Middleman::Extensions.register :sitemap_redirects, auto_activate: :before_config
   Middleman::Sitemap::Extensions::Redirects
 end
 
+# Move Files
+Middleman::Extensions.register :sitemap_move_files, auto_activate: :before_configuration do
+  require 'middleman-core/sitemap/extensions/move_file'
+  Middleman::Sitemap::Extensions::MoveFile
+end
+
 require 'middleman-core/contracts'
 
 module Middleman
