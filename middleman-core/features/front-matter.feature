@@ -28,13 +28,18 @@ Feature: YAML Front Matter
     Then I should not see "layout: false"
     Then I should not see "title: Pandoc likes trailing dots..."
 
+  Scenario: Rendering Haml (yaml)
+    Given the Server is running at "frontmatter-app"
+    When I go to "/front-matter-haml.html"
+    Then I should see "<h1>This is the title</h1>"
+    Then I should not see "---"
 
   Scenario: YAML not on first line, no encoding
     Given the Server is running at "frontmatter-app"
     When I go to "/front-matter-line-2.html"
     Then I should see "<h1></h1>"
     Then I should see "---"
-    
+
   Scenario: YAML not on first line, with encoding
     Given the Server is running at "frontmatter-app"
     When I go to "/front-matter-encoding.html"

@@ -185,6 +185,12 @@ module Middleman
       end
     }, 'Callbacks that can exclude paths from the sitemap'
 
+    # Set textual delimiters that denote the start and end of frontmatter
+    define_setting :frontmatter_delims, {
+      json: [%w(;;; ;;;)],
+      yaml: [%w(--- ---), %w(--- ...)]
+    }, 'Allowed frontmatter delimiters'
+
     define_setting :watcher_disable, false, 'If the Listen watcher should not run'
     define_setting :watcher_force_polling, false, 'If the Listen watcher should run in polling mode'
     define_setting :watcher_latency, nil, 'The Listen watcher latency'
