@@ -328,7 +328,7 @@ module Middleman
 
     Contract String, String, ArrayOf[String], Proc => String
     def rewrite_paths(body, _path, exts, &_block)
-      body.dup.gsub(/([=\'\"\(,]\s*)([^\s\'\"\)]+(#{Regexp.union(exts)}))/) do |match|
+      body.dup.gsub(/([=\'\"\(,]\s*)([^\s\'\"\)>]+(#{Regexp.union(exts)}))/) do |match|
         opening_character = $1
         asset_path = $2
 

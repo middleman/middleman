@@ -11,6 +11,7 @@ Feature: Alternate between multiple asset hosts
     Then I should see 'src="https://code.jquery.com/jquery-2.1.3.min.js"'
     Then I should see content matching %r{http://assets1.example.com/}
     Then I should not see content matching %r{http://assets1.example.com//}
+    Then I should see content matching %r{<a href="https://github.com/angular/angular.js">Angular.js</a>}
     Then I should see content matching %r{'//www.example.com/script.js'}
     When I go to "/stylesheets/asset_host.css"
     Then I should see content matching %r{http://assets1.example.com/}
@@ -29,6 +30,7 @@ Feature: Alternate between multiple asset hosts
     Then I should see 'src="https://code.jquery.com/jquery-2.1.3.min.js"'
     Then I should see content matching %r{http://assets1.example.com/}
     Then I should not see content matching %r{http://assets1.example.com//}
+    Then I should see content matching %r{<a href="https://github.com/angular/angular.js">Angular.js</a>}
     Then I should see content matching %r{'//www.example.com/script.js'}
     When I go to "/stylesheets/asset_host.css"
     Then I should see content matching %r{http://assets1.example.com/}
