@@ -19,7 +19,7 @@ These days, many websites are built with an API in mind. Rather than package the
 
 ## Installation
 
-Middleman is built on Ruby and uses the RubyGems package manager for installation. These are usually pre-installed on Mac OS X and Linux. Windows users can install both using [RubyInstaller].
+Middleman is built on Ruby and uses the [RubyGems package manager] (https://rubygems.org/pages/download) for installation. These are usually pre-installed on Mac OS X and Linux. Windows users can install both using [RubyInstaller].
 
 ```
 gem install middleman
