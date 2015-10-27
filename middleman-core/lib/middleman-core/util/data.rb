@@ -26,9 +26,9 @@ module Middleman::Util::Data
 
     /
       \A(?:[^\r\n]*coding:[^\r\n]*\r?\n)?
-      (?<start>---|;;;)[ ]*\r?\n
+      \\?(?<start>---|;;;)[ ]*\r?\n
       (?<frontmatter>.*?)[ ]*\r?\n?
-      ^(?<stop>---|\.\.\.|;;;)[ ]*\r?\n?
+      ^\\?(?<stop>---|\.\.\.|;;;)[ ]*\r?\n?
       \r?\n?
       (?<additional_content>.*)
     /mx =~ content
