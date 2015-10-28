@@ -91,7 +91,7 @@ The best way to get quick responses to your issues and swift fixes to your bugs 
 
 ## Donate
 
-[Click here to lend your support to Middleman](https://spacebox.io/s/4dXbHBorC3)
+Help support the Middleman team [with a donation](https://plasso.co/s/4dXbHBorC3).
 
 ## Versioning
 
