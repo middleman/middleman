@@ -1,7 +1,7 @@
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
-require "middleman-core/version"
+require File.expand_path("../../middleman-core/lib/middleman-core/version.rb", __FILE__)
 
 Gem::Specification.new do |s|
   s.name        = "middleman"
