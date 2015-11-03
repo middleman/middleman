@@ -5,6 +5,7 @@ require 'padrino-helpers/format_helpers'
 require 'padrino-helpers/number_helpers'
 require 'padrino-helpers/output_helpers'
 require 'padrino-helpers/render_helpers'
+require 'padrino-helpers/tag_helpers'
 
 # Don't fail on invalid locale, that's not what our current
 # users expect.
