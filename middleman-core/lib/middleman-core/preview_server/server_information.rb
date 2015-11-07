@@ -20,6 +20,8 @@ module Middleman
 
       public
 
+      attr_writer :https
+
       def initialize(opts={})
         @resolver     = opts.fetch(:resolver, DnsResolver.new)
         @validator    = opts.fetch(:validator, ServerInformationValidator.new)
@@ -64,10 +66,12 @@ module Middleman
         @bind_address = config[:bind_address]
         @port         = config[:port]
         @server_name  = config[:server_name]
+        @https        = config[:https]
 
         config[:bind_address] = bind_address
-        config[:port] = port
-        config[:server_name] = server_name
+        config[:port]         = port
+        config[:server_name]  = server_name
+        config[:https]        = https?
       end
 
       # Make information of internal server class avaible to make debugging
@@ -138,6 +142,11 @@ module Middleman
       #   A list of bind address where the
       def listeners
         information.listeners
+      end
+
+      # Is https enabled?
+      def https?
+        @https == true
       end
     end
   end
