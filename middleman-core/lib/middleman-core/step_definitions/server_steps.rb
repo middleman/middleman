@@ -31,15 +31,13 @@ Given /^current environment is "([^\"]*)"$/ do |env|
 end
 
 Given /^the Server is running$/ do
-  root_dir = File.expand_path(current_directory)
-
-  if File.exists?(File.join(root_dir, 'source'))
-    ENV['MM_SOURCE'] = 'source'
+  if exist? 'source'
+    set_environment_variable 'MM_SOURCE', 'source'
   else
-    ENV['MM_SOURCE'] = ''
+    set_environment_variable 'MM_SOURCE', ''
   end
 
-  ENV['MM_ROOT'] = root_dir
+  set_environment_variable 'MM_ROOT', expand_path('.')
 
   initialize_commands = @initialize_commands || []
   initialize_commands.unshift lambda {
@@ -47,10 +45,12 @@ Given /^the Server is running$/ do
     set :show_exceptions, false
   }
 
-  in_current_directory do
-    @server_inst = Middleman::Application.server.inst do
-      initialize_commands.each do |p|
-        instance_exec(&p)
+  cd '.' do
+    with_environment do
+      @server_inst = Middleman::Application.server.inst do
+        initialize_commands.each do |p|
+          instance_exec(&p)
+        end
       end
     end
   end
@@ -68,61 +68,81 @@ Given /^a template named "([^\"]*)" with:$/ do |name, string|
 end
 
 When /^I go to "([^\"]*)"$/ do |url|
-  in_current_directory do
-    visit(URI.encode(url).to_s)
+  cd '.' do
+    with_environment do
+      visit(URI.encode(url).to_s)
+    end
   end
 end
 
 Then /^going to "([^\"]*)" should not raise an exception$/ do |url|
-  in_current_directory do
-    expect{ visit(URI.encode(url).to_s) }.to_not raise_exception
+  cd '.' do
+    with_environment do
+      expect{ visit(URI.encode(url).to_s) }.to_not raise_exception
+    end
   end
 end
 
 Then /^the content type should be "([^\"]*)"$/ do |expected|
-  in_current_directory do
-    expect(page.response_headers['Content-Type']).to start_with expected
+  cd '.' do
+    with_environment do
+      expect(page.response_headers['Content-Type']).to start_with expected
+    end
   end
 end
 
 Then /^I should see "([^\"]*)"$/ do |expected|
-  in_current_directory do
-    expect(page.body).to include expected
+  cd '.' do
+    with_environment do
+      expect(page.body).to include expected
+    end
   end
 end
 
 Then /^I should see '([^\']*)'$/ do |expected|
-  in_current_directory do
-    expect(page.body).to include expected
+  cd '.' do
+    with_environment do
+      expect(page.body).to include expected
+    end
   end
 end
 
 Then /^I should see:$/ do |expected|
-  in_current_directory do
-    expect(page.body).to include expected
+  cd '.' do
+    with_environment do
+      expect(page.body).to include expected
+    end
   end
 end
 
 Then /^I should not see "([^\"]*)"$/ do |expected|
-  in_current_directory do
-    expect(page.body).not_to include expected
+  cd '.' do
+    with_environment do
+      expect(page.body).not_to include expected
+    end
   end
 end
 
 Then /^I should not see:$/ do |expected|
-  in_current_directory do
-    expect(page.body).not_to include expected
+  cd '.' do
+    with_environment do
+      expect(page.body).not_to include expected
+    end
   end
 end
 
 Then /^the status code should be "([^\"]*)"$/ do |expected|
-  in_current_directory do
-    expect(page.status_code).to eq expected.to_i
+  cd '.' do
+    with_environment do
+      expect(page.status_code).to eq expected.to_i
+    end
   end
 end
 
 Then /^I should see "([^\"]*)" lines$/ do |lines|
-  in_current_directory do
-    expect(page.body.chomp.split($/).length).to eq lines.to_i
+  cd '.' do
+    with_environment do
+      expect(page.body.chomp.split($/).length).to eq lines.to_i
+    end
   end
 end

@@ -6,7 +6,7 @@ Feature: Run the preview server
 
   Background:
     Given a fixture app "preview-server-app"
-    And the default aruba timeout is 30 seconds
+    And the default aruba exit timeout is 30 seconds
 
   Scenario: Start the server with defaults
     When I run `middleman server` interactively
