@@ -4,6 +4,8 @@ master
 * Rather than applying layouts to all files which are not .txt, .css, .js, .json: the new behavior is to only default layouts to active for .html
 * Switch from Ruby Sass to SassC.
 * `relative_assets` extension overrides local `relative: false` option to stylesheet/javascript tag helpers.
+* Add `before_server`-hook to the preview server which is run before the Webrick server is started
+* Add `-d` to `middleman server` to make it run as daemon
 
 # 4.0.0.rc.1
 
