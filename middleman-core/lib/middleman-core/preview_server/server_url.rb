@@ -6,7 +6,7 @@ module Middleman
     class ServerUrl
       private
 
-      attr_reader :hosts, :port, :https
+      attr_reader :hosts, :port, :https, :format_output
 
       public
 
@@ -14,6 +14,7 @@ module Middleman
         @hosts = opts.fetch(:hosts)
         @port  = opts.fetch(:port)
         @https = opts.fetch(:https, false)
+        @format_output = opts.fetch(:format_output, true)
       end
 
       # Return bind addresses
@@ -21,7 +22,11 @@ module Middleman
       # @return [Array]
       #   List of bind addresses of format host:port
       def to_bind_addresses
-        hosts.map { |l| format('"%s:%s"', l.to_s, port) }
+        if format_output
+          hosts.map { |l| format('"%s:%s"', l.to_s, port) }
+        else
+          hosts.map { |l| format('%s:%s', l.to_s, port) }
+        end
       end
 
       # Return server urls
@@ -29,7 +34,11 @@ module Middleman
       # @return [Array]
       #   List of urls of format http://host:port
       def to_urls
-        hosts.map { |l| format('"%s://%s:%s"', https? ? 'https' : 'http', l.to_browser, port) }
+        if format_output
+          hosts.map { |l| format('"%s://%s:%s"', https? ? 'https' : 'http', l.to_browser, port) }
+        else
+          hosts.map { |l| format('%s://%s:%s', https? ? 'https' : 'http', l.to_browser, port) }
+        end
       end
 
       # Return server config urls
@@ -37,7 +46,11 @@ module Middleman
       # @return [Array]
       #   List of urls of format http://host:port/__middleman
       def to_config_urls
-        hosts.map { |l| format('"%s://%s:%s/__middleman"', https? ? 'https' : 'http', l.to_browser, port) }
+        if format_output
+          hosts.map { |l| format('"%s://%s:%s/__middleman"', https? ? 'https' : 'http', l.to_browser, port) }
+        else
+          hosts.map { |l| format('%s://%s:%s/__middleman', https? ? 'https' : 'http', l.to_browser, port) }
+        end
       end
 
       private

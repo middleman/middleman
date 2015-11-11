@@ -31,7 +31,7 @@ Feature: Run the preview server
     """
     Then the output should contain:
     """
-    The Middleman preview server is bind to ":::4567", "0.0.0.0:4567"
+    The Middleman preview server is bound to ":::4567", "0.0.0.0:4567"
     """
     And the output should contain:
     """
@@ -52,7 +52,7 @@ Feature: Run the preview server
     """
     Then the output should contain:
     """
-    The Middleman preview server is bind to ":::4567", "0.0.0.0:4567"
+    The Middleman preview server is bound to ":::4567", "0.0.0.0:4567"
     """
     And the output should contain:
     """
@@ -76,7 +76,7 @@ Feature: Run the preview server
     """
     Then the output should contain:
     """
-    The Middleman preview server is bind to "127.0.0.1:4567"
+    The Middleman preview server is bound to "127.0.0.1:4567"
     """
     And the output should contain:
     """
@@ -104,7 +104,7 @@ Feature: Run the preview server
     """
     Then the output should contain:
     """
-    The Middleman preview server is bind to "127.0.0.1:4567"
+    The Middleman preview server is bound to "127.0.0.1:4567"
     """
     And the output should contain:
     """
@@ -127,7 +127,7 @@ Feature: Run the preview server
     """
     Then the output should contain:
     """
-    The Middleman preview server is bind to "127.0.0.5:4567"
+    The Middleman preview server is bound to "127.0.0.5:4567"
     """
     And the output should contain:
     """
@@ -151,7 +151,7 @@ Feature: Run the preview server
     """
     Then the output should contain:
     """
-    The Middleman preview server is bind to "::1:4567"
+    The Middleman preview server is bound to "::1:4567"
     """
     And the output should contain:
     """
@@ -170,7 +170,7 @@ Feature: Run the preview server
     """
     Then the output should contain:
     """
-    The Middleman preview server is bind to "0.0.0.0:4567"
+    The Middleman preview server is bound to "0.0.0.0:4567"
     """
     And the output should contain:
     """
@@ -189,7 +189,7 @@ Feature: Run the preview server
     """
     Then the output should contain:
     """
-    The Middleman preview server is bind to ":::4567"
+    The Middleman preview server is bound to ":::4567"
     """
     And the output should contain:
     """
@@ -213,7 +213,7 @@ Feature: Run the preview server
     """
     Then the output should contain:
     """
-    The Middleman preview server is bind to "127.0.0.1:4567"
+    The Middleman preview server is bound to "127.0.0.1:4567"
     """
     And the output should contain:
     """
@@ -241,7 +241,7 @@ Feature: Run the preview server
     """
     Then the output should contain:
     """
-    The Middleman preview server is bind to "127.0.0.1:4567"
+    The Middleman preview server is bound to "127.0.0.1:4567"
     """
     And the output should contain:
     """
@@ -265,7 +265,7 @@ Feature: Run the preview server
     """
     Then the output should contain:
     """
-    The Middleman preview server is bind to "127.0.0.1:4567"
+    The Middleman preview server is bound to "127.0.0.1:4567"
     """
     And the output should contain:
     """
@@ -284,7 +284,7 @@ Feature: Run the preview server
     """
     Then the output should contain:
     """
-    The Middleman preview server is bind to "127.0.0.1:4567"
+    The Middleman preview server is bound to "127.0.0.1:4567"
     """
     And the output should contain:
     """
@@ -303,7 +303,7 @@ Feature: Run the preview server
     """
     Then the output should contain:
     """
-    The Middleman preview server is bind to "::1:4567"
+    The Middleman preview server is bound to "::1:4567"
     """
     And the output should contain:
     """
@@ -322,7 +322,7 @@ Feature: Run the preview server
     """
     Then the output should contain:
     """
-    The Middleman preview server is bind to ":::4567", "0.0.0.0:4567"
+    The Middleman preview server is bound to ":::4567", "0.0.0.0:4567"
     """
     And the output should contain:
     """
@@ -341,7 +341,7 @@ Feature: Run the preview server
     """
     Then the output should contain:
     """
-    The Middleman preview server is bind to ":::65432", "0.0.0.0:65432"
+    The Middleman preview server is bound to ":::65432", "0.0.0.0:65432"
     """
 
   Scenario: Start the server with port 65432 configured via config.rb
@@ -356,7 +356,7 @@ Feature: Run the preview server
     """
     Then the output should contain:
     """
-    The Middleman preview server is bind to ":::65432", "0.0.0.0:65432"
+    The Middleman preview server is bound to ":::65432", "0.0.0.0:65432"
     """
 
   Scenario: Start the server when port is blocked by other middleman instance
@@ -456,7 +456,7 @@ Feature: Run the preview server
     """
     Then the output should contain:
     """
-    The Middleman preview server is bind to "127.0.0.1:4567"
+    The Middleman preview server is bound to "127.0.0.1:4567"
     """
     And the output should contain:
     """
@@ -488,7 +488,7 @@ Feature: Run the preview server
     """
     Then the output should contain:
     """
-    The Middleman preview server is bind to "127.0.0.1:4567"
+    The Middleman preview server is bound to "127.0.0.1:4567"
     """
     And the output should contain:
     """
@@ -520,7 +520,7 @@ Feature: Run the preview server
     """
     Then the output should contain:
     """
-    The Middleman preview server is bind to "127.0.0.1:4567"
+    The Middleman preview server is bound to "127.0.0.1:4567"
     """
     And the output should contain:
     """

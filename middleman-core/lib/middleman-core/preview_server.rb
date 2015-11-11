@@ -5,6 +5,7 @@ require 'middleman-core/meta_pages'
 require 'middleman-core/logger'
 require 'middleman-core/preview_server/server_information'
 require 'middleman-core/preview_server/server_url'
+require 'middleman-core/preview_server/server_information_callback_proxy'
 
 # rubocop:disable GlobalVars
 module Middleman
@@ -52,6 +53,8 @@ module Middleman
         # Save the last-used @options so it may be re-used when
         # reloading later on.
         ::Middleman::Profiling.report('server_start')
+
+        app.run_hook(:before_server, ServerInformationCallbackProxy.new(server_information))
 
         loop do
           @webrick.start
