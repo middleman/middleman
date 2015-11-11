@@ -58,6 +58,19 @@ module Middleman
 
         app.execute_callbacks(:before_server, [ServerInformationCallbackProxy.new(server_information)])
 
+        if @options[:daemon]
+          # To output the child PID, let's make preview server a daemon by hand
+          if child_pid = fork
+            app.logger.info "== Middleman preview server is running in background with PID #{child_pid}"
+            Process.detach child_pid 
+            exit 0
+          else
+            $stdout.reopen('/dev/null', 'w')
+            $stderr.reopen('/dev/null', 'w')
+            $stdin.reopen('/dev/null', 'r')
+          end
+        end
+
         loop do
           @webrick.start
 

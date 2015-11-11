@@ -49,6 +49,11 @@ module Middleman::Cli
                  aliases: '-l',
                  default: 0.5,
                  desc: 'Set file watcher latency, in seconds'
+    class_option :daemon,
+                 type: :boolean,
+                 aliases: '-d',
+                 default: false,
+                 desc: 'Daemonize preview server'
 
     # Start the server
     def server
@@ -73,7 +78,8 @@ module Middleman::Cli
         disable_watcher: options['disable_watcher'],
         reload_paths: options['reload_paths'],
         force_polling: options['force_polling'],
-        latency: options['latency']
+        latency: options['latency'],
+        daemon: options['daemon']
       }
 
       puts '== The Middleman is loading'
