@@ -14,7 +14,7 @@ module Middleman::Util::Data
   # @param [String] path
   # @return [Array<Hash, String>]
   Contract Pathname, Maybe[Symbol] => [Hash, Maybe[String]]
-  def parse(full_path, known_type=nil)
+  def parse(full_path, frontmatter_delims, known_type=nil)
     return [{}, nil] if Middleman::Util.binary?(full_path)
 
     # Avoid weird race condition when a file is renamed
@@ -24,16 +24,22 @@ module Middleman::Util::Data
       return [{}, nil]
     end
 
-    /
+    start_delims, stop_delims = frontmatter_delims
+      .values
+      .flatten(1)
+      .transpose
+      .map(&Regexp.method(:union))
+
+    match = /
       \A(?:[^\r\n]*coding:[^\r\n]*\r?\n)?
-      (?<start>---|;;;)[ ]*\r?\n
+      (?<start>#{start_delims})[ ]*\r?\n
       (?<frontmatter>.*?)[ ]*\r?\n?
-      ^(?<stop>---|\.\.\.|;;;)[ ]*\r?\n?
+      ^(?<stop>#{stop_delims})[ ]*\r?\n?
       \r?\n?
       (?<additional_content>.*)
-    /mx =~ content
+    /mx.match(content) || {}
 
-    unless frontmatter
+    unless match[:frontmatter]
       case known_type
       when :yaml
         return [parse_yaml(content, full_path), nil]
@@ -42,13 +48,22 @@ module Middleman::Util::Data
       end
     end
 
-    case [start, stop]
-    when %w(--- ---), %w(--- ...)
-      [parse_yaml(frontmatter, full_path), additional_content]
-    when %w(;;; ;;;)
-      [parse_json("{#{frontmatter}}", full_path), additional_content]
+    case [match[:start], match[:stop]]
+    when *frontmatter_delims[:yaml]
+      [
+        parse_yaml(match[:frontmatter], full_path),
+        match[:additional_content]
+      ]
+    when *frontmatter_delims[:json]
+      [
+        parse_json("{#{match[:frontmatter]}}", full_path),
+        match[:additional_content]
+      ]
     else
-      [{}, content]
+      [
+        {},
+        content
+      ]
     end
   end
 

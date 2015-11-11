@@ -65,7 +65,10 @@ module Middleman::CoreExtensions
 
       return [{}, nil] unless file
 
-      @cache[file[:full_path]] ||= ::Middleman::Util::Data.parse(file[:full_path])
+      @cache[file[:full_path]] ||= ::Middleman::Util::Data.parse(
+        file[:full_path],
+        app.config[:frontmatter_delims]
+      )
     end
 
     Contract ArrayOf[IsA['Middleman::SourceFile']], ArrayOf[IsA['Middleman::SourceFile']] => Any
