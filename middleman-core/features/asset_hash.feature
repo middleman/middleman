@@ -63,21 +63,21 @@ Feature: Assets get file hashes appended to them and references to them are upda
     Given the Server is running at "asset-hash-app"
     When I go to "/"
     Then I should see 'href="apple-touch-icon.png"'
-    And I should see 'href="stylesheets/site-c876f66c.css"'
+    And I should see 'href="stylesheets/site-d2959d87.css"'
     And I should see 'src="javascripts/application-1d8d5276.js"'
     And I should see 'src="images/100px-5fd6fb90.jpg"'
     And I should see 'srcset="images/100px-5fd6fb90.jpg 1x, images/200px-c11eb203.jpg 2x, images/300px-59adce76.jpg 3x"'
     When I go to "/subdir/"
-    Then I should see 'href="../stylesheets/site-c876f66c.css"'
+    Then I should see 'href="../stylesheets/site-d2959d87.css"'
     And I should see 'src="../javascripts/application-1d8d5276.js"'
     And I should see 'src="../images/100px-5fd6fb90.jpg"'
     When I go to "/other/"
-    Then I should see 'href="../stylesheets/site-c876f66c.css"'
+    Then I should see 'href="../stylesheets/site-d2959d87.css"'
     And I should see 'src="../javascripts/application-1d8d5276.js"'
     And I should see 'src="../images/100px-5fd6fb90.jpg"'
     When I go to "/javascripts/application-1d8d5276.js"
     Then I should see "img.src = '/images/100px-5fd6fb90.jpg'"
-    When I go to "/stylesheets/site-c876f66c.css"
+    When I go to "/stylesheets/site-d2959d87.css"
     Then I should see 'background-image: url("../images/100px-5fd6fb90.jpg")'
     When I go to "/api.json"
     Then I should see 'images/100px-5fd6fb90.gif'
@@ -98,13 +98,13 @@ Feature: Assets get file hashes appended to them and references to them are upda
   Scenario: Enabling an asset host still produces hashed files and references
     Given the Server is running at "asset-hash-host-app"
     When I go to "/"
-    Then I should see 'href="http://middlemanapp.com/stylesheets/site-d3eb6c92.css"'
+    Then I should see 'href="http://middlemanapp.com/stylesheets/site-e587b659.css"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg"'
     When I go to "/subdir/"
-    Then I should see 'href="http://middlemanapp.com/stylesheets/site-d3eb6c92.css"'
+    Then I should see 'href="http://middlemanapp.com/stylesheets/site-e587b659.css"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg"'
     When I go to "/other/"
-    Then I should see 'href="http://middlemanapp.com/stylesheets/site-d3eb6c92.css"'
+    Then I should see 'href="http://middlemanapp.com/stylesheets/site-e587b659.css"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg"'
 
   Scenario: The asset hash should change when a SASS partial changes
@@ -115,14 +115,14 @@ Feature: Assets get file hashes appended to them and references to them are upda
         font-size: 14px
       """
     When I go to "/partials/"
-    Then I should see 'href="../stylesheets/uses_partials-e1b802a2.css'
+    Then I should see 'href="../stylesheets/uses_partials-44fb2764.css'
     And the file "source/stylesheets/_partial.sass" has the contents
       """
       body
         font-size: 18px !important
       """
     When I go to "/partials/"
-    Then I should see 'href="../stylesheets/uses_partials-023a2e4d.css'
+    Then I should see 'href="../stylesheets/uses_partials-10d8ae33.css'
 
   Scenario: The asset hash should change when a Rack-based filter changes
     Given a fixture app "asset-hash-app"
@@ -136,8 +136,8 @@ Feature: Assets get file hashes appended to them and references to them are upda
       """
     Given the Server is running at "asset-hash-app"
     When I go to "/"
-    Then I should see 'href="stylesheets/site-79a70922.css'
-    When I go to "stylesheets/site-79a70922.css"
+    Then I should see 'href="stylesheets/site-30784643.css'
+    When I go to "stylesheets/site-30784643.css"
     Then I should see 'background-image'
     Then I should see 'Added by Rack filter'
     When I go to "stylesheets/site-7474cadd.css"

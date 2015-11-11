@@ -24,7 +24,7 @@ interfaces = [
 
 
 # Start the RubyDNS server
-RubyDNS::run_server(:listen => interfaces) do
+RubyDNS::run_server(listen: interfaces) do
   db.each do |matcher, result|
     match(matcher, Resolv::DNS::Resource::IN::A) do |transaction|
       transaction.respond!(result)

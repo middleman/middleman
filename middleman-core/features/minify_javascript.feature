@@ -38,7 +38,7 @@ Feature: Minify Javascript
       I'm a jQuery {{template}}.
     </script>
     """
-    
+
   Scenario: Rendering inline js with a passthrough minifier
     Given a fixture app "passthrough-app"
     And a file named "config.rb" with:
@@ -119,7 +119,7 @@ Feature: Minify Javascript
       I'm a jQuery {{template}}.
     </script>
     """
-    
+
   Scenario: Rendering inline js with the feature enabled
     Given a fixture app "minify-js-app"
     And a file named "config.rb" with:
@@ -150,7 +150,7 @@ Feature: Minify Javascript
     Given a fixture app "minify-js-app"
     And a file named "config.rb" with:
       """
-      activate :minify_javascript, :inline => true
+      activate :minify_javascript, inline: true
       """
     And the Server is running at "minify-js-app"
     When I go to "/inline-js.php"
@@ -175,7 +175,7 @@ Feature: Minify Javascript
     Given a fixture app "minify-js-app"
     And a file named "config.rb" with:
       """
-      activate :minify_javascript, :inline => true
+      activate :minify_javascript, inline: true
       proxy '/inline-js-proxy', '/inline-js.html', ignore: true
       """
     And the Server is running at "minify-js-app"
@@ -193,7 +193,7 @@ Feature: Minify Javascript
     Then I should see "1" lines
     When I go to "/more-js/other.js"
     Then I should see "1" lines
-    
+
   Scenario: Rendering external js in a proxied resource
     Given a fixture app "minify-js-app"
     And a file named "config.rb" with:
@@ -219,7 +219,7 @@ Feature: Minify Javascript
     And the Server is running at "minify-js-app"
     When I go to "/inline-coffeescript.html"
     Then I should see "3" lines
-  
+
   Scenario: Rendering external js (coffeescript) with the feature enabled
     Given a fixture app "minify-js-app"
     And a file named "config.rb" with:
@@ -229,7 +229,7 @@ Feature: Minify Javascript
     And the Server is running at "minify-js-app"
     When I go to "/javascripts/coffee_test.js"
     Then I should see "1" lines
-    
+
   Scenario: Rendering inline js (coffeescript) with a passthrough minifier
     Given a fixture app "passthrough-app"
     And a file named "config.rb" with:
@@ -247,7 +247,7 @@ Feature: Minify Javascript
     And the Server is running at "passthrough-app"
     When I go to "/inline-coffeescript.html"
     Then I should see "13" lines
-    
+
   Scenario: Rendering external js (coffeescript) with a passthrough minifier
     Given a fixture app "passthrough-app"
     And a file named "config.rb" with:
@@ -263,4 +263,4 @@ Feature: Minify Javascript
     And the Server is running at "passthrough-app"
     When I go to "/javascripts/coffee_test.js"
     Then I should see "11" lines
-    
+

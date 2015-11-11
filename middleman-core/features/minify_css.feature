@@ -154,7 +154,7 @@ Feature: Minify CSS
       """
       config[:sass_source_maps] = false
 
-      activate :minify_css, :inline => true
+      activate :minify_css, inline: true
       """
     And the Server is running at "minify-css-app"
     When I go to "/inline-css.php"
@@ -173,7 +173,7 @@ Feature: Minify CSS
       """
       config[:sass_source_maps] = false
 
-      activate :minify_css, :inline => true
+      activate :minify_css, inline: true
       proxy '/inline-css-proxy', '/inline-css.html', ignore: true
       """
     And the Server is running at "minify-css-app"

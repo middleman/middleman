@@ -28,7 +28,7 @@ module Middleman
       PageDescriptor = Struct.new(:path, :metadata)
 
       # The page method allows options to be set for a given source path, regex, or glob.
-      # Options that may be set include layout, locals, proxy, andx ignore.
+      # Options that may be set include layout, locals, andx ignore.
       #
       # @example
       #   page '/about.html', layout: false
