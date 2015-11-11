@@ -57,11 +57,11 @@ Feature: Middleman CLI
     Then a directory named "MY_PROJECT" should exist
 
   Scenario: Create a new project using Middleman directory
-    When I run `middleman init MY_PROJECT -T amicus`
+    When I run `middleman init MY_PROJECT -T blog`
     Then a directory named "MY_PROJECT" should exist
     When I cd to "MY_PROJECT"
-    And the file "README.md" should contain "Amicus"
-    And the file ".gitignore" should not exist
+    And the file "Gemfile" should contain "middleman-blog"
+    And the file ".gitignore" should exist
 
   Scenario: Create a new project using github(user/repository)
     When I run `middleman init MY_PROJECT -T middleman/middleman-templates-default` interactively

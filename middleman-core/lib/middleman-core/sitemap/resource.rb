@@ -134,7 +134,7 @@ module Middleman
 
           # Certain output file types don't use layouts
           unless opts.key?(:layout)
-            opts[:layout] = false if %w(.js .json .css .txt).include?(ext)
+            opts[:layout] = false if ext != '.html'
           end
 
           renderer = ::Middleman::TemplateRenderer.new(@app, file_descriptor[:full_path].to_s)
