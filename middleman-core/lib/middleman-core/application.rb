@@ -216,7 +216,8 @@ module Middleman
         :before_shutdown,
         :before, # Before Rack requests
         :before_render,
-        :after_render
+        :after_render,
+        :before_server
       ])
 
       @middleware = Set.new
