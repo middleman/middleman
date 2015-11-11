@@ -13,10 +13,6 @@ module Middleman
       attr_reader :app, :ssl_certificate, :ssl_private_key, :environment, :server_information
       delegate :logger, to: :app
 
-      def https?
-        @https
-      end
-
       # Start an instance of Middleman::Application
       # @return [void]
       def start(opts={})
@@ -26,6 +22,7 @@ module Middleman
 
         @options = opts
         @server_information = ServerInformation.new
+        @server_information.https = (@options[:https] == true)
 
         # New app evaluates the middleman configuration. Since this can be
         # invalid as well, we need to evaluate the configuration BEFORE
@@ -42,9 +39,9 @@ module Middleman
 
         logger.debug %(== Server information is provided by #{server_information.handler})
         logger.debug %(== The Middleman is running in "#{environment}" environment)
-        logger.debug format('== The Middleman preview server is bind to %s', ServerUrl.new(hosts: server_information.listeners, port: server_information.port, https: https?).to_bind_addresses.join(', '))
-        logger.info format('== View your site at %s', ServerUrl.new(hosts: server_information.site_addresses, port: server_information.port, https: https?).to_urls.join(', '))
-        logger.info format('== Inspect your site configuration at %s', ServerUrl.new(hosts: server_information.site_addresses, port: server_information.port, https: https?).to_config_urls.join(', '))
+        logger.debug format('== The Middleman preview server is bound to %s', ServerUrl.new(hosts: server_information.listeners, port: server_information.port, https: server_information.https?).to_bind_addresses.join(', '))
+        logger.info format('== View your site at %s', ServerUrl.new(hosts: server_information.site_addresses, port: server_information.port, https: server_information.https?).to_urls.join(', '))
+        logger.info format('== Inspect your site configuration at %s', ServerUrl.new(hosts: server_information.site_addresses, port: server_information.port, https: server_information.https?).to_config_urls.join(', '))
 
         @initialized ||= false
         return if @initialized
@@ -153,7 +150,6 @@ module Middleman
 
         logger.warn format('== The Middleman uses a different port "%s" then the configured one "%s" because some other server is listening on that port.', server_information.port, configured_port) unless @app.config[:port] == configured_port
 
-        @https        = @app.config[:https]
         @environment  = @app.config[:environment]
 
         @ssl_certificate = @app.config[:ssl_certificate]
@@ -224,7 +220,7 @@ module Middleman
           DoNotReverseLookup: true
         }
 
-        if https?
+        if server_information.https?
           http_opts[:SSLEnable] = true
 
           if ssl_certificate || ssl_private_key
