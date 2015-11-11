@@ -29,6 +29,9 @@ Ideally, a bug report should include a pull request with failing specs.
 [gist]: https://gist.github.com/
 
 ## Submitting a Pull Request
+
+**WE DO NOT ACCEPT NEW FEATURES FOR THE V3 BRANCH ANYMORE**
+
 1. [Fork the repository.][fork]
 2. Create a topic [branch]. `git checkout -b local_topic_branch`
 3. Add specs for your unimplemented feature or bug fix.
