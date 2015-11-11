@@ -41,6 +41,9 @@ module Middleman
     # Runs after the build is finished
     define_hook :after_build
 
+    # Runs before the preview server is started
+    define_hook :before_server
+
     # Mix-in helper methods. Accepts either a list of Modules
     # and/or a block to be evaluated
     # @return [void]
