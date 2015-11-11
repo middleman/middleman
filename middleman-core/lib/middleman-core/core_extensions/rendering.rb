@@ -296,10 +296,10 @@ module Middleman
           # Allow hooks to manipulate the template before render
           self.class.callbacks_for_hook(:before_render).each do |callback|
             # Uber::Options::Value doesn't respond to call
-            newbody = if callback.respond_to?(:call)
-              callback.call(body, path, locs, template_class)
+            newbody = if callback.is_a? ::Uber::Options::Value
+              callback.call(self, body, path, locs, template_class)
             elsif callback.respond_to?(:evaluate)
-              callback.evaluate(self, body, path, locs, template_class)
+              callback.call(body, path, locs, template_class)
             end
             body = newbody if newbody # Allow the callback to return nil to skip it
           end
@@ -315,10 +315,10 @@ module Middleman
           # Allow hooks to manipulate the result after render
           self.class.callbacks_for_hook(:after_render).each do |callback|
             # Uber::Options::Value doesn't respond to call
-            newcontent = if callback.respond_to?(:call)
-              callback.call(content, path, locs, template_class)
+            newcontent = if callback.is_a? ::Uber::Options::Value
+              callback.call(self, content, path, locs, template_class)
             elsif callback.respond_to?(:evaluate)
-              callback.evaluate(self, content, path, locs, template_class)
+              callback.call(content, path, locs, template_class)
             end
             content = newcontent if newcontent # Allow the callback to return nil to skip it
           end
