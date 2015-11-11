@@ -30,7 +30,7 @@ Ideally, a bug report should include a pull request with failing specs.
 
 ## Submitting a Pull Request
 
-** WE DO NOT ACCEPT NEW FEATURES FOR THE V3 BRANCH ANYMORE **
+**WE DO NOT ACCEPT NEW FEATURES FOR THE V3 BRANCH ANYMORE**
 
 1. [Fork the repository.][fork]
 2. Create a topic [branch]. `git checkout -b local_topic_branch`
