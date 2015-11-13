@@ -223,7 +223,7 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
     # @return [String] The fully qualified asset url
     def asset_url(path, prefix='', options={})
       # Don't touch assets which already have a full path
-      if path.include?('//') || path.start_with?('data:') || !current_resource
+      if path.include?('//') || path.start_with?('data:')
         path
       else # rewrite paths to use their destination path
         result = if resource = sitemap.find_resource_by_destination_path(url_for(path))
@@ -241,6 +241,10 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
         if options[:relative] != true
           result
         else
+          unless current_resource
+            raise ArgumentError, "#asset_url must be run in a context with current_resource if relative: true"
+          end
+
           current_dir = Pathname('/' + current_resource.destination_path)
           Pathname(result).relative_path_from(current_dir.dirname).to_s
         end
