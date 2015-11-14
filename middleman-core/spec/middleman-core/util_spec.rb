@@ -1,5 +1,5 @@
 require 'spec_helper'
-require 'middleman-core/util'
+require 'middleman-core'
 
 describe Middleman::Util do
 
@@ -57,7 +57,7 @@ describe Middleman::Util do
     it "returns Hashie extended Hash if given a hash" do
       input   = {test: "subject"}
       subject = Middleman::Util.recursively_enhance input
-      
+
       expect( subject.test ).to eq "subject"
     end
 
@@ -71,6 +71,74 @@ describe Middleman::Util do
       expect( subject[2] ).to eq true
       expect( subject[3] ).to eq false
     end
+  end
+
+  describe "::asset_url" do
+
+    after(:each) do
+      Given.cleanup!
+    end
+
+    context "when http_prefix is activated" do
+
+      before(:each) do
+        Given.fixture 'clean-dir-app'
+        Given.file 'source/images/blank.gif', ''
+        @mm = Middleman::Application.new do
+          config[:http_prefix] = 'http_prefix'
+        end
+      end
+
+      it "returns path with http_prefix pre-pended if resource is found" do
+        expect( Middleman::Util.asset_url( @mm, 'blank.gif', 'images', http_prefix: 'http_prefix' ) ).to eq 'http_prefix/images/blank.gif'
+      end
+
+      it "returns path with http_prefix pre-pended if resource is not found" do
+        expect( Middleman::Util.asset_url( @mm, 'missing.gif', 'images', http_prefix: 'http_prefix' ) ).to eq 'http_prefix/images/missing.gif'
+      end
+    end
+
+    context "when relative is true" do
+
+      before(:each) do
+        Given.fixture 'relative-assets-app'
+        @mm = Middleman::Application.new
+      end
+
+      it "returns path relative to the provided current_resource" do
+        current_resource = instance_double("Middleman::Sitemap::Resource", destination_path: 'a-path/index.html')
+        expect( Middleman::Util.asset_url( @mm, 'blank.gif', 'images', current_resource: current_resource,
+                                                                       relative: true ) ).to eq '../images/blank.gif'
+      end
+
+      it "raises error if not given a current_resource" do
+        expect{
+          Middleman::Util.asset_url( @mm, 'blank.gif', 'images', relative: true )
+        }.to raise_error ArgumentError
+      end
+    end
+
+    it "returns path if it is already a full path" do
+      expect( Middleman::Util.asset_url( @mm, 'http://example.com' ) ).to eq 'http://example.com'
+      expect( Middleman::Util.asset_url( @mm, 'data:example' ) ).to eq 'data:example'
+    end
+
+    it "returns a resource url if given a resource's destination path" do
+      Given.fixture 'clean-dir-app' # includes directory indexes extension
+      Given.file 'source/how/about/that.html', ''
+      @mm = Middleman::Application.new
+
+      expect( Middleman::Util.asset_url( @mm, '/how/about/that/index.html' ) ).to eq '/how/about/that/'
+    end
+
+    it "returns a resource url if given a resources path" do
+      Given.fixture 'clean-dir-app' # includes directory indexes extension
+      Given.file 'source/how/about/that.html', ''
+      @mm = Middleman::Application.new
+
+      expect( Middleman::Util.asset_url( @mm, '/how/about/that.html' ) ).to eq '/how/about/that/'
+    end
+
   end
 
 end

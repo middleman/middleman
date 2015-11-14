@@ -12,6 +12,8 @@ RSpec.configure do |config|
   config.include Aruba::Api
 end
 
+require_relative 'support/given'
+
 # encoding: utf-8
 RSpec.configure do |config|
   config.filter_run :focus
