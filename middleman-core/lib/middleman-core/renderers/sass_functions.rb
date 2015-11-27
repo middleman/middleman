@@ -105,7 +105,13 @@ module Middleman
   end
 end
 
-::SassC::Script::Functions.send :include, ::Middleman::Sass::Functions
+SASS_MODULE = if defined?(::SassC)
+  ::SassC
+else
+  ::Sass
+end
+
+SASS_MODULE::Script::Functions.send :include, ::Middleman::Sass::Functions
 
 # module SASS_MODULE::Script::Functions
 #   include ::Middleman::Sass::Functions

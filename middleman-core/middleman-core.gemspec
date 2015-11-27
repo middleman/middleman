@@ -42,7 +42,7 @@ Gem::Specification.new do |s|
   s.add_dependency('fastimage', ['~> 1.7.0'])
 
   # Minify CSS
-  s.add_dependency('sassc', ['>= 1.6.0'])
+  s.add_dependency('sass', ['>= 3.4'])
 
   # Minify JS
   s.add_dependency('uglifier', ['~> 2.6'])

@@ -1,12 +1,5 @@
 require 'sass'
 
-SASS_MODULE = begin
-  require 'sassc'
-  ::SassC
-rescue LoadError => e
-  ::Sass
-end
-
 module Middleman
   module Renderers
     # Sass renderer
@@ -59,11 +52,17 @@ module Middleman
         def evaluate(context, _)
           @context ||= context
 
-          @engine = SASS_MODULE::Engine.new(data, sass_options)
+          sass_module = if defined?(::SassC)
+            ::SassC
+          else
+            ::Sass
+          end
+
+          @engine = sass_module::Engine.new(data, sass_options)
 
           begin
             @engine.render
-          rescue SASS_MODULE::SyntaxError => e
+          rescue sass_module::SyntaxError => e
             ::Sass::SyntaxError.exception_to_css(e)
           end
         end
