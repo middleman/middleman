@@ -6,7 +6,7 @@ gem 'yard', '~> 0.8', require: false
 
 # Test tools
 gem 'pry', '~> 0.10', group: :development
-gem 'aruba', '~> 0.7.4'
+gem 'aruba', '~> 0.10.0'
 gem 'rspec', '~> 3.0'
 gem 'cucumber', '~> 2.0'
 
@@ -37,4 +37,4 @@ gem 'coveralls', '~> 0.8', require: false
 # Middleman itself
 gem 'middleman-core', path: 'middleman-core'
 gem 'middleman', path: 'middleman'
-gem 'middleman-sprockets', github: 'middleman/middleman-sprockets', branch: 'v3-stable-real'
+gem 'middleman-sprockets', git: 'https://github.com/middleman/middleman-sprockets', branch: 'v3-stable-real'

@@ -9,9 +9,17 @@ Then /^the file "([^\"]*)" is removed$/ do |path|
 end
 
 Then /^the file "([^\"]*)" did change$/ do |path|
-  @server_inst.files.did_change(path)
+  cd '.' do
+    with_environment do
+      @server_inst.files.did_change(path)
+    end
+  end
 end
 
 Then /^the file "([^\"]*)" did delete$/ do |path|
-  @server_inst.files.did_delete(path)
+  cd '.' do
+    with_environment do
+      @server_inst.files.did_delete(path)
+    end
+  end
 end

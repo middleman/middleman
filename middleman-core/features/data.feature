@@ -54,7 +54,7 @@ Feature: Local Data API
 
   Scenario: Invalid YAML
     Given a fixture app "basic-data-app"
-    And the default aruba timeout is 30 seconds
+    And the default aruba exit timeout is 30 seconds
     And a file named "data/test.yml" with:
       """
       'ASDSFDa:
@@ -68,7 +68,7 @@ Feature: Local Data API
 
   Scenario: Invalid JSON
     Given a fixture app "basic-data-app"
-    And the default aruba timeout is 30 seconds
+    And the default aruba exit timeout is 30 seconds
     And a file named "data/test.json" with:
       """
       'ASDSFDa:
