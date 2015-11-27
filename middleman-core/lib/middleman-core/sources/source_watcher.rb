@@ -161,7 +161,7 @@ module Middleman
       @listener = ::Listen.to(@directory.to_s, config, &method(:on_listener_change))
 
       @listener.ignore(/^\.sass-cache/)
-      @listener.only(@only) unless @only.empty?
+      # @listener.only(@only) unless @only.empty?
 
       @listener.start
     end
@@ -216,8 +216,6 @@ module Middleman
 
       return if updated.empty? && removed.empty?
 
-      updated |= find_related_files(updated + removed)
-
       update(updated.map { |s| Pathname(s) }, removed.map { |s| Pathname(s) })
     end
 
@@ -227,7 +225,7 @@ module Middleman
     # @return [void]
     Contract ArrayOf[Pathname], ArrayOf[Pathname] => Any
     def update(updated_paths, removed_paths)
-      valid_updates = updated_paths
+      valid_updates = (updated_paths | find_related_files(updated_paths + removed_paths))
                       .lazy
                       .map(&method(:path_to_source_file))
                       .select(&method(:valid?))
@@ -304,13 +302,15 @@ module Middleman
     # Finds files which should also be considered to be dirty when
     # the given file(s) are touched.
     #
-    # @param [Array] files The original touched file paths.
-    # @return [Array] All related file paths, not including the source file paths.
-    Contract ArrayOf[String] => ArrayOf[String]
+    # @param [Pathname] files The original touched file paths.
+    # @return [Pathname] All related file paths, not including the source file paths.
+    Contract ArrayOf[Pathname] => ArrayOf[Pathname]
     def find_related_files(files)
       files.flat_map do |file|
         # If any partial file changes, reload all non-partials
-        Dir[File.join(@directory, app.config[:source], "**/[^_]*.#{File.extname(file)}")] if File.basename(file).start_with?('_')
+        if File.basename(file).start_with?('_')
+          Dir[File.join(@directory, app.config[:source], "**/[^_]*.#{File.extname(file)}")].map { |p| Pathname(p) }
+        end
       end.compact.uniq - files
     end
   end

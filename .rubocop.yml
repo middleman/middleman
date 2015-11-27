@@ -57,3 +57,7 @@ Metrics/AbcSize:
   Enabled: false
 Metrics/PerceivedComplexity:
   Enabled: false
+Style/ParallelAssignment:
+  Enabled: false
+Style/BlockDelimiters:
+  Enabled: false

@@ -183,12 +183,12 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
   def on_file_changed(_updated_files, _removed_files)
     @_langs = nil # Clear langs cache
 
-    # TODO, add new file to ::I18n.load_path
+    ::I18n.load_path |= app.files.by_type(:locales).files.map { |p| p[:full_path].to_s }
     ::I18n.reload!
   end
 
   def configure_i18n
-    ::I18n.load_path += app.files.by_type(:locales).files.map { |p| p[:full_path].to_s }
+    ::I18n.load_path |= app.files.by_type(:locales).files.map { |p| p[:full_path].to_s }
     ::I18n.reload!
 
     ::I18n.default_locale = @mount_at_root

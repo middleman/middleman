@@ -42,8 +42,7 @@ module Middleman
     # @api private
     # @return [String] The old buffer.
     def save_buffer
-      buf_was = @_out_buf
-      @_out_buf = ''
+      @_out_buf, buf_was = '', @_out_buf
       buf_was
     end
 

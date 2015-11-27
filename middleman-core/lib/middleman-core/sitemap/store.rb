@@ -69,7 +69,7 @@ module Middleman
         @resources = []
         @update_count = 0
 
-        @resource_list_manipulators = ::Hamster.vector
+        @resource_list_manipulators = ::Hamster::Vector.empty
         @needs_sitemap_rebuild = true
 
         @lock = Monitor.new

@@ -8,8 +8,8 @@ module Middleman
 
     Contract Any
     def initialize
-      @callbacks = ::Hamster.hash
-      @subscribers = ::Hamster.vector
+      @callbacks = ::Hamster::Hash.empty
+      @subscribers = ::Hamster::Vector.empty
     end
 
     Contract RespondTo[:define_singleton_method], ArrayOf[Symbol] => Any
@@ -55,7 +55,7 @@ module Middleman
     Contract Or[Symbol, ArrayOf[Symbol]] => ::Hamster::Vector
     def callbacks_for(keys)
       immutable_keys = keys.is_a?(Symbol) ? keys : ::Hamster::Vector.new(keys)
-      @callbacks.get(immutable_keys) || ::Hamster.vector
+      @callbacks.get(immutable_keys) || ::Hamster::Vector.empty
     end
   end
 end

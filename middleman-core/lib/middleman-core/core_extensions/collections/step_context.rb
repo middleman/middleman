@@ -11,7 +11,7 @@ module Middleman
         attr_reader :descriptors
 
         def initialize
-          @descriptors = ::Hamster.set
+          @descriptors = ::Hamster::Set.empty
         end
 
         def method_missing(name, *args, &block)

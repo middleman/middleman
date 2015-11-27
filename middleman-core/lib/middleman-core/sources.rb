@@ -47,10 +47,10 @@ module Middleman
       @options = options
 
       # Set of procs wanting to be notified of changes
-      @on_change_callbacks = ::Hamster.vector
+      @on_change_callbacks = ::Hamster::Vector.empty
 
       # Global ignores
-      @ignores = ::Hamster.hash
+      @ignores = ::Hamster::Hash.empty
 
       # Whether we're "running", which means we're in a stable
       # watch state after all initialization and config.

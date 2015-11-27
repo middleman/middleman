@@ -37,8 +37,7 @@ module Middleman
       engine = extension[1..-1].to_sym
 
       # Store last engine for later (could be inside nested renders)
-      context.current_engine = engine
-      engine_was = context.current_engine
+      context.current_engine, engine_was = engine, context.current_engine
 
       # Save current buffer for later
       buf_was = context.save_buffer
