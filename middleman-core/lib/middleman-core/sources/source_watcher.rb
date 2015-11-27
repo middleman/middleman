@@ -224,6 +224,8 @@ module Middleman
 
       return if updated.empty? && removed.empty?
 
+      updated |= find_related_files(updated + removed)
+
       update(updated.map { |s| Pathname(s) }, removed.map { |s| Pathname(s) })
     end
 
@@ -305,6 +307,25 @@ module Middleman
       relative_path   = File.join(destination_dir, relative_path) if destination_dir
 
       ::Middleman::SourceFile.new(Pathname(relative_path), path, @directory, types)
+    end
+
+    # Finds files which should also be considered to be dirty when
+    # the given file(s) are touched.
+    #
+    # @param [Array] files The original touched file paths.
+    # @return [Array] All related file paths, not including the source file paths.
+    Contract ArrayOf[String] => ArrayOf[String]
+    def find_related_files(files)
+      files.map do |file|
+        related_files = []
+
+        # If any SASS file changes, reload all non-partials
+        if file =~ /\.(sass|scss)$/
+          related_files |= Dir[File.join(@directory, app.config[:css_dir], '**/[^_]*.{scss,sass}')]
+        end
+
+        related_files
+      end.flatten.uniq - files
     end
   end
 end
