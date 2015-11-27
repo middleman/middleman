@@ -182,14 +182,8 @@ module Middleman
     # @return [void]
     Contract Any
     def poll_once!
-      removed = @files.keys
-
-      updated = []
-
-      ::Middleman::Util.all_files_under(@directory.to_s).each do |filepath|
-        removed.delete(filepath)
-        updated << filepath
-      end
+      updated = ::Middleman::Util.all_files_under(@directory.to_s)
+      removed = @files.keys.reject { |p| updated.include?(p) }
 
       update(updated, removed)
 
@@ -314,16 +308,10 @@ module Middleman
     # @return [Array] All related file paths, not including the source file paths.
     Contract ArrayOf[String] => ArrayOf[String]
     def find_related_files(files)
-      files.map do |file|
-        related_files = []
-
-        # If any SASS file changes, reload all non-partials
-        if file =~ /\.(sass|scss)$/
-          related_files |= Dir[File.join(@directory, app.config[:css_dir], '**/[^_]*.{scss,sass}')]
-        end
-
-        related_files
-      end.flatten.uniq - files
+      files.flat_map do |file|
+        # If any partial file changes, reload all non-partials
+        Dir[File.join(@directory, app.config[:source], "**/[^_]*.#{File.extname(file)}")] if File.basename(file).start_with?('_')
+      end.compact.uniq - files
     end
   end
 end

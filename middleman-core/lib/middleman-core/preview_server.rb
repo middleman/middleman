@@ -62,7 +62,7 @@ module Middleman
           # To output the child PID, let's make preview server a daemon by hand
           if child_pid = fork
             app.logger.info "== Middleman preview server is running in background with PID #{child_pid}"
-            Process.detach child_pid 
+            Process.detach child_pid
             exit 0
           else
             $stdout.reopen('/dev/null', 'w')
@@ -183,7 +183,7 @@ module Middleman
 
         app.logger.warn format('== The Middleman uses a different port "%s" then the configured one "%s" because some other server is listening on that port.', server_information.port, configured_port) unless app.config[:port] == configured_port
 
-        @environment  = app.config[:environment]
+        @environment = app.config[:environment]
 
         @ssl_certificate = app.config[:ssl_certificate]
         @ssl_private_key = app.config[:ssl_private_key]

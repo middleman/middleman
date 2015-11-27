@@ -133,9 +133,7 @@ module Middleman
           locs[:current_path] ||= destination_path
 
           # Certain output file types don't use layouts
-          unless opts.key?(:layout)
-            opts[:layout] = false if ext != '.html'
-          end
+          opts[:layout] = false unless opts.key?(:layout) || !ext != '.html'
 
           renderer = ::Middleman::TemplateRenderer.new(@app, file_descriptor[:full_path].to_s)
           renderer.render(locs, opts)

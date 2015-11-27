@@ -398,7 +398,6 @@ module Middleman
       execute_callbacks(:before_shutdown)
     end
 
-
     # Set attributes (global variables)
     #
     # @deprecated Prefer accessing settings through "config".

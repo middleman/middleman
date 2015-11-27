@@ -13,15 +13,15 @@ module Middleman
       attr_reader :server_name, :port, :site_addresses, :listeners
 
       def initialize(server_information)
-        @listeners   = ServerUrl.new(
+        @listeners = ServerUrl.new(
           hosts: server_information.listeners,
-          port: server_information.port, 
+          port: server_information.port,
           https: server_information.https?,
           format_output: false
         ).to_bind_addresses
 
         @port           = server_information.port
-        @server_name    = server_information.server_name.dup unless server_information.server_name == nil
+        @server_name    = server_information.server_name.dup unless server_information.server_name.nil?
 
         @site_addresses = ServerUrl.new(
           hosts: server_information.site_addresses,

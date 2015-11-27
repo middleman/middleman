@@ -25,10 +25,10 @@ module Middleman::Util::Data
     end
 
     start_delims, stop_delims = frontmatter_delims
-      .values
-      .flatten(1)
-      .transpose
-      .map(&Regexp.method(:union))
+                                .values
+                                .flatten(1)
+                                .transpose
+                                .map(&Regexp.method(:union))
 
     match = /
       \A(?:[^\r\n]*coding:[^\r\n]*\r?\n)?
