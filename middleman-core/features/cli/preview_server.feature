@@ -42,7 +42,7 @@ Feature: Run the preview server
     Inspect your site configuration at "http://
     """
 
-    @ruby-2.1
+  @ruby-2.1
   Scenario: Start the server with defaults in verbose mode, when a local mdns server resolves the local hostname
     Given I start a mdns server for the local hostname
     When I run `middleman server --verbose` interactively
@@ -359,6 +359,7 @@ Feature: Run the preview server
     The Middleman preview server is bound to ":::65432", "0.0.0.0:65432"
     """
 
+  @ruby-2.1
   Scenario: Start the server when port is blocked by other middleman instance
     Given `middleman server` is running in background
     When I run `middleman server --verbose` interactively
