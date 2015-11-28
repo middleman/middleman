@@ -1,6 +1,8 @@
 ENV["TEST"] = "true"
 ENV["AUTOLOAD_SPROCKETS"] ||= "false"
 
+require 'sassc'
+
 require 'simplecov'
 SimpleCov.root(File.expand_path(File.dirname(__FILE__) + '/../..'))
 
