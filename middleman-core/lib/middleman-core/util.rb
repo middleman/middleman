@@ -468,13 +468,12 @@ module Middleman
     #
     # @param [Pathname] path The path.
     # @return [Middleman::SourceFile]
-    Contract Pathname, Pathname, Symbol => IsA['Middleman::SourceFile']
-    def path_to_source_file(path, directory, type)
+    Contract Pathname, Pathname, Symbol, Bool => IsA['Middleman::SourceFile']
+    def path_to_source_file(path, directory, type, destination_dir)
       types = Set.new([type])
 
       relative_path = path.relative_path_from(directory)
-      # destination_dir = @options.fetch(:destination_dir, false)
-      # relative_path   = File.join(destination_dir, relative_path) if destination_dir
+      relative_path   = File.join(destination_dir, relative_path) if destination_dir
 
       ::Middleman::SourceFile.new(Pathname(relative_path), path, directory, types)
     end

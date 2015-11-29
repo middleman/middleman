@@ -226,7 +226,7 @@ module Middleman
     Contract ArrayOf[Pathname], ArrayOf[Pathname] => Any
     def update(updated_paths, removed_paths)
       valid_updates = updated_paths
-                      .map { |p| ::Middleman::Util.path_to_source_file(p, @directory, @type) }
+                      .map { |p| ::Middleman::Util.path_to_source_file(p, @directory, @type, @options.fetch(:destination_dir, false)) }
                       .select(&method(:valid?))
 
       valid_updates.each do |f|
