@@ -430,6 +430,95 @@ module Middleman
       end
     end
 
+    Contract String => String
+    def step_through_extensions(path)
+      while ::Tilt[path]
+        yield File.extname(path) if block_given?
+
+        # Strip templating extensions as long as Tilt knows them
+        path = path.sub(/#{::Regexp.escape(File.extname(path))}$/, '')
+      end
+
+      yield File.extname(path) if block_given?
+
+      path
+    end
+
+    # Removes the templating extensions, while keeping the others
+    # @param [String] path
+    # @return [String]
+    Contract String => String
+    def remove_templating_extensions(path)
+      step_through_extensions(path)
+    end
+
+    # Removes the templating extensions, while keeping the others
+    # @param [String] path
+    # @return [String]
+    Contract String => ArrayOf[String]
+    def collect_extensions(path)
+      result = []
+
+      step_through_extensions(path) { |e| result << e }
+
+      result
+    end
+
+    # Convert a path to a file resprentation.
+    #
+    # @param [Pathname] path The path.
+    # @return [Middleman::SourceFile]
+    Contract Pathname, Pathname, Symbol => IsA['Middleman::SourceFile']
+    def path_to_source_file(path, directory, type)
+      types = Set.new([type])
+
+      relative_path = path.relative_path_from(directory)
+      # destination_dir = @options.fetch(:destination_dir, false)
+      # relative_path   = File.join(destination_dir, relative_path) if destination_dir
+
+      ::Middleman::SourceFile.new(Pathname(relative_path), path, directory, types)
+    end
+
+    # Finds files which should also be considered to be dirty when
+    # the given file(s) are touched.
+    #
+    # @param [Middleman::Application] app The app.
+    # @param [Pathname] files The original touched file paths.
+    # @return [Middleman::SourceFile] All related file paths, not including the source file paths.
+    Contract IsA['Middleman::Application'], ArrayOf[Pathname] => ArrayOf[IsA['Middleman::SourceFile']]
+    def find_related_files(app, files)
+      all_extensions = files.flat_map { |f| collect_extensions(f.to_s) }
+
+      sass_type_aliasing = ['.scss', '.sass']
+      erb_type_aliasing = ['.erb', '.haml', '.slim']
+
+      if (all_extensions & sass_type_aliasing).length > 0
+        all_extensions |= sass_type_aliasing
+      end
+
+      if (all_extensions & erb_type_aliasing).length > 0
+        all_extensions |= erb_type_aliasing
+      end
+
+      all_extensions.uniq!
+
+      app.sitemap.resources.select { |r|
+        local_extensions = collect_extensions(r.file_descriptor[:relative_path].to_s)
+
+        if (local_extensions & sass_type_aliasing).length > 0
+          local_extensions |= sass_type_aliasing
+        end
+
+        if (local_extensions & erb_type_aliasing).length > 0
+          local_extensions |= erb_type_aliasing
+        end
+
+        local_extensions.uniq!
+
+        ((all_extensions & local_extensions).length > 0) && files.none? { |f| f == r.file_descriptor[:full_path] }
+      }.map(&:file_descriptor)
+    end
+
     # Handy methods for dealing with URI templates. Mix into whatever class.
     module UriTemplates
       module_function

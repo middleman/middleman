@@ -180,7 +180,7 @@ module Middleman
       Contract String => String
       def extensionless_path(file)
         path = file.dup
-        remove_templating_extensions(path)
+        ::Middleman::Util.remove_templating_extensions(path)
       end
 
       # Actually update the resource list, assuming anything has called
@@ -222,16 +222,6 @@ module Middleman
           @_lookup_by_path = {}
           @_lookup_by_destination_path = {}
         end
-      end
-
-      # Removes the templating extensions, while keeping the others
-      # @param [String] path
-      # @return [String]
-      Contract String => String
-      def remove_templating_extensions(path)
-        # Strip templating extensions as long as Tilt knows them
-        path = path.sub(/#{::Regexp.escape(File.extname(path))}$/, '') while ::Tilt[path]
-        path
       end
 
       # Remove the locale token from the end of the path

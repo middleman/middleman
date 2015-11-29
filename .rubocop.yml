@@ -61,3 +61,5 @@ Style/ParallelAssignment:
   Enabled: false
 Style/BlockDelimiters:
   Enabled: false
+Style/MultilineBlockChain:
+  Enabled: false

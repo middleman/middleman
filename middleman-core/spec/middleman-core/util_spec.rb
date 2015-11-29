@@ -141,4 +141,44 @@ describe Middleman::Util do
 
   end
 
+  describe "::find_related_files" do
+    after(:each) do
+      Given.cleanup!
+    end
+
+    before(:each) do
+      Given.fixture 'related-files-app'
+      @mm = Middleman::Application.new
+    end
+
+    def source_file(path)
+      Pathname(File.expand_path("source/#{path}"))
+    end
+
+    it "Finds partials possibly related to ERb files" do
+      related = Middleman::Util.find_related_files(@mm, [source_file('partials/_test.erb')]).map { |f| f[:full_path].to_s }
+      expect(related).to include File.expand_path("source/index.html.erb")
+
+      related = Middleman::Util.find_related_files(@mm, [source_file('partials/_test2.haml')]).map { |f| f[:full_path].to_s }
+      expect(related).to include File.expand_path("source/index.html.erb")
+    end
+
+    it "Finds partials possible related to Scss files" do
+      related = Middleman::Util.find_related_files(@mm, [source_file('stylesheets/_include4.scss')]).map { |f| f[:full_path].to_s }
+      expect(related).to include File.expand_path("source/stylesheets/site.css.scss")
+      expect(related).to include File.expand_path("source/stylesheets/include2.css.scss")
+
+      related = Middleman::Util.find_related_files(@mm, [source_file('stylesheets/include2.css.scss')]).map { |f| f[:full_path].to_s }
+      expect(related).to include File.expand_path("source/stylesheets/site.css.scss")
+      expect(related).not_to include File.expand_path("source/stylesheets/include2.css.scss")
+
+      related = Middleman::Util.find_related_files(@mm, [source_file('stylesheets/include1.css')]).map { |f| f[:full_path].to_s }
+      expect(related).to include File.expand_path("source/stylesheets/site.css.scss")
+      expect(related).to include File.expand_path("source/stylesheets/include2.css.scss")
+
+      related = Middleman::Util.find_related_files(@mm, [source_file('stylesheets/_include3.sass')]).map { |f| f[:full_path].to_s }
+      expect(related).to include File.expand_path("source/stylesheets/site.css.scss")
+      expect(related).to include File.expand_path("source/stylesheets/include2.css.scss")
+    end
+  end
 end

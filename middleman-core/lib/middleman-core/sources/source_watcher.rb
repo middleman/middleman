@@ -225,15 +225,23 @@ module Middleman
     # @return [void]
     Contract ArrayOf[Pathname], ArrayOf[Pathname] => Any
     def update(updated_paths, removed_paths)
-      valid_updates = (updated_paths | find_related_files(updated_paths + removed_paths))
-                      .lazy
-                      .map(&method(:path_to_source_file))
+      valid_updates = updated_paths
+                      .map { |p| ::Middleman::Util.path_to_source_file(p, @directory, @type) }
                       .select(&method(:valid?))
-                      .to_a
-                      .each do |f|
-                        add_file_to_cache(f)
-                        logger.debug "== Change (#{f[:types].inspect}): #{f[:relative_path]}"
-                      end
+
+      valid_updates.each do |f|
+        add_file_to_cache(f)
+        logger.debug "== Change (#{f[:types].inspect}): #{f[:relative_path]}"
+      end
+
+      related_updates = ::Middleman::Util.find_related_files(app, (updated_paths + removed_paths)).select(&method(:valid?))
+
+      related_updates.each do |f|
+        add_file_to_cache(f)
+        logger.debug "== Possible Change (#{f[:types].inspect}): #{f[:relative_path]}"
+      end
+
+      valid_updates |= related_updates
 
       valid_removes = removed_paths
                       .lazy
@@ -282,36 +290,6 @@ module Middleman
       else
         @only.any? { |reg| reg.match(file[:relative_path].to_s) }
       end
-    end
-
-    # Convert a path to a file resprentation.
-    #
-    # @param [Pathname] path The path.
-    # @return [Middleman::SourceFile]
-    Contract Pathname => IsA['Middleman::SourceFile']
-    def path_to_source_file(path)
-      types = Set.new([@type])
-
-      relative_path   = path.relative_path_from(@directory)
-      destination_dir = @options.fetch(:destination_dir, false)
-      relative_path   = File.join(destination_dir, relative_path) if destination_dir
-
-      ::Middleman::SourceFile.new(Pathname(relative_path), path, @directory, types)
-    end
-
-    # Finds files which should also be considered to be dirty when
-    # the given file(s) are touched.
-    #
-    # @param [Pathname] files The original touched file paths.
-    # @return [Pathname] All related file paths, not including the source file paths.
-    Contract ArrayOf[Pathname] => ArrayOf[Pathname]
-    def find_related_files(files)
-      files.flat_map do |file|
-        # If any partial file changes, reload all non-partials
-        if File.basename(file).start_with?('_')
-          Dir[File.join(@directory, app.config[:source], "**/[^_]*.#{File.extname(file)}")].map { |p| Pathname(p) }
-        end
-      end.compact.uniq - files
     end
   end
 end
