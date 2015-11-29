@@ -237,7 +237,6 @@ module Middleman
       related_updates = ::Middleman::Util.find_related_files(app, (updated_paths + removed_paths)).select(&method(:valid?))
 
       related_updates.each do |f|
-        add_file_to_cache(f)
         logger.debug "== Possible Change (#{f[:types].inspect}): #{f[:relative_path]}"
       end
 

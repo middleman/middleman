@@ -28,7 +28,7 @@ module Middleman
         # @param [String] from The original path.
         # @param [String] to The new path.
         # @return [void]
-        Contract String, String, Maybe[Hash] => Any
+        Contract String, String => Any
         def create_move_file(from, to)
           @move_configs << create_anonymous_move(from, to)
           @app.sitemap.rebuild_resource_list!(:added_move_file)

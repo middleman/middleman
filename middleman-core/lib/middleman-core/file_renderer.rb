@@ -97,7 +97,7 @@ module Middleman
     Contract String
     def template_data_for_file
       if @app.extensions[:front_matter]
-        @app.extensions[:front_matter].template_data_for_file(@path) || ''
+        @app.extensions[:front_matter].template_data_for_file(@path) || File.read(@path)
       else
         file = @app.files.find(:source, @path)
         file.read if file

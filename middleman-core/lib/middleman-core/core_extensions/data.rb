@@ -94,7 +94,7 @@ module Middleman
         # @return [void]
         Contract IsA['Middleman::SourceFile'] => Any
         def touch_file(file)
-          data_path = file[:relative_path]
+          data_path = file[:full_path]
           extension = File.extname(data_path)
           basename  = File.basename(data_path, extension)
 
@@ -124,7 +124,7 @@ module Middleman
         # @return [void]
         Contract IsA['Middleman::SourceFile'] => Any
         def remove_file(file)
-          data_path = file[:relative_path]
+          data_path = file[:full_path]
           extension = File.extname(data_path)
           basename  = File.basename(data_path, extension)
 

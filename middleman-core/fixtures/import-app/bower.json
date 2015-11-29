@@ -1,0 +1,21 @@
+{
+  "name": "import-app",
+  "homepage": "https://github.com/middleman/middleman",
+  "authors": [
+    "Thomas Reynolds <me@tdreyno.com>"
+  ],
+  "description": "",
+  "main": "",
+  "moduleType": [],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.1.4"
+  }
+}

@@ -15,6 +15,12 @@ Middleman::Extensions.register :sitemap_ondisk, auto_activate: :before_configura
   Middleman::Sitemap::Extensions::OnDisk
 end
 
+# Files on Disk (outside the project root)
+Middleman::Extensions.register :sitemap_import, auto_activate: :before_configuration do
+  require 'middleman-core/sitemap/extensions/import'
+  Middleman::Sitemap::Extensions::Import
+end
+
 # Endpoints
 Middleman::Extensions.register :sitemap_endpoint, auto_activate: :before_configuration do
   require 'middleman-core/sitemap/extensions/request_endpoints'

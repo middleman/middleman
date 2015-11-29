@@ -502,8 +502,8 @@ module Middleman
 
       all_extensions.uniq!
 
-      app.sitemap.resources.select { |r|
-        local_extensions = collect_extensions(r.file_descriptor[:relative_path].to_s)
+      app.sitemap.resources.select(&:file_descriptor).select { |r|
+        local_extensions = collect_extensions(r.file_descriptor[:full_path].to_s)
 
         if (local_extensions & sass_type_aliasing).length > 0
           local_extensions |= sass_type_aliasing

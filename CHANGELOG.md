@@ -6,6 +6,8 @@ master
 * `relative_assets` extension overrides local `relative: false` option to stylesheet/javascript tag helpers.
 * Add `before_server`-hook to the preview server which is run before the Webrick server is started
 * Add `-d` to `middleman server` to make it run as daemon
+* Trigger "Possible File Change" events on files which share an output or template type with a changed file. Allows LiveReload to update on partial changes.
+* Added `import_file SOURCE, TARGET` and `import_path SOURCE_FOLDER` to copy resources from outside the project in. Does NOT do file change watching. Perfect for `bower_components`.
 
 # 4.0.0.rc.1
 
