@@ -61,7 +61,7 @@ module Middleman
   # * `app.before_render {|body, path, locs, template_class| ... }` - Manipulate template sources before they are rendered.
   # * `app.after_render {|content, path, locs, template_class| ... }` - Manipulate output text after a template has been rendered. It is also common to install a Rack middleware to do this instead.
   # * `app.ready { ... }` - Run code once Middleman is ready to serve or build files (after `after_configuration`).
-  # * `app.compass_config { |compass_config| ... }` - Manipulate the Compass configuration after it has been set up.
+
   #
   # @see http://middlemanapp.com/advanced/custom/ Middleman Custom Extensions Documentation
   class Extension

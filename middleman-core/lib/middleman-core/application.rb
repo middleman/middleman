@@ -124,15 +124,15 @@ module Middleman
     # @return [String]
     define_setting :js_dir,      'javascripts', 'Location of javascripts within source'
 
-    # Location of stylesheets within source. Used by Compass.
+    # Location of stylesheets within source.
     # @return [String]
     define_setting :css_dir,     'stylesheets', 'Location of stylesheets within source'
 
-    # Location of images within source. Used by HTML helpers and Compass.
+    # Location of images within source. Used by HTML helpers.
     # @return [String]
     define_setting :images_dir,  'images', 'Location of images within source'
 
-    # Location of fonts within source. Used by Compass.
+    # Location of fonts within source.
     # @return [String]
     define_setting :fonts_dir,   'fonts', 'Location of fonts within source'
 
@@ -144,7 +144,7 @@ module Middleman
     # @return [String]
     define_setting :build_dir,   'build', 'Where to build output files'
 
-    # Default prefix for building paths. Used by HTML helpers and Compass.
+    # Default prefix for building paths. Used by HTML helpers.
     # @return [String]
     define_setting :http_prefix, '/', 'Default prefix for building paths'
 

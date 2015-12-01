@@ -1,5 +1,4 @@
 ENV["TEST"] = "true"
-ENV["AUTOLOAD_SPROCKETS"] ||= "false"
 
 require 'sassc'
 

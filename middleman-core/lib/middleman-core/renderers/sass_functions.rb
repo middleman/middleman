@@ -112,26 +112,3 @@ else
 end
 
 SASS_MODULE::Script::Functions.send :include, ::Middleman::Sass::Functions
-
-# module SASS_MODULE::Script::Functions
-#   include ::Middleman::Sass::Functions
-
-#   # # Hack to ensure previous API declarations (by Compass or whatever)
-#   # # don't take precedence.
-#   # [:asset_path, :asset_url, :image_path, :image_url, :font_path, :font_url, :asset_data_uri].each do |method|
-#   #   defined?(@signatures) && @signatures.delete(method)
-#   # end
-
-#   # declare :asset_path,     [:source], var_kwargs: true
-#   # declare :asset_path,     [:source, :kind]
-#   # declare :asset_url,      [:source], var_kwargs: true
-#   # declare :asset_url,      [:source, :kind]
-#   # declare :image_path,     [:source], var_kwargs: true
-#   # declare :image_url,      [:source], var_kwargs: true
-#   # declare :image_url,      [:source, :only_path]
-#   # declare :image_url,      [:source, :only_path, :cache_buster]
-#   # declare :font_path,      [:source], var_kwargs: true
-#   # declare :font_url,       [:source], var_kwargs: true
-#   # declare :font_url,       [:source, :only_path]
-#   # declare :asset_data_uri, [:source]
-# end

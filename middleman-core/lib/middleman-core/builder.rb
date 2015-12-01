@@ -54,7 +54,6 @@ module Middleman
       @app.execute_callbacks(:before_build, [self])
 
       queue_current_paths if @cleaning
-      prerender_css
 
       output_files
 
@@ -67,39 +66,14 @@ module Middleman
       !@has_error
     end
 
-    # Pre-request CSS to give Compass a chance to build sprites
-    # @return [Array<Resource>] List of css resources that were output.
-    Contract ResourceList
-    def prerender_css
-      logger.debug '== Prerendering CSS'
-
-      css_files = @app.sitemap.resources.select do |resource|
-        resource.ext == '.css'
-      end.each(&method(:output_resource))
-
-      logger.debug '== Checking for Compass sprites'
-
-      # Double-check for compass sprites
-      @app.files.find_new_files!
-      @app.sitemap.ensure_resource_list_updated!
-
-      css_files
-    end
-
     # Find all the files we need to output and do so.
     # @return [Array<Resource>] List of resources that were output.
     Contract ResourceList
     def output_files
       logger.debug '== Building files'
 
-      # Sort paths to be built by the above order. This is primarily so Compass can
-      # find files in the build folder when it needs to generate sprites for the
-      # css files.
-      #
-      # Loop over all the paths and build them.
       @app.sitemap.resources
         .sort_by { |resource| SORT_ORDER.index(resource.ext) || 100 }
-        .reject { |resource| resource.ext == '.css' }
         .select { |resource| !@glob || File.fnmatch(@glob, resource.destination_path) }
         .each(&method(:output_resource))
     end
