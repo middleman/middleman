@@ -8,6 +8,8 @@ module Middleman
       def initialize(app, options={}, &block)
         super
 
+        logger.info "== Prefering use of LibSass" if defined?(::SassC)
+
         app.files.ignore :sass_cache, :source, /(^|\/)\.sass-cache\//
 
         opts = { output_style: :nested }
