@@ -8,7 +8,7 @@ module Middleman
       def initialize(app, options={}, &block)
         super
 
-        logger.info "== Prefering use of LibSass" if defined?(::SassC)
+        logger.info "== Preferring use of LibSass" if defined?(::SassC)
 
         app.files.ignore :sass_cache, :source, /(^|\/)\.sass-cache\//
 
@@ -75,7 +75,7 @@ module Middleman
           ctx = @context
 
           more_opts = {
-            load_paths: ctx.config[:sass_assets_paths],
+            load_paths: ::Sass.load_paths | ctx.config[:sass_assets_paths],
             filename: eval_file,
             line: line,
             syntax: syntax,
