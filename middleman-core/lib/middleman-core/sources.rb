@@ -14,6 +14,9 @@ module Middleman
     extend Forwardable
     include Contracts
 
+    # Types which trigger a livereload
+    LIVERELOAD_TYPES = [:source, :locales, :data]
+
     Matcher = Or[Regexp, RespondTo[:call]]
 
     # A reference to the current app.
@@ -165,15 +168,15 @@ module Middleman
 
     # Find a file given a type and path.
     #
-    # @param [Symbol] type The file "type".
+    # @param [Symbol,Array<Symbol>] types A list of file "type".
     # @param [String] path The file path.
     # @param [Boolean] glob If the path contains wildcard or glob characters.
     # @return [Middleman::SourceFile, nil]
-    Contract Symbol, String, Maybe[Bool] => Maybe[SourceFile]
-    def find(type, path, glob=false)
+    Contract Or[Symbol, ArrayOf[Symbol]], String, Maybe[Bool] => Maybe[SourceFile]
+    def find(types, path, glob=false)
       watchers
         .lazy
-        .select { |d| d.type == type }
+        .select { |d| Array(types).include?(d.type) }
         .map { |d| d.find(path, glob) }
         .reject(&:nil?)
         .first
@@ -181,26 +184,26 @@ module Middleman
 
     # Check if a file for a given type exists.
     #
-    # @param [Symbol] type The file "type".
+    # @param [Symbol,Array<Symbol>] types The list of file "type".
     # @param [String] path The file path relative to it's source root.
     # @return [Boolean]
-    Contract Symbol, String => Bool
-    def exists?(type, path)
+    Contract Or[Symbol, ArrayOf[Symbol]], String => Bool
+    def exists?(types, path)
       watchers
         .lazy
-        .select { |d| d.type == type }
+        .select { |d| Array(types).include?(d.type) }
         .any? { |d| d.exists?(path) }
     end
 
     # Check if a file for a given type exists.
     #
-    # @param [Symbol] type The file "type".
+    # @param [Symbol,Array<Symbol>] types The list of file "type".
     # @param [String] path The file path relative to it's source root.
     # @return [Boolean]
-    Contract SetOf[Symbol], String => Maybe[HANDLER]
+    Contract Or[Symbol, ArrayOf[Symbol]], String => Maybe[HANDLER]
     def watcher_for_path(types, path)
       watchers
-        .select { |d| types.include?(d.type) }
+        .select { |d| Array(types).include?(d.type) }
         .find { |d| d.exists?(path) }
     end
 
@@ -238,11 +241,13 @@ module Middleman
 
     # Add callback to be run on file change or deletion
     #
-    # @param [Symbol] type The change type.
+    # @param [Symbol,Array<Symbol>] types The change types to register the callback.
     # @return [void]
-    Contract Symbol, Proc => Any
-    def on_change(type, &block)
-      @on_change_callbacks = @on_change_callbacks.push(CallbackDescriptor.new(type, block))
+    Contract Or[Symbol, ArrayOf[Symbol]], Proc => Any
+    def on_change(types, &block)
+      Array(types).each do |type|
+        @on_change_callbacks = @on_change_callbacks.push(CallbackDescriptor.new(type, block))
+      end
     end
 
     # Backwards compatible change handler.
@@ -250,7 +255,7 @@ module Middleman
     # @param [nil,Regexp] matcher A Regexp to match the change path against
     Contract Maybe[Matcher] => Any
     def changed(matcher=nil, &block)
-      on_change :source do |updated, _removed|
+      on_change LIVERELOAD_TYPES do |updated, _removed|
         updated
           .select { |f| matcher.nil? ? true : matches?(matcher, f) }
           .each { |f| block.call(f[:relative_path]) }
@@ -262,7 +267,7 @@ module Middleman
     # @param [nil,Regexp] matcher A Regexp to match the change path against
     Contract Maybe[Matcher] => Any
     def deleted(matcher=nil, &block)
-      on_change :source do |_updated, removed|
+      on_change LIVERELOAD_TYPES do |_updated, removed|
         removed
           .select { |f| matcher.nil? ? true : matches?(matcher, f) }
           .each { |f| block.call(f[:relative_path]) }
@@ -274,7 +279,7 @@ module Middleman
     # @param [Pathname,String] path The path to check.
     Contract Or[Pathname, String] => Bool
     def ignored?(path)
-      descriptor = find(:source, path)
+      descriptor = find(LIVERELOAD_TYPES, path)
       !descriptor || globally_ignored?(descriptor)
     end
 
