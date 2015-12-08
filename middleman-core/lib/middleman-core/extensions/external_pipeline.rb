@@ -11,17 +11,18 @@ class Middleman::Extensions::ExternalPipeline < ::Middleman::Extension
 
     require 'thread'
 
-    app.files.watch :source,
-                    path: File.expand_path(options[:source], app.root),
-                    latency: options[:latency]
+    @watcher = app.files.watch :source,
+                               path: File.expand_path(options[:source], app.root),
+                               latency: options[:latency]
   end
 
   def ready
-    if app.build?
-      logger.info "== Executing: `#{options[:command]}`"
-      watch_command!
-    else
-      logger.debug "== Executing: `#{options[:command]}`"
+    logger.info "== Executing: `#{options[:command]}`"
+
+    watch_command!
+    @watcher.poll_once!
+
+    if !app.build?
       ::Thread.new { watch_command! }
     end
   end
