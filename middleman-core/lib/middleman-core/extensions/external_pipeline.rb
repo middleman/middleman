@@ -19,8 +19,6 @@ class Middleman::Extensions::ExternalPipeline < ::Middleman::Extension
   def ready
     logger.info "== Executing: `#{options[:command]}`"
 
-    @watcher.poll_once!
-
     if app.build?
       watch_command!
     else
@@ -35,6 +33,8 @@ class Middleman::Extensions::ExternalPipeline < ::Middleman::Extension
         logger.info "== External: #{without_newline}" if without_newline.length > 0
       end
     end
+
+    @watcher.poll_once!
   rescue ::Errno::ENOENT => e
     logger.error "== External: Command failed with message: #{e.message}"
     exit(1)
