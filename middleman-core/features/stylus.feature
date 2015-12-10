@@ -1,4 +1,4 @@
-@nojava
+@wip @nojava
 Feature: Stylus Updates and Partials
   Scenario: The preview server should update stylesheets when Stylus changes
     Given the Server is running at "stylus-preview-app"
