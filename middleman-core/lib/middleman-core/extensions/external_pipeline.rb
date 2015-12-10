@@ -19,10 +19,11 @@ class Middleman::Extensions::ExternalPipeline < ::Middleman::Extension
   def ready
     logger.info "== Executing: `#{options[:command]}`"
 
-    watch_command!
     @watcher.poll_once!
 
-    if !app.build?
+    if app.build?
+      watch_command!
+    else
       ::Thread.new { watch_command! }
     end
   end
