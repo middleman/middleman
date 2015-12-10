@@ -7,6 +7,7 @@ master
 * Adapt to upstream hooks API change, fixing `after_render` hook bugs. (#1658)
 * Add a bunch of requires to help Windows users.
 * Refator Data Loader to prevent middleman from crashing due to invalid data file. (#1633)
+* Add `before_server` hook.
 
 3.4.0
 ===
