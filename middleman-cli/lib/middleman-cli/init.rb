@@ -29,7 +29,7 @@ module Middleman::Cli
         require 'open-uri'
         require 'json'
 
-        api = 'http://directory.middlemanapp.com/api'
+        api = 'https://directory.middlemanapp.com/api'
         uri = ::URI.parse("#{api}/#{options[:template]}.json")
 
         begin
