@@ -10,6 +10,7 @@ Given /^a built app at "([^\"]*)"$/ do |path|
 end
 
 Given /^was successfully built$/ do
+  step %Q{the output should contain "Project built successfully."}
   step %Q{the exit status should be 0}
   step %Q{a directory named "build" should exist}
 end

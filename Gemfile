@@ -21,7 +21,7 @@ gem 'slim', '>= 2.0', require: false
 gem 'liquid', '>= 2.6', require: false
 gem 'stylus', '>= 1.0', require: false
 gem 'sinatra', '>= 1.4', require: false
-gem 'redcarpet', '>= 3.1', require: false unless RUBY_ENGINE == 'jruby'
+gem 'redcarpet', '>= 3.1', require: false
 
 # Dns server to test preview server
 gem 'rubydns', '~> 1.0.1', require: false
