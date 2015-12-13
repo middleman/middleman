@@ -52,6 +52,9 @@ module Middleman
 
       if defined?(::I18n)
         old_locale = ::I18n.locale
+        ::I18n.locale = options[:locale] if options[:locale]
+
+        # Backwards compat
         ::I18n.locale = options[:lang] if options[:lang]
       end
 

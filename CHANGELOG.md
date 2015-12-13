@@ -1,6 +1,7 @@
 master
 ===
 
+* Rename i18n `lang` and `langs` to `locale` and `locales`.
 * Rather than applying layouts to all files which are not .txt, .css, .js, .json: the new behavior is to only default layouts to active for .html
 * Switch from Ruby Sass to SassC.
 * `relative_assets` extension overrides local `relative: false` option to stylesheet/javascript tag helpers.
