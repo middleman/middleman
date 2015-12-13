@@ -360,6 +360,7 @@ Feature: Run the preview server
     """
 
   @ruby-2.1
+  @wip
   Scenario: Start the server when port is blocked by other middleman instance
     Given `middleman server` is running in background
     When I run `middleman server --verbose` interactively

@@ -8,7 +8,7 @@ module Middleman
       def initialize(app, options={}, &block)
         super
 
-        logger.info "== Preferring use of LibSass" if defined?(::SassC)
+        logger.info '== Preferring use of LibSass' if defined?(::SassC)
 
         app.files.ignore :sass_cache, :source, /(^|\/)\.sass-cache\//
 

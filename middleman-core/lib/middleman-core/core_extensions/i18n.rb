@@ -17,13 +17,9 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
 
     require 'i18n'
 
-    if !options[:langs].nil?
-      options[:locales] = options[:langs]
-    end
+    options[:locales] = options[:langs] unless options[:langs].nil?
 
-    if !options[:lang_map].nil?
-      options[:locale_map] = options[:lang_map]
-    end
+    options[:locale_map] = options[:lang_map] unless options[:lang_map].nil?
 
     # Don't fail on invalid locale, that's not what our current
     # users expect.
