@@ -179,16 +179,10 @@ Feature: Assets get file hashes appended to them and references to them are upda
       | javascripts/application-1d8d5276.js |
       | stylesheets/site-7474cadd.css |
 
-  # @wip Currently broken, we should move all asset-host functionality out of Compass and into something more similar to asset_hash with Rack-based rewrites
-  # Scenario: Enabling an asset host and referencing assets in CSS with URL fragments are rewritten correctly
-  #   Given a successfully built app at "asset-hash-host-app"
-  #   When I cd to "build"
-
-  #   Then the following files should exist:
-  #     | images/100px-5fd6fb90.jpg |
-  #     | stylesheets/fragment-c058ecb2.css |
-  #   And the following files should not exist:
-  #     | images/100px.jpg |
-
-  #   And the file "stylesheets/fragment-c058ecb2.css" should contain "http://middlemanapp.com/images/100px-5fd6fb90.jpg#test"
-  #   And the file "stylesheets/fragment-c058ecb2.css" should not contain "http://middlemanapp.com/images/100px.jpg#test"
+  Scenario: Already minified files should still be hashed
+    Given a successfully built app at "asset-hash-minified-app"
+    When I cd to "build"
+    Then the following files should exist:
+      | javascripts/jquery.min-276c87ff.js |
+    And the following files should not exist:
+      | javascripts/jquery.min.js |

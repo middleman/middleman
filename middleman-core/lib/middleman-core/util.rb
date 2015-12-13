@@ -336,10 +336,15 @@ module Middleman
         opening_character = $1
         asset_path = $2
 
-        uri = ::Addressable::URI.parse(asset_path)
-        if uri.relative? && uri.host.nil? && (result = yield(asset_path))
-          "#{opening_character}#{result}"
-        else
+        begin
+          uri = ::Addressable::URI.parse(asset_path)
+
+          if uri.relative? && uri.host.nil? && (result = yield(asset_path))
+            "#{opening_character}#{result}"
+          else
+            match
+          end
+        rescue ::Addressable::URI::InvalidURIError
           match
         end
       end
