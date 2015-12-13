@@ -2,6 +2,12 @@ master
 ===
 
 * Rename i18n `lang` and `langs` to `locale` and `locales`.
+* Avoid matching URLs across new lines. #1689
+* Load Middleman Directory when doing `init` over SSL
+* Fix `external_pipeline` first runs running out of sequence.
+
+# 4.0.0.rc.2
+
 * Rather than applying layouts to all files which are not .txt, .css, .js, .json: the new behavior is to only default layouts to active for .html
 * Switch from Ruby Sass to SassC.
 * `relative_assets` extension overrides local `relative: false` option to stylesheet/javascript tag helpers.
