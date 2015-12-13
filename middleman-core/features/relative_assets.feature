@@ -36,6 +36,11 @@ Feature: Relative Assets
     Then I should see 'url("../images/blank.gif'
     When I go to "/javascripts/application.js"
     Then I should not see "../"
+    When I go to "/stylesheets/fonts.css"
+    Then I should see 'url(../fonts/roboto/roboto-regular-webfont.eot'
+    And I should see 'url(../fonts/roboto/roboto-regular-webfont.woff'
+    And I should see 'url(../fonts/roboto/roboto-regular-webfont.ttf'
+    And I should see 'url(../fonts/roboto/roboto-regular-webfont.svg'
 
   Scenario: Building css with the feature enabled
     Given a fixture app "relative-assets-app"

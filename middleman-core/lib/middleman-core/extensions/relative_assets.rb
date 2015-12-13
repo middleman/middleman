@@ -2,7 +2,7 @@ require 'addressable/uri'
 
 # Relative Assets extension
 class Middleman::Extensions::RelativeAssets < ::Middleman::Extension
-  option :exts, %w(.css .png .jpg .jpeg .webp .svg .svgz .js .gif .ttf .otf .woff .woff2), 'List of extensions that get cache busters strings appended to them.'
+  option :exts, %w(.css .png .jpg .jpeg .webp .svg .svgz .js .gif .ttf .otf .woff .woff2 .eot), 'List of extensions that get cache busters strings appended to them.'
   option :sources, %w(.htm .html .css), 'List of extensions that are searched for relative assets.'
   option :ignore, [], 'Regexes of filenames to skip adding query strings to'
 
