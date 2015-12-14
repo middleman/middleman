@@ -5,6 +5,7 @@ class Middleman::Extensions::ExternalPipeline < ::Middleman::Extension
   option :command, nil, 'The command to initialize', required: true
   option :source, nil, 'Path to merge into sitemap', required: true
   option :latency, 0.25, 'Latency between refreshes of source'
+  option :disable_background_execution, false, "Don't run the command in a separate background thread"
 
   def initialize(app, config={}, &block)
     super
@@ -19,7 +20,7 @@ class Middleman::Extensions::ExternalPipeline < ::Middleman::Extension
   def ready
     logger.info "== Executing: `#{options[:command]}`"
 
-    if app.build?
+    if app.build? || options[:disable_background_execution]
       watch_command!
     else
       ::Thread.new { watch_command! }
