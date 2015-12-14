@@ -14,8 +14,11 @@ module Middleman
     extend Forwardable
     include Contracts
 
-    # Types which trigger a livereload
-    LIVERELOAD_TYPES = [:source, :locales, :data]
+    # Types which could cause output to change.
+    OUTPUT_TYPES = [:source, :locales, :data]
+
+    # Types which require a reload to eval ruby
+    CODE_TYPES = [:reload]
 
     Matcher = Or[Regexp, RespondTo[:call]]
 
@@ -172,7 +175,7 @@ module Middleman
     # @param [String] path The file path.
     # @param [Boolean] glob If the path contains wildcard or glob characters.
     # @return [Middleman::SourceFile, nil]
-    Contract Or[Symbol, ArrayOf[Symbol]], String, Maybe[Bool] => Maybe[SourceFile]
+    Contract Or[Symbol, ArrayOf[Symbol], SetOf[Symbol]], String, Maybe[Bool] => Maybe[SourceFile]
     def find(types, path, glob=false)
       watchers
         .lazy
@@ -187,7 +190,7 @@ module Middleman
     # @param [Symbol,Array<Symbol>] types The list of file "type".
     # @param [String] path The file path relative to it's source root.
     # @return [Boolean]
-    Contract Or[Symbol, ArrayOf[Symbol]], String => Bool
+    Contract Or[Symbol, ArrayOf[Symbol], SetOf[Symbol]], String => Bool
     def exists?(types, path)
       watchers
         .lazy
@@ -200,7 +203,7 @@ module Middleman
     # @param [Symbol,Array<Symbol>] types The list of file "type".
     # @param [String] path The file path relative to it's source root.
     # @return [Boolean]
-    Contract Or[Symbol, ArrayOf[Symbol]], String => Maybe[HANDLER]
+    Contract Or[Symbol, ArrayOf[Symbol], SetOf[Symbol]], String => Maybe[HANDLER]
     def watcher_for_path(types, path)
       watchers
         .select { |d| Array(types).include?(d.type) }
@@ -243,7 +246,7 @@ module Middleman
     #
     # @param [Symbol,Array<Symbol>] types The change types to register the callback.
     # @return [void]
-    Contract Or[Symbol, ArrayOf[Symbol]], Proc => Any
+    Contract Or[Symbol, ArrayOf[Symbol], SetOf[Symbol]], Proc => Any
     def on_change(types, &block)
       Array(types).each do |type|
         @on_change_callbacks = @on_change_callbacks.push(CallbackDescriptor.new(type, block))
@@ -255,7 +258,7 @@ module Middleman
     # @param [nil,Regexp] matcher A Regexp to match the change path against
     Contract Maybe[Matcher] => Any
     def changed(matcher=nil, &block)
-      on_change LIVERELOAD_TYPES do |updated, _removed|
+      on_change OUTPUT_TYPES do |updated, _removed|
         updated
           .select { |f| matcher.nil? ? true : matches?(matcher, f) }
           .each { |f| block.call(f[:relative_path]) }
@@ -267,7 +270,7 @@ module Middleman
     # @param [nil,Regexp] matcher A Regexp to match the change path against
     Contract Maybe[Matcher] => Any
     def deleted(matcher=nil, &block)
-      on_change LIVERELOAD_TYPES do |_updated, removed|
+      on_change OUTPUT_TYPES do |_updated, removed|
         removed
           .select { |f| matcher.nil? ? true : matches?(matcher, f) }
           .each { |f| block.call(f[:relative_path]) }
@@ -279,7 +282,7 @@ module Middleman
     # @param [Pathname,String] path The path to check.
     Contract Or[Pathname, String] => Bool
     def ignored?(path)
-      descriptor = find(LIVERELOAD_TYPES, path)
+      descriptor = find(OUTPUT_TYPES, path)
       !descriptor || globally_ignored?(descriptor)
     end
 

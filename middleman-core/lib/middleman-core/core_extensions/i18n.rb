@@ -10,7 +10,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
   option :data, 'locales', 'The directory holding your locale configurations'
 
   # Exposes `locales` to templates
-  expose_to_template :locales, :langs
+  expose_to_template :locales, :langs, :locale, :lang
 
   def initialize(*)
     super
@@ -128,6 +128,14 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
 
   # Backwards API compat
   alias_method :langs, :locales
+
+  Contract Symbol
+  def locale
+    ::I18n.locale
+  end
+
+  # Backwards API compat
+  alias_method :lang, :locale
 
   # Update the main sitemap resource list
   # @return Array<Middleman::Sitemap::Resource>
