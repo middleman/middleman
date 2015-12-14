@@ -1,6 +1,9 @@
 master
 ===
 
+# 4.0.0.rc.3
+
+* Add `:locales` and `:data` source types to the list of files which trigger a live-reload.
 * Rename i18n `lang` and `langs` to `locale` and `locales`.
 * Avoid matching URLs across new lines. #1689
 * Load Middleman Directory when doing `init` over SSL
