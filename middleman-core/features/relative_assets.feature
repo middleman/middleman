@@ -41,6 +41,11 @@ Feature: Relative Assets
     And I should see 'url(../fonts/roboto/roboto-regular-webfont.woff'
     And I should see 'url(../fonts/roboto/roboto-regular-webfont.ttf'
     And I should see 'url(../fonts/roboto/roboto-regular-webfont.svg'
+    When I go to "/stylesheets/fonts2.css"
+    Then I should see 'url(../fonts/roboto/roboto-regular-webfont.eot'
+    And I should see 'url(../fonts/roboto/roboto-regular-webfont.woff'
+    And I should see 'url(../fonts/roboto/roboto-regular-webfont.ttf'
+    And I should see 'url(../fonts/roboto/roboto-regular-webfont.svg'
 
   Scenario: Building css with the feature enabled
     Given a fixture app "relative-assets-app"

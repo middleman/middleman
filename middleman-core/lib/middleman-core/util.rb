@@ -332,11 +332,18 @@ module Middleman
 
     Contract String, String, ArrayOf[String], Proc => String
     def rewrite_paths(body, _path, exts, &_block)
-      matcher = /([=\'\"\(,] *)([^\s\'\"\)>]+(#{Regexp.union(exts)}))/
+      matcher = /([=\'\"\(,]\s*)([^\s\'\"\)>]+(#{Regexp.union(exts)}))/
+
+      url_fn_prefix = 'url('
 
       body.dup.gsub(matcher) do |match|
         opening_character = $1
         asset_path = $2
+
+        if asset_path.start_with?(url_fn_prefix)
+          opening_character << url_fn_prefix
+          asset_path = asset_path[url_fn_prefix.length..-1]
+        end
 
         begin
           uri = ::Addressable::URI.parse(asset_path)

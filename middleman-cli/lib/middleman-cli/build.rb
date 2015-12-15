@@ -64,7 +64,7 @@ module Middleman::Cli
 
       if builder.run!
         clean_directories! if options['clean']
-        shell.say "Project built successfully."
+        shell.say 'Project built successfully.'
       else
         msg = 'There were errors during this build'
         unless options['verbose']
