@@ -28,6 +28,7 @@ module Middleman::CoreExtensions
     Contract ResourceList => ResourceList
     def manipulate_resource_list(resources)
       resources.each do |resource|
+        next if resource.ignored?
         next if resource.file_descriptor.nil?
 
         fmdata = data(resource.file_descriptor[:full_path].to_s).first.dup
