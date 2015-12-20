@@ -35,7 +35,7 @@ master
 * Add `resources` class method to extensions to allow simple string-based resource generation.
 * rename `app.add_to_instance` to `Extension.expose_to_application` for adding extension-local methods to the shared app instance.
 * rename `app.add_to_config_context` to `Extension.expose_to_config` for adding extension-local methods to the sandboxed scope of `config.rb`
-* Add `Extension.expose_to_templates`, which auto binds copies of extension-local methods into a Template context.
+* Add `Extension.expose_to_template`, which auto binds copies of extension-local methods into a Template context.
 * Remove side-loading of CLI tasks from `tasks/`
 * Add the option of naming `config.rb` as `middleman.rb`.
 * Builder extracted from Thor. `after_build` hook now passes an instance of a Builder instead of the Thor CLI.
