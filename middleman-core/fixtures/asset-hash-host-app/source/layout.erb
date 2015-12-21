@@ -3,15 +3,15 @@
   <head>
     <meta charset="utf-8">
 
-    <%= stylesheet_link_tag "site" %>
+    <%= stylesheet_link_tag "site", "fragment" %>
     <%= yield_content :head %>
   </head>
-  
+
   <body class="<%= page_classes %>">
 
     <div id="main" role="main">
       <%= yield %>
     </div>
-    
+
   </body>
 </html>
