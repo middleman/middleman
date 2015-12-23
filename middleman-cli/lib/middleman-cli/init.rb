@@ -39,7 +39,7 @@ module Middleman::Cli
         rescue ::OpenURI::HTTPError
           say "Template `#{options[:template]}` not found in Middleman Directory."
           say 'Did you mean to use a full `user/repo` path?'
-          exit
+          exit 1
         end
       else
         repo_name, repo_branch = options[:template].split('#')
@@ -55,7 +55,7 @@ module Middleman::Cli
 
         unless File.directory?(dir)
           say 'Git clone failed, maybe the url is invalid or you don\'t have the permissions?', :red
-          exit
+          exit 1
         end
 
         inside(target) do
