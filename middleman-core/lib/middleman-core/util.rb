@@ -203,10 +203,14 @@ module Middleman
       # Don't touch assets which already have a full path
       return path if path.include?('//') || path.start_with?('data:')
 
+      if options[:relative] && !options[:current_resource]
+        raise ArgumentError, '#asset_url must be run in a context with current_resource if relative: true'
+      end
+
       uri = URI(path)
       path = uri.path
 
-      result = if resource = app.sitemap.find_resource_by_destination_path(url_for(app, path))
+      result = if resource = app.sitemap.find_resource_by_destination_path(url_for(app, path, options))
         resource.url
       else
         path = File.join(prefix, path)
@@ -217,15 +221,11 @@ module Middleman
         end
       end
 
-      final_result = if options[:relative] != true
-        result
-      else
-        unless options[:current_resource]
-          raise ArgumentError, '#asset_url must be run in a context with current_resource if relative: true'
-        end
-
+      final_result = if options[:relative]
         current_dir = Pathname('/' + options[:current_resource].destination_path)
         Pathname(result).relative_path_from(current_dir.dirname).to_s
+      else
+        result
       end
 
       result_uri = URI(final_result)
@@ -296,9 +296,6 @@ module Middleman
         else
           resource_url
         end
-      else
-        # If they explicitly asked for relative links but we can't find a resource...
-        raise "No resource exists at #{url}" if relative
       end
 
       # Support a :query option that can be a string or hash
