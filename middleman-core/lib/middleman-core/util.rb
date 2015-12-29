@@ -221,12 +221,7 @@ module Middleman
         end
       end
 
-      final_result = if options[:relative]
-        current_dir = Pathname('/' + options[:current_resource].destination_path)
-        Pathname(result).relative_path_from(current_dir.dirname).to_s
-      else
-        result
-      end
+      final_result = URI.encode(relative_path_from_resource(options[:current_resource], result, options[:relative]))
 
       result_uri = URI(final_result)
       result_uri.query = uri.query
