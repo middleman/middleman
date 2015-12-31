@@ -98,6 +98,15 @@ describe Middleman::Util do
       end
     end
 
+    it "returns path relative to the provided current_resource" do
+      Given.fixture 'clean-dir-app'
+      Given.file 'source/a-path/index.html', ''
+      Given.file 'source/a-path/images/blank.gif', ''
+      @mm = Middleman::Application.new
+      current_resource = @mm.sitemap.find_resource_by_path('a-path/index.html')
+      expect( Middleman::Util.asset_url( @mm, 'images/blank.gif', 'images', current_resource: current_resource ) ).to eq '/a-path/images/blank.gif'
+    end
+
     context "when relative is true" do
 
       before(:each) do
@@ -106,7 +115,7 @@ describe Middleman::Util do
       end
 
       it "returns path relative to the provided current_resource" do
-        current_resource = instance_double("Middleman::Sitemap::Resource", destination_path: 'a-path/index.html')
+        current_resource = instance_double("Middleman::Sitemap::Resource", destination_path: 'a-path/index.html', path: 'a-path/index.html')
         expect( Middleman::Util.asset_url( @mm, 'blank.gif', 'images', current_resource: current_resource,
                                                                        relative: true ) ).to eq '../images/blank.gif'
       end
