@@ -201,9 +201,9 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
     # @param [String] prefix The type prefix (such as "images")
     # @param [Hash] options Additional options.
     # @return [String] The fully qualified asset url
-    def asset_url(_path, prefix='', options={})
+    def asset_url(path, prefix='', options={})
       options_with_resource = options.merge(current_resource: current_resource)
-      ::Middleman::Util.asset_url(app, prefix, options_with_resource)
+      ::Middleman::Util.asset_url(app, path, prefix, options_with_resource)
     end
 
     # Given a source path (referenced either absolutely or relatively)
