@@ -5,7 +5,7 @@ require 'sassc'
 require 'simplecov'
 SimpleCov.root(File.expand_path(File.dirname(__FILE__) + '/../..'))
 
-require 'capybara/poltergeist'
+require 'phantomjs/poltergeist'
 Capybara.javascript_driver = :poltergeist
 
 require 'coveralls'
