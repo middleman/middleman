@@ -3,12 +3,6 @@ require 'active_support/core_ext/hash/deep_merge'
 require 'monitor'
 require 'hamster'
 
-# Ignores
-Middleman::Extensions.register :sitemap_ignore, auto_activate: :before_configuration do
-  require 'middleman-core/sitemap/extensions/ignores'
-  Middleman::Sitemap::Extensions::Ignores
-end
-
 # Files on Disk
 Middleman::Extensions.register :sitemap_ondisk, auto_activate: :before_configuration do
   require 'middleman-core/sitemap/extensions/on_disk'
@@ -43,6 +37,12 @@ end
 Middleman::Extensions.register :sitemap_move_files, auto_activate: :before_configuration do
   require 'middleman-core/sitemap/extensions/move_file'
   Middleman::Sitemap::Extensions::MoveFile
+end
+
+# Ignores
+Middleman::Extensions.register :sitemap_ignore, auto_activate: :before_configuration do
+  require 'middleman-core/sitemap/extensions/ignores'
+  Middleman::Sitemap::Extensions::Ignores
 end
 
 require 'middleman-core/contracts'
@@ -108,14 +108,15 @@ module Middleman
           [m[:priority], n]
         end
 
-        rebuild_resource_list!(:registered_new)
+        rebuild_resource_list!(:"registered_new_manipulator_#{name}")
       end
 
       # Rebuild the list of resources from scratch, using registed manipulators
       # @return [void]
       Contract Maybe[Symbol] => Any
-      def rebuild_resource_list!(_name=nil)
+      def rebuild_resource_list!(name=nil)
         @lock.synchronize do
+          @app.logger.debug "== Requesting resource list rebuilding: #{name}"
           @needs_sitemap_rebuild = true
         end
       end
@@ -159,7 +160,7 @@ module Middleman
         end
       end
 
-      # Invalidate our cached view of resource that are not ingnored. If your extension
+      # Invalidate our cached view of resource that are not ignored. If your extension
       # adds ways to ignore files, you should call this to make sure #resources works right.
       def invalidate_resources_not_ignored_cache!
         @resources_not_ignored = nil

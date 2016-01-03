@@ -31,7 +31,7 @@ module Middleman::Cli
       template 'extension/gemspec', File.join(name, "#{name}.gemspec")
       template 'extension/Gemfile', File.join(name, 'Gemfile')
       template 'extension/lib/lib.rb', File.join(name, 'lib', "#{name}.rb")
-      template 'extension/lib/lib/extension.rb', File.join(name, 'lib', name, "extension.rb")
+      template 'extension/lib/lib/extension.rb', File.join(name, 'lib', name, 'extension.rb')
       template 'extension/features/support/env.rb', File.join(name, 'features', 'support', 'env.rb')
       empty_directory File.join(name, 'fixtures')
     end

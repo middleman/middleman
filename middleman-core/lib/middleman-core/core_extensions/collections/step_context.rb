@@ -1,5 +1,3 @@
-require 'hamster'
-
 module Middleman
   module CoreExtensions
     module Collections
@@ -11,15 +9,16 @@ module Middleman
         attr_reader :descriptors
 
         def initialize
-          @descriptors = ::Hamster::Set.empty
+          @descriptors = []
         end
 
         def method_missing(name, *args, &block)
           internal = :"_internal_#{name}"
-          if respond_to?(internal)
-            @descriptors = @descriptors.add(send(internal, *args, &block))
-          else
-            super
+
+          return super unless respond_to?(internal)
+
+          send(internal, *args, &block).tap do |r|
+            @descriptors << r if r.respond_to?(:execute_descriptor)
           end
         end
       end

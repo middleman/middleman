@@ -38,6 +38,8 @@ module Middleman
       Contract METADATA_HASH
       attr_reader :metadata
 
+      attr_accessor :ignored
+
       # Initialize resource with parent store and URL
       # @param [Middleman::Sitemap::Store] store
       # @param [String] path
@@ -47,6 +49,7 @@ module Middleman
         @store       = store
         @app         = @store.app
         @path        = path
+        @ignored     = false
 
         source = Pathname(source) if source && source.is_a?(String)
 
@@ -173,15 +176,7 @@ module Middleman
       # @return [Boolean]
       Contract Bool
       def ignored?
-        return true if @ignored
-        # Ignore based on the source path (without template extensions)
-        return true if @app.sitemap.ignored?(path)
-        # This allows files to be ignored by their source file name (with template extensions)
-        if !self.is_a?(ProxyResource) && file_descriptor && @app.sitemap.ignored?(file_descriptor[:relative_path].to_s)
-          true
-        else
-          false
-        end
+        @ignored
       end
 
       # The preferred MIME content type for this resource based on extension or metadata

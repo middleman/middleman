@@ -469,4 +469,38 @@ module Middleman
       @app.ready(&method(:ready)) if respond_to?(:ready)
     end
   end
+
+  class ConfigExtension < Extension
+    def initialize(app, config={}, &block)
+      @descriptors = {}
+      @wrapped = {}
+
+      self.class.exposed_to_config.each do |k, v|
+        @descriptors[k] = []
+
+        define_singleton_method(:"__original_#{v}", &method(v))
+        define_singleton_method(v) do |*args, &block|
+          @descriptors[k] << method(:"__original_#{v}").call(*args, &block)
+          @app.sitemap.rebuild_resource_list!(:"first_run_change_#{v}")
+        end
+      end
+
+      super
+    end
+
+    def after_configuration
+      self.class.exposed_to_config.each do |k, v|
+        ::Middleman::CoreExtensions::Collections::StepContext.add_to_context(k, &method(:"__original_#{v}"))
+      end
+    end
+
+    # Update the main sitemap resource list
+    # @return Array<Middleman::Sitemap::Resource>
+    Contract ResourceList => ResourceList
+    def manipulate_resource_list(resources)
+      @descriptors.values.flatten.reduce(resources) do |sum, c|
+        c.execute_descriptor(app, sum)
+      end
+    end
+  end
 end
