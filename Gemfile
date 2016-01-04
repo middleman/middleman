@@ -8,7 +8,7 @@ gem 'yard', '~> 0.8', require: false
 gem 'pry', '~> 0.10', group: :development, require: false
 gem 'pry-byebug'
 gem 'pry-stack_explorer'
-gem 'aruba', '~> 0.7.4', require: false
+gem 'aruba', '~> 0.12.0', require: false
 gem 'rspec', '~> 3.0', require: false
 gem 'cucumber', '~> 2.0', require: false
 
