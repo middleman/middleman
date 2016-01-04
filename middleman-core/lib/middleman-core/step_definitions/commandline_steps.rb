@@ -1,11 +1,11 @@
 When /^I stop (?:middleman|all commands) if the output( of the last command)? contains:$/ do |last_command, expected|
   begin
-    Timeout.timeout(exit_timeout) do
+    Timeout.timeout(aruba.config.exit_timeout) do
       loop do
-        fail "You need to start middleman interactively first." unless @interactive
+        fail "You need to start middleman interactively first." if last_command_started.nil?
 
-        if unescape(@interactive.output) =~ Regexp.new(unescape(expected))
-          only_processes.each { |p| p.terminate }
+        if sanitize_text(last_command_started.output) =~ Regexp.new(sanitize_text(expected))
+          terminate_all_commands
           break
         end
 
@@ -13,10 +13,10 @@ When /^I stop (?:middleman|all commands) if the output( of the last command)? co
       end
     end
   rescue ChildProcess::TimeoutError, TimeoutError
-    @interactive.terminate
+    terminate_all_commands
   ensure
-    announcer.stdout @interactive.stdout
-    announcer.stderr @interactive.stderr
+    announcer.announce :stdout, last_command_started.stdout
+    announcer.announce :stderr, last_command_started.stderr
   end
 end
 
@@ -68,7 +68,7 @@ Given /I start a mdns server with:/ do |string|
     )
   )
 
-  set_env 'PATH', File.expand_path(File.join(current_dir, 'bin')) + ':' + ENV['PATH']
+  set_environment_variable 'PATH', File.expand_path(File.join(current_dir, 'bin')) + ':' + ENV['PATH']
   write_file db_file, string
 
   @mdns_server = run("dns_server.rb #{db_file} #{port}", 120)
@@ -80,7 +80,7 @@ end
 
 # Make sure each and every process is really dead
 After do
-  only_processes.each { |p| p.terminate }
+  terminate_all_commands
 end
 
 Before '@ruby-2.1' do
