@@ -253,11 +253,6 @@ module Middleman
       # Initialize the Sitemap
       @sitemap = ::Middleman::Sitemap::Store.new(self)
 
-      if Object.const_defined?(:Encoding)
-        Encoding.default_internal = config[:encoding]
-        Encoding.default_external = config[:encoding]
-      end
-
       ::Middleman::Extension.clear_after_extension_callbacks
 
       after_configuration_eval(&method(:prune_tilt_templates))
@@ -275,6 +270,10 @@ module Middleman
 
       # Eval config.
       evaluate_configuration!
+
+      if Object.const_defined?(:Encoding)
+        Encoding.default_external = config[:encoding]
+      end
 
       # Run any `configure` blocks for the current environment.
       execute_callbacks([:configure, config[:environment]])
