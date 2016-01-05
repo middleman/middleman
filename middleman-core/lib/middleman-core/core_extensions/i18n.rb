@@ -196,6 +196,16 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
     @lookup[lookup_path] && @lookup[lookup_path][locale]
   end
 
+  Contract Symbol => String
+  def path_root(locale)
+    if (options[:mount_at_root] == locale) || (options[:mount_at_root].nil? && locales[0] == locale)
+      '/'
+    else
+      replacement = options[:locale_map].fetch(locale, locale)
+      options[:path].sub(':locale', replacement.to_s).sub(':lang', replacement.to_s) # Backward compat
+    end
+  end
+
   private
 
   def on_file_changed(_updated_files, _removed_files)
@@ -267,12 +277,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
 
     path = "#{partially_localized_path}/#{File.basename(path)}"
 
-    prefix = if (options[:mount_at_root] == locale) || (options[:mount_at_root].nil? && locales[0] == locale)
-      '/'
-    else
-      replacement = options[:locale_map].fetch(locale, locale)
-      options[:path].sub(':locale', replacement.to_s).sub(':lang', replacement.to_s) # Backward compat
-    end
+    prefix = path_root(locale)
 
     # path needs to be changed if file has a localizable extension. (options[mount_at_root] == locale)
     path = ::Middleman::Util.normalize_path(

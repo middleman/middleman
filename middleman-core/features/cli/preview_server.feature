@@ -115,6 +115,7 @@ Feature: Run the preview server
     Inspect your site configuration at "http://127.0.0.1:4567/__middleman"
     """
 
+  @wip
   Scenario: Start the server with bind address 127.0.0.5
 
     This will have no hostname attached because the hosts file, the DNS server
@@ -469,7 +470,8 @@ Feature: Run the preview server
     Inspect your site configuration at "http://www.example.com:4567/__middleman", "http://127.0.0.1:4567/__middleman"
     """
 
-    @ruby-2.1
+  @ruby-2.1
+  @wip
   Scenario: Start the server with server name "host.local" and the link local name server is used to resolve the server name
 
     To make the mdns resolver resolve a name, it needs to end with ".local".
@@ -501,7 +503,8 @@ Feature: Run the preview server
     Inspect your site configuration at "http://host.local:4567/__middleman", "http://127.0.0.1:4567/__middleman"
     """
 
-    @ruby-2.1
+  @ruby-2.1
+  @wip
   Scenario: Start the server with server name "host" and the link local name server is used to resolve the server name
 
     To make the mdns resolver resolve a name, it needs to end with ".local". If

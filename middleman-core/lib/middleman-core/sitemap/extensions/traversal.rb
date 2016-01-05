@@ -2,10 +2,22 @@ module Middleman
   module Sitemap
     module Extensions
       module Traversal
+        def traversal_root
+          root = if !@app.extensions[:i18n]
+            '/'
+          else
+            @app.extensions[:i18n].path_root(::I18n.locale)
+          end
+
+          root.sub(/^\//, '')
+        end
+
         # This resource's parent resource
         # @return [Middleman::Sitemap::Resource, nil]
         def parent
-          parts = path.split('/')
+          root = path.sub(/^#{::Regexp.escape(traversal_root)}/, '')
+          parts = root.split('/')
+
           tail = parts.pop
           is_index = (tail == @app.config[:index_file])
 

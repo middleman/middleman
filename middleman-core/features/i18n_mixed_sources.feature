@@ -33,6 +33,7 @@ Feature: i18n merging path trees
     When I go to "/b/sub.html"
     Then I should see "Current locale: en"
     Then I should see "path: is-localized Home # b/index.html.erb # b/sub.html.erb"
-    Then I should see "Current locale: es"
+
     When I go to "/es/b/sub.html"
+    Then I should see "Current locale: es"
     Then I should see "path: is-localized Home # b/index.html.erb # b/sub.html.erb"
