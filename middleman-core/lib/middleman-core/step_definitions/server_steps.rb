@@ -75,6 +75,10 @@ Then /^the content type should be "([^\"]*)"$/ do |expected|
   expect(page.response_headers['Content-Type']).to start_with expected
 end
 
+Then /^the "([^\"]*)" header should contain "([^\"]*)"$/ do |header, expected|
+  expect(page.response_headers[header]).to include expected
+end
+
 Then /^I should see "([^\"]*)"$/ do |expected|
   expect(page.body).to include expected
 end
