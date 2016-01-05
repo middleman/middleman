@@ -28,6 +28,7 @@ gem 'rubydns', '~> 1.0.1', require: false
 
 # To test javascript
 gem 'poltergeist', '~> 1.8', require: false
+gem 'phantomjs', '~> 1.9.8.0', require: false
 
 # For less, note there is no compatible JS runtime for windows
 gem 'therubyrhino', '>= 2.0', platforms: :jruby
