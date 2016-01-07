@@ -10,6 +10,7 @@
 # to .html, .htm, .js and .css.
 #
 class Middleman::Extensions::Gzip < ::Middleman::Extension
+  option :all, false, 'Gzip all file extensions (except ignored).'
   option :exts, %w(.js .css .html .htm), 'File extensions to Gzip when building.'
   option :ignore, [], 'Patterns to avoid gzipping'
   option :overwrite, false, 'Overwrite original files instead of adding .gz extension.'
@@ -109,6 +110,6 @@ class Middleman::Extensions::Gzip < ::Middleman::Extension
   Contract Pathname => Bool
   def should_gzip?(path)
     path = path.sub app.config[:build_dir] + '/', ''
-    options.exts.include?(path.extname) && options.ignore.none? { |ignore| Middleman::Util.path_match(ignore, path.to_s) }
+    (options.all || options.exts.include?(path.extname)) && options.ignore.none? { |ignore| Middleman::Util.path_match(ignore, path.to_s) }
   end
 end
