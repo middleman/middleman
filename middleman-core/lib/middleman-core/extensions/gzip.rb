@@ -10,7 +10,7 @@
 # to .html, .htm, .js and .css.
 #
 class Middleman::Extensions::Gzip < ::Middleman::Extension
-  option :exts, %w(.js .css .html .htm), 'File extensions to Gzip when building.'
+  option :exts, %w(.js .css .html .htm .svg), 'File extensions to Gzip when building.'
   option :ignore, [], 'Patterns to avoid gzipping'
   option :overwrite, false, 'Overwrite original files instead of adding .gz extension.'
 
