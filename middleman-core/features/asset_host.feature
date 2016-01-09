@@ -35,3 +35,17 @@ Feature: Alternate between multiple asset hosts
     When I go to "/stylesheets/asset_host.css"
     Then I should see content matching %r{http://assets1.example.com/}
     Then I should not see content matching %r{http://assets1.example.com//}
+
+  Scenario: Hosts are not rewritten for rewrite ignored paths
+    Given a fixture app "asset-host-app"
+    And a file named "config.rb" with:
+      """
+      activate :asset_host, host: "http://assets1.example.com", rewrite_ignore: [
+        '/stylesheets/asset_host.css',
+      ]
+      """
+    And the Server is running
+    When I go to "/asset_host.html"
+    Then I should see content matching %r{http://assets1.example.com/}
+    When I go to "/stylesheets/asset_host.css"
+    Then I should not see content matching %r{http://assets1.example.com/}

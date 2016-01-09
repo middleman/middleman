@@ -40,3 +40,17 @@ Feature: Generate mtime-based query string for busting browser caches
     When I go to "/cache-buster.html"
     Then I should see "site.css?"
     Then I should see "blank.gif?"
+
+  Scenario: URLs are not rewritten for rewrite ignored paths
+    Given a fixture app "cache-buster-app"
+    And a file named "config.rb" with:
+      """
+      activate :cache_buster, rewrite_ignore: [
+        '/cache-buster.html',
+      ]
+      """
+    And the Server is running at "cache-buster-app"
+    When I go to "/cache-buster.html"
+    Then I should see 'site.css"'
+    Then I should see 'empty-with-include.js"'
+    Then I should see 'blank.gif"'
