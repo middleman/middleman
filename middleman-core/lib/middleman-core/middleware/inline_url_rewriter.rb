@@ -34,13 +34,16 @@ module Middleman
         @source_exts_regex_text = Regexp.union(@source_exts).to_s
 
         @ignore = options.fetch(:ignore)
+        @rewrite_ignore = Array(options.fetch(:rewrite_ignore, []))
       end
 
       def call(env)
         status, headers, response = @rack_app.call(env)
 
-        # Allow upstream request to skip all rewriting
-        return [status, headers, response] if env['bypass_inline_url_rewriter'] == 'true'
+        # Allow configuration or upstream request to skip all rewriting
+        if rewrite_ignore?(env['PATH_INFO']) || env['bypass_inline_url_rewriter'] == 'true'
+          return [status, headers, response]
+        end
 
         # Allow upstream request to skip this specific rewriting
         if @uid
@@ -95,6 +98,11 @@ module Middleman
           # If some unknown thing, don't ignore
           false
         end
+      end
+
+      Contract String => Bool
+      def rewrite_ignore?(path)
+        @rewrite_ignore.any? { |ignore| Middleman::Util.path_match(ignore, path) }
       end
     end
   end

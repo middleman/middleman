@@ -6,6 +6,7 @@ class Middleman::Extensions::AssetHost < ::Middleman::Extension
   option :exts, %w(.css .png .jpg .jpeg .webp .svg .svgz .js .gif), 'List of extensions that get cache busters strings appended to them.'
   option :sources, %w(.htm .html .php .css .js), 'List of extensions that are searched for bustable assets.'
   option :ignore, [], 'Regexes of filenames to skip adding query strings to'
+  option :rewrite_ignore, [], 'Regexes of filenames to skip processing for host rewrites'
 
   def ready
     app.use ::Middleman::Middleware::InlineURLRewriter,
@@ -13,6 +14,7 @@ class Middleman::Extensions::AssetHost < ::Middleman::Extension
             url_extensions: options.exts,
             source_extensions: options.sources,
             ignore: options.ignore,
+            rewrite_ignore: options.rewrite_ignore,
             middleman_app: app,
             proc: method(:rewrite_url)
   end

@@ -5,6 +5,7 @@ require 'middleman-core/rack'
 class Middleman::Extensions::AssetHash < ::Middleman::Extension
   option :exts, %w(.jpg .jpeg .png .gif .webp .js .css .otf .woff .woff2 .eot .ttf .svg .svgz), 'List of extensions that get asset hashes appended to them.'
   option :ignore, [], 'Regexes of filenames to skip adding asset hashes to'
+  option :rewrite_ignore, [], 'Regexes of filenames to skip processing for path rewrites'
 
   def initialize(app, options_hash={}, &block)
     super
@@ -23,6 +24,7 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
             url_extensions: options.exts.sort.reverse,
             source_extensions: %w(.htm .html .php .css .js),
             ignore: @ignore,
+            rewrite_ignore: options.rewrite_ignore,
             middleman_app: app,
             proc: method(:rewrite_url)
   end

@@ -203,6 +203,45 @@ Feature: Assets get file hashes appended to them and references to them are upda
       | javascripts/application-1d8d5276.js |
       | stylesheets/site-7474cadd.css |
 
+  Scenario: Hashed-asset files are not replaced for rewrite ignored paths
+    Given a fixture app "asset-hash-app"
+    And a file named "config.rb" with:
+      """
+      is_stylesheet = proc { |path| path.start_with? '/stylesheets' }
+      activate :asset_hash, rewrite_ignore: [
+        %r(javascripts/*),
+        '/subdir/*',
+        is_stylesheet
+      ]
+      activate :relative_assets
+      activate :directory_indexes
+      """
+    And a successfully built app at "asset-hash-app"
+    When I cd to "build"
+    Then the following files should exist:
+      | index.html |
+      | subdir/index.html |
+      | images/100px-5fd6fb90.jpg |
+      | javascripts/application-1d8d5276.js |
+      | stylesheets/site-8bc55985.css |
+    And the following files should not exist:
+      | images/100px.jpg |
+      | javascripts/application.js |
+      | stylesheets/site.css |
+    And the file "javascripts/application-1d8d5276.js" should contain "img.src = '/images/100px.jpg'"
+    And the file "stylesheets/site-8bc55985.css" should contain:
+      """
+      background-image: url("../images/100px.jpg")
+      """
+    And the file "index.html" should contain 'href="stylesheets/site-8bc55985.css"'
+    And the file "index.html" should contain 'src="javascripts/application-1d8d5276.js"'
+    And the file "index.html" should contain 'src="images/100px-5fd6fb90.jpg"'
+    And the file "subdir/index.html" should contain:
+      """
+      <h2>Image url3:</h2>
+      <p><img src="../images/100px.jpg"></p>
+      """
+
   Scenario: Already minified files should still be hashed
     Given a successfully built app at "asset-hash-minified-app"
     When I cd to "build"
