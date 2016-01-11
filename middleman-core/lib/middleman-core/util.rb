@@ -366,7 +366,7 @@ module Middleman
       case
       when mime.start_with?('text/')
         true
-      when mime.include?('xml')
+      when mime.include?('xml') && !mime.include?('officedocument')
         true
       when mime.include?('json')
         true
