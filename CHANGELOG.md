@@ -1,7 +1,18 @@
 master
 ===
 
-# 4.0.0.rc.3
+# 4.1.0
+
+* Add rewrite_ignore option to asset_hash, asset_host, cache_buster & relative_assets. This proc let's you opt-out of the extension behavior on a per-path basis.
+* gzip extension now compresses svgs by default
+* Fix the `encoding` option.
+* Fix relative paths on `image_tag` helper.
+* Correctly exit with error code on failed `init`
+* Fixed `asset_hash` when path has query string or #hashes
+* Fix new extension template
+* Don't parse frontmatter on ignored files.
+
+# 4.0.0
 
 * Add `:locales` and `:data` source types to the list of files which trigger a live-reload.
 * Rename i18n `lang` and `langs` to `locale` and `locales`.
