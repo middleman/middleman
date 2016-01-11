@@ -15,9 +15,7 @@ class Middleman::Extensions::ExternalPipeline < ::Middleman::Extension
     @watcher = app.files.watch :source,
                                path: File.expand_path(options[:source], app.root),
                                latency: options[:latency]
-  end
 
-  def ready
     logger.info "== Executing: `#{options[:command]}`"
 
     if app.build? || options[:disable_background_execution]

@@ -100,7 +100,9 @@ module Middleman
           end
 
           # Inject descriptors
-          resources + ctx.descriptors.map { |d| d.to_resource(app) }
+          ctx.descriptors.reduce(resources) do |sum, d|
+            d.execute_descriptor(app, sum)
+          end
         end
       end
     end

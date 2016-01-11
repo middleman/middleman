@@ -6,28 +6,12 @@ module Middleman
     module Extensions
       # Manages the list of proxy configurations and manipulates the sitemap
       # to include new resources based on those configurations
-      class Proxies < Extension
+      class Proxies < ConfigExtension
         self.resource_list_manipulator_priority = 0
-
-        # Expose `create_proxy` as `app.proxy`
-        expose_to_application proxy: :create_proxy
 
         # Expose `create_proxy` to config as `proxy`
         expose_to_config proxy: :create_proxy
 
-        def initialize(app, config={}, &block)
-          super
-
-          @proxy_configs = Set.new
-          @post_config = false
-        end
-
-        def after_configuration
-          @post_config = true
-
-          ::Middleman::CoreExtensions::Collections::StepContext.add_to_context(:proxy, &method(:create_anonymous_proxy))
-        end
-
         # Setup a proxy from a path to a target
         # @param [String] path The new, proxied path to create
         # @param [String] target The existing path that should be proxied to. This must be a real resource, not another proxy.
@@ -36,51 +20,35 @@ module Middleman
         # @option opts [Boolean] directory_indexes Whether or not the `:directory_indexes` extension applies to these paths.
         # @option opts [Hash] locals Local variables for the template. These will be available when the template renders.
         # @option opts [Hash] data Extra metadata to add to the page. This is the same as frontmatter, though frontmatter will take precedence over metadata defined here. Available via {Resource#data}.
-        # @return [void]
-        Contract String, String, Maybe[Hash] => Any
+        # @return [ProxyDescriptor]
+        Contract String, String, Maybe[Hash] => RespondTo[:execute_descriptor]
         def create_proxy(path, target, opts={})
-          options = opts.dup
-          @app.ignore(target) if options.delete(:ignore)
-
-          @proxy_configs << create_anonymous_proxy(path, target, options)
-          @app.sitemap.rebuild_resource_list!(:added_proxy)
-        end
-
-        # Setup a proxy from a path to a target
-        # @param [String] path The new, proxied path to create
-        # @param [String] target The existing path that should be proxied to. This must be a real resource, not another proxy.
-        # @option opts [Boolean] ignore Ignore the target from the sitemap (so only the new, proxy resource ends up in the output)
-        # @option opts [Symbol, Boolean, String] layout The layout name to use (e.g. `:article`) or `false` to disable layout.
-        # @option opts [Boolean] directory_indexes Whether or not the `:directory_indexes` extension applies to these paths.
-        # @option opts [Hash] locals Local variables for the template. These will be available when the template renders.
-        # @option opts [Hash] data Extra metadata to add to the page. This is the same as frontmatter, though frontmatter will take precedence over metadata defined here. Available via {Resource#data}.
-        # @return [void]
-        def create_anonymous_proxy(path, target, options={})
           ProxyDescriptor.new(
             ::Middleman::Util.normalize_path(path),
             ::Middleman::Util.normalize_path(target),
-            options
+            opts.dup
           )
-        end
-
-        # Update the main sitemap resource list
-        # @return Array<Middleman::Sitemap::Resource>
-        Contract ResourceList => ResourceList
-        def manipulate_resource_list(resources)
-          resources + @proxy_configs.map { |c| c.to_resource(@app) }
         end
       end
 
       ProxyDescriptor = Struct.new(:path, :target, :metadata) do
-        def to_resource(app)
-          ProxyResource.new(app.sitemap, path, target).tap do |p|
-            md = metadata.dup
-            p.add_metadata(
-              locals: md.delete(:locals) || {},
-              page: md.delete(:data) || {},
-              options: md
-            )
+        def execute_descriptor(app, resources)
+          md = metadata.dup
+          should_ignore = md.delete(:ignore)
+
+          r = ProxyResource.new(app.sitemap, path, target)
+          r.add_metadata(
+            locals: md.delete(:locals) || {},
+            page: md.delete(:data) || {},
+            options: md
+          )
+
+          if should_ignore
+            d = ::Middleman::Sitemap::Extensions::Ignores::IgnoreDescriptor.new(target)
+            d.execute_descriptor(app, resources)
           end
+
+          resources + [r]
         end
       end
     end

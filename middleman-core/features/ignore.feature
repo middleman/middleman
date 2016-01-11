@@ -12,7 +12,7 @@ Feature: Ignoring paths
     And the following files should not exist:
       | build/plain.html |
       | build/about.html |
-      
+
   Scenario: Ignore a single path (server)
     Given a fixture app "ignore-app"
     And a file named "config.rb" with:
@@ -25,6 +25,35 @@ Feature: Ignoring paths
     Then I should not see "File Not Found"
     When I go to "/plain.html"
     Then I should see "File Not Found"
+    When I go to "/about.html"
+    Then I should see "File Not Found"
+
+  Scenario: Ignoring collected values
+    Given a fixture app "ignore-app"
+    And a file named "data/ignores.yaml" with:
+      """
+      ---
+      - "plain"
+      """
+    And a file named "config.rb" with:
+       """
+       data.ignores.each do |name|
+         ignore "#{name}.html"
+       end
+       """
+    And the Server is running
+    When I go to "/plain.html"
+    Then I should see "File Not Found"
+    When I go to "/about.html"
+    Then I should not see "File Not Found"
+
+    When the file "data/ignores.yaml" has the contents
+      """
+      ---
+      - "about"
+      """
+    When I go to "/plain.html"
+    Then I should not see "File Not Found"
     When I go to "/about.html"
     Then I should see "File Not Found"
 
@@ -47,7 +76,7 @@ Feature: Ignoring paths
       | build/reports/index.html |
       | build/reports/another.html |
       | build/images/icons/messages.png |
-      
+
   Scenario: Ignore a globbed path (server)
     Given a fixture app "ignore-app"
     And a file named "config.rb" with:
@@ -93,7 +122,7 @@ Feature: Ignoring paths
       | build/reports/index.html |
       | build/reports/another.html |
       | build/images/icons/messages.png |
-      
+
   Scenario: Ignore a regex (server)
     Given a fixture app "ignore-app"
     And a file named "config.rb" with:

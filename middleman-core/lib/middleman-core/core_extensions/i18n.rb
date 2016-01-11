@@ -185,7 +185,9 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
       sum[abs_path][desc.locale] = '/' + desc.path
     end
 
-    resources + new_resources.map { |r| r.to_resource(app) }
+    new_resources.reduce(resources) do |sum, r|
+      r.execute_descriptor(app, sum)
+    end
   end
 
   Contract String, Symbol => String
@@ -255,10 +257,10 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
   end
 
   LocalizedPageDescriptor = Struct.new(:path, :source_path, :locale) do
-    def to_resource(app)
+    def execute_descriptor(app, resources)
       r = ::Middleman::Sitemap::ProxyResource.new(app.sitemap, path, source_path)
       r.add_metadata options: { locale: locale }
-      r
+      resources + [r]
     end
   end
 
