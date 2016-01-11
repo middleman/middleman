@@ -16,6 +16,22 @@ Feature: Build Clean
       | build/should_be_ignored3.html |
     And the file "build/index.html" should contain "Comment in layout"
 
+  Scenario: Clean build has a whitelist
+    Given a fixture app "clean-app"
+    When a file named "build/.test" with:
+      """
+      Hello
+      """
+    When a file named "config.rb" with:
+      """
+      set :skip_build_clean do |path|
+        path =~ /\.test/
+      end
+      """
+    Given a built app at "clean-app"
+    Then the following files should exist:
+      | build/.test         |
+
   Scenario: Clean build an app with newly ignored files and a nested output directory
     Given a fixture app "clean-nested-app"
     When a file named "config.rb" with:

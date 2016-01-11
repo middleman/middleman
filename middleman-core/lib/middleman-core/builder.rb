@@ -58,7 +58,7 @@ module Middleman
       prerender_css
       output_files
 
-      clean if @cleaning
+      clean! if @cleaning
 
       ::Middleman::Profiling.report('build')
 
@@ -219,8 +219,12 @@ module Middleman
 
     # Remove files which were not built in this cycle
     Contract ArrayOf[Pathname]
-    def clean
-      @to_clean.each do |f|
+    def clean!
+      to_remove = @to_clean.reject do |f|
+        app.config[:skip_build_clean].call(f.to_s)
+      end
+
+      to_remove.each do |f|
         FileUtils.rm(f)
         trigger(:deleted, f)
       end

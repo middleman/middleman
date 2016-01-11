@@ -191,6 +191,8 @@ module Middleman
       yaml: [%w(--- ---), %w(--- ...)]
     }, 'Allowed frontmatter delimiters'
 
+    define_setting :skip_build_clean, proc { |p| [/\.git/].any? { |r| r.match(p) } }, 'Whether some paths should not be removed during a clean build.'
+
     define_setting :watcher_disable, false, 'If the Listen watcher should not run'
     define_setting :watcher_force_polling, false, 'If the Listen watcher should run in polling mode'
     define_setting :watcher_latency, nil, 'The Listen watcher latency'

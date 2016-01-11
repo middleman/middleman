@@ -12,6 +12,7 @@ master
 * Fix new extension template
 * Don't parse frontmatter on ignored files.
 * Fix displaying frontmatter on `/__middleman/sitemap`
+* Add `skip_build_clean` config which when set to a block, will avoid removing non-generated paths from build, like .git #1716
 
 # 4.0.0
 
