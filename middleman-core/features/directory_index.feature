@@ -9,6 +9,7 @@ Feature: Directory Index
       | a_folder/needs_index/index.html               |
       | leave_me_alone.html                           |
       | wildcard_leave_me_alone.html                  |
+      | regex_leave_me_alone2.html                    |
       | evil spaces/index.html                        |
       | regular/index.html                            |
       | .htaccess                                     |
@@ -21,12 +22,13 @@ Feature: Directory Index
       | a_folder/needs_index.html                     |
       | leave_me_alone/index.html                     |
       | wildcard_leave_me_alone/index.html            |
+      | regex_leave_me_alone2/index.html              |
     And the file "needs_index/index.html" should contain "Indexable"
     And the file "a_folder/needs_index/index.html" should contain "Indexable"
     And the file "leave_me_alone.html" should contain "Stay away"
     And the file "regular/index.html" should contain "Regular"
     And the file "evil spaces/index.html" should contain "Filled with Evil Spaces"
-    
+
   Scenario: Preview normal file
     Given the Server is running at "indexable-app"
     When I go to "/needs_index/"

@@ -44,7 +44,7 @@ module Middleman
       # @option opts [Hash] locals Local variables for the template. These will be available when the template renders.
       # @option opts [Hash] data Extra metadata to add to the page. This is the same as frontmatter, though frontmatter will take precedence over metadata defined here. Available via {Resource#data}.
       # @return [void]
-      Contract String, Hash => Any
+      Contract Or[String, Regexp], Hash => Any
       def page(path, opts={})
         options = opts.dup
 
