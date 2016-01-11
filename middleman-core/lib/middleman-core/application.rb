@@ -327,18 +327,26 @@ module Middleman
       end
     end
 
+    # Whether we're in a specific mode
+    # @param [Symbol] key
+    # @return [Boolean]
+    Contract Symbol => Bool
+    def mode?(key)
+      config[:mode] == key
+    end
+
     # Whether we're in server mode
     # @return [Boolean] If we're in dev mode
     Contract Bool
     def server?
-      config[:mode] == :server
+      mode?(:server)
     end
 
     # Whether we're in build mode
     # @return [Boolean] If we're in dev mode
     Contract Bool
     def build?
-      config[:mode] == :build
+      mode?(:build)
     end
 
     # Whether we're in a specific environment
