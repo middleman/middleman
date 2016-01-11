@@ -11,6 +11,7 @@ master
 * Fixed `asset_hash` when path has query string or #hashes
 * Fix new extension template
 * Don't parse frontmatter on ignored files.
+* Fix displaying frontmatter on `/__middleman/sitemap`
 
 # 4.0.0
 

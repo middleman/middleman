@@ -42,7 +42,7 @@ module Middleman
         props['Source File'] = @resource.file_descriptor ? @resource.file_descriptor[:full_path].to_s.sub(/^#{Regexp.escape(ENV['MM_ROOT'] + '/')}/, '') : 'Dynamic'
 
         data = @resource.data
-        props['Data'] = data.inspect unless data.empty?
+        props['Data'] = data.to_hash(symbolize_keys: true).inspect unless data.empty?
 
         options = @resource.options
         props['Options'] = options.inspect unless options.empty?
