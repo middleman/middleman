@@ -3,46 +3,48 @@ require 'active_support/core_ext/hash/deep_merge'
 require 'monitor'
 require 'hamster'
 
+require 'middleman-core/extensions'
+
 # Files on Disk
-Middleman::Extensions.register :sitemap_ondisk, auto_activate: :before_configuration do
+::Middleman::Extensions.register :sitemap_ondisk, auto_activate: :before_configuration do
   require 'middleman-core/sitemap/extensions/on_disk'
-  Middleman::Sitemap::Extensions::OnDisk
+  ::Middleman::Sitemap::Extensions::OnDisk
 end
 
 # Files on Disk (outside the project root)
-Middleman::Extensions.register :sitemap_import, auto_activate: :before_configuration do
+::Middleman::Extensions.register :sitemap_import, auto_activate: :before_configuration do
   require 'middleman-core/sitemap/extensions/import'
-  Middleman::Sitemap::Extensions::Import
+  ::Middleman::Sitemap::Extensions::Import
 end
 
 # Endpoints
-Middleman::Extensions.register :sitemap_endpoint, auto_activate: :before_configuration do
+::Middleman::Extensions.register :sitemap_endpoint, auto_activate: :before_configuration do
   require 'middleman-core/sitemap/extensions/request_endpoints'
-  Middleman::Sitemap::Extensions::RequestEndpoints
+  ::Middleman::Sitemap::Extensions::RequestEndpoints
 end
 
 # Proxies
-Middleman::Extensions.register :sitemap_proxies, auto_activate: :before_configuration do
+::Middleman::Extensions.register :sitemap_proxies, auto_activate: :before_configuration do
   require 'middleman-core/sitemap/extensions/proxies'
-  Middleman::Sitemap::Extensions::Proxies
+  ::Middleman::Sitemap::Extensions::Proxies
 end
 
 # Redirects
-Middleman::Extensions.register :sitemap_redirects, auto_activate: :before_configuration do
+::Middleman::Extensions.register :sitemap_redirects, auto_activate: :before_configuration do
   require 'middleman-core/sitemap/extensions/redirects'
-  Middleman::Sitemap::Extensions::Redirects
+  ::Middleman::Sitemap::Extensions::Redirects
 end
 
 # Move Files
-Middleman::Extensions.register :sitemap_move_files, auto_activate: :before_configuration do
+::Middleman::Extensions.register :sitemap_move_files, auto_activate: :before_configuration do
   require 'middleman-core/sitemap/extensions/move_file'
-  Middleman::Sitemap::Extensions::MoveFile
+  ::Middleman::Sitemap::Extensions::MoveFile
 end
 
 # Ignores
-Middleman::Extensions.register :sitemap_ignore, auto_activate: :before_configuration do
+::Middleman::Extensions.register :sitemap_ignore, auto_activate: :before_configuration do
   require 'middleman-core/sitemap/extensions/ignores'
-  Middleman::Sitemap::Extensions::Ignores
+  ::Middleman::Sitemap::Extensions::Ignores
 end
 
 require 'middleman-core/contracts'

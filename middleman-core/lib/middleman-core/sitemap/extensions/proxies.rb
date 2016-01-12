@@ -9,8 +9,8 @@ module Middleman
       class Proxies < ConfigExtension
         self.resource_list_manipulator_priority = 0
 
-        # Expose `create_proxy` to config as `proxy`
-        expose_to_config proxy: :create_proxy
+        # Expose `proxy`
+        expose_to_config :proxy
 
         # Setup a proxy from a path to a target
         # @param [String] path The new, proxied path to create
@@ -22,7 +22,7 @@ module Middleman
         # @option opts [Hash] data Extra metadata to add to the page. This is the same as frontmatter, though frontmatter will take precedence over metadata defined here. Available via {Resource#data}.
         # @return [ProxyDescriptor]
         Contract String, String, Maybe[Hash] => RespondTo[:execute_descriptor]
-        def create_proxy(path, target, opts={})
+        def proxy(path, target, opts={})
           ProxyDescriptor.new(
             ::Middleman::Util.normalize_path(path),
             ::Middleman::Util.normalize_path(target),

@@ -7,11 +7,8 @@ module Middleman
       class Import < ConfigExtension
         self.resource_list_manipulator_priority = 1
 
-        # Expose `create_import_file` to config as `import_file`
-        expose_to_config import_file: :create_import_file
-
-        # Expose `create_import_path` to config as `import_path`
-        expose_to_config import_path: :create_import_path
+        # Expose methods
+        expose_to_config :import_file, :import_path
 
         ImportFileDescriptor = Struct.new(:from, :to) do
           def execute_descriptor(app, resources)
@@ -42,7 +39,7 @@ module Middleman
         # @param [String] to The new path.
         # @return [void]
         Contract String, String => ImportFileDescriptor
-        def create_import_file(from, to)
+        def import_file(from, to)
           ImportFileDescriptor.new(
             File.expand_path(from, @app.root),
             ::Middleman::Util.normalize_path(to)
@@ -54,7 +51,7 @@ module Middleman
         # @param [Proc] block Renaming method
         # @return [void]
         Contract String, Maybe[Proc] => ImportPathDescriptor
-        def create_import_path(from, &block)
+        def import_path(from, &block)
           ImportPathDescriptor.new(
             from,
             block_given? ? block : proc { |path| path }

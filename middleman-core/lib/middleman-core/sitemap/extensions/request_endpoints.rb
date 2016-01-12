@@ -3,53 +3,35 @@ require 'middleman-core/sitemap/resource'
 module Middleman
   module Sitemap
     module Extensions
-      class RequestEndpoints < Extension
+      class RequestEndpoints < ConfigExtension
         self.resource_list_manipulator_priority = 0
 
-        # Expose `create_endpoint` to config as `endpoint`
-        expose_to_config endpoint: :create_endpoint
+        # Expose `endpoint`
+        expose_to_config :endpoint
 
-        # Manages the list of proxy configurations and manipulates the sitemap
-        # to include new resources based on those configurations
-        def initialize(app, config={}, &block)
-          super
+        EndpointDescriptor = Struct.new(:path, :request_path, :block) do
+          def execute_descriptor(app, resources)
+            r = EndpointResource.new(
+              app.sitemap,
+              path,
+              request_path
+            )
+            r.output = block if block
 
-          @endpoints = {}
+            resources + [r]
+          end
         end
 
         # Setup a proxy from a path to a target
         # @param [String] path
         # @param [Hash] opts The :path value gives a request path if it
         # differs from the output path
-        Contract String, Or[({ path: String }), Proc] => Any
-        def create_endpoint(path, opts={}, &block)
-          endpoint = {
-            request_path: path
-          }
-
+        Contract String, Or[{ path: String }, Proc] => EndpointDescriptor
+        def endpoint(path, opts={}, &block)
           if block_given?
-            endpoint[:output] = block
+            EndpointDescriptor.new(path, path, block)
           else
-            endpoint[:request_path] = opts[:path] if opts.key?(:path)
-          end
-
-          @endpoints[path] = endpoint
-
-          @app.sitemap.rebuild_resource_list!(:added_endpoint)
-        end
-
-        # Update the main sitemap resource list
-        # @return Array<Middleman::Sitemap::Resource>
-        Contract ResourceList => ResourceList
-        def manipulate_resource_list(resources)
-          resources + @endpoints.map do |path, config|
-            r = EndpointResource.new(
-              @app.sitemap,
-              path,
-              config[:request_path]
-            )
-            r.output = config[:output] if config.key?(:output)
-            r
+            EndpointDescriptor.new(path, opts[:path] || path, nil)
           end
         end
       end

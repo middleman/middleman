@@ -5,13 +5,13 @@ module Middleman
       class Ignores < ConfigExtension
         self.resource_list_manipulator_priority = 0
 
-        expose_to_config ignore: :create_ignore
+        expose_to_config :ignore
 
         # Ignore a path or add an ignore callback
         # @param [String, Regexp] path Path glob expression, or path regex
         # @return [IgnoreDescriptor]
         Contract Maybe[Or[String, Regexp]], Maybe[Proc] => RespondTo[:execute_descriptor]
-        def create_ignore(path=nil, &block)
+        def ignore(path=nil, &block)
           @app.sitemap.invalidate_resources_not_ignored_cache!
           IgnoreDescriptor.new(path, block)
         end

@@ -9,8 +9,8 @@ module Middleman
       class MoveFile < ConfigExtension
         self.resource_list_manipulator_priority = 101
 
-        # Expose `create_move_file` to config as `move_file`
-        expose_to_config move_file: :create_move_file
+        # Expose `move_file`
+        expose_to_config :move_file
 
         MoveFileDescriptor = Struct.new(:from, :to) do
           def execute_descriptor(_app, resources)
@@ -27,7 +27,7 @@ module Middleman
         # @param [String] to The new path.
         # @return [void]
         Contract String, String => MoveFileDescriptor
-        def create_move_file(from, to)
+        def move_file(from, to)
           MoveFileDescriptor.new(
             ::Middleman::Util.normalize_path(from),
             ::Middleman::Util.normalize_path(to)

@@ -10,6 +10,9 @@ require 'rack/mime'
 
 # DbC
 require 'middleman-core/contracts'
+require 'middleman-core/application'
+require 'middleman-core/sources'
+require 'middleman-core/sitemap/resource'
 
 # Indifferent Access
 require 'hashie'
@@ -104,7 +107,7 @@ module Middleman
     Contract String => String
     def normalize_path(path)
       # The tr call works around a bug in Ruby's Unicode handling
-      URI.decode(path).sub(%r{^/}, '').tr('', '')
+      ::URI.decode(path).sub(%r{^/}, '').tr('', '')
     end
 
     # This is a separate method from normalize_path in case we
@@ -167,7 +170,7 @@ module Middleman
     # @param [String, Symbol] source The path to the file
     # @param [Hash] options Data to pass through.
     # @return [String]
-    Contract IsA['Middleman::Application'], Symbol, Or[String, Symbol], Hash => String
+    Contract ::Middleman::Application, Symbol, Or[String, Symbol], Hash => String
     def asset_path(app, kind, source, options={})
       return source if source.to_s.include?('//') || source.to_s.start_with?('data:')
 
@@ -198,7 +201,7 @@ module Middleman
     # @param [String] prefix The type prefix (such as "images")
     # @param [Hash] options Data to pass through.
     # @return [String] The fully qualified asset url
-    Contract IsA['Middleman::Application'], String, String, Hash => String
+    Contract ::Middleman::Application, String, String, Hash => String
     def asset_url(app, path, prefix='', options={})
       # Don't touch assets which already have a full path
       return path if path.include?('//') || path.start_with?('data:')
@@ -221,7 +224,7 @@ module Middleman
         end
       end
 
-      final_result = URI.encode(relative_path_from_resource(options[:current_resource], result, options[:relative]))
+      final_result = ::URI.encode(relative_path_from_resource(options[:current_resource], result, options[:relative]))
 
       result_uri = URI(final_result)
       result_uri.query = uri.query
@@ -232,7 +235,7 @@ module Middleman
     # Given a source path (referenced either absolutely or relatively)
     # or a Resource, this will produce the nice URL configured for that
     # path, respecting :relative_links, directory indexes, etc.
-    Contract IsA['Middleman::Application'], Or[String, IsA['Middleman::Sitemap::Resource']], Hash => String
+    Contract ::Middleman::Application, Or[String, ::Middleman::Sitemap::Resource], Hash => String
     def url_for(app, path_or_resource, options={})
       # Handle Resources and other things which define their own url method
       url = if path_or_resource.respond_to?(:url)
@@ -244,7 +247,7 @@ module Middleman
       # Try to parse URL
       begin
         uri = URI(url)
-      rescue URI::InvalidURIError
+      rescue ::URI::InvalidURIError
         # Nothing we can do with it, it's not really a URI
         return url
       end
@@ -287,7 +290,7 @@ module Middleman
 
       if resource
         uri.path = if this_resource
-          URI.encode(relative_path_from_resource(this_resource, resource_url, effective_relative))
+          ::URI.encode(relative_path_from_resource(this_resource, resource_url, effective_relative))
         else
           resource_url
         end
@@ -311,7 +314,7 @@ module Middleman
     # @param [String] path Request path/
     # @param [Middleman::Application] app The requesting app.
     # @return [String] Path with index file if necessary.
-    Contract String, IsA['Middleman::Application'] => String
+    Contract String, ::Middleman::Application => String
     def full_path(path, app)
       resource = app.sitemap.find_resource_by_destination_path(path)
 
@@ -422,7 +425,7 @@ module Middleman
     # @param [String] resource_url The target url.
     # @param [Boolean] relative If the path should be relative.
     # @return [String]
-    Contract IsA['Middleman::Sitemap::Resource'], String, Bool => String
+    Contract ::Middleman::Sitemap::Resource, String, Bool => String
     def relative_path_from_resource(curr_resource, resource_url, relative)
       # Switch to the relative path between resource and the given resource
       # if we've been asked to.
@@ -480,7 +483,7 @@ module Middleman
     #
     # @param [Pathname] path The path.
     # @return [Middleman::SourceFile]
-    Contract Pathname, Pathname, Symbol, Bool => IsA['Middleman::SourceFile']
+    Contract Pathname, Pathname, Symbol, Bool => ::Middleman::SourceFile
     def path_to_source_file(path, directory, type, destination_dir)
       types = Set.new([type])
 
@@ -496,7 +499,7 @@ module Middleman
     # @param [Middleman::Application] app The app.
     # @param [Pathname] files The original touched file paths.
     # @return [Middleman::SourceFile] All related file paths, not including the source file paths.
-    Contract IsA['Middleman::Application'], ArrayOf[Pathname] => ArrayOf[IsA['Middleman::SourceFile']]
+    Contract ::Middleman::Application, ArrayOf[Pathname] => ArrayOf[::Middleman::SourceFile]
     def find_related_files(app, files)
       all_extensions = files.flat_map { |f| collect_extensions(f.to_s) }
 
@@ -546,7 +549,7 @@ module Middleman
           tmpl_src = tmpl_src.gsub(/:([A-Za-z0-9]+)/, '{\1}')
         end
 
-        Addressable::Template.new ::Middleman::Util.normalize_path(tmpl_src)
+        ::Addressable::Template.new ::Middleman::Util.normalize_path(tmpl_src)
       end
 
       # Apply a URI template with the given data, producing a normalized
@@ -556,7 +559,7 @@ module Middleman
       # @param [Hash] data
       # @return [String] normalized path
       def apply_uri_template(template, data)
-        ::Middleman::Util.normalize_path Addressable::URI.unencode(template.expand(data)).to_s
+        ::Middleman::Util.normalize_path ::Addressable::URI.unencode(template.expand(data)).to_s
       end
 
       # Use a template to extract parameters from a path, and validate some special (date)

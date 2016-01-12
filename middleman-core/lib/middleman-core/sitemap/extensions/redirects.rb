@@ -6,43 +6,31 @@ module Middleman
     module Extensions
       # Manages the list of proxy configurations and manipulates the sitemap
       # to include new resources based on those configurations
-      class Redirects < Extension
+      class Redirects < ConfigExtension
         self.resource_list_manipulator_priority = 0
 
-        # Expose `create_redirect` to config as `redirect`
-        expose_to_config redirect: :create_redirect
+        # Expose `redirect`
+        expose_to_config :redirect
 
-        def initialize(app, config={}, &block)
-          super
+        RedirectDescriptor = Struct.new(:path, :to, :template) do
+          def execute_descriptor(app, resources)
+            r = RedirectResource.new(
+              app.sitemap,
+              path,
+              to
+            )
+            r.output = template if template
 
-          @redirects = {}
+            resources + [r]
+          end
         end
 
         # Setup a redirect from a path to a target
         # @param [String] path
         # @param [Hash] opts The :to value gives a target path
-        Contract String, ({ to: Or[String, IsA['Middleman::Sitemap::Resource']] }), Maybe[Proc] => Any
-        def create_redirect(path, opts={}, &block)
-          opts[:template] = block if block_given?
-
-          @redirects[path] = opts
-
-          @app.sitemap.rebuild_resource_list!(:added_redirect)
-        end
-
-        # Update the main sitemap resource list
-        # @return Array<Middleman::Sitemap::Resource>
-        Contract ResourceList => ResourceList
-        def manipulate_resource_list(resources)
-          resources + @redirects.map do |path, opts|
-            r = RedirectResource.new(
-              @app.sitemap,
-              path,
-              opts[:to]
-            )
-            r.output = opts[:template] if opts[:template]
-            r
-          end
+        Contract String, ({ to: Or[String, ::Middleman::Sitemap::Resource] }), Maybe[Proc] => RedirectDescriptor
+        def redirect(path, opts={}, &block)
+          RedirectDescriptor.new(path, opts[:to], block_given? ? block : nil)
         end
       end
 
