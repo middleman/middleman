@@ -5,6 +5,7 @@ module Middleman
       class Ignores < ConfigExtension
         self.resource_list_manipulator_priority = 0
 
+        expose_to_application :ignore
         expose_to_config :ignore
 
         # Ignore a path or add an ignore callback
