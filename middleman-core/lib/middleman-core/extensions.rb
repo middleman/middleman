@@ -120,6 +120,18 @@ module Middleman
           app.extensions.activate descriptor[:name]
         end
       end
+
+      def load_settings(app)
+        registered.each do |name, _|
+          begin
+            ext = load(name)
+            unless ext.global_config.all_settings.empty?
+              app.config.load_settings(ext.global_config.all_settings)
+            end
+          rescue LoadError
+          end
+        end
+      end
     end
   end
 end

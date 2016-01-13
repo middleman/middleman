@@ -9,6 +9,8 @@ module Middleman
       @app = app
       @activated = {}
 
+      ::Middleman::Extensions.load_settings(@app)
+
       manager = self
 
       {

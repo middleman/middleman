@@ -70,27 +70,27 @@ module Middleman
 
     # Which port preview should start on.
     # @return [Fixnum]
-    config.define_setting :port, 4567, 'The preview server port'
+    define_setting :port, 4567, 'The preview server port'
 
     # Which server name should be used
     # @return [NilClass, String]
-    config.define_setting :server_name, nil, 'The server name of preview server'
+    define_setting :server_name, nil, 'The server name of preview server'
 
     # Which bind address the preview server should use
     # @return [NilClass, String]
-    config.define_setting :bind_address, nil, 'The bind address of the preview server'
+    define_setting :bind_address, nil, 'The bind address of the preview server'
 
     # Whether to serve the preview server over HTTPS.
     # @return [Boolean]
-    config.define_setting :https, false, 'Serve the preview server over SSL/TLS'
+    define_setting :https, false, 'Serve the preview server over SSL/TLS'
 
     # The (optional) path to the SSL cert to use for the preview server.
     # @return [String]
-    config.define_setting :ssl_certificate, nil, 'Path to an X.509 certificate to use for the preview server'
+    define_setting :ssl_certificate, nil, 'Path to an X.509 certificate to use for the preview server'
 
     # The (optional) private key for the certificate in :ssl_certificate.
     # @return [String]
-    config.define_setting :ssl_private_key, nil, "Path to an RSA private key for the preview server's certificate"
+    define_setting :ssl_private_key, nil, "Path to an RSA private key for the preview server's certificate"
 
     # Name of the source directory
     # @return [String]
@@ -214,6 +214,7 @@ module Middleman
       @callbacks.install_methods!(self, [
         :initialized,
         :configure,
+        :before_extensions,
         :before_sitemap,
         :before_configuration,
         :after_configuration,
@@ -245,6 +246,8 @@ module Middleman
       ::Middleman::FileRenderer.cache.clear
       ::Middleman::TemplateRenderer.cache.clear
 
+      execute_callbacks(:before_extensions)
+
       @extensions = ::Middleman::ExtensionManager.new(self)
 
       # Evaluate a passed block if given
@@ -257,13 +260,6 @@ module Middleman
 
       ::Middleman::Extension.clear_after_extension_callbacks
 
-      after_configuration_eval(&method(:prune_tilt_templates))
-
-      start_lifecycle
-    end
-
-    # Boot the app.
-    def start_lifecycle
       # Before config is parsed, before extensions get to it.
       execute_callbacks(:initialized)
 
@@ -273,10 +269,6 @@ module Middleman
       # Eval config.
       evaluate_configuration!
 
-      if Object.const_defined?(:Encoding)
-        Encoding.default_external = config[:encoding]
-      end
-
       # Run any `configure` blocks for the current environment.
       execute_callbacks([:configure, config[:environment]])
 
@@ -285,6 +277,12 @@ module Middleman
 
       # Post parsing, pre-extension callback
       execute_callbacks(:after_configuration_eval)
+
+      if Object.const_defined?(:Encoding)
+        Encoding.default_external = config[:encoding]
+      end
+
+      prune_tilt_templates!
 
       # After extensions have worked after_config
       execute_callbacks(:after_configuration)
@@ -317,7 +315,7 @@ module Middleman
     end
 
     # Clean up missing Tilt exts
-    def prune_tilt_templates
+    def prune_tilt_templates!
       ::Tilt.mappings.each do |key, _|
         begin
           ::Tilt[".#{key}"]

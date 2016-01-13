@@ -4,11 +4,10 @@ module Middleman
   module Renderers
     # Sass renderer
     class Less < ::Middleman::Extension
+      define_setting :less, {}, 'LESS compiler options'
+
       def initialize(app, options={}, &block)
         super
-
-        # Default less options
-        app.config.define_setting :less, {}, 'LESS compiler options'
 
         # Tell Tilt to use it as well (for inline sass blocks)
         ::Tilt.register 'less', LocalLoadingLessTemplate

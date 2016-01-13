@@ -1,9 +1,17 @@
 require 'sass'
 
+
 module Middleman
   module Renderers
     # Sass renderer
     class Sass < ::Middleman::Extension
+
+      opts = { output_style: :nested }
+      opts[:line_comments] = false if ENV['TEST']
+      define_setting :sass, opts, 'Sass engine options'
+      define_setting :sass_assets_paths, [], 'Paths to extra SASS/SCSS files'
+      define_setting :sass_source_maps, nil, 'Whether to inline sourcemap into Sass'
+
       # Setup extension
       def initialize(app, options={}, &block)
         super
@@ -11,15 +19,6 @@ module Middleman
         logger.info '== Preferring use of LibSass' if defined?(::SassC)
 
         app.files.ignore :sass_cache, :source, /(^|\/)\.sass-cache\//
-
-        opts = { output_style: :nested }
-        opts[:line_comments] = false if ENV['TEST']
-
-        # Default sass options
-        app.config.define_setting :sass, opts, 'Sass engine options'
-
-        app.config.define_setting :sass_assets_paths, [], 'Paths to extra SASS/SCSS files'
-        app.config.define_setting :sass_source_maps, app.development?, 'Whether to inline sourcemap into Sass'
 
         # Tell Tilt to use it as well (for inline sass blocks)
         ::Tilt.register 'sass', SassPlusCSSFilenameTemplate
@@ -75,7 +74,7 @@ module Middleman
           ctx = @context
 
           more_opts = {
-            load_paths: ::Sass.load_paths | ctx.config[:sass_assets_paths],
+            load_paths: ::Sass.load_paths | ctx.app.config[:sass_assets_paths],
             filename: eval_file,
             line: line,
             syntax: syntax,
@@ -85,7 +84,7 @@ module Middleman
             )
           }
 
-          if ctx.config[:sass_source_maps]
+          if ctx.app.config[:sass_source_maps] || (ctx.app.config[:sass_source_maps].nil? && ctx.app.development?)
             more_opts[:source_map_file] = '.'
             more_opts[:source_map_embed] = true
             more_opts[:source_map_contents] = true

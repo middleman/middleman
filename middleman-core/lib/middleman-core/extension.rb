@@ -135,6 +135,23 @@ module Middleman
         config.define_setting(key, default, description, options)
       end
 
+      # @api private
+      # @return [Middleman::Configuration::ConfigurationManager] The defined global options for this extension.
+      def global_config
+        @_global_config ||= ::Middleman::Configuration::ConfigurationManager.new
+      end
+
+      # Add an global option to this extension.
+      # @see Middleman::Configuration::ConfigurationManager#define_setting
+      # @example
+      #   option :compress, false, 'Whether to compress the output'
+      # @param [Symbol] key The name of the option
+      # @param [Object] default The default value for the option
+      # @param [String] description A human-readable description of what the option does
+      def define_setting(key, default=nil, description=nil, options={})
+        global_config.define_setting(key, default, description, options)
+      end
+
       # Short-hand for simple Sitemap manipulation
       # @example A generator which returns an array of resources
       #   resources :make_resources

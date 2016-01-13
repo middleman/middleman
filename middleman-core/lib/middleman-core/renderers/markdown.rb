@@ -2,14 +2,8 @@ module Middleman
   module Renderers
     # Markdown renderer
     class Markdown < ::Middleman::Extension
-      # Once registered
-      def initialize(app, options={}, &block)
-        super
-
-        # Set our preference for a markdown engine
-        app.config.define_setting :markdown_engine, :kramdown, 'Preferred markdown engine'
-        app.config.define_setting :markdown_engine_prefix, ::Tilt, 'The parent module for markdown template engines'
-      end
+      define_setting :markdown_engine, :kramdown, 'Preferred markdown engine'
+      define_setting :markdown_engine_prefix, ::Tilt, 'The parent module for markdown template engines'
 
       # Once configuration is parsed
       def after_configuration

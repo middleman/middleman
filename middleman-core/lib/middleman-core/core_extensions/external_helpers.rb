@@ -2,17 +2,12 @@ module Middleman
   module CoreExtensions
     # Load helpers in `helpers/`
     class ExternalHelpers < Extension
-      def initialize(app, options_hash={}, &block)
-        super
-
-        # Setup a default helpers paths
-        app.config.define_setting :helpers_dir, 'helpers', 'Directory to autoload helper modules from'
-        app.config.define_setting :helpers_filename_glob, '**.rb', 'Glob pattern for matching helper ruby files'
-        app.config.define_setting :helpers_filename_to_module_name_proc, proc { |filename|
-          basename = File.basename(filename, File.extname(filename))
-          basename.camelcase
-        }, 'Proc implementing the conversion from helper filename to module name'
-      end
+      define_setting :helpers_dir, 'helpers', 'Directory to autoload helper modules from'
+      define_setting :helpers_filename_glob, '**.rb', 'Glob pattern for matching helper ruby files'
+      define_setting :helpers_filename_to_module_name_proc, proc { |filename|
+        basename = File.basename(filename, File.extname(filename))
+        basename.camelcase
+      }, 'Proc implementing the conversion from helper filename to module name'
 
       def after_configuration
         helpers_path = File.join(app.root, app.config[:helpers_dir])

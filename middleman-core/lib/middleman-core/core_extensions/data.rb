@@ -8,6 +8,8 @@ module Middleman
     class Data < Extension
       attr_reader :data_store
 
+      define_setting :data_dir, 'data', 'The directory data files are stored in'
+
       # Make the internal `data_store` method available as `app.data`
       expose_to_application data: :data_store
 
@@ -21,7 +23,6 @@ module Middleman
         super
 
         @data_store = DataStore.new(app, DATA_FILE_MATCHER)
-        app.config.define_setting :data_dir, 'data', 'The directory data files are stored in'
 
         start_watching(app.config[:data_dir])
       end
