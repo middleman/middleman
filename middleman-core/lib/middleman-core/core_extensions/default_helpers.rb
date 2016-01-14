@@ -9,7 +9,7 @@ class Padrino::Helpers::OutputHelpers::ErbHandler
   def capture_from_template(*args, &block)
     self.output_buffer = ''
     buf_was = output_buffer
-    raw = block.call(*args)
+    raw = yield(*args)
     captured = template.instance_variable_get(:@_out_buf)
     self.output_buffer = buf_was
     engine_matches?(block) && !captured.empty? ? captured : raw
@@ -55,7 +55,7 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
           output.safe_concat ::Padrino::Helpers::TagHelpers::NEWLINE
         end
       else
-        output.safe_concat "#{content}"
+        output.safe_concat content.to_s
       end
       output.safe_concat "</#{name}>"
 
@@ -66,7 +66,7 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
       result = if handler = auto_find_proper_handler(&block)
         handler.capture_from_template(*args, &block)
       else
-        block.call(*args)
+        yield(*args)
       end
 
       ::ActiveSupport::SafeBuffer.new.safe_concat(result)

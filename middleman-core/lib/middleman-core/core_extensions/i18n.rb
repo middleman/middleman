@@ -127,7 +127,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
   end
 
   # Backwards API compat
-  alias_method :langs, :locales
+  alias langs locales
 
   Contract Symbol
   def locale
@@ -135,7 +135,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
   end
 
   # Backwards API compat
-  alias_method :lang, :locale
+  alias lang locale
 
   # Update the main sitemap resource list
   # @return Array<Middleman::Sitemap::Resource>
@@ -274,7 +274,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
 
     File.dirname(path).split('/').each do |path_sub|
       next if path_sub == ''
-      partially_localized_path = "#{partially_localized_path}/#{(::I18n.t("paths.#{path_sub}", default: path_sub).to_s)}"
+      partially_localized_path = "#{partially_localized_path}/#{::I18n.t("paths.#{path_sub}", default: path_sub)}"
     end
 
     path = "#{partially_localized_path}/#{File.basename(path)}"

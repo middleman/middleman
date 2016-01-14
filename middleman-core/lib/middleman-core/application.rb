@@ -170,7 +170,7 @@ module Middleman
         ignored = false
 
         file[:relative_path].ascend do |f|
-          if f.basename.to_s.match %r{^_[^_]}
+          if f.basename.to_s =~ %r{^_[^_]}
             ignored = true
             break
           end
@@ -180,8 +180,7 @@ module Middleman
       end,
 
       layout: proc do |file, _sitemap_app|
-        file[:relative_path].to_s.start_with?('layout.') ||
-          file[:relative_path].to_s.start_with?('layouts/')
+        file[:relative_path].to_s.start_with?('layout.', 'layouts/')
       end
     }, 'Callbacks that can exclude paths from the sitemap'
 
@@ -210,26 +209,26 @@ module Middleman
       # Search the root of the project for required files
       $LOAD_PATH.unshift(root) unless $LOAD_PATH.include?(root)
 
-      ::Middleman::Util.instrument "application.setup" do
+      ::Middleman::Util.instrument 'application.setup' do
         @callbacks = ::Middleman::CallbackManager.new
         @callbacks.install_methods!(self, [
-          :initialized,
-          :configure,
-          :before_extensions,
-          :before_instance_block,
-          :before_sitemap,
-          :before_configuration,
-          :after_configuration,
-          :after_configuration_eval,
-          :ready,
-          :before_build,
-          :after_build,
-          :before_shutdown,
-          :before, # Before Rack requests
-          :before_render,
-          :after_render,
-          :before_server
-        ])
+                                      :initialized,
+                                      :configure,
+                                      :before_extensions,
+                                      :before_instance_block,
+                                      :before_sitemap,
+                                      :before_configuration,
+                                      :after_configuration,
+                                      :after_configuration_eval,
+                                      :ready,
+                                      :before_build,
+                                      :after_build,
+                                      :before_shutdown,
+                                      :before, # Before Rack requests
+                                      :before_render,
+                                      :after_render,
+                                      :before_server
+                                    ])
 
         @middleware = Set.new
         @mappings = Set.new
@@ -431,6 +430,6 @@ module Middleman
     def to_s
       "#<Middleman::Application:0x#{object_id}>"
     end
-    alias_method :inspect, :to_s # Ruby 2.0 calls inspect for NoMethodError instead of to_s
+    alias inspect to_s # Ruby 2.0 calls inspect for NoMethodError instead of to_s
   end
 end

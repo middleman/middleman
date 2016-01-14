@@ -20,7 +20,7 @@ module Middleman
     def_delegator :@app, :logger
 
     # Sort order, images, fonts, js/css and finally everything else.
-    SORT_ORDER = %w(.png .jpeg .jpg .gif .bmp .svg .svgz .webp .ico .woff .woff2 .otf .ttf .eot .js .css)
+    SORT_ORDER = %w(.png .jpeg .jpg .gif .bmp .svg .svgz .webp .ico .woff .woff2 .otf .ttf .eot .js .css).freeze
 
     # Create a new Builder instance.
     # @param [Middleman::Application] app The app to build.
@@ -74,8 +74,8 @@ module Middleman
       logger.debug '== Prerendering CSS'
 
       css_files = @app.sitemap.resources
-          .select { |resource| resource.ext == '.css' }
-          .each(&method(:output_resource))
+                      .select { |resource| resource.ext == '.css' }
+                      .each(&method(:output_resource))
 
       # Double-check for compass sprites
       if @app.files.find_new_files!.length > 0
@@ -93,10 +93,10 @@ module Middleman
       logger.debug '== Building files'
 
       @app.sitemap.resources
-        .sort_by { |resource| SORT_ORDER.index(resource.ext) || 100 }
-        .reject { |resource| resource.ext == '.css' }
-        .select { |resource| !@glob || File.fnmatch(@glob, resource.destination_path) }
-        .each(&method(:output_resource))
+          .sort_by { |resource| SORT_ORDER.index(resource.ext) || 100 }
+          .reject { |resource| resource.ext == '.css' }
+          .select { |resource| !@glob || File.fnmatch(@glob, resource.destination_path) }
+          .each(&method(:output_resource))
     end
 
     # Figure out the correct event mode.
@@ -119,9 +119,9 @@ module Middleman
     Contract Pathname, String => Tempfile
     def write_tempfile(output_file, contents)
       file = Tempfile.new([
-        File.basename(output_file),
-        File.extname(output_file)
-      ])
+                            File.basename(output_file),
+                            File.extname(output_file)
+                          ])
       file.binmode
       file.write(contents)
       file.close
@@ -136,24 +136,24 @@ module Middleman
     Contract Pathname, Or[String, Pathname] => Any
     def export_file!(output_file, source)
       # ::Middleman::Util.instrument "write_file", output_file: output_file do
-        source = write_tempfile(output_file, source.to_s) if source.is_a? String
+      source = write_tempfile(output_file, source.to_s) if source.is_a? String
 
-        method, source_path = if source.is_a? Tempfile
-          [::FileUtils.method(:mv), source.path]
-        else
-          [::FileUtils.method(:cp), source.to_s]
-        end
+      method, source_path = if source.is_a? Tempfile
+        [::FileUtils.method(:mv), source.path]
+      else
+        [::FileUtils.method(:cp), source.to_s]
+      end
 
-        mode = which_mode(output_file, source_path)
+      mode = which_mode(output_file, source_path)
 
-        if mode == :created || mode == :updated
-          ::FileUtils.mkdir_p(output_file.dirname)
-          method.call(source_path, output_file.to_s)
-        end
+      if mode == :created || mode == :updated
+        ::FileUtils.mkdir_p(output_file.dirname)
+        method.call(source_path, output_file.to_s)
+      end
 
-        source.unlink if source.is_a? Tempfile
+      source.unlink if source.is_a? Tempfile
 
-        trigger(mode, output_file)
+      trigger(mode, output_file)
       # end
     end
 

@@ -8,7 +8,7 @@ module Middleman
       # in the wrong direction
       ALIASES = {
         escape_html: :filter_html
-      }
+      }.freeze
 
       def initialize(*args, &block)
         super

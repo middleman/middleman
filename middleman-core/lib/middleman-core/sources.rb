@@ -15,10 +15,10 @@ module Middleman
     include Contracts
 
     # Types which could cause output to change.
-    OUTPUT_TYPES = [:source, :locales, :data]
+    OUTPUT_TYPES = [:source, :locales, :data].freeze
 
     # Types which require a reload to eval ruby
-    CODE_TYPES = [:reload]
+    CODE_TYPES = [:reload].freeze
 
     Matcher = Or[Regexp, RespondTo[:call]]
 
@@ -257,11 +257,11 @@ module Middleman
     #
     # @param [nil,Regexp] matcher A Regexp to match the change path against
     Contract Maybe[Matcher] => Any
-    def changed(matcher=nil, &block)
+    def changed(matcher=nil, &_block)
       on_change OUTPUT_TYPES do |updated, _removed|
         updated
           .select { |f| matcher.nil? ? true : matches?(matcher, f) }
-          .each { |f| block.call(f[:relative_path]) }
+          .each { |f| yield f[:relative_path] }
       end
     end
 
@@ -269,11 +269,11 @@ module Middleman
     #
     # @param [nil,Regexp] matcher A Regexp to match the change path against
     Contract Maybe[Matcher] => Any
-    def deleted(matcher=nil, &block)
+    def deleted(matcher=nil, &_block)
       on_change OUTPUT_TYPES do |_updated, removed|
         removed
           .select { |f| matcher.nil? ? true : matches?(matcher, f) }
-          .each { |f| block.call(f[:relative_path]) }
+          .each { |f| yield f[:relative_path] }
       end
     end
 

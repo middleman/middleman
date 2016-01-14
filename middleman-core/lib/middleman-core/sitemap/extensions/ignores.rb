@@ -23,9 +23,9 @@ module Middleman
               # Ignore based on the source path (without template extensions)
               if ignored?(r.path)
                 r.ignore!
-              else
+              elsif !r.is_a?(ProxyResource) && r.file_descriptor && ignored?(r.file_descriptor[:relative_path].to_s)
                 # This allows files to be ignored by their source file name (with template extensions)
-                r.ignore! if !r.is_a?(ProxyResource) && r.file_descriptor && ignored?(r.file_descriptor[:relative_path].to_s)
+                r.ignore!
               end
 
               r

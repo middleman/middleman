@@ -10,7 +10,7 @@ module Middleman
           true
         end
 
-        alias_method :to_browser, :to_s
+        alias to_browser to_s
       end
 
       class ServerPlainHostname < SimpleDelegator
@@ -24,7 +24,7 @@ module Middleman
           # rubocop:enable Style/CaseEquality
         end
 
-        alias_method :to_browser, :to_s
+        alias to_browser to_s
       end
 
       def self.new(string)

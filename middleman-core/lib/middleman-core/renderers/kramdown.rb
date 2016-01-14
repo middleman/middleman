@@ -35,7 +35,7 @@ module Middleman
       def convert_a(el, indent)
         content = inner(el, indent)
 
-        if el.attr['href'] =~ /\Amailto:/
+        if el.attr['href'].start_with?('mailto:')
           mail_addr = el.attr['href'].sub(/\Amailto:/, '')
           href = obfuscate('mailto') << ':' << obfuscate(mail_addr)
           content = obfuscate(content) if content == mail_addr

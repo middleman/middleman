@@ -247,10 +247,10 @@ module Middleman
           end
         end
 
-        if is_logging
-          http_opts[:Logger] = FilteredWebrickLog.new
+        http_opts[:Logger] = if is_logging
+          FilteredWebrickLog.new
         else
-          http_opts[:Logger] = ::WEBrick::Log.new(nil, 0)
+          ::WEBrick::Log.new(nil, 0)
         end
 
         begin

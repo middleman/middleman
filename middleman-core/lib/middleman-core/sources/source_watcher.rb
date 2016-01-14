@@ -202,7 +202,7 @@ module Middleman
     def to_s
       "#<Middleman::SourceWatcher:0x#{object_id} type=#{@type.inspect} directory=#{@directory.inspect}>"
     end
-    alias_method :inspect, :to_s # Ruby 2.0 calls inspect for NoMethodError instead of to_s
+    alias inspect to_s # Ruby 2.0 calls inspect for NoMethodError instead of to_s
 
     protected
 
@@ -256,10 +256,10 @@ module Middleman
                       end
 
       execute_callbacks(:on_change, [
-        valid_updates,
-        valid_removes,
-        self
-      ]) unless valid_updates.empty? && valid_removes.empty?
+                          valid_updates,
+                          valid_removes,
+                          self
+                        ]) unless valid_updates.empty? && valid_removes.empty?
     end
 
     def add_file_to_cache(f)

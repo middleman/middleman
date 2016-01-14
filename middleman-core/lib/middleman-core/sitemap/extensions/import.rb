@@ -23,14 +23,14 @@ module Middleman
             resources + ::Middleman::Util.glob_directory(File.join(from, '**/*'))
                         .reject { |path| File.directory?(path) }
                         .map do |path|
-              target_path = Pathname(path).relative_path_from(Pathname(from).parent).to_s
+                          target_path = Pathname(path).relative_path_from(Pathname(from).parent).to_s
 
-              ::Middleman::Sitemap::Resource.new(
-                app.sitemap,
-                renameProc.call(target_path, path),
-                path
-              )
-            end
+                          ::Middleman::Sitemap::Resource.new(
+                            app.sitemap,
+                            renameProc.call(target_path, path),
+                            path
+                          )
+                        end
           end
         end
 

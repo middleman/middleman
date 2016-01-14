@@ -496,8 +496,8 @@ module Middleman
         @descriptors[k] = []
 
         define_singleton_method(:"__original_#{v}", &method(v))
-        define_singleton_method(v) do |*args, &block|
-          @descriptors[k] << method(:"__original_#{v}").call(*args, &block)
+        define_singleton_method(v) do |*args, &b|
+          @descriptors[k] << method(:"__original_#{v}").call(*args, &b)
           @app.sitemap.rebuild_resource_list!(:"first_run_change_#{v}")
         end
       end

@@ -29,9 +29,9 @@ module Middleman
       # The path to use when requesting this resource. Normally it's
       # the same as {#destination_path} but it can be overridden in subclasses.
       # @return [String]
-      alias_method :request_path, :destination_path
+      alias request_path destination_path
 
-      METADATA_HASH = ({ options: Maybe[Hash], locals: Maybe[Hash], page: Maybe[Hash] })
+      METADATA_HASH = { options: Maybe[Hash], locals: Maybe[Hash], page: Maybe[Hash] }.freeze
 
       # The metadata for this resource
       # @return [Hash]
@@ -53,10 +53,10 @@ module Middleman
 
         source = Pathname(source) if source && source.is_a?(String)
 
-        if source && source.is_a?(Pathname)
-          @file_descriptor = ::Middleman::SourceFile.new(source.relative_path_from(@app.source_dir), source, @app.source_dir, Set.new([:source]))
+        @file_descriptor = if source && source.is_a?(Pathname)
+          ::Middleman::SourceFile.new(source.relative_path_from(@app.source_dir), source, @app.source_dir, Set.new([:source]))
         else
-          @file_descriptor = source
+          source
         end
 
         @destination_path = @path
@@ -130,16 +130,16 @@ module Middleman
         return ::Middleman::FileRenderer.new(@app, file_descriptor[:full_path].to_s).template_data_for_file unless template?
 
         # ::Middleman::Util.instrument 'render.resource', path: file_descriptor[:full_path].to_s, destination_path: destination_path do
-          md   = metadata
-          opts = md[:options].deep_merge(opts)
-          locs = md[:locals].deep_merge(locs)
-          locs[:current_path] ||= destination_path
+        md   = metadata
+        opts = md[:options].deep_merge(opts)
+        locs = md[:locals].deep_merge(locs)
+        locs[:current_path] ||= destination_path
 
-          # Certain output file types don't use layouts
-          opts[:layout] = false if !opts.key?(:layout) && ext != '.html'
+        # Certain output file types don't use layouts
+        opts[:layout] = false if !opts.key?(:layout) && ext != '.html'
 
-          renderer = ::Middleman::TemplateRenderer.new(@app, file_descriptor[:full_path].to_s)
-          renderer.render(locs, opts)
+        renderer = ::Middleman::TemplateRenderer.new(@app, file_descriptor[:full_path].to_s)
+        renderer.render(locs, opts)
         # end
       end
 
@@ -189,7 +189,7 @@ module Middleman
       def to_s
         "#<#{self.class} path=#{@path}>"
       end
-      alias_method :inspect, :to_s # Ruby 2.0 calls inspect for NoMethodError instead of to_s
+      alias inspect to_s # Ruby 2.0 calls inspect for NoMethodError instead of to_s
     end
 
     class StringResource < Resource

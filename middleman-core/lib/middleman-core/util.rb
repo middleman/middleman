@@ -153,7 +153,7 @@ module Middleman
           all_files_under(child, &ignore)
         end.compact
       elsif path.file?
-        if block_given? && ignore.call(path)
+        if block_given? && yield(path)
           []
         else
           [path]
@@ -332,7 +332,7 @@ module Middleman
     end
 
     Contract String, String, ArrayOf[String], Proc => String
-    def rewrite_paths(body, _path, exts, &block)
+    def rewrite_paths(body, _path, exts, &_block)
       matcher = /([=\'\"\(,]\s*)([^\s\'\"\)>]+(#{Regexp.union(exts)}))/
 
       url_fn_prefix = 'url('
@@ -349,7 +349,7 @@ module Middleman
         begin
           uri = ::Addressable::URI.parse(asset_path)
 
-          if uri.relative? && uri.host.nil? && (result = block.call(asset_path))
+          if uri.relative? && uri.host.nil? && (result = yield asset_path)
             "#{opening_character}#{result}"
           else
             match
@@ -488,7 +488,7 @@ module Middleman
       types = Set.new([type])
 
       relative_path = path.relative_path_from(directory)
-      relative_path   = File.join(destination_dir, relative_path) if destination_dir
+      relative_path = File.join(destination_dir, relative_path) if destination_dir
 
       ::Middleman::SourceFile.new(Pathname(relative_path), path, directory, types)
     end

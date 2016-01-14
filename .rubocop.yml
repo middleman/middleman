@@ -52,6 +52,8 @@ CaseIndentation:
   IndentWhenRelativeTo: end
 TrivialAccessors:
   ExactNameMatch: true
+SingleLineBlockParams:
+  Enabled: false
 Metrics/AbcSize:
   Enabled: false
 Metrics/PerceivedComplexity:

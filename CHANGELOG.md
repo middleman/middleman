@@ -13,6 +13,8 @@ master
 * Don't parse frontmatter on ignored files.
 * Fix displaying frontmatter on `/__middleman/sitemap`
 * Add `skip_build_clean` config which when set to a block, will avoid removing non-generated paths from build, like .git #1716
+* Minor performance improvements
+* DRY-up config.rb-specific commands like `ignore` or `path`.
 
 # 4.0.0
 

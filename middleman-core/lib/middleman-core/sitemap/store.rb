@@ -201,7 +201,7 @@ module Middleman
         @lock.synchronize do
           return unless @needs_sitemap_rebuild
 
-          ::Middleman::Util.instrument "sitemap.update", reasons: @rebuild_reasons.uniq do
+          ::Middleman::Util.instrument 'sitemap.update', reasons: @rebuild_reasons.uniq do
             @needs_sitemap_rebuild = false
 
             @app.logger.debug '== Rebuilding resource list'
@@ -209,7 +209,7 @@ module Middleman
             @resources = []
 
             @resource_list_manipulators.each do |m|
-              ::Middleman::Util.instrument "sitemap.manipulator", name: m[:name] do
+              ::Middleman::Util.instrument 'sitemap.manipulator', name: m[:name] do
                 @app.logger.debug "== Running manipulator: #{m[:name]}"
                 @resources = m[:manipulator].send(m[:custom_name] || :manipulate_resource_list, @resources)
 

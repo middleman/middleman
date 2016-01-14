@@ -44,13 +44,13 @@ module Middleman
         def children
           return [] unless directory_index?
 
-          if eponymous_directory?
-            base_path = eponymous_directory_path
-            prefix    = %r{^#{base_path.sub("/", "\\/")}}
+          base_path = if eponymous_directory?
+            eponymous_directory_path
           else
-            base_path = path.sub("#{@app.config[:index_file]}", '')
-            prefix    = %r{^#{base_path.sub("/", "\\/")}}
+            path.sub(@app.config[:index_file].to_s, '')
           end
+
+          prefix = %r{^#{base_path.sub("/", "\\/")}}
 
           @store.resources.select do |sub_resource|
             if sub_resource.path == path || sub_resource.path !~ prefix

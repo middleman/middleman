@@ -162,7 +162,7 @@ module Middleman
       return nil unless current_path
       sitemap.find_resource_by_destination_path(current_path)
     end
-    alias_method :current_page, :current_resource
+    alias current_page current_resource
 
     protected
 

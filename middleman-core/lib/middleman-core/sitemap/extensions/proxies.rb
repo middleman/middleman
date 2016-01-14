@@ -113,7 +113,7 @@ module Middleman
       def to_s
         "#<#{self.class} path=#{@path} target=#{@target}>"
       end
-      alias_method :inspect, :to_s
+      alias inspect to_s
     end
   end
 end

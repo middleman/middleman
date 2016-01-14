@@ -1,11 +1,9 @@
 require 'sass'
 
-
 module Middleman
   module Renderers
     # Sass renderer
     class Sass < ::Middleman::Extension
-
       opts = { output_style: :nested }
       opts[:line_comments] = false if ENV['TEST']
       define_setting :sass, opts, 'Sass engine options'

@@ -3,7 +3,7 @@ require 'rake'
 require File.expand_path('../middleman-core/lib/middleman-core/version.rb', __FILE__)
 
 ROOT = File.expand_path(File.dirname(__FILE__))
-GEM_NAME = 'middleman'
+GEM_NAME = 'middleman'.freeze
 
 middleman_gems = %w(middleman-core middleman-cli middleman)
 GEM_PATHS = middleman_gems.freeze
@@ -36,7 +36,7 @@ end
 desc 'Generate documentation for all middleman gems'
 task :doc do
   GEM_PATHS.each do |g|
-    Dir.chdir("#{File.join(ROOT, g)}") { sh "#{Gem.ruby} -S rake yard" }
+    Dir.chdir(File.join(ROOT, g).to_s) { sh "#{Gem.ruby} -S rake yard" }
   end
 end
 
@@ -45,14 +45,14 @@ task :test do
   Rake::Task['rubocop'].invoke
 
   GEM_PATHS.each do |g|
-    Dir.chdir("#{File.join(ROOT, g)}") { sh "#{Gem.ruby} -S rake test" }
+    Dir.chdir(File.join(ROOT, g).to_s) { sh "#{Gem.ruby} -S rake test" }
   end
 end
 
 desc 'Run specs for all middleman gems'
 task :spec do
   GEM_PATHS.each do |g|
-    Dir.chdir("#{File.join(ROOT, g)}") { sh "#{Gem.ruby} -S rake spec" }
+    Dir.chdir(File.join(ROOT, g).to_s) { sh "#{Gem.ruby} -S rake spec" }
   end
 end
 

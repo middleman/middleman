@@ -21,7 +21,7 @@ module Middleman
         tilde_files: /~$/,
         ds_store: /\.DS_Store$/,
         git: /(^|\/)\.git(ignore|modules|\/)/
-      }
+      }.freeze
 
       # Setup the extension.
       def initialize(app, config={}, &block)

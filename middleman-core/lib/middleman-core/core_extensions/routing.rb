@@ -24,8 +24,8 @@ module Middleman
           normalized_path = '/' + ::Middleman::Util.strip_leading_slash(normalized_path) if normalized_path.is_a?(String)
 
           resources
-          .select { |r| ::Middleman::Util.path_match(normalized_path, "/#{r.path}") }
-          .each { |r| r.add_metadata(metadata) }
+            .select { |r| ::Middleman::Util.path_match(normalized_path, "/#{r.path}") }
+            .each { |r| r.add_metadata(metadata) }
 
           resources
         end

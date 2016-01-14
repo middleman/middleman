@@ -6,7 +6,6 @@ require 'middleman-core/contracts'
 
 module Middleman
   module CoreExtensions
-
     class InlineURLRewriter < ::Middleman::Extension
       include Contracts
 
@@ -19,7 +18,7 @@ module Middleman
         url_extensions: ArrayOf[String],
         source_extensions: ArrayOf[String],
         ignore: ArrayOf[IGNORE_DESCRIPTOR]
-      }
+      }.freeze
 
       def initialize(app, options_hash={}, &block)
         super
@@ -33,19 +32,17 @@ module Middleman
       end
 
       def after_configuration
-        app.use Rack, {
-          rewriters: @rewriters.values,
-          middleman_app: @app
-        }
+        app.use Rack,           rewriters: @rewriters.values,
+                                middleman_app: @app
       end
 
       class Rack
         include Contracts
 
-        Contract RespondTo[:call], ({
+        Contract RespondTo[:call], {
           middleman_app: IsA['Middleman::Application'],
           rewriters: ArrayOf[REWRITER_DESCRIPTOR]
-        }) => Any
+        } => Any
         def initialize(app, options={})
           @rack_app = app
           @middleman_app = options.fetch(:middleman_app)
@@ -59,15 +56,15 @@ module Middleman
           return [status, headers, response] if env['bypass_inline_url_rewriter'] == 'true'
 
           all_source_exts = @rewriters
-              .reduce([]) { |sum, rewriter| sum + rewriter[:source_extensions] }
-              .flatten
-              .uniq
+                            .reduce([]) { |sum, rewriter| sum + rewriter[:source_extensions] }
+                            .flatten
+                            .uniq
           source_exts_regex_text = Regexp.union(all_source_exts).to_s
 
           all_asset_exts = @rewriters
-              .reduce([]) { |sum, rewriter| sum + rewriter[:url_extensions] }
-              .flatten
-              .uniq
+                           .reduce([]) { |sum, rewriter| sum + rewriter[:url_extensions] }
+                           .flatten
+                           .uniq
 
           path = ::Middleman::Util.full_path(env['PATH_INFO'], @middleman_app)
 
@@ -76,10 +73,8 @@ module Middleman
 
           dirpath = ::Pathname.new(File.dirname(path))
 
-          rewritten = nil
-
-          # ::Middleman::Util.instrument "inline_url_rewriter", path: path do
-            rewritten = ::Middleman::Util.rewrite_paths(body, path, all_asset_exts) do |asset_path|
+          rewritten = ::Middleman::Util.instrument 'inline_url_rewriter', path: path do
+            ::Middleman::Util.rewrite_paths(body, path, all_asset_exts) do |asset_path|
               uri = ::Addressable::URI.parse(asset_path)
 
               relative_path = uri.host.nil?
@@ -106,7 +101,7 @@ module Middleman
                 next if ignore.any? { |r| should_ignore?(r, full_asset_path) }
 
                 rewrite_ignore = Array(rewriter.fetch(:rewrite_ignore, []))
-                next if rewrite_ignore.any? { |ignore| ::Middleman::Util.path_match(ignore, path) }
+                next if rewrite_ignore.any? { |i| ::Middleman::Util.path_match(i, path) }
 
                 proc = rewriter.fetch(:proc)
 
@@ -115,7 +110,7 @@ module Middleman
               end
 
               asset_path
-            # end
+            end
           end
 
           ::Rack::Response.new(
@@ -143,6 +138,5 @@ module Middleman
         end
       end
     end
-
   end
 end
