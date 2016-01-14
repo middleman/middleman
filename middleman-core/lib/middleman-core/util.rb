@@ -332,7 +332,7 @@ module Middleman
     end
 
     Contract String, String, ArrayOf[String], Proc => String
-    def rewrite_paths(body, _path, exts, &_block)
+    def rewrite_paths(body, _path, exts, &block)
       matcher = /([=\'\"\(,]\s*)([^\s\'\"\)>]+(#{Regexp.union(exts)}))/
 
       url_fn_prefix = 'url('
@@ -349,7 +349,7 @@ module Middleman
         begin
           uri = ::Addressable::URI.parse(asset_path)
 
-          if uri.relative? && uri.host.nil? && (result = yield(asset_path))
+          if uri.relative? && uri.host.nil? && (result = block.call(asset_path))
             "#{opening_character}#{result}"
           else
             match

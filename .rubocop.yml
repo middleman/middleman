@@ -10,7 +10,6 @@ AllCops:
     - '**/tmp/**/*'
     - '**/bin/**/*'
     - 'middleman-core/lib/middleman-core/step_definitions/**/*'
-    - 'middleman-core/lib/vendored-middleman-deps/**/*'
     - 'middleman-cli/lib/middleman-cli/templates/**/*'
     - 'middleman-core/fixtures/**/*'
     - 'middleman-core/features/**/*'

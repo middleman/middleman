@@ -19,6 +19,12 @@ Middleman::Extensions.register :data, auto_activate: :before_sitemap do
   Middleman::CoreExtensions::Data
 end
 
+# Rewrite embedded URLs via Rack
+Middleman::Extensions.register :inline_url_rewriter, auto_activate: :before_sitemap do
+  require 'middleman-core/core_extensions/inline_url_rewriter'
+  Middleman::CoreExtensions::InlineURLRewriter
+end
+
 # Catch and show exceptions at the Rack level
 Middleman::Extensions.register :show_exceptions, auto_activate: :before_configuration, modes: [:server] do
   require 'middleman-core/core_extensions/show_exceptions'

@@ -48,31 +48,38 @@ module Middleman::Cli
       verbose = options['verbose'] ? 0 : 1
       instrument = options['instrument']
 
-      @app = ::Middleman::Application.new do
-        config[:mode] = :build
-        config[:environment] = env
-        config[:show_exceptions] = false
-        ::Middleman::Logger.singleton(verbose, instrument)
+      builder = nil
+
+      ::Middleman::Logger.singleton(verbose, instrument)
+
+      ::Middleman::Util.instrument "builder_setup" do
+        @app = ::Middleman::Application.new do
+          config[:mode] = :build
+          config[:environment] = env
+          config[:show_exceptions] = false
+        end
+
+        builder = Middleman::Builder.new(@app,
+                                         glob: options['glob'],
+                                         clean: options['clean'],
+                                         parallel: options['parallel'])
+        builder.thor = self
+        builder.on_build_event(&method(:on_event))
       end
 
-      builder = Middleman::Builder.new(@app,
-                                       glob: options['glob'],
-                                       clean: options['clean'],
-                                       parallel: options['parallel'])
-      builder.thor = self
-      builder.on_build_event(&method(:on_event))
+      ::Middleman::Util.instrument "builder_run" do
+        if builder.run!
+          clean_directories! if options['clean']
+          shell.say 'Project built successfully.'
+        else
+          msg = 'There were errors during this build'
+          unless options['verbose']
+            msg << ', re-run with `middleman build --verbose` to see the full exception.'
+          end
+          shell.say msg, :red
 
-      if builder.run!
-        clean_directories! if options['clean']
-        shell.say 'Project built successfully.'
-      else
-        msg = 'There were errors during this build'
-        unless options['verbose']
-          msg << ', re-run with `middleman build --verbose` to see the full exception.'
+          exit(1)
         end
-        shell.say msg, :red
-
-        exit(1)
       end
     end
 

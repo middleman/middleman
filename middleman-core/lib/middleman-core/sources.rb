@@ -213,12 +213,12 @@ module Middleman
     # Manually poll all watchers for new content.
     #
     # @return [void]
-    Contract Any
+    Contract ArrayOf[Pathname]
     def find_new_files!
-      return unless @update_count != @last_update_count
+      return [] unless @update_count != @last_update_count
 
       @last_update_count = @update_count
-      watchers.each(&:poll_once!)
+      watchers.reduce([]) { |sum, w| sum + w.poll_once! }
     end
 
     # Start up all listeners.

@@ -1,8 +1,8 @@
-require 'addressable/uri'
 require 'middleman-core/util'
 require 'middleman-core/rack'
 
 class Middleman::Extensions::AssetHash < ::Middleman::Extension
+  option :sources, %w(.htm .html .php .css .js), 'List of extensions that are searched for hashable assets.'
   option :exts, %w(.jpg .jpeg .png .gif .webp .js .css .otf .woff .woff2 .eot .ttf .svg .svgz), 'List of extensions that get asset hashes appended to them.'
   option :ignore, [], 'Regexes of filenames to skip adding asset hashes to'
   option :rewrite_ignore, [], 'Regexes of filenames to skip processing for path rewrites'
@@ -10,29 +10,25 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
   def initialize(app, options_hash={}, &block)
     super
 
+    require 'addressable/uri'
     require 'digest/sha1'
     require 'rack/mock'
-    require 'middleman-core/middleware/inline_url_rewriter'
-  end
 
-  def after_configuration
     # Allow specifying regexes to ignore, plus always ignore apple touch icons
     @ignore = Array(options.ignore) + [/^apple-touch-icon/]
 
-    app.use ::Middleman::Middleware::InlineURLRewriter,
-            id: :asset_hash,
-            url_extensions: options.exts.sort.reverse,
-            source_extensions: %w(.htm .html .php .css .js),
-            ignore: @ignore,
-            rewrite_ignore: options.rewrite_ignore,
-            middleman_app: app,
-            proc: method(:rewrite_url)
+    app.rewrite_inline_urls id: :asset_hash,
+                            url_extensions: options.exts.sort.reverse,
+                            source_extensions: options.sources,
+                            ignore: @ignore,
+                            rewrite_ignore: options.rewrite_ignore,
+                            proc: method(:rewrite_url)
   end
 
   Contract String, Or[String, Pathname], Any => Maybe[String]
   def rewrite_url(asset_path, dirpath, _request_path)
     uri = ::Addressable::URI.parse(asset_path)
-    relative_path = uri.path[0..0] != '/'
+    relative_path = !uri.path.start_with?('/')
 
     full_asset_path = if relative_path
       dirpath.join(asset_path).to_s
@@ -77,15 +73,19 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
     return if ignored_resource?(resource)
     return if resource.ignored?
 
-    # Render through the Rack interface so middleware and mounted apps get a shot
-    response = @rack_client.get(
-      URI.escape(resource.destination_path),
-      'bypass_inline_url_rewriter_asset_hash' => 'true'
-    )
+    digest = if resource.binary?
+      ::Digest::SHA1.file(resource.source_file).hexdigest[0..7]
+    else
+      # Render through the Rack interface so middleware and mounted apps get a shot
+      response = @rack_client.get(
+        ::URI.escape(resource.destination_path),
+        'bypass_inline_url_rewriter_asset_hash' => 'true'
+      )
 
-    raise "#{resource.path} should be in the sitemap!" unless response.status == 200
+      raise "#{resource.path} should be in the sitemap!" unless response.status == 200
 
-    digest = Digest::SHA1.hexdigest(response.body)[0..7]
+      ::Digest::SHA1.hexdigest(response.body)[0..7]
+    end
 
     resource.destination_path = resource.destination_path.sub(/\.(\w+)$/) { |ext| "-#{digest}#{ext}" }
     resource

@@ -1,5 +1,4 @@
 require 'addressable/uri'
-require 'middleman-core/middleware/inline_url_rewriter'
 
 class Middleman::Extensions::AssetHost < ::Middleman::Extension
   option :host, nil, 'The asset host to use or a Proc to determine asset host', required: true
@@ -8,15 +7,15 @@ class Middleman::Extensions::AssetHost < ::Middleman::Extension
   option :ignore, [], 'Regexes of filenames to skip adding query strings to'
   option :rewrite_ignore, [], 'Regexes of filenames to skip processing for host rewrites'
 
-  def ready
-    app.use ::Middleman::Middleware::InlineURLRewriter,
-            id: :asset_host,
-            url_extensions: options.exts,
-            source_extensions: options.sources,
-            ignore: options.ignore,
-            rewrite_ignore: options.rewrite_ignore,
-            middleman_app: app,
-            proc: method(:rewrite_url)
+  def initialize(app, options_hash={}, &block)
+    super
+
+    app.rewrite_inline_urls id: :asset_host,
+                            url_extensions: options.exts,
+                            source_extensions: options.sources,
+                            ignore: options.ignore,
+                            rewrite_ignore: options.rewrite_ignore,
+                            proc: method(:rewrite_url)
   end
 
   Contract String, Or[String, Pathname], Any => String

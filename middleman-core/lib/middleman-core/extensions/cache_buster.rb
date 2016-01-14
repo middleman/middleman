@@ -8,18 +8,12 @@ class Middleman::Extensions::CacheBuster < ::Middleman::Extension
   def initialize(app, options_hash={}, &block)
     super
 
-    require 'middleman-core/middleware/inline_url_rewriter'
-  end
-
-  def after_configuration
-    app.use ::Middleman::Middleware::InlineURLRewriter,
-            id: :cache_buster,
-            url_extensions: options.exts,
-            source_extensions: options.sources,
-            ignore: options.ignore,
-            rewrite_ignore: options.rewrite_ignore,
-            middleman_app: app,
-            proc: method(:rewrite_url)
+    app.rewrite_inline_urls id: :cache_buster,
+                            url_extensions: options.exts,
+                            source_extensions: options.sources,
+                            ignore: options.ignore,
+                            rewrite_ignore: options.rewrite_ignore,
+                            proc: method(:rewrite_url)
   end
 
   Contract String, Or[String, Pathname], Any => String

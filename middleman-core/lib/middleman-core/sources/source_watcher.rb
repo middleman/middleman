@@ -180,17 +180,19 @@ module Middleman
     # Manually trigger update events.
     #
     # @return [void]
-    Contract Any
+    Contract ArrayOf[Pathname]
     def poll_once!
       updated = ::Middleman::Util.all_files_under(@directory.to_s)
       removed = @files.keys.reject { |p| updated.include?(p) }
 
       update(updated, removed)
 
-      return unless @waiting_for_existence && @directory.exist?
+      if @waiting_for_existence && @directory.exist?
+        @waiting_for_existence = false
+        listen!
+      end
 
-      @waiting_for_existence = false
-      listen!
+      updated + removed
     end
 
     # Work around this bug: http://bugs.ruby-lang.org/issues/4521

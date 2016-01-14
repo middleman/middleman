@@ -48,8 +48,15 @@ module Middleman
 
     Contract Or[Symbol, ArrayOf[Symbol]], Maybe[ArrayOf[Any]], Maybe[RespondTo[:instance_exec]] => Any
     def execute(keys, args=[], scope=self)
-      callbacks_for(keys).each { |b| scope.instance_exec(*args, &b) }
-      @subscribers.each { |b| scope.instance_exec(keys, args, &b) }
+      callbacks = callbacks_for(keys)
+      callbacks_count = callbacks.length + @subscribers.length
+
+      return if callbacks_count < 1
+
+      # ::Middleman::Util.instrument "callbacks.execute", keys: keys, length: callbacks_count do
+        callbacks.each { |b| scope.instance_exec(*args, &b) }
+        @subscribers.each { |b| scope.instance_exec(keys, args, &b) }
+      # end
     end
 
     Contract Or[Symbol, ArrayOf[Symbol]] => ::Hamster::Vector

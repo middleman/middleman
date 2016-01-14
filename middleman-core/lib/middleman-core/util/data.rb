@@ -17,7 +17,7 @@ module Middleman
       # @return [Array<Hash, String>]
       Contract Pathname, Maybe[Symbol] => [Hash, Maybe[String]]
       def parse(full_path, frontmatter_delims, known_type=nil)
-        return [{}, nil] if Middleman::Util.binary?(full_path)
+        return [{}, nil] if ::Middleman::Util.binary?(full_path)
 
         # Avoid weird race condition when a file is renamed
         begin
@@ -74,8 +74,8 @@ module Middleman
       # @return [Hash]
       Contract String, Pathname, Bool => Hash
       def parse_yaml(content, full_path)
-        symbolize_recursive(YAML.load(content) || {})
-      rescue StandardError, Psych::SyntaxError => error
+        symbolize_recursive(::YAML.load(content) || {})
+      rescue StandardError, ::Psych::SyntaxError => error
         warn "YAML Exception parsing #{full_path}: #{error.message}"
         {}
       end
@@ -85,7 +85,7 @@ module Middleman
       # @return [Hash]
       Contract String, Pathname => Hash
       def parse_json(content, full_path)
-        symbolize_recursive(JSON.parse(content) || {})
+        symbolize_recursive(::JSON.parse(content) || {})
       rescue StandardError => error
         warn "JSON Exception parsing #{full_path}: #{error.message}"
         {}

@@ -210,45 +210,50 @@ module Middleman
       # Search the root of the project for required files
       $LOAD_PATH.unshift(root) unless $LOAD_PATH.include?(root)
 
-      @callbacks = ::Middleman::CallbackManager.new
-      @callbacks.install_methods!(self, [
-        :initialized,
-        :configure,
-        :before_extensions,
-        :before_sitemap,
-        :before_configuration,
-        :after_configuration,
-        :after_configuration_eval,
-        :ready,
-        :before_build,
-        :after_build,
-        :before_shutdown,
-        :before, # Before Rack requests
-        :before_render,
-        :after_render,
-        :before_server
-      ])
+      ::Middleman::Util.instrument "application.setup" do
+        @callbacks = ::Middleman::CallbackManager.new
+        @callbacks.install_methods!(self, [
+          :initialized,
+          :configure,
+          :before_extensions,
+          :before_instance_block,
+          :before_sitemap,
+          :before_configuration,
+          :after_configuration,
+          :after_configuration_eval,
+          :ready,
+          :before_build,
+          :after_build,
+          :before_shutdown,
+          :before, # Before Rack requests
+          :before_render,
+          :after_render,
+          :before_server
+        ])
 
-      @middleware = Set.new
-      @mappings = Set.new
+        @middleware = Set.new
+        @mappings = Set.new
 
-      @template_context_class = Class.new(Middleman::TemplateContext)
-      @generic_template_context = @template_context_class.new(self)
-      @config_context = ConfigContext.new(self, @template_context_class)
+        @template_context_class = Class.new(Middleman::TemplateContext)
+        @generic_template_context = @template_context_class.new(self)
+        @config_context = ConfigContext.new(self, @template_context_class)
 
-      # Setup the default values from calls to set before initialization
-      @config = ::Middleman::Configuration::ConfigurationManager.new
-      @config.load_settings(self.class.config.all_settings)
+        # Setup the default values from calls to set before initialization
+        @config = ::Middleman::Configuration::ConfigurationManager.new
+        @config.load_settings(self.class.config.all_settings)
 
-      config[:source] = ENV['MM_SOURCE'] if ENV['MM_SOURCE']
+        config[:source] = ENV['MM_SOURCE'] if ENV['MM_SOURCE']
 
-      # TODO, make this less global
-      ::Middleman::FileRenderer.cache.clear
-      ::Middleman::TemplateRenderer.cache.clear
+        # TODO, make this less global
+        ::Middleman::FileRenderer.cache.clear
+        ::Middleman::TemplateRenderer.cache.clear
+      end
 
       execute_callbacks(:before_extensions)
 
       @extensions = ::Middleman::ExtensionManager.new(self)
+
+      execute_callbacks(:before_instance_block)
 
       # Evaluate a passed block if given
       config_context.instance_exec(&block) if block_given?

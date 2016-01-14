@@ -72,13 +72,17 @@ module Middleman
     Contract ResourceList
     def prerender_css
       logger.debug '== Prerendering CSS'
-      css_files = @app.sitemap.resources.select do |resource|
-        resource.ext == '.css'
-      end.each(&method(:output_resource))
-      logger.debug '== Checking for Compass sprites'
+
+      css_files = @app.sitemap.resources
+          .select { |resource| resource.ext == '.css' }
+          .each(&method(:output_resource))
+
       # Double-check for compass sprites
-      @app.files.find_new_files!
-      @app.sitemap.ensure_resource_list_updated!
+      if @app.files.find_new_files!.length > 0
+        logger.debug '== Checking for Compass sprites'
+        @app.sitemap.ensure_resource_list_updated!
+      end
+
       css_files
     end
 
@@ -131,24 +135,26 @@ module Middleman
     # @return [void]
     Contract Pathname, Or[String, Pathname] => Any
     def export_file!(output_file, source)
-      source = write_tempfile(output_file, source.to_s) if source.is_a? String
+      # ::Middleman::Util.instrument "write_file", output_file: output_file do
+        source = write_tempfile(output_file, source.to_s) if source.is_a? String
 
-      method, source_path = if source.is_a? Tempfile
-        [FileUtils.method(:mv), source.path]
-      else
-        [FileUtils.method(:cp), source.to_s]
-      end
+        method, source_path = if source.is_a? Tempfile
+          [::FileUtils.method(:mv), source.path]
+        else
+          [::FileUtils.method(:cp), source.to_s]
+        end
 
-      mode = which_mode(output_file, source_path)
+        mode = which_mode(output_file, source_path)
 
-      if mode == :created || mode == :updated
-        FileUtils.mkdir_p(output_file.dirname)
-        method.call(source_path, output_file.to_s)
-      end
+        if mode == :created || mode == :updated
+          ::FileUtils.mkdir_p(output_file.dirname)
+          method.call(source_path, output_file.to_s)
+        end
 
-      source.unlink if source.is_a? Tempfile
+        source.unlink if source.is_a? Tempfile
 
-      trigger(mode, output_file)
+        trigger(mode, output_file)
+      # end
     end
 
     # Try to output a resource and capture errors.
@@ -162,7 +168,7 @@ module Middleman
         if resource.binary?
           export_file!(output_file, resource.file_descriptor[:full_path])
         else
-          response = @rack.get(URI.escape(resource.request_path))
+          response = @rack.get(::URI.escape(resource.request_path))
 
           # If we get a response, save it to a tempfile.
           if response.status == 200

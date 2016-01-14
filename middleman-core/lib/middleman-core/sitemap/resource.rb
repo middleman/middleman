@@ -129,7 +129,7 @@ module Middleman
       def render(opts={}, locs={})
         return ::Middleman::FileRenderer.new(@app, file_descriptor[:full_path].to_s).template_data_for_file unless template?
 
-        ::Middleman::Util.instrument 'render.resource', path: file_descriptor[:full_path].to_s, destination_path: destination_path do
+        # ::Middleman::Util.instrument 'render.resource', path: file_descriptor[:full_path].to_s, destination_path: destination_path do
           md   = metadata
           opts = md[:options].deep_merge(opts)
           locs = md[:locals].deep_merge(locs)
@@ -140,7 +140,7 @@ module Middleman
 
           renderer = ::Middleman::TemplateRenderer.new(@app, file_descriptor[:full_path].to_s)
           renderer.render(locs, opts)
-        end
+        # end
       end
 
       # A path without the directory index - so foo/index.html becomes

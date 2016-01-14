@@ -10,18 +10,12 @@ class Middleman::Extensions::RelativeAssets < ::Middleman::Extension
   def initialize(app, options_hash={}, &block)
     super
 
-    require 'middleman-core/middleware/inline_url_rewriter'
-  end
-
-  def ready
-    app.use ::Middleman::Middleware::InlineURLRewriter,
-            id: :asset_hash,
-            url_extensions: options.exts,
-            source_extensions: options.sources,
-            ignore: options.ignore,
-            rewrite_ignore: options.rewrite_ignore,
-            middleman_app: app,
-            proc: method(:rewrite_url)
+    app.rewrite_inline_urls id: :asset_hash,
+                            url_extensions: options.exts,
+                            source_extensions: options.sources,
+                            ignore: options.ignore,
+                            rewrite_ignore: options.rewrite_ignore,
+                            proc: method(:rewrite_url)
   end
 
   helpers do

@@ -110,22 +110,22 @@ Feature: Assets get file hashes appended to them and references to them are upda
   Scenario: Enabling an asset host still produces hashed files and references
     Given the Server is running at "asset-hash-host-app"
     When I go to "/"
-    Then I should see 'href="http://middlemanapp.com/stylesheets/site-e587b659.css"'
-    Then I should see 'href="http://middlemanapp.com/stylesheets/fragment-7af0b5ab.css"'
+    Then I should see 'href="http://middlemanapp.com/stylesheets/site-4b64a653.css"'
+    Then I should see 'href="http://middlemanapp.com/stylesheets/fragment-a772891f.css"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg?test"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg?#test"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg#test"'
     When I go to "/subdir/"
-    Then I should see 'href="http://middlemanapp.com/stylesheets/site-e587b659.css"'
+    Then I should see 'href="http://middlemanapp.com/stylesheets/site-4b64a653.css"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg"'
     When I go to "/other/"
-    Then I should see 'href="http://middlemanapp.com/stylesheets/site-e587b659.css"'
+    Then I should see 'href="http://middlemanapp.com/stylesheets/site-4b64a653.css"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg?test"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg?#test"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg#test"'
-    When I go to "/stylesheets/fragment-7af0b5ab.css"
+    When I go to "/stylesheets/fragment-a772891f.css"
     And I should see 'url("http://middlemanapp.com/images/100px-5fd6fb90.jpg")'
     And I should see 'url("http://middlemanapp.com/images/100px-5fd6fb90.jpg?test")'
     And I should see 'url("http://middlemanapp.com/images/100px-5fd6fb90.jpg?#test")'

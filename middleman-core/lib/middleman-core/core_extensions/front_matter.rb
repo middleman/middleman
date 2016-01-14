@@ -28,6 +28,7 @@ module Middleman::CoreExtensions
     Contract ResourceList => ResourceList
     def manipulate_resource_list(resources)
       resources.each do |resource|
+        next if resource.binary?
         next if resource.ignored?
         next if resource.file_descriptor.nil?
 

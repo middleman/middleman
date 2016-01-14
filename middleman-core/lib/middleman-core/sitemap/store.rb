@@ -75,6 +75,7 @@ module Middleman
       def initialize(app)
         @app = app
         @resources = []
+        @rebuild_reasons = [:first_run]
         @update_count = 0
 
         @resource_list_manipulators = ::Hamster::Vector.empty
@@ -115,9 +116,10 @@ module Middleman
 
       # Rebuild the list of resources from scratch, using registed manipulators
       # @return [void]
-      Contract Maybe[Symbol] => Any
-      def rebuild_resource_list!(name=nil)
+      Contract Symbol => Any
+      def rebuild_resource_list!(name)
         @lock.synchronize do
+          @rebuild_reasons << name
           @app.logger.debug "== Requesting resource list rebuilding: #{name}"
           @needs_sitemap_rebuild = true
         end
@@ -198,29 +200,36 @@ module Middleman
       def ensure_resource_list_updated!
         @lock.synchronize do
           return unless @needs_sitemap_rebuild
-          @needs_sitemap_rebuild = false
 
-          @app.logger.debug '== Rebuilding resource list'
+          ::Middleman::Util.instrument "sitemap.update", reasons: @rebuild_reasons.uniq do
+            @needs_sitemap_rebuild = false
 
-          @resources = []
+            @app.logger.debug '== Rebuilding resource list'
 
-          @resource_list_manipulators.each do |m|
-            @app.logger.debug "== Running manipulator: #{m[:name]}"
-            @resources = m[:manipulator].send(m[:custom_name] || :manipulate_resource_list, @resources)
+            @resources = []
 
-            # Reset lookup cache
-            reset_lookup_cache!
+            @resource_list_manipulators.each do |m|
+              ::Middleman::Util.instrument "sitemap.manipulator", name: m[:name] do
+                @app.logger.debug "== Running manipulator: #{m[:name]}"
+                @resources = m[:manipulator].send(m[:custom_name] || :manipulate_resource_list, @resources)
 
-            # Rebuild cache
-            @resources.each do |resource|
-              @_lookup_by_path[resource.path] = resource
-              @_lookup_by_destination_path[resource.destination_path] = resource
+                # Reset lookup cache
+                reset_lookup_cache!
+
+                # Rebuild cache
+                @resources.each do |resource|
+                  @_lookup_by_path[resource.path] = resource
+                  @_lookup_by_destination_path[resource.destination_path] = resource
+                end
+
+                invalidate_resources_not_ignored_cache!
+              end
             end
 
-            invalidate_resources_not_ignored_cache!
-          end
+            @update_count += 1
 
-          @update_count += 1
+            @rebuild_reasons = []
+          end
         end
       end
 

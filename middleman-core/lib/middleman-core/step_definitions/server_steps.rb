@@ -4,22 +4,23 @@ require 'capybara/cucumber'
 
 Given /^a clean server$/ do
   @initialize_commands = []
+  @activation_commands = []
 end
 
 Given /^"([^\"]*)" feature is "([^\"]*)"$/ do |feature, state|
-  @initialize_commands ||= []
+  @activation_commands ||= []
 
   if state == 'enabled'
-    @initialize_commands << lambda { activate(feature.to_sym) }
+    @activation_commands << lambda { activate(feature.to_sym) }
   end
 end
 
 Given /^"([^\"]*)" feature is "enabled" with "([^\"]*)"$/ do |feature, options_str|
-  @initialize_commands ||= []
+  @activation_commands ||= []
 
   options = eval("{#{options_str}}")
 
-  @initialize_commands << lambda { activate(feature.to_sym, options) }
+  @activation_commands << lambda { activate(feature.to_sym, options) }
 end
 
 Given /^"([^\"]*)" is set to "([^\"]*)"$/ do |variable, value|
@@ -41,6 +42,7 @@ Given /^the Server is running$/ do
   ENV['MM_ROOT'] = root_dir
 
   initialize_commands = @initialize_commands || []
+  activation_commands = @activation_commands || []
 
   @server_inst = ::Middleman::Application.new do
     config[:watcher_disable] = true
@@ -48,6 +50,12 @@ Given /^the Server is running$/ do
 
     initialize_commands.each do |p|
       instance_exec(&p)
+    end
+
+    app.after_configuration_eval do
+      activation_commands.each do |p|
+        config_context.instance_exec(&p)
+      end
     end
   end
 
