@@ -15,6 +15,8 @@ master
 * Add `skip_build_clean` config which when set to a block, will avoid removing non-generated paths from build, like .git #1716
 * Minor performance improvements
 * DRY-up config.rb-specific commands like `ignore` or `path`.
+* Fix automatic images with absolute (or images dir missing) paths in markdown. Fixes #1755
+* Fix asset_host in combination with Google Analytics snippet. #1751
 
 # 4.0.0
 
