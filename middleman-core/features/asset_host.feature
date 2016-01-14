@@ -8,6 +8,7 @@ Feature: Alternate between multiple asset hosts
       """
     And the Server is running
     When I go to "/asset_host.html"
+    Then I should see "'.google-analytics.com/ga.js'"
     Then I should see 'src="https://code.jquery.com/jquery-2.1.3.min.js"'
     Then I should see content matching %r{http://assets1.example.com/}
     Then I should not see content matching %r{http://assets1.example.com//}

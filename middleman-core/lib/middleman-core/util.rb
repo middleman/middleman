@@ -349,7 +349,7 @@ module Middleman
         begin
           uri = ::Addressable::URI.parse(asset_path)
 
-          if uri.relative? && uri.host.nil? && (result = yield asset_path)
+          if uri.relative? && uri.host.nil? && !asset_path.match(/^[^\/].*[a-z]+\.[a-z]+\/.*/) && (result = yield(asset_path))
             "#{opening_character}#{result}"
           else
             match
