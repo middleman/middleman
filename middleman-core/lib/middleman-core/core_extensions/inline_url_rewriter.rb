@@ -17,7 +17,8 @@ module Middleman
         proc: Or[Proc, Method],
         url_extensions: ArrayOf[String],
         source_extensions: ArrayOf[String],
-        ignore: ArrayOf[IGNORE_DESCRIPTOR]
+        ignore: ArrayOf[IGNORE_DESCRIPTOR],
+        after: Maybe[Symbol]
       }.freeze
 
       def initialize(app, options_hash={}, &block)
@@ -32,8 +33,15 @@ module Middleman
       end
 
       def after_configuration
-        app.use Rack,           rewriters: @rewriters.values,
-                                middleman_app: @app
+        rewriters = @rewriters.values.sort do |a, b|
+          if b[:after] && b[:after] == a[:id]
+            1
+          else
+            0
+          end
+        end
+
+        app.use Rack, rewriters: rewriters, middleman_app: @app
       end
 
       class Rack

@@ -22,7 +22,8 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
                             source_extensions: options.sources,
                             ignore: @ignore,
                             rewrite_ignore: options.rewrite_ignore,
-                            proc: method(:rewrite_url)
+                            proc: method(:rewrite_url),
+                            after: :asset_host
   end
 
   Contract String, Or[String, Pathname], Any => Maybe[String]
