@@ -91,7 +91,7 @@ module Middleman
 
       stop_listener! if @listener
 
-      update([], @files.values)
+      update([], @files.values.map { |source_file| source_file[:full_path] })
 
       poll_once!
 
@@ -262,11 +262,13 @@ module Middleman
                         ]) unless valid_updates.empty? && valid_removes.empty?
     end
 
+    Contract IsA['Middleman::SourceFile'] => Any
     def add_file_to_cache(f)
       @files[f[:full_path]] = f
       @extensionless_files[strip_extensions(f[:full_path])] = f
     end
 
+    Contract IsA['Middleman::SourceFile'] => Any
     def remove_file_from_cache(f)
       @files.delete(f[:full_path])
       @extensionless_files.delete(strip_extensions(f[:full_path]))
