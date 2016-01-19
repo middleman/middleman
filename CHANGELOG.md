@@ -17,6 +17,7 @@ master
 * DRY-up config.rb-specific commands like `ignore` or `path`.
 * Fix automatic images with absolute (or images dir missing) paths in markdown. Fixes #1755
 * Fix asset_host in combination with Google Analytics snippet. #1751
+* Show an error message when git CLI is not available. #1765
 
 # 4.0.0
 
