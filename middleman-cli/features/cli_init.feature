@@ -65,10 +65,7 @@ Feature: Middleman CLI
 
   Scenario: Create an invalid project using Middleman directory
     When I run `middleman init MY_PROJECT -T does-not-exist-for-reals`
-    Then a directory named "MY_PROJECT" should exist
-    When I cd to "MY_PROJECT"
-    And the file "Gemfile" should contain "middleman-blog"
-    And the file ".gitignore" should exist
+    Then the exit status should be 1
 
   Scenario: Create a new project using github(user/repository)
     When I run `middleman init MY_PROJECT -T middleman/middleman-templates-default` interactively
