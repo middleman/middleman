@@ -190,7 +190,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
     end
   end
 
-  Contract String, Symbol => String
+  Contract String, Symbol => Maybe[String]
   def localized_path(path, locale)
     lookup_path = path.dup
     lookup_path << app.config[:index_file] if lookup_path.end_with?('/')
