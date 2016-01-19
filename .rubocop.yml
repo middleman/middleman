@@ -10,10 +10,13 @@ AllCops:
     - '**/tmp/**/*'
     - '**/bin/**/*'
     - 'middleman-core/lib/middleman-core/step_definitions/**/*'
-    - 'middleman-cli/lib/middleman-cli/templates/**/*'
     - 'middleman-core/fixtures/**/*'
     - 'middleman-core/features/**/*'
     - 'middleman-core/spec/**/*'
+    - 'middleman-cli/lib/middleman-cli/templates/**/*'
+    - 'middleman-cli/fixtures/**/*'
+    - 'middleman-cli/features/**/*'
+    - 'middleman-cli/spec/**/*'
 DoubleNegation:
   Enabled: false
 LineLength:
