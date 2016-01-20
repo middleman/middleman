@@ -18,7 +18,7 @@ module Middleman
       Contract IsA['Middleman::SourceFile'], Maybe[Symbol] => [Hash, Maybe[String]]
       def parse(file, frontmatter_delims, known_type=nil)
         full_path = file[:full_path]
-        return [{}, nil] if ::Middleman::Util.binary?(full_path)
+        return [{}, nil] if ::Middleman::Util.binary?(full_path) || file[:types].include?(:binary)
 
         # Avoid weird race condition when a file is renamed
         begin

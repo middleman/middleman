@@ -14,7 +14,8 @@ class Middleman::Extensions::ExternalPipeline < ::Middleman::Extension
 
     @watcher = app.files.watch :source,
                                path: File.expand_path(options[:source], app.root),
-                               latency: options[:latency]
+                               latency: options[:latency],
+                               frontmatter: false
 
     logger.info "== Executing: `#{options[:command]}`"
 

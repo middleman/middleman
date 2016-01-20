@@ -96,12 +96,13 @@ module Middleman
     # @return [String]
     Contract String
     def template_data_for_file
-      if @app.extensions[:front_matter]
+      file = @app.files.find(:source, @path)
+
+      if @app.extensions[:front_matter] || (file && !file[:types].include?(:no_frontmatter))
         result = @app.extensions[:front_matter].template_data_for_file(@path)
         return result unless result.nil?
       end
 
-      file = @app.files.find(:source, @path)
       file ? file.read : File.read(@path)
     end
 

@@ -161,7 +161,7 @@ module Middleman
       # @return [Boolean]
       Contract Bool
       def binary?
-        !file_descriptor.nil? && ::Middleman::Util.binary?(file_descriptor[:full_path].to_s)
+        !file_descriptor.nil? && (file_descriptor[:types].include?(:binary) || ::Middleman::Util.binary?(file_descriptor[:full_path].to_s))
       end
 
       # Ignore a resource directly, without going through the whole

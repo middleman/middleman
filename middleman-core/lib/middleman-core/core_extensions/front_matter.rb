@@ -36,6 +36,7 @@ module Middleman::CoreExtensions
       resources.each do |resource|
         next if resource.binary?
         next if resource.file_descriptor.nil?
+        next if resource.file_descriptor[:types].include?(:no_frontmatter)
 
         fmdata = data(resource.file_descriptor[:full_path].to_s).first.dup
 
@@ -73,6 +74,11 @@ module Middleman::CoreExtensions
       return [{}, nil] unless file
 
       return @cache[file[:full_path]] if @cache.key?(file[:full_path])
+
+      if file[:types].include?(:no_frontmatter)
+        $stderr.puts file[:relative_path].to_s
+        require 'pry'
+      end
 
       @cache[file[:full_path]] = ::Middleman::Util::Data.parse(
         file,

@@ -11,7 +11,7 @@ module Middleman
         # Ignore a path or add an ignore callback
         # @param [String, Regexp] path Path glob expression, or path regex
         # @return [IgnoreDescriptor]
-        Contract Maybe[Or[String, Regexp]], Maybe[Proc] => RespondTo[:execute_descriptor]
+        Contract Or[String, Regexp, Proc] => RespondTo[:execute_descriptor]
         def ignore(path=nil, &block)
           @app.sitemap.invalidate_resources_not_ignored_cache!
           IgnoreDescriptor.new(path, block)
@@ -49,7 +49,7 @@ module Middleman
               else
                 match_path == path_clean
               end
-            elsif block_given?
+            elsif block
               block.call(match_path)
             end
           end

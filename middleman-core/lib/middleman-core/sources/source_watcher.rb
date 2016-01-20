@@ -66,6 +66,8 @@ module Middleman
       @files = {}
       @extensionless_files = {}
 
+      @frontmatter = options.fetch(:frontmatter, true)
+      @binary = options.fetch(:binary, false)
       @validator = options.fetch(:validator, proc { true })
       @ignored = options.fetch(:ignored, proc { false })
       @only = Array(options.fetch(:only, []))
@@ -181,7 +183,7 @@ module Middleman
     Contract ArrayOf[Pathname]
     def find_new_files!
       new_files = ::Middleman::Util.all_files_under(@directory.to_s)
-          .reject { |p| @files.key?(p) }
+                                   .reject { |p| @files.key?(p) }
 
       update(new_files, [])
 
@@ -278,6 +280,8 @@ module Middleman
     Contract Pathname, Pathname, Symbol, Maybe[String] => ::Middleman::SourceFile
     def path_to_source_file(path, directory, type, destination_dir)
       types = Set.new([type])
+      types << :no_frontmatter unless @frontmatter
+      types << :@binary if @binary
 
       relative_path = path.relative_path_from(directory)
       relative_path = File.join(destination_dir, relative_path) if destination_dir
