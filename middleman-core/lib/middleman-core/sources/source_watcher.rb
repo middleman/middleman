@@ -1,6 +1,7 @@
 # Watcher Library
 require 'listen'
 require 'middleman-core/contracts'
+require 'digest'
 
 # Monkey patch Listen silencer so `only` works on directories too
 module Listen
@@ -175,6 +176,16 @@ module Middleman
 
       @listener.stop
       @listener = nil
+    end
+
+    Contract ArrayOf[Pathname]
+    def find_new_files!
+      new_files = ::Middleman::Util.all_files_under(@directory.to_s)
+          .reject { |p| @files.key?(p) }
+
+      update(new_files, [])
+
+      new_files
     end
 
     # Manually trigger update events.

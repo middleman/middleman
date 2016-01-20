@@ -47,7 +47,7 @@ module Middleman
       # @return [void]
       Contract Any
       def before_configuration
-        @sources.find_new_files!
+        @sources.poll_once!
       end
 
       # After we config, find new files since config can change paths.
@@ -60,7 +60,7 @@ module Middleman
         end
 
         @sources.start!
-        @sources.find_new_files!
+        @sources.poll_once!
       end
 
       protected

@@ -91,7 +91,7 @@ module Middleman
                                     validator: (block_given? ? block : regex))
 
       bump_count
-      find_new_files! if @running
+      poll_once! if @running
     end
 
     # Whether this path is ignored.
@@ -219,11 +219,22 @@ module Middleman
         .find { |d| d.exists?(path) }
     end
 
-    # Manually poll all watchers for new content.
+    # Manually check for new files
     #
     # @return [void]
     Contract ArrayOf[Pathname]
     def find_new_files!
+      return [] unless @update_count != @last_update_count
+
+      @last_update_count = @update_count
+      watchers.reduce([]) { |sum, w| sum + w.find_new_files! }
+    end
+
+    # Manually poll all watchers for new content.
+    #
+    # @return [void]
+    Contract ArrayOf[Pathname]
+    def poll_once!
       return [] unless @update_count != @last_update_count
 
       @last_update_count = @update_count

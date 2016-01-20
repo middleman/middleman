@@ -31,13 +31,13 @@ end
 Then /^the file "([^\"]*)" has the contents$/ do |path, contents|
   write_file(path, contents)
 
-  @server_inst.files.find_new_files!
+  @server_inst.files.poll_once!
 end
 
 Then /^the file "([^\"]*)" is removed$/ do |path|
   step %Q{I remove the file "#{path}"}
 
-  @server_inst.files.find_new_files!
+  @server_inst.files.poll_once!
 end
 
 Given /^a modification time for a file named "([^\"]*)"$/ do |file|
