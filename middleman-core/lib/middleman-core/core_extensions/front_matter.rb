@@ -14,6 +14,12 @@ module Middleman::CoreExtensions
     # Try to run after routing but before directory_indexes
     self.resource_list_manipulator_priority = 20
 
+    # Set textual delimiters that denote the start and end of frontmatter
+    define_setting :frontmatter_delims, {
+      json: [%w(;;; ;;;)],
+      yaml: [%w(--- ---), %w(--- ...)]
+    }, 'Allowed frontmatter delimiters'
+
     def initialize(app, options_hash={}, &block)
       super
 
@@ -29,7 +35,6 @@ module Middleman::CoreExtensions
     def manipulate_resource_list(resources)
       resources.each do |resource|
         next if resource.binary?
-        next if resource.ignored?
         next if resource.file_descriptor.nil?
 
         fmdata = data(resource.file_descriptor[:full_path].to_s).first.dup
