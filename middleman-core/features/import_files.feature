@@ -13,5 +13,3 @@ Feature: Import files
     Then I should see 'jQuery'
     When I go to "/bower_components2/jquery/dist/jquery.js"
     Then I should see 'jQuery'
-
-

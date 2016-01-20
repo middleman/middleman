@@ -100,10 +100,10 @@ module Middleman
           basename  = File.basename(data_path, extension)
 
           if %w(.yaml .yml).include?(extension)
-            data, postscript = ::Middleman::Util::Data.parse(file[:full_path], @app.config[:frontmatter_delims], :yaml)
+            data, postscript = ::Middleman::Util::Data.parse(file, @app.config[:frontmatter_delims], :yaml)
             data[:postscript] = postscript if !postscript.nil? && data.is_a?(Hash)
           elsif extension == '.json'
-            data, _postscript = ::Middleman::Util::Data.parse(file[:full_path], @app.config[:frontmatter_delims], :json)
+            data, _postscript = ::Middleman::Util::Data.parse(file, @app.config[:frontmatter_delims], :json)
           else
             return
           end

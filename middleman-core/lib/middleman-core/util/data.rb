@@ -15,13 +15,14 @@ module Middleman
       # Get the frontmatter and plain content from a file
       # @param [String] path
       # @return [Array<Hash, String>]
-      Contract Pathname, Maybe[Symbol] => [Hash, Maybe[String]]
-      def parse(full_path, frontmatter_delims, known_type=nil)
+      Contract IsA['Middleman::SourceFile'], Maybe[Symbol] => [Hash, Maybe[String]]
+      def parse(file, frontmatter_delims, known_type=nil)
+        full_path = file[:full_path]
         return [{}, nil] if ::Middleman::Util.binary?(full_path)
 
         # Avoid weird race condition when a file is renamed
         begin
-          content = File.read(full_path)
+          content = file.read
         rescue EOFError, IOError, Errno::ENOENT
           return [{}, nil]
         end

@@ -3,7 +3,12 @@ require 'middleman-core/contracts'
 
 module Middleman
   # The standard "record" that contains information about a file on disk.
-  SourceFile = Struct.new :relative_path, :full_path, :directory, :types
+  SourceFile = Struct.new(:relative_path, :full_path, :directory, :types, :version) do
+    def read
+      ::Middleman::Sources.file_cache[full_path] ||= {}
+      ::Middleman::Sources.file_cache[full_path][version] ||= ::File.read(full_path)
+    end
+  end
 
   # Sources handle multiple on-disk collections of files which make up
   # a Middleman project. They are separated by `type` which can then be
@@ -36,6 +41,8 @@ module Middleman
     # Reference to the global logger.
     def_delegator :@app, :logger
 
+    cattr_accessor :file_cache
+
     # Built-in types
     # :source, :data, :locales, :reload
 
@@ -49,6 +56,8 @@ module Middleman
       @app = app
       @watchers = watchers
       @sorted_watchers = @watchers.dup.freeze
+
+      ::Middleman::Sources.file_cache = {}
 
       @options = options
 
@@ -177,9 +186,10 @@ module Middleman
     # @return [Middleman::SourceFile, nil]
     Contract Or[Symbol, ArrayOf[Symbol], SetOf[Symbol]], String, Maybe[Bool] => Maybe[SourceFile]
     def find(types, path, glob=false)
+      array_of_types = Array(types)
+
       watchers
-        .lazy
-        .select { |d| Array(types).include?(d.type) }
+        .select { |d| array_of_types.include?(d.type) }
         .map { |d| d.find(path, glob) }
         .reject(&:nil?)
         .first
@@ -193,7 +203,6 @@ module Middleman
     Contract Or[Symbol, ArrayOf[Symbol], SetOf[Symbol]], String => Bool
     def exists?(types, path)
       watchers
-        .lazy
         .select { |d| Array(types).include?(d.type) }
         .any? { |d| d.exists?(path) }
     end

@@ -54,7 +54,7 @@ module Middleman
         source = Pathname(source) if source && source.is_a?(String)
 
         @file_descriptor = if source && source.is_a?(Pathname)
-          ::Middleman::SourceFile.new(source.relative_path_from(@app.source_dir), source, @app.source_dir, Set.new([:source]))
+          ::Middleman::SourceFile.new(source.relative_path_from(@app.source_dir), source, @app.source_dir, Set.new([:source]), 0)
         else
           source
         end

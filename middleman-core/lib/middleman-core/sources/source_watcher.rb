@@ -228,11 +228,11 @@ module Middleman
     Contract ArrayOf[Pathname], ArrayOf[Pathname] => Any
     def update(updated_paths, removed_paths)
       valid_updates = updated_paths
-                      .map { |p| ::Middleman::Util.path_to_source_file(p, @directory, @type, @options.fetch(:destination_dir, false)) }
+                      .map { |p| @files[p] || path_to_source_file(p, @directory, @type, @options[:destination_dir]) }
                       .select(&method(:valid?))
 
       valid_updates.each do |f|
-        add_file_to_cache(f)
+        record_file_change(f)
         logger.debug "== Change (#{f[:types].inspect}): #{f[:relative_path]}"
       end
 
@@ -245,11 +245,9 @@ module Middleman
       valid_updates |= related_updates
 
       valid_removes = removed_paths
-                      .lazy
                       .select(&@files.method(:key?))
                       .map(&@files.method(:[]))
                       .select(&method(:valid?))
-                      .to_a
                       .each do |f|
                         remove_file_from_cache(f)
                         logger.debug "== Deletion (#{f[:types].inspect}): #{f[:relative_path]}"
@@ -262,10 +260,28 @@ module Middleman
                         ]) unless valid_updates.empty? && valid_removes.empty?
     end
 
+    # Convert a path to a file resprentation.
+    #
+    # @param [Pathname] path The path.
+    # @return [Middleman::SourceFile]
+    Contract Pathname, Pathname, Symbol, Maybe[String] => ::Middleman::SourceFile
+    def path_to_source_file(path, directory, type, destination_dir)
+      types = Set.new([type])
+
+      relative_path = path.relative_path_from(directory)
+      relative_path = File.join(destination_dir, relative_path) if destination_dir
+
+      ::Middleman::SourceFile.new(Pathname(relative_path), path, directory, types, 0)
+    end
+
     Contract IsA['Middleman::SourceFile'] => Any
-    def add_file_to_cache(f)
-      @files[f[:full_path]] = f
-      @extensionless_files[strip_extensions(f[:full_path])] = f
+    def record_file_change(f)
+      if @files[f[:full_path]]
+        @files[f[:full_path]][:version] += 1
+      else
+        @files[f[:full_path]] = f
+        @extensionless_files[strip_extensions(f[:full_path])] = f
+      end
     end
 
     Contract IsA['Middleman::SourceFile'] => Any

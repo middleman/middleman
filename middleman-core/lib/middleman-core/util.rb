@@ -35,20 +35,28 @@ module Middleman
     # @return [Boolean]
     Contract Or[String, Pathname] => Bool
     def binary?(filename)
-      path = Pathname(filename)
-      ext = path.extname
+      @@binary_cache ||= {}
 
-      # We hardcode detecting of gzipped SVG files
-      return true if ext == '.svgz'
+      return @@binary_cache[filename] if @@binary_cache.key?(filename)
 
-      return false if Tilt.registered?(ext.sub('.', ''))
+      @@binary_cache[filename] = begin
+        path = Pathname(filename)
+        ext = path.extname
 
-      dot_ext = (ext.to_s[0] == '.') ? ext.dup : ".#{ext}"
+        # We hardcode detecting of gzipped SVG files
+        if ext == '.svgz'
+          true
+        elsif Tilt.registered?(ext.sub('.', ''))
+          false
+        else
+          dot_ext = (ext.to_s[0] == '.') ? ext.dup : ".#{ext}"
 
-      if mime = ::Rack::Mime.mime_type(dot_ext, nil)
-        !nonbinary_mime?(mime)
-      else
-        file_contents_include_binary_bytes?(path.to_s)
+          if mime = ::Rack::Mime.mime_type(dot_ext, nil)
+            !nonbinary_mime?(mime)
+          else
+            file_contents_include_binary_bytes?(path.to_s)
+          end
+        end
       end
     end
 
@@ -477,20 +485,6 @@ module Middleman
       step_through_extensions(path) { |e| result << e }
 
       result
-    end
-
-    # Convert a path to a file resprentation.
-    #
-    # @param [Pathname] path The path.
-    # @return [Middleman::SourceFile]
-    Contract Pathname, Pathname, Symbol, Bool => ::Middleman::SourceFile
-    def path_to_source_file(path, directory, type, destination_dir)
-      types = Set.new([type])
-
-      relative_path = path.relative_path_from(directory)
-      relative_path = File.join(destination_dir, relative_path) if destination_dir
-
-      ::Middleman::SourceFile.new(Pathname(relative_path), path, directory, types)
     end
 
     # Finds files which should also be considered to be dirty when

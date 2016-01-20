@@ -110,7 +110,7 @@ module Middleman
       r = sitemap.find_resource_by_path(source_path)
 
       if (r && !r.template?) || (Tilt[partial_file[:full_path]].nil? && partial_file[:full_path].exist?)
-        File.read(partial_file[:full_path])
+        partial_file.read
       else
         opts = options.dup
         locs = opts.delete(:locals)

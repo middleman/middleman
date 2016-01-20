@@ -72,8 +72,10 @@ module Middleman::CoreExtensions
 
       return [{}, nil] unless file
 
-      @cache[file[:full_path]] ||= ::Middleman::Util::Data.parse(
-        file[:full_path],
+      return @cache[file[:full_path]] if @cache.key?(file[:full_path])
+
+      @cache[file[:full_path]] = ::Middleman::Util::Data.parse(
+        file,
         app.config[:frontmatter_delims]
       )
     end

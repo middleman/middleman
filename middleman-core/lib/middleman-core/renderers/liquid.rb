@@ -14,7 +14,7 @@ module Middleman
       def read_template_file(template_path, _)
         file = app.files.find(:source, "_#{template_path}.liquid")
         raise ::Liquid::FileSystemError, "No such template '#{template_path}'" unless file
-        File.read(file[:full_path])
+        file.read
       end
 
       # @return Array<Middleman::Sitemap::Resource>
