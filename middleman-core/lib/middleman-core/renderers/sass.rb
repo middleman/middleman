@@ -1,5 +1,10 @@
 require 'sass'
 
+begin
+  require 'sassc'
+rescue LoadError
+end
+
 module Middleman
   module Renderers
     # Sass renderer

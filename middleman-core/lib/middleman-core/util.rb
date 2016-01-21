@@ -35,11 +35,11 @@ module Middleman
     # @return [Boolean]
     Contract Or[String, Pathname] => Bool
     def binary?(filename)
-      @@binary_cache ||= {}
+      @binary_cache ||= {}
 
-      return @@binary_cache[filename] if @@binary_cache.key?(filename)
+      return @binary_cache[filename] if @binary_cache.key?(filename)
 
-      @@binary_cache[filename] = begin
+      @binary_cache[filename] = begin
         path = Pathname(filename)
         ext = path.extname
 

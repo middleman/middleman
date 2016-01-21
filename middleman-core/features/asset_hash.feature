@@ -63,8 +63,8 @@ Feature: Assets get file hashes appended to them and references to them are upda
     Given the Server is running at "asset-hash-app"
     When I go to "/"
     Then I should see 'href="apple-touch-icon.png"'
-    And I should see 'href="stylesheets/site-d2959d87.css"'
-    And I should see 'href="stylesheets/fragment-a06f0dfc.css"'
+    And I should see 'href="stylesheets/site-d1a750ca.css"'
+    And I should see 'href="stylesheets/fragment-99b76247.css"'
     And I should see 'src="javascripts/application-1d8d5276.js"'
     And I should see 'src="images/100px-5fd6fb90.jpg"'
     And I should see 'srcset="images/100px-5fd6fb90.jpg 1x, images/200px-c11eb203.jpg 2x, images/300px-59adce76.jpg 3x"'
@@ -72,11 +72,11 @@ Feature: Assets get file hashes appended to them and references to them are upda
     And I should see 'src="images/100px-5fd6fb90.jpg?#test"'
     And I should see 'src="images/100px-5fd6fb90.jpg#test"'
     When I go to "/subdir/"
-    Then I should see 'href="../stylesheets/site-d2959d87.css"'
+    Then I should see 'href="../stylesheets/site-d1a750ca.css"'
     And I should see 'src="../javascripts/application-1d8d5276.js"'
     And I should see 'src="../images/100px-5fd6fb90.jpg"'
     When I go to "/other/"
-    Then I should see 'href="../stylesheets/site-d2959d87.css"'
+    Then I should see 'href="../stylesheets/site-d1a750ca.css"'
     And I should see 'src="../javascripts/application-1d8d5276.js"'
     And I should see 'src="../images/100px-5fd6fb90.jpg"'
     And I should see 'src="../images/100px-5fd6fb90.jpg?test"'
@@ -84,8 +84,8 @@ Feature: Assets get file hashes appended to them and references to them are upda
     And I should see 'src="../images/100px-5fd6fb90.jpg#test"'
     When I go to "/javascripts/application-1d8d5276.js"
     Then I should see "img.src = '/images/100px-5fd6fb90.jpg'"
-    When I go to "/stylesheets/site-d2959d87.css"
-    Then I should see 'background-image: url("../images/100px-5fd6fb90.jpg")'
+    When I go to "/stylesheets/site-d1a750ca.css"
+    Then I should see 'background-image: url("../images/100px-5fd6fb90.jpg");'
     When I go to "/api.json"
     Then I should see 'images/100px-5fd6fb90.gif'
     And I should see 'images/100px-5fd6fb90.jpg'
@@ -94,11 +94,11 @@ Feature: Assets get file hashes appended to them and references to them are upda
     Then I should see 'images/100px-5fd6fb90.gif'
     And I should see 'images/100px-5fd6fb90.jpg'
     And I should see 'images/100px-1242c368.png'
-    When I go to "/stylesheets/fragment-a06f0dfc.css"
-    And I should see 'url("../images/100px-5fd6fb90.jpg")'
-    And I should see 'url("../images/100px-5fd6fb90.jpg?test")'
-    And I should see 'url("../images/100px-5fd6fb90.jpg?#test")'
-    And I should see 'url("../images/100px-5fd6fb90.jpg#test")'
+    When I go to "/stylesheets/fragment-99b76247.css"
+    And I should see 'url("../images/100px-5fd6fb90.jpg");'
+    And I should see 'url("../images/100px-5fd6fb90.jpg?test");'
+    And I should see 'url("../images/100px-5fd6fb90.jpg?#test");'
+    And I should see 'url("../images/100px-5fd6fb90.jpg#test");'
 
   Scenario: Hashed assets work with Slim
     Given the Server is running at "asset-hash-app"
@@ -117,26 +117,26 @@ Feature: Assets get file hashes appended to them and references to them are upda
       """
     Given the Server is running at "asset-hash-host-app"
     When I go to "/"
-    Then I should see 'href="http://middlemanapp.com/stylesheets/site-4b64a653.css"'
-    Then I should see 'href="http://middlemanapp.com/stylesheets/fragment-a772891f.css"'
+    Then I should see 'href="http://middlemanapp.com/stylesheets/site-210612a0.css"'
+    Then I should see 'href="http://middlemanapp.com/stylesheets/fragment-7000b132.css"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg?test"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg?#test"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg#test"'
     When I go to "/subdir/"
-    Then I should see 'href="http://middlemanapp.com/stylesheets/site-4b64a653.css"'
+    Then I should see 'href="http://middlemanapp.com/stylesheets/site-210612a0.css"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg"'
     When I go to "/other/"
-    Then I should see 'href="http://middlemanapp.com/stylesheets/site-4b64a653.css"'
+    Then I should see 'href="http://middlemanapp.com/stylesheets/site-210612a0.css"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg?test"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg?#test"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg#test"'
-    When I go to "/stylesheets/fragment-a772891f.css"
-    And I should see 'url("http://middlemanapp.com/images/100px-5fd6fb90.jpg")'
-    And I should see 'url("http://middlemanapp.com/images/100px-5fd6fb90.jpg?test")'
-    And I should see 'url("http://middlemanapp.com/images/100px-5fd6fb90.jpg?#test")'
-    And I should see 'url("http://middlemanapp.com/images/100px-5fd6fb90.jpg#test")'
+    When I go to "/stylesheets/fragment-7000b132.css"
+    And I should see 'url("http://middlemanapp.com/images/100px-5fd6fb90.jpg");'
+    And I should see 'url("http://middlemanapp.com/images/100px-5fd6fb90.jpg?test");'
+    And I should see 'url("http://middlemanapp.com/images/100px-5fd6fb90.jpg?#test");'
+    And I should see 'url("http://middlemanapp.com/images/100px-5fd6fb90.jpg#test");'
 
   Scenario: Enabling an asset host still produces hashed files and references (host first)
     Given a fixture app "asset-hash-host-app"
@@ -148,22 +148,22 @@ Feature: Assets get file hashes appended to them and references to them are upda
       """
     Given the Server is running at "asset-hash-host-app"
     When I go to "/"
-    Then I should see 'href="http://middlemanapp.com/stylesheets/site-4b64a653.css"'
-    Then I should see 'href="http://middlemanapp.com/stylesheets/fragment-a772891f.css"'
+    Then I should see 'href="http://middlemanapp.com/stylesheets/site-210612a0.css"'
+    Then I should see 'href="http://middlemanapp.com/stylesheets/fragment-7000b132.css"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg?test"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg?#test"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg#test"'
     When I go to "/subdir/"
-    Then I should see 'href="http://middlemanapp.com/stylesheets/site-4b64a653.css"'
+    Then I should see 'href="http://middlemanapp.com/stylesheets/site-210612a0.css"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg"'
     When I go to "/other/"
-    Then I should see 'href="http://middlemanapp.com/stylesheets/site-4b64a653.css"'
+    Then I should see 'href="http://middlemanapp.com/stylesheets/site-210612a0.css"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg?test"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg?#test"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg#test"'
-    When I go to "/stylesheets/fragment-a772891f.css"
+    When I go to "/stylesheets/fragment-7000b132.css"
     And I should see 'url("http://middlemanapp.com/images/100px-5fd6fb90.jpg")'
     And I should see 'url("http://middlemanapp.com/images/100px-5fd6fb90.jpg?test")'
     And I should see 'url("http://middlemanapp.com/images/100px-5fd6fb90.jpg?#test")'
@@ -177,14 +177,14 @@ Feature: Assets get file hashes appended to them and references to them are upda
         font-size: 14px
       """
     When I go to "/partials/"
-    Then I should see 'href="../stylesheets/uses_partials-44fb2764.css'
+    Then I should see 'href="../stylesheets/uses_partials-4d4e34e6.css'
     And the file "source/stylesheets/_partial.sass" has the contents
       """
       body
         font-size: 18px !important
       """
     When I go to "/partials/"
-    Then I should see 'href="../stylesheets/uses_partials-10d8ae33.css'
+    Then I should see 'href="../stylesheets/uses_partials-ec347271.css'
 
   Scenario: The asset hash should change when a Rack-based filter changes
     Given a fixture app "asset-hash-app"
@@ -198,12 +198,10 @@ Feature: Assets get file hashes appended to them and references to them are upda
       """
     Given the Server is running at "asset-hash-app"
     When I go to "/"
-    Then I should see 'href="stylesheets/site-30784643.css'
-    When I go to "stylesheets/site-30784643.css"
-    Then I should see 'background-image'
+    Then I should see 'href="stylesheets/site-5ad7def0.css'
+    When I go to "stylesheets/site-5ad7def0.css"
+    Then I should see 'background-image: url("../images/100px-5fd6fb90.jpg")'
     Then I should see 'Added by Rack filter'
-    When I go to "stylesheets/site-7474cadd.css"
-    Then I should see 'Not Found'
 
   Scenario: Hashed-asset files are not produced for ignored paths
     Given a fixture app "asset-hash-app"

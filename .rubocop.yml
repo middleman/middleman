@@ -67,3 +67,5 @@ Style/BlockDelimiters:
   Enabled: false
 Style/MultilineBlockChain:
   Enabled: false
+Style/SpecialGlobalVars:
+  Enabled: false
