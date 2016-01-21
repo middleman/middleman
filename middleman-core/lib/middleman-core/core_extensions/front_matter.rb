@@ -75,11 +75,6 @@ module Middleman::CoreExtensions
 
       return @cache[file[:full_path]] if @cache.key?(file[:full_path])
 
-      if file[:types].include?(:no_frontmatter)
-        $stderr.puts file[:relative_path].to_s
-        require 'pry'
-      end
-
       @cache[file[:full_path]] = ::Middleman::Util::Data.parse(
         file,
         app.config[:frontmatter_delims]
