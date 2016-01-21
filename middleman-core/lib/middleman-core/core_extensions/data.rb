@@ -8,7 +8,7 @@ module Middleman
     class Data < Extension
       attr_reader :data_store
 
-      define_setting :data_dir, 'data', 'The directory data files are stored in'
+      define_setting :data_dir, ENV['MM_DATA_DIR'] || 'data', 'The directory data files are stored in'
 
       # Make the internal `data_store` method available as `app.data`
       expose_to_application data: :data_store
