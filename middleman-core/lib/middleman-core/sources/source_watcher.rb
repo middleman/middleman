@@ -281,7 +281,7 @@ module Middleman
     def path_to_source_file(path, directory, type, destination_dir)
       types = Set.new([type])
       types << :no_frontmatter unless @frontmatter
-      types << :@binary if @binary
+      types << :binary if @binary
 
       relative_path = path.relative_path_from(directory)
       relative_path = File.join(destination_dir, relative_path) if destination_dir
