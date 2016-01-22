@@ -184,7 +184,7 @@ module Middleman
       end
     }, 'Callbacks that can exclude paths from the sitemap'
 
-    define_setting :skip_build_clean, proc { |p| [/\.git/].any? { |r| r.match(p) } }, 'Whether some paths should not be removed during a clean build.'
+    define_setting :skip_build_clean, proc { |p| [/\.git/].any? { |r| p =~ r } }, 'Whether some paths should not be removed during a clean build.'
 
     define_setting :watcher_disable, false, 'If the Listen watcher should not run'
     define_setting :watcher_force_polling, false, 'If the Listen watcher should run in polling mode'
@@ -314,7 +314,7 @@ module Middleman
 
     # Clean up missing Tilt exts
     def prune_tilt_templates!
-      ::Tilt.mappings.each do |key, _|
+      ::Tilt.mappings.each_key do |key|
         begin
           ::Tilt[".#{key}"]
         rescue LoadError, NameError

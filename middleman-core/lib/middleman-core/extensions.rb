@@ -106,7 +106,7 @@ module Middleman
       # A flattened list of all extensions which are automatically activated
       # @return [Array<Symbol>] A list of extension names which are automatically activated.
       def auto_activated
-        @auto_activate.values.map(&:to_a).flatten.map(&:name)
+        @auto_activate.values.map(&:to_a).flat_map(&:name)
       end
 
       # @api private

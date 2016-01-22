@@ -189,6 +189,7 @@ module Middleman
       array_of_types = Array(types)
 
       watchers
+        .lazy
         .select { |d| array_of_types.include?(d.type) }
         .map { |d| d.find(path, glob) }
         .reject(&:nil?)
@@ -202,9 +203,7 @@ module Middleman
     # @return [Boolean]
     Contract Or[Symbol, ArrayOf[Symbol], SetOf[Symbol]], String => Bool
     def exists?(types, path)
-      watchers
-        .select { |d| Array(types).include?(d.type) }
-        .any? { |d| d.exists?(path) }
+      watchers.any? { |d| Array(types).include?(d.type) && d.exists?(path) }
     end
 
     # Check if a file for a given type exists.
@@ -214,9 +213,7 @@ module Middleman
     # @return [Boolean]
     Contract Or[Symbol, ArrayOf[Symbol], SetOf[Symbol]], String => Maybe[HANDLER]
     def watcher_for_path(types, path)
-      watchers
-        .select { |d| Array(types).include?(d.type) }
-        .find { |d| d.exists?(path) }
+      watchers.detect { |d| Array(types).include?(d.type) && d.exists?(path) }
     end
 
     # Manually check for new files
@@ -317,7 +314,7 @@ module Middleman
     def matches?(validator, file)
       path = file[:relative_path]
       if validator.is_a? Regexp
-        !!validator.match(path.to_s)
+        !!(path.to_s =~ validator)
       else
         !!validator.call(path, @app)
       end

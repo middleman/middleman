@@ -1,6 +1,7 @@
 require 'pathname'
 require 'fileutils'
 require 'tempfile'
+require 'parallel'
 require 'middleman-core/rack'
 require 'middleman-core/callback_manager'
 require 'middleman-core/contracts'
@@ -36,6 +37,7 @@ module Middleman
 
       @glob = opts.fetch(:glob)
       @cleaning = opts.fetch(:clean)
+      @parallel = opts.fetch(:parallel, true)
 
       rack_app = ::Middleman::Rack.new(@app).to_app
       @rack = ::Rack::MockRequest.new(rack_app)
@@ -63,15 +65,17 @@ module Middleman
         prerender_css
       end
 
+      ::Middleman::Profiling.start
+
       ::Middleman::Util.instrument 'builder.output' do
         output_files
       end
 
+      ::Middleman::Profiling.report('build')
+
       ::Middleman::Util.instrument 'builder.clean' do
         clean! if @cleaning
       end
-
-      ::Middleman::Profiling.report('build')
 
       ::Middleman::Util.instrument 'builder.after' do
         @app.execute_callbacks(:after_build, [self])
@@ -87,9 +91,8 @@ module Middleman
       logger.debug '== Prerendering CSS'
 
       css_files = ::Middleman::Util.instrument 'builder.prerender.output' do
-        @app.sitemap.resources
-                        .select { |resource| resource.ext == '.css' }
-                        .each(&method(:output_resource))
+        resources = @app.sitemap.resources.select { |resource| resource.ext == '.css' }
+        output_resources(resources)
       end
 
       ::Middleman::Util.instrument 'builder.prerender.check-files' do
@@ -117,7 +120,20 @@ module Middleman
         resources = resources.select { |resource| File.fnmatch(@glob, resource.destination_path) }
       end
 
-      resources.each(&method(:output_resource))
+      output_resources(resources)
+    end
+
+    Contract ResourceList => ResourceList
+    def output_resources(resources)
+      cleaned_paths = if @parallel
+        ::Parallel.map(resources, &method(:output_resource))
+      else
+        resources.map(&method(:output_resource))
+      end
+
+      cleaned_paths.each { |p| @to_clean.delete(p) } if @cleaning
+
+      resources
     end
 
     # Figure out the correct event mode.
@@ -181,7 +197,7 @@ module Middleman
     # Try to output a resource and capture errors.
     # @param [Middleman::Sitemap::Resource] resource The resource.
     # @return [void]
-    Contract IsA['Middleman::Sitemap::Resource'] => Any
+    Contract IsA['Middleman::Sitemap::Resource'] => Maybe[Pathname]
     def output_resource(resource)
       output_file = nil
 
@@ -218,7 +234,7 @@ module Middleman
         output_file
       end
 
-      @to_clean.delete(Pathname(cleaned_name))
+      Pathname(cleaned_name)
     end
 
     # Get a list of all the paths in the destination folder and save them

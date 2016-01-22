@@ -203,7 +203,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
     if (options[:mount_at_root] == locale) || (options[:mount_at_root].nil? && locales[0] == locale)
       '/'
     else
-      replacement = options[:locale_map].fetch(locale, locale)
+      replacement = options[:locale_map][locale] || locale
       options[:path].sub(':locale', replacement.to_s).sub(':lang', replacement.to_s) # Backward compat
     end
   end

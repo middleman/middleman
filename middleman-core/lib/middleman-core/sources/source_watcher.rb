@@ -322,7 +322,7 @@ module Middleman
       if @only.empty?
         !@ignored.call(file)
       else
-        @only.any? { |reg| reg.match(file[:relative_path].to_s) }
+        @only.any? { |reg| file[:relative_path].to_s =~ reg }
       end
     end
   end

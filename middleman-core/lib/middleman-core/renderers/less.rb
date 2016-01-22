@@ -26,7 +26,7 @@ module Middleman
           if ::Less.const_defined? :Engine
             @engine = ::Less::Engine.new(data)
           else
-            parser  = ::Less::Parser.new(options.merge(filename: eval_file, line: line, paths: ['.', File.dirname(eval_file)]))
+            parser = ::Less::Parser.new({}.merge!(options).merge!(filename: eval_file, line: line, paths: ['.', File.dirname(eval_file)]))
             @engine = parser.parse(data)
           end
         end

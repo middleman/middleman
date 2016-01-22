@@ -81,7 +81,7 @@ module Middleman
             filename: eval_file,
             line: line,
             syntax: syntax,
-            custom: (options[:custom] || {}).merge(
+            custom: {}.merge!(options[:custom] || {}).merge!(
               middleman_context: ctx.app,
               current_resource: ctx.current_resource
             )
@@ -97,7 +97,7 @@ module Middleman
             more_opts[:css_filename] = file.sub(/\.s[ac]ss$/, '')
           end
 
-          options.merge(more_opts)
+          {}.merge!(options).merge!(more_opts)
         end
       end
 

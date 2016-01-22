@@ -108,7 +108,7 @@ module Middleman
                 ignore = rewriter.fetch(:ignore)
                 next if ignore.any? { |r| should_ignore?(r, full_asset_path) }
 
-                rewrite_ignore = Array(rewriter.fetch(:rewrite_ignore, []))
+                rewrite_ignore = Array(rewriter[:rewrite_ignore] || [])
                 next if rewrite_ignore.any? { |i| ::Middleman::Util.path_match(i, path) }
 
                 proc = rewriter.fetch(:proc)
@@ -132,7 +132,7 @@ module Middleman
         def should_ignore?(validator, value)
           if validator.is_a? Regexp
             # Treat as Regexp
-            !value.match(validator).nil?
+            !!(value =~ validator)
           elsif validator.respond_to? :call
             # Treat as proc
             validator.call(value)

@@ -113,7 +113,7 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
       path_options = {}
       path_options[:relative] = options.delete(:relative) if options.key?(:relative)
 
-      sources.flatten.inject(::ActiveSupport::SafeBuffer.new) do |all, source|
+      sources.flatten.reduce(::ActiveSupport::SafeBuffer.new) do |all, source|
         all << tag(:link, {
           href: asset_path(:css, source, path_options)
         }.update(options))
@@ -127,7 +127,7 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
       path_options = {}
       path_options[:relative] = options.delete(:relative) if options.key?(:relative)
 
-      sources.flatten.inject(::ActiveSupport::SafeBuffer.new) do |all, source|
+      sources.flatten.reduce(::ActiveSupport::SafeBuffer.new) do |all, source|
         all << content_tag(:script, nil, {
           src: asset_path(:js, source, path_options)
         }.update(options))
@@ -152,7 +152,7 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
       # If the basename of the request as no extension, assume we are serving a
       # directory and join index_file to the path.
       path = File.join(asset_dir, current_resource.path)
-      path = path.sub(/#{Regexp.escape(File.extname(path))}$/, ".#{asset_ext}")
+      path = path[0..-(File.extname(path).length + 1)] + ".#{asset_ext}"
 
       yield path if sitemap.find_resource_by_path(path)
     end
@@ -191,7 +191,7 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
     # @param [Hash] options Data to pass through.
     # @return [String]
     def asset_path(kind, source, options={})
-      options_with_resource = options.merge(current_resource: current_resource)
+      options_with_resource = {}.merge!(options).merge!(current_resource: current_resource)
       ::Middleman::Util.asset_path(app, kind, source, options_with_resource)
     end
 
@@ -202,7 +202,7 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
     # @param [Hash] options Additional options.
     # @return [String] The fully qualified asset url
     def asset_url(path, prefix='', options={})
-      options_with_resource = options.merge(current_resource: current_resource)
+      options_with_resource = {}.merge!(options).merge!(current_resource: current_resource)
       ::Middleman::Util.asset_url(app, path, prefix, options_with_resource)
     end
 
@@ -210,7 +210,7 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
     # or a Resource, this will produce the nice URL configured for that
     # path, respecting :relative_links, directory indexes, etc.
     def url_for(path_or_resource, options={})
-      options_with_resource = options.merge(current_resource: current_resource)
+      options_with_resource = {}.merge!(options).merge!(current_resource: current_resource)
       ::Middleman::Util.url_for(app, path_or_resource, options_with_resource)
     end
 

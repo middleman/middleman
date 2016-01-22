@@ -24,6 +24,7 @@ Gem::Specification.new do |s|
   s.add_dependency('tilt', ['~> 1.4.1'])
   s.add_dependency('erubis')
   s.add_dependency('fast_blank')
+  s.add_dependency('parallel')
 
   # Helpers
   s.add_dependency('activesupport', ['~> 4.2'])

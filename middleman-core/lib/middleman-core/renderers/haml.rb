@@ -30,7 +30,7 @@ module Middleman
       end
 
       def evaluate(scope, locals, &block)
-        options = @options.merge(filename: eval_file, line: line, context: @context || scope)
+        options = {}.merge!(@options).merge!(filename: eval_file, line: line, context: @context || scope)
         @engine = ::Haml::Engine.new(data, options)
         output = @engine.render(scope, locals, &block)
 

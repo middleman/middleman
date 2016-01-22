@@ -23,7 +23,7 @@ class Middleman::Extensions::MinifyCss < ::Middleman::Extension
   class SassCompressor
     def self.compress(style, options={})
       root_node = ::Sass::SCSS::CssParser.new(style, 'middleman-css-input', 1).parse
-      root_node.options = options.merge(style: :compressed)
+      root_node.options = {}.merge!(options).merge!(style: :compressed)
       root_node.render.strip
     end
   end

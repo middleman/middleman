@@ -79,7 +79,7 @@ module Middleman
           path == matcher
         end
       when matcher.respond_to?(:match)
-        !matcher.match(path).nil?
+        !!(path =~ matcher)
       when matcher.respond_to?(:call)
         matcher.call(path)
       else
@@ -357,7 +357,7 @@ module Middleman
         begin
           uri = ::Addressable::URI.parse(asset_path)
 
-          if uri.relative? && uri.host.nil? && !asset_path.match(/^[^\/].*[a-z]+\.[a-z]+\/.*/) && (result = yield(asset_path))
+          if uri.relative? && uri.host.nil? && !(asset_path =~ /^[^\/].*[a-z]+\.[a-z]+\/.*/) && (result = yield(asset_path))
             "#{opening_character}#{result}"
           else
             match
@@ -456,10 +456,11 @@ module Middleman
     Contract String => String
     def step_through_extensions(path)
       while ::Tilt[path]
-        yield File.extname(path) if block_given?
+        ext = File.extname(path)
+        yield ext if block_given?
 
         # Strip templating extensions as long as Tilt knows them
-        path = path.sub(/#{::Regexp.escape(File.extname(path))}$/, '')
+        path = path[0..-(ext.length + 1)]
       end
 
       yield File.extname(path) if block_given?

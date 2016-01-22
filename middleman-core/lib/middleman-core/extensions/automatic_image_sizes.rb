@@ -19,7 +19,7 @@ class Middleman::Extensions::AutomaticImageSizes < ::Middleman::Extension
         real_path = path.dup
         real_path = File.join(config[:images_dir], real_path) unless real_path.start_with?('/')
 
-        file = app.files.find(:source, real_path) || app.files.find(:source, real_path.gsub(/^\//, ''))
+        file = app.files.find(:source, real_path) || app.files.find(:source, real_path.sub(/^\//, ''))
 
         if file && file[:full_path].exist?
           begin

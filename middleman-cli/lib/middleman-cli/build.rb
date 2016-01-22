@@ -14,6 +14,10 @@ module Middleman::Cli
                  type: :boolean,
                  default: true,
                  desc: 'Remove orphaned files from build (--no-clean to disable)'
+    class_option :parallel,
+                 type: :boolean,
+                 default: true,
+                 desc: 'Output files in parallel (--no-parallel to disable)'
     class_option :glob,
                  type: :string,
                  aliases: '-g',

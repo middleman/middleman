@@ -432,7 +432,7 @@ module Middleman
           {}
         end
 
-        sum.merge(resource_definitions)
+        sum.merge!(resource_definitions)
       end
 
       resources + generator_defs.map do |path, g|

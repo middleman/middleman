@@ -203,11 +203,11 @@ module Middleman
         def to_h
           data = {}
 
-          store.each do |k, _|
+          store.each_key do |k|
             data[k] = data_for_path(k)
           end
 
-          callbacks.each do |k, _|
+          callbacks.each_key do |k|
             data[k] = data_for_path(k)
           end
 
