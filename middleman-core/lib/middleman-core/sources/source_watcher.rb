@@ -185,9 +185,7 @@ module Middleman
       new_files = ::Middleman::Util.all_files_under(@directory.to_s)
                                    .reject { |p| @files.key?(p) }
 
-      update(new_files, [])
-
-      new_files
+      update(new_files, []).flatten.map { |s| s[:full_path] }
     end
 
     # Manually trigger update events.
@@ -198,14 +196,14 @@ module Middleman
       updated = ::Middleman::Util.all_files_under(@directory.to_s)
       removed = @files.keys.reject { |p| updated.include?(p) }
 
-      update(updated, removed)
+      result = update(updated, removed)
 
       if @waiting_for_existence && @directory.exist?
         @waiting_for_existence = false
         listen!
       end
 
-      updated + removed
+      result.flatten.map { |s| s[:full_path] }
     end
 
     # Work around this bug: http://bugs.ruby-lang.org/issues/4521
@@ -238,7 +236,7 @@ module Middleman
     #
     # @param [String, Pathname] path The updated file path.
     # @return [void]
-    Contract ArrayOf[Pathname], ArrayOf[Pathname] => Any
+    Contract ArrayOf[Pathname], ArrayOf[Pathname] => ArrayOf[ArrayOf[IsA['Middleman::SourceFile']]]
     def update(updated_paths, removed_paths)
       valid_updates = updated_paths
                       .map { |p| @files[p] || path_to_source_file(p, @directory, @type, @options[:destination_dir]) }
@@ -271,6 +269,8 @@ module Middleman
                           valid_removes,
                           self
                         ]) unless valid_updates.empty? && valid_removes.empty?
+
+      [valid_updates, valid_removes]
     end
 
     # Convert a path to a file resprentation.

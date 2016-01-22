@@ -98,7 +98,7 @@ module Middleman
     # @private
     # @param [Hash] data Normal hash
     # @return [Hash]
-    Contract Maybe[Hash] => Maybe[Or[Array, EnhancedHash]]
+    Contract Any => Maybe[Or[Array, EnhancedHash]]
     def recursively_enhance(obj)
       if obj.is_a? ::Array
         obj.map { |e| recursively_enhance(e) }
@@ -480,6 +480,8 @@ module Middleman
     # @return [String]
     Contract String => ArrayOf[String]
     def collect_extensions(path)
+      return [] if File.basename(path).start_with?('.')
+
       result = []
 
       step_through_extensions(path) { |e| result << e }
@@ -495,6 +497,8 @@ module Middleman
     # @return [Middleman::SourceFile] All related file paths, not including the source file paths.
     Contract ::Middleman::Application, ArrayOf[Pathname] => ArrayOf[::Middleman::SourceFile]
     def find_related_files(app, files)
+      return [] if files.empty?
+
       all_extensions = files.flat_map { |f| collect_extensions(f.to_s) }
 
       sass_type_aliasing = ['.scss', '.sass']

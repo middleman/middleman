@@ -52,7 +52,7 @@ module Middleman::Cli
 
       ::Middleman::Logger.singleton(verbose, instrument)
 
-      ::Middleman::Util.instrument 'builder_setup' do
+      ::Middleman::Util.instrument 'builder.setup' do
         @app = ::Middleman::Application.new do
           config[:mode] = :build
           config[:environment] = env
@@ -67,7 +67,7 @@ module Middleman::Cli
         builder.on_build_event(&method(:on_event))
       end
 
-      ::Middleman::Util.instrument 'builder_run' do
+      ::Middleman::Util.instrument 'builder.run' do
         if builder.run!
           clean_directories! if options['clean']
           shell.say 'Project built successfully.'

@@ -133,12 +133,21 @@ module Middleman
       # Add extension helpers to context.
       @app.extensions.add_exposed_to_context(context)
 
-      content = _render_with_all_renderers(path, locs, context, opts, &block)
+      content = ::Middleman::Util.instrument 'builder.output.resource.render-template', path: File.basename(path) do
+        _render_with_all_renderers(path, locs, context, opts, &block)
+      end
 
       # If we need a layout and have a layout, use it
-      if layout_file = fetch_layout(engine, options)
-        layout_renderer = ::Middleman::FileRenderer.new(@app, layout_file[:relative_path].to_s)
-        content = layout_renderer.render(locals, options, context) { content }
+      layout_file = fetch_layout(engine, options)
+      if layout_file
+        content = ::Middleman::Util.instrument 'builder.output.resource.render-layout', path: File.basename(layout_file[:relative_path].to_s) do
+          if layout_file = fetch_layout(engine, options)
+            layout_renderer = ::Middleman::FileRenderer.new(@app, layout_file[:relative_path].to_s)
+            layout_renderer.render(locals, options, context) { content }
+          else
+            content
+          end
+        end
       end
 
       # Return result

@@ -51,18 +51,31 @@ module Middleman
       @has_error = false
       @events = {}
 
-      @app.execute_callbacks(:before_build, [self])
+      ::Middleman::Util.instrument 'builder.before' do
+        @app.execute_callbacks(:before_build, [self])
+      end
 
-      queue_current_paths if @cleaning
+      ::Middleman::Util.instrument 'builder.queue' do
+        queue_current_paths if @cleaning
+      end
 
-      prerender_css
-      output_files
+      ::Middleman::Util.instrument 'builder.prerender' do
+        prerender_css
+      end
 
-      clean! if @cleaning
+      ::Middleman::Util.instrument 'builder.output' do
+        output_files
+      end
+
+      ::Middleman::Util.instrument 'builder.clean' do
+        clean! if @cleaning
+      end
 
       ::Middleman::Profiling.report('build')
 
-      @app.execute_callbacks(:after_build, [self])
+      ::Middleman::Util.instrument 'builder.after' do
+        @app.execute_callbacks(:after_build, [self])
+      end
 
       !@has_error
     end
@@ -73,14 +86,18 @@ module Middleman
     def prerender_css
       logger.debug '== Prerendering CSS'
 
-      css_files = @app.sitemap.resources
-                      .select { |resource| resource.ext == '.css' }
-                      .each(&method(:output_resource))
+      css_files = ::Middleman::Util.instrument 'builder.prerender.output' do
+        @app.sitemap.resources
+                        .select { |resource| resource.ext == '.css' }
+                        .each(&method(:output_resource))
+      end
 
-      # Double-check for compass sprites
-      if @app.files.find_new_files!.length > 0
-        logger.debug '== Checking for Compass sprites'
-        @app.sitemap.ensure_resource_list_updated!
+      ::Middleman::Util.instrument 'builder.prerender.check-files' do
+        # Double-check for compass sprites
+        if @app.files.find_new_files!.length > 0
+          logger.debug '== Checking for Compass sprites'
+          @app.sitemap.ensure_resource_list_updated!
+        end
       end
 
       css_files
@@ -92,11 +109,15 @@ module Middleman
     def output_files
       logger.debug '== Building files'
 
-      @app.sitemap.resources
-          .sort_by { |resource| SORT_ORDER.index(resource.ext) || 100 }
+      resources = @app.sitemap.resources
           .reject { |resource| resource.ext == '.css' }
-          .select { |resource| !@glob || File.fnmatch(@glob, resource.destination_path) }
-          .each(&method(:output_resource))
+          .sort_by { |resource| SORT_ORDER.index(resource.ext) || 100 }
+
+      if @glob
+        resources = resources.select { |resource| File.fnmatch(@glob, resource.destination_path) }
+      end
+
+      resources.each(&method(:output_resource))
     end
 
     # Figure out the correct event mode.
@@ -162,25 +183,29 @@ module Middleman
     # @return [void]
     Contract IsA['Middleman::Sitemap::Resource'] => Any
     def output_resource(resource)
-      output_file = @build_dir + resource.destination_path.gsub('%20', ' ')
+      output_file = nil
 
-      begin
-        if resource.binary?
-          export_file!(output_file, resource.file_descriptor[:full_path])
-        else
-          response = @rack.get(::URI.escape(resource.request_path))
+      ::Middleman::Util.instrument "builder.output.resource", path: File.basename(resource.destination_path) do
+        output_file = @build_dir + resource.destination_path.gsub('%20', ' ')
 
-          # If we get a response, save it to a tempfile.
-          if response.status == 200
-            export_file!(output_file, binary_encode(response.body))
+        begin
+          if resource.binary?
+            export_file!(output_file, resource.file_descriptor[:full_path])
           else
-            @has_error = true
-            trigger(:error, output_file, response.body)
+            response = @rack.get(::URI.escape(resource.request_path))
+
+            # If we get a response, save it to a tempfile.
+            if response.status == 200
+              export_file!(output_file, binary_encode(response.body))
+            else
+              @has_error = true
+              trigger(:error, output_file, response.body)
+            end
           end
+        rescue => e
+          @has_error = true
+          trigger(:error, output_file, "#{e}\n#{e.backtrace.join("\n")}")
         end
-      rescue => e
-        @has_error = true
-        trigger(:error, output_file, "#{e}\n#{e.backtrace.join("\n")}")
       end
 
       return unless @cleaning

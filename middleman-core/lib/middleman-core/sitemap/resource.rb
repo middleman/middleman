@@ -66,6 +66,8 @@ module Middleman
         # Page are data that is exposed through this resource's data member.
         # Note: It is named 'page' for backwards compatibility with older MM.
         @metadata = { options: {}, locals: {}, page: {} }
+
+        @page_data = nil
       end
 
       # Whether this resource has a template file
@@ -91,6 +93,7 @@ module Middleman
       #   Note: It is named 'page' for backwards compatibility with older MM.
       Contract METADATA_HASH => METADATA_HASH
       def add_metadata(meta={})
+        @page_data = nil
         @metadata.deep_merge!(meta)
       end
 
@@ -98,7 +101,7 @@ module Middleman
       # @return [Hash]
       Contract RespondTo[:indifferent_access?]
       def data
-        ::Middleman::Util.recursively_enhance(metadata[:page])
+        @page_data ||= ::Middleman::Util.recursively_enhance(metadata[:page])
       end
 
       # Options about how this resource is rendered, such as its :layout,
@@ -129,7 +132,6 @@ module Middleman
       def render(opts={}, locs={})
         return ::Middleman::FileRenderer.new(@app, file_descriptor[:full_path].to_s).template_data_for_file unless template?
 
-        # ::Middleman::Util.instrument 'render.resource', path: file_descriptor[:full_path].to_s, destination_path: destination_path do
         md   = metadata
         opts = md[:options].deep_merge(opts)
         locs = md[:locals].deep_merge(locs)
@@ -140,7 +142,6 @@ module Middleman
 
         renderer = ::Middleman::TemplateRenderer.new(@app, file_descriptor[:full_path].to_s)
         renderer.render(locs, opts)
-        # end
       end
 
       # A path without the directory index - so foo/index.html becomes

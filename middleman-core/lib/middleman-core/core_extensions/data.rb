@@ -57,6 +57,7 @@ module Middleman
           @app = app
           @data_file_matcher = data_file_matcher
           @local_data = {}
+          @local_data_enhanced = nil
           @local_sources = {}
           @callback_sources = {}
         end
@@ -117,6 +118,8 @@ module Middleman
           end
 
           data_branch[basename] = data
+
+          @local_data_enhanced = nil
         end
 
         # Remove a given file from the internal cache
@@ -137,6 +140,8 @@ module Middleman
           end
 
           data_branch.delete(basename) if data_branch.key?(basename)
+
+          @local_data_enhanced = nil
         end
 
         # Get a hash from either internal static data or a callback
@@ -151,8 +156,7 @@ module Middleman
             callbacks[path.to_s].call
           end
 
-          response = ::Middleman::Util.recursively_enhance(response)
-          response
+          ::Middleman::Util.recursively_enhance(response)
         end
 
         # "Magically" find namespaces of data if they exist
@@ -162,7 +166,8 @@ module Middleman
         def method_missing(path)
           if @local_data.key?(path.to_s)
             # Any way to cache this?
-            return ::Middleman::Util.recursively_enhance(@local_data[path.to_s])
+            @local_data_enhanced ||= ::Middleman::Util.recursively_enhance(@local_data)
+            return @local_data_enhanced[path.to_s]
           else
             result = data_for_path(path)
             return result if result
