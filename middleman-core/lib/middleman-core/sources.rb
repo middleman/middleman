@@ -184,7 +184,7 @@ module Middleman
     # @param [String] path The file path.
     # @param [Boolean] glob If the path contains wildcard or glob characters.
     # @return [Middleman::SourceFile, nil]
-    Contract Or[Symbol, ArrayOf[Symbol], SetOf[Symbol]], String, Maybe[Bool] => Maybe[SourceFile]
+    Contract Or[Symbol, ArrayOf[Symbol], SetOf[Symbol]], Or[Pathname, String], Maybe[Bool] => Maybe[SourceFile]
     def find(types, path, glob=false)
       array_of_types = Array(types)
 
