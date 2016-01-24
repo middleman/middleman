@@ -125,13 +125,28 @@ module Middleman
 
     Contract ResourceList => ResourceList
     def output_resources(resources)
-      cleaned_paths = if @parallel
+      results = if @parallel
         ::Parallel.map(resources, &method(:output_resource))
       else
         resources.map(&method(:output_resource))
       end
 
-      cleaned_paths.each { |p| @to_clean.delete(p) } if @cleaning
+      @has_error = true if results.any? { |r| r == false }
+
+      if @cleaning && !@has_error
+        results.each do |p|
+          next unless p.exist?
+
+          # handle UTF-8-MAC filename on MacOS
+          cleaned_name = if RUBY_PLATFORM =~ /darwin/
+            p.to_s.encode('UTF-8', 'UTF-8-MAC')
+          else
+            p
+          end
+
+          @to_clean.delete(Pathname(cleaned_name))
+        end
+      end
 
       resources
     end
@@ -197,10 +212,8 @@ module Middleman
     # Try to output a resource and capture errors.
     # @param [Middleman::Sitemap::Resource] resource The resource.
     # @return [void]
-    Contract IsA['Middleman::Sitemap::Resource'] => Maybe[Pathname]
+    Contract IsA['Middleman::Sitemap::Resource'] => Or[Pathname, Bool]
     def output_resource(resource)
-      output_file = nil
-
       ::Middleman::Util.instrument "builder.output.resource", path: File.basename(resource.destination_path) do
         output_file = @build_dir + resource.destination_path.gsub('%20', ' ')
 
@@ -214,27 +227,17 @@ module Middleman
             if response.status == 200
               export_file!(output_file, binary_encode(response.body))
             else
-              @has_error = true
               trigger(:error, output_file, response.body)
+              return false
             end
           end
         rescue => e
-          @has_error = true
           trigger(:error, output_file, "#{e}\n#{e.backtrace.join("\n")}")
+          return false
         end
-      end
 
-      return unless @cleaning
-      return unless output_file.exist?
-
-      # handle UTF-8-MAC filename on MacOS
-      cleaned_name = if RUBY_PLATFORM =~ /darwin/
-        output_file.to_s.encode('UTF-8', 'UTF-8-MAC')
-      else
         output_file
       end
-
-      Pathname(cleaned_name)
     end
 
     # Get a list of all the paths in the destination folder and save them
