@@ -112,7 +112,7 @@ class Middleman::Extensions::MinifyJavascript < ::Middleman::Extension
 
         # Only compress script tags that contain JavaScript (as opposed to
         # something like jQuery templates, identified with a "text/html" type).
-        if first.include?('<script>') || first.include?('text/javascript')
+        if !first.include?('type=') || first.include?('text/javascript')
           first + minify(inline_content) + last
         else
           match
