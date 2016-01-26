@@ -276,5 +276,14 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
 
       super(path, params)
     end
+
+    def partial(template, options={}, &block)
+      including_parent_locals = {}
+      including_parent_locals.merge!(@locs || {})
+      including_parent_locals.merge!(options[:locals] || {})
+
+      options[:locals] = including_parent_locals
+      super(template, options, &block)
+    end
   end
 end
