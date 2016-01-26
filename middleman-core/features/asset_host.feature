@@ -17,6 +17,8 @@ Feature: Alternate between multiple asset hosts
     When I go to "/stylesheets/asset_host.css"
     Then I should see content matching %r{http://assets1.example.com/}
     Then I should not see content matching %r{http://assets1.example.com//}
+    When I go to "/javascripts/asset_host.js"
+    Then I should not see content matching %r{http://assets1.example.com/}
 
   Scenario: Set proc host with inline-option
     Given a fixture app "asset-host-app"

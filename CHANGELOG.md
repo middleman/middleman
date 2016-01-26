@@ -21,6 +21,7 @@ master
 * Correctly show file names of GZIP'ed assets. #1364
 * Build file output is not parallel-ized! Use `middleman build --no-parallel` to disable.
 * Make template file extensions that get layouts by default configurable via `config[:extensions_with_layout]`
+* Remove `=` from inline url matcher. This means paths in HTML attributes MUST be quoted. Fixes #1780
 
 # 4.0.0
 
