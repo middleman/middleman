@@ -149,8 +149,12 @@ module Middleman
     define_setting :http_prefix, '/', 'Default prefix for building paths'
 
     # Default layout name
-    # @return [String, Symbold]
+    # @return [String]
     define_setting :layout, :_auto_layout, 'Default layout name'
+
+    # Which file extensions have a layout by default.
+    # @return [Array.<String>]
+    define_setting :extensions_with_layout, %w(.html .xhtml .php), 'Which file extensions have a layout by default.'
 
     # Default string encoding for templates and output.
     # @return [String]
