@@ -154,7 +154,7 @@ module Middleman
 
     # Which file extensions have a layout by default.
     # @return [Array.<String>]
-    define_setting :extensions_with_layout, %w(.html .xhtml .php), 'Which file extensions have a layout by default.'
+    define_setting :extensions_with_layout, %w(.htm .html .xhtml .php), 'Which file extensions have a layout by default.'
 
     # Default string encoding for templates and output.
     # @return [String]

@@ -1,7 +1,7 @@
 # The Cache Buster extension
 class Middleman::Extensions::CacheBuster < ::Middleman::Extension
   option :exts, %w(.css .png .jpg .jpeg .webp .svg .svgz .js .gif), 'List of extensions that get cache busters strings appended to them.'
-  option :sources, %w(.htm .html .php .css .js), 'List of extensions that are searched for bustable assets.'
+  option :sources, %w(.css .htm .html .js .php .xhtml), 'List of extensions that are searched for bustable assets.'
   option :ignore, [], 'Regexes of filenames to skip adding query strings to'
   option :rewrite_ignore, [], 'Regexes of filenames to skip processing for path rewrites'
 
