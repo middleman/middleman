@@ -22,7 +22,7 @@ Feature: GZIP assets during build
     Given a fixture app "gzip-app"
     And a file named "config.rb" with:
       """
-      activate :gzip, exts: %w(.htm .html .js .xhtml .xml)
+      activate :gzip, exts: %w(.htm .html .js .xhtml)
       """
     And a successfully built app at "gzip-app"
     Then the following files should exist:
