@@ -151,19 +151,19 @@ module Middleman
           config[:ssl_private_key] = opts[:ssl_private_key] if opts[:ssl_private_key]
 
           ready do
-            match_against = [
-              %r{^config\.rb$},
-              %r{^environments/[^\.](.*)\.rb$},
-              %r{^lib/[^\.](.*)\.rb$},
-              %r{^#{config[:helpers_dir]}/[^\.](.*)\.rb$}
-            ]
-
-            # config.rb
-            watcher = files.watch :reload,
-                                  path: root,
-                                  only: match_against
-
             unless config[:watcher_disable]
+              match_against = [
+                %r{^config\.rb$},
+                %r{^environments/[^\.](.*)\.rb$},
+                %r{^lib/[^\.](.*)\.rb$},
+                %r{^#{config[:helpers_dir]}/[^\.](.*)\.rb$}
+              ]
+
+              # config.rb
+              watcher = files.watch :reload,
+                                    path: root,
+                                    only: match_against
+
               # Hack around node_modules in root.
               watcher.listener.ignore(/^node_modules/)
 
