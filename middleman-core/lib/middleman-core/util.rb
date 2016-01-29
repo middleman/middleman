@@ -156,16 +156,14 @@ module Middleman
     def all_files_under(path, &ignore)
       path = Pathname(path)
 
-      if path.directory?
+      if ignore && ignore.call(path)
+        []
+      elsif path.directory?
         path.children.flat_map do |child|
           all_files_under(child, &ignore)
         end.compact
       elsif path.file?
-        if block_given? && yield(path)
-          []
-        else
-          [path]
-        end
+        [path]
       else
         []
       end
