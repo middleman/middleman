@@ -39,8 +39,6 @@ AssignmentInCondition:
   Enabled: false
 CyclomaticComplexity:
   Enabled: false
-AbcSize:
-  Enabled: false
 HandleExceptions:
   Enabled: false
 EndAlignment:
@@ -54,7 +52,7 @@ FormatString:
 CaseIndentation:
   IndentWhenRelativeTo: end
 TrivialAccessors:
-  ExactNameMatch: true
+  Enabled: false
 SingleLineBlockParams:
   Enabled: false
 Metrics/AbcSize:

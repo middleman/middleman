@@ -49,7 +49,7 @@ module Middleman
     # Reference to lower level listener
     attr_reader :listener
 
-    IGNORED_DIRECTORIES = %w(.git node_modules .sass-cache)
+    IGNORED_DIRECTORIES = %w(.git node_modules .sass-cache).freeze
 
     # Construct a new SourceWatcher
     #
