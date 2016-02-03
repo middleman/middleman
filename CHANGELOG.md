@@ -1,6 +1,12 @@
 master
 ===
 
+* Allow looking for `Gemfile` when setting up a project to fail gracefully.
+
+# 4.1.1
+
+* Fix bad code that made `/__middleman/` break.
+
 # 4.1.0
 
 * Add rewrite_ignore option to asset_hash, asset_host, cache_buster & relative_assets. This proc let's you opt-out of the extension behavior on a per-path basis.
