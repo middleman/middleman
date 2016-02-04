@@ -49,6 +49,19 @@ task :test do
   end
 end
 
+namespace :test do
+  GEM_PATHS.each do |path|
+    namespace :"#{path}" do
+      desc "run features for #{path}"
+      task :feature, [:feature] do |t, args|
+        Dir.chdir( File.join(ROOT, path) ) do
+          sh "#{Gem.ruby} -S rake FEATURE=features/#{args[:feature].chomp('.feature')}.feature cucumber"
+        end
+      end
+    end
+  end
+end
+
 desc 'Run specs for all middleman gems'
 task :spec do
   GEM_PATHS.each do |g|
