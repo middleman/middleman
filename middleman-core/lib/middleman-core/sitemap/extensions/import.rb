@@ -12,11 +12,7 @@ module Middleman
 
         ImportFileDescriptor = Struct.new(:from, :to) do
           def execute_descriptor(app, resources)
-            source = ::Middleman::SourceFile.new(Pathname(from).relative_path_from(app.source_dir), Pathname(from), app.source_dir, Set.new([:source, :binary]), 0)
-
-            resources + [
-              ::Middleman::Sitemap::Resource.new(app.sitemap, to, source)
-            ]
+            resources + [ Import.create_resource!(app, from, to) ]
           end
         end
 
@@ -27,11 +23,7 @@ module Middleman
                         .map do |path|
                           target_path = Pathname(path).relative_path_from(Pathname(from).parent).to_s
 
-                          ::Middleman::Sitemap::Resource.new(
-                            app.sitemap,
-                            renameProc.call(target_path, path),
-                            path
-                          )
+                          Import.create_resource!(app, path, renameProc.call(target_path, path))
                         end
           end
         end
@@ -58,6 +50,21 @@ module Middleman
             from,
             block_given? ? block : proc { |path| path }
           )
+        end
+
+        # Utility method for use in imported descriptors
+        #
+        Contract ::Middleman::Application, String, String => ::Middleman::Sitemap::Resource
+        def self.create_resource! app, from, to
+          source = ::Middleman::SourceFile.new(Pathname(from).relative_path_from(app.source_dir), Pathname(from), app.source_dir, Set.new([:source]), 0)
+          source.types.add(:binary) if ::Middleman::Util.binary?(source.full_path.to_s)
+          new_resource = ::Middleman::Sitemap::Resource.new(app.sitemap, to, source)
+
+          if new_resource.template? && !app.files.exists?(:source, source[:full_path].to_s)
+            app.files.watch :source, path: File.dirname(source[:full_path].to_s)
+          end
+
+          new_resource
         end
       end
     end
