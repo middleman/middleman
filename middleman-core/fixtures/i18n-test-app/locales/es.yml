@@ -4,6 +4,7 @@ es:
     hello: "hola"
     morning: "manana"
     one: "una"
-  
+
   greetings: "Como Esta?"
   hi: "Hola"
+  morning: "Manana"

@@ -3,6 +3,10 @@
     <%= stylesheet_link_tag :site %>
   </head>
   <body>
+    <nav>
+      <%= link_to t(:morning), "/morning.html" %>
+      <%= link_to other_locale, current_page, locale: other_locale %>
+    </nav>
     <%= yield %>
   </body>
 </html>
