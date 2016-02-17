@@ -29,7 +29,7 @@ module Middleman
       if obj.is_a? ::Array
         obj.map { |e| recursively_enhance(e) }
       elsif obj.is_a? ::Hash
-        ::Hashie::Mash.new(obj)
+        EnhancedHash.new(obj)
       else
         obj
       end
