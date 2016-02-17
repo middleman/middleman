@@ -67,7 +67,7 @@ module Middleman
         # @param [Symbol] name Name of the data, used for namespacing
         # @param [Hash] content The content for this data
         # @return [Hash]
-        Contract Symbol, Hash => Hash
+        Contract Symbol, Or[Hash, Array] => Hash
         def store(name=nil, content=nil)
           @local_sources[name.to_s] = content unless name.nil? || content.nil?
           @local_sources
@@ -148,7 +148,7 @@ module Middleman
         #
         # @param [String, Symbol] path The name of the data namespace
         # @return [Hash, nil]
-        Contract Or[String, Symbol] => Maybe[Hash]
+        Contract Or[String, Symbol] => Maybe[Or[Array, IsA['Middleman::Util::EnhancedHash']]]
         def data_for_path(path)
           response = if store.key?(path.to_s)
             store[path.to_s]
