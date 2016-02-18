@@ -20,13 +20,13 @@ Feature: Builder
       | layout                                        |
       | layouts/custom                                |
       | layouts/content_for                           |
-      
+
     And the file "index.html" should contain "Comment in layout"
     And the file "index.html" should contain "<h1>Welcome</h1>"
     And the file "static.html" should contain "Static, no code!"
     And the file "services/index.html" should contain "Services"
     And the file "stylesheets/static.css" should contain "body"
-    
+
   Scenario: Build glob
     Given a successfully built app at "glob-app" with flags "--glob '*.css'"
     When I cd to "build"
@@ -34,13 +34,17 @@ Feature: Builder
       | index.html                                    |
     Then the following files should exist:
       | stylesheets/site.css                          |
-  
+
   Scenario: Build with errors
     Given a built app at "build-with-errors-app"
     Then the exit status should be 1
-  
+
   Scenario: Build empty errors
     Given a built app at "empty-app"
+    Then the exit status should be 1
+
+  Scenario: Build external_pipeline errors
+    Given a built app at "external-pipeline-error"
     Then the exit status should be 1
 
   Scenario: Build alias (b)
