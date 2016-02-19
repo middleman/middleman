@@ -22,7 +22,9 @@ module Middleman
 
     # Set BUNDLE_GEMFILE and run Bundler setup. Raises an exception if there is no Gemfile
     def setup_bundler
-      ENV['BUNDLE_GEMFILE'] ||= File.join(findup('Gemfile', ENV['MM_ROOT']), 'Gemfile')
+      if found_gemfile_root = findup('Gemfile', ENV['MM_ROOT'])
+        ENV['BUNDLE_GEMFILE'] ||= File.join(found_gemfile_root, 'Gemfile')
+      end
 
       unless File.exist?(ENV['BUNDLE_GEMFILE'])
         ENV['BUNDLE_GEMFILE'] = File.expand_path('../../../../Gemfile', __FILE__)

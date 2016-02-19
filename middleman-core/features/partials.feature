@@ -50,3 +50,10 @@ Feature: Provide Sane Defaults for Partial Behavior
     Then I should see "File Not Found"
     When I go to "/_code_snippet.html"
     Then I should see "File Not Found"
+
+Scenario: Works with blocks
+    Given the Server is running at "partials-app"
+    When I go to "/block.html"
+    Then I should see "Start"
+    And I should see "Contents"
+    And I should see "End"

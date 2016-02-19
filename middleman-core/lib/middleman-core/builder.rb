@@ -113,8 +113,8 @@ module Middleman
       logger.debug '== Building files'
 
       resources = @app.sitemap.resources
-          .reject { |resource| resource.ext == '.css' }
-          .sort_by { |resource| SORT_ORDER.index(resource.ext) || 100 }
+                      .reject { |resource| resource.ext == '.css' }
+                      .sort_by { |resource| SORT_ORDER.index(resource.ext) || 100 }
 
       if @glob
         resources = resources.select { |resource| File.fnmatch(@glob, resource.destination_path) }
@@ -214,7 +214,7 @@ module Middleman
     # @return [void]
     Contract IsA['Middleman::Sitemap::Resource'] => Or[Pathname, Bool]
     def output_resource(resource)
-      ::Middleman::Util.instrument "builder.output.resource", path: File.basename(resource.destination_path) do
+      ::Middleman::Util.instrument 'builder.output.resource', path: File.basename(resource.destination_path) do
         output_file = @build_dir + resource.destination_path.gsub('%20', ' ')
 
         begin

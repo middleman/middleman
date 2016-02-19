@@ -1,12 +1,40 @@
 require 'yaml'
 require 'json'
 require 'pathname'
-require 'middleman-core/util'
-require 'middleman-core/contracts'
 require 'backports/2.1.0/array/to_h'
+require 'hashie'
+
+require 'middleman-core/util/binary'
+require 'middleman-core/contracts'
 
 module Middleman
   module Util
+    include Contracts
+
+    module_function
+
+    class EnhancedHash < ::Hashie::Mash
+      # include ::Hashie::Extensions::MergeInitializer
+      # include ::Hashie::Extensions::MethodReader
+      # include ::Hashie::Extensions::IndifferentAccess
+    end
+
+    # Recursively convert a normal Hash into a EnhancedHash
+    #
+    # @private
+    # @param [Hash] data Normal hash
+    # @return [Hash]
+    Contract Any => Maybe[Or[Array, EnhancedHash]]
+    def recursively_enhance(obj)
+      if obj.is_a? ::Array
+        obj.map { |e| recursively_enhance(e) }
+      elsif obj.is_a? ::Hash
+        EnhancedHash.new(obj)
+      else
+        obj
+      end
+    end
+
     module Data
       include Contracts
 
@@ -23,7 +51,7 @@ module Middleman
         # Avoid weird race condition when a file is renamed
         begin
           content = file.read
-        rescue EOFError, IOError, Errno::ENOENT
+        rescue EOFError, IOError, ::Errno::ENOENT
           return [{}, nil]
         end
 
@@ -31,7 +59,7 @@ module Middleman
                                     .values
                                     .flatten(1)
                                     .transpose
-                                    .map(&Regexp.method(:union))
+                                    .map(&::Regexp.method(:union))
 
         match = /
           \A(?:[^\r\n]*coding:[^\r\n]*\r?\n)?

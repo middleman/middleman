@@ -34,6 +34,11 @@ class Middleman::Extensions::ExternalPipeline < ::Middleman::Extension
       end
     end
 
+    unless $?.success?
+      logger.error '== External: Command failed with non-zero exit status'
+      exit(1)
+    end
+
     @watcher.poll_once!
   rescue ::Errno::ENOENT => e
     logger.error "== External: Command failed with message: #{e.message}"

@@ -96,8 +96,9 @@ module Middleman
     #
     # @param [String, Symbol] name The partial to render.
     # @param [Hash] options
+    # @param [Proc] block A block will be evaluated to return internal contents.
     # @return [String]
-    Contract Any, Or[Symbol, String], Hash => String
+    Contract Any, Or[Symbol, String], Hash => String, Maybe[Proc] => String
     def render(_, name, options={}, &block)
       name = name.to_s
 

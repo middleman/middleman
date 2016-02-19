@@ -49,6 +49,8 @@ module Middleman
     # Reference to lower level listener
     attr_reader :listener
 
+    IGNORED_DIRECTORIES = %w(.git node_modules .sass-cache).freeze
+
     # Construct a new SourceWatcher
     #
     # @param [Middleman::Sources] parent The parent collection.
@@ -182,7 +184,7 @@ module Middleman
 
     Contract ArrayOf[Pathname]
     def find_new_files!
-      new_files = ::Middleman::Util.all_files_under(@directory.to_s)
+      new_files = ::Middleman::Util.all_files_under(@directory.to_s, &method(:should_not_recurse?))
                                    .reject { |p| @files.key?(p) }
 
       update(new_files, []).flatten.map { |s| s[:full_path] }
@@ -193,7 +195,7 @@ module Middleman
     # @return [void]
     Contract ArrayOf[Pathname]
     def poll_once!
-      updated = ::Middleman::Util.all_files_under(@directory.to_s)
+      updated = ::Middleman::Util.all_files_under(@directory.to_s, &method(:should_not_recurse?))
       removed = @files.keys.reject { |p| updated.include?(p) }
 
       result = update(updated, removed)
@@ -216,6 +218,11 @@ module Middleman
     alias inspect to_s # Ruby 2.0 calls inspect for NoMethodError instead of to_s
 
     protected
+
+    Contract Pathname => Bool
+    def should_not_recurse?(p)
+      IGNORED_DIRECTORIES.include?(p.basename.to_s)
+    end
 
     # The `listen` gem callback.
     #
