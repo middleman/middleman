@@ -99,8 +99,13 @@ module Middleman
     # Given a source path (referenced either absolutely or relatively)
     # or a Resource, this will produce the nice URL configured for that
     # path, respecting :relative_links, directory indexes, etc.
-    Contract ::Middleman::Application, Or[String, ::Middleman::Sitemap::Resource], Hash => String
+    Contract ::Middleman::Application, Or[String, Symbol, ::Middleman::Sitemap::Resource], Hash => String
     def url_for(app, path_or_resource, options={})
+      if path_or_resource.is_a?(String) || path_or_resource.is_a?(Symbol)
+        r = app.sitemap.find_resource_by_page_id(path_or_resource)
+        path_or_resource = r if r
+      end
+
       # Handle Resources and other things which define their own url method
       url = if path_or_resource.respond_to?(:url)
         path_or_resource.url

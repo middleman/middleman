@@ -52,10 +52,13 @@ module Middleman
       def page(path, opts={})
         options = opts.dup
 
+        page_data = options.delete(:data) || {}
+        page_data[:id] = options.delete(:id) if options.key?(:id)
+
         # Default layout
         metadata = {
           locals: options.delete(:locals) || {},
-          page: options.delete(:data) || {},
+          page: page_data,
           options: options
         }
 

@@ -1,6 +1,7 @@
 master
 ===
 
+* Add `page_id` concept. Using the `id` key in frontmatter, proxy or page will set an ID on a resource which can be referenced by `url_for` and `link_to`.
 * Allow looking for `Gemfile` when setting up a project to fail gracefully.
 
 # 4.1.1

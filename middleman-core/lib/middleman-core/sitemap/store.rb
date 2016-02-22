@@ -149,6 +149,17 @@ module Middleman
         end
       end
 
+      # Find a resource given its page id
+      # @param [String] page_id The page id.
+      # @return [Middleman::Sitemap::Resource]
+      Contract Or[String, Symbol] => Maybe[IsA['Middleman::Sitemap::Resource']]
+      def find_resource_by_page_id(page_id)
+        @lock.synchronize do
+          ensure_resource_list_updated!
+          @_lookup_by_page_id[page_id.to_sym]
+        end
+      end
+
       # Get the array of all resources
       # @param [Boolean] include_ignored Whether to include ignored resources
       # @return [Array<Middleman::Sitemap::Resource>]
@@ -220,6 +231,7 @@ module Middleman
                 @resources.each do |resource|
                   @_lookup_by_path[resource.path] = resource
                   @_lookup_by_destination_path[resource.destination_path] = resource
+                  @_lookup_by_page_id[resource.page_id.to_sym] = resource
                 end
 
                 invalidate_resources_not_ignored_cache!
@@ -239,6 +251,7 @@ module Middleman
         @lock.synchronize do
           @_lookup_by_path = {}
           @_lookup_by_destination_path = {}
+          @_lookup_by_page_id = {}
         end
       end
 

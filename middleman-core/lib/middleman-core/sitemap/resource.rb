@@ -85,6 +85,11 @@ module Middleman
         file_descriptor && file_descriptor[:full_path].to_s
       end
 
+      Contract Or[Symbol, String]
+      def page_id
+        metadata[:page][:id] || destination_path
+      end
+
       # Merge in new metadata specific to this resource.
       # @param [Hash] meta A metadata block with keys :options, :locals, :page.
       #   Options are generally rendering/sitemap options
