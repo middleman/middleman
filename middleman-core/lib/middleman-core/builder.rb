@@ -97,7 +97,7 @@ module Middleman
 
       ::Middleman::Util.instrument 'builder.prerender.check-files' do
         # Double-check for compass sprites
-        if @app.files.find_new_files!.length > 0
+        unless @app.files.find_new_files!.empty?
           logger.debug '== Checking for Compass sprites'
           @app.sitemap.ensure_resource_list_updated!
         end

@@ -87,6 +87,13 @@ module Middleman
         @app.config_context.class.send :def_delegator, :app, :sitemap
       end
 
+      Contract Symbol, RespondTo[:manipulate_resource_list], Maybe[Or[Num, ArrayOf[Num]]], Maybe[Symbol] => Any
+      def register_resource_list_manipulators(name, manipulator, priority=50, custom_name=nil)
+        Array(priority || 50).each do |p|
+          register_resource_list_manipulator(name, manipulator, p, custom_name)
+        end
+      end
+
       # Register an object which can transform the sitemap resource list. Best to register
       # these in a `before_configuration` or `after_configuration` hook.
       #
@@ -221,7 +228,7 @@ module Middleman
 
             @resource_list_manipulators.each do |m|
               ::Middleman::Util.instrument 'sitemap.manipulator', name: m[:name] do
-                @app.logger.debug "== Running manipulator: #{m[:name]}"
+                @app.logger.debug "== Running manipulator: #{m[:name]} (#{m[:priority]})"
                 @resources = m[:manipulator].send(m[:custom_name] || :manipulate_resource_list, @resources)
 
                 # Reset lookup cache

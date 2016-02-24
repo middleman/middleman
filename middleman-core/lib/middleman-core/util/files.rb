@@ -104,30 +104,19 @@ module Middleman
       sass_type_aliasing = ['.scss', '.sass']
       erb_type_aliasing = ['.erb', '.haml', '.slim']
 
-      if (all_extensions & sass_type_aliasing).length > 0
-        all_extensions |= sass_type_aliasing
-      end
-
-      if (all_extensions & erb_type_aliasing).length > 0
-        all_extensions |= erb_type_aliasing
-      end
+      all_extensions |= sass_type_aliasing unless (all_extensions & sass_type_aliasing).empty?
+      all_extensions |= erb_type_aliasing unless (all_extensions & erb_type_aliasing).empty?
 
       all_extensions.uniq!
 
       app.sitemap.resources.select(&:file_descriptor).select { |r|
         local_extensions = collect_extensions(r.file_descriptor[:full_path].to_s)
-
-        if (local_extensions & sass_type_aliasing).length > 0
-          local_extensions |= sass_type_aliasing
-        end
-
-        if (local_extensions & erb_type_aliasing).length > 0
-          local_extensions |= erb_type_aliasing
-        end
+        local_extensions |= sass_type_aliasing unless (local_extensions & sass_type_aliasing).empty?
+        local_extensions |= erb_type_aliasing unless (local_extensions & erb_type_aliasing).empty?
 
         local_extensions.uniq!
 
-        ((all_extensions & local_extensions).length > 0) && files.none? { |f| f == r.file_descriptor[:full_path] }
+        !(all_extensions & local_extensions).empty? && files.none? { |f| f == r.file_descriptor[:full_path] }
       }.map(&:file_descriptor)
     end
   end

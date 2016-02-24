@@ -30,7 +30,7 @@ class Middleman::Extensions::ExternalPipeline < ::Middleman::Extension
     ::IO.popen(options[:command], 'r') do |pipe|
       while buf = pipe.gets
         without_newline = buf.sub(/\n$/, '')
-        logger.info "== External: #{without_newline}" if without_newline.length > 0
+        logger.info "== External: #{without_newline}" unless without_newline.empty?
       end
     end
 
