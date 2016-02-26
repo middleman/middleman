@@ -3,7 +3,7 @@ require 'middleman-core/rack'
 
 class Middleman::Extensions::AssetHash < ::Middleman::Extension
   option :sources, %w(.css .htm .html .js .php .xhtml), 'List of extensions that are searched for hashable assets.'
-  option :exts, %w(.jpg .jpeg .png .gif .webp .js .css .otf .woff .woff2 .eot .ttf .svg .svgz), 'List of extensions that get asset hashes appended to them.'
+  option :exts, %w(.jpg .jpeg .png .gif .webp .js .css .otf .woff .woff2 .eot .ttf .svg .svgz .map), 'List of extensions that get asset hashes appended to them.'
   option :ignore, [], 'Regexes of filenames to skip adding asset hashes to'
   option :rewrite_ignore, [], 'Regexes of filenames to skip processing for path rewrites'
 

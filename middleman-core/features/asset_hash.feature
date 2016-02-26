@@ -285,3 +285,17 @@ Feature: Assets get file hashes appended to them and references to them are upda
       | javascripts/jquery.min-276c87ff.js |
     And the following files should not exist:
       | javascripts/jquery.min.js |
+
+  Scenario: Source map paths include the hash
+    Given a successfully built app at "asset-hash-source-map"
+    When I cd to "build"
+    Then the following files should exist:
+      | index.html |
+      | javascripts/application-4553338c.js |
+      | javascripts/application.js-22cc2b5f.map |
+      | index.html |
+    And the following files should not exist:
+      | javascripts/application.js |
+      | javascripts/application.js.map |
+
+    And the file "javascripts/application-4553338c.js" should contain "//# sourceMappingURL=application.js-22cc2b5f.map"
