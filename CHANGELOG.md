@@ -3,6 +3,10 @@ master
 
 * Add `page_id` concept. Using the `id` key in frontmatter, proxy or page will set an ID on a resource which can be referenced by `url_for` and `link_to`.
 * Allow looking for `Gemfile` when setting up a project to fail gracefully.
+* Send correct exit code when external_pipeline fails during build.
+* Fix error when customizing `layouts_dir`. #1028
+* Fix collections (commands in loops) not being processed by `page` command. #1226
+* Correctly asset_hash sourcemap references.
 
 # 4.1.1
 
