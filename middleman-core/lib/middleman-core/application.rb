@@ -1,5 +1,3 @@
-require 'active_support/core_ext/integer/inflections'
-
 require 'middleman-core/contracts'
 require 'middleman-core/callback_manager'
 require 'middleman-core/logger'
