@@ -51,7 +51,7 @@ module Middleman::Cli
       env = options['environment'].to_sym
       verbose = options['verbose'] ? 0 : 1
       instrument = options['instrument']
-      cli_options = options.to_hash.symbolize_keys
+      cli_options = options.symbolize_keys.to_hash
 
       builder = nil
 
