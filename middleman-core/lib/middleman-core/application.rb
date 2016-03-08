@@ -193,6 +193,7 @@ module Middleman
     define_setting :watcher_disable, false, 'If the Listen watcher should not run'
     define_setting :watcher_force_polling, false, 'If the Listen watcher should run in polling mode'
     define_setting :watcher_latency, nil, 'The Listen watcher latency'
+    define_setting :cli_options, nil, 'Options passed in from the cli.'
 
     # Delegate convenience methods off to their implementations
     def_delegator :"::Middleman::Logger", :singleton, :logger

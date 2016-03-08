@@ -51,6 +51,7 @@ module Middleman::Cli
       env = options['environment'].to_sym
       verbose = options['verbose'] ? 0 : 1
       instrument = options['instrument']
+      cli_options = options.to_hash.symbolize_keys
 
       builder = nil
 
@@ -61,6 +62,7 @@ module Middleman::Cli
           config[:mode] = :build
           config[:environment] = env
           config[:show_exceptions] = false
+          config[:cli_options] = cli_options
         end
 
         builder = Middleman::Builder.new(@app,

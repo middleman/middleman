@@ -79,7 +79,8 @@ module Middleman::Cli
         reload_paths: options['reload_paths'],
         force_polling: options['force_polling'],
         latency: options['latency'],
-        daemon: options['daemon']
+        daemon: options['daemon'],
+        cli_options: options.to_hash.symbolize_keys
       }
 
       puts '== The Middleman is loading'
