@@ -55,12 +55,6 @@ module Middleman::Cli
                  default: false,
                  desc: 'Daemonize preview server'
 
-    # Allow extensions to verify cli arugments
-    # @return [void]
-    def check_cli_arguments
-      nil
-    end
-
     # Start the server
     def server
       require 'middleman-core'

@@ -36,12 +36,6 @@ module Middleman::Cli
                  default: false,
                  desc: 'Generate profiling report for the build'
 
-    # Allow extensions to verify cli arugments
-    # @return [void]
-    def check_cli_arguments
-      nil
-    end
-
     # Core build Thor command
     # @return [void]
     def build
