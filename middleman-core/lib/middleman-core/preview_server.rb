@@ -149,6 +149,7 @@ module Middleman
           config[:https]           = opts[:https] unless opts[:https].nil?
           config[:ssl_certificate] = opts[:ssl_certificate] if opts[:ssl_certificate]
           config[:ssl_private_key] = opts[:ssl_private_key] if opts[:ssl_private_key]
+          config[:cli_options]     = opts[:cli_options]
 
           ready do
             unless config[:watcher_disable]
