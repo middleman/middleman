@@ -106,7 +106,7 @@ module Middleman
 
     # Middleman environment. Defaults to :development
     # @return [String]
-    define_setting :environment, ((ENV['MM_ENV'] && ENV['MM_ENV'].to_sym) || :development), 'Middleman environment. Defaults to :development'
+    define_setting :environment, ((ENV['MM_ENV'] && ENV['MM_ENV'].to_sym) || :development), 'Middleman environment. Defaults to :development', import: proc { |s| s.to_sym }
 
     # Which file should be used for directory indexes
     # @return [String]

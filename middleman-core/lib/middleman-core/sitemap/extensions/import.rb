@@ -23,8 +23,8 @@ module Middleman
         ImportPathDescriptor = Struct.new(:from, :renameProc) do
           def execute_descriptor(app, resources)
             resources + ::Middleman::Util.glob_directory(File.join(from, '**/*'))
-                        .reject { |path| File.directory?(path) }
-                        .map do |path|
+                                         .reject { |path| File.directory?(path) }
+                                         .map do |path|
                           target_path = Pathname(path).relative_path_from(Pathname(from).parent).to_s
 
                           ::Middleman::Sitemap::Resource.new(

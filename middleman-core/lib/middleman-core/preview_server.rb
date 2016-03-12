@@ -18,12 +18,13 @@ module Middleman
 
       # Start an instance of Middleman::Application
       # @return [void]
-      def start(opts={})
+      def start(opts={}, cli_options={})
         # Do not buffer output, otherwise testing of output does not work
         $stdout.sync = true
         $stderr.sync = true
 
         @options = opts
+        @cli_options = cli_options
         @server_information = ServerInformation.new
         @server_information.https = (@options[:https] == true)
 
@@ -131,6 +132,7 @@ module Middleman
 
       def initialize_new_app
         opts = @options.dup
+        cli_options = @cli_options.dup
 
         ::Middleman::Logger.singleton(
           opts[:debug] ? 0 : 1,
@@ -138,17 +140,14 @@ module Middleman
         )
 
         app = ::Middleman::Application.new do
-          config[:environment] = opts[:environment].to_sym if opts[:environment]
-          config[:watcher_disable] = opts[:disable_watcher]
-          config[:watcher_force_polling] = opts[:force_polling]
-          config[:watcher_latency] = opts[:latency]
+          cli_options.each do |k, v|
+            setting = config.setting(k.to_sym)
+            next unless setting
 
-          config[:port] = opts[:port] if opts[:port]
-          config[:bind_address]    = opts[:bind_address]
-          config[:server_name]     = opts[:server_name]
-          config[:https]           = opts[:https] unless opts[:https].nil?
-          config[:ssl_certificate] = opts[:ssl_certificate] if opts[:ssl_certificate]
-          config[:ssl_private_key] = opts[:ssl_private_key] if opts[:ssl_private_key]
+            v = setting.options[:import].call(v) if setting.options[:import]
+
+            config[k.to_sym] = v
+          end
 
           ready do
             unless config[:watcher_disable]

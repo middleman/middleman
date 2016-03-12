@@ -9,6 +9,31 @@ end
 require "middleman-core/load_paths"
 Middleman.setup_load_paths
 
+require 'middleman-core'
+require 'middleman-core/logger'
+
+module Middleman::Cli
+  class << self
+    attr_accessor :config
+  end
+
+  def self.import_config(base)
+    ::Middleman::Cli.config.all_settings.each do |setting|
+      if setting.default.is_a?(String) || setting.default.is_a?(NilClass)
+        base.class_option setting.key,
+                          type: :string,
+                          default: setting.default,
+                          desc: setting.description
+      elsif setting.default.is_a?(TrueClass) || setting.default.is_a?(FalseClass)
+        base.class_option setting.key,
+                          type: :boolean,
+                          default: setting.default,
+                          desc: setting.description
+      end
+    end
+  end
+end
+
 require "middleman-cli"
 
 # Change directory to the root
@@ -18,6 +43,22 @@ Dir.chdir(ENV["MM_ROOT"]) if ENV["MM_ROOT"]
 if ARGV[0] != 'help' && (ARGV.length < 1 || ARGV.first.include?('-'))
   ARGV.unshift('server')
 end
+
+::Middleman::Logger.singleton(3)
+::Middleman::Cli.config = ::Middleman::Application.new do
+  config[:exit_before_ready] = true
+end.config
+
+# Require the Middleman version
+require 'middleman-core/version'
+
+# Include the core CLI items
+require 'middleman-cli/init'
+require 'middleman-cli/extension'
+require 'middleman-cli/server'
+require 'middleman-cli/build'
+require 'middleman-cli/console'
+require 'middleman-cli/config'
 
 # Start the CLI
 Middleman::Cli::Base.start(ARGV)

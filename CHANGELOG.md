@@ -1,6 +1,7 @@
 master
 ===
 
+* Expose all top-level config options to CLI (flags now match config. latency -> watcher_latency, etc).
 * Fix directory indexes with `.htm` files. #1821
 
 # 4.1.2
