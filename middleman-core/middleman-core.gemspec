@@ -29,7 +29,7 @@ Gem::Specification.new do |s|
   # Helpers
   s.add_dependency('activesupport', ['~> 4.2'])
   s.add_dependency('padrino-helpers', ['~> 0.13.0'])
-  s.add_dependency("addressable", ["~> 2.4.0"])
+  s.add_dependency("addressable", ["~> 2.3"])
 
   # Watcher
   s.add_dependency('listen', ['~> 3.0'])
@@ -41,7 +41,7 @@ Gem::Specification.new do |s|
   s.add_dependency('i18n', ['~> 0.7.0'])
 
   # Automatic Image Sizes
-  s.add_dependency('fastimage', ['~> 1.8.0'])
+  s.add_dependency('fastimage', ['~> 1.7'])
 
   # Minify CSS
   s.add_dependency('sass', ['>= 3.4'])
