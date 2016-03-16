@@ -237,7 +237,16 @@ module Middleman
                 # Rebuild cache
                 @resources.each do |resource|
                   @_lookup_by_path[resource.path] = resource
+                end
+
+                @resources.each do |resource|
                   @_lookup_by_destination_path[resource.destination_path] = resource
+                end
+
+                # NB: This needs to be done after the previous two steps,
+                # since some proxy resources are looked up by path in order to
+                # get their metadata and subsequently their page_id.
+                @resources.each do |resource|
                   @_lookup_by_page_id[resource.page_id.to_sym] = resource
                 end
 
