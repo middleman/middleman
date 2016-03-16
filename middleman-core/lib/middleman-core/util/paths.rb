@@ -80,10 +80,11 @@ module Middleman
       result = if resource = app.sitemap.find_resource_by_destination_path(url_for(app, path, options))
         resource.url
       else
-        path = ::File.join(prefix, path)
-        if resource = app.sitemap.find_resource_by_path(path)
+        prefixed_path = ::File.join(prefix, path)
+        if resource = app.sitemap.find_resource_by_path(prefixed_path)
           resource.url
         else
+          # Don't try to prefix the path (usually with an asset directory)
           ::File.join(app.config[:http_prefix], path)
         end
       end
