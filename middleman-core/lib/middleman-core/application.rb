@@ -96,6 +96,10 @@ module Middleman
     # @return [String]
     define_setting :source, 'source', 'Name of the source directory'
 
+    # If we should not run the sitemap.
+    # @return [Boolean]
+    define_setting :disable_sitemap, false, 'If we should not run the sitemap.'
+
     # If we should exit before ready event.
     # @return [Boolean]
     define_setting :exit_before_ready, false, 'If we should exit before ready event.'
