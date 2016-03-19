@@ -120,6 +120,20 @@ describe Middleman::Util do
                                                                        relative: true ) ).to eq '../images/blank.gif'
       end
 
+      context "when the asset is stored in the same directory as current_resource" do
+        before do
+          Given.file 'source/a-path/index.html', ''
+          Given.file 'source/a-path/blank.gif', ''
+          @mm = Middleman::Application.new
+        end
+
+        it "returns path relative to the provided current_resource" do
+          current_resource = @mm.sitemap.find_resource_by_path('a-path/index.html')
+          expect( Middleman::Util.asset_url( @mm, 'blank.gif', 'images', current_resource: current_resource,
+                                                                        relative: true) ).to eq 'blank.gif'
+        end
+      end
+
       it "raises error if not given a current_resource" do
         expect{
           Middleman::Util.asset_url( @mm, 'blank.gif', 'images', relative: true )
