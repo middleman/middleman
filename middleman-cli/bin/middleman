@@ -47,6 +47,8 @@ end
 ::Middleman::Logger.singleton(3)
 ::Middleman::Cli.config = ::Middleman::Application.new do
   config[:exit_before_ready] = true
+  config[:watcher_disable] = true
+  config[:disable_sitemap] = true
 end.config
 
 # Require the Middleman version

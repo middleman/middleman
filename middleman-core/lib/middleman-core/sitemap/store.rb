@@ -216,6 +216,8 @@ module Middleman
       # rebuild_resource_list! since the last time it was run. This is
       # very expensive!
       def ensure_resource_list_updated!
+        return if @app.config[:disable_sitemap]
+
         @lock.synchronize do
           return unless @needs_sitemap_rebuild
 
