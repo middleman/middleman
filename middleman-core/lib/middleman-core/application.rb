@@ -194,6 +194,8 @@ module Middleman
 
     define_setting :skip_build_clean, proc { |p| [/\.git/].any? { |r| p =~ r } }, 'Whether some paths should not be removed during a clean build.'
 
+    define_setting :cli_options, {}, 'Options from the Command Line.'
+
     define_setting :watcher_disable, false, 'If the Listen watcher should not run'
     define_setting :watcher_force_polling, false, 'If the Listen watcher should run in polling mode'
     define_setting :watcher_latency, nil, 'The Listen watcher latency'
@@ -280,6 +282,15 @@ module Middleman
 
       # Run any `configure` blocks for the current mode.
       execute_callbacks([:configure, config[:mode]])
+
+      config[:cli_options].each do |k, v|
+        setting = config.setting(k.to_sym)
+        next unless setting
+
+        v = setting.options[:import].call(v) if setting.options[:import]
+
+        config[k.to_sym] = v
+      end
 
       # Post parsing, pre-extension callback
       execute_callbacks(:after_configuration_eval)

@@ -63,14 +63,9 @@ module Middleman::Cli
         @app = ::Middleman::Application.new do
           config[:mode] = :build
           config[:show_exceptions] = false
-
-          cli_options.each do |k, v|
-            setting = config.setting(k.to_sym)
-            next unless setting
-
-            v = setting.options[:import].call(v) if setting.options[:import]
-
-            config[k.to_sym] = v
+          config[:cli_options] = cli_options.reduce({}) do |sum, (k, v)|
+            sum[k] = v unless v == :undefined
+            sum
           end
         end
 
