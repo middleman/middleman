@@ -46,6 +46,7 @@ end
 
 ::Middleman::Logger.singleton(3)
 ::Middleman::Cli.config = ::Middleman::Application.new do
+  config[:mode] = :config
   config[:exit_before_ready] = true
   config[:watcher_disable] = true
   config[:disable_sitemap] = true

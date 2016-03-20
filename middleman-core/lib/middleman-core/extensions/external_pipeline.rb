@@ -10,6 +10,8 @@ class Middleman::Extensions::ExternalPipeline < ::Middleman::Extension
   def initialize(app, config={}, &block)
     super
 
+    return if app.mode?(:config)
+
     require 'thread'
 
     @watcher = app.files.watch :source,
