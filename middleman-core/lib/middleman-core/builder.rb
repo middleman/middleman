@@ -97,7 +97,7 @@ module Middleman
 
       ::Middleman::Util.instrument 'builder.prerender.check-files' do
         # Double-check for compass sprites
-        if @app.files.find_new_files!.length > 0
+        unless @app.files.find_new_files!.empty?
           logger.debug '== Checking for Compass sprites'
           @app.sitemap.ensure_resource_list_updated!
         end
@@ -117,7 +117,13 @@ module Middleman
                       .sort_by { |resource| SORT_ORDER.index(resource.ext) || 100 }
 
       if @glob
-        resources = resources.select { |resource| File.fnmatch(@glob, resource.destination_path) }
+        resources = resources.select do |resource|
+          if defined?(::File::FNM_EXTGLOB)
+            File.fnmatch(@glob, resource.destination_path, ::File::FNM_EXTGLOB)
+          else
+            File.fnmatch(@glob, resource.destination_path)
+          end
+        end
       end
 
       output_resources(resources)

@@ -52,7 +52,7 @@ module Middleman
       def register(name, extension_class=nil, options={}, &block)
         raise 'Extension name must be a symbol' unless name.is_a?(Symbol)
         # If we've already got an extension registered under this name, bail out
-        raise "There is already an extension registered with the name '#{name}'" if registered.key?(name)
+        # raise "There is a already an extension registered with the name '#{name}'" if registered.key?(name)
 
         # If the extension is defined with a block, grab options out of the "extension_class" parameter.
         if extension_class && block_given? && options.empty? && extension_class.is_a?(Hash)

@@ -116,7 +116,8 @@ module Middleman
     Contract Or[Symbol, HANDLER], Maybe[Hash] => HANDLER
     def watch(type_or_handler, options={})
       handler = if type_or_handler.is_a? Symbol
-        SourceWatcher.new(self, type_or_handler, options.delete(:path), options)
+        path = File.expand_path(options.delete(:path), app.root)
+        SourceWatcher.new(self, type_or_handler, path, options)
       else
         type_or_handler
       end

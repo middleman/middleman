@@ -11,6 +11,22 @@ Feature: Custom layouts
     When I go to "/custom-layout.html"
     Then I should see "Custom Layout"
 
+  Scenario: Using custom :layout attribute with proxy
+    Given a fixture app "custom-layout-app2"
+    And a file named "config.rb" with:
+      """
+      page '/test/*', layout: :custom
+      proxy "/test/me.html", "/custom-layout.html"
+      live { %w(you) }.each do |who|
+        proxy "/test/#{who}.html", "/custom-layout.html"
+      end
+      """
+    And the Server is running at "custom-layout-app2"
+    When I go to "/test/me.html"
+    Then I should see "Custom Layout"
+    When I go to "/test/you.html"
+    Then I should see "Custom Layout"
+
   Scenario: Using custom :layout attribute with folders
     Given a fixture app "custom-layout-app2"
     And a file named "config.rb" with:

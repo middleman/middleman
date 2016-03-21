@@ -96,6 +96,10 @@ module Middleman
     # @return [String]
     define_setting :source, 'source', 'Name of the source directory'
 
+    # If we should not run the sitemap.
+    # @return [Boolean]
+    define_setting :disable_sitemap, false, 'If we should not run the sitemap.'
+
     # If we should exit before ready event.
     # @return [Boolean]
     define_setting :exit_before_ready, false, 'If we should exit before ready event.'
@@ -106,7 +110,7 @@ module Middleman
 
     # Middleman environment. Defaults to :development
     # @return [String]
-    define_setting :environment, ((ENV['MM_ENV'] && ENV['MM_ENV'].to_sym) || :development), 'Middleman environment. Defaults to :development'
+    define_setting :environment, ((ENV['MM_ENV'] && ENV['MM_ENV'].to_sym) || :development), 'Middleman environment. Defaults to :development', import: proc { |s| s.to_sym }
 
     # Which file should be used for directory indexes
     # @return [String]
@@ -190,6 +194,8 @@ module Middleman
 
     define_setting :skip_build_clean, proc { |p| [/\.git/].any? { |r| p =~ r } }, 'Whether some paths should not be removed during a clean build.'
 
+    define_setting :cli_options, {}, 'Options from the Command Line.'
+
     define_setting :watcher_disable, false, 'If the Listen watcher should not run'
     define_setting :watcher_force_polling, false, 'If the Listen watcher should run in polling mode'
     define_setting :watcher_latency, nil, 'The Listen watcher latency'
@@ -265,6 +271,8 @@ module Middleman
       # Before config is parsed, before extensions get to it.
       execute_callbacks(:initialized)
 
+      apply_cli_options
+
       # Before config is parsed. Mostly used for extensions.
       execute_callbacks(:before_configuration)
 
@@ -276,6 +284,8 @@ module Middleman
 
       # Run any `configure` blocks for the current mode.
       execute_callbacks([:configure, config[:mode]])
+
+      apply_cli_options
 
       # Post parsing, pre-extension callback
       execute_callbacks(:after_configuration_eval)
@@ -291,6 +301,17 @@ module Middleman
 
       # Everything is stable
       execute_callbacks(:ready) unless config[:exit_before_ready]
+    end
+
+    def apply_cli_options
+      config[:cli_options].each do |k, v|
+        setting = config.setting(k.to_sym)
+        next unless setting
+
+        v = setting.options[:import].call(v) if setting.options[:import]
+
+        config[k.to_sym] = v
+      end
     end
 
     # Eval config

@@ -102,7 +102,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
       locale_suffix = ::I18n.locale
 
       extname = File.extname(partial_name)
-      maybe_static = extname.length > 0
+      maybe_static = !extname.empty?
       suffixed_partial_name = if maybe_static
         partial_name.sub(extname, ".#{locale_suffix}#{extname}")
       else

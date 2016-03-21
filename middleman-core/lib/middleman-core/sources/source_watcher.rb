@@ -92,7 +92,7 @@ module Middleman
     # @return [void]
     Contract String => Any
     def update_path(directory)
-      @directory = Pathname(directory)
+      @directory = Pathname(File.expand_path(directory, app.root))
 
       stop_listener! if @listener
 
@@ -133,6 +133,7 @@ module Middleman
       return nil if p.absolute? && !p.to_s.start_with?(@directory.to_s)
 
       p = @directory + p if p.relative?
+
       if glob
         @extensionless_files[p]
       else

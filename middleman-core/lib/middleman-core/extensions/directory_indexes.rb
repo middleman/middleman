@@ -11,16 +11,22 @@ class Middleman::Extensions::DirectoryIndexes < ::Middleman::Extension
     index_file = app.config[:index_file]
     new_index_path = "/#{index_file}"
 
+    extensions = %w(.htm .html .php)
+
     resources.each do |resource|
       # Check if it would be pointless to reroute
       next if resource.destination_path == index_file ||
               resource.destination_path.end_with?(new_index_path) ||
-              File.extname(index_file) != resource.ext
+              !extensions.include?(resource.ext)
 
       # Check if file metadata (options set by "page" in config.rb or frontmatter) turns directory_index off
       next if resource.options[:directory_index] == false
 
-      resource.destination_path = resource.destination_path.chomp(File.extname(index_file)) + new_index_path
+      extensions.each do |ext|
+        resource.destination_path = resource.destination_path.chomp(ext)
+      end
+
+      resource.destination_path += new_index_path
     end
   end
 end

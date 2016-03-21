@@ -1,3 +1,5 @@
+require 'middleman-core/application'
+
 # CLI Module
 module Middleman::Cli
   # The CLI Build class
@@ -8,8 +10,7 @@ module Middleman::Cli
 
     class_option :environment,
                  aliases: '-e',
-                 default: ENV['MM_ENV'] || ENV['RACK_ENV'] || 'production',
-                 desc: 'The environment Middleman will run under'
+                 default: :production
     class_option :clean,
                  type: :boolean,
                  default: true,
@@ -36,6 +37,8 @@ module Middleman::Cli
                  default: false,
                  desc: 'Generate profiling report for the build'
 
+    Middleman::Cli.import_config(self)
+
     # Core build Thor command
     # @return [void]
     def build
@@ -48,19 +51,22 @@ module Middleman::Cli
       require 'middleman-core/builder'
       require 'fileutils'
 
-      env = options['environment'].to_sym
       verbose = options['verbose'] ? 0 : 1
       instrument = options['instrument']
 
       builder = nil
+      cli_options = options
 
       ::Middleman::Logger.singleton(verbose, instrument)
 
       ::Middleman::Util.instrument 'builder.setup' do
         @app = ::Middleman::Application.new do
           config[:mode] = :build
-          config[:environment] = env
           config[:show_exceptions] = false
+          config[:cli_options] = cli_options.reduce({}) do |sum, (k, v)|
+            sum[k] = v unless v == :undefined
+            sum
+          end
         end
 
         builder = Middleman::Builder.new(@app,

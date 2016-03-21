@@ -40,7 +40,7 @@ module Middleman
 
       # Allow configuration settings to be read and written via methods
       def method_missing(method, *args)
-        if defines_setting?(method) && args.size == 0
+        if defines_setting?(method) && args.empty?
           self[method]
         elsif method.to_s =~ /^(\w+)=$/ && args.size == 1
           self[$1.to_sym] = args[0]

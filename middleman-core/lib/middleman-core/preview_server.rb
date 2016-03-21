@@ -18,12 +18,13 @@ module Middleman
 
       # Start an instance of Middleman::Application
       # @return [void]
-      def start(opts={})
+      def start(opts={}, cli_options={})
         # Do not buffer output, otherwise testing of output does not work
         $stdout.sync = true
         $stderr.sync = true
 
         @options = opts
+        @cli_options = cli_options
         @server_information = ServerInformation.new
         @server_information.https = (@options[:https] == true)
 
@@ -131,6 +132,7 @@ module Middleman
 
       def initialize_new_app
         opts = @options.dup
+        cli_options = @cli_options.dup
 
         ::Middleman::Logger.singleton(
           opts[:debug] ? 0 : 1,
@@ -138,17 +140,10 @@ module Middleman
         )
 
         app = ::Middleman::Application.new do
-          config[:environment] = opts[:environment].to_sym if opts[:environment]
-          config[:watcher_disable] = opts[:disable_watcher]
-          config[:watcher_force_polling] = opts[:force_polling]
-          config[:watcher_latency] = opts[:latency]
-
-          config[:port] = opts[:port] if opts[:port]
-          config[:bind_address]    = opts[:bind_address]
-          config[:server_name]     = opts[:server_name]
-          config[:https]           = opts[:https] unless opts[:https].nil?
-          config[:ssl_certificate] = opts[:ssl_certificate] if opts[:ssl_certificate]
-          config[:ssl_private_key] = opts[:ssl_private_key] if opts[:ssl_private_key]
+          cli_options.reduce({}) do |sum, (k, v)|
+            sum[k] = v unless v == :undefined
+            sum
+          end
 
           ready do
             unless config[:watcher_disable]
@@ -177,18 +172,23 @@ module Middleman
         end
 
         # store configured port to make a check later on possible
-        configured_port = app.config[:port]
+        configured_port = possible_from_cli(:port, app.config)
 
         # Use configuration values to set `bind_address` etc. in
         # `server_information`
-        server_information.use app.config
+        server_information.use({
+          bind_address: possible_from_cli(:bind_address, app.config),
+          port: possible_from_cli(:port, app.config),
+          server_name: possible_from_cli(:server_name, app.config),
+          https: possible_from_cli(:https, app.config)
+        })
 
-        app.logger.warn format('== The Middleman uses a different port "%s" then the configured one "%s" because some other server is listening on that port.', server_information.port, configured_port) unless app.config[:port] == configured_port
+        app.logger.warn format('== The Middleman uses a different port "%s" then the configured one "%s" because some other server is listening on that port.', server_information.port, configured_port) unless server_information.port == configured_port
 
-        @environment = app.config[:environment]
+        @environment = possible_from_cli(:environment, app.config)
 
-        @ssl_certificate = app.config[:ssl_certificate]
-        @ssl_private_key = app.config[:ssl_private_key]
+        @ssl_certificate = possible_from_cli(:ssl_certificate, app.config)
+        @ssl_private_key = possible_from_cli(:ssl_private_key, app.config)
 
         app.files.on_change :reload do
           $mm_reload = true
@@ -202,6 +202,14 @@ module Middleman
         end
 
         app
+      end
+
+      def possible_from_cli(key, config)
+        if @cli_options[key] && @cli_options[key] != :undefined
+          @cli_options[key]
+        else
+          config[key]
+        end
       end
 
       # Trap some interupt signals and shut down smoothly

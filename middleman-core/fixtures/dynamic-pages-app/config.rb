@@ -28,3 +28,7 @@ page "fake/*", locals: { glob_var: "I am one glob" }
 page "fake2/*", locals: { glob_var: "I am two glob" }
 page "fake3/*", locals: { glob_var: "I am three glob" }
 page "fake4/*", locals: { glob_var: "I am four glob" }
+
+["tom", "dick", "harry"].each do |name|
+  proxy "/about/#{name}.html", "/should_be_ignored9.html", locals: { person_name: name }, ignore: true
+end

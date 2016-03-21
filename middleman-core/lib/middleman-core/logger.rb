@@ -7,7 +7,7 @@ module Middleman
   # The Middleman Logger
   class Logger < ActiveSupport::Logger
     def self.singleton(*args)
-      if !@_logger || args.length > 0
+      if !@_logger || !args.empty?
         if args.length == 1 && (args.first.is_a?(::String) || args.first.respond_to?(:write))
           args = [0, false, args.first]
         end

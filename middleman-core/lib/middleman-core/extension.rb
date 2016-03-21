@@ -402,11 +402,11 @@ module Middleman
         ext.after_configuration if ext.respond_to?(:after_configuration)
 
         if ext.respond_to?(:manipulate_resource_list)
-          ext.app.sitemap.register_resource_list_manipulator(ext.class.ext_name, ext, ext.class.resource_list_manipulator_priority)
+          ext.app.sitemap.register_resource_list_manipulators(ext.class.ext_name, ext, ext.class.resource_list_manipulator_priority)
         end
 
         if ext.class.resources_generators && !ext.class.resources_generators.empty?
-          ext.app.sitemap.register_resource_list_manipulator(
+          ext.app.sitemap.register_resource_list_manipulators(
             :"#{ext.class.ext_name}_generator",
             ext,
             ext.class.resource_list_manipulator_priority,

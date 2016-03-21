@@ -87,6 +87,13 @@ module Middleman
         @app.config_context.class.send :def_delegator, :app, :sitemap
       end
 
+      Contract Symbol, RespondTo[:manipulate_resource_list], Maybe[Or[Num, ArrayOf[Num]]], Maybe[Symbol] => Any
+      def register_resource_list_manipulators(name, manipulator, priority=50, custom_name=nil)
+        Array(priority || 50).each do |p|
+          register_resource_list_manipulator(name, manipulator, p, custom_name)
+        end
+      end
+
       # Register an object which can transform the sitemap resource list. Best to register
       # these in a `before_configuration` or `after_configuration` hook.
       #
@@ -149,6 +156,17 @@ module Middleman
         end
       end
 
+      # Find a resource given its page id
+      # @param [String] page_id The page id.
+      # @return [Middleman::Sitemap::Resource]
+      Contract Or[String, Symbol] => Maybe[IsA['Middleman::Sitemap::Resource']]
+      def find_resource_by_page_id(page_id)
+        @lock.synchronize do
+          ensure_resource_list_updated!
+          @_lookup_by_page_id[page_id.to_sym]
+        end
+      end
+
       # Get the array of all resources
       # @param [Boolean] include_ignored Whether to include ignored resources
       # @return [Array<Middleman::Sitemap::Resource>]
@@ -198,6 +216,8 @@ module Middleman
       # rebuild_resource_list! since the last time it was run. This is
       # very expensive!
       def ensure_resource_list_updated!
+        return if @app.config[:disable_sitemap]
+
         @lock.synchronize do
           return unless @needs_sitemap_rebuild
 
@@ -210,7 +230,7 @@ module Middleman
 
             @resource_list_manipulators.each do |m|
               ::Middleman::Util.instrument 'sitemap.manipulator', name: m[:name] do
-                @app.logger.debug "== Running manipulator: #{m[:name]}"
+                @app.logger.debug "== Running manipulator: #{m[:name]} (#{m[:priority]})"
                 @resources = m[:manipulator].send(m[:custom_name] || :manipulate_resource_list, @resources)
 
                 # Reset lookup cache
@@ -219,7 +239,17 @@ module Middleman
                 # Rebuild cache
                 @resources.each do |resource|
                   @_lookup_by_path[resource.path] = resource
+                end
+
+                @resources.each do |resource|
                   @_lookup_by_destination_path[resource.destination_path] = resource
+                end
+
+                # NB: This needs to be done after the previous two steps,
+                # since some proxy resources are looked up by path in order to
+                # get their metadata and subsequently their page_id.
+                @resources.each do |resource|
+                  @_lookup_by_page_id[resource.page_id.to_sym] = resource
                 end
 
                 invalidate_resources_not_ignored_cache!
@@ -239,6 +269,7 @@ module Middleman
         @lock.synchronize do
           @_lookup_by_path = {}
           @_lookup_by_destination_path = {}
+          @_lookup_by_page_id = {}
         end
       end
 

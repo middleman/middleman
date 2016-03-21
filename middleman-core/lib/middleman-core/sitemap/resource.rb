@@ -85,16 +85,26 @@ module Middleman
         file_descriptor && file_descriptor[:full_path].to_s
       end
 
+      Contract Or[Symbol, String]
+      def page_id
+        metadata[:page][:id] || destination_path
+      end
+
       # Merge in new metadata specific to this resource.
       # @param [Hash] meta A metadata block with keys :options, :locals, :page.
       #   Options are generally rendering/sitemap options
       #   Locals are local variables for rendering this resource's template
       #   Page are data that is exposed through this resource's data member.
       #   Note: It is named 'page' for backwards compatibility with older MM.
-      Contract METADATA_HASH => METADATA_HASH
-      def add_metadata(meta={})
+      Contract METADATA_HASH, Maybe[Bool] => METADATA_HASH
+      def add_metadata(meta={}, reverse=false)
         @page_data = nil
-        @metadata.deep_merge!(meta)
+
+        @metadata = if reverse
+          meta.deep_merge(@metadata)
+        else
+          @metadata.deep_merge(meta)
+        end
       end
 
       # Data about this resource, populated from frontmatter or extensions.

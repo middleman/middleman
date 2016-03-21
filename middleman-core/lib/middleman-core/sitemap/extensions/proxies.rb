@@ -36,10 +36,13 @@ module Middleman
           md = metadata.dup
           should_ignore = md.delete(:ignore)
 
+          page_data = md.delete(:data) || {}
+          page_data[:id] = md.delete(:id) if md.key?(:id)
+
           r = ProxyResource.new(app.sitemap, path, target)
           r.add_metadata(
             locals: md.delete(:locals) || {},
-            page: md.delete(:data) || {},
+            page: page_data || {},
             options: md
           )
 

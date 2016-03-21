@@ -104,7 +104,6 @@ module Middleman
 
       partial_file = locate_partial(name, false) || locate_partial(name, true)
 
-      return '' unless partial_file
       raise ::Middleman::TemplateRenderer::TemplateNotFound, "Could not locate partial: #{name}" unless partial_file
 
       source_path = sitemap.file_to_path(partial_file)

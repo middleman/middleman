@@ -21,14 +21,3 @@ module Middleman::Cli
     end
   end
 end
-
-# Require the Middleman version
-require 'middleman-core/version'
-
-# Include the core CLI items
-require 'middleman-cli/init'
-require 'middleman-cli/extension'
-require 'middleman-cli/server'
-require 'middleman-cli/build'
-require 'middleman-cli/console'
-require 'middleman-cli/config'

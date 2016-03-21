@@ -77,7 +77,11 @@ module Middleman
       uri = URI(path)
       path = uri.path
 
-      result = if resource = app.sitemap.find_resource_by_destination_path(url_for(app, path, options))
+      # Ensure the url we pass into find_resource_by_destination_path is not a
+      # relative path, since it only takes absolute url paths.
+      dest_path = url_for(app, path, options.merge(relative: false))
+
+      result = if resource = app.sitemap.find_resource_by_destination_path(dest_path)
         resource.url
       else
         path = ::File.join(prefix, path)
@@ -99,8 +103,13 @@ module Middleman
     # Given a source path (referenced either absolutely or relatively)
     # or a Resource, this will produce the nice URL configured for that
     # path, respecting :relative_links, directory indexes, etc.
-    Contract ::Middleman::Application, Or[String, ::Middleman::Sitemap::Resource], Hash => String
+    Contract ::Middleman::Application, Or[String, Symbol, ::Middleman::Sitemap::Resource], Hash => String
     def url_for(app, path_or_resource, options={})
+      if path_or_resource.is_a?(String) || path_or_resource.is_a?(Symbol)
+        r = app.sitemap.find_resource_by_page_id(path_or_resource)
+        path_or_resource = r if r
+      end
+
       # Handle Resources and other things which define their own url method
       url = if path_or_resource.respond_to?(:url)
         path_or_resource.url
