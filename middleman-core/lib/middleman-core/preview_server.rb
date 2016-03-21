@@ -172,18 +172,23 @@ module Middleman
         end
 
         # store configured port to make a check later on possible
-        configured_port = app.config[:port]
+        configured_port = possible_from_cli(:port, app.config)
 
         # Use configuration values to set `bind_address` etc. in
         # `server_information`
-        server_information.use app.config
+        server_information.use({
+          bind_address: possible_from_cli(:bind_address, app.config),
+          port: possible_from_cli(:port, app.config),
+          server_name: possible_from_cli(:server_name, app.config),
+          https: possible_from_cli(:https, app.config)
+        })
 
-        app.logger.warn format('== The Middleman uses a different port "%s" then the configured one "%s" because some other server is listening on that port.', server_information.port, configured_port) unless app.config[:port] == configured_port
+        app.logger.warn format('== The Middleman uses a different port "%s" then the configured one "%s" because some other server is listening on that port.', server_information.port, configured_port) unless server_information.port == configured_port
 
-        @environment = app.config[:environment]
+        @environment = possible_from_cli(:environment, app.config)
 
-        @ssl_certificate = app.config[:ssl_certificate]
-        @ssl_private_key = app.config[:ssl_private_key]
+        @ssl_certificate = possible_from_cli(:ssl_certificate, app.config)
+        @ssl_private_key = possible_from_cli(:ssl_private_key, app.config)
 
         app.files.on_change :reload do
           $mm_reload = true
@@ -197,6 +202,14 @@ module Middleman
         end
 
         app
+      end
+
+      def possible_from_cli(key, config)
+        if @cli_options[key] && @cli_options[key] != :undefined
+          @cli_options[key]
+        else
+          config[key]
+        end
       end
 
       # Trap some interupt signals and shut down smoothly

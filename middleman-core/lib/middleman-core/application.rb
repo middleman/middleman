@@ -271,6 +271,8 @@ module Middleman
       # Before config is parsed, before extensions get to it.
       execute_callbacks(:initialized)
 
+      apply_cli_options
+
       # Before config is parsed. Mostly used for extensions.
       execute_callbacks(:before_configuration)
 
@@ -283,14 +285,7 @@ module Middleman
       # Run any `configure` blocks for the current mode.
       execute_callbacks([:configure, config[:mode]])
 
-      config[:cli_options].each do |k, v|
-        setting = config.setting(k.to_sym)
-        next unless setting
-
-        v = setting.options[:import].call(v) if setting.options[:import]
-
-        config[k.to_sym] = v
-      end
+      apply_cli_options
 
       # Post parsing, pre-extension callback
       execute_callbacks(:after_configuration_eval)
@@ -306,6 +301,17 @@ module Middleman
 
       # Everything is stable
       execute_callbacks(:ready) unless config[:exit_before_ready]
+    end
+
+    def apply_cli_options
+      config[:cli_options].each do |k, v|
+        setting = config.setting(k.to_sym)
+        next unless setting
+
+        v = setting.options[:import].call(v) if setting.options[:import]
+
+        config[k.to_sym] = v
+      end
     end
 
     # Eval config
