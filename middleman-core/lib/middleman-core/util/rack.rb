@@ -22,7 +22,7 @@ module Middleman
 
     Contract String, String, ArrayOf[String], Proc => String
     def rewrite_paths(body, _path, exts, &_block)
-      matcher = /([\'\"\(,]\s*|# sourceMappingURL=)([^\s\'\"\)>]+(#{::Regexp.union(exts)}))/
+      matcher = /([\'\"\(,]\s*|# sourceMappingURL=)([^\s\'\"\)\(>]+(#{::Regexp.union(exts)}))/
 
       url_fn_prefix = 'url('
 
