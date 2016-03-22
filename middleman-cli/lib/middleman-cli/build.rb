@@ -63,9 +63,8 @@ module Middleman::Cli
         @app = ::Middleman::Application.new do
           config[:mode] = :build
           config[:show_exceptions] = false
-          config[:cli_options] = cli_options.reduce({}) do |sum, (k, v)|
+          config[:cli_options] = cli_options.each_with_object({}) do |(k, v), sum|
             sum[k] = v unless v == :undefined
-            sum
           end
         end
 

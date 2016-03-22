@@ -3,7 +3,7 @@ require 'middleman-core/rack'
 
 class Middleman::Extensions::AssetHash < ::Middleman::Extension
   option :sources, %w(.css .htm .html .js .php .xhtml), 'List of extensions that are searched for hashable assets.'
-  option :exts, %w(.jpg .jpeg .png .gif .webp .js .css .otf .woff .woff2 .eot .ttf .svg .svgz .map), 'List of extensions that get asset hashes appended to them.'
+  option :exts, nil, 'List of extensions that get asset hashes appended to them.'
   option :ignore, [], 'Regexes of filenames to skip adding asset hashes to'
   option :rewrite_ignore, [], 'Regexes of filenames to skip processing for path rewrites'
 
@@ -17,8 +17,12 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
     # Allow specifying regexes to ignore, plus always ignore apple touch icons
     @ignore = Array(options.ignore) + [/^apple-touch-icon/]
 
+    # Exclude .ico from the default list because browsers expect it
+    # to be named "favicon.ico"
+    @exts = options.exts || (app.config[:asset_extensions] - %w(.ico))
+
     app.rewrite_inline_urls id: :asset_hash,
-                            url_extensions: options.exts.sort.reverse,
+                            url_extensions: @exts.sort.reverse,
                             source_extensions: options.sources,
                             ignore: @ignore,
                             rewrite_ignore: options.rewrite_ignore,
@@ -70,7 +74,7 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
 
   Contract IsA['Middleman::Sitemap::Resource'] => Maybe[IsA['Middleman::Sitemap::Resource']]
   def manipulate_single_resource(resource)
-    return unless options.exts.include?(resource.ext)
+    return unless @exts.include?(resource.ext)
     return if ignored_resource?(resource)
     return if resource.ignored?
 

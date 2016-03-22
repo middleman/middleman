@@ -1,6 +1,6 @@
 # The Cache Buster extension
 class Middleman::Extensions::CacheBuster < ::Middleman::Extension
-  option :exts, %w(.css .png .jpg .jpeg .webp .svg .svgz .js .gif), 'List of extensions that get cache busters strings appended to them.'
+  option :exts, nil, 'List of extensions that get cache busters strings appended to them.'
   option :sources, %w(.css .htm .html .js .php .xhtml), 'List of extensions that are searched for bustable assets.'
   option :ignore, [], 'Regexes of filenames to skip adding query strings to'
   option :rewrite_ignore, [], 'Regexes of filenames to skip processing for path rewrites'
@@ -9,7 +9,7 @@ class Middleman::Extensions::CacheBuster < ::Middleman::Extension
     super
 
     app.rewrite_inline_urls id: :cache_buster,
-                            url_extensions: options.exts,
+                            url_extensions: options.exts || app.config[:asset_extensions],
                             source_extensions: options.sources,
                             ignore: options.ignore,
                             rewrite_ignore: options.rewrite_ignore,

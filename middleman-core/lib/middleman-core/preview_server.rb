@@ -140,9 +140,8 @@ module Middleman
         )
 
         app = ::Middleman::Application.new do
-          cli_options.reduce({}) do |sum, (k, v)|
+          cli_options.each_with_object({}) do |(k, v), sum|
             sum[k] = v unless v == :undefined
-            sum
           end
 
           ready do

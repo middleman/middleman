@@ -160,6 +160,10 @@ module Middleman
     # @return [Array.<String>]
     define_setting :extensions_with_layout, %w(.htm .html .xhtml .php), 'Which file extensions have a layout by default.'
 
+    # Which file extensions are "assets."
+    # @return [Array.<String>]
+    define_setting :asset_extensions, %w(.css .png .jpg .jpeg .webp .svg .svgz .js .gif .ttf .otf .woff .woff2 .eot .ico .map), 'Which file extensions are treated as assets.'
+
     # Default string encoding for templates and output.
     # @return [String]
     define_setting :encoding, 'utf-8', 'Default string encoding for templates and output'
