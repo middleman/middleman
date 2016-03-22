@@ -2,7 +2,7 @@ require 'addressable/uri'
 
 class Middleman::Extensions::AssetHost < ::Middleman::Extension
   option :host, nil, 'The asset host to use or a Proc to determine asset host', required: true
-  option :exts, %w(.css .png .jpg .jpeg .webp .svg .svgz .js .gif), 'List of extensions that get cache busters strings appended to them.'
+  option :exts, %w(.jpg .jpeg .png .gif .webp .js .css .otf .woff .woff2 .eot .ttf .svg .svgz .map), 'List of extensions that get cache busters strings appended to them.'
   option :sources, %w(.css .htm .html .js .php .xhtml), 'List of extensions that are searched for bustable assets.'
   option :ignore, [], 'Regexes of filenames to skip adding query strings to'
   option :rewrite_ignore, [], 'Regexes of filenames to skip processing for host rewrites'
