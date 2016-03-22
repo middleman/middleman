@@ -283,8 +283,15 @@ Feature: Assets get file hashes appended to them and references to them are upda
     When I cd to "build"
     Then the following files should exist:
       | javascripts/jquery.min-276c87ff.js |
+      | stylesheets/test-7de2ad06.css |
     And the following files should not exist:
       | javascripts/jquery.min.js |
+    And the file "stylesheets/test-7de2ad06.css" should contain:
+      """
+      .no-bug{background-image:url(/images/100px-5fd6fb90.jpg)}
+      .bug{content:"";background-image:url(/images/100px-5fd6fb90.jpg)}
+      .no-bug{content:""; background-image:url(/images/100px-5fd6fb90.jpg)}
+      """
 
   Scenario: Source map paths include the hash
     Given a successfully built app at "asset-hash-source-map"
