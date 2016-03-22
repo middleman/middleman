@@ -2,7 +2,7 @@ master
 ===
 
 * Expose all top-level config options to CLI (flags now match config. latency -> watcher_latency, etc).
-* Fix directory indexes with `.htm` files. #1821
+* Fix directory indexes with `.htm` and `.xhtml` files. #1821
 
 # 4.1.2
 
@@ -35,7 +35,7 @@ master
 * Fix asset_host in combination with Google Analytics snippet. #1751
 * Show an error message when git CLI is not available. #1765
 * Correctly show file names of GZIP'ed assets. #1364
-* Build file output is not parallel-ized! Use `middleman build --no-parallel` to disable.
+* Build file output is now parallel-ized! Use `middleman build --no-parallel` to disable.
 * Make template file extensions that get layouts by default configurable via `config[:extensions_with_layout]`
 * Remove `=` from inline url matcher. This means paths in HTML attributes MUST be quoted. Fixes #1780
 
