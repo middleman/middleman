@@ -176,12 +176,10 @@ module Middleman
 
         # Use configuration values to set `bind_address` etc. in
         # `server_information`
-        server_information.use({
-          bind_address: possible_from_cli(:bind_address, app.config),
-          port: possible_from_cli(:port, app.config),
-          server_name: possible_from_cli(:server_name, app.config),
-          https: possible_from_cli(:https, app.config)
-        })
+        server_information.use(bind_address: possible_from_cli(:bind_address, app.config),
+                               port: possible_from_cli(:port, app.config),
+                               server_name: possible_from_cli(:server_name, app.config),
+                               https: possible_from_cli(:https, app.config))
 
         app.logger.warn format('== The Middleman uses a different port "%s" then the configured one "%s" because some other server is listening on that port.', server_information.port, configured_port) unless server_information.port == configured_port
 

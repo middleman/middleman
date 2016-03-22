@@ -1,6 +1,15 @@
 master
 ===
 
+# 4.1.4
+
+* Unify default extensions for all URL processing extensions. #1855
+* Fix URL regex for `content: ` context of CSS. #1853
+* Make sure CLI config over-rides `config.rb` order.
+* Fix relative assets in some contexts. #1842
+
+# 4.1.3
+
 * Expose all top-level config options to CLI (flags now match config. latency -> watcher_latency, etc).
 * Fix directory indexes with `.htm` and `.xhtml` files. #1821
 
