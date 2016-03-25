@@ -13,9 +13,15 @@ class Middleman::Extensions::ExternalPipeline < ::Middleman::Extension
     return if app.mode?(:config)
 
     require 'thread'
+    require 'fileutils'
+
+    source_path = File.expand_path(options[:source], app.root)
+
+    # Make sure it exists, or `listen` will explode.
+    ::FileUtils.mkdir_p(source_path)
 
     @watcher = app.files.watch :source,
-                               path: File.expand_path(options[:source], app.root),
+                               path: source_path,
                                latency: options[:latency],
                                frontmatter: false
 
