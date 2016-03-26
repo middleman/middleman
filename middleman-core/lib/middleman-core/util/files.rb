@@ -1,3 +1,5 @@
+require 'set'
+
 module Middleman
   module Util
     include Contracts
@@ -52,9 +54,15 @@ module Middleman
       result.encode('UTF-8', 'UTF-8-MAC')
     end
 
+    Contract String => Bool
+    def tilt_recognizes?(path)
+      @@tilt_lookup_cache ||= {}
+      @@tilt_lookup_cache[path] ||= ::Tilt[path]
+    end
+
     Contract String => String
     def step_through_extensions(path)
-      while ::Tilt[path]
+      while tilt_recognizes?(path)
         ext = ::File.extname(path)
         yield ext if block_given?
 
@@ -80,13 +88,18 @@ module Middleman
     # @return [String]
     Contract String => ArrayOf[String]
     def collect_extensions(path)
-      return [] if ::File.basename(path).start_with?('.')
+      @@extensions_cache ||= {}
 
-      result = []
+      base_name = ::File.basename(path)
+      @@extensions_cache[base_name] ||= begin
+        result = []
 
-      step_through_extensions(path) { |e| result << e }
+        unless base_name.start_with?('.')
+          step_through_extensions(base_name) { |e| result << e }
+        end
 
-      result
+        result
+      end
     end
 
     # Finds files which should also be considered to be dirty when
@@ -99,8 +112,9 @@ module Middleman
     def find_related_files(app, files)
       return [] if files.empty?
 
-      all_extensions = files.flat_map { |f| collect_extensions(f.to_s) }
+      file_set = ::Set.new(files)
 
+      all_extensions = files.flat_map { |f| collect_extensions(f.to_s) }
       sass_type_aliasing = ['.scss', '.sass']
       erb_type_aliasing = ['.erb', '.haml', '.slim']
 
@@ -109,14 +123,18 @@ module Middleman
 
       all_extensions.uniq!
 
-      app.sitemap.resources.select(&:file_descriptor).select { |r|
-        local_extensions = collect_extensions(r.file_descriptor[:full_path].to_s)
-        local_extensions |= sass_type_aliasing unless (local_extensions & sass_type_aliasing).empty?
-        local_extensions |= erb_type_aliasing unless (local_extensions & erb_type_aliasing).empty?
+      app.sitemap.resources.select { |r|
+        if r.file_descriptor
+          local_extensions = collect_extensions(r.file_descriptor[:full_path].to_s)
+          local_extensions |= sass_type_aliasing unless (local_extensions & sass_type_aliasing).empty?
+          local_extensions |= erb_type_aliasing unless (local_extensions & erb_type_aliasing).empty?
 
-        local_extensions.uniq!
+          local_extensions.uniq!
 
-        !(all_extensions & local_extensions).empty? && files.none? { |f| f == r.file_descriptor[:full_path] }
+          !(all_extensions & local_extensions).empty? && !file_set.include?(r.file_descriptor[:full_path])
+        else
+          false
+        end
       }.map(&:file_descriptor)
     end
   end
