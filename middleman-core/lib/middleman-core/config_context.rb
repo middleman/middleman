@@ -22,6 +22,10 @@ module Middleman
       app.subscribe_to_callbacks(&method(:execute_callbacks))
     end
 
+    def include(mod)
+      self.extend(mod)
+    end
+
     def helpers(*helper_modules, &block)
       helper_modules ||= []
 
