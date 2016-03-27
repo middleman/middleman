@@ -2,6 +2,7 @@
 require 'listen'
 require 'middleman-core/contracts'
 require 'digest'
+require 'set'
 
 # Monkey patch Listen silencer so `only` works on directories too
 module Listen
@@ -49,7 +50,7 @@ module Middleman
     # Reference to lower level listener
     attr_reader :listener
 
-    IGNORED_DIRECTORIES = %w(.git node_modules .sass-cache).freeze
+    IGNORED_DIRECTORIES = Set.new(%w(.git node_modules .sass-cache vendor/bundle .bundle))
 
     # Construct a new SourceWatcher
     #
@@ -167,7 +168,8 @@ module Middleman
       @listener = ::Listen.to(@directory.to_s, config, &method(:on_listener_change))
 
       @listener.ignore(/^\.sass-cache/)
-      # @listener.only(@only) unless @only.empty?
+      @listener.ignore(/^node_modules/)
+      @listener.ignore(/^vendor\/bundle/)
 
       @listener.start
     end
@@ -222,7 +224,8 @@ module Middleman
 
     Contract Pathname => Bool
     def should_not_recurse?(p)
-      IGNORED_DIRECTORIES.include?(p.basename.to_s)
+      relative_path = p.relative_path_from(@directory).to_s
+      IGNORED_DIRECTORIES.include?(relative_path)
     end
 
     # The `listen` gem callback.
@@ -255,7 +258,8 @@ module Middleman
         logger.debug "== Change (#{f[:types].inspect}): #{f[:relative_path]}"
       end
 
-      related_updates = ::Middleman::Util.find_related_files(app, (updated_paths + removed_paths)).select(&method(:valid?))
+      related_sources = valid_updates.map { |u| u[:full_path] } + removed_paths
+      related_updates = ::Middleman::Util.find_related_files(app, related_sources).select(&method(:valid?))
 
       related_updates.each do |f|
         logger.debug "== Possible Change (#{f[:types].inspect}): #{f[:relative_path]}"

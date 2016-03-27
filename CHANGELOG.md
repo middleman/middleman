@@ -1,6 +1,10 @@
 master
 ===
 
+# 4.1.5-4.1.6
+
+* Fix file recursion when looking for possible asset dependencies. Major preview server performance improvement.
+
 # 4.1.4
 
 * Unify default extensions for all URL processing extensions. #1855
