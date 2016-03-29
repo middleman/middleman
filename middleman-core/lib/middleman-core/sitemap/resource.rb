@@ -3,6 +3,7 @@ require 'middleman-core/sitemap/extensions/traversal'
 require 'middleman-core/file_renderer'
 require 'middleman-core/template_renderer'
 require 'middleman-core/contracts'
+require 'middleman-core/pipeline'
 
 module Middleman
   # Sitemap namespace
@@ -40,6 +41,8 @@ module Middleman
 
       attr_accessor :ignored
 
+      attr_reader :pipeline
+
       # Initialize resource with parent store and URL
       # @param [Middleman::Sitemap::Store] store
       # @param [String] path
@@ -50,6 +53,7 @@ module Middleman
         @app         = @store.app
         @path        = path
         @ignored     = false
+        @pipeline    = Pipeline.new(self)
 
         source = Pathname(source) if source && source.is_a?(String)
 
