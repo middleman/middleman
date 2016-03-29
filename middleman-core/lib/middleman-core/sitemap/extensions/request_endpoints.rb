@@ -14,9 +14,8 @@ module Middleman
             r = EndpointResource.new(
               app.sitemap,
               path,
-              request_path
+              &block
             )
-            r.output = block if block
 
             resource_list.add! r
           end
@@ -24,7 +23,6 @@ module Middleman
 
         # Setup a proxy from a path to a target
         # @param [String] path
-        # @param [Hash] opts The :path value gives a request path if it
         # differs from the output path
         Contract String, Or[{ path: String }, Proc] => EndpointDescriptor
         def endpoint(path, opts = {}, &block)

@@ -4,6 +4,7 @@ require 'middleman-core/file_renderer'
 require 'middleman-core/template_renderer'
 require 'middleman-core/contracts'
 require 'set'
+require 'middleman-core/inline_url_rewriter'
 
 module Middleman
   # Sitemap namespace
@@ -40,6 +41,7 @@ module Middleman
       attr_reader :metadata
 
       attr_accessor :ignored
+      attr_accessor :filters
 
       # Initialize resource with parent store and URL
       # @param [Middleman::Sitemap::Store] store
@@ -51,6 +53,7 @@ module Middleman
         @app         = @store.app
         @path        = path
         @ignored     = false
+        @filters     = []
 
         source = Pathname(source) if source&.is_a?(String)
 
@@ -144,6 +147,43 @@ module Middleman
       # @return [String]
       Contract Hash, Hash => String
       def render(opts = {}, locs = {})
+        body = render_without_filters(opts, locs)
+
+        return body if @filters.empty?
+
+        sortable_filters = @filters.select { |f| f.respond_to?(:filter_name) }.sort do |a, b|
+          if b.after_filter == a.filter_name
+            1
+          else
+            -1
+          end
+        end.reverse
+
+        n = 0
+        sorted_filters = @filters.sort_by do |m|
+          n += 1
+          idx = sortable_filters.index(m)
+
+          [idx.nil? ? 0 : idx, n]
+        end
+
+        sorted_filters.reduce(body) do |output, filter|
+          if block_given? && !yield(filter)
+            output
+          elsif filter.respond_to?(:execute_filter)
+            filter.execute_filter(output)
+          elsif filter.respond_to?(:call)
+            filter.call(output)
+          else
+            output
+          end
+        end
+      end
+
+      # Render this resource without content filters
+      # @return [String]
+      Contract Hash, Hash => String
+      def render_without_filters(opts = {}, locs = {})
         return ::Middleman::FileRenderer.new(@app, file_descriptor[:full_path].to_s).template_data_for_file unless template?
 
         md   = metadata
@@ -155,7 +195,7 @@ module Middleman
         opts[:layout] = false if !opts.key?(:layout) && !@set_of_extensions_with_layout.include?(ext)
 
         renderer = ::Middleman::TemplateRenderer.new(@app, file_descriptor[:full_path].to_s)
-        renderer.render(locs, opts)
+        renderer.render(locs, opts).to_str
       end
 
       # A path without the directory index - so foo/index.html becomes
@@ -239,9 +279,10 @@ module Middleman
     end
 
     class StringResource < Resource
-      def initialize(store, path, contents = nil, &block)
+      Contract IsA['Middleman::Sitemap::Store'], String, Maybe[Or[String, Proc]] => Any
+      def initialize(store, path, contents)
         @request_path = path
-        @contents = block_given? ? block : contents
+        @contents = contents
         super(store, path)
       end
 
@@ -250,7 +291,28 @@ module Middleman
       end
 
       def render(*)
-        @contents.respond_to?(:call) ? @contents.call : @contents
+        @contents
+      end
+
+      def binary?
+        false
+      end
+    end
+
+    class CallbackResource < Resource
+      Contract IsA['Middleman::Sitemap::Store'], String, Proc => Any
+      def initialize(store, path, &block)
+        @request_path = path
+        @contents = block
+        super(store, path)
+      end
+
+      def template?
+        true
+      end
+
+      def render(*)
+        @contents.call
       end
 
       def binary?
