@@ -35,7 +35,7 @@ module Middleman
             found
           else
             parts.pop if is_index
-            @store.find_resource_by_destination_path("#{parts.join('/')}/#{@app.config[:index_file]}")
+            @store.find_resource_by_path("#{parts.join('/')}/#{@app.config[:index_file]}")
           end
         end
 
