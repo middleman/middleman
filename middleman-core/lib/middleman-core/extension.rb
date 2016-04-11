@@ -490,15 +490,14 @@ module Middleman
   class ConfigExtension < Extension
     def initialize(app, config={}, &block)
       @descriptors = {}
-      @wrapped = {}
+      @ready = false
 
       self.class.exposed_to_config.each do |k, v|
         @descriptors[k] = []
 
         define_singleton_method(:"__original_#{v}", &method(v))
         define_singleton_method(v) do |*args, &b|
-          @descriptors[k] << method(:"__original_#{v}").call(*args, &b)
-          @app.sitemap.rebuild_resource_list!(:"first_run_change_#{v}")
+          proxy_method_call(k, v, args, &b)
         end
       end
 
@@ -506,9 +505,22 @@ module Middleman
     end
 
     def after_configuration
+      context = self
+
       self.class.exposed_to_config.each do |k, v|
-        ::Middleman::CoreExtensions::Collections::StepContext.add_to_context(k, &method(:"__original_#{v}"))
+        ::Middleman::CoreExtensions::Collections::StepContext.add_to_context(k) do |*args, &b|
+          r = context.method(:"__original_#{v}").call(*args, &b)
+          self.descriptors << r if r.respond_to?(:execute_descriptor)
+        end
       end
+    end
+
+    def ready
+      @ready = true
+
+      # @descriptors.each do |k, v|
+      #   @descriptors[k] = []
+      # end
     end
 
     # Update the main sitemap resource list
@@ -517,6 +529,26 @@ module Middleman
     def manipulate_resource_list(resources)
       @descriptors.values.flatten.reduce(resources) do |sum, c|
         c.execute_descriptor(app, sum)
+      end
+    end
+
+    Contract Symbol, Symbol, ArrayOf[Any], Maybe[Proc] => Any
+    def proxy_method_call(k, v, args, &b)
+      if @ready
+        ctx = ::Middleman::CoreExtensions::Collections::StepContext.current
+        r = method(:"__original_#{v}").call(*args, &b)
+
+        if r.respond_to?(:execute_descriptor)
+          if ctx
+            ctx.descriptors << r
+          else
+            @descriptors[k] << r
+            @app.sitemap.rebuild_resource_list!(:"first_run_change_#{v}")
+          end
+        end
+      else
+        @descriptors[k] << method(:"__original_#{v}").call(*args, &b)
+        @app.sitemap.rebuild_resource_list!(:"first_run_change_#{v}")
       end
     end
   end

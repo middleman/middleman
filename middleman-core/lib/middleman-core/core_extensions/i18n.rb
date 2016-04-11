@@ -213,6 +213,8 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
   def on_file_changed(_updated_files, _removed_files)
     ::I18n.load_path |= app.files.by_type(:locales).files.map { |p| p[:full_path].to_s }
     ::I18n.reload!
+
+    @app.sitemap.rebuild_resource_list!(:touched_locale_file)
   end
 
   def configure_i18n
