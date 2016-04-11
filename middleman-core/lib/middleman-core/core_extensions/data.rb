@@ -88,6 +88,8 @@ module Middleman
         def update_files(updated_files, removed_files)
           updated_files.each(&method(:touch_file))
           removed_files.each(&method(:remove_file))
+
+          @app.sitemap.rebuild_resource_list!(:touched_data_file)
         end
 
         # Update the internal cache for a given file path
