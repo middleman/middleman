@@ -2,8 +2,12 @@ module Middleman
   module CoreExtensions
     module Collections
       class StepContext
-        def self.add_to_context(name, &func)
-          send(:define_method, :"_internal_#{name}", &func)
+        class << self
+          attr_accessor :current
+
+          def add_to_context(name, &func)
+            send(:define_method, :"_internal_#{name}", &func)
+          end
         end
 
         attr_reader :descriptors

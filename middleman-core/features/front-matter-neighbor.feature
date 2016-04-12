@@ -22,7 +22,7 @@ Feature: Neighboring YAML Front Matter
     Then I should not see "---"
     When I go to "/raw-front-matter.php.frontmatter"
     Then I should see "File Not Found"
-    
+
   Scenario: YAML not on first line, with encoding
     Given the Server is running at "frontmatter-neighbor-app"
     When I go to "/front-matter-encoding.html"
@@ -35,7 +35,7 @@ Feature: Neighboring YAML Front Matter
     Given the Server is running at "frontmatter-neighbor-app"
     And the file "source/front-matter-change.html.erb" has the contents
       """
-      <%= current_page.data.title %>
+      FileA <%= current_page.data.title %>
       """
     And the file "source/front-matter-change.html.erb.frontmatter" has the contents
       """
@@ -43,6 +43,8 @@ Feature: Neighboring YAML Front Matter
       title: Hello World
       layout: false
       ---
+
+      FileB
       """
     When I go to "/front-matter-change.html"
     Then I should see "Hello World"
@@ -52,6 +54,8 @@ Feature: Neighboring YAML Front Matter
       title: Hola Mundo
       layout: false
       ---
+
+      FileC
       """
     When I go to "/front-matter-change.html"
     Then I should see "Hola Mundo"

@@ -1,3 +1,4 @@
+require 'monitor'
 require 'middleman-core/core_extensions/collections/pagination'
 require 'middleman-core/core_extensions/collections/step_context'
 require 'middleman-core/core_extensions/collections/lazy_root'
@@ -41,6 +42,8 @@ module Middleman
           @values_by_name = {}
 
           @collector_roots = []
+
+          @lock = Monitor.new
         end
 
         def before_configuration
@@ -81,27 +84,35 @@ module Middleman
 
         Contract ResourceList => ResourceList
         def manipulate_resource_list(resources)
-          @collector_roots.each do |pair|
-            dataset = pair[:block].call(app, resources)
-            pair[:root].realize!(dataset)
-          end
+          @lock.synchronize do
+            @collector_roots.each do |pair|
+              dataset = pair[:block].call(app, resources)
+              pair[:root].realize!(dataset)
+            end
 
-          ctx = StepContext.new
-          leaves = @leaves.dup
+            ctx = StepContext.new
+            StepContext.current = ctx
 
-          @collectors_by_name.each do |k, v|
-            @values_by_name[k] = v.value(ctx)
-            leaves.delete v
-          end
+            leaves = @leaves.dup
 
-          # Execute code paths
-          leaves.each do |v|
-            v.value(ctx)
-          end
+            @collectors_by_name.each do |k, v|
+              @values_by_name[k] = v.value(ctx)
+              leaves.delete v
+            end
 
-          # Inject descriptors
-          ctx.descriptors.reduce(resources) do |sum, d|
-            d.execute_descriptor(app, sum)
+            # Execute code paths
+            leaves.each do |v|
+              v.value(ctx)
+            end
+
+            # Inject descriptors
+            results = ctx.descriptors.reduce(resources) do |sum, d|
+              d.execute_descriptor(app, sum)
+            end
+
+            StepContext.current = nil
+
+            results
           end
         end
       end
