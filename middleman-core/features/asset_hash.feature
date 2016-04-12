@@ -111,28 +111,29 @@ Feature: Assets get file hashes appended to them and references to them are upda
     Given a fixture app "asset-hash-host-app"
     And a file named "config.rb" with:
       """
+      set :sass_source_maps, false
       activate :asset_hash
       activate :directory_indexes
       activate :asset_host, host: 'http://middlemanapp.com'
       """
     Given the Server is running at "asset-hash-host-app"
     When I go to "/"
-    Then I should see 'href="http://middlemanapp.com/stylesheets/site-210612a0.css"'
-    Then I should see 'href="http://middlemanapp.com/stylesheets/fragment-7000b132.css"'
+    Then I should see 'href="http://middlemanapp.com/stylesheets/site-7474cadd.css"'
+    Then I should see 'href="http://middlemanapp.com/stylesheets/fragment-2902933e.css"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg?test"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg?#test"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg#test"'
     When I go to "/subdir/"
-    Then I should see 'href="http://middlemanapp.com/stylesheets/site-210612a0.css"'
+    Then I should see 'href="http://middlemanapp.com/stylesheets/site-7474cadd.css"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg"'
     When I go to "/other/"
-    Then I should see 'href="http://middlemanapp.com/stylesheets/site-210612a0.css"'
+    Then I should see 'href="http://middlemanapp.com/stylesheets/site-7474cadd.css"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg?test"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg?#test"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg#test"'
-    When I go to "/stylesheets/fragment-7000b132.css"
+    When I go to "/stylesheets/fragment-2902933e.css"
     And I should see 'url("http://middlemanapp.com/images/100px-5fd6fb90.jpg");'
     And I should see 'url("http://middlemanapp.com/images/100px-5fd6fb90.jpg?test");'
     And I should see 'url("http://middlemanapp.com/images/100px-5fd6fb90.jpg?#test");'
@@ -142,28 +143,29 @@ Feature: Assets get file hashes appended to them and references to them are upda
     Given a fixture app "asset-hash-host-app"
     And a file named "config.rb" with:
       """
+      set :sass_source_maps, false
       activate :asset_host, host: 'http://middlemanapp.com'
       activate :directory_indexes
       activate :asset_hash
       """
     Given the Server is running at "asset-hash-host-app"
     When I go to "/"
-    Then I should see 'href="http://middlemanapp.com/stylesheets/site-210612a0.css"'
-    Then I should see 'href="http://middlemanapp.com/stylesheets/fragment-7000b132.css"'
+    Then I should see 'href="http://middlemanapp.com/stylesheets/site-7474cadd.css"'
+    Then I should see 'href="http://middlemanapp.com/stylesheets/fragment-2902933e.css"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg?test"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg?#test"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg#test"'
     When I go to "/subdir/"
-    Then I should see 'href="http://middlemanapp.com/stylesheets/site-210612a0.css"'
+    Then I should see 'href="http://middlemanapp.com/stylesheets/site-7474cadd.css"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg"'
     When I go to "/other/"
-    Then I should see 'href="http://middlemanapp.com/stylesheets/site-210612a0.css"'
+    Then I should see 'href="http://middlemanapp.com/stylesheets/site-7474cadd.css"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg?test"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg?#test"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg#test"'
-    When I go to "/stylesheets/fragment-7000b132.css"
+    When I go to "/stylesheets/fragment-2902933e.css"
     And I should see 'url("http://middlemanapp.com/images/100px-5fd6fb90.jpg")'
     And I should see 'url("http://middlemanapp.com/images/100px-5fd6fb90.jpg?test")'
     And I should see 'url("http://middlemanapp.com/images/100px-5fd6fb90.jpg?#test")'
