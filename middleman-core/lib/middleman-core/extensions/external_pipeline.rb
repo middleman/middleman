@@ -12,6 +12,7 @@ class Middleman::Extensions::ExternalPipeline < ::Middleman::Extension
 
     return if app.mode?(:config)
 
+    require 'servolux'
     require 'thread'
     require 'fileutils'
 
@@ -25,31 +26,63 @@ class Middleman::Extensions::ExternalPipeline < ::Middleman::Extension
                                latency: options[:latency],
                                frontmatter: false
 
+    @current_thread = nil
+    app.reload(&method(:reload!))
+
     logger.info "== Executing: `#{options[:command]}`"
 
     if app.build? || options[:disable_background_execution]
-      watch_command!
+      watch_command!(false)
+
+      @watcher.poll_once!
     else
-      ::Thread.new { watch_command! }
+      watch_command!(true)
     end
   end
 
-  def watch_command!
-    ::IO.popen(options[:command], 'r') do |pipe|
-      while buf = pipe.gets
+  def reload!
+    if @current_thread
+      logger.info "== Stopping: `#{options[:command]}`"
+
+      @current_thread.stop
+      @current_thread = nil
+    end
+  end
+
+  def watch_command!(async)
+    @current_thread = ::Servolux::Child.new(
+      command: options[:command],
+      suspend: 2
+    )
+
+    @current_thread.start
+
+    watch_thread = Thread.new do
+      while buf = @current_thread.io.gets
         without_newline = buf.sub(/\n$/, '')
         logger.info "== External: #{without_newline}" unless without_newline.empty?
       end
+
+      @current_thread.wait
+
+      if !@current_thread.exitstatus.nil? && @current_thread.exitstatus != 0
+        logger.error '== External: Command failed with non-zero exit status'
+        exit(1)
+      end
     end
 
-    unless $?.success?
-      logger.error '== External: Command failed with non-zero exit status'
-      exit(1)
-    end
-
-    @watcher.poll_once!
+    watch_thread.join unless async
   rescue ::Errno::ENOENT => e
     logger.error "== External: Command failed with message: #{e.message}"
     exit(1)
+  end
+
+  private
+
+  def print_command(stdout)
+    while buf = stdout.gets
+      without_newline = buf.sub(/\n$/, '')
+      logger.info "== External: #{without_newline}" unless without_newline.empty?
+    end
   end
 end
