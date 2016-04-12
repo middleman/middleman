@@ -25,6 +25,7 @@ Gem::Specification.new do |s|
   s.add_dependency('erubis')
   s.add_dependency('fast_blank')
   s.add_dependency('parallel')
+  s.add_dependency('servolux')
 
   # Helpers
   s.add_dependency('activesupport', ['~> 4.2'])

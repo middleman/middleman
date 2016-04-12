@@ -235,7 +235,8 @@ module Middleman
                                       :before, # Before Rack requests
                                       :before_render,
                                       :after_render,
-                                      :before_server
+                                      :before_server,
+                                      :reload
                                     ])
 
         @middleware = Set.new
