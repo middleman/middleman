@@ -48,7 +48,7 @@ Gem::Specification.new do |s|
   s.add_dependency('sass', ['>= 3.4'])
 
   # Minify JS
-  s.add_dependency('uglifier', ['~> 2.6'])
+  s.add_dependency('uglifier', ['~> 3.0'])
   s.add_dependency('execjs', ['~> 2.0'])
 
   # Testing
