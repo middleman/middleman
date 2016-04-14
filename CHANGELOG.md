@@ -1,6 +1,13 @@
 master
 ===
 
+# 4.1.7
+
+* Upgrade fastimage to 2.0
+* Fix shutdown of external_pipeline commands when config.rb is changed. #1877
+* Allow calls to `app.` to work as collections after initial config parse. #1876
+
+
 # 4.1.5-4.1.6
 
 * Fix file recursion when looking for possible asset dependencies. Major preview server performance improvement.

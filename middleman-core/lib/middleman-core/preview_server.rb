@@ -103,6 +103,8 @@ module Middleman
       def reload
         app.logger.info '== The Middleman is reloading'
 
+        app.execute_callbacks(:reload)
+
         begin
           app = initialize_new_app
         rescue => e

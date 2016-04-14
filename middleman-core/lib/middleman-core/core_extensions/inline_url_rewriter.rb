@@ -82,7 +82,7 @@ module Middleman
           dirpath = ::Pathname.new(File.dirname(path))
 
           rewritten = ::Middleman::Util.instrument 'inline_url_rewriter', path: path do
-            ::Middleman::Util.rewrite_paths(body, path, all_asset_exts) do |asset_path|
+            ::Middleman::Util.rewrite_paths(body, path, all_asset_exts, @middleman_app) do |asset_path|
               uri = ::Addressable::URI.parse(asset_path)
 
               relative_path = uri.host.nil?
