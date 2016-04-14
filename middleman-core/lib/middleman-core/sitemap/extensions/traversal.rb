@@ -15,27 +15,27 @@ module Middleman
         # This resource's parent resource
         # @return [Middleman::Sitemap::Resource, nil]
         def parent
-          root = path.sub(/^#{::Regexp.escape(traversal_root)}/, '')
+          root = destination_path.sub(/^#{::Regexp.escape(traversal_root)}/, '')
           parts = root.split('/')
 
           tail = parts.pop
           is_index = (tail == @app.config[:index_file])
 
           if parts.empty?
-            return is_index ? nil : @store.find_resource_by_path(@app.config[:index_file])
+            return is_index ? nil : @store.find_resource_by_destination_path(@app.config[:index_file])
           end
 
           test_expr = parts.join('\\/')
           # eponymous reverse-lookup
           found = @store.resources.find do |candidate|
-            candidate.path =~ %r{^#{test_expr}(?:\.[a-zA-Z0-9]+|\/)$}
+            candidate.destination_path =~ %r{^#{test_expr}(?:\.[a-zA-Z0-9]+|\/)$}
           end
 
           if found
             found
           else
             parts.pop if is_index
-            @store.find_resource_by_path("#{parts.join('/')}/#{@app.config[:index_file]}")
+            @store.find_resource_by_destination_path("#{parts.join('/')}/#{@app.config[:index_file]}")
           end
         end
 
