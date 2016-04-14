@@ -1,6 +1,10 @@
 master
 ===
 
+# 4.1.8
+
+* Let collection loops access ConfigContext for helpers. #1879
+
 # 4.1.7
 
 * Upgrade fastimage to 2.0

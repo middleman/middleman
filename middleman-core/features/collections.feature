@@ -144,6 +144,33 @@ Feature: Collections
     And I should see 'Article: Blog3 Another Article'
     And I should see 'Article: Blog2 Yet Another Article'
 
+  Scenario: Work with local helpers
+    Given a fixture app "collections-app"
+    And a file named "config.rb" with:
+      """
+      module TestHelper
+        def help_me
+          "ok"
+        end
+      end
+
+      include TestHelper
+
+      data.articles.each_with_index do |a, i|
+        proxy "/#{i}-#{help_me}.html", a
+      end
+      """
+    And a file named "data/articles.yaml" with:
+      """
+      ---
+      - "/blog1/2011-01-01-new-article.html"
+      - "/blog2/2011-01-02-another-article.html"
+      """
+    Given the Server is running at "collections-app"
+    When I go to "0-ok.html"
+    Then I should see 'Newer Article Content'
+    When I go to "1-ok.html"
+    Then I should see 'Another Article Content'
 
   Scenario: Collected data update with file changes
     Given a fixture app "collections-app"

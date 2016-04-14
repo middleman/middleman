@@ -90,7 +90,7 @@ module Middleman
               pair[:root].realize!(dataset)
             end
 
-            ctx = StepContext.new
+            ctx = StepContext.new(app)
             StepContext.current = ctx
 
             leaves = @leaves.dup

@@ -12,17 +12,20 @@ module Middleman
 
         attr_reader :descriptors
 
-        def initialize
+        def initialize(app)
+          @app = app
           @descriptors = []
         end
 
         def method_missing(name, *args, &block)
           internal = :"_internal_#{name}"
 
-          return super unless respond_to?(internal)
-
-          send(internal, *args, &block).tap do |r|
-            @descriptors << r if r.respond_to?(:execute_descriptor)
+          if respond_to?(internal)
+            send(internal, *args, &block).tap do |r|
+              @descriptors << r if r.respond_to?(:execute_descriptor)
+            end
+          else
+            @app.config_context.send(name, *args, &block)
           end
         end
       end
