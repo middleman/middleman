@@ -16,9 +16,9 @@ Feature: Don't allow template locals to overwrite template helpers
 
       activate :test
 
-      page "/index.html", locals: { test: false }
+      page "/index.html", locals: { foo: false }
       """
-    And a file named "source/index.erb" with:
+    And a file named "source/index.html.erb" with:
       """
       <%= foo %>
       """
