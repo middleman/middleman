@@ -133,8 +133,20 @@ module Middleman
       # Add extension helpers to context.
       @app.extensions.add_exposed_to_context(context)
 
+      locals.each do |k, _|
+        next unless context.respond_to?(k) && k != :current_path
+
+        msg = "Template local `#{k}` tried to overwrite an existing context value. Please renamed the key when passing to `locals`"
+
+        if @app.build?
+          throw msg
+        else
+          @app.logger.error(msg)
+        end
+      end
+
       content = ::Middleman::Util.instrument 'builder.output.resource.render-template', path: File.basename(path) do
-        _render_with_all_renderers(path, locs, context, opts, &block)
+        _render_with_all_renderers(path, locals, context, options, &block)
       end
 
       # If we need a layout and have a layout, use it
