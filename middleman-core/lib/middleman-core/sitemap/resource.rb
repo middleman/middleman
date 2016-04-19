@@ -85,7 +85,7 @@ module Middleman
         file_descriptor && file_descriptor[:full_path].to_s
       end
 
-      Contract Or[Symbol, String]
+      Contract Or[Symbol, String, Fixnum]
       def page_id
         metadata[:page][:id] || destination_path
       end
