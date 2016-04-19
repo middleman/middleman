@@ -34,18 +34,6 @@ module Middleman
       @app = app
       @locs = locs
       @opts = opts
-
-      @locs.each do |k, _|
-        next unless self.respond_to?(k)
-
-        msg = "Template local `#{k}` tried to overwrite an existing context value. Please renamed the key when passing to `locals`"
-
-        if app.build?
-          throw msg
-        else
-          logger.error(msg)
-        end
-      end
     end
 
     # Return the current buffer to the caller and clear the value internally.
