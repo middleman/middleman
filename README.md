@@ -121,6 +121,6 @@ Copyright (c) 2010-2015 Thomas Reynolds. MIT Licensed, see [LICENSE] for details
 [codeclimate]: https://codeclimate.com/github/middleman/middleman
 [gittip]: https://www.gittip.com/middleman/
 [rubyinstaller]: http://rubyinstaller.org/
-[RubyInstaller-Devkit]: http:rubyinstaller.org/add-ons/devkit/
+[RubyInstaller-Devkit]: http://rubyinstaller.org/add-ons/devkit/
 [rubydoc]: http://rubydoc.info/github/middleman/middleman
 [LICENSE]: https://github.com/middleman/middleman/blob/master/LICENSE.md
