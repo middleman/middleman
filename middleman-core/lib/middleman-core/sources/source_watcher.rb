@@ -298,7 +298,13 @@ module Middleman
       relative_path = path.relative_path_from(directory)
       relative_path = File.join(destination_dir, relative_path) if destination_dir
 
+      types << :no_frontmatter if partial?(relative_path.to_s)
+
       ::Middleman::SourceFile.new(Pathname(relative_path), path, directory, types, 0)
+    end
+
+    def partial?(relative_path)
+      relative_path.split(::File::SEPARATOR).any? { |p| p.start_with?('_') }
     end
 
     Contract IsA['Middleman::SourceFile'] => Any

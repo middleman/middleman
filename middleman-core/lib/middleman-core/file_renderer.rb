@@ -59,7 +59,7 @@ module Middleman
       # Overwrite with frontmatter options
       options = options.deep_merge(options[:renderer_options]) if options[:renderer_options]
 
-      template_class = ::Tilt[path]
+      template_class = ::Middleman::Util.tilt_class(path)
 
       # Allow hooks to manipulate the template before render
       body = @app.callbacks_for(:before_render).reduce(body) do |sum, callback|
@@ -99,12 +99,12 @@ module Middleman
     def template_data_for_file
       file = @app.files.find(:source, @path)
 
-      if @app.extensions[:front_matter] || (file && !file[:types].include?(:no_frontmatter))
+      if @app.extensions[:front_matter] && (file && !file[:types].include?(:no_frontmatter))
         result = @app.extensions[:front_matter].template_data_for_file(@path)
         return result unless result.nil?
       end
 
-      file ? file.read : File.read(@path)
+      file ? file.read : ::File.read(@path)
     end
 
     protected
@@ -122,7 +122,7 @@ module Middleman
 
         # Find all the engines which handle this extension in tilt. Look for
         # config variables of that name and merge it
-        extension_class = ::Tilt[ext]
+        extension_class = ::Middleman::Util.tilt_class(ext)
         ::Tilt.mappings.each do |mapping_ext, engines|
           next unless engines.include? extension_class
           engine_options = @app.config[mapping_ext.to_sym] || {}

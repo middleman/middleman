@@ -1,6 +1,6 @@
 require 'rack'
 require 'rack/response'
-require 'addressable/uri'
+require 'memoist'
 require 'middleman-core/util'
 require 'middleman-core/contracts'
 
@@ -33,6 +33,8 @@ module Middleman
       end
 
       def after_configuration
+        return if @rewriters.empty?
+
         rewriters = @rewriters.values.sort do |a, b|
           if b[:after] && b[:after] == a[:id]
             1
@@ -45,6 +47,7 @@ module Middleman
       end
 
       class Rack
+        extend Memoist
         include Contracts
 
         Contract RespondTo[:call], {
@@ -55,6 +58,17 @@ module Middleman
           @rack_app = app
           @middleman_app = options.fetch(:middleman_app)
           @rewriters = options.fetch(:rewriters)
+
+          all_source_exts = @rewriters
+                            .reduce([]) { |sum, rewriter| sum + rewriter[:source_extensions] }
+                            .flatten
+                            .uniq
+          @source_exts_regex_text = Regexp.union(all_source_exts).to_s
+
+          @all_asset_exts = @rewriters
+                            .reduce([]) { |sum, rewriter| sum + rewriter[:url_extensions] }
+                            .flatten
+                            .uniq
         end
 
         def call(env)
@@ -63,27 +77,16 @@ module Middleman
           # Allow configuration or upstream request to skip all rewriting
           return [status, headers, response] if env['bypass_inline_url_rewriter'] == 'true'
 
-          all_source_exts = @rewriters
-                            .reduce([]) { |sum, rewriter| sum + rewriter[:source_extensions] }
-                            .flatten
-                            .uniq
-          source_exts_regex_text = Regexp.union(all_source_exts).to_s
-
-          all_asset_exts = @rewriters
-                           .reduce([]) { |sum, rewriter| sum + rewriter[:url_extensions] }
-                           .flatten
-                           .uniq
-
           path = ::Middleman::Util.full_path(env['PATH_INFO'], @middleman_app)
 
-          return [status, headers, response] unless path =~ /(^\/$)|(#{source_exts_regex_text}$)/
+          return [status, headers, response] unless path =~ /(^\/$)|(#{@source_exts_regex_text}$)/
           return [status, headers, response] unless body = ::Middleman::Util.extract_response_text(response)
 
           dirpath = ::Pathname.new(File.dirname(path))
 
           rewritten = ::Middleman::Util.instrument 'inline_url_rewriter', path: path do
-            ::Middleman::Util.rewrite_paths(body, path, all_asset_exts, @middleman_app) do |asset_path|
-              uri = ::Addressable::URI.parse(asset_path)
+            ::Middleman::Util.rewrite_paths(body, path, @all_asset_exts, @middleman_app) do |asset_path|
+              uri = ::Middleman::Util.parse_uri(asset_path)
 
               relative_path = uri.host.nil?
 
@@ -144,6 +147,7 @@ module Middleman
             false
           end
         end
+        memoize :should_ignore?
       end
     end
   end

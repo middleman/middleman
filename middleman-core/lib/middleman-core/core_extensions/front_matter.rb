@@ -73,18 +73,20 @@ module Middleman::CoreExtensions
 
       return [{}, nil] unless file
 
-      return @cache[file[:full_path]] if @cache.key?(file[:full_path])
+      file_path = file[:full_path].to_s
 
-      @cache[file[:full_path]] = ::Middleman::Util::Data.parse(
-        file,
-        app.config[:frontmatter_delims]
-      )
+      @cache[file_path] ||= begin
+        ::Middleman::Util::Data.parse(
+          file,
+          app.config[:frontmatter_delims]
+        )
+      end
     end
 
     Contract ArrayOf[IsA['Middleman::SourceFile']], ArrayOf[IsA['Middleman::SourceFile']] => Any
     def clear_data(updated_files, removed_files)
       (updated_files + removed_files).each do |file|
-        @cache.delete(file[:full_path])
+        @cache.delete(file[:full_path].to_s)
       end
     end
   end

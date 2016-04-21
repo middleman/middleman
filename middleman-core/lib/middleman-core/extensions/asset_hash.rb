@@ -32,7 +32,7 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
 
   Contract String, Or[String, Pathname], Any => Maybe[String]
   def rewrite_url(asset_path, dirpath, _request_path)
-    uri = ::Addressable::URI.parse(asset_path)
+    uri = ::Middleman::Util.parse_uri(asset_path)
     relative_path = !uri.path.start_with?('/')
 
     full_asset_path = if relative_path

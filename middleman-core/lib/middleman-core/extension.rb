@@ -1,4 +1,5 @@
 require 'forwardable'
+require 'memoist'
 require 'active_support/core_ext/class/attribute'
 require 'middleman-core/configuration'
 require 'middleman-core/contracts'
@@ -66,6 +67,8 @@ module Middleman
   # @see http://middlemanapp.com/advanced/custom/ Middleman Custom Extensions Documentation
   class Extension
     extend Forwardable
+    extend Memoist
+
     include Contracts
 
     def_delegator :@app, :logger
@@ -510,7 +513,7 @@ module Middleman
       self.class.exposed_to_config.each do |k, v|
         ::Middleman::CoreExtensions::Collections::StepContext.add_to_context(k) do |*args, &b|
           r = context.method(:"__original_#{v}").call(*args, &b)
-          self.descriptors << r if r.respond_to?(:execute_descriptor)
+          descriptors << r if r.respond_to?(:execute_descriptor)
         end
       end
     end

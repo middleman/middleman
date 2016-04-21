@@ -31,6 +31,7 @@ Gem::Specification.new do |s|
   s.add_dependency('activesupport', ['~> 4.2'])
   s.add_dependency('padrino-helpers', ['~> 0.13.0'])
   s.add_dependency("addressable", ["~> 2.3"])
+  s.add_dependency('memoist', ['~> 0.14'])
 
   # Watcher
   s.add_dependency('listen', ['~> 3.0'])

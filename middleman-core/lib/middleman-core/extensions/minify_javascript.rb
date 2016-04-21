@@ -1,4 +1,5 @@
 require 'middleman-core/contracts'
+require 'memoist'
 
 # Minify Javascript Extension
 class Middleman::Extensions::MinifyJavascript < ::Middleman::Extension
@@ -22,6 +23,7 @@ class Middleman::Extensions::MinifyJavascript < ::Middleman::Extension
 
   # Rack middleware to look for JS and compress it
   class Rack
+    extend Memoist
     include Contracts
     INLINE_JS_REGEX = /(<script[^>]*>\s*(?:\/\/(?:(?:<!--)|(?:<!\[CDATA\[))\n)?)(.*?)((?:(?:\n\s*)?\/\/(?:(?:-->)|(?:\]\]>)))?\s*<\/script>)/m
 
@@ -76,6 +78,7 @@ class Middleman::Extensions::MinifyJavascript < ::Middleman::Extension
     def ignore?(path)
       @ignore.any? { |ignore| Middleman::Util.path_match(ignore, path) }
     end
+    memoize :ignore?
 
     # Whether this type of content can be minified
     # @param [String, nil] content_type
@@ -83,6 +86,7 @@ class Middleman::Extensions::MinifyJavascript < ::Middleman::Extension
     def minifiable?(content_type)
       @content_types.include?(content_type)
     end
+    memoize :minifiable?
 
     # Whether this type of content contains inline content that can be minified
     # @param [String, nil] content_type
@@ -90,6 +94,7 @@ class Middleman::Extensions::MinifyJavascript < ::Middleman::Extension
     def minifiable_inline?(content_type)
       @inline_content_types.include?(content_type)
     end
+    memoize :minifiable_inline?
 
     # Minify the content
     # @param [String] content
@@ -100,6 +105,7 @@ class Middleman::Extensions::MinifyJavascript < ::Middleman::Extension
       warn "WARNING: Couldn't compress JavaScript in #{@path}: #{e.message}"
       content
     end
+    memoize :minify
 
     # Detect and minify inline content
     # @param [String] content
@@ -119,5 +125,6 @@ class Middleman::Extensions::MinifyJavascript < ::Middleman::Extension
         end
       end
     end
+    memoize :minify_inline
   end
 end

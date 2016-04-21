@@ -20,7 +20,7 @@ class Middleman::Extensions::AssetHost < ::Middleman::Extension
 
   Contract String, Or[String, Pathname], Any => String
   def rewrite_url(asset_path, dirpath, _request_path)
-    uri = ::Addressable::URI.parse(asset_path)
+    uri = ::Middleman::Util.parse_uri(asset_path)
     relative_path = uri.path[0..0] != '/'
 
     full_asset_path = if relative_path
@@ -37,4 +37,5 @@ class Middleman::Extensions::AssetHost < ::Middleman::Extension
 
     File.join(asset_prefix, full_asset_path)
   end
+  memoize :rewrite_url
 end

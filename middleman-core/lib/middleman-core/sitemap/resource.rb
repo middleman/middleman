@@ -75,7 +75,7 @@ module Middleman
       Contract Bool
       def template?
         return false if file_descriptor.nil?
-        !::Tilt[file_descriptor[:full_path].to_s].nil?
+        !::Middleman::Util.tilt_class(file_descriptor[:full_path].to_s).nil?
       end
 
       # Backwards compatible method for turning descriptor into a string.

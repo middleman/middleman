@@ -54,15 +54,9 @@ module Middleman
       result.encode('UTF-8', 'UTF-8-MAC')
     end
 
-    Contract String => Bool
-    def tilt_recognizes?(path)
-      @@tilt_lookup_cache ||= {}
-      @@tilt_lookup_cache[path] ||= ::Tilt[path]
-    end
-
     Contract String => String
     def step_through_extensions(path)
-      while tilt_recognizes?(path)
+      while ::Middleman::Util.tilt_class(path)
         ext = ::File.extname(path)
         yield ext if block_given?
 

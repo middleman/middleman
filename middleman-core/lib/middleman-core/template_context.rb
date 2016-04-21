@@ -84,6 +84,7 @@ module Middleman
         # Reset stored buffer, regardless of success
         restore_buffer(buf_was)
       end
+
       # Render the layout, with the contents of the block inside.
       concat_safe_content render_file(layout_file, @locs, @opts) { content }
     ensure
@@ -185,7 +186,7 @@ module Middleman
       # handles cases like `style.css.sass.erb`
       content = nil
 
-      while ::Tilt[path]
+      while ::Middleman::Util.tilt_class(path)
         begin
           opts[:template_body] = content if content
 

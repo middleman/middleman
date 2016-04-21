@@ -23,7 +23,7 @@ module Middleman
     end
 
     def include(mod)
-      self.extend(mod)
+      extend(mod)
     end
 
     def helpers(*helper_modules, &block)

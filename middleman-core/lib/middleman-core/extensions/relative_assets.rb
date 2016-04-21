@@ -33,7 +33,7 @@ class Middleman::Extensions::RelativeAssets < ::Middleman::Extension
 
   Contract String, Or[String, Pathname], Any => Maybe[String]
   def rewrite_url(asset_path, dirpath, request_path)
-    uri = ::Addressable::URI.parse(asset_path)
+    uri = ::Middleman::Util.parse_uri(asset_path)
 
     return if uri.path[0..0] != '/'
 
@@ -50,4 +50,5 @@ class Middleman::Extensions::RelativeAssets < ::Middleman::Extension
 
     result
   end
+  memoize :rewrite_url
 end

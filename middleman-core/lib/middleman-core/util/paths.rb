@@ -1,15 +1,31 @@
 # Core Pathname library used for traversal
 require 'pathname'
 require 'uri'
+require 'memoist'
+require 'addressable'
+require 'tilt'
 
 require 'middleman-core/contracts'
 
 # rubocop:disable ModuleLength
 module Middleman
   module Util
+    extend Memoist
     include Contracts
 
     module_function
+
+    Contract String => ::Addressable::URI
+    def parse_uri(uri)
+      ::Addressable::URI.parse(uri)
+    end
+    memoize :parse_uri
+
+    Contract String => Any
+    def tilt_class(path)
+      ::Tilt[path]
+    end
+    memoize :tilt_class
 
     # Normalize a path to not include a leading slash
     # @param [String] path
@@ -19,6 +35,7 @@ module Middleman
       # The tr call works around a bug in Ruby's Unicode handling
       ::URI.decode(path).sub(%r{^/}, '').tr('', '')
     end
+    memoize :normalize_path
 
     # This is a separate method from normalize_path in case we
     # change how we normalize paths
@@ -26,6 +43,7 @@ module Middleman
     def strip_leading_slash(path)
       path.sub(%r{^/}, '')
     end
+    memoize :strip_leading_slash
 
     # Get the path of a file of a given type
     #
@@ -256,5 +274,6 @@ module Middleman
         ::File.fnmatch(matcher.to_s, path)
       end
     end
+    memoize :path_match
   end
 end

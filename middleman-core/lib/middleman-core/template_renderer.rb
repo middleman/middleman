@@ -61,7 +61,7 @@ module Middleman
 
       # If we're specifically looking for a preferred engine
       if options.key?(:preferred_engine)
-        extension_class = ::Tilt[options[:preferred_engine]]
+        extension_class = ::Middleman::Util.tilt_class(options[:preferred_engine])
 
         # Get a list of extensions for a preferred engine
         preferred_engines += ::Tilt.mappings.select do |_, engines|
@@ -89,7 +89,7 @@ module Middleman
           app.files.find(:source, path_with_ext, globbing)
         end
 
-        found_template = file if file && (preferred_engine.nil? || ::Tilt[file[:full_path]])
+        found_template = file if file && (preferred_engine.nil? || ::Middleman::Util.tilt_class(file[:full_path].to_s))
         break if found_template
       end
 
@@ -134,9 +134,9 @@ module Middleman
       @app.extensions.add_exposed_to_context(context)
 
       locals.each do |k, _|
-        next unless context.respond_to?(k) && k != :current_path
+        next unless context.respond_to?(k) && ![:current_path, :paginate, :page_articles, :blog_controller, :lang, :locale].include?(k.to_sym)
 
-        msg = "Template local `#{k}` tried to overwrite an existing context value. Please renamed the key when passing to `locals`"
+        msg = "Template local `#{k}` tried to overwrite an existing context value. Please rename the key when passing to `locals`"
 
         if @app.build?
           throw msg
@@ -152,13 +152,14 @@ module Middleman
       # If we need a layout and have a layout, use it
       layout_file = fetch_layout(engine, options)
       if layout_file
-        content = ::Middleman::Util.instrument 'builder.output.resource.render-layout', path: File.basename(layout_file[:relative_path].to_s) do
-          if layout_file = fetch_layout(engine, options)
-            layout_renderer = ::Middleman::FileRenderer.new(@app, layout_file[:relative_path].to_s)
+        content = if layout_file = fetch_layout(engine, options)
+          layout_renderer = ::Middleman::FileRenderer.new(@app, layout_file[:relative_path].to_s)
+
+          ::Middleman::Util.instrument 'builder.output.resource.render-layout', path: File.basename(layout_file[:relative_path].to_s) do
             layout_renderer.render(locals, options, context) { content }
-          else
-            content
           end
+        else
+          content
         end
       end
 
@@ -177,7 +178,7 @@ module Middleman
       # handles cases like `style.css.sass.erb`
       content = nil
 
-      while ::Tilt[path]
+      while ::Middleman::Util.tilt_class(path)
         begin
           opts[:template_body] = content if content
 

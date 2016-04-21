@@ -3,6 +3,7 @@ require 'json'
 require 'pathname'
 require 'backports/2.1.0/array/to_h'
 require 'hashie'
+require 'memoist'
 
 require 'middleman-core/util/binary'
 require 'middleman-core/contracts'
@@ -36,6 +37,7 @@ module Middleman
     end
 
     module Data
+      extend Memoist
       include Contracts
 
       module_function
@@ -55,20 +57,7 @@ module Middleman
           return [{}, nil]
         end
 
-        start_delims, stop_delims = frontmatter_delims
-                                    .values
-                                    .flatten(1)
-                                    .transpose
-                                    .map(&::Regexp.method(:union))
-
-        match = /
-          \A(?:[^\r\n]*coding:[^\r\n]*\r?\n)?
-          (?<start>#{start_delims})[ ]*\r?\n
-          (?<frontmatter>.*?)[ ]*\r?\n?
-          ^(?<stop>#{stop_delims})[ ]*\r?\n?
-          \r?\n?
-          (?<additional_content>.*)
-        /mx.match(content) || {}
+        match = build_regex(frontmatter_delims).match(content) || {}
 
         unless match[:frontmatter]
           case known_type
@@ -98,27 +87,53 @@ module Middleman
         end
       end
 
+      def build_regex(frontmatter_delims)
+        start_delims, stop_delims = frontmatter_delims
+                                    .values
+                                    .flatten(1)
+                                    .transpose
+                                    .map(&::Regexp.method(:union))
+
+        match = /
+          \A(?:[^\r\n]*coding:[^\r\n]*\r?\n)?
+          (?<start>#{start_delims})[ ]*\r?\n
+          (?<frontmatter>.*?)[ ]*\r?\n?
+          ^(?<stop>#{stop_delims})[ ]*\r?\n?
+          \r?\n?
+          (?<additional_content>.*)
+        /mx
+      end
+      memoize :build_regex
+
       # Parse YAML frontmatter out of a string
       # @param [String] content
       # @return [Hash]
-      Contract String, Pathname, Bool => Hash
+      Contract String, Pathname => Hash
       def parse_yaml(content, full_path)
-        symbolize_recursive(::YAML.load(content) || {})
+        c = ::Middleman::Util.instrument 'parse.yaml' do
+          ::YAML.load(content)
+        end
+        c ? symbolize_recursive(c) : {}
       rescue StandardError, ::Psych::SyntaxError => error
         warn "YAML Exception parsing #{full_path}: #{error.message}"
         {}
       end
+      memoize :parse_yaml
 
       # Parse JSON frontmatter out of a string
       # @param [String] content
       # @return [Hash]
       Contract String, Pathname => Hash
       def parse_json(content, full_path)
-        symbolize_recursive(::JSON.parse(content) || {})
+        c = ::Middleman::Util.instrument 'parse.json' do
+          ::JSON.parse(content)
+        end
+        c ? symbolize_recursive(c) : {}
       rescue StandardError => error
         warn "JSON Exception parsing #{full_path}: #{error.message}"
         {}
       end
+      memoize :parse_json
 
       def symbolize_recursive(value)
         case value

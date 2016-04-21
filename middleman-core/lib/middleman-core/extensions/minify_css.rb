@@ -1,3 +1,4 @@
+require 'memoist'
 require 'middleman-core/contracts'
 
 # Minify CSS Extension
@@ -30,6 +31,7 @@ class Middleman::Extensions::MinifyCss < ::Middleman::Extension
 
   # Rack middleware to look for CSS and compress it
   class Rack
+    extend Memoist
     include Contracts
     INLINE_CSS_REGEX = /(<style[^>]*>\s*(?:\/\*<!\[CDATA\[\*\/\n)?)(.*?)((?:(?:\n\s*)?\/\*\]\]>\*\/)?\s*<\/style>)/m
 
@@ -82,8 +84,9 @@ class Middleman::Extensions::MinifyCss < ::Middleman::Extension
     # @param [String] path
     # @return [Boolean]
     def ignore?(path)
-      @ignore.any? { |ignore| Middleman::Util.path_match(ignore, path) }
+      @ignore.any? { |ignore| ::Middleman::Util.path_match(ignore, path) }
     end
+    memoize :ignore?
 
     # Whether this type of content can be minified
     # @param [String, nil] content_type
@@ -91,6 +94,7 @@ class Middleman::Extensions::MinifyCss < ::Middleman::Extension
     def minifiable?(content_type)
       @content_types.include?(content_type)
     end
+    memoize :minifiable?
 
     # Whether this type of content contains inline content that can be minified
     # @param [String, nil] content_type
@@ -98,6 +102,7 @@ class Middleman::Extensions::MinifyCss < ::Middleman::Extension
     def minifiable_inline?(content_type)
       @inline_content_types.include?(content_type)
     end
+    memoize :minifiable_inline?
 
     # Minify the content
     # @param [String] content
@@ -105,6 +110,7 @@ class Middleman::Extensions::MinifyCss < ::Middleman::Extension
     def minify(content)
       @compressor.compress(content)
     end
+    memoize :minify
 
     # Detect and minify inline content
     # @param [String] content
@@ -114,5 +120,6 @@ class Middleman::Extensions::MinifyCss < ::Middleman::Extension
         $1 + minify($2) + $3
       end
     end
+    memoize :minify_inline
   end
 end
