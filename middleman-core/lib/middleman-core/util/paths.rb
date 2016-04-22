@@ -45,6 +45,25 @@ module Middleman
     end
     memoize :strip_leading_slash
 
+    IGNORE_DESCRIPTOR = Or[Regexp, RespondTo[:call], String]
+    Contract IGNORE_DESCRIPTOR, String => Bool
+    def should_ignore?(validator, value)
+      if validator.is_a? Regexp
+        # Treat as Regexp
+        !!(value =~ validator)
+      elsif validator.respond_to? :call
+        # Treat as proc
+        validator.call(value)
+      elsif validator.is_a? String
+        # Treat as glob
+        File.fnmatch(value, validator)
+      else
+        # If some unknown thing, don't ignore
+        false
+      end
+    end
+    memoize :should_ignore?
+
     # Get the path of a file of a given type
     #
     # @param [Middleman::Application] app The app.

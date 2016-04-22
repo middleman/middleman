@@ -1,4 +1,5 @@
 require 'padrino-helpers'
+require 'middleman-core/contracts'
 
 # Don't fail on invalid locale, that's not what our current
 # users expect.

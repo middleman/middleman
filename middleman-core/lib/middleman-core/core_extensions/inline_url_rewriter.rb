@@ -11,13 +11,12 @@ module Middleman
 
       expose_to_application rewrite_inline_urls: :add
 
-      IGNORE_DESCRIPTOR = Or[Regexp, RespondTo[:call], String]
       REWRITER_DESCRIPTOR = {
         id: Symbol,
         proc: Or[Proc, Method],
         url_extensions: ArrayOf[String],
         source_extensions: ArrayOf[String],
-        ignore: ArrayOf[IGNORE_DESCRIPTOR],
+        ignore: ArrayOf[::Middleman::Util::IGNORE_DESCRIPTOR],
         after: Maybe[Symbol]
       }.freeze
 
@@ -109,7 +108,7 @@ module Middleman
                 next unless source_exts.include?(::File.extname(path))
 
                 ignore = rewriter.fetch(:ignore)
-                next if ignore.any? { |r| should_ignore?(r, full_asset_path) }
+                next if ignore.any? { |r| ::Middleman::Util.should_ignore?(r, full_asset_path) }
 
                 rewrite_ignore = Array(rewriter[:rewrite_ignore] || [])
                 next if rewrite_ignore.any? { |i| ::Middleman::Util.path_match(i, path) }
@@ -130,24 +129,6 @@ module Middleman
             headers
           ).finish
         end
-
-        Contract IGNORE_DESCRIPTOR, String => Bool
-        def should_ignore?(validator, value)
-          if validator.is_a? Regexp
-            # Treat as Regexp
-            !!(value =~ validator)
-          elsif validator.respond_to? :call
-            # Treat as proc
-            validator.call(value)
-          elsif validator.is_a? String
-            # Treat as glob
-            File.fnmatch(value, validator)
-          else
-            # If some unknown thing, don't ignore
-            false
-          end
-        end
-        memoize :should_ignore?
       end
     end
   end

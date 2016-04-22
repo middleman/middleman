@@ -2,15 +2,20 @@ require 'addressable/uri'
 
 # Relative Assets extension
 class Middleman::Extensions::RelativeAssets < ::Middleman::Extension
-  option :exts, nil, 'List of extensions that get cache busters strings appended to them.'
+  option :exts, nil, 'List of extensions that get converted to relative paths.'
   option :sources, %w(.css .htm .html .xhtml), 'List of extensions that are searched for relative assets.'
-  option :ignore, [], 'Regexes of filenames to skip adding query strings to'
-  option :rewrite_ignore, [], 'Regexes of filenames to skip processing for path rewrites'
+  option :ignore, [], 'Regexes of filenames to skip converting to relative paths.'
+  option :rewrite_ignore, [], 'Regexes of filenames to skip processing for path rewrites.'
+  option :helpers_only, false, 'Allow only Ruby helpers to change paths.'
 
   def initialize(app, options_hash={}, &block)
     super
 
-    app.rewrite_inline_urls id: :asset_hash,
+    if options[:helpers_only]
+      return
+    end
+
+    app.rewrite_inline_urls id: :relative_assets,
                             url_extensions: options.exts || app.config[:asset_extensions],
                             source_extensions: options.sources,
                             ignore: options.ignore,
@@ -18,16 +23,37 @@ class Middleman::Extensions::RelativeAssets < ::Middleman::Extension
                             proc: method(:rewrite_url)
   end
 
-  helpers do
-    # asset_url override for relative assets
-    # @param [String] path
-    # @param [String] prefix
-    # @param [Hash] options Additional options.
-    # @return [String]
-    def asset_url(path, prefix='', options={})
-      options[:relative] = true unless options.key?(:relative)
+  def mark_as_relative(file_path, opts, current_resource)
+    result = opts.dup
 
-      super(path, prefix, options)
+    valid_exts = options.sources
+
+    return result unless current_resource
+    return result unless valid_exts.include?(current_resource.ext)
+
+    rewrite_ignores = Array(options.rewrite_ignore || [])
+
+    path = current_resource.destination_path
+    return result if rewrite_ignores.any? do |i|
+      ::Middleman::Util.path_match(i, path) || ::Middleman::Util.path_match(i, "/#{path}")
+    end
+
+    return result if Array(options.ignore || []).any? do |r|
+      ::Middleman::Util.should_ignore?(r, file_path)
+    end
+
+    result[:relative] = true unless result.key?(:relative)
+
+    result
+  end
+
+  helpers do
+    def asset_url(path, prefix='', options={})
+      super(path, prefix, app.extensions[:relative_assets].mark_as_relative(super, options, current_resource))
+    end
+
+    def asset_path(kind, source, options={})
+      super(kind, source,  app.extensions[:relative_assets].mark_as_relative(super, options, current_resource))
     end
   end
 
