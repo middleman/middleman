@@ -34,7 +34,7 @@ Gem::Specification.new do |s|
   s.add_dependency('memoist', ['~> 0.14'])
 
   # Watcher
-  s.add_dependency('listen', ['~> 3.0'])
+  s.add_dependency('listen', ['~> 3.0.0'])
 
   # Tests
   s.add_dependency("capybara", ["~> 2.5.0"])
