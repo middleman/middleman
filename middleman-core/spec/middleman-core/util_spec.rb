@@ -204,4 +204,20 @@ describe Middleman::Util do
       expect(related).to include File.expand_path("source/stylesheets/include2.css.scss")
     end
   end
+
+  describe "::step_through_extensions" do
+    it "returns the base name after templating engine extensions are removed" do
+      result = Middleman::Util.step_through_extensions('my_file.html.haml.erb')
+      expect(result).to eq 'my_file.html'
+    end
+
+    it "does not loop infinitely when file name is a possible templating engine" do
+      expect do
+        Timeout::timeout(0.5) do
+          result = Middleman::Util.step_through_extensions("markdown.scss")
+          expect(result).to eq "markdown"
+        end
+      end.not_to raise_error
+    end
+  end
 end
