@@ -23,7 +23,7 @@ module Middleman
     attr_accessor :current_engine
 
     # Shorthand references to global values on the app instance.
-    def_delegators :@app, :config, :logger, :sitemap, :server?, :build?, :environment?, :environment, :data, :extensions, :root
+    def_delegators :@app, :config, :logger, :sitemap, :server?, :build?, :environment?, :environment, :data, :extensions, :root, :development?, :production?
 
     # Initialize a context with the current app and predefined locals and options hashes.
     #

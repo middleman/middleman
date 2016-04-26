@@ -1,6 +1,10 @@
 master
 ===
 
+# Next
+
+* Expose `development?` and `production?` helpers to template context.
+
 # 4.1.8
 
 * Let collection loops access ConfigContext for helpers. #1879
