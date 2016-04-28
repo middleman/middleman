@@ -5,7 +5,7 @@ before_script:
   - bundle update
 rvm:
   - ruby-head
-  - 2.3.0
+  - 2.3.1
   - 2.2.4
   - 2.1
   - 2.0
@@ -15,7 +15,6 @@ os:
 matrix:
   fast_finish: true
   allow_failures:
-    - rvm: 2.3.0
     - rvm: ruby-head
 env:
   global:
