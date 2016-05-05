@@ -80,7 +80,7 @@ module Middleman
 
       # Backwards compatible method for turning descriptor into a string.
       # @return [String]
-      Contract String
+      Contract Maybe[String]
       def source_file
         file_descriptor && file_descriptor[:full_path].to_s
       end
