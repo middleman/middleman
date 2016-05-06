@@ -102,7 +102,7 @@ module Middleman
       # @param [Numeric] priority Sets the order of this resource list manipulator relative to the rest. By default this is 50, and manipulators run in the order they are registered, but if a priority is provided then this will run ahead of or behind other manipulators.
       # @param [Symbol] custom_name The method name to execute.
       # @return [void]
-      Contract Symbol, RespondTo[:manipulate_resource_list], Maybe[Num], Maybe[Symbol] => Any
+      Contract Symbol, RespondTo[:manipulate_resource_list], Maybe[Num, Bool], Maybe[Symbol] => Any
       def register_resource_list_manipulator(name, manipulator, priority=50, custom_name=nil)
         # The third argument used to be a boolean - handle those who still pass one
         priority = 50 unless priority.is_a? Numeric
