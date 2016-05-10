@@ -1,3 +1,4 @@
+require 'active_support/core_ext/object/try'
 require 'middleman-core/contracts'
 require 'memoist'
 
