@@ -4,7 +4,7 @@ Feature: i18n Paths
     Given a fixture app "empty-app"
     And a file named "data/pages.yml" with:
       """
-      - hello.html 
+      - hello.html
       """
     And a file named "locales/en.yml" with:
       """
@@ -50,24 +50,24 @@ Feature: i18n Paths
     Given the Server is running at "empty-app"
     When I go to "/hello.html"
     Then I should see "Page: Hello"
-    Then I should see '<a class="current" href="/index.html">Current Home</a>'
-    Then I should see '<a title="Other Home" href="/es/index.html">Other Home</a>'
-    Then I should see '<a class="current" href="/index.html"><span>Home: Current Block</span></a>'
-    Then I should see '<a title="Other Home" href="/es/index.html"><span>Home: Other Block</span></a>'
-    Then I should see '<a class="current" href="/hello.html">Current hello.html</a>'
-    Then I should see '<a title="Other hello.html" href="/es/hola.html">Other hello.html</a>'
-    Then I should see '<a class="current" href="/hello.html"><span>Current Block</span></a>'
-    Then I should see '<a title="Other hello.html" href="/es/hola.html"><span>Other Block</span></a>'
+    Then I should see '<a href="/index.html" class="current">Current Home</a>'
+    Then I should see '<a href="/es/index.html" title="Other Home">Other Home</a>'
+    Then I should see '<a href="/index.html" class="current"><span>Home: Current Block</span></a>'
+    Then I should see '<a href="/es/index.html" title="Other Home"><span>Home: Other Block</span></a>'
+    Then I should see '<a href="/hello.html" class="current">Current hello.html</a>'
+    Then I should see '<a href="/es/hola.html" title="Other hello.html">Other hello.html</a>'
+    Then I should see '<a href="/hello.html" class="current"><span>Current Block</span></a>'
+    Then I should see '<a href="/es/hola.html" title="Other hello.html"><span>Other Block</span></a>'
     When I go to "/es/hola.html"
     Then I should see "Page: Hola"
-    Then I should see '<a class="current" href="/es/index.html">Current Home</a>'
-    Then I should see '<a title="Other Home" href="/index.html">Other Home</a>'
-    Then I should see '<a class="current" href="/es/index.html"><span>Home: Current Block</span></a>'
-    Then I should see '<a title="Other Home" href="/index.html"><span>Home: Other Block</span></a>'
-    Then I should see '<a class="current" href="/es/hola.html">Current hello.html</a>'
-    Then I should see '<a title="Other hello.html" href="/hello.html">Other hello.html</a>'
-    Then I should see '<a class="current" href="/es/hola.html"><span>Current Block</span></a>'
-    Then I should see '<a title="Other hello.html" href="/hello.html"><span>Other Block</span></a>'
+    Then I should see '<a href="/es/index.html" class="current">Current Home</a>'
+    Then I should see '<a href="/index.html" title="Other Home">Other Home</a>'
+    Then I should see '<a href="/es/index.html" class="current"><span>Home: Current Block</span></a>'
+    Then I should see '<a href="/index.html" title="Other Home"><span>Home: Other Block</span></a>'
+    Then I should see '<a href="/es/hola.html" class="current">Current hello.html</a>'
+    Then I should see '<a href="/hello.html" title="Other hello.html">Other hello.html</a>'
+    Then I should see '<a href="/es/hola.html" class="current"><span>Current Block</span></a>'
+    Then I should see '<a href="/hello.html" title="Other hello.html"><span>Other Block</span></a>'
 
   Scenario: link_to is i18n aware and supports relative_links
     Given a fixture app "empty-app"
@@ -124,30 +124,30 @@ Feature: i18n Paths
     Then I should see "assets/css/main.css"
     When I go to "/hello.html"
     Then I should see "Page: Hello"
-    Then I should see '<a class="current" href="index.html">Current Home</a>'
-    Then I should see '<a title="Other Home" href="es/index.html">Other Home</a>'
-    Then I should see '<a class="current" href="index.html"><span>Home: Current Block</span></a>'
-    Then I should see '<a title="Other Home" href="es/index.html"><span>Home: Other Block</span></a>'
-    Then I should see '<a class="current" href="hello.html">Current hello.html</a>'
-    Then I should see '<a title="Other hello.html" href="es/hola.html">Other hello.html</a>'
-    Then I should see '<a class="current" href="hello.html"><span>Current Block</span></a>'
-    Then I should see '<a title="Other hello.html" href="es/hola.html"><span>Other Block</span></a>'
+    Then I should see '<a href="index.html" class="current">Current Home</a>'
+    Then I should see '<a href="es/index.html" title="Other Home">Other Home</a>'
+    Then I should see '<a href="index.html" class="current"><span>Home: Current Block</span></a>'
+    Then I should see '<a href="es/index.html" title="Other Home"><span>Home: Other Block</span></a>'
+    Then I should see '<a href="hello.html" class="current">Current hello.html</a>'
+    Then I should see '<a href="es/hola.html" title="Other hello.html">Other hello.html</a>'
+    Then I should see '<a href="hello.html" class="current"><span>Current Block</span></a>'
+    Then I should see '<a href="es/hola.html" title="Other hello.html"><span>Other Block</span></a>'
     When I go to "/es/hola.html"
     Then I should see "Page: Hola"
-    Then I should see '<a class="current" href="index.html">Current Home</a>'
-    Then I should see '<a title="Other Home" href="../index.html">Other Home</a>'
-    Then I should see '<a class="current" href="index.html"><span>Home: Current Block</span></a>'
-    Then I should see '<a title="Other Home" href="../index.html"><span>Home: Other Block</span></a>'
-    Then I should see '<a class="current" href="hola.html">Current hello.html</a>'
-    Then I should see '<a title="Other hello.html" href="../hello.html">Other hello.html</a>'
-    Then I should see '<a class="current" href="hola.html"><span>Current Block</span></a>'
-    Then I should see '<a title="Other hello.html" href="../hello.html"><span>Other Block</span></a>'
+    Then I should see '<a href="index.html" class="current">Current Home</a>'
+    Then I should see '<a href="../index.html" title="Other Home">Other Home</a>'
+    Then I should see '<a href="index.html" class="current"><span>Home: Current Block</span></a>'
+    Then I should see '<a href="../index.html" title="Other Home"><span>Home: Other Block</span></a>'
+    Then I should see '<a href="hola.html" class="current">Current hello.html</a>'
+    Then I should see '<a href="../hello.html" title="Other hello.html">Other hello.html</a>'
+    Then I should see '<a href="hola.html" class="current"><span>Current Block</span></a>'
+    Then I should see '<a href="../hello.html" title="Other hello.html"><span>Other Block</span></a>'
 
   Scenario: url_for is i18n aware
     Given a fixture app "empty-app"
     And a file named "data/pages.yml" with:
       """
-      - hello.html 
+      - hello.html
       - article.html
       """
     And a file named "locales/en.yml" with:

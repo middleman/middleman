@@ -120,7 +120,7 @@ Feature: Relative Assets
       """
     And the Server is running at "relative-assets-app"
     When I go to "/sub/image_tag.html"
-    Then I should see '<img src="../img/blank.gif" />'
+    Then I should see '<img src="../img/blank.gif"'
 
   Scenario: Relative assets should not break data URIs in image_tag
     Given a fixture app "relative-assets-app"
