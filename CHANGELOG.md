@@ -1,13 +1,16 @@
 master
 ===
 
-# Next
-
-* Expose `development?` and `production?` helpers to template context.
-
 # 4.1.8
 
+* Expose `development?` and `production?` helpers to template context.
+* require the `try` core extension (#1911)
+* Fix contract for Sitemap::Store.register_resource_list_manipulator (#1907)
+* Loosen contract on Resource#source_file to Maybe[String] (#1906)
 * Let collection loops access ConfigContext for helpers. #1879
+* Use https:// to clone templates (#1901)
+* Allow numbers to be unique page_ids (#1886)
+* Prevent infinite loop when encountering files where base filename is a possible templating engine
 
 # 4.1.7
 
