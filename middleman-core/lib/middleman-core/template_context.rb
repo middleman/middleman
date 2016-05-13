@@ -127,30 +127,36 @@ module Middleman
     # @return [String]
     Contract String, Maybe[Bool] => Maybe[IsA['Middleman::SourceFile']]
     def locate_partial(partial_path, try_static=true)
-      return unless resource = sitemap.find_resource_by_destination_path(current_path)
-
-      # Look for partials relative to the current path
-      current_dir = resource.file_descriptor[:relative_path].dirname
-      non_root = partial_path.to_s.sub(/^\//, '')
-      relative_dir = current_dir + Pathname(non_root)
-
-      non_root_no_underscore = non_root.sub(/^_/, '').sub(/\/_/, '/')
-      relative_dir_no_underscore = current_dir + Pathname(non_root_no_underscore)
-
       partial_file = nil
+      lookup_stack = []
+      non_root     = partial_path.to_s.sub(/^\//, '')
+      non_root_no_underscore = non_root.sub(/^_/, '').sub(/\/_/, '/')
 
-      [
-        [relative_dir.to_s, { preferred_engine: resource.file_descriptor[:relative_path].extname[1..-1].to_sym }],
-        [non_root],
-        [non_root, { try_static: try_static }],
-        [relative_dir_no_underscore.to_s, { try_static: try_static }],
-        [non_root_no_underscore, { try_static: try_static }]
-      ].each do |args|
+      if resource = current_resource
+        current_dir  = resource.file_descriptor[:relative_path].dirname
+        relative_dir = current_dir + Pathname(non_root)
+        relative_dir_no_underscore = current_dir + Pathname(non_root_no_underscore)
+      end
+
+
+      lookup_stack.push [ relative_dir.to_s,
+                          { preferred_engine: resource.file_descriptor[:relative_path]
+                                                      .extname[1..-1].to_sym }] if relative_dir
+      lookup_stack.push [ non_root ]
+      lookup_stack.push [ non_root,
+                          { try_static: try_static }]
+      lookup_stack.push [ relative_dir_no_underscore.to_s,
+                          { try_static: try_static }] if relative_dir_no_underscore
+      lookup_stack.push [ non_root_no_underscore,
+                          { try_static: try_static }]
+
+
+      lookup_stack.each do |args|
         partial_file = ::Middleman::TemplateRenderer.resolve_template(@app, *args)
         break if partial_file
       end
 
-      partial_file || nil
+      partial_file
     end
 
     def current_path
