@@ -118,7 +118,9 @@ module Middleman
       # relative path, since it only takes absolute url paths.
       dest_path = url_for(app, path, options.merge(relative: false))
 
-      result = if resource = app.sitemap.find_resource_by_destination_path(dest_path)
+      result = if resource = app.sitemap.find_resource_by_path(dest_path)
+        resource.url
+      elsif resource = app.sitemap.find_resource_by_destination_path(dest_path)
         resource.url
       else
         path = ::File.join(prefix, path)
