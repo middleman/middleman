@@ -162,6 +162,13 @@ describe Middleman::Util do
       expect( Middleman::Util.asset_url( @mm, '/how/about/that.html' ) ).to eq '/how/about/that/'
     end
 
+    it "returns a resource url when asset_hash is on" do
+      Given.fixture 'asset-hash-app'
+      @mm = Middleman::Application.new
+
+      expect( Middleman::Util.asset_url( @mm, '100px.png', 'images') ).to match %r|/images/100px-[a-f0-9]+.png|
+    end
+
   end
 
   describe "::find_related_files" do
