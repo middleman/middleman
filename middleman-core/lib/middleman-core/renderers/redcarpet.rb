@@ -3,7 +3,7 @@ require 'active_support/core_ext/module/attribute_accessors'
 
 module Middleman
   module Renderers
-    class RedcarpetTemplate < ::Tilt::RedcarpetTemplate::Redcarpet2
+    class RedcarpetTemplate < ::Tilt::RedcarpetTemplate
       # because tilt has decided to convert these
       # in the wrong direction
       ALIASES = {
