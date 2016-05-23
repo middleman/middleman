@@ -64,7 +64,7 @@ module Middleman
         extension_class = ::Middleman::Util.tilt_class(options[:preferred_engine])
 
         # Get a list of extensions for a preferred engine
-        preferred_engines += ::Tilt.mappings.select do |_, engines|
+        preferred_engines += ::Tilt.default_mapping.lazy_map.select do |_, engines|
           engines.include? extension_class
         end.keys
       end
