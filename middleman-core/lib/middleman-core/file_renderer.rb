@@ -3,8 +3,15 @@ require 'active_support/core_ext/string/output_safety'
 require 'active_support/core_ext/module/delegation'
 require 'middleman-core/contracts'
 
-::Tilt.mappings.delete('html') # WTF, Tilt?
-::Tilt.mappings.delete('csv')
+# If Tilt 1.4.x
+if ::Tilt.respond_to?(:mappings)
+  ::Tilt.mappings.delete('html') # WTF, Tilt?
+  ::Tilt.mappings.delete('csv')
+# If Tilt 2.x
+else
+  ::Tilt.default_mapping.lazy_map.delete('html')
+  ::Tilt.default_mapping.lazy_map.delete('csv')
+end
 
 module Middleman
   class FileRenderer
@@ -123,10 +130,21 @@ module Middleman
         # Find all the engines which handle this extension in tilt. Look for
         # config variables of that name and merge it
         extension_class = ::Middleman::Util.tilt_class(ext)
-        ::Tilt.mappings.each do |mapping_ext, engines|
-          next unless engines.include? extension_class
-          engine_options = @app.config[mapping_ext.to_sym] || {}
-          options.merge!(engine_options)
+
+        # If Tilt 1.4.x
+        if ::Tilt.respond_to?(:mappings)
+          ::Tilt.mappings.each do |mapping_ext, engines|
+            next unless engines.include? extension_class
+            engine_options = @app.config[mapping_ext.to_sym] || {}
+            options.merge!(engine_options)
+          end
+        # If Tilt 2.x
+        else
+          ::Tilt.default_mapping.lazy_map.each do |mapping_ext, engines|
+            next unless engines.include? extension_class
+            engine_options = @app.config[mapping_ext.to_sym] || {}
+            options.merge!(engine_options)
+          end
         end
 
         options
