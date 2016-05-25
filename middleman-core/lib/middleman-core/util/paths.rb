@@ -158,7 +158,7 @@ module Middleman
 
       # Try to parse URL
       begin
-        uri = URI(url)
+        uri = URI(::URI.encode(url))
       rescue ::URI::InvalidURIError
         # Nothing we can do with it, it's not really a URI
         return url
