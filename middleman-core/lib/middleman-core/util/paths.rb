@@ -158,10 +158,14 @@ module Middleman
 
       # Try to parse URL
       begin
-        uri = URI(::URI.encode(url))
+        uri = URI(url)
       rescue ::URI::InvalidURIError
-        # Nothing we can do with it, it's not really a URI
-        return url
+        begin
+          uri = URI(::URI.encode(url))
+        rescue ::URI::InvalidURIError
+          # Nothing we can do with it, it's not really a URI
+          return url
+        end
       end
 
       relative = options[:relative]
