@@ -18,7 +18,7 @@ class ::Slim::Template
 
       ::Slim::Embedded::SassEngine.disable_option_validator!
       %w(sass scss markdown).each do |engine|
-        ::Slim::Embedded.options[engine.to_sym] = context_hack
+        (::Slim::Embedded.options[engine.to_sym] ||= {})[:context] = opts[:context]
       end
     end
 
