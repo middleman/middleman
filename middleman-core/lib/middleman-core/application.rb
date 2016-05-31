@@ -266,6 +266,8 @@ module Middleman
       # Evaluate a passed block if given
       config_context.instance_exec(&block) if block_given?
 
+      apply_cli_options
+
       execute_callbacks(:before_sitemap)
 
       # Initialize the Sitemap
@@ -275,8 +277,6 @@ module Middleman
 
       # Before config is parsed, before extensions get to it.
       execute_callbacks(:initialized)
-
-      apply_cli_options
 
       # Before config is parsed. Mostly used for extensions.
       execute_callbacks(:before_configuration)
