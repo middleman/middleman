@@ -88,17 +88,14 @@ Then /^the "([^\"]*)" header should contain "([^\"]*)"$/ do |header, expected|
 end
 
 Then /^I should see "([^\"]*)"$/ do |expected|
-  puts page.body
   expect(page.body).to include expected
 end
 
 Then /^I should see '([^\']*)'$/ do |expected|
-  puts page.body
   expect(page.body).to include expected
 end
 
 Then /^I should see:$/ do |expected|
-  puts page.body
   expect(page.body).to include expected
 end
 
