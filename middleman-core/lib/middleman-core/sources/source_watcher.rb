@@ -163,7 +163,7 @@ module Middleman
         wait_for_delay: 0.5
       }
 
-      config[:latency] = @latency if @latency
+      config[:latency] = @latency.to_i if @latency
 
       @listener = ::Listen.to(@directory.to_s, config, &method(:on_listener_change))
 
