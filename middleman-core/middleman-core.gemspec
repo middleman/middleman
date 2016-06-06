@@ -21,7 +21,7 @@ Gem::Specification.new do |s|
   # Core
   s.add_dependency('bundler', ['~> 1.1'])
   s.add_dependency('rack', ['>= 1.4.5', '< 2.0'])
-  s.add_dependency('tilt', ['>= 1.4.1', '< 3.0'])
+  s.add_dependency('tilt', ['~> 2.0'])
   s.add_dependency('erubis')
   s.add_dependency('fast_blank')
   s.add_dependency('parallel')
