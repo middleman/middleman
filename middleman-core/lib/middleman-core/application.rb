@@ -344,23 +344,11 @@ module Middleman
 
     # Clean up missing Tilt exts
     def prune_tilt_templates!
-      # If Tilt 1.4.x
-      if ::Tilt.respond_to?(:mappings)
-        ::Tilt.mappings.each_key do |key|
-          begin
-            ::Tilt[".#{key}"]
-          rescue LoadError, NameError
-            ::Tilt.mappings.delete(key)
-          end
-        end
-      else
-        # If Tilt 2.x
-        ::Tilt.default_mapping.lazy_map.each_key do |key|
-          begin
-            ::Tilt[".#{key}"]
-          rescue LoadError, NameError
-            ::Tilt.default_mapping.lazy_map.delete(key)
-          end
+      ::Tilt.default_mapping.lazy_map.each_key do |key|
+        begin
+          ::Tilt[".#{key}"]
+        rescue LoadError, NameError
+          ::Tilt.default_mapping.lazy_map.delete(key)
         end
       end
     end
