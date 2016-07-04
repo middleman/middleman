@@ -89,6 +89,25 @@ The best way to get quick responses to your issues and swift fixes to your bugs 
 3. Run `bundle install` inside the project root to install the gem dependencies.
 4. Run test cases: `bundle exec rake test`
 
+## Docker
+
+`Dockerfile` is provided for creating an image and building in the default
+Middleman executable.  To build the image:
+
+    $ docker build -t middleman .
+
+To create a new Middleman project using the base image:
+
+    $ docker run -v /path/to/project/:/project/ middleman middleman init
+
+`Dockerfile.dev` is provided for building and running the Middleman development
+server.  `Dockerfile` itself doesn't install the gem packages required to run
+your site.  To launch the development server for a new project:
+
+    $ cp /path/to/middleman-src/Dockerfile.dev /path/to/project/
+    $ docker build -f Dockerfile.dev -t middleman-dev .
+    $ docker run -p 4567:4567 -v /path/to/project/:/project/ middleman-dev
+
 ## Donate
 
 Help support the Middleman team [with a donation](https://plasso.co/s/4dXbHBorC3).

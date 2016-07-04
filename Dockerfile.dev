@@ -1,0 +1,8 @@
+FROM middleman
+
+MAINTAINER Jack M <exegete@mac.com>
+
+COPY . /project/
+RUN bundle install
+
+EXPOSE 4567
