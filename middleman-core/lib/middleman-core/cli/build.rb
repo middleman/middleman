@@ -257,7 +257,7 @@ module Middleman::Cli
           response = @rack.get(URI.escape(resource.request_path))
 
           if response.status == 200
-            base.create_file(output_file, binary_encode(response.body))
+            base.generate_file(output_file, binary_encode(response.body))
           else
             handle_error(output_file, response.body)
           end
