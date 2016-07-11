@@ -11,9 +11,7 @@ class Middleman::Extensions::RelativeAssets < ::Middleman::Extension
   def initialize(app, options_hash={}, &block)
     super
 
-    if options[:helpers_only]
-      return
-    end
+    return if options[:helpers_only]
 
     app.rewrite_inline_urls id: :relative_assets,
                             url_extensions: options.exts || app.config[:asset_extensions],
@@ -53,7 +51,7 @@ class Middleman::Extensions::RelativeAssets < ::Middleman::Extension
     end
 
     def asset_path(kind, source, options={})
-      super(kind, source,  app.extensions[:relative_assets].mark_as_relative(super, options, current_resource))
+      super(kind, source, app.extensions[:relative_assets].mark_as_relative(super, options, current_resource))
     end
   end
 

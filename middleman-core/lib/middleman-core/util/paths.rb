@@ -1,8 +1,8 @@
 # Core Pathname library used for traversal
 require 'pathname'
 require 'uri'
-require 'memoist'
 require 'addressable'
+require 'memoist'
 require 'tilt'
 
 require 'middleman-core/contracts'
@@ -32,9 +32,9 @@ module Middleman
     # @return [String]
     Contract String => String
     def normalize_path(path)
-      # The tr call works around a bug in Ruby's Unicode handling
+     # The tr call works around a bug in Ruby's Unicode handling
       ::URI.decode(path).sub(%r{^/}, '').tr('', '')
-    end
+     end
     memoize :normalize_path
 
     # This is a separate method from normalize_path in case we
@@ -111,7 +111,7 @@ module Middleman
         raise ArgumentError, '#asset_url must be run in a context with current_resource if relative: true'
       end
 
-      uri = URI(path)
+      uri = ::Middleman::Util.parse_uri(path)
       path = uri.path
 
       # Ensure the url we pass into find_resource_by_destination_path is not a
@@ -131,9 +131,15 @@ module Middleman
         end
       end
 
-      final_result = ::URI.encode(relative_path_from_resource(options[:current_resource], result, options[:relative]))
+      final_result = ::Addressable::URI.encode(
+        relative_path_from_resource(
+          options[:current_resource],
+          result,
+          options[:relative]
+        )
+      )
 
-      result_uri = URI(final_result)
+      result_uri = ::Middleman::Util.parse_uri(final_result)
       result_uri.query = uri.query
       result_uri.fragment = uri.fragment
       result_uri.to_s
@@ -158,14 +164,10 @@ module Middleman
 
       # Try to parse URL
       begin
-        uri = URI(url)
-      rescue ::URI::InvalidURIError
-        begin
-          uri = URI(::URI.encode(url))
-        rescue ::URI::InvalidURIError
-          # Nothing we can do with it, it's not really a URI
-          return url
-        end
+        uri = ::Middleman::Util.parse_uri(url)
+      rescue ::Addressable::URI::InvalidURIError
+        # Nothing we can do with it, it's not really a URI
+        return url
       end
 
       relative = options[:relative]
@@ -206,7 +208,13 @@ module Middleman
 
       if resource
         uri.path = if this_resource
-          ::URI.encode(relative_path_from_resource(this_resource, resource_url, effective_relative))
+          ::Addressable::URI.encode(
+            relative_path_from_resource(
+              this_resource,
+              resource_url,
+              effective_relative
+            )
+          )
         else
           resource_url
         end
@@ -284,16 +292,15 @@ module Middleman
     # @return [Boolean] Whether the path matches the matcher
     Contract PATH_MATCHER, String => Bool
     def path_match(matcher, path)
-      case
-      when matcher.is_a?(String)
+      if matcher.is_a?(String)
         if matcher.include? '*'
           ::File.fnmatch(matcher, path)
         else
           path == matcher
         end
-      when matcher.respond_to?(:match)
+      elsif matcher.respond_to?(:match)
         !!(path =~ matcher)
-      when matcher.respond_to?(:call)
+      elsif matcher.respond_to?(:call)
         matcher.call(path)
       else
         ::File.fnmatch(matcher.to_s, path)

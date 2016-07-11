@@ -1,6 +1,11 @@
 master
 ===
 
+# 4.1.10
+
+* Fix unicode issues in URL deeplinks.
+* Add prefix option to asset_hash (#1949)
+
 # 4.1.9
 
 * Fix `--watcher-*` CLI flags.
