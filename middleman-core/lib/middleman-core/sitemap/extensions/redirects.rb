@@ -53,8 +53,7 @@ module Middleman
         def render(*)
           url = ::Middleman::Util.url_for(@store.app, @request_path,
                                           relative: false,
-                                          find_resource: true
-                                         )
+                                          find_resource: true)
 
           if output
             output.call(path, url)

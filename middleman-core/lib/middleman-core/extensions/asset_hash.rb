@@ -6,6 +6,7 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
   option :exts, nil, 'List of extensions that get asset hashes appended to them.'
   option :ignore, [], 'Regexes of filenames to skip adding asset hashes to'
   option :rewrite_ignore, [], 'Regexes of filenames to skip processing for path rewrites'
+  option :prefix, '', 'Prefix for hash'
 
   def initialize(app, options_hash={}, &block)
     super
@@ -92,7 +93,7 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
       ::Digest::SHA1.hexdigest(response.body)[0..7]
     end
 
-    resource.destination_path = resource.destination_path.sub(/\.(\w+)$/) { |ext| "-#{digest}#{ext}" }
+    resource.destination_path = resource.destination_path.sub(/\.(\w+)$/) { |ext| "-#{options.prefix}#{digest}#{ext}" }
     resource
   end
 

@@ -308,3 +308,17 @@ Feature: Assets get file hashes appended to them and references to them are upda
       | javascripts/application.js.map |
 
     And the file "javascripts/application-4553338c.js" should contain "//# sourceMappingURL=application.js-22cc2b5f.map"
+
+  Scenario: Hashes can contain a prefix
+    Given a successfully built app at "asset-hash-prefix"
+    When I cd to "build"
+    Then the following files should exist:
+      | index.html |
+      | javascripts/application-myprefix-4553338c.js |
+      | javascripts/application.js-myprefix-22cc2b5f.map |
+      | index.html |
+    And the following files should not exist:
+      | javascripts/application.js |
+      | javascripts/application.js.map |
+
+    And the file "javascripts/application-myprefix-4553338c.js" should contain "//# sourceMappingURL=application.js-myprefix-22cc2b5f.map"

@@ -47,14 +47,13 @@ module Middleman
     # @return [Boolean]
     Contract String => Bool
     def nonbinary_mime?(mime)
-      case
-      when mime.start_with?('text/')
+      if mime.start_with?('text/')
         true
-      when mime.include?('xml') && !mime.include?('officedocument')
+      elsif mime.include?('xml') && !mime.include?('officedocument')
         true
-      when mime.include?('json')
+      elsif mime.include?('json')
         true
-      when mime.include?('javascript')
+      elsif mime.include?('javascript')
         true
       else
         false
