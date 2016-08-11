@@ -36,9 +36,9 @@ module Middleman
           def execute_descriptor(_app, resources)
             resources.map do |r|
               # Ignore based on the source path (without template extensions)
-              if ignored?(r.path)
+              if ignored?(r.normalized_path)
                 r.ignore!
-              elsif !r.is_a?(ProxyResource) && r.file_descriptor && ignored?(r.file_descriptor[:relative_path].to_s)
+              elsif !r.is_a?(ProxyResource) && r.file_descriptor && ignored?(r.file_descriptor.normalized_relative_path)
                 # This allows files to be ignored by their source file name (with template extensions)
                 r.ignore!
               end
@@ -54,14 +54,12 @@ module Middleman
 
         class RegexpIgnoreDescriptor < IgnoreDescriptor
           def ignored?(match_path)
-            match_path = ::Middleman::Util.normalize_path(match_path)
             match_path =~ path
           end
         end
 
         class GlobIgnoreDescriptor < IgnoreDescriptor
           def ignored?(match_path)
-            match_path = ::Middleman::Util.normalize_path(match_path)
             if defined?(::File::FNM_EXTGLOB)
               ::File.fnmatch(path, match_path, ::File::FNM_EXTGLOB)
             else
@@ -72,14 +70,12 @@ module Middleman
 
         class StringIgnoreDescriptor < IgnoreDescriptor
           def ignored?(match_path)
-            match_path = ::Middleman::Util.normalize_path(match_path)
             match_path == path
           end
         end
 
         class BlockIgnoreDescriptor
           def ignored?(match_path)
-            match_path = ::Middleman::Util.normalize_path(match_path)
             block.call(match_path)
           end
         end
