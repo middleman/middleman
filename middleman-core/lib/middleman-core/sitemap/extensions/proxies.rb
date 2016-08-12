@@ -47,7 +47,7 @@ module Middleman
           )
 
           if should_ignore
-            d = ::Middleman::Sitemap::Extensions::Ignores::IgnoreDescriptor.new(target)
+            d = ::Middleman::Sitemap::Extensions::Ignores::StringIgnoreDescriptor.new(target)
             d.execute_descriptor(app, resources)
           end
 

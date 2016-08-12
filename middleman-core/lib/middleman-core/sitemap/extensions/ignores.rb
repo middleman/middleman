@@ -14,16 +14,31 @@ module Middleman
         Contract Or[String, Regexp, Proc] => RespondTo[:execute_descriptor]
         def ignore(path=nil, &block)
           @app.sitemap.invalidate_resources_not_ignored_cache!
-          IgnoreDescriptor.new(path, block)
+
+          if path.is_a? Regexp
+            RegexpIgnoreDescriptor.new(path)
+          elsif path.is_a? String
+            path_clean = ::Middleman::Util.normalize_path(path)
+
+            if path_clean.include?('*') # It's a glob
+              GlobIgnoreDescriptor.new(path_clean)
+            else
+              StringIgnoreDescriptor.new(path_clean)
+            end
+          elsif block
+            BlockIgnoreDescriptor.new(nil, block)
+          else
+            IgnoreDescriptor.new(path, block)
+          end
         end
 
         IgnoreDescriptor = Struct.new(:path, :block) do
           def execute_descriptor(_app, resources)
             resources.map do |r|
               # Ignore based on the source path (without template extensions)
-              if ignored?(r.path)
+              if ignored?(r.normalized_path)
                 r.ignore!
-              elsif !r.is_a?(ProxyResource) && r.file_descriptor && ignored?(r.file_descriptor[:relative_path].to_s)
+              elsif !r.is_a?(ProxyResource) && r.file_descriptor && ignored?(r.file_descriptor.normalized_relative_path)
                 # This allows files to be ignored by their source file name (with template extensions)
                 r.ignore!
               end
@@ -33,27 +48,38 @@ module Middleman
           end
 
           def ignored?(match_path)
-            match_path = ::Middleman::Util.normalize_path(match_path)
+            raise NotImplementedError
+          end
+        end
 
-            if path.is_a? Regexp
-              match_path =~ path
-            elsif path.is_a? String
-              path_clean = ::Middleman::Util.normalize_path(path)
+        class RegexpIgnoreDescriptor < IgnoreDescriptor
+          def ignored?(match_path)
+            match_path =~ path
+          end
+        end
 
-              if path_clean.include?('*') # It's a glob
-                if defined?(::File::FNM_EXTGLOB)
-                  ::File.fnmatch(path_clean, match_path, ::File::FNM_EXTGLOB)
-                else
-                  ::File.fnmatch(path_clean, match_path)
-                end
-              else
-                match_path == path_clean
-              end
-            elsif block
-              block.call(match_path)
+        class GlobIgnoreDescriptor < IgnoreDescriptor
+          def ignored?(match_path)
+            if defined?(::File::FNM_EXTGLOB)
+              ::File.fnmatch(path, match_path, ::File::FNM_EXTGLOB)
+            else
+              ::File.fnmatch(path, match_path)
             end
           end
         end
+
+        class StringIgnoreDescriptor < IgnoreDescriptor
+          def ignored?(match_path)
+            match_path == path
+          end
+        end
+
+        class BlockIgnoreDescriptor
+          def ignored?(match_path)
+            block.call(match_path)
+          end
+        end
+
       end
     end
   end

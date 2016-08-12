@@ -197,6 +197,13 @@ module Middleman
         options[:content_type] || ::Rack::Mime.mime_type(ext, nil)
       end
 
+      # The normalized source path of this resource (relative to the source directory,
+      # without template extensions)
+      # @return [String]
+      def normalized_path
+        @normalized_path ||= ::Middleman::Util.normalize_path @path
+      end
+
       def to_s
         "#<#{self.class} path=#{@path}>"
       end
