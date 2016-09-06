@@ -8,6 +8,10 @@ module Middleman
       ::Middleman::Sources.file_cache[full_path] ||= {}
       ::Middleman::Sources.file_cache[full_path][version] ||= ::File.read(full_path)
     end
+
+    def normalized_relative_path
+      @normalized_relative_path ||= ::Middleman::Util.normalize_path relative_path.to_s
+    end
   end
 
   # Sources handle multiple on-disk collections of files which make up

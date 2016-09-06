@@ -10,7 +10,7 @@ module Middleman::Cli
 
     class_option :environment,
                  aliases: '-e',
-                 default: :production
+                 default: ENV['MM_ENV'] || ENV['RACK_ENV'] || :production
     class_option :clean,
                  type: :boolean,
                  default: true,

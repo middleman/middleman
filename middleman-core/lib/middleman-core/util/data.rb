@@ -94,7 +94,7 @@ module Middleman
                                     .transpose
                                     .map(&::Regexp.method(:union))
 
-        match = /
+        /
           \A(?:[^\r\n]*coding:[^\r\n]*\r?\n)?
           (?<start>#{start_delims})[ ]*\r?\n
           (?<frontmatter>.*?)[ ]*\r?\n?

@@ -163,7 +163,7 @@ module Middleman
         wait_for_delay: 0.5
       }
 
-      config[:latency] = @latency if @latency
+      config[:latency] = @latency.to_i if @latency
 
       @listener = ::Listen.to(@directory.to_s, config, &method(:on_listener_change))
 
@@ -199,7 +199,7 @@ module Middleman
     Contract ArrayOf[Pathname]
     def poll_once!
       updated = ::Middleman::Util.all_files_under(@directory.to_s, &method(:should_not_recurse?))
-      removed = @files.keys.reject { |p| updated.include?(p) }
+      removed = @files.keys - updated
 
       result = update(updated, removed)
 

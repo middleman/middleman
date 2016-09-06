@@ -40,19 +40,29 @@ Feature: link_to helper
     """
     absolute: <%= link_to "Needs Index", "/needs_index.html", relative: true %>
     relative: <%= link_to "Relative", "needs_index.html", relative: true %>
+
+    absolute spaces: <%= link_to "Spaces Index", "/evil spaces.html", relative: true %>
+    relative spaces: <%= link_to "Spaces Relative", "evil spaces.html", relative: true %>
     """
     And a file named "source/link_to/sub.html.erb" with:
     """
     absolute: <%= link_to "Needs Index", "/needs_index.html", relative: true %>
     relative: <%= link_to "Relative", "../needs_index.html", relative: true %>
+
+    absolute spaces: <%= link_to "Spaces Index", "/evil spaces.html", relative: true %>
+    relative spaces: <%= link_to "Spaces Relative", "../evil spaces.html", relative: true %>
     """
     And the Server is running at "indexable-app"
     When I go to "/link_to.html"
     Then I should see 'absolute: <a href="needs_index.html">Needs Index</a>'
     Then I should see 'relative: <a href="needs_index.html">Relative</a>'
+    Then I should see 'absolute spaces: <a href="evil%20spaces.html">Spaces Index</a>'
+    Then I should see 'relative spaces: <a href="evil%20spaces.html">Spaces Relative</a>'
     When I go to "/link_to/sub.html"
     Then I should see 'absolute: <a href="../needs_index.html">Needs Index</a>'
     Then I should see 'relative: <a href="../needs_index.html">Relative</a>'
+    Then I should see 'absolute spaces: <a href="../evil%20spaces.html">Spaces Index</a>'
+    Then I should see 'relative spaces: <a href="../evil%20spaces.html">Spaces Relative</a>'
 
   Scenario: link_to relative works with strip_index_file
     Given a fixture app "indexable-app"
@@ -113,7 +123,7 @@ Feature: link_to helper
     When I go to "/link_to/sub.html"
     Then I should see 'absolute: <a href="../needs_index.html">Needs Index</a>'
     Then I should see 'relative: <a href="../needs_index.html">Relative</a>'
-  
+
   Scenario: link_to knows about directory indexes
     Given a fixture app "indexable-app"
     And a file named "source/link_to.html.erb" with:

@@ -1,6 +1,19 @@
 master
 ===
 
+# 4.1.10
+
+* Fix unicode issues in URL deeplinks.
+* Add prefix option to asset_hash (#1949)
+
+# 4.1.9
+
+* Fix `--watcher-*` CLI flags.
+* Allow spaces in paths to work with `link_to`. Fixes #1914
+* Add support for dotenv
+* Fix asset_url with asset_hash (#1919)
+* Allow partial lookups without a current_resource (#1912)
+
 # 4.1.8
 
 * Expose `development?` and `production?` helpers to template context.
