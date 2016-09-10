@@ -64,7 +64,7 @@ class Middleman::Extensions::MinifyJavascript < ::Middleman::Extension
       end
 
       if minified
-        headers['Content-Length'] = ::Rack::Utils.bytesize(minified).to_s
+        headers['Content-Length'] = minified.bytesize.to_s
         response = [minified]
       end
 

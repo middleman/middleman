@@ -25,7 +25,8 @@ Feature: Alternate between multiple asset hosts
     And a file named "config.rb" with:
       """
       activate :asset_host, host: Proc.new { |asset|
-        "http://assets%d.example.com" % (asset.hash % 4)
+        hash = Digest::MD5.digest(asset).bytes.map!(&:ord).reduce(&:+)
+        "http://assets%d.example.com" % (hash % 4)
       }
       """
     And the Server is running

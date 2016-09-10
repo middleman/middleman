@@ -133,9 +133,15 @@ module Middleman
 
     # Immediately send static file
     def send_file(resource, env)
-      file      = ::Rack::File.new nil
-      file.path = resource.file_descriptor[:full_path]
-      response = file.serving(env)
+      file     = ::Rack::File.new nil
+      path     = resource.file_descriptor[:full_path]
+      if !file.respond_to?(:path=)
+        request  = ::Rack::Request.new(env)
+        response = file.serving(request, path)
+      else
+        file.path = path
+        response = file.serving(env)
+      end
       status = response[0]
       response[1]['Content-Encoding'] = 'gzip' if %w(.svgz .gz).include?(resource.ext)
       # Do not set Content-Type if status is 1xx, 204, 205 or 304, otherwise
