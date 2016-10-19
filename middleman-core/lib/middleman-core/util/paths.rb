@@ -152,7 +152,8 @@ module Middleman
     def url_for(app, path_or_resource, options={})
       if path_or_resource.is_a?(String) || path_or_resource.is_a?(Symbol)
         r = app.sitemap.find_resource_by_page_id(path_or_resource)
-        path_or_resource = r if r
+
+        path_or_resource = r ? r : path_or_resource.to_s
       end
 
       # Handle Resources and other things which define their own url method
