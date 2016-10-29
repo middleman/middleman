@@ -53,9 +53,10 @@ module Middleman
     # Create a new collection of sources.
     #
     # @param [Middleman::Application] app The parent app.
+    # @param [Hash] options Global options.
     # @param [Array] watchers Default watchers.
-    Contract IsA['Middleman::Application'], Maybe[Array] => Any
-    def initialize(app, watchers=[])
+    Contract IsA['Middleman::Application'], Maybe[Hash], Maybe[Array] => Any
+    def initialize(app, _options={}, watchers=[])
       @app = app
       @watchers = watchers
       @sorted_watchers = @watchers.dup.freeze
@@ -169,7 +170,7 @@ module Middleman
     # @return [Middleman::Sources]
     Contract Symbol => ::Middleman::Sources
     def by_type(type)
-      self.class.new @app, watchers.select { |d| d.type == type }
+      self.class.new @app, nil, watchers.select { |d| d.type == type }
     end
 
     # Get all files for this collection of watchers.
