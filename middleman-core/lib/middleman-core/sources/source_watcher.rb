@@ -99,6 +99,8 @@ module Middleman
       without_listener_running do
         update([], @files.values.map { |source_file| source_file[:full_path] })
       end
+
+      poll_once!
     end
 
     def update_config(options={})
