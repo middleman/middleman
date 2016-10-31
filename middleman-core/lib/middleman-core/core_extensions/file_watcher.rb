@@ -28,10 +28,7 @@ module Middleman
         super
 
         # Setup source collection.
-        @sources = ::Middleman::Sources.new(app,
-                                            disable_watcher: app.config[:watcher_disable],
-                                            force_polling: app.config[:watcher_force_polling],
-                                            latency: app.config[:watcher_latency])
+        @sources = ::Middleman::Sources.new(app)
 
         # Add default ignores.
         IGNORES.each do |key, value|
@@ -55,6 +52,13 @@ module Middleman
       # @return [void]
       Contract Any
       def after_configuration
+        @watcher.update_config(
+          disable_watcher: app.config[:watcher_disable],
+          force_polling: app.config[:watcher_force_polling],
+          latency: app.config[:watcher_latency],
+          wait_for_delay: app.config[:watcher_wait_for_delay]
+        )
+
         if @original_source_dir != app.config[:source]
           @watcher.update_path(app.config[:source])
         end

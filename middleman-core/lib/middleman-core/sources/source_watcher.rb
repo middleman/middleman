@@ -75,9 +75,10 @@ module Middleman
       @ignored = options.fetch(:ignored, proc { false })
       @only = Array(options.fetch(:only, []))
 
-      @disable_watcher = app.build? || @parent.options.fetch(:disable_watcher, false)
-      @force_polling = @parent.options.fetch(:force_polling, false)
-      @latency = @parent.options.fetch(:latency, nil)
+      @disable_watcher = app.build?
+      @force_polling = false
+      @latency = nil
+      @wait_for_delay = nil
 
       @listener = nil
 
@@ -95,13 +96,20 @@ module Middleman
     def update_path(directory)
       @directory = Pathname(File.expand_path(directory, app.root))
 
-      stop_listener! if @listener
-
-      update([], @files.values.map { |source_file| source_file[:full_path] })
+      without_listener_running do
+        update([], @files.values.map { |source_file| source_file[:full_path] })
+      end
 
       poll_once!
+    end
 
-      listen! unless @disable_watcher
+    def update_config(options={})
+      without_listener_running do
+        @disable_watcher = options.fetch(:disable_watcher, false)
+        @force_polling = options.fetch(:force_polling, false)
+        @latency = options.fetch(:latency, nil)
+        @wait_for_delay = options.fetch(:wait_for_delay, nil)
+      end
     end
 
     # Stop watching.
@@ -160,10 +168,10 @@ module Middleman
 
       config = {
         force_polling: @force_polling,
-        wait_for_delay: 0.5
       }
 
-      config[:latency] = @latency.to_i if @latency
+      config[:wait_for_delay] = @wait_for_delay.try(:to_f) || 0.5
+      config[:latency] = @latency.to_f if @latency
 
       @listener = ::Listen.to(@directory.to_s, config, &method(:on_listener_change))
 
@@ -341,6 +349,21 @@ module Middleman
         !@ignored.call(file)
       else
         @only.any? { |reg| file[:relative_path].to_s =~ reg }
+      end
+    end
+
+    private
+
+    def without_listener_running
+      listener_running = @listener && @listener.processing?
+
+      stop_listener! if listener_running
+
+      yield
+
+      if listener_running
+        poll_once!
+        listen!
       end
     end
   end
