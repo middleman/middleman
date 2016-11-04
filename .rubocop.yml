@@ -67,3 +67,5 @@ Style/MultilineBlockChain:
   Enabled: false
 Style/SpecialGlobalVars:
   Enabled: false
+Style/FrozenStringLiteralComment:
+  Enabled: false
