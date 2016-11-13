@@ -218,6 +218,10 @@ module Middleman
       Contract String => String
       def make_implicit_page_id(path)
         @id ||= begin
+          if prok = @app.config[:page_id_generator]
+            return prok.call(path)
+          end
+
           basename = if ext == ".html"
                        File.basename(path, ext)
                      else
