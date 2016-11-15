@@ -68,7 +68,7 @@ module Middleman
 
           # rubocop:disable Style/AccessorMethodName
           def get_source_file
-            nil
+            @request_path.source_file
           end
           # rubocop:enable Style/AccessorMethodName
 
