@@ -1,7 +1,7 @@
 # Core Pathname library used for traversal
 require 'pathname'
 require 'uri'
-require 'addressable'
+require 'addressable/uri'
 require 'memoist'
 require 'tilt'
 
