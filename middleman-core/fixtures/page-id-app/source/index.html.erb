@@ -4,3 +4,11 @@ URL1: <%= url_for "frontmatter" %>
 URL2: <%= url_for "page2" %>
 URL3: <%= link_to "Hi", "page3" %>
 URL4: <%= link_to "Sym", :"something-else" %>
+URL5: <%= link_to "Imp", :implicit %>
+URL6: <%= link_to "Foldern", "folder/foldern" %>
+URL7: <%= link_to "Feed", "feed.xml" %>
+
+<%# If custom proc %>
+URL8: <%= link_to "Imp", "implicit.html-foo" %>
+URL9: <%= link_to "Foldern", "folder/foldern.html-foo" %>
+URL10: <%= link_to "Feed", "feed.xml-foo" %>

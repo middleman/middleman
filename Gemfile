@@ -11,6 +11,11 @@ gem 'rspec', '~> 3.0', require: false
 gem 'cucumber', '~> 2.0', require: false
 gem 'addressable', '~> 2.4.0', require: false
 
+# Pry tools
+gem 'pry'
+gem 'pry-stack_explorer'
+gem 'pry-rescue'
+
 # Optional middleman dependencies, included for tests
 gem 'haml', '>= 4.0.5', require: false
 gem 'sassc', '~> 1.8', require: false
