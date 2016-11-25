@@ -220,7 +220,7 @@ describe Middleman::Util do
 
     it "does not loop infinitely when file name is a possible templating engine" do
       expect do
-        Timeout::timeout(0.5) do
+        Timeout::timeout(3.0) do
           result = Middleman::Util.step_through_extensions("markdown.scss")
           expect(result).to eq "markdown"
         end
