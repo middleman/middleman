@@ -1,6 +1,14 @@
 master
 ===
 
+# 4.1.12
+
+* Fix broken `ignore { |p| true }` form.
+
+# 4.1.11
+
+* Upgrade to Rack 2.
+
 # 4.1.10
 
 * Fix unicode issues in URL deeplinks.

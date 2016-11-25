@@ -74,7 +74,7 @@ module Middleman
           end
         end
 
-        class BlockIgnoreDescriptor
+        class BlockIgnoreDescriptor < IgnoreDescriptor
           def ignored?(match_path)
             block.call(match_path)
           end
