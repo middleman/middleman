@@ -17,7 +17,7 @@ module Middleman::Cli
                  default: false,
                  desc: 'Print debug messages'
     class_option :instrument,
-                 type: :string,
+                 type: :boolean,
                  default: false,
                  desc: 'Print instrument messages'
     class_option :profile,

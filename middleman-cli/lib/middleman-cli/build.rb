@@ -29,7 +29,7 @@ module Middleman::Cli
                  default: false,
                  desc: 'Print debug messages'
     class_option :instrument,
-                 type: :string,
+                 type: :boolean,
                  default: false,
                  desc: 'Print instrument messages'
     class_option :profile,
@@ -64,7 +64,7 @@ module Middleman::Cli
           config[:mode] = :build
           config[:show_exceptions] = false
           config[:cli_options] = cli_options.each_with_object({}) do |(k, v), sum|
-            sum[k] = v unless v == :undefined
+            sum[k] = v
           end
         end
 

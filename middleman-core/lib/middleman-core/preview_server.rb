@@ -143,7 +143,7 @@ module Middleman
 
         app = ::Middleman::Application.new do
           config[:cli_options] = cli_options.each_with_object({}) do |(k, v), sum|
-            sum[k] = v unless v == :undefined
+            sum[k] = v
           end
 
           ready do
@@ -162,7 +162,7 @@ module Middleman
 
               # Hack around bower_components in root.
               watcher.listener.ignore(/^bower_components/)
-              
+
               # Hack around node_modules in root.
               watcher.listener.ignore(/^node_modules/)
 
@@ -207,7 +207,7 @@ module Middleman
       end
 
       def possible_from_cli(key, config)
-        if @cli_options[key] && @cli_options[key] != :undefined
+        if @cli_options[key]
           @cli_options[key]
         else
           config[key]

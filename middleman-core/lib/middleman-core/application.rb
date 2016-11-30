@@ -306,6 +306,7 @@ module Middleman
       execute_callbacks(:after_configuration)
 
       # Everything is stable
+      $stderr.puts config[:exit_before_ready].inspect
       execute_callbacks(:ready) unless config[:exit_before_ready]
     end
 

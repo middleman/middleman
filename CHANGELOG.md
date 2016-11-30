@@ -1,6 +1,10 @@
 master
 ===
 
+# 4.1.13
+
+* Change how config options are passed to Thor. Removes new Thor warnings from #2017
+
 # 4.1.12
 
 * Fix broken `ignore { |p| true }` form.

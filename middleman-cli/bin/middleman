@@ -25,12 +25,10 @@ module Middleman::Cli
       if setting.default.is_a?(String) || setting.default.is_a?(NilClass)
         base.class_option setting.key,
                           type: :string,
-                          default: :undefined,
                           desc: setting.description
       elsif setting.default.is_a?(TrueClass) || setting.default.is_a?(FalseClass)
         base.class_option setting.key,
                           type: :boolean,
-                          default: :undefined,
                           desc: setting.description
       end
     end
