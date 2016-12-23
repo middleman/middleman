@@ -73,12 +73,14 @@ module Middleman
 
       ::Middleman::Profiling.report('build')
 
-      ::Middleman::Util.instrument 'builder.clean' do
-        clean! if @cleaning
-      end
+      unless @has_error
+        ::Middleman::Util.instrument 'builder.clean' do
+          clean! if @cleaning
+        end
 
-      ::Middleman::Util.instrument 'builder.after' do
-        @app.execute_callbacks(:after_build, [self])
+        ::Middleman::Util.instrument 'builder.after' do
+          @app.execute_callbacks(:after_build, [self])
+        end
       end
 
       !@has_error
