@@ -18,7 +18,7 @@ gem 'pry-rescue'
 
 # Optional middleman dependencies, included for tests
 gem 'haml', '>= 4.0.5', require: false
-gem 'sassc', '~> 1.8', require: false
+gem 'sassc', '~> 1.10.1', require: false
 gem 'coffee-script', '~> 2.2', require: false
 gem 'kramdown', '~> 1.2', require: false
 gem 'slim', '>= 2.0', require: false
