@@ -85,7 +85,7 @@ module Middleman
         file_descriptor && file_descriptor[:full_path].to_s
       end
 
-      Contract Or[Symbol, String, Fixnum]
+      Contract Or[Symbol, String, Integer]
       def page_id
         metadata[:page][:id] || make_implicit_page_id(destination_path)
       end
@@ -222,10 +222,10 @@ module Middleman
             return prok.call(path)
           end
 
-          basename = if ext == ".html"
-                       File.basename(path, ext)
-                     else
-                       File.basename(path)
+          basename = if ext == '.html'
+            File.basename(path, ext)
+          else
+            File.basename(path)
                      end
 
           # Remove leading dot or slash if present

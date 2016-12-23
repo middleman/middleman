@@ -167,7 +167,7 @@ module Middleman
       return if @disable_watcher || @listener || @waiting_for_existence
 
       config = {
-        force_polling: @force_polling,
+        force_polling: @force_polling
       }
 
       config[:wait_for_delay] = @wait_for_delay.try(:to_f) || 0.5
@@ -284,11 +284,13 @@ module Middleman
                         logger.debug "== Deletion (#{f[:types].inspect}): #{f[:relative_path]}"
                       end
 
-      execute_callbacks(:on_change, [
-                          valid_updates,
-                          valid_removes,
-                          self
-                        ]) unless valid_updates.empty? && valid_removes.empty?
+      unless valid_updates.empty? && valid_removes.empty?
+        execute_callbacks(:on_change, [
+                            valid_updates,
+                            valid_removes,
+                            self
+                          ])
+      end
 
       [valid_updates, valid_removes]
     end

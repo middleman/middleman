@@ -47,7 +47,7 @@ module Middleman
             end
           end
 
-          def ignored?(match_path)
+          def ignored?(_match_path)
             raise NotImplementedError
           end
         end
@@ -79,7 +79,6 @@ module Middleman
             block.call(match_path)
           end
         end
-
       end
     end
   end

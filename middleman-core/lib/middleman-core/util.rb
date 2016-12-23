@@ -17,7 +17,7 @@ module Middleman
 
     # Facade for ActiveSupport/Notification
     def instrument(name, payload={}, &block)
-      suffixed_name = (name =~ /\.middleman$/) ? name.dup : "#{name}.middleman"
+      suffixed_name = name =~ /\.middleman$/ ? name.dup : "#{name}.middleman"
       ::ActiveSupport::Notifications.instrument(suffixed_name, payload, &block)
     end
   end

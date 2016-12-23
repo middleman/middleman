@@ -138,14 +138,18 @@ module Middleman
         relative_dir_no_underscore = current_dir + Pathname(non_root_no_underscore)
       end
 
-      lookup_stack.push [relative_dir.to_s,
-                         { preferred_engine: resource.file_descriptor[:relative_path]
-                           .extname[1..-1].to_sym }] if relative_dir
+      if relative_dir
+        lookup_stack.push [relative_dir.to_s,
+                           { preferred_engine: resource.file_descriptor[:relative_path]
+                             .extname[1..-1].to_sym }]
+      end
       lookup_stack.push [non_root]
       lookup_stack.push [non_root,
                          { try_static: try_static }]
-      lookup_stack.push [relative_dir_no_underscore.to_s,
-                         { try_static: try_static }] if relative_dir_no_underscore
+      if relative_dir_no_underscore
+        lookup_stack.push [relative_dir_no_underscore.to_s,
+                           { try_static: try_static }]
+      end
       lookup_stack.push [non_root_no_underscore,
                          { try_static: try_static }]
 

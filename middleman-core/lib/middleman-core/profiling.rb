@@ -20,11 +20,9 @@ module Middleman
 
     # A profiler that does nothing. The default.
     class NullProfiler
-      def start
-      end
+      def start; end
 
-      def report(_)
-      end
+      def report(_); end
     end
 
     # A profiler that uses ruby-prof

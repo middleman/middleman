@@ -26,8 +26,7 @@ module Middleman
         @context = @options[:context] if @options.key?(:context)
       end
 
-      def prepare
-      end
+      def prepare; end
 
       def evaluate(scope, locals, &block)
         options = {}.merge!(@options).merge!(filename: eval_file, line: line, context: @context || scope)

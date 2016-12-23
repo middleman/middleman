@@ -28,8 +28,7 @@ else
     end
 
     # rubocop:disable MethodName
-    def Contract(*)
-    end
+    def Contract(*); end
 
     class Callable
       def self.[](*)

@@ -29,10 +29,12 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
     # don't completely reload middleman, I18n.load_path can get
     # polluted with paths from other test app directories that don't
     # exist anymore.
-    app.after_configuration_eval do
-      ::I18n.load_path.delete_if { |path| path =~ %r{tmp/aruba} }
-      ::I18n.reload!
-    end if ENV['TEST']
+    if ENV['TEST']
+      app.after_configuration_eval do
+        ::I18n.load_path.delete_if { |path| path =~ %r{tmp/aruba} }
+        ::I18n.reload!
+      end
+    end
   end
 
   def after_configuration

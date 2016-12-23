@@ -24,13 +24,15 @@ module Middleman
 
           original_block = @block
 
-          b = if ctx
-            ::Proc.new do |*args|
-              ctx.instance_exec(*args, &original_block)
+          if original_block
+            b = if ctx
+              ::Proc.new do |*args|
+                ctx.instance_exec(*args, &original_block)
+              end
+            else
+              original_block
             end
-          else
-            original_block
-          end if original_block
+          end
 
           data.send(@name, *@args.deep_dup, &b)
         end
