@@ -178,7 +178,7 @@ module Middleman
     # Setup callbacks which can exclude paths from the sitemap
     define_setting :ignored_sitemap_matchers, {
       # Files starting with an underscore, but not a double-underscore
-      partials: proc do |file|
+      partials: proc { |file|
         ignored = false
 
         file[:relative_path].ascend do |f|
@@ -189,11 +189,11 @@ module Middleman
         end
 
         ignored
-      end,
+      },
 
-      layout: proc do |file, app|
+      layout: proc { |file, app|
         file[:relative_path].to_s.start_with?('layout.', app.config[:layouts_dir] + '/')
-      end
+      }
     }, 'Callbacks that can exclude paths from the sitemap'
 
     define_setting :skip_build_clean, proc { |p| [/\.git/].any? { |r| p =~ r } }, 'Whether some paths should not be removed during a clean build.'
