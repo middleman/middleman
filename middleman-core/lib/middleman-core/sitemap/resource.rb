@@ -226,7 +226,7 @@ module Middleman
             File.basename(path, ext)
           else
             File.basename(path)
-                     end
+          end
 
           # Remove leading dot or slash if present
           File.join(File.dirname(path), basename).gsub(/^\.?\//, '')
