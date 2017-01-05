@@ -35,7 +35,7 @@ gem 'phantomjs', '~> 2.1.1.0', require: false
 gem 'poltergeist', '~> 1.8', require: false
 
 # For less, note there is no compatible JS runtime for windows
-gem 'therubyracer', '>= 0.12.13', platforms: :ruby
+gem 'therubyracer', '>= 0.12.3', platforms: :ruby
 gem 'therubyrhino', '>= 2.0', platforms: :jruby
 
 # Code Quality
