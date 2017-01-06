@@ -11,6 +11,7 @@ Feature: Page IDs
     And I should see 'URL5: <a href="/implicit.html">Imp</a>'
     And I should see 'URL6: <a href="/folder/foldern.html">Foldern</a>'
     And I should see 'URL7: <a href="/feed.xml">Feed</a>'
+    And I should see "URL8: /fourty-two.html"
 
     When I go to "/fm.html"
     Then I should see "I am: frontmatter"
@@ -45,9 +46,10 @@ Feature: Page IDs
     And I should see "URL2: /2.html"
     And I should see 'URL3: <a href="/3.html">Hi</a>'
     And I should see 'URL4: <a href="/overwrites/from-default.html">Sym</a>'
-    And I should see 'URL8: <a href="/implicit.html">Imp</a>'
-    And I should see 'URL9: <a href="/folder/foldern.html">Foldern</a>'
-    And I should see 'URL10: <a href="/feed.xml">Feed</a>'
+    And I should see "URL8: /fourty-two.html"
+    And I should see 'URL9: <a href="/implicit.html">Imp</a>'
+    And I should see 'URL10: <a href="/folder/foldern.html">Foldern</a>'
+    And I should see 'URL11: <a href="/feed.xml">Feed</a>'
 
     When I go to "/fm.html"
     Then I should see "I am: frontmatter"
