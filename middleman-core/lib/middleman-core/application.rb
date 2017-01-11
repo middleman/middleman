@@ -191,9 +191,9 @@ module Middleman
         ignored
       end,
 
-      layout: proc do |file, app|
+      layout: ->(file, app) {
         file[:relative_path].to_s.start_with?('layout.', app.config[:layouts_dir] + '/')
-      end
+      }
     }, 'Callbacks that can exclude paths from the sitemap'
 
     define_setting :skip_build_clean, proc { |p| [/\.git/].any? { |r| p =~ r } }, 'Whether some paths should not be removed during a clean build.'
