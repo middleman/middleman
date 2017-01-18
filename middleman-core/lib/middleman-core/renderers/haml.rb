@@ -52,6 +52,10 @@ module Middleman
               modified_options = options.dup
               modified_options[:context] = compiler_options[:context]
 
+              renderer_symbol = self.to_s.split(":").last.downcase.to_sym
+              renderer_options = modified_options[:context].app.config[renderer_symbol]
+              modified_options = modified_options.merge(renderer_options || {})
+
               text = template_class.new(nil, 1, modified_options) { text }.render
               super(text, compiler_options)
             end
