@@ -39,11 +39,11 @@ Feature: Meta redirects
     And a file named "config.rb" with:
     """
     activate :directory_indexes
-    redirect "hello.html", to: "link_test.html"
+    redirect "hello.html", to: "link_test.html", directory_index: false
     redirect "hello2.html", to: "services/index.html"
     """
     And the Server is running at "large-build-app"
-    When I go to "/hello/index.html"
+    When I go to "/hello.html"
     Then I should see '<meta http-equiv=refresh content="0; url=/link_test/"'
     When I go to "/hello2/index.html"
     Then I should see '<meta http-equiv=refresh content="0; url=/services/"'
