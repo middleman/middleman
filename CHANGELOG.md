@@ -1,6 +1,10 @@
 master
 ===
 
+# 4.2.1
+
+* Fix some issues with Ruby 2.4.0
+
 # 4.2.0
 
 Fix #1951. A failed build would "clean" all files in build. Possibly breaking change, "clean" and "after_build" are only run for sucessful builds.
