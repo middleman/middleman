@@ -53,15 +53,16 @@ module Middleman
   #
   # Common lifecycle events can be handled by extensions simply by implementing an appropriately-named method:
   #
+  # * {#before_configuration}
   # * {#after_configuration}
-  # * {#after_build}
   # * {#before_build}
+  # * {#after_build}
+  # * {#ready}
   #
   # There are also some less common hooks that can be listened to from within an extension's `initialize` method:
   #
-  # * `app.before_render {|body, path, locs, template_class| ... }` - Manipulate template sources before they are rendered.
-  # * `app.after_render {|content, path, locs, template_class| ... }` - Manipulate output text after a template has been rendered. It is also common to install a Rack middleware to do this instead.
-  # * `app.ready { ... }` - Run code once Middleman is ready to serve or build files (after `after_configuration`).
+  # * `app.before_render { |body, path, locs, template_class| ... }` - Manipulate template sources before they are rendered.
+  # * `app.after_render { |content, path, locs, template_class| ... }` - Manipulate output text after a template has been rendered. It is also common to install a Rack middleware to do this instead.
 
   #
   # @see http://middlemanapp.com/advanced/custom/ Middleman Custom Extensions Documentation
