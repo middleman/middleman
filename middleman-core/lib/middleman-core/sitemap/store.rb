@@ -163,7 +163,7 @@ module Middleman
       def find_resource_by_page_id(page_id)
         @lock.synchronize do
           ensure_resource_list_updated!
-          @_lookup_by_page_id[page_id.to_sym]
+          @_lookup_by_page_id[page_id.to_s.to_sym]
         end
       end
 
@@ -249,7 +249,7 @@ module Middleman
                 # since some proxy resources are looked up by path in order to
                 # get their metadata and subsequently their page_id.
                 @resources.each do |resource|
-                  @_lookup_by_page_id[resource.page_id.to_sym] = resource
+                  @_lookup_by_page_id[resource.page_id.to_s.to_sym] = resource
                 end
 
                 invalidate_resources_not_ignored_cache!

@@ -1,4 +1,4 @@
-require 'rack/showexceptions'
+require 'rack/show_exceptions'
 
 # Support rack/showexceptions during development
 module Middleman::CoreExtensions

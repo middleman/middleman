@@ -191,7 +191,7 @@ module Middleman
         ignored
       },
 
-      layout: proc { |file, app|
+      layout: ->(file, app) {
         file[:relative_path].to_s.start_with?('layout.', app.config[:layouts_dir] + '/')
       }
     }, 'Callbacks that can exclude paths from the sitemap'
