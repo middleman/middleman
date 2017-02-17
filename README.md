@@ -111,7 +111,7 @@ Constraint][pvc] with two digits of precision. For example:
 
 ## License
 
-Copyright (c) 2010-2015 Thomas Reynolds. MIT Licensed, see [LICENSE] for details.
+Copyright (c) 2010-2017 Thomas Reynolds. MIT Licensed, see [LICENSE] for details.
 
 [middleman]: http://middlemanapp.com
 [gem]: https://rubygems.org/gems/middleman
