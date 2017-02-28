@@ -58,9 +58,9 @@ This will compile your templates and output a stand-alone site which can be easi
 
 ## Learn More
 
-A full set of in-depth instructional guides are available on the official website at: http://middlemanapp.com.
+A full set of in-depth instructional guides are available on the official website at: http://middlemanapp.com
 
-Additionally, up-to-date generated code documentation is available on [RubyDoc].
+Additionally, up-to-date generated code documentation is available on [RubyDoc]
 
 ## Build & Dependency Status
 
