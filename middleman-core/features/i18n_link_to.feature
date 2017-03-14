@@ -162,6 +162,7 @@ Feature: i18n Paths
       es:
         paths:
           hello: "hola"
+          form: "formulario"
         msg: Hola
       """
     And a file named "source/localizable/hello.html.erb" with:
@@ -171,6 +172,10 @@ Feature: i18n Paths
         Current: <%= url_for "/#{p}" %>
         Other: <%= url_for "/#{p}", locale: ::I18n.locale == :en ? :es : :en %>
       <% end %>
+      """
+    And a file named "source/localizable/form.html.erb" with:
+      """
+      Other: <%= url_for "/form.html", query: { foo: 'bar' }, fragment: "deep", locale: ::I18n.locale == :en ? :es : :en %>
       """
     And a file named "source/localizable/article.html.erb" with:
       """
@@ -199,6 +204,10 @@ Feature: i18n Paths
     Then I should see "Page: Hola"
     Then I should see 'Current: /es/hola.html'
     Then I should see 'Other: /hello.html'
+    When I go to "/form.html"
+    Then I should see 'Other: /es/formulario.html?foo=bar#deep'
+    When I go to "/es/formulario.html"
+    Then I should see 'Other: /form.html?foo=bar#deep'
     When I go to "/article.html"
     Then I should see "Page Lang: Default"
     Then I should see 'Current: /article.html'
