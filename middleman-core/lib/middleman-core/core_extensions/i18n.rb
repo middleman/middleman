@@ -183,6 +183,12 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
 
     @lookup = new_resources.each_with_object({}) do |desc, sum|
       abs_path = desc.source_path.sub(options[:templates_dir], '')
+
+      # Process templates with locale suffix
+      locales.each do |locale|
+        abs_path = abs_path.sub(".#{locale}.", ".")
+      end
+
       sum[abs_path] ||= {}
       sum[abs_path][desc.locale] = '/' + desc.path
     end

@@ -34,6 +34,8 @@ Feature: i18n Paths
       <%= link_to "Other Home", "/index.html", title: "Other Home", locale: ::I18n.locale == :en ? :es : :en %>
       <% link_to "/index.html", class: 'current' do %><span>Home: Current Block</span><% end %>
       <% link_to "/index.html", title: "Other Home", locale: ::I18n.locale == :en ? :es : :en do %><span>Home: Other Block</span><% end %>
+      <%= link_to "Current Foobar", "/foobar.html", class: 'current' %>
+      <%= link_to "Other Foobar", "/foobar.html", title: "Other Foobar", locale: ::I18n.locale == :en ? :es : :en %>
 
       <% data.pages.each_with_index do |p, i| %>
         <%= link_to "Current #{p}", "/#{p}", class: 'current' %>
@@ -41,6 +43,14 @@ Feature: i18n Paths
         <% link_to "/#{p}", class: 'current' do %><span>Current Block</span><% end %>
         <% link_to "/#{p}", title: "Other #{p}", locale: ::I18n.locale == :en ? :es : :en do %><span>Other Block</span><% end %>
       <% end %>
+      """
+    And a file named "source/localizable/foobar.en.html.erb" with:
+      """
+      English foobar
+      """
+    And a file named "source/localizable/foobar.es.html.erb" with:
+      """
+      Spanish foobar
       """
     And a file named "config.rb" with:
       """
@@ -58,6 +68,8 @@ Feature: i18n Paths
     Then I should see '<a href="/es/hola.html" title="Other hello.html">Other hello.html</a>'
     Then I should see '<a href="/hello.html" class="current"><span>Current Block</span></a>'
     Then I should see '<a href="/es/hola.html" title="Other hello.html"><span>Other Block</span></a>'
+    Then I should see '<a href="/foobar.html" class="current">Current Foobar</a>'
+    Then I should see '<a href="/es/foobar.html" title="Other Foobar">Other Foobar</a>'
     When I go to "/es/hola.html"
     Then I should see "Page: Hola"
     Then I should see '<a href="/es/index.html" class="current">Current Home</a>'
@@ -68,6 +80,8 @@ Feature: i18n Paths
     Then I should see '<a href="/hello.html" title="Other hello.html">Other hello.html</a>'
     Then I should see '<a href="/es/hola.html" class="current"><span>Current Block</span></a>'
     Then I should see '<a href="/hello.html" title="Other hello.html"><span>Other Block</span></a>'
+    Then I should see '<a href="/es/foobar.html" class="current">Current Foobar</a>'
+    Then I should see '<a href="/foobar.html" title="Other Foobar">Other Foobar</a>'
 
   Scenario: link_to is i18n aware and supports relative_links
     Given a fixture app "empty-app"
