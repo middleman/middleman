@@ -191,6 +191,14 @@ module Middleman
         def [](key)
           __send__(key) if key?(key)
         end
+        
+        # Return requested data, or nil if data does not exist
+        #
+        # @param [String, Symbol] path The name of the data namespace
+        # @return [Hash, nil]
+        def try(path)
+          __send__(path) if respond_to?(path)
+        end
 
         def key?(key)
           (@local_data.keys + @local_sources.keys + @callback_sources.keys).include?(key.to_s)
