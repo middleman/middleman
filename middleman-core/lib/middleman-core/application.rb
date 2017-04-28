@@ -178,7 +178,7 @@ module Middleman
     # Setup callbacks which can exclude paths from the sitemap
     define_setting :ignored_sitemap_matchers, {
       # Files starting with an underscore, but not a double-underscore
-      partials: proc do |file|
+      partials: ->(file) {
         ignored = false
 
         file[:relative_path].ascend do |f|
@@ -189,7 +189,7 @@ module Middleman
         end
 
         ignored
-      end,
+      },
 
       layout: ->(file, app) {
         file[:relative_path].to_s.start_with?('layout.', app.config[:layouts_dir] + '/')
