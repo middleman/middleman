@@ -109,7 +109,7 @@ module Middleman
 
       begin
         # Write out the contents of the page
-        res.write resource.render({}, rack: { request: req })
+        res.write resource.pipeline.render({}, rack: { request: req })
 
         # Valid content is a 200 status
         res.status = 200
