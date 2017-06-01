@@ -20,6 +20,26 @@ Feature: Markdown support in Haml
     Then I should see ">H1</h1>"
     Then I should see "<p>paragraph</p>"
 
+  Scenario: Markdown filter options in Haml works
+    Given a fixture app "markdown-in-haml-app"
+    And a file named "config.rb" with:
+      """
+      set :markdown_engine, :redcarpet
+      set :markdown, { with_toc_data: true }
+      activate :directory_indexes
+      """
+    And a file named "source/markdown_filter.html.haml" with:
+      """
+      :markdown
+        # Memorable Title
+
+        paragraph
+      """
+    Given the Server is running at "markdown-in-haml-app"
+    When I go to "/markdown_filter/"
+    Then I should see ">Memorable Title</h1>"
+    Then I should see '<h1 id="memorable-title"'
+    Then I should see "<p>paragraph</p>"
 
   Scenario: Markdown filter in Haml uses our link_to and image_tag helpers
     Given a fixture app "markdown-in-haml-app"
