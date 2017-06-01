@@ -89,6 +89,8 @@ The best way to get quick responses to your issues and swift fixes to your bugs 
 3. Run `bundle install` inside the project root to install the gem dependencies.
 4. Run test cases: `bundle exec rake test`
 
+To run a single test case: `bundle exec rake test:middleman-core:feature[#{feature_name}]`
+
 ## Donate
 
 [Click here to lend your support to Middleman](https://plasso.co/s/4dXbHBorC3)
