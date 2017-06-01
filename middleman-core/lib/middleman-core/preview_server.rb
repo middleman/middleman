@@ -268,7 +268,8 @@ module Middleman
         begin
           ::WEBrick::HTTPServer.new(http_opts)
         rescue Errno::EADDRINUSE
-          $stderr.puts %(== Port "#{http_opts[:Port]}" is in use. This should not have happened. Please start "middleman server" again.)
+          port = http_opts[:Port]
+          $stderr.puts %(== Port #{port} is already in use. This could mean another instance of middleman is already running. Please make sure port #{port} is free and start `middleman server` again, or choose another port by running `middleman server —-port=#{port + 1}` instead.)
         end
       end
 
