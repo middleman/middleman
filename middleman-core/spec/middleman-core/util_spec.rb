@@ -94,7 +94,7 @@ describe Middleman::Util do
       end
 
       it "returns path with http_prefix pre-pended if resource is not found" do
-        expect( Middleman::Util.asset_url( @mm, 'missing.gif', 'images', http_prefix: 'http_prefix' ) ).to eq 'http_prefix/images/missing.gif'
+        expect( Middleman::Util.asset_url( @mm, 'missing.gif', 'images', http_prefix: 'http_prefix' ) ).to eq 'http_prefix/missing.gif'
       end
     end
 
