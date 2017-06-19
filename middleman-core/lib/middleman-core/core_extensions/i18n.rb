@@ -183,6 +183,12 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
 
     @lookup = new_resources.each_with_object({}) do |desc, sum|
       abs_path = desc.source_path.sub(options[:templates_dir], '')
+
+      # Process templates with locale suffix
+      locales.each do |locale|
+        abs_path = abs_path.sub(".#{locale}.", ".")
+      end
+
       sum[abs_path] ||= {}
       sum[abs_path][desc.locale] = '/' + desc.path
     end
@@ -194,10 +200,13 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
 
   Contract String, Symbol => Maybe[String]
   def localized_path(path, locale)
-    lookup_path = path.dup
-    lookup_path << app.config[:index_file] if lookup_path.end_with?('/')
-
-    @lookup[lookup_path] && @lookup[lookup_path][locale]
+    begin
+      lookup = ::Middleman::Util.parse_uri(path)
+      lookup.path << app.config[:index_file] if lookup.path && lookup.path.end_with?('/')
+      lookup.to_s if @lookup[lookup.path] && lookup.path = @lookup[lookup.path][locale]
+    rescue ::Addressable::URI::InvalidURIError
+      nil
+    end
   end
 
   Contract Symbol => String

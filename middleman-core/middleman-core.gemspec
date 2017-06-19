@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.email       = ['me@tdreyno.com', 'ben@benhollis.net', 'karlfreeman@gmail.com']
   s.homepage    = 'http://middlemanapp.com'
   s.summary     = 'Hand-crafted frontend development'
-  s.description = 'A static site generator. Provides dozens of templating languages (Haml, Sass, Compass, Slim, CoffeeScript, and more). Makes minification, compression, cache busting, Yaml data (and more) an easy part of your development cycle.'
+  s.description = 'A static site generator. Provides dozens of templating languages (Haml, Sass, Slim, CoffeeScript, and more). Makes minification, compression, cache busting, Yaml data (and more) an easy part of your development cycle.'
 
   s.files        = `git ls-files -z`.split("\0")
   s.test_files   = `git ls-files -z -- {fixtures,features}/*`.split("\0")
@@ -29,7 +29,7 @@ Gem::Specification.new do |s|
   s.add_dependency('dotenv')
 
   # Helpers
-  s.add_dependency('activesupport', ['>= 4.2', '< 5.1'])
+  s.add_dependency('activesupport', ['>= 4.2', '< 5.2'])
   s.add_dependency('padrino-helpers', ['~> 0.13.0'])
   s.add_dependency("addressable", ["~> 2.3"])
   s.add_dependency('memoist', ['~> 0.14'])

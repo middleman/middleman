@@ -32,7 +32,7 @@ module Middleman
 
         # Tell the file watcher to observe the :data_dir
         @watcher = app.files.watch :data,
-                                   path: File.join(app.root, dir),
+                                   path: File.expand_path(dir, app.root),
                                    only: DATA_FILE_MATCHER
 
         # Setup data files before anything else so they are available when

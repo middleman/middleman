@@ -1,6 +1,6 @@
 # Middleman - Makes developing websites simple
 
-[![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/middleman/middleman?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Gitter](https://badges.gitter.im/middleman/middleman.svg)](https://gitter.im/middleman/middleman?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 **Middleman** is a static site generator using all the shortcuts and tools in modern web development. Check out [middlemanapp.com](http://middlemanapp.com/) for detailed tutorials, including a [getting started guide](http://middlemanapp.com/basics/getting-started/). You can also follow [@middlemanapp](https://twitter.com/middlemanapp) for updates.
 
@@ -46,7 +46,7 @@ The preview server allows you to build your site, by modifying the contents of t
 
 To get started, simply develop as you normally would by building HTML, CSS, and Javascript in the `source` directory. When you're ready to use more complex templates, simply add the templating engine's extension to the file and start writing in that format.
 
-For example, say I am working on a stylesheet at `source/stylesheets/site.css` and I'd like to start using Compass and Sass. I would rename the file to `source/stylesheets/site.css.scss` and Middleman will automatically begin processing that file as Sass. The same would apply to CoffeeScript (`.js.coffee`), Haml (`.html.haml`) and any other templating engine you might want to use.
+For example, say I am working on a stylesheet at `source/stylesheets/site.css` and I'd like to start using Sass. I would rename the file to `source/stylesheets/site.css.scss` and Middleman will automatically begin processing that file as Sass. The same would apply to CoffeeScript (`.js.coffee`), Haml (`.html.haml`) and any other templating engine you might want to use.
 
 Finally, you will want to build your project into a stand-alone site. From the project directory:
 
@@ -58,9 +58,9 @@ This will compile your templates and output a stand-alone site which can be easi
 
 ## Learn More
 
-A full set of in-depth instructional guides are available on the official website at: http://middlemanapp.com.
+A full set of in-depth instructional guides are available on the official website at: http://middlemanapp.com
 
-Additionally, up-to-date generated code documentation is available on [RubyDoc].
+Additionally, up-to-date generated code documentation is available on [RubyDoc]
 
 ## Build & Dependency Status
 
@@ -111,7 +111,7 @@ Constraint][pvc] with two digits of precision. For example:
 
 ## License
 
-Copyright (c) 2010-2015 Thomas Reynolds. MIT Licensed, see [LICENSE] for details.
+Copyright (c) 2010-2017 Thomas Reynolds. MIT Licensed, see [LICENSE] for details.
 
 [middleman]: http://middlemanapp.com
 [gem]: https://rubygems.org/gems/middleman
@@ -121,6 +121,6 @@ Copyright (c) 2010-2015 Thomas Reynolds. MIT Licensed, see [LICENSE] for details
 [codeclimate]: https://codeclimate.com/github/middleman/middleman
 [gittip]: https://www.gittip.com/middleman/
 [rubyinstaller]: http://rubyinstaller.org/
-[RubyInstaller-Devkit]: http://rubyinstaller.org/add-ons/devkit/
+[RubyInstaller-Devkit]: https://rubyinstaller.org/add-ons/devkit.html
 [rubydoc]: http://rubydoc.info/github/middleman/middleman
 [LICENSE]: https://github.com/middleman/middleman/blob/master/LICENSE.md
