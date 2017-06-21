@@ -36,6 +36,7 @@ module Middleman
       end
 
       @glob = opts.fetch(:glob)
+      @globsource = opts.fetch(:globsource)
       @cleaning = opts.fetch(:clean)
       @parallel = opts.fetch(:parallel, true)
 
@@ -110,6 +111,15 @@ module Middleman
 
     # Find all the files we need to output and do so.
     # @return [Array<Resource>] List of resources that were output.
+    #
+    # @TODO related pages should as tags / categories etc are not updated in this process
+    # @TODO Isn't this expensive to loop through all resources - could loop
+    #       Through the glob array and do a find on resource
+    # @TODO Could add a check on same destination_path - i.e. identical slugs /
+    #       title and log warn Testing shows it creates both of them as does not
+    #       alert on this issue
+    # @TODO Do we want to include proxy resources in this also
+    # @TODO if resource is a blog resource then can we trigger the build of calendar / tag / archive and custom pages
     Contract ResourceList
     def output_files
       logger.debug '== Building files'
@@ -118,13 +128,46 @@ module Middleman
                       .reject { |resource| resource.ext == '.css' }
                       .sort_by { |resource| SORT_ORDER.index(resource.ext) || 100 }
 
-      if @glob
+      # Build a subset of the project based on a glob filter
+      if @glob || @globsource
+        logger.info "== Processing glob files: #{@glob}"
+
+        # Loops through all resources.
         resources = resources.select do |resource|
+
           if defined?(::File::FNM_EXTGLOB)
-            File.fnmatch(@glob, resource.destination_path, ::File::FNM_EXTGLOB)
+            result = @glob ? File.fnmatch(@glob, resource.destination_path, ::File::FNM_EXTGLOB) : File.fnmatch(@globsource, resource.path, ::File::FNM_EXTGLOB)
           else
-            File.fnmatch(@glob, resource.destination_path)
+            result = @glob ? File.fnmatch(@glob, resource.destination_path) : File.fnmatch(@globsource, resource.path)
           end
+
+          # # Is this a blog article?
+          # if result && resource.is_a?(::Middleman::Blog::BlogArticle)
+
+          #   logger.info "== Found blog article - processing proxy templates"
+
+          #   # require 'middleman-blog'
+          #   # blog = ::Middleman::BlogExtension.new()
+
+          #   # Push article to get rebuilt in blog system and hopefully rebuild proxy pages
+          #   # puts '>>>>>> BLOG ARTICLE', resource.blog_controller
+          #   # puts '>>>>>> BLOG ARTICLE', ::Middleman::BlogExtension, resource, blog.options
+
+          #   # # Create Tag pages
+          #   # # Check that the options are present to do so
+          #   # if options.tag_template && options.generate_tag_pages
+          #   #   @app.ignore options.tag_template
+
+          #   # require 'middleman-blog/tag_pages'
+          #   tag_pages = Blog::TagPages.new(@app, resource.blog_controller)
+
+          #   puts '>>>>>> Tags', tag_pages, resource.blog_controller.name
+
+          #   # Register the return tag resources
+          #   # @app.sitemap.register_resource_list_manipulator(:"blog_#{resource.blog_controller.name}_tags", @tag_pages)
+
+          # end
+
         end
       end
 

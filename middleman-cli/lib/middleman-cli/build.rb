@@ -23,7 +23,12 @@ module Middleman::Cli
                  type: :string,
                  aliases: '-g',
                  default: nil,
-                 desc: 'Build a subset of the project'
+                 desc: 'Build a subset of the project based on build path'
+    class_option :globsource,
+                 type: :string,
+                 aliases: '-gs',
+                 default: nil,
+                 desc: 'Build a subset of the project based on source path'
     class_option :verbose,
                  type: :boolean,
                  default: false,
@@ -71,7 +76,8 @@ module Middleman::Cli
         builder = Middleman::Builder.new(@app,
                                          glob: options['glob'],
                                          clean: options['clean'],
-                                         parallel: options['parallel'])
+                                         parallel: options['parallel'],
+                                         globsource: options['globsource'])
         builder.thor = self
         builder.on_build_event(&method(:on_event))
       end
