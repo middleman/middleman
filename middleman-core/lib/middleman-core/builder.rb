@@ -149,7 +149,7 @@ module Middleman
           offset = end_r
           ranges << range
         end
-        outputs = ranges.in_threads(threads).map do |range|
+        outputs = Parallel.map(ranges, in_threads: threads) do |range|
           puts range.to_s
           resources[range].map(&method(:output_resource))
         end
