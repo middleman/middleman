@@ -138,7 +138,7 @@ module Middleman
         processes = ::Parallel.processor_count
         processes = processes < res_count ? processes : res_count
         min_parts = res_count/processes
-        reminder = res_count%processes
+        remainder = res_count%processes
         offset = 0
         ranges = []
         while offset < res_count
@@ -152,7 +152,6 @@ module Middleman
           ranges << range
         end
         outputs = Parallel.map(ranges, in_processes: processes) do |range|
-          puts range.to_s
           resources[range].map!(&method(:output_resource))
         end
         outputs.flatten!
