@@ -143,9 +143,9 @@ module Middleman
         ranges = []
         while offset < res_count
           end_r = offset + min_parts
-          if reminder > 0
+          if remainder > 0
             end_r +=1
-            reminder -= 1
+            remainder -= 1
           end
           range = offset...end_r
           offset = end_r
