@@ -31,14 +31,14 @@ Gem::Specification.new do |s|
   # Helpers
   s.add_dependency('activesupport', ['>= 4.2', '< 5.2'])
   s.add_dependency('padrino-helpers', ['~> 0.13.0'])
-  s.add_dependency("addressable", ["~> 2.3"])
+  s.add_dependency('addressable', ['~> 2.3'])
   s.add_dependency('memoist', ['~> 0.14'])
 
   # Watcher
-  s.add_dependency('listen', ['~> 3.0.0'])
+  s.add_dependency('listen', ['~> 3.0'])
 
   # Tests
-  s.add_development_dependency("capybara", ["~> 2.5.0"])
+  s.add_development_dependency('capybara', ['~> 2.5.0'])
 
   # i18n
   s.add_dependency('i18n', ['~> 0.7.0'])
@@ -54,7 +54,7 @@ Gem::Specification.new do |s|
   s.add_dependency('execjs', ['~> 2.0'])
 
   # Testing
-  s.add_dependency('contracts', ['~> 0.13.0'])
+  s.add_dependency('contracts', ['~> 0.13'])
 
   # Hash stuff
   s.add_dependency('hashie', ['~> 3.4'])

@@ -9,7 +9,7 @@ gem 'byebug'
 gem 'aruba', '~> 0.7.4', require: false
 gem 'rspec', '~> 3.0', require: false
 gem 'cucumber', '~> 2.0', require: false
-gem 'addressable', '~> 2.4.0', require: false
+gem 'addressable', '~> 2.4', require: false
 
 # Pry tools
 gem 'pry'
@@ -18,7 +18,7 @@ gem 'pry-rescue'
 
 # Optional middleman dependencies, included for tests
 gem 'haml', '>= 4.0.5', require: false
-gem 'sassc', '~> 1.10.1', require: false
+gem 'sassc', '~> 1.10', require: false
 gem 'coffee-script', '~> 2.2', require: false
 gem 'kramdown', '~> 1.2', require: false
 gem 'slim', '>= 2.0', require: false
@@ -42,7 +42,7 @@ gem 'therubyracer', '~> 0.12.3', platforms: :ruby
 gem 'rubocop', '~> 0.24', require: false
 gem 'simplecov', '~> 0.10', require: false
 gem 'coveralls', '~> 0.8', require: false
-gem 'codeclimate-test-reporter', '~> 0.3', require: false, group: :test
+gem 'codeclimate-test-reporter', '~> 1.0', require: false, group: :test
 
 # Middleman itself
 gem 'middleman-cli', path: 'middleman-cli'
