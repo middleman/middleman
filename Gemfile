@@ -36,7 +36,7 @@ gem 'phantomjs', '~> 2.1.1.0', require: false
 
 # For less, note there is no compatible JS runtime for windows
 gem 'therubyrhino', '>= 2.0', platforms: :jruby
-gem 'therubyracer', '>= 0.12', platforms: :ruby
+gem 'therubyracer', '~> 0.12.3', platforms: :ruby
 
 # Code Quality
 gem 'rubocop', '~> 0.24', require: false
