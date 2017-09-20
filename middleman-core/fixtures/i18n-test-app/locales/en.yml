@@ -1,4 +1,8 @@
 ---
 en:
+  paths:
+    tac: "terms-and-conditions"
+
   greetings: "Howdy"
   hi: "Hello"
+  tac: "Terms & Conditions"
