@@ -1,6 +1,8 @@
 ---
 en:
   paths:
+    hello: "hello"
+    morning: "morning"
     tac: "terms-and-conditions"
 
   greetings: "Howdy"
