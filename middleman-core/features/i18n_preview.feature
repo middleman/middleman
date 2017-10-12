@@ -32,6 +32,10 @@ Feature: i18n Preview
     Then I should see "Buenos días"
     When I go to "/es/una.html"
     Then I should see "Solamente una"
+    When I go to "/terms-and-conditions.html"
+    Then I should see "Terms & Conditions"
+    When I go to "/es/terms-and-conditions.html"
+    Then I should see "Condiciones Generales"
 
   Scenario: A template changes i18n during preview
     Given a fixture app "i18n-test-app"
