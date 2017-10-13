@@ -1,4 +1,5 @@
 require 'ipaddr'
+require 'fast_blank'
 
 module Middleman
   class PreviewServer
