@@ -42,7 +42,6 @@ gem 'therubyracer', '~> 0.12.3', platforms: :ruby
 gem 'rubocop', '~> 0.24', require: false
 gem 'simplecov', '~> 0.10', require: false
 gem 'coveralls', '~> 0.8', require: false
-gem 'codeclimate-test-reporter', '~> 1.0', require: false, group: :test
 
 # Middleman itself
 gem 'middleman-cli', path: 'middleman-cli'
