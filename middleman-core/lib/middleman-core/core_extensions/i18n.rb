@@ -155,6 +155,8 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
 
     # If it's a "localizable template"
     localizable_folder_resources.each do |resource|
+      next if resource.ignored?
+
       page_id = File.basename(resource.path, File.extname(resource.path))
       locales.each do |locale|
         # Remove folder name
@@ -174,6 +176,8 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
 
     # If it uses file extension localization
     file_extension_resources.each do |resource|
+      next if resource.ignored?
+
       result = parse_locale_extension(resource.path)
       ext_locale, path, page_id = result
       new_resources << build_resource(path, resource.path, page_id, ext_locale)
