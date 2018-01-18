@@ -40,7 +40,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency('capybara', ['~> 2.5.0'])
 
   # i18n
-  s.add_dependency('i18n', ['~> 0.7.0'])
+  s.add_dependency('i18n', ['~> 0.7'])
 
   # Automatic Image Sizes
   s.add_dependency('fastimage', ['~> 2.0'])
