@@ -1,7 +1,6 @@
 require 'yaml'
 require 'json'
 require 'pathname'
-require 'backports/2.1.0/array/to_h'
 require 'hashie'
 require 'memoist'
 
