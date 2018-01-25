@@ -1,10 +1,10 @@
 When /^I stop (?:middleman|all commands) if the output( of the last command)? contains:$/ do |last_command, expected|
   begin
-    Timeout.timeout(exit_timeout) do
+    Timeout.timeout(aruba.config.exit_timeout) do
       loop do
         fail "You need to start middleman interactively first." unless @interactive
 
-        if unescape(@interactive.output) =~ Regexp.new(unescape(expected))
+        if sanitize_text(@interactive.output) =~ Regexp.new(sanitize_text(expected))
           all_commands.each { |p| p.terminate }
           break
         end

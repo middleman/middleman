@@ -49,3 +49,9 @@ Given /^I run the interactive middleman console$/ do
   step %Q{I set the environment variable "MM_ROOT" to "#{cwd}"}
   step %Q{I run `middleman console` interactively}
 end
+
+Given /^I run the interactive middleman server$/ do
+  cwd = File.expand_path(aruba.current_directory)
+  step %Q{I set the environment variable "MM_ROOT" to "#{cwd}"}
+  step %Q{I run `middleman server` interactively}
+end

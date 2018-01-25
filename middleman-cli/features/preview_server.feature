@@ -9,7 +9,7 @@ Feature: Run the preview server
     And the default aruba timeout is 30 seconds
 
   Scenario: Start the server with defaults
-    When I run `middleman server` interactively
+    When I run the interactive middleman server
     And I stop middleman if the output contains:
     """
     Inspect your site configuration

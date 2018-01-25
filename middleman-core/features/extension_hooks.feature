@@ -1,9 +1,7 @@
 Feature: Extension author could use some hooks
 
   Scenario: When build
-    Given a fixture app "extension-hooks-app"
-    When I run `middleman build`
-    Then the exit status should be 0
+    Given a successfully built app at "extension-hooks-app"
     And the output should contain "/// after_configuration ///"
     And the output should contain "/// ready ///"
     And the output should contain "/// before_build ///"
