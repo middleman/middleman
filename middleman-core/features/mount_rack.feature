@@ -1,3 +1,4 @@
+@wip
 Feature: Support Rack apps mounted using map
 
   Scenario: Mounted Rack App at /sinatra
