@@ -6,9 +6,9 @@ gem 'yard', '~> 0.8', require: false
 
 # Test tools
 gem 'byebug'
-gem 'aruba', '~> 0.7.4', require: false
+gem 'aruba', '~> 0.14.0', require: false
 gem 'rspec', '~> 3.0', require: false
-gem 'cucumber', '~> 2.0', require: false
+gem 'cucumber', '~> 3.0', require: false
 gem 'addressable', '~> 2.4', require: false
 
 # Pry tools
