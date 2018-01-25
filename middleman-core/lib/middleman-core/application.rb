@@ -345,13 +345,14 @@ module Middleman
 
     # Clean up missing Tilt exts
     def prune_tilt_templates!
-      ::Tilt.default_mapping.lazy_map.each_key do |key|
+      mapping = ::Tilt.default_mapping
+      mapping.lazy_map.each_key do |key|
         begin
-          ::Tilt[".#{key}"]
+          mapping[key]
         rescue LoadError, NameError
-          ::Tilt.default_mapping.lazy_map.delete(key)
         end
       end
+      mapping.lazy_map.clear
     end
 
     # Whether we're in a specific mode
