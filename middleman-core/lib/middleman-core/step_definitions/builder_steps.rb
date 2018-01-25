@@ -43,3 +43,9 @@ Given /^a successfully built app at "([^\"]*)" with flags "([^\"]*)"$/ do |path,
   step %Q{a built app at "#{path}" with flags "#{flags}"}
   step %Q{was successfully built}
 end
+
+Given /^I run the interactive middleman console$/ do
+  cwd = File.expand_path(aruba.current_directory)
+  step %Q{I set the environment variable "MM_ROOT" to "#{cwd}"}
+  step %Q{I run `middleman console` interactively}
+end
