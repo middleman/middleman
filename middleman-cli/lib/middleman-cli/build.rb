@@ -42,7 +42,9 @@ module Middleman::Cli
     # Core build Thor command
     # @return [void]
     def build
-      unless ENV['MM_ROOT']
+      root = ENV['MM_ROOT'] || Dir.pwd
+
+      unless File.exists?(File.join(root, "config.rb"))
         raise Thor::Error, 'Error: Could not find a Middleman project config, perhaps you are in the wrong folder?'
       end
 
@@ -79,7 +81,7 @@ module Middleman::Cli
       ::Middleman::Util.instrument 'builder.run' do
         if builder.run!
           clean_directories! if options['clean']
-          shell.say 'Project built successfully.'
+          puts 'Project built successfully.'
         else
           msg = 'There were errors during this build'
           unless options['verbose']

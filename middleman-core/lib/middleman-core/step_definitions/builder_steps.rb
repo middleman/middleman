@@ -19,6 +19,12 @@ Given /^was successfully built$/ do
   step %Q{a directory named "build" should exist}
 end
 
+Given /^was not successfully built$/ do
+  step %Q{the output should not contain "Project built successfully."}
+  step %Q{the exit status should be 1}
+  step %Q{a directory named "build" should not exist}
+end
+
 Given /^a successfully built app at "([^\"]*)"$/ do |path|
   step %Q{a built app at "#{path}"}
   step %Q{was successfully built}
