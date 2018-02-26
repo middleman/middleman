@@ -22,6 +22,10 @@ module Middleman::Cli
                  default: false,
                  desc: 'Skip bundle install'
 
+    class_option 'bundle-path',
+                 type: :string,
+                 desc: 'Use specified bundle path'
+
     # The init task
     def init
       require 'fileutils'
@@ -80,7 +84,8 @@ module Middleman::Cli
             directory dir, '.', exclude_pattern: /\.git\/|\.gitignore$/
           end
 
-          run('bundle install') unless ENV['TEST'] || options[:'skip-bundle']
+          bundle_args = options[:'bundle-path'] ? " --path=#{options[:'bundle-path']}" : ''
+          run("bundle install#{bundle_args}") unless ENV['TEST'] || options[:'skip-bundle']
         end
       ensure
         FileUtils.remove_entry(dir) if File.directory?(dir)
