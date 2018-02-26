@@ -67,7 +67,6 @@ Additionally, up-to-date generated code documentation is available on [RubyDoc].
 [![Gem Version](http://img.shields.io/gem/v/middleman.svg?style=flat)][gem]
 [![License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)][license]
 [![Dependency Status](http://img.shields.io/gemnasium/middleman/middleman.svg?style=flat)][gemnasium]
-[![Code Coverage](http://img.shields.io/coveralls/middleman/middleman.svg?style=flat)][coveralls]
 [![Code Quality](http://img.shields.io/codeclimate/github/middleman/middleman.svg?style=flat)][codeclimate]
 [![Gittip](http://img.shields.io/gittip/middleman.svg?style=flat)][gittip]
 
@@ -114,7 +113,6 @@ Copyright (c) 2010-2020 Thomas Reynolds. MIT Licensed, see [LICENSE] for details
 
 [middleman]: http://middlemanapp.com
 [gem]: https://rubygems.org/gems/middleman
-[coveralls]: https://coveralls.io/r/middleman/middleman
 [gemnasium]: https://gemnasium.com/middleman/middleman
 [codeclimate]: https://codeclimate.com/github/middleman/middleman
 [gittip]: https://www.gittip.com/middleman/

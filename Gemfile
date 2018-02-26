@@ -33,7 +33,6 @@ gem 'rubydns', '~> 1.0.1', require: false
 gem 'therubyrhino', '>= 2.0', platforms: :jruby
 
 # Code Quality
-gem 'coveralls',  require: false
 gem 'rubocop', require: false
 gem 'simplecov', require: false
 
