@@ -21,4 +21,5 @@ env:
     - TEST=true
 script: bundle exec rake test
 notifications:
+  email: false
   slack: middleman:JW9OvXmn1m3XrSERe8866nBR
