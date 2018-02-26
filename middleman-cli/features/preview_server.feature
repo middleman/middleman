@@ -139,6 +139,7 @@ Feature: Run the preview server
     Inspect your site configuration at "http://127.0.0.5:4567/__middleman"
     """
 
+  @wip
   Scenario: Start the server with bind address ::1
     Given a file named ".hosts" with:
     """
