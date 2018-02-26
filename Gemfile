@@ -41,7 +41,6 @@ gem 'therubyracer', '~> 0.12.3', platforms: :ruby
 # Code Quality
 gem 'rubocop', '~> 0.24', require: false
 gem 'simplecov', '~> 0.10', require: false
-gem 'coveralls', '~> 0.8', require: false
 
 # Middleman itself
 gem 'middleman-cli', path: 'middleman-cli'
