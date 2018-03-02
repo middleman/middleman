@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 
 # Build and doc tools
 gem 'rake', '~> 10.3', require: false
-gem 'yard', '~> 0.8', require: false
+gem 'yard', '~> 0.9.11', require: false
 
 # Test tools
 gem 'byebug'
@@ -39,7 +39,7 @@ gem 'therubyrhino', '>= 2.0', platforms: :jruby
 gem 'therubyracer', '~> 0.12.3', platforms: :ruby
 
 # Code Quality
-gem 'rubocop', '~> 0.24', require: false
+gem 'rubocop', '~> 0.52', require: false
 gem 'simplecov', '~> 0.10', require: false
 
 # Middleman itself
