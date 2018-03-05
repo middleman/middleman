@@ -1,6 +1,28 @@
 master
 ===
 
+# 4.3.0
+
+* Test against Ruby 2.5 (#2166)
+* Update Rubocop and Yard (#2161) 
+* Discover template in local directory if applicable (#2157)
+* Better error message when init fails to clone git repo (#2159)
+* Allow bundle path to be specified in init command (#2154)
+* Add ExtensionManager#active? to check if extension is active (#2156)
+* Resolve Haml 5 warnings (#2149)
+* Clear lazy map after resolving Tilt templates (#2132)
+* Fix ignore of I18n files (#2143)
+* Fix redirect destination lookup (#2140) 
+* Add LD-JSON to MinifyJavascript content types allowed to be compressed (#2138)
+* chmod before closing file to fix compatibility with JRuby (#2133)
+* Keeps full file path for chained templates (#2117) 
+* Use i18n fallbacks when looking up localized paths (#2116)
+* Compat with latest rails/activsupport < 5.2 (#2095)
+* Update "Port in use"-message for PreviewServer (#2089) 
+* I18n: Keep fragment and query in url_for (#2062)
+* Add support for locale suffixes to link_to (#2065)
+* Allow absolute :data_dir paths. Addresses #2042
+
 # 4.2.1
 
 * Fix some issues with Ruby 2.4.0
