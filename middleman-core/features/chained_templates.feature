@@ -7,6 +7,13 @@ Feature: Templates should be chainable
     Then I should see "Title</h1>"
     And I should see "Subtitle</h2>"
     And I should see "Sup</h3>"
+    When I go to "/stylesheets/main.css"
+
+  Scenario: Scss file in Erb
+    Given the Server is running at "chained-app"
+    When I go to "/stylesheets/main.css"
+    Then I should see "color: from_main;"
+    And I should see "background: from_sub;"
 
   Scenario: Build chained template
     Given a successfully built app at "chained-app"

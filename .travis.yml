@@ -5,9 +5,10 @@ before_script:
   - bundle update
 rvm:
   - ruby-head
-  - 2.4.0
-  - 2.3.1
-  - 2.2.4
+  - 2.5.0
+  - 2.4.3
+  - 2.3.6
+  - 2.2.9
 os:
   - linux
   # - osx
@@ -18,7 +19,7 @@ matrix:
 env:
   global:
     - TEST=true
-    - CODECLIMATE_REPO_TOKEN=81787f7b1c3bfa937edadcafbc94f807bf5af5c1142c7b793f2d9969a271de1f
 script: bundle exec rake test
 notifications:
+  email: false
   slack: middleman:JW9OvXmn1m3XrSERe8866nBR

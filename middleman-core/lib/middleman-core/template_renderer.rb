@@ -183,7 +183,7 @@ module Middleman
           content_renderer = ::Middleman::FileRenderer.new(@app, path)
           content = content_renderer.render(locs, opts, context, &block)
 
-          path = File.basename(path, File.extname(path))
+          path = path.sub(/\.[^.]*\z/, '')
         rescue LocalJumpError
           raise "Tried to render a layout (calls yield) at #{path} like it was a template. Non-default layouts need to be in #{@app.config[:source]}/#{@app.config[:layouts_dir]}."
         end

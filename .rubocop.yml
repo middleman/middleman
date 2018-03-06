@@ -42,7 +42,7 @@ CyclomaticComplexity:
 HandleExceptions:
   Enabled: false
 EndAlignment:
-  AlignWith: variable
+  EnforcedStyleAlignWith: variable
 SignalException:
   Enabled: false
 RegexpLiteral:
@@ -50,7 +50,7 @@ RegexpLiteral:
 FormatString:
   Enabled: false
 CaseIndentation:
-  IndentWhenRelativeTo: end
+  EnforcedStyle: end
 TrivialAccessors:
   Enabled: false
 SingleLineBlockParams:

@@ -41,7 +41,7 @@ Feature: Builder
 
   Scenario: Build empty errors
     Given a built app at "empty-app"
-    Then the exit status should be 1
+    Then was not successfully built
 
   Scenario: Build external_pipeline errors
     Given a built app at "external-pipeline-error"

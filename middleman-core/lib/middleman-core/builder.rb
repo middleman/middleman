@@ -205,8 +205,8 @@ module Middleman
                           ])
       file.binmode
       file.write(contents)
-      file.close
       File.chmod(0o644, file)
+      file.close
       file
     end
 

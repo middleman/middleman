@@ -238,11 +238,11 @@ module Middleman
 
                 # Rebuild cache
                 @resources.each do |resource|
-                  @_lookup_by_path[resource.path] = resource
+                  @_lookup_by_path[::Middleman::Util.normalize_path(resource.path)] = resource
                 end
 
                 @resources.each do |resource|
-                  @_lookup_by_destination_path[resource.destination_path] = resource
+                  @_lookup_by_destination_path[::Middleman::Util.normalize_path(resource.destination_path)] = resource
                 end
 
                 # NB: This needs to be done after the previous two steps,

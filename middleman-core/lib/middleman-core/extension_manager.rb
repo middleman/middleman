@@ -24,6 +24,10 @@ module Middleman
       @app.after_configuration_eval(&method(:activate_all))
     end
 
+    def active?(key)
+      @activated.key?(key)
+    end
+
     def auto_activate(key)
       ::Middleman::Extensions.auto_activate(key, @app)
     end
@@ -60,7 +64,7 @@ module Middleman
         @activated[ext_name] ||= {}
         key = "instance_#{@activated[ext_name].keys.length}"
         @activated[ext_name][key] = extension.new(@app, options, &block)
-      elsif @activated.key?(ext_name)
+      elsif active?(ext_name)
         raise "#{ext_name} has already been activated and cannot be re-activated."
       else
         @activated[ext_name] = extension.new(@app, options, &block)

@@ -24,3 +24,4 @@ Makefile
 .idea
 *.sublime-workspace
 /bin
+/vendor/bundle/

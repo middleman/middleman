@@ -22,6 +22,10 @@ module Middleman::Cli
                  default: false,
                  desc: 'Skip bundle install'
 
+    class_option 'bundle-path',
+                 type: :string,
+                 desc: 'Use specified bundle path'
+
     # The init task
     def init
       require 'fileutils'
@@ -43,7 +47,7 @@ module Middleman::Cli
 
         begin
           data = ::JSON.parse(uri.read)
-          data['links']['github']
+          is_local_dir = false
           data['links']['github'].split('#')
         rescue ::OpenURI::HTTPError
           say "Template `#{options[:template]}` not found in Middleman Directory."
@@ -52,21 +56,12 @@ module Middleman::Cli
         end
       else
         repo_name, repo_branch = options[:template].split('#')
-        [repository_path(repo_name), repo_branch]
+        repo_path, is_local_dir = repository_path(repo_name)
+        [repo_path, repo_branch]
       end
 
-      dir = Dir.mktmpdir
-
       begin
-        branch_cmd = repo_branch ? "-b #{repo_branch} " : ''
-
-        git_path = "#{branch_cmd}#{repo_path}"
-        run("#{GIT_CMD} clone --depth 1 #{branch_cmd}#{repo_path} #{dir}")
-
-        unless $?.success?
-          say "Git clone command failed. Make sure git repository exists: #{git_path}", :red
-          exit 1
-        end
+        dir = is_local_dir ? repo_path : clone_repository(repo_path, repo_branch)
 
         inside(target) do
           thorfile = File.join(dir, 'Thorfile')
@@ -80,10 +75,11 @@ module Middleman::Cli
             directory dir, '.', exclude_pattern: /\.git\/|\.gitignore$/
           end
 
-          run('bundle install') unless ENV['TEST'] || options[:'skip-bundle']
+          bundle_args = options[:'bundle-path'] ? " --path=#{options[:'bundle-path']}" : ''
+          run("bundle install#{bundle_args}") unless ENV['TEST'] || options[:'skip-bundle']
         end
       ensure
-        FileUtils.remove_entry(dir) if File.directory?(dir)
+        FileUtils.remove_entry(dir) if !is_local_dir && File.directory?(dir)
       end
     end
 
@@ -112,8 +108,30 @@ module Middleman::Cli
       repo.split('/').length == 1
     end
 
-    def repository_path(repo)
-      repo.include?('://') || repo.include?('git@') ? repo : "https://github.com/#{repo}.git"
+    def repository_path(repo_name)
+      if repo_name.include?('://') || /^[^@]+@[^:]+:.+/ =~ repo_name
+        repo_name
+      elsif (repo_path = Pathname(repo_name)).directory? && repo_path.absolute?
+        [repo_name, true]
+      else
+        "https://github.com/#{repo_name}.git"
+      end
+    end
+
+    def clone_repository(repo_path, repo_branch)
+      dir = Dir.mktmpdir
+
+      branch_cmd = repo_branch ? "-b #{repo_branch} " : ''
+
+      git_path = "#{branch_cmd}#{repo_path}"
+      run("#{GIT_CMD} clone --depth 1 #{branch_cmd}#{repo_path} #{dir}")
+
+      unless $?.success?
+        say "Git clone command failed. Make sure git repository exists: #{git_path}", :red
+        exit 1
+      end
+
+      dir
     end
 
     # Add to CLI

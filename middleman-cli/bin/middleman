@@ -47,7 +47,6 @@ end
 
 ::Middleman::Logger.singleton(3)
 ::Middleman::Cli.config = ::Middleman::Application.new do
-  #
   config[:environment] = (ENV['MM_ENV'] || ENV['RACK_ENV'] || 'development').to_sym
   config[:mode] = :config
   config[:exit_before_ready] = true
