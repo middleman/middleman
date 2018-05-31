@@ -53,7 +53,7 @@ module Middleman
     # An anonymous subclass of ::Middleman::TemplateContext
     attr_reader :template_context_class
 
-    # An instance of the above anonymouse class.
+    # An instance of the above anonymous class.
     attr_reader :generic_template_context
 
     Contract ::Middleman::Configuration::ConfigurationManager
