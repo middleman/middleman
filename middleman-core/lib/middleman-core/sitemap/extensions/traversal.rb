@@ -14,29 +14,84 @@ module Middleman
 
         # This resource's parent resource
         # @return [Middleman::Sitemap::Resource, nil]
-        def parent
-          root = path.sub(/^#{::Regexp.escape(traversal_root)}/, '')
-          parts = root.split('/')
+        def parent(recurse=false)
+          max_recursion = @app.config[:max_traversal_recursion] || 99
+          _parent(path, max_recursion)
+        end
 
-          tail = parts.pop
-          is_index = (tail == @app.config[:index_file])
+        def _parent(_path, max_recursion)
+          # What is the configured format for index pages.
+          index_file = @app.config[:index_file]
+          parts = _path.split('/')
+          # Reduce the path by the current page to get the parent level path.
+          current_page = parts.pop
+          # Does the current page has the name of an index file?
+          is_index = current_page == index_file
+          # Is the `current_page` in the traversal root?
+          # Note: `traversal_root` is `/` for non localised pages and `/[lang]/` for
+          # localised pages.
+          at_traversal_root = !(_path =~ /^#{traversal_root}#{current_page}$/).nil?
 
-          if parts.empty?
-            return is_index ? nil : @store.find_resource_by_path(@app.config[:index_file])
+          # Check that we have any path parts left after the pop because if we
+          # don't, `current_page` is either root or another file under root.
+          # Also, if we are `at_traversal_root`, we consider this root.
+          if parts.empty? || at_traversal_root
+            # If this `is_index`, the `current_page` is root and there is no parent.
+            if is_index
+              return nil
+            else
+              # `current_page` must be a page under root, let's return the root
+              # index page of the `traversal_root` (`/` or `/[lang]/`).
+              return @store.find_resource_by_path("#{traversal_root}#{index_file}")
+            end
           end
 
-          test_expr = parts.join('\\/')
-          # eponymous reverse-lookup
-          found = @store.resources.find do |candidate|
-            candidate.path =~ %r{^#{test_expr}(?:\.[a-zA-Z0-9]+|\/)$}
+          # Get the index file for the parent path parts, e.g.: `/blog/index.html`
+          # for `/blog/`.
+          index_by_parts = Proc.new do |parts|
+            found = @store.find_resource_by_destination_path("#{parts.join('/')}/#{index_file}")
+            return found unless found.nil?
           end
 
-          if found
-            found
-          else
-            parts.pop if is_index
-            @store.find_resource_by_destination_path("#{parts.join('/')}/#{@app.config[:index_file]}")
+          # Get a file that has the name of the parent path parts e.g.:
+          # `/blog.html` for `/blog/`.
+          file_by_parts = Proc.new do |parts|
+            test_expr = Regexp.escape(parts.join('/'))
+            # eponymous reverse-lookup
+            found = @store.resources.find do |candidate|
+              candidate.path =~ %r{^#{test_expr}(?:\.[a-zA-Z0-9]+|\/)$}
+            end
+            return found unless found.nil?
           end
+
+          # Try to find a file matching the parent path name and return it.
+          # E.g. `parts == ['en', 'blog']`, we try to find: `/en/blog.html`
+          file_by_parts.call(parts)
+
+          # Try to find an non-localised parent instead if `traversal_root`
+          # indicates the path is localised and there are still more parts
+          # remaining, and return it.
+          # E.g. `parts == ['en', 'blog']`, we try to find: `/blog.html`
+          if traversal_root != "/" && parts.length > 1
+            file_by_parts.call(parts[1..-1])
+          end
+
+          # Now let's drop the last part of the path to try to find an index
+          # file in the path above `current_page`'s path and return it.
+          # E.g. `parts == ['en', 'blog']`, we try to find: `/en/index.html`
+          parts.pop if is_index
+          index_by_parts.call(parts)
+
+          # Lastly, check for an non-localised index index file in the path
+          # above `current_page`'s path and return it.
+          # E.g. `parts == ['en', 'blog']`, we try to find: `/index.html`
+          if traversal_root == "#{parts.first}/"
+            index_by_parts.call(parts[1..-1] || "")
+          end
+          if !parts.empty? && max_recursion > 0
+            return _parent parts.join('/'), max_recursion - 1
+          end
+          return nil
         end
 
         # This resource's child resources
@@ -68,7 +123,6 @@ module Middleman
             end
           end
         end
-
         # This resource's sibling resources
         # @return [Array<Middleman::Sitemap::Resource>]
         def siblings
