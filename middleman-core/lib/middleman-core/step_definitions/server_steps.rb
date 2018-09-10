@@ -52,7 +52,7 @@ Given /^the Server is running$/ do
 
     app.after_configuration_eval do
       activation_commands.each do |p|
-        config_context.instance_exec(&p)
+        instance_exec(&p)
       end
     end
   end
