@@ -206,7 +206,7 @@ module Middleman
 
       mode = which_mode(output_file, source_path)
 
-      if %w[:created :updates].include? mode
+      if %i[created updated].include? mode
         ::FileUtils.mkdir_p(output_file.dirname)
         method.call(source_path, output_file.to_s)
       end

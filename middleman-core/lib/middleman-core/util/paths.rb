@@ -88,7 +88,7 @@ module Middleman
                      end
 
       source = source.to_s.tr(' ', '')
-      ignore_extension = %w[:images :fonts].include? kind # don't append extension
+      ignore_extension = %i[images fonts].include? kind # don't append extension
       source << ".#{kind}" unless ignore_extension || source.end_with?(".#{kind}")
       asset_folder = '' if source.start_with?('/') # absolute path
 

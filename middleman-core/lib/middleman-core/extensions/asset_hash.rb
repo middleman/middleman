@@ -44,7 +44,7 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
 
     asset_page = app.sitemap.find_resource_by_destination_path(full_asset_path) || app.sitemap.find_resource_by_path(full_asset_path)
 
-    return unless asset_pageasset_page
+    return unless asset_page
 
     replacement_path = "/#{asset_page.destination_path}"
     replacement_path = Pathname.new(replacement_path).relative_path_from(dirpath).to_s if relative_path
