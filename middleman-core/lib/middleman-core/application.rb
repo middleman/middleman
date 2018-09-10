@@ -158,11 +158,11 @@ module Middleman
 
     # Which file extensions have a layout by default.
     # @return [Array.<String>]
-    define_setting :extensions_with_layout, %w(.htm .html .xhtml .php), 'Which file extensions have a layout by default.'
+    define_setting :extensions_with_layout, %w[.htm .html .xhtml .php], 'Which file extensions have a layout by default.'
 
     # Which file extensions are "assets."
     # @return [Array.<String>]
-    define_setting :asset_extensions, %w(.css .png .jpg .jpeg .webp .svg .svgz .js .gif .ttf .otf .woff .woff2 .eot .ico .map), 'Which file extensions are treated as assets.'
+    define_setting :asset_extensions, %w[.css .png .jpg .jpeg .webp .svg .svgz .js .gif .ttf .otf .woff .woff2 .eot .ico .map], 'Which file extensions are treated as assets.'
 
     # Default string encoding for templates and output.
     # @return [String]
@@ -182,7 +182,7 @@ module Middleman
         ignored = false
 
         file[:relative_path].ascend do |f|
-          if f.basename.to_s =~ %r{^_[^_]}
+          if /^_[^_]/.match?(f.basename.to_s)
             ignored = true
             break
           end
@@ -347,10 +347,8 @@ module Middleman
     def prune_tilt_templates!
       mapping = ::Tilt.default_mapping
       mapping.lazy_map.each_key do |key|
-        begin
-          mapping[key]
-        rescue LoadError, NameError
-        end
+        mapping[key]
+      rescue LoadError, NameError
       end
       mapping.lazy_map.clear
     end

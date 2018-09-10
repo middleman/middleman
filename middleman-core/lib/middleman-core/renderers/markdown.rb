@@ -7,7 +7,7 @@ module Middleman
 
       # Once configuration is parsed
       def after_configuration
-        markdown_exts = %w(markdown mdown md mkd mkdn)
+        markdown_exts = %w[markdown mdown md mkd mkdn]
 
         begin
           # Look for the user's preferred engine

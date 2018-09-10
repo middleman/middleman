@@ -13,7 +13,6 @@ class Middleman::Extensions::ExternalPipeline < ::Middleman::Extension
     return if app.mode?(:config)
 
     require 'servolux'
-    require 'thread'
     require 'fileutils'
 
     source_path = File.expand_path(options[:source], app.root)

@@ -56,7 +56,7 @@ module Middleman
       end
 
       def resolve_me(*)
-        fail NoMethodError
+        raise NoMethodError
       end
 
       # Get network information
@@ -116,7 +116,7 @@ module Middleman
           @site_addresses << hostname
 
           network_interface = ServerIpAddress.new((local_network_interfaces & hostname_ips).first)
-        elsif RbConfig::CONFIG['host_os'] =~ /mswin|mingw|cygwin/
+        elsif /mswin|mingw|cygwin/.match?(RbConfig::CONFIG['host_os'])
           @server_name = hostname
           @site_addresses << hostname
         elsif !resolved_name.blank?
@@ -241,7 +241,7 @@ module Middleman
       end
 
       def self.matches?(opts = {})
-        !opts[:bind_address].blank? && !opts[:server_name].blank? && !%w(:: 0.0.0.0).include?(opts[:bind_address])
+        !opts[:bind_address].blank? && !opts[:server_name].blank? && !%w[:: 0.0.0.0].include?(opts[:bind_address])
       end
 
       def resolve_me(*); end
@@ -265,7 +265,7 @@ module Middleman
         ip = IPAddr.new(opts[:server_name])
 
         ip.ipv4? || ip.ipv6?
-      rescue
+      rescue StandardError
         false
       end
     end

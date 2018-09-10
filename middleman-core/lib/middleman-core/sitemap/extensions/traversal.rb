@@ -14,7 +14,7 @@ module Middleman
 
         # This resource's parent resource
         # @return [Middleman::Sitemap::Resource, nil]
-        def parent(recurse = false)
+        def parent(_recurse = false)
           max_recursion = @app.config[:max_traversal_recursion] || 99
           _parent(path, max_recursion)
         end
@@ -48,14 +48,14 @@ module Middleman
 
           # Get the index file for the parent path parts, e.g.: `/blog/index.html`
           # for `/blog/`.
-          index_by_parts = Proc.new do |parts|
+          index_by_parts = proc do |parts|
             found = @store.find_resource_by_destination_path("#{parts.join('/')}/#{index_file}")
             return found unless found.nil?
           end
 
           # Get a file that has the name of the parent path parts e.g.:
           # `/blog.html` for `/blog/`.
-          file_by_parts = Proc.new do |parts|
+          file_by_parts = proc do |parts|
             test_expr = Regexp.escape(parts.join('/'))
             # eponymous reverse-lookup
             found = @store.resources.find do |candidate|
@@ -72,7 +72,7 @@ module Middleman
           # indicates the path is localised and there are still more parts
           # remaining, and return it.
           # E.g. `parts == ['en', 'blog']`, we try to find: `/blog.html`
-          if traversal_root != "/" && parts.length > 1
+          if traversal_root != '/' && parts.length > 1
             file_by_parts.call(parts[1..-1])
           end
 
@@ -86,13 +86,13 @@ module Middleman
           # above `current_page`'s path and return it.
           # E.g. `parts == ['en', 'blog']`, we try to find: `/index.html`
           if traversal_root == "#{parts.first}/"
-            index_by_parts.call(parts[1..-1] || "")
+            index_by_parts.call(parts[1..-1] || '')
           end
           if !parts.empty? && max_recursion > 0
             return _parent parts.join('/'), max_recursion - 1
           end
 
-          return nil
+          nil
         end
 
         # This resource's child resources
@@ -106,7 +106,7 @@ module Middleman
                         path.sub(@app.config[:index_file].to_s, '')
           end
 
-          prefix = %r{^#{base_path.sub("/", "\\/")}}
+          prefix = /^#{base_path.sub("/", "\\/")}/
 
           @store.resources.select do |sub_resource|
             if sub_resource.path == path || sub_resource.path !~ prefix

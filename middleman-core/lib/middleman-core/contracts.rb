@@ -31,8 +31,7 @@ else
     def Contract(*); end
 
     class Callable
-      def self.[](*)
-      end
+      def self.[](*); end
     end
 
     class Bool

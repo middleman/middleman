@@ -35,7 +35,7 @@ module Middleman
         end
 
         # Renderer Options
-        possible_render_opts = [:filter_html, :no_images, :no_links, :no_styles, :safe_links_only, :with_toc_data, :hard_wrap, :xhtml, :prettify, :link_attributes]
+        possible_render_opts = %i[filter_html no_images no_links no_styles safe_links_only with_toc_data hard_wrap xhtml prettify link_attributes]
 
         render_options = possible_render_opts.each_with_object({}) do |opt, sum|
           sum[opt] = options.delete(opt) if options.key?(opt)

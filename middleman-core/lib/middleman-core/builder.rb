@@ -21,7 +21,7 @@ module Middleman
     def_delegator :@app, :logger
 
     # Sort order, images, fonts, js/css and finally everything else.
-    SORT_ORDER = %w(.png .jpeg .jpg .gif .bmp .svg .svgz .webp .ico .woff .woff2 .otf .ttf .eot .js .css).freeze
+    SORT_ORDER = %w[.png .jpeg .jpg .gif .bmp .svg .svgz .webp .ico .woff .woff2 .otf .ttf .eot .js .css].freeze
 
     # Create a new Builder instance.
     # @param [Middleman::Application] app The app to build.
@@ -31,7 +31,7 @@ module Middleman
       @source_dir = Pathname(File.join(@app.root, @app.config[:source]))
       @build_dir = Pathname(@app.config[:build_dir])
 
-      if @build_dir.expand_path.relative_path_from(@source_dir).to_s =~ /\A[.\/]+\Z/
+      if /\A[.\/]+\Z/.match?(@build_dir.expand_path.relative_path_from(@source_dir).to_s)
         raise ":build_dir (#{@build_dir}) cannot be a parent of :source_dir (#{@source_dir})"
       end
 
@@ -146,7 +146,7 @@ module Middleman
           next unless p.exist?
 
           # handle UTF-8-MAC filename on MacOS
-          cleaned_name = if RUBY_PLATFORM =~ /darwin/
+          cleaned_name = if RUBY_PLATFORM.match?(/darwin/)
                            p.to_s.encode('UTF-8', 'UTF-8-MAC')
                          else
                            p
@@ -239,7 +239,7 @@ module Middleman
               return false
             end
           end
-        rescue => e
+        rescue StandardError => e
           trigger(:error, output_file, "#{e}\n#{e.backtrace.join("\n")}")
           return false
         end
@@ -267,7 +267,7 @@ module Middleman
 
       # handle UTF-8-MAC filename on MacOS
       @to_clean = @to_clean.map do |path|
-        if RUBY_PLATFORM =~ /darwin/
+        if RUBY_PLATFORM.match?(/darwin/)
           Pathname(path.to_s.encode('UTF-8', 'UTF-8-MAC'))
         else
           Pathname(path)

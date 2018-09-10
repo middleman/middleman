@@ -15,7 +15,7 @@ module Listen
       #   return true unless only_patterns.any? { |pattern| path =~ pattern }
       # end
 
-      return !only_patterns.any? { |pattern| path =~ pattern } if only_patterns
+      return only_patterns.none? { |pattern| path =~ pattern } if only_patterns
 
       ignore_patterns.any? { |pattern| path =~ pattern }
     end
@@ -50,7 +50,7 @@ module Middleman
     # Reference to lower level listener
     attr_reader :listener
 
-    IGNORED_DIRECTORIES = Set.new(%w(.git node_modules .sass-cache vendor/bundle .bundle))
+    IGNORED_DIRECTORIES = Set.new(%w[.git node_modules .sass-cache vendor/bundle .bundle])
 
     # Construct a new SourceWatcher
     #
@@ -363,7 +363,7 @@ module Middleman
     private
 
     def without_listener_running
-      listener_running = @listener && @listener.processing?
+      listener_running = @listener&.processing?
 
       stop_listener! if listener_running
 

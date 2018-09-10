@@ -10,7 +10,7 @@
 # to .css, .htm, .html, .js, and .xhtml
 #
 class Middleman::Extensions::Gzip < ::Middleman::Extension
-  option :exts, %w(.css .htm .html .js .svg .xhtml), 'File extensions to Gzip when building.'
+  option :exts, %w[.css .htm .html .js .svg .xhtml], 'File extensions to Gzip when building.'
   option :ignore, [], 'Patterns to avoid gzipping'
   option :overwrite, false, 'Overwrite original files instead of adding .gz extension.'
 
@@ -24,8 +24,7 @@ class Middleman::Extensions::Gzip < ::Middleman::Extension
     require 'zlib'
     require 'stringio'
     require 'find'
-    require 'thread'
-  end
+      end
 
   def after_build(builder)
     num_threads = 4

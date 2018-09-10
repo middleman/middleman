@@ -1,5 +1,5 @@
 activate :asset_hash,
-         prefix: "myprefix-"
+         prefix: 'myprefix-'
 
 activate :relative_assets
 

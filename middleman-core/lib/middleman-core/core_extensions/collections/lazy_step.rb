@@ -2,7 +2,7 @@ module Middleman
   module CoreExtensions
     module Collections
       class LazyCollectorStep < BasicObject
-        DELEGATE = [:hash, :eql?].freeze
+        DELEGATE = %i[hash eql?].freeze
 
         def initialize(name, args, block, parent = nil)
           @name = name

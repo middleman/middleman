@@ -209,7 +209,7 @@ module Middleman
       def expose_to_application(*symbols)
         self.exposed_to_application ||= {}
 
-        if symbols.first && symbols.first.is_a?(Hash)
+        if symbols.first&.is_a?(Hash)
           self.exposed_to_application.merge!(symbols.first)
         elsif symbols.is_a? Array
           symbols.each do |sym|
@@ -229,7 +229,7 @@ module Middleman
       def expose_to_config(*symbols)
         self.exposed_to_config ||= {}
 
-        if symbols.first && symbols.first.is_a?(Hash)
+        if symbols.first&.is_a?(Hash)
           self.exposed_to_config.merge!(symbols.first)
         elsif symbols.is_a? Array
           symbols.each do |sym|
@@ -249,7 +249,7 @@ module Middleman
       def expose_to_template(*symbols)
         self.exposed_to_template ||= {}
 
-        if symbols.first && symbols.first.is_a?(Hash)
+        if symbols.first&.is_a?(Hash)
           self.exposed_to_template.merge!(symbols.first)
         elsif symbols.is_a? Array
           symbols.each do |sym|
@@ -282,7 +282,7 @@ module Middleman
       # @return [void]
       def activated_extension(instance)
         name = instance.class.ext_name
-        return unless @_extension_activation_callbacks && @_extension_activation_callbacks.key?(name)
+        return unless @_extension_activation_callbacks&.key?(name)
 
         @_extension_activation_callbacks[name].each do |block|
           block.arity == 1 ? block.call(instance) : block.call

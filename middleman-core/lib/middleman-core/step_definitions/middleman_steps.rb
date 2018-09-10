@@ -2,14 +2,14 @@ require 'fileutils'
 
 Given /^app "([^\"]*)" is using config "([^\"]*)"$/ do |path, config_name|
   target = File.join(PROJECT_ROOT_PATH, 'fixtures', path)
-  config_path = File.join(expand_path("."), "config-#{config_name}.rb")
-  config_dest = File.join(expand_path("."), 'config.rb')
+  config_path = File.join(expand_path('.'), "config-#{config_name}.rb")
+  config_dest = File.join(expand_path('.'), 'config.rb')
   FileUtils.cp(config_path, config_dest)
 end
 
 Given /^an empty app$/ do
-  step %Q{a directory named "empty_app"}
-  step %Q{I cd to "empty_app"}
+  step %(a directory named "empty_app")
+  step %(I cd to "empty_app")
   ENV['MM_ROOT'] = nil
 end
 
@@ -18,14 +18,14 @@ Given /^a fixture app "([^\"]*)"$/ do |path|
 
   # This step can be reentered from several places but we don't want
   # to keep re-copying and re-cd-ing into ever-deeper directories
-  next if File.basename(expand_path(".")) == path
+  next if File.basename(expand_path('.')) == path
 
-  step %Q{a directory named "#{path}"}
+  step %(a directory named "#{path}")
 
   target_path = File.join(PROJECT_ROOT_PATH, 'fixtures', path)
-  FileUtils.cp_r(target_path, expand_path("."))
+  FileUtils.cp_r(target_path, expand_path('.'))
 
-  step %Q{I cd to "#{path}"}
+  step %(I cd to "#{path}")
 end
 
 Then /^the file "([^\"]*)" has the contents$/ do |path, contents|
@@ -35,18 +35,18 @@ Then /^the file "([^\"]*)" has the contents$/ do |path, contents|
 end
 
 Then /^the file "([^\"]*)" is removed$/ do |path|
-  step %Q{I remove the file "#{path}"}
+  step %(I remove the file "#{path}")
 
   @server_inst.files.poll_once!
 end
 
 Given /^a modification time for a file named "([^\"]*)"$/ do |file|
-  target = File.join(expand_path("."), file)
+  target = File.join(expand_path('.'), file)
   @modification_times[target] = File.mtime(target)
 end
 
 Then /^the file "([^\"]*)" should not have been updated$/ do |file|
-  target = File.join(expand_path("."), file)
+  target = File.join(expand_path('.'), file)
   expect(File.mtime(target)).to eq(@modification_times[target])
 end
 
@@ -56,5 +56,5 @@ Then /^the file "([^"]*)" should contain '([^']*)'$/ do |file, partial_content|
 end
 
 And /the file "(.*)" should be gzipped/ do |file|
-  expect(File.binread(File.join(expand_path("."), file), 2)).to eq(['1F8B'].pack('H*'))
+  expect(File.binread(File.join(expand_path('.'), file), 2)).to eq(['1F8B'].pack('H*'))
 end

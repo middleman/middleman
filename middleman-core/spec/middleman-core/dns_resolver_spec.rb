@@ -29,7 +29,7 @@ RSpec.describe Middleman::DnsResolver do
       end
 
       let(:unresolved_ip) { '127.0.0.1' }
-      let(:resolved_names) { %w(localhost) }
+      let(:resolved_names) { %w[localhost] }
 
       it { expect(resolver.names_for(unresolved_ip)).to eq resolved_names }
     end
@@ -46,7 +46,7 @@ RSpec.describe Middleman::DnsResolver do
       end
 
       let(:unresolved_ip) { '127.0.0.1' }
-      let(:resolved_names) { %w(localhost) }
+      let(:resolved_names) { %w[localhost] }
 
       it { expect(resolver.names_for(unresolved_ip)).to eq resolved_names }
     end
@@ -61,7 +61,7 @@ RSpec.describe Middleman::DnsResolver do
       end
 
       let(:unresolved_ip) { '127.0.0.1' }
-      let(:resolved_names) { %w(localhost) }
+      let(:resolved_names) { %w[localhost] }
 
       it { expect(resolver.names_for(unresolved_ip)).to eq resolved_names }
     end
@@ -78,7 +78,7 @@ RSpec.describe Middleman::DnsResolver do
       end
 
       let(:unresolved_ips) { '127.0.0.1' }
-      let(:resolved_name) { %w(localhost) }
+      let(:resolved_name) { %w[localhost] }
 
       it { expect(resolver.ips_for(unresolved_ips)).to eq resolved_name }
     end
@@ -95,7 +95,7 @@ RSpec.describe Middleman::DnsResolver do
       end
 
       let(:unresolved_ips) { '127.0.0.1' }
-      let(:resolved_name) { %w(localhost) }
+      let(:resolved_name) { %w[localhost] }
 
       it { expect(resolver.ips_for(unresolved_ips)).to eq resolved_name }
     end
@@ -110,7 +110,7 @@ RSpec.describe Middleman::DnsResolver do
       end
 
       let(:unresolved_ips) { '127.0.0.1' }
-      let(:resolved_name) { %w(localhost) }
+      let(:resolved_name) { %w[localhost] }
 
       it { expect(resolver.ips_for(unresolved_ips)).to eq resolved_name }
     end

@@ -110,7 +110,7 @@ module Middleman
       Contract String, Pathname => Hash
       def parse_yaml(content, full_path)
         c = ::Middleman::Util.instrument 'parse.yaml' do
-          ::YAML.load(content)
+          ::YAML.safe_load(content)
         end
         c ? symbolize_recursive(c) : {}
       rescue StandardError, ::Psych::SyntaxError => error

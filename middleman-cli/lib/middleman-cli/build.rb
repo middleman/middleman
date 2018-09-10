@@ -44,7 +44,7 @@ module Middleman::Cli
     def build
       root = ENV['MM_ROOT'] || Dir.pwd
 
-      unless File.exists?(File.join(root, "config.rb"))
+      unless File.exist?(File.join(root, 'config.rb'))
         raise Thor::Error, 'Error: Could not find a Middleman project config, perhaps you are in the wrong folder?'
       end
 

@@ -13,7 +13,7 @@ class ::Slim::Template
   def initialize(file, line, opts, &block)
     if opts.key?(:context)
       ::Slim::Embedded::SassEngine.disable_option_validator!
-      %w(sass scss markdown).each do |engine|
+      %w[sass scss markdown].each do |engine|
         (::Slim::Embedded.options[engine.to_sym] ||= {})[:context] = opts[:context]
       end
     end

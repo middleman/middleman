@@ -32,7 +32,7 @@ module Middleman
             super
           rescue ::ExecJS::RuntimeError => e
             e.to_s
-          rescue => e
+          rescue StandardError => e
             e.to_s
           end
         end

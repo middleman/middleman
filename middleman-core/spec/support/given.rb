@@ -1,9 +1,9 @@
 module Given
-  ROOT = File.expand_path('../..', File.dirname(File.realpath(__FILE__)))
+  ROOT = File.expand_path('../..', __dir__)
   TMP  = File.join(ROOT, 'tmp')
 
   class << self
-    def fixture name
+    def fixture(name)
       cleanup!
 
       `rsync -av #{File.join(ROOT, 'fixtures', name)}/ #{TMP}/`
@@ -11,18 +11,18 @@ module Given
       ENV['MM_ROOT'] = TMP
     end
 
-    def no_file name
+    def no_file(name)
       FileUtils.rm name, force: true
     end
 
-    def symlink source, destination
+    def symlink(source, destination)
       no_file destination
       FileUtils.symlink File.expand_path(source),
                         File.expand_path(destination),
                         force: true
     end
 
-    def file name, content
+    def file(name, content)
       file_path = File.join(TMP, name)
       FileUtils.mkdir_p(File.dirname(file_path))
       File.open(file_path, 'w') do |file|
@@ -32,9 +32,7 @@ module Given
 
     def cleanup!
       Dir.chdir ROOT
-      if File.exist? TMP
-        `rm -rf #{TMP}`
-      end
+      `rm -rf #{TMP}` if File.exist? TMP
     end
   end
 end

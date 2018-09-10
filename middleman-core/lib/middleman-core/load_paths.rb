@@ -26,7 +26,7 @@ module Middleman
       end
 
       unless File.exist?(ENV['BUNDLE_GEMFILE'])
-        ENV['BUNDLE_GEMFILE'] = File.expand_path('../../../../Gemfile', __FILE__)
+        ENV['BUNDLE_GEMFILE'] = File.expand_path('../../../Gemfile', __dir__)
       end
 
       if File.exist?(ENV['BUNDLE_GEMFILE'])

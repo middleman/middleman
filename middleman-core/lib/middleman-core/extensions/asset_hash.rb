@@ -2,7 +2,7 @@ require 'middleman-core/util'
 require 'middleman-core/rack'
 
 class Middleman::Extensions::AssetHash < ::Middleman::Extension
-  option :sources, %w(.css .htm .html .js .php .xhtml), 'List of extensions that are searched for hashable assets.'
+  option :sources, %w[.css .htm .html .js .php .xhtml], 'List of extensions that are searched for hashable assets.'
   option :exts, nil, 'List of extensions that get asset hashes appended to them.'
   option :ignore, [], 'Regexes of filenames to skip adding asset hashes to'
   option :rewrite_ignore, [], 'Regexes of filenames to skip processing for path rewrites'
@@ -20,7 +20,7 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
 
     # Exclude .ico from the default list because browsers expect it
     # to be named "favicon.ico"
-    @exts = options.exts || (app.config[:asset_extensions] - %w(.ico))
+    @exts = options.exts || (app.config[:asset_extensions] - %w[.ico])
 
     app.rewrite_inline_urls id: :asset_hash,
                             url_extensions: @exts.sort.reverse,
@@ -63,9 +63,9 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
     # This is so by the time we get around to the text files (which may reference
     # images and fonts) the static assets' hashes are already calculated.
     resources.sort_by do |a|
-      if %w(.svg .svgz).include? a.ext
+      if %w[.svg .svgz].include? a.ext
         0
-      elsif %w(.js .css).include? a.ext
+      elsif %w[.js .css].include? a.ext
         1
       else
         -1

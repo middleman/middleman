@@ -25,7 +25,7 @@ module Middleman
 
         resources.each do |resource|
           next if resource.file_descriptor.nil?
-          next unless resource.file_descriptor[:full_path].to_s =~ %r{\.liquid$}
+          next unless resource.file_descriptor[:full_path].to_s =~ /\.liquid$/
 
           # Convert data object into a hash for liquid
           resource.add_metadata locals: {

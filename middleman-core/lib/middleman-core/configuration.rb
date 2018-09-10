@@ -43,7 +43,7 @@ module Middleman
         if defines_setting?(method) && args.empty?
           self[method]
         elsif method.to_s =~ /^(\w+)=$/ && args.size == 1
-          self[$1.to_sym] = args[0]
+          self[Regexp.last_match(1).to_sym] = args[0]
         else
           super
         end
@@ -51,7 +51,7 @@ module Middleman
 
       # Needed so that method_missing makes sense
       def respond_to?(method, include_private = false)
-        super || defines_setting?(method) || (method =~ /^(\w+)=$/ && defines_setting?($1))
+        super || defines_setting?(method) || (method =~ /^(\w+)=$/ && defines_setting?(Regexp.last_match(1)))
       end
 
       # Does this configuration manager know about the setting identified by key?

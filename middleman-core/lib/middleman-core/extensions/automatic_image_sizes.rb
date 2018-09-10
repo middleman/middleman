@@ -36,7 +36,7 @@ class Middleman::Extensions::AutomaticImageSizes < ::Middleman::Extension
             params[:height] = height
           rescue FastImage::UnknownImageType
             # No message, it's just not supported
-          rescue
+          rescue StandardError
             warn "Couldn't determine dimensions for image #{path}: #{$ERROR_INFO.message}"
           end
         end

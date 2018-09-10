@@ -41,7 +41,7 @@ module Middleman
       layout_file = resolve_template(app, File.join(app.config[:layouts_dir], name.to_s), resolve_opts)
 
       # If we didn't find it, check root
-      layout_file = resolve_template(app, name, resolve_opts) unless layout_file
+      layout_file ||= resolve_template(app, name, resolve_opts)
 
       # Return the path
       layout_file
@@ -132,7 +132,7 @@ module Middleman
       @app.extensions.add_exposed_to_context(context)
 
       locals.each do |k, _|
-        next unless context.respond_to?(k) && ![:current_path, :paginate, :page_articles, :blog_controller, :lang, :locale, :data].include?(k.to_sym)
+        next unless context.respond_to?(k) && !%i[current_path paginate page_articles blog_controller lang locale data].include?(k.to_sym)
 
         msg = "Template local `#{k}` tried to overwrite an existing context value. Please rename the key when passing to `locals`"
 

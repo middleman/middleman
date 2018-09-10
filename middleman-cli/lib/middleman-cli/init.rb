@@ -127,7 +127,7 @@ module Middleman::Cli
       git_path = "#{branch_cmd}#{repo_path}"
       run("#{GIT_CMD} clone --depth 1 #{branch_cmd}#{repo_path} #{dir}")
 
-      unless $?.success?
+      unless $CHILD_STATUS.success?
         say "Git clone command failed. Make sure git repository exists: #{git_path}", :red
         exit 1
       end

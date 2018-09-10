@@ -2,7 +2,7 @@
 require 'middleman-core/callback_manager'
 
 describe ::Middleman::CallbackManager do
-  it "adds a simple key" do
+  it 'adds a simple key' do
     counters = {
       test1: 0,
       test2: 0,
@@ -26,7 +26,7 @@ describe ::Middleman::CallbackManager do
     expect(counters[:test3]).to eq 0
   end
 
-  it "callbacks run in order" do
+  it 'callbacks run in order' do
     result = []
 
     m = ::Middleman::CallbackManager.new
@@ -39,24 +39,24 @@ describe ::Middleman::CallbackManager do
     expect(result.join('')).to eq '123'
   end
 
-  it "adds a nested key" do
+  it 'adds a nested key' do
     counters = {
       test1: 0,
       test1a: 0
     }
 
     m = ::Middleman::CallbackManager.new
-    m.add([:test1, :a]) { |n| counters[:test1a] += n }
+    m.add(%i[test1 a]) { |n| counters[:test1a] += n }
     m.add(:test1) { counters[:test1] += 1 }
 
-    m.execute([:test1, :a], [2])
-    m.execute([:test1, :b], [5])
+    m.execute(%i[test1 a], [2])
+    m.execute(%i[test1 b], [5])
 
     expect(counters[:test1]).to eq 0
     expect(counters[:test1a]).to eq 2
   end
 
-  it "works in isolation" do
+  it 'works in isolation' do
     m1 = ::Middleman::CallbackManager.new
     m2 = ::Middleman::CallbackManager.new
 
@@ -77,7 +77,7 @@ describe ::Middleman::CallbackManager do
     expect(counters[:test2]).to eq 5
   end
 
-  it "installs to arbitrary instances" do
+  it 'installs to arbitrary instances' do
     instance = Class.new(Object).new
 
     m = ::Middleman::CallbackManager.new
@@ -88,11 +88,11 @@ describe ::Middleman::CallbackManager do
     instance.execute_callbacks(:ready, [2])
     instance.execute_callbacks(:ready2, [10])
     instance.execute_callbacks([:ready], [20])
-    instance.execute_callbacks([:ready, :two], [20])
+    instance.execute_callbacks(%i[ready two], [20])
     expect(counter).to eq 2
   end
 
-  it "executes in default scope" do
+  it 'executes in default scope' do
     instance = Class.new(Object).new
     m = ::Middleman::CallbackManager.new
     m.install_methods!(instance, [:ready])
@@ -107,7 +107,7 @@ describe ::Middleman::CallbackManager do
     expect(internal_self) === instance
   end
 
-  it "executes in custom scope" do
+  it 'executes in custom scope' do
     instance = Class.new(Object).new
     m = ::Middleman::CallbackManager.new
     m.install_methods!(instance, [:ready])

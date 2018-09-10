@@ -1,4 +1,4 @@
-ENV["TEST"] = "true"
+ENV['TEST'] = 'true'
 
 require 'sassc'
 

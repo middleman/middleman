@@ -25,7 +25,7 @@ module Middleman
         end
 
         def self.match?(type)
-          :ipv4 == type
+          type == :ipv4
         end
       end
 
@@ -36,7 +36,7 @@ module Middleman
         end
 
         def self.match?(type)
-          :ipv6 == type
+          type == :ipv6
         end
       end
 

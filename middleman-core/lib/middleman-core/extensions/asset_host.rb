@@ -3,7 +3,7 @@ require 'addressable/uri'
 class Middleman::Extensions::AssetHost < ::Middleman::Extension
   option :host, nil, 'The asset host to use or a Proc to determine asset host', required: true
   option :exts, nil, 'List of extensions that get cache busters strings appended to them.'
-  option :sources, %w(.css .htm .html .js .php .xhtml), 'List of extensions that are searched for bustable assets.'
+  option :sources, %w[.css .htm .html .js .php .xhtml], 'List of extensions that are searched for bustable assets.'
   option :ignore, [], 'Regexes of filenames to skip adding query strings to'
   option :rewrite_ignore, [], 'Regexes of filenames to skip processing for host rewrites'
 

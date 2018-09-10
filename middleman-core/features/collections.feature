@@ -111,7 +111,7 @@ Feature: Collections
       """
       ---
       title: "Blog3 Another Article"
-      date: 2011-01-02
+      date: "2011-01-02"
       tags:
         - foo
       ---
@@ -133,7 +133,7 @@ Feature: Collections
       """
       ---
       title: "Blog2 Yet Another Article"
-      date: 2011-01-02
+      date: "2011-01-02"
       tags:
         - foo
       ---

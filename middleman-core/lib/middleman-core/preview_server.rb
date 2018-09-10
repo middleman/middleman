@@ -35,7 +35,7 @@ module Middleman
 
         # And now comes the check
         unless server_information.valid?
-          $stderr.puts %(== Running Middleman failed: #{server_information.reason}. Please fix that and try again.)
+          warn %(== Running Middleman failed: #{server_information.reason}. Please fix that and try again.)
           exit 1
         end
 
@@ -92,7 +92,7 @@ module Middleman
       def stop
         begin
           app.logger.info '== The Middleman is shutting down'
-        rescue
+        rescue StandardError
           # if the user closed their terminal STDOUT/STDERR won't exist
         end
 
@@ -108,8 +108,8 @@ module Middleman
 
         begin
           app = initialize_new_app
-        rescue => e
-          $stderr.puts "Error reloading Middleman: #{e}\n#{e.backtrace.join("\n")}"
+        rescue StandardError => e
+          warn "Error reloading Middleman: #{e}\n#{e.backtrace.join("\n")}"
           app.logger.info '== The Middleman is still running the application from before the error'
           return
         end
@@ -150,7 +150,7 @@ module Middleman
           ready do
             unless config[:watcher_disable]
               match_against = [
-                %r{^config\.rb$},
+                /^config\.rb$/,
                 %r{^environments/[^\.](.*)\.rb$},
                 %r{^lib/[^\.](.*)\.rb$},
                 %r{^#{config[:helpers_dir]}/[^\.](.*)\.rb$}
@@ -208,17 +208,13 @@ module Middleman
       end
 
       def possible_from_cli(key, config)
-        if @cli_options[key]
-          @cli_options[key]
-        else
-          config[key]
-        end
+        @cli_options[key] || config[key]
       end
 
       # Trap some interupt signals and shut down smoothly
       # @return [void]
       def register_signal_handlers
-        %w(INT HUP TERM QUIT).each do |sig|
+        %w[INT HUP TERM QUIT].each do |sig|
           next unless Signal.list[sig]
 
           Signal.trap(sig) do
@@ -252,8 +248,8 @@ module Middleman
           else
             # use a generated self-signed cert
             http_opts[:SSLCertName] = [
-              %w(CN localhost),
-              %w(CN #{host})
+              %w[CN localhost],
+              %w[CN #{host}]
             ].uniq
             cert, key = create_self_signed_cert(1024, [['CN', server_information.server_name]], server_information.site_addresses, 'Middleman Preview Server')
             http_opts[:SSLCertificate] = cert
@@ -271,7 +267,7 @@ module Middleman
           ::WEBrick::HTTPServer.new(http_opts)
         rescue Errno::EADDRINUSE
           port = http_opts[:Port]
-          $stderr.puts %(== Port #{port} is already in use. This could mean another instance of middleman is already running. Please make sure port #{port} is free and start `middleman server` again, or choose another port by running `middleman server —-port=#{port + 1}` instead.)
+          warn %(== Port #{port} is already in use. This could mean another instance of middleman is already running. Please make sure port #{port} is free and start `middleman server` again, or choose another port by running `middleman server —-port=#{port + 1}` instead.)
         end
       end
 
@@ -334,7 +330,7 @@ module Middleman
 
     class FilteredWebrickLog < ::WEBrick::Log
       def log(level, data)
-        super(level, data) unless data =~ %r{Could not determine content-length of response body.}
+        super(level, data) unless data =~ /Could not determine content-length of response body./
       end
     end
   end
