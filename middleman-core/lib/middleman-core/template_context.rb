@@ -133,24 +133,29 @@ module Middleman
       non_root     = partial_path.to_s.sub(/^\//, '')
       non_root_no_underscore = non_root.sub(/^_/, '').sub(/\/_/, '/')
 
-      if resource = current_resource
+      if current_resource
+        resource = current_resource
         current_dir  = resource.file_descriptor[:relative_path].dirname
         relative_dir = current_dir + Pathname(non_root)
         relative_dir_no_underscore = current_dir + Pathname(non_root_no_underscore)
+
+        if relative_dir
+          lookup_stack.push [relative_dir.to_s,
+                             { preferred_engine: resource.file_descriptor[:relative_path]
+                                                         .extname[1..-1].to_sym }]
+        end
       end
 
-      if relative_dir
-        lookup_stack.push [relative_dir.to_s,
-                           { preferred_engine: resource.file_descriptor[:relative_path]
-                                                       .extname[1..-1].to_sym }]
-      end
       lookup_stack.push [non_root]
+
       lookup_stack.push [non_root,
                          { try_static: try_static }]
+
       if relative_dir_no_underscore
         lookup_stack.push [relative_dir_no_underscore.to_s,
                            { try_static: try_static }]
       end
+
       lookup_stack.push [non_root_no_underscore,
                          { try_static: try_static }]
 

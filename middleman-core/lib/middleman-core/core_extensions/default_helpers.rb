@@ -64,11 +64,13 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
     end
 
     def capture_html(*args, &block)
-      result = if handler = auto_find_proper_handler(&block)
+      handler = auto_find_proper_handler(&block)
+
+      result = if handler
                  handler.capture_from_template(*args, &block)
                else
                  yield(*args)
-      end
+               end
 
       ::ActiveSupport::SafeBuffer.new.safe_concat(result)
     end
@@ -147,7 +149,7 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
                       config[:js_dir]
                     when :css
                       config[:css_dir]
-        end
+                    end
       end
 
       # If the basename of the request as no extension, assume we are serving a
@@ -236,7 +238,9 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
         raise ArgumentError, 'Too many arguments to link_to(url, options={}, &block)'
       end
 
-      if url = args[url_arg_index]
+      url = args[url_arg_index]
+
+      if url
         options = args[options_index] || {}
         raise ArgumentError, 'Options must be a hash' unless options.is_a?(Hash)
 

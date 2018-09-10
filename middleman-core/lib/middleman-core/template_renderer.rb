@@ -85,7 +85,7 @@ module Middleman
                  end
                else
                  app.files.find(:source, path_with_ext, globbing)
-        end
+               end
 
         found_template = file if file && (preferred_engine.nil? || ::Middleman::Util.tilt_class(file[:full_path].to_s))
         break if found_template
@@ -149,8 +149,11 @@ module Middleman
 
       # If we need a layout and have a layout, use it
       layout_file = fetch_layout(engine, options)
+
       if layout_file
-        content = if layout_file = fetch_layout(engine, options)
+        layout_file = fetch_layout(engine, options)
+
+        content = if layout_file
                     layout_renderer = ::Middleman::FileRenderer.new(@app, layout_file[:relative_path].to_s)
 
                     ::Middleman::Util.instrument 'builder.output.resource.render-layout', path: File.basename(layout_file[:relative_path].to_s) do
@@ -158,7 +161,7 @@ module Middleman
                     end
                   else
                     content
-        end
+                  end
       end
 
       # Return result
@@ -214,20 +217,19 @@ module Middleman
                         engine_options[:layout_engine]
                       else
                         engine
-      end
+                      end
 
       # Automatic mode
       if local_layout == :_auto_layout
         # Look for :layout of any extension
         # If found, use it. If not, continue
         locate_layout(:layout, layout_engine)
-      elsif layout_file = locate_layout(local_layout, layout_engine)
-        # Look for specific layout
-        # If found, use it. If not, error.
+      else
+        layout_file = locate_layout(local_layout, layout_engine)
+
+        raise ::Middleman::TemplateRenderer::TemplateNotFound, "Could not locate layout: #{local_layout}" unless layout_file
 
         layout_file
-      else
-        raise ::Middleman::TemplateRenderer::TemplateNotFound, "Could not locate layout: #{local_layout}"
       end
     end
 

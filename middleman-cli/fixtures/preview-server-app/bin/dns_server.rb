@@ -15,7 +15,7 @@ db = if File.file? db_file
        {
          /www\.example\.org/ => '1.1.1.1'
        }
-      end
+     end
 
 interfaces = [
   [:udp, '127.0.0.1', port],

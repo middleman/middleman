@@ -25,7 +25,7 @@ module Middleman
                                       app.config[:markdown_engine_prefix].const_get("#{engine}Template")
                                     else
                                       app.config[:markdown_engine_prefix]
-            end
+                                    end
 
             # Tell tilt to use that engine
             ::Tilt.prefer(markdown_engine_klass, *markdown_exts)

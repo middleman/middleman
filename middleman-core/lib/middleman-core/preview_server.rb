@@ -8,7 +8,6 @@ require 'middleman-core/preview_server/server_information'
 require 'middleman-core/preview_server/server_url'
 require 'middleman-core/preview_server/server_information_callback_proxy'
 
-# rubocop:disable GlobalVars
 module Middleman
   class PreviewServer
     class << self
@@ -62,7 +61,9 @@ module Middleman
 
         if @options[:daemon]
           # To output the child PID, let's make preview server a daemon by hand
-          if child_pid = fork
+          child_pid = fork
+
+          if child_pid
             app.logger.info "== Middleman preview server is running in background with PID #{child_pid}"
             Process.detach child_pid
             exit 0
@@ -249,7 +250,7 @@ module Middleman
             # use a generated self-signed cert
             http_opts[:SSLCertName] = [
               %w[CN localhost],
-              %w[CN #{host}]
+              ['CN', host]
             ].uniq
             cert, key = create_self_signed_cert(1024, [['CN', server_information.server_name]], server_information.site_addresses, 'Middleman Preview Server')
             http_opts[:SSLCertificate] = cert
@@ -261,7 +262,7 @@ module Middleman
                                FilteredWebrickLog.new
                              else
                                ::WEBrick::Log.new(nil, 0)
-        end
+                             end
 
         begin
           ::WEBrick::HTTPServer.new(http_opts)

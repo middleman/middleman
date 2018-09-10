@@ -156,7 +156,7 @@ module Middleman
                        store[path.to_s]
                      elsif callbacks.key?(path.to_s)
                        callbacks[path.to_s].call
-          end
+                     end
 
           ::Middleman::Util.recursively_enhance(response)
         end

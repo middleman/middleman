@@ -67,7 +67,7 @@ module Middleman
                              extension_class
                            else
                              raise 'You must provide a Middleman::Extension or a block that returns a Middleman::Extension'
-        end
+                           end
 
         return unless options[:auto_activate]
 

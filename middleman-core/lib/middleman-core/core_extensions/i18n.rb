@@ -29,11 +29,11 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
     # don't completely reload middleman, I18n.load_path can get
     # polluted with paths from other test app directories that don't
     # exist anymore.
-    if ENV['TEST']
-      app.after_configuration_eval do
-        ::I18n.load_path.delete_if { |path| path =~ %r{tmp/aruba} }
-        ::I18n.reload!
-      end
+    return unless ENV['TEST']
+
+    app.after_configuration_eval do
+      ::I18n.load_path.delete_if { |path| path =~ %r{tmp/aruba} }
+      ::I18n.reload!
     end
   end
 
@@ -79,12 +79,9 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
 
       href = super(path_or_resource, opts)
 
-      final_path = if result = extensions[:i18n].localized_path(href, locale)
-                     result
-                   else
-                     # Should we log the missing file?
-                     href
-      end
+      result = extensions[:i18n].localized_path(href, locale)
+
+      final_path = result || href
 
       opts[:relative] = should_relativize
 
@@ -109,7 +106,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
                                 partial_name.sub(extname, ".#{locale_suffix}#{extname}")
                               else
                                 "#{partial_name}.#{locale_suffix}"
-      end
+                              end
 
       if locale_suffix
         super(suffixed_partial_name, maybe_static) ||
@@ -206,7 +203,11 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
   def localized_path(path, locale)
     lookup = ::Middleman::Util.parse_uri(path)
     lookup.path << app.config[:index_file] if lookup.path&.end_with?('/')
-    lookup.to_s if @lookup[lookup.path] && lookup.path = @lookup[lookup.path][locale]
+
+    if @lookup[lookup.path] && @lookup[lookup.path][locale]
+      lookup.path = @lookup[lookup.path][locale]
+      lookup.to_s
+    end
   rescue ::Addressable::URI::InvalidURIError
     nil
   end

@@ -40,9 +40,11 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
                         dirpath.join(asset_path).to_s
                       else
                         asset_path
-    end
+                      end
 
-    return unless asset_page = app.sitemap.find_resource_by_destination_path(full_asset_path) || app.sitemap.find_resource_by_path(full_asset_path)
+    asset_page = app.sitemap.find_resource_by_destination_path(full_asset_path) || app.sitemap.find_resource_by_path(full_asset_path)
+
+    return unless asset_pageasset_page
 
     replacement_path = "/#{asset_page.destination_path}"
     replacement_path = Pathname.new(replacement_path).relative_path_from(dirpath).to_s if relative_path
@@ -91,7 +93,7 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
                raise "#{resource.path} should be in the sitemap!" unless response.status == 200
 
                ::Digest::SHA1.hexdigest(response.body)[0..7]
-    end
+             end
 
     resource.destination_path = resource.destination_path.sub(/\.(\w+)$/) { |ext| "-#{options.prefix}#{digest}#{ext}" }
     resource

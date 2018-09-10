@@ -27,13 +27,13 @@ class Middleman::Extensions::AssetHost < ::Middleman::Extension
                         dirpath.join(asset_path).to_s
                       else
                         asset_path
-    end
+                      end
 
     asset_prefix = if options[:host].is_a?(Proc)
                      options[:host].call(full_asset_path)
                    elsif options[:host].is_a?(String)
                      options[:host]
-    end
+                   end
 
     File.join(asset_prefix, full_asset_path)
   end

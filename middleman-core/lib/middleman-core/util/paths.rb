@@ -7,7 +7,6 @@ require 'tilt'
 
 require 'middleman-core/contracts'
 
-# rubocop:disable ModuleLength
 module Middleman
   module Util
     extend Memoist
@@ -86,10 +85,10 @@ module Middleman
                        app.config[:fonts_dir]
                      else
                        kind.to_s
-      end
+                     end
 
       source = source.to_s.tr(' ', '')
-      ignore_extension = (kind == :images || kind == :fonts) # don't append extension
+      ignore_extension = %w[:images :fonts].include? kind # don't append extension
       source << ".#{kind}" unless ignore_extension || source.end_with?(".#{kind}")
       asset_folder = '' if source.start_with?('/') # absolute path
 
@@ -118,18 +117,20 @@ module Middleman
       # relative path, since it only takes absolute url paths.
       dest_path = url_for(app, path, options.merge(relative: false))
 
-      result = if resource = app.sitemap.find_resource_by_path(dest_path)
-                 resource.url
-               elsif resource = app.sitemap.find_resource_by_destination_path(dest_path)
+      resource = app.sitemap.find_resource_by_path(dest_path) || app.sitemap.find_resource_by_destination_path(dest_path)
+
+      result = if resource
                  resource.url
                else
                  path = ::File.join(prefix, path)
-                 if resource = app.sitemap.find_resource_by_path(path)
+                 resource = app.sitemap.find_resource_by_path(path)
+
+                 if resource
                    resource.url
                  else
                    ::File.join(app.config[:http_prefix], path)
                  end
-      end
+               end
 
       final_result = ::Addressable::URI.encode(
         relative_path_from_resource(
@@ -161,7 +162,7 @@ module Middleman
               path_or_resource.url
             else
               path_or_resource.dup
-      end
+            end
 
       # Try to parse URL
       begin
@@ -218,11 +219,13 @@ module Middleman
                      )
                    else
                      resource_url
-        end
+                   end
       end
 
       # Support a :query option that can be a string or hash
-      if query = options[:query]
+      query = options[:query]
+
+      if query
         uri.query = query.respond_to?(:to_param) ? query.to_param : query.to_s
       end
 

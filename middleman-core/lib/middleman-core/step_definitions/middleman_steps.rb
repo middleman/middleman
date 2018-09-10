@@ -1,7 +1,6 @@
 require 'fileutils'
 
-Given /^app "([^\"]*)" is using config "([^\"]*)"$/ do |path, config_name|
-  target = File.join(PROJECT_ROOT_PATH, 'fixtures', path)
+Given /^app "([^\"]*)" is using config "([^\"]*)"$/ do |_path, config_name|
   config_path = File.join(expand_path('.'), "config-#{config_name}.rb")
   config_dest = File.join(expand_path('.'), 'config.rb')
   FileUtils.cp(config_path, config_dest)

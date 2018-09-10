@@ -57,7 +57,7 @@ module Middleman
                              ::Middleman::SourceFile.new(source.relative_path_from(@app.source_dir), source, @app.source_dir, Set.new([:source]), 0)
                            else
                              source
-        end
+                           end
 
         @destination_path = @path
 
@@ -105,7 +105,7 @@ module Middleman
                       meta.deep_merge(@metadata)
                     else
                       @metadata.deep_merge(meta)
-        end
+                    end
       end
 
       # Data about this resource, populated from frontmatter or extensions.
@@ -219,9 +219,9 @@ module Middleman
       Contract String => String
       def make_implicit_page_id(path)
         @id ||= begin
-          if prok = @app.config[:page_id_generator]
-            return prok.call(path)
-          end
+          prok = @app.config[:page_id_generator]
+
+          return prok.call(path) if prok
 
           basename = if ext == '.html'
                        File.basename(path, ext)

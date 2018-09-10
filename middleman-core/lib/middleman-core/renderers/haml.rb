@@ -62,7 +62,6 @@ module Middleman
             end
           end
         end
-        # rubocop:enable NestedMethodDefinition
 
         ::Tilt.prefer(::Middleman::Renderers::HamlTemplate, :haml)
 

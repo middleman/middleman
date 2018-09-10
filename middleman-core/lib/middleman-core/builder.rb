@@ -137,7 +137,7 @@ module Middleman
                   ::Parallel.map(resources, &method(:output_resource))
                 else
                   resources.map(&method(:output_resource))
-      end
+                end
 
       @has_error = true if results.any? { |r| r == false }
 
@@ -150,7 +150,7 @@ module Middleman
                            p.to_s.encode('UTF-8', 'UTF-8-MAC')
                          else
                            p
-          end
+                         end
 
           @to_clean.delete(Pathname(cleaned_name))
         end
@@ -202,11 +202,11 @@ module Middleman
                               [::FileUtils.method(:mv), source.path]
                             else
                               [::FileUtils.method(:cp), source.to_s]
-      end
+                            end
 
       mode = which_mode(output_file, source_path)
 
-      if mode == :created || mode == :updated
+      if %w[:created :updates].include? mode
         ::FileUtils.mkdir_p(output_file.dirname)
         method.call(source_path, output_file.to_s)
       end

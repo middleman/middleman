@@ -31,7 +31,7 @@ module Middleman
                   end
                 else
                   original_block
-            end
+                end
           end
 
           data.send(@name, *@args.deep_dup, &b)

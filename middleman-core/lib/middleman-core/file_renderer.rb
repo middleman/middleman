@@ -48,7 +48,7 @@ module Middleman
                opts.delete(:template_body)
              else
                template_data_for_file
-      end
+             end
 
       # Merge per-extension options from config
       extension = File.extname(path)

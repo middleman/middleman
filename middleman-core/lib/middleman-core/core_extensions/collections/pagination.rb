@@ -13,7 +13,7 @@ module Middleman
                   each_slice(per_page).reduce([]) do |sum, items|
                     sum << items
                   end
-        end
+                end
 
         num_pages = parts.length
         collection = self

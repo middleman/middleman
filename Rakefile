@@ -60,9 +60,7 @@ end
 
 require 'rubocop/rake_task'
 desc 'Run RuboCop to check code consistency'
-RuboCop::RakeTask.new(:rubocop) do |task|
-  task.fail_on_error = false
-end
+RuboCop::RakeTask.new(:rubocop)
 
 desc 'Run tests for all middleman gems'
 task default: :test

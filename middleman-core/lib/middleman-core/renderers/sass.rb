@@ -60,7 +60,7 @@ module Middleman
                           ::SassC
                         else
                           ::Sass
-          end
+                        end
 
           @engine = sass_module::Engine.new(data, sass_options)
 

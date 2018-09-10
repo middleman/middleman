@@ -69,7 +69,7 @@ class Middleman::Extensions::MinifyCss < ::Middleman::Extension
                    minify_inline(::Middleman::Util.extract_response_text(response))
                  elsif minifiable?(content_type) && !ignore?(path)
                    minify(::Middleman::Util.extract_response_text(response))
-      end
+                 end
 
       if minified
         headers['Content-Length'] = minified.bytesize.to_s

@@ -104,7 +104,9 @@ describe ::Middleman::CallbackManager do
 
     instance.execute_callbacks(:ready)
 
+    # rubocop:disable Style/CaseEquality
     expect(internal_self) === instance
+    # rubocop:enable Style/CaseEquality
   end
 
   it 'executes in custom scope' do

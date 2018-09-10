@@ -428,14 +428,14 @@ module Middleman
                                elsif g.is_a? Symbol
                                  definition = method(g)
 
-                                 if definition.arity == 0
+                                 if definition.arity.zero?
                                    send(g)
                                  else
                                    send(g, resources)
                                  end
                                else
                                  {}
-        end
+                               end
 
         sum.merge!(resource_definitions)
       end
@@ -444,11 +444,11 @@ module Middleman
         if g.is_a? Symbol
           definition = method(g)
 
-          g = if definition.arity == 0
+          g = if definition.arity.zero?
                 send(g)
               else
                 send(g, resources)
-          end
+              end
         end
 
         ::Middleman::Sitemap::StringResource.new(

@@ -40,12 +40,12 @@ class Middleman::Extensions::ExternalPipeline < ::Middleman::Extension
   end
 
   def reload!
-    if @current_thread
-      logger.info "== Stopping: `#{options[:command]}`"
+    return unless @current_thread
 
-      @current_thread.stop
-      @current_thread = nil
-    end
+    logger.info "== Stopping: `#{options[:command]}`"
+
+    @current_thread.stop
+    @current_thread = nil
   end
 
   def watch_command!(async)
@@ -57,9 +57,12 @@ class Middleman::Extensions::ExternalPipeline < ::Middleman::Extension
     @current_thread.start
 
     watch_thread = Thread.new do
-      while buf = @current_thread.io.gets
+      buf = @current_thread.io.gets
+
+      while buf
         without_newline = buf.sub(/\n$/, '')
         logger.info "== External: #{without_newline}" unless without_newline.empty?
+        buf = @current_thread.io.gets
       end
 
       @current_thread.wait
@@ -79,9 +82,12 @@ class Middleman::Extensions::ExternalPipeline < ::Middleman::Extension
   private
 
   def print_command(stdout)
-    while buf = stdout.gets
+    buf = stdout.gets
+
+    while buf
       without_newline = buf.sub(/\n$/, '')
       logger.info "== External: #{without_newline}" unless without_newline.empty?
+      buf = stdout.gets
     end
   end
 end

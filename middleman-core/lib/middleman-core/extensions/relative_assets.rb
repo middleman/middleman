@@ -67,7 +67,7 @@ class Middleman::Extensions::RelativeAssets < ::Middleman::Extension
                         dirpath.join(asset_path).to_s
                       else
                         asset_path
-    end
+                      end
 
     current_dir = Pathname(request_path).dirname
     result = Pathname(full_asset_path).relative_path_from(current_dir).to_s

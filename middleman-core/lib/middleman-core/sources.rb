@@ -122,7 +122,7 @@ module Middleman
                   SourceWatcher.new(self, type_or_handler, path, options)
                 else
                   type_or_handler
-      end
+                end
 
       @watchers << handler
 

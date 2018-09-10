@@ -58,7 +58,7 @@ module Middleman::Cli
                                  repo_name, repo_branch = options[:template].split('#')
                                  repo_path, is_local_dir = repository_path(repo_name)
                                  [repo_path, repo_branch]
-      end
+                               end
 
       begin
         dir = is_local_dir ? repo_path : clone_repository(repo_path, repo_branch)
