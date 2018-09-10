@@ -124,9 +124,8 @@ describe ::Middleman::CallbackManager do
     instance.ready(&external_instance.method(:when_ready))
 
     instance.execute_callbacks(:ready, [5])
-    
+
     expect(external_instance[:scope]).to eq external_instance
     expect(external_instance[:counter]).to eq 5
   end
-
 end

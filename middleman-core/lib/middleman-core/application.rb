@@ -442,7 +442,7 @@ module Middleman
     # @param [Symbol] key Name of the attribue
     # @param value Attribute value
     # @return [void]
-    def set(key, value=nil, &block)
+    def set(key, value = nil, &block)
       logger.warn "Warning: `set :#{key}` is deprecated. Use `config[:#{key}] =` instead."
 
       value = block if block_given?

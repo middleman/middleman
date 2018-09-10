@@ -49,7 +49,7 @@ module Middleman
       instance_eval File.read(other_config), other_config, 1
     end
 
-    def set(key, default=nil, &block)
+    def set(key, default = nil, &block)
       config.define_setting(key, default) unless config.defines_setting?(key)
       @app.config[key] = block_given? ? block : default
     end

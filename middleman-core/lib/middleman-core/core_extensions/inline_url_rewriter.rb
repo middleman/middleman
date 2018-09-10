@@ -20,7 +20,7 @@ module Middleman
         after: Maybe[Symbol]
       }.freeze
 
-      def initialize(app, options_hash={}, &block)
+      def initialize(app, options_hash = {}, &block)
         super
 
         @rewriters = {}
@@ -53,7 +53,7 @@ module Middleman
           middleman_app: IsA['Middleman::Application'],
           rewriters: ArrayOf[REWRITER_DESCRIPTOR]
         } => Any
-        def initialize(app, options={})
+        def initialize(app, options = {})
           @rack_app = app
           @middleman_app = options.fetch(:middleman_app)
           @rewriters = options.fetch(:rewriters)
@@ -90,9 +90,9 @@ module Middleman
               relative_path = uri.host.nil?
 
               full_asset_path = if relative_path
-                dirpath.join(asset_path).to_s
-              else
-                asset_path
+                                  dirpath.join(asset_path).to_s
+                                else
+                                  asset_path
               end
 
               @rewriters.each do |rewriter|

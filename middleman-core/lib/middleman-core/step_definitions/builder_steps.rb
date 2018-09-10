@@ -32,7 +32,7 @@ end
 
 Given /^a built app at "([^\"]*)" with flags "([^\"]*)"$/ do |path, flags|
   step %Q{a fixture app "#{path}"}
-  
+
   cwd = File.expand_path(aruba.current_directory)
   step %Q{I set the environment variable "MM_ROOT" to "#{cwd}"}
 

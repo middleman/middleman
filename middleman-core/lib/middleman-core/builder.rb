@@ -26,7 +26,7 @@ module Middleman
     # Create a new Builder instance.
     # @param [Middleman::Application] app The app to build.
     # @param [Hash] opts The builder options
-    def initialize(app, opts={})
+    def initialize(app, opts = {})
       @app = app
       @source_dir = Pathname(File.join(@app.root, @app.config[:source]))
       @build_dir = Pathname(@app.config[:build_dir])
@@ -134,9 +134,9 @@ module Middleman
     Contract ResourceList => ResourceList
     def output_resources(resources)
       results = if @parallel
-        ::Parallel.map(resources, &method(:output_resource))
-      else
-        resources.map(&method(:output_resource))
+                  ::Parallel.map(resources, &method(:output_resource))
+                else
+                  resources.map(&method(:output_resource))
       end
 
       @has_error = true if results.any? { |r| r == false }
@@ -147,9 +147,9 @@ module Middleman
 
           # handle UTF-8-MAC filename on MacOS
           cleaned_name = if RUBY_PLATFORM =~ /darwin/
-            p.to_s.encode('UTF-8', 'UTF-8-MAC')
-          else
-            p
+                           p.to_s.encode('UTF-8', 'UTF-8-MAC')
+                         else
+                           p
           end
 
           @to_clean.delete(Pathname(cleaned_name))
@@ -199,9 +199,9 @@ module Middleman
       source = write_tempfile(output_file, source.to_s) if source.is_a? String
 
       method, source_path = if source.is_a? Tempfile
-        [::FileUtils.method(:mv), source.path]
-      else
-        [::FileUtils.method(:cp), source.to_s]
+                              [::FileUtils.method(:mv), source.path]
+                            else
+                              [::FileUtils.method(:cp), source.to_s]
       end
 
       mode = which_mode(output_file, source_path)
@@ -295,7 +295,7 @@ module Middleman
     end
 
     Contract Symbol, Or[String, Pathname], Maybe[String] => Any
-    def trigger(event_type, target, extra=nil)
+    def trigger(event_type, target, extra = nil)
       @events[event_type] ||= []
       @events[event_type] << target
 

@@ -68,7 +68,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
       ::I18n.t(*args)
     end
 
-    def url_for(path_or_resource, options={})
+    def url_for(path_or_resource, options = {})
       locale = options.delete(:locale) || ::I18n.locale
 
       opts = options.dup
@@ -80,10 +80,10 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
       href = super(path_or_resource, opts)
 
       final_path = if result = extensions[:i18n].localized_path(href, locale)
-        result
-      else
-        # Should we log the missing file?
-        href
+                     result
+                   else
+                     # Should we log the missing file?
+                     href
       end
 
       opts[:relative] = should_relativize
@@ -95,7 +95,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
       end
     end
 
-    def locate_partial(partial_name, try_static=false)
+    def locate_partial(partial_name, try_static = false)
       locals_dir = extensions[:i18n].options[:templates_dir]
 
       # Try /localizable
@@ -106,9 +106,9 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
       extname = File.extname(partial_name)
       maybe_static = !extname.empty?
       suffixed_partial_name = if maybe_static
-        partial_name.sub(extname, ".#{locale_suffix}#{extname}")
-      else
-        "#{partial_name}.#{locale_suffix}"
+                                partial_name.sub(extname, ".#{locale_suffix}#{extname}")
+                              else
+                                "#{partial_name}.#{locale_suffix}"
       end
 
       if locale_suffix
@@ -291,6 +291,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
 
     File.dirname(path).split('/').each do |path_sub|
       next if path_sub == ''
+
       partially_localized_path = "#{partially_localized_path}/#{::I18n.t("paths.#{path_sub}", default: path_sub)}"
     end
 

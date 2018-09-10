@@ -12,7 +12,7 @@ module Middleman
         # @param [String, Regexp] path Path glob expression, or path regex
         # @return [IgnoreDescriptor]
         Contract Or[String, Regexp, Proc] => RespondTo[:execute_descriptor]
-        def ignore(path=nil, &block)
+        def ignore(path = nil, &block)
           @app.sitemap.invalidate_resources_not_ignored_cache!
 
           if path.is_a? Regexp

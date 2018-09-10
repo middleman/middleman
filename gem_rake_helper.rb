@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rake'
 require 'yard'
 
@@ -38,7 +40,7 @@ RSpec::Core::RakeTask.new do |spec|
 end
 
 desc 'Run tests, both RSpec and Cucumber'
-task test: [:spec, :cucumber]
+task test: %i[spec cucumber]
 
 YARD::Rake::YardocTask.new
 

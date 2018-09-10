@@ -45,7 +45,7 @@ module Middleman
       # @param [String] path
       # @return [Array<Hash, String>]
       Contract IsA['Middleman::SourceFile'], Maybe[Symbol] => [Hash, Maybe[String]]
-      def parse(file, frontmatter_delims, known_type=nil)
+      def parse(file, frontmatter_delims, known_type = nil)
         full_path = file[:full_path]
         return [{}, nil] if ::Middleman::Util.binary?(full_path) || file[:types].include?(:binary)
 

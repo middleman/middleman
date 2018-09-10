@@ -8,7 +8,7 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
   option :rewrite_ignore, [], 'Regexes of filenames to skip processing for path rewrites'
   option :prefix, '', 'Prefix for hash'
 
-  def initialize(app, options_hash={}, &block)
+  def initialize(app, options_hash = {}, &block)
     super
 
     require 'addressable/uri'
@@ -37,9 +37,9 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
     relative_path = !uri.path.start_with?('/')
 
     full_asset_path = if relative_path
-      dirpath.join(asset_path).to_s
-    else
-      asset_path
+                        dirpath.join(asset_path).to_s
+                      else
+                        asset_path
     end
 
     return unless asset_page = app.sitemap.find_resource_by_destination_path(full_asset_path) || app.sitemap.find_resource_by_path(full_asset_path)
@@ -80,17 +80,17 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
     return if resource.ignored?
 
     digest = if resource.binary?
-      ::Digest::SHA1.file(resource.source_file).hexdigest[0..7]
-    else
-      # Render through the Rack interface so middleware and mounted apps get a shot
-      response = @rack_client.get(
-        ::URI.escape(resource.destination_path),
-        'bypass_inline_url_rewriter_asset_hash' => 'true'
-      )
+               ::Digest::SHA1.file(resource.source_file).hexdigest[0..7]
+             else
+               # Render through the Rack interface so middleware and mounted apps get a shot
+               response = @rack_client.get(
+                 ::URI.escape(resource.destination_path),
+                 'bypass_inline_url_rewriter_asset_hash' => 'true'
+               )
 
-      raise "#{resource.path} should be in the sitemap!" unless response.status == 200
+               raise "#{resource.path} should be in the sitemap!" unless response.status == 200
 
-      ::Digest::SHA1.hexdigest(response.body)[0..7]
+               ::Digest::SHA1.hexdigest(response.body)[0..7]
     end
 
     resource.destination_path = resource.destination_path.sub(/\.(\w+)$/) { |ext| "-#{options.prefix}#{digest}#{ext}" }

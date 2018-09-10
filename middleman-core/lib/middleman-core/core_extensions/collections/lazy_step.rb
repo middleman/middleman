@@ -4,7 +4,7 @@ module Middleman
       class LazyCollectorStep < BasicObject
         DELEGATE = [:hash, :eql?].freeze
 
-        def initialize(name, args, block, parent=nil)
+        def initialize(name, args, block, parent = nil)
           @name = name
           @args = args
           @block = block
@@ -19,18 +19,18 @@ module Middleman
           @parent.leaves
         end
 
-        def value(ctx=nil)
+        def value(ctx = nil)
           data = @parent.value(ctx)
 
           original_block = @block
 
           if original_block
             b = if ctx
-              ::Proc.new do |*args|
-                ctx.instance_exec(*args, &original_block)
-              end
-            else
-              original_block
+                  ::Proc.new do |*args|
+                    ctx.instance_exec(*args, &original_block)
+                  end
+                else
+                  original_block
             end
           end
 

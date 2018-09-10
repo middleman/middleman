@@ -7,7 +7,7 @@ class Middleman::Extensions::ExternalPipeline < ::Middleman::Extension
   option :latency, 0.25, 'Latency between refreshes of source'
   option :disable_background_execution, false, "Don't run the command in a separate background thread"
 
-  def initialize(app, config={}, &block)
+  def initialize(app, config = {}, &block)
     super
 
     return if app.mode?(:config)

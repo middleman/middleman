@@ -135,7 +135,7 @@ module Middleman
       # @param [Symbol] key The name of the option
       # @param [Object] default The default value for the option
       # @param [String] description A human-readable description of what the option does
-      def option(key, default=nil, description=nil, options={})
+      def option(key, default = nil, description = nil, options = {})
         config.define_setting(key, default, description, options)
       end
 
@@ -152,7 +152,7 @@ module Middleman
       # @param [Symbol] key The name of the option
       # @param [Object] default The default value for the option
       # @param [String] description A human-readable description of what the option does
-      def define_setting(key, default=nil, description=nil, options={})
+      def define_setting(key, default = nil, description = nil, options = {})
         global_config.define_setting(key, default, description, options)
       end
 
@@ -283,6 +283,7 @@ module Middleman
       def activated_extension(instance)
         name = instance.class.ext_name
         return unless @_extension_activation_callbacks && @_extension_activation_callbacks.key?(name)
+
         @_extension_activation_callbacks[name].each do |block|
           block.arity == 1 ? block.call(instance) : block.call
         end
@@ -307,7 +308,7 @@ module Middleman
     # @param [Hash] options_hash The raw options hash. Subclasses should not manipulate this directly - it will be turned into {#options}.
     # @yield An optional block that can be used to customize options before the extension is activated.
     # @yieldparam [Middleman::Configuration::ConfigurationManager] options Extension options
-    def initialize(app, options_hash={}, &block)
+    def initialize(app, options_hash = {}, &block)
       @_helpers = []
       @app = app
 
@@ -423,17 +424,17 @@ module Middleman
     def generate_resources(resources)
       generator_defs = self.class.resources_generators.reduce({}) do |sum, g|
         resource_definitions = if g.is_a? Hash
-          g
-        elsif g.is_a? Symbol
-          definition = method(g)
+                                 g
+                               elsif g.is_a? Symbol
+                                 definition = method(g)
 
-          if definition.arity == 0
-            send(g)
-          else
-            send(g, resources)
-          end
-        else
-          {}
+                                 if definition.arity == 0
+                                   send(g)
+                                 else
+                                   send(g, resources)
+                                 end
+                               else
+                                 {}
         end
 
         sum.merge!(resource_definitions)
@@ -444,9 +445,9 @@ module Middleman
           definition = method(g)
 
           g = if definition.arity == 0
-            send(g)
-          else
-            send(g, resources)
+                send(g)
+              else
+                send(g, resources)
           end
         end
 
@@ -492,7 +493,7 @@ module Middleman
   end
 
   class ConfigExtension < Extension
-    def initialize(app, config={}, &block)
+    def initialize(app, config = {}, &block)
       @descriptors = {}
       @ready = false
 

@@ -50,7 +50,7 @@ module Middleman
       end
 
       # Needed so that method_missing makes sense
-      def respond_to?(method, include_private=false)
+      def respond_to?(method, include_private = false)
         super || defines_setting?(method) || (method =~ /^(\w+)=$/ && defines_setting?($1))
       end
 
@@ -71,7 +71,7 @@ module Middleman
       # @param [String] description A human-readable description of what the option does
       # @param [Hash] options Additional options.
       # @return [ConfigSetting]
-      def define_setting(key, default=nil, description=nil, options={})
+      def define_setting(key, default = nil, description = nil, options = {})
         raise "Setting #{key} doesn't exist" if @finalized
         raise "Setting #{key} already defined" if @settings.key?(key)
         raise 'Setting key must be a Symbol' unless key.is_a? Symbol
@@ -127,7 +127,7 @@ module Middleman
       # Additional config.
       attr_accessor :options
 
-      def initialize(key, default, description, options={})
+      def initialize(key, default, description, options = {})
         @value_set = false
         self.key = key
         self.default = default

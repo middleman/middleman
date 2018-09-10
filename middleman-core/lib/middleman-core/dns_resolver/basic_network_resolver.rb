@@ -8,7 +8,7 @@ module Middleman
 
       public
 
-      def initialize(opts={})
+      def initialize(opts = {})
         @timeouts = opts.fetch(:timeouts, 2)
       end
 

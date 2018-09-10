@@ -33,7 +33,7 @@ module Middleman
     # @param [Symbol] preferred_engine
     # @return [String]
     Contract IsA['Middleman::Application'], Or[String, Symbol], Symbol => Maybe[IsA['Middleman::SourceFile']]
-    def self.locate_layout(app, name, preferred_engine=nil)
+    def self.locate_layout(app, name, preferred_engine = nil)
       resolve_opts = {}
       resolve_opts[:preferred_engine] = preferred_engine unless preferred_engine.nil?
 
@@ -52,7 +52,7 @@ module Middleman
     # @option options [Boolean] :preferred_engine If set, try this engine first, then fall back to any engine.
     # @return [String, Boolean] Either the path to the template, or false
     Contract IsA['Middleman::Application'], Or[Symbol, String], Maybe[Hash] => Maybe[IsA['Middleman::SourceFile']]
-    def self.resolve_template(app, request_path, options={})
+    def self.resolve_template(app, request_path, options = {})
       # Find the path by searching
       relative_path = Util.strip_leading_slash(request_path.to_s)
 
@@ -80,11 +80,11 @@ module Middleman
 
         # Cache lookups in build mode only
         file = if app.build?
-          cache.fetch(path_with_ext, preferred_engine) do
-            app.files.find(:source, path_with_ext, globbing)
-          end
-        else
-          app.files.find(:source, path_with_ext, globbing)
+                 cache.fetch(path_with_ext, preferred_engine) do
+                   app.files.find(:source, path_with_ext, globbing)
+                 end
+               else
+                 app.files.find(:source, path_with_ext, globbing)
         end
 
         found_template = file if file && (preferred_engine.nil? || ::Middleman::Util.tilt_class(file[:full_path].to_s))
@@ -109,7 +109,7 @@ module Middleman
     # @param [Hash] opts
     # @return [String]
     Contract Hash, Hash => String
-    def render(locs={}, opts={}, &block)
+    def render(locs = {}, opts = {}, &block)
       path = @path.dup
       locals = locs.dup.freeze
       options = opts.dup
@@ -151,13 +151,13 @@ module Middleman
       layout_file = fetch_layout(engine, options)
       if layout_file
         content = if layout_file = fetch_layout(engine, options)
-          layout_renderer = ::Middleman::FileRenderer.new(@app, layout_file[:relative_path].to_s)
+                    layout_renderer = ::Middleman::FileRenderer.new(@app, layout_file[:relative_path].to_s)
 
-          ::Middleman::Util.instrument 'builder.output.resource.render-layout', path: File.basename(layout_file[:relative_path].to_s) do
-            layout_renderer.render(locals, options, context) { content }
-          end
-        else
-          content
+                    ::Middleman::Util.instrument 'builder.output.resource.render-layout', path: File.basename(layout_file[:relative_path].to_s) do
+                      layout_renderer.render(locals, options, context) { content }
+                    end
+                  else
+                    content
         end
       end
 
@@ -209,11 +209,11 @@ module Middleman
       # The engine for the layout can be set in options, engine_options or passed
       # into this method
       layout_engine = if opts.key?(:layout_engine)
-        opts[:layout_engine]
-      elsif engine_options.key?(:layout_engine)
-        engine_options[:layout_engine]
-      else
-        engine
+                        opts[:layout_engine]
+                      elsif engine_options.key?(:layout_engine)
+                        engine_options[:layout_engine]
+                      else
+                        engine
       end
 
       # Automatic mode
@@ -236,7 +236,7 @@ module Middleman
     # @param [Symbol] preferred_engine
     # @return [String]
     Contract Or[String, Symbol], Symbol => Maybe[IsA['Middleman::SourceFile']]
-    def locate_layout(name, preferred_engine=nil)
+    def locate_layout(name, preferred_engine = nil)
       self.class.locate_layout(@app, name, preferred_engine)
     end
 
@@ -245,7 +245,7 @@ module Middleman
     # @param [Hash] options
     # @return [Array<String, Symbol>, Boolean]
     Contract String, Hash => ArrayOf[Or[String, Symbol]]
-    def resolve_template(request_path, options={})
+    def resolve_template(request_path, options = {})
       self.class.resolve_template(@app, request_path, options)
     end
   end

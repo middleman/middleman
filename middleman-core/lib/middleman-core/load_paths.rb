@@ -5,7 +5,6 @@ module Middleman
   class << self
     def setup_load_paths
       @_is_setup ||= begin
-
         # Only look for config.rb if MM_ROOT isn't set
         if !ENV['MM_ROOT'] && (found_path = findup('config.rb'))
           ENV['MM_ROOT'] = found_path
@@ -39,10 +38,11 @@ module Middleman
     end
 
     # Recursive method to find a file in parent directories
-    def findup(filename, cwd=Dir.pwd)
+    def findup(filename, cwd = Dir.pwd)
       cwd = Pathname(cwd)
       return cwd.to_s if (cwd + filename).exist?
       return false if cwd.root?
+
       findup(filename, cwd.parent)
     end
   end

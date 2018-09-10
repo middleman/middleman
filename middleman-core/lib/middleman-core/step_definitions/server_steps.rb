@@ -76,7 +76,7 @@ When /^I go to "([^\"]*)"$/ do |url|
 end
 
 Then /^going to "([^\"]*)" should not raise an exception$/ do |url|
-  expect{ visit(URI.encode(url).to_s) }.to_not raise_exception
+  expect { visit(URI.encode(url).to_s) }.to_not raise_exception
 end
 
 Then /^the content type should be "([^\"]*)"$/ do |expected|

@@ -22,7 +22,7 @@ module Middleman
 
       attr_writer :https
 
-      def initialize(opts={})
+      def initialize(opts = {})
         @resolver     = opts.fetch(:resolver, DnsResolver.new)
         @validator    = opts.fetch(:validator, ServerInformationValidator.new)
         @network_interface_inventory = opts.fetch(:network_interface_inventory, NetworkInterfaceInventory.new)

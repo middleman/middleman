@@ -65,7 +65,7 @@ module Middleman
     class MiddlemanRedcarpetHTML < ::Redcarpet::Render::HTML
       cattr_accessor :scope
 
-      def initialize(options={})
+      def initialize(options = {})
         @local_options = options.dup
 
         super

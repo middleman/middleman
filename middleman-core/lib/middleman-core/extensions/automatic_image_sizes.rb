@@ -1,6 +1,6 @@
 # Automatic Image Sizes extension
 class Middleman::Extensions::AutomaticImageSizes < ::Middleman::Extension
-  def initialize(app, options_hash={}, &block)
+  def initialize(app, options_hash = {}, &block)
     super
 
     # Include 3rd-party fastimage library
@@ -14,7 +14,7 @@ class Middleman::Extensions::AutomaticImageSizes < ::Middleman::Extension
     # @param [String] path
     # @param [Hash] params
     # @return [String]
-    def image_tag(path, params={})
+    def image_tag(path, params = {})
       if !params.key?(:width) && !params.key?(:height) && !path.include?('://')
         real_path = path.dup
         real_path = File.join(config[:images_dir], real_path) unless real_path.start_with?('/')

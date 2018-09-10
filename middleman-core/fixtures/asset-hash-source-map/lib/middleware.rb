@@ -6,7 +6,7 @@ class Middleware
   def call(env)
     status, headers, response = @app.call(env)
     body = ''
-    response.each {|part| body += part }
+    response.each { |part| body += part }
     if (env["PATH_INFO"] =~ /css$/)
       body += "\n/* Added by Rack filter */"
       status, headers, response = Rack::Response.new(body, status, headers).finish

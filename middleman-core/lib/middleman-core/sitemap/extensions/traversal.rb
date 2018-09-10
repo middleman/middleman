@@ -4,9 +4,9 @@ module Middleman
       module Traversal
         def traversal_root
           root = if !@app.extensions[:i18n]
-            '/'
-          else
-            @app.extensions[:i18n].path_root(::I18n.locale)
+                   '/'
+                 else
+                   @app.extensions[:i18n].path_root(::I18n.locale)
           end
 
           root.sub(/^\//, '')
@@ -14,7 +14,7 @@ module Middleman
 
         # This resource's parent resource
         # @return [Middleman::Sitemap::Resource, nil]
-        def parent(recurse=false)
+        def parent(recurse = false)
           max_recursion = @app.config[:max_traversal_recursion] || 99
           _parent(path, max_recursion)
         end
@@ -91,6 +91,7 @@ module Middleman
           if !parts.empty? && max_recursion > 0
             return _parent parts.join('/'), max_recursion - 1
           end
+
           return nil
         end
 
@@ -100,9 +101,9 @@ module Middleman
           return [] unless directory_index?
 
           base_path = if eponymous_directory?
-            eponymous_directory_path
-          else
-            path.sub(@app.config[:index_file].to_s, '')
+                        eponymous_directory_path
+                      else
+                        path.sub(@app.config[:index_file].to_s, '')
           end
 
           prefix = %r{^#{base_path.sub("/", "\\/")}}
@@ -123,10 +124,12 @@ module Middleman
             end
           end
         end
+
         # This resource's sibling resources
         # @return [Array<Middleman::Sitemap::Resource>]
         def siblings
           return [] unless parent
+
           parent.children.reject { |p| p == self }
         end
 

@@ -13,7 +13,7 @@ module Middleman
           @data = data
         end
 
-        def value(_ctx=nil)
+        def value(_ctx = nil)
           @data
         end
 

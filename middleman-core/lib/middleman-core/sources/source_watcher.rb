@@ -59,7 +59,7 @@ module Middleman
     # @param [String] directory The on-disk path to watch.
     # @param [Hash] options Configuration options.
     Contract IsA['Middleman::Sources'], Symbol, String, Hash => Any
-    def initialize(parent, type, directory, options={})
+    def initialize(parent, type, directory, options = {})
       @parent = parent
       @options = options
 
@@ -103,7 +103,7 @@ module Middleman
       poll_once!
     end
 
-    def update_config(options={})
+    def update_config(options = {})
       without_listener_running do
         @disable_watcher = options.fetch(:disable_watcher, false)
         @force_polling = options.fetch(:force_polling, false)
@@ -134,7 +134,7 @@ module Middleman
     # @param [Boolean] glob If the path contains wildcard characters.
     # @return [Middleman::SourceFile, nil]
     Contract Or[String, Pathname], Maybe[Bool] => Maybe[IsA['Middleman::SourceFile']]
-    def find(path, glob=false)
+    def find(path, glob = false)
       path = path.to_s.encode!('UTF-8', 'UTF-8-MAC') if RUBY_PLATFORM =~ /darwin/
 
       p = Pathname(path)
@@ -143,7 +143,7 @@ module Middleman
 
       destination_dir = @options[:destination_dir]
       if destination_dir.present? && p.to_s.start_with?(destination_dir)
-        path_without_destination_dir = p.to_s[destination_dir.to_s.length + 1 .. -1]
+        path_without_destination_dir = p.to_s[destination_dir.to_s.length + 1..-1]
         p = Pathname(path_without_destination_dir)
       end
 

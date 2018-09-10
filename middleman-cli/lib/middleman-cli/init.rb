@@ -39,25 +39,25 @@ module Middleman::Cli
       end
 
       repo_path, repo_branch = if shortname?(options[:template])
-        require 'open-uri'
-        require 'json'
+                                 require 'open-uri'
+                                 require 'json'
 
-        api = 'https://directory.middlemanapp.com/api'
-        uri = ::URI.parse("#{api}/#{options[:template]}.json")
+                                 api = 'https://directory.middlemanapp.com/api'
+                                 uri = ::URI.parse("#{api}/#{options[:template]}.json")
 
-        begin
-          data = ::JSON.parse(uri.read)
-          is_local_dir = false
-          data['links']['github'].split('#')
-        rescue ::OpenURI::HTTPError
-          say "Template `#{options[:template]}` not found in Middleman Directory."
-          say 'Did you mean to use a full `user/repo` path?'
-          exit 1
-        end
-      else
-        repo_name, repo_branch = options[:template].split('#')
-        repo_path, is_local_dir = repository_path(repo_name)
-        [repo_path, repo_branch]
+                                 begin
+                                   data = ::JSON.parse(uri.read)
+                                   is_local_dir = false
+                                   data['links']['github'].split('#')
+                                 rescue ::OpenURI::HTTPError
+                                   say "Template `#{options[:template]}` not found in Middleman Directory."
+                                   say 'Did you mean to use a full `user/repo` path?'
+                                   exit 1
+                                 end
+                               else
+                                 repo_name, repo_branch = options[:template].split('#')
+                                 repo_path, is_local_dir = repository_path(repo_name)
+                                 [repo_path, repo_branch]
       end
 
       begin
@@ -88,6 +88,7 @@ module Middleman::Cli
     # Copied from Bundler
     def git_present?
       return @git_present if defined?(@git_present)
+
       @git_present = which(GIT_CMD) || which('git.exe')
     end
 

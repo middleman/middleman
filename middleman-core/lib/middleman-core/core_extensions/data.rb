@@ -19,7 +19,7 @@ module Middleman
       # The regex which tells Middleman which files are for data
       DATA_FILE_MATCHER = /^(.*?)[\w-]+\.(yml|yaml|json)$/
 
-      def initialize(app, config={}, &block)
+      def initialize(app, config = {}, &block)
         super
 
         @data_store = DataStore.new(app, DATA_FILE_MATCHER)
@@ -68,7 +68,7 @@ module Middleman
         # @param [Hash] content The content for this data
         # @return [Hash]
         Contract Symbol, Or[Hash, Array] => Hash
-        def store(name=nil, content=nil)
+        def store(name = nil, content = nil)
           @local_sources[name.to_s] = content unless name.nil? || content.nil?
           @local_sources
         end
@@ -79,7 +79,7 @@ module Middleman
         # @param [Proc] proc The callback which will return data
         # @return [Hash]
         Contract Maybe[Symbol], Maybe[Proc] => Hash
-        def callbacks(name=nil, proc=nil)
+        def callbacks(name = nil, proc = nil)
           @callback_sources[name.to_s] = proc unless name.nil? || proc.nil?
           @callback_sources
         end
@@ -153,9 +153,9 @@ module Middleman
         Contract Or[String, Symbol] => Maybe[Or[Array, IsA['Middleman::Util::EnhancedHash']]]
         def data_for_path(path)
           response = if store.key?(path.to_s)
-            store[path.to_s]
-          elsif callbacks.key?(path.to_s)
-            callbacks[path.to_s].call
+                       store[path.to_s]
+                     elsif callbacks.key?(path.to_s)
+                       callbacks[path.to_s].call
           end
 
           ::Middleman::Util.recursively_enhance(response)
@@ -179,7 +179,7 @@ module Middleman
         end
 
         # Needed so that method_missing makes sense
-        def respond_to?(method, include_private=false)
+        def respond_to?(method, include_private = false)
           super || key?(method)
         end
 

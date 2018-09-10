@@ -44,9 +44,9 @@ module Middleman
 
       # Read from disk or cache the contents of the file
       body = if opts[:template_body]
-        opts.delete(:template_body)
-      else
-        template_data_for_file
+               opts.delete(:template_body)
+             else
+               template_data_for_file
       end
 
       # Merge per-extension options from config

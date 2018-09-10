@@ -18,7 +18,7 @@ module Middleman
 
       # Start an instance of Middleman::Application
       # @return [void]
-      def start(opts={}, cli_options={})
+      def start(opts = {}, cli_options = {})
         # Do not buffer output, otherwise testing of output does not work
         $stdout.sync = true
         $stderr.sync = true
@@ -49,6 +49,7 @@ module Middleman
 
         @initialized ||= false
         return if @initialized
+
         @initialized = true
 
         register_signal_handlers
@@ -245,6 +246,7 @@ module Middleman
 
           if ssl_certificate || ssl_private_key
             raise 'You must provide both :ssl_certificate and :ssl_private_key' unless ssl_private_key && ssl_certificate
+
             http_opts[:SSLCertificate] = OpenSSL::X509::Certificate.new ::File.read ssl_certificate
             http_opts[:SSLPrivateKey] = OpenSSL::PKey::RSA.new ::File.read ssl_private_key
           else
@@ -260,9 +262,9 @@ module Middleman
         end
 
         http_opts[:Logger] = if is_logging
-          FilteredWebrickLog.new
-        else
-          ::WEBrick::Log.new(nil, 0)
+                               FilteredWebrickLog.new
+                             else
+                               ::WEBrick::Log.new(nil, 0)
         end
 
         begin

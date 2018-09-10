@@ -36,7 +36,7 @@ class Middleman::Extensions::MinifyJavascript < ::Middleman::Extension
       inline: Bool,
       compressor: Or[Proc, RespondTo[:to_proc], RespondTo[:compress]]
     } => Any
-    def initialize(app, options={})
+    def initialize(app, options = {})
       @app = app
       @ignore = options.fetch(:ignore)
       @inline = options.fetch(:inline)
@@ -58,9 +58,9 @@ class Middleman::Extensions::MinifyJavascript < ::Middleman::Extension
       @path = env['PATH_INFO']
 
       minified = if @inline && minifiable_inline?(type)
-        minify_inline(::Middleman::Util.extract_response_text(response))
-      elsif minifiable?(type) && !ignore?(@path)
-        minify(::Middleman::Util.extract_response_text(response))
+                   minify_inline(::Middleman::Util.extract_response_text(response))
+                 elsif minifiable?(type) && !ignore?(@path)
+                   minify(::Middleman::Util.extract_response_text(response))
       end
 
       if minified

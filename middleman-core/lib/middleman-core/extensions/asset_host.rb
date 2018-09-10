@@ -7,7 +7,7 @@ class Middleman::Extensions::AssetHost < ::Middleman::Extension
   option :ignore, [], 'Regexes of filenames to skip adding query strings to'
   option :rewrite_ignore, [], 'Regexes of filenames to skip processing for host rewrites'
 
-  def initialize(app, options_hash={}, &block)
+  def initialize(app, options_hash = {}, &block)
     super
 
     app.rewrite_inline_urls id: :asset_host,
@@ -24,15 +24,15 @@ class Middleman::Extensions::AssetHost < ::Middleman::Extension
     relative_path = uri.path[0..0] != '/'
 
     full_asset_path = if relative_path
-      dirpath.join(asset_path).to_s
-    else
-      asset_path
+                        dirpath.join(asset_path).to_s
+                      else
+                        asset_path
     end
 
     asset_prefix = if options[:host].is_a?(Proc)
-      options[:host].call(full_asset_path)
-    elsif options[:host].is_a?(String)
-      options[:host]
+                     options[:host].call(full_asset_path)
+                   elsif options[:host].is_a?(String)
+                     options[:host]
     end
 
     File.join(asset_prefix, full_asset_path)

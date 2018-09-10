@@ -57,7 +57,7 @@ module Middleman
       #
       # @param [Symbol] type
       #   The type of interface which should be returned
-      def network_interfaces(type=:all)
+      def network_interfaces(type = :all)
         types.find { |t| t.match? type.to_sym }.new.network_interfaces
       end
     end

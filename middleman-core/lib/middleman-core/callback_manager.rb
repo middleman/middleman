@@ -47,7 +47,7 @@ module Middleman
     end
 
     Contract Or[Symbol, ArrayOf[Symbol]], Maybe[ArrayOf[Any]], Maybe[RespondTo[:instance_exec]] => Any
-    def execute(keys, args=[], scope=self)
+    def execute(keys, args = [], scope = self)
       callbacks = callbacks_for(keys)
       callbacks_count = callbacks.length + @subscribers.length
 

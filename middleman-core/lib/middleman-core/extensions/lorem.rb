@@ -11,7 +11,7 @@ class Middleman::Extensions::Lorem < ::Middleman::Extension
     # @param [String] size
     # @param [Hash] options
     # @return [String]
-    def placekitten(size, options={})
+    def placekitten(size, options = {})
       options[:domain] = 'http://placekitten.com'
       lorem.image(size, options)
     end
@@ -94,7 +94,7 @@ class Middleman::Extensions::Lorem < ::Middleman::Extension
       # Get a placeholder date
       # @param [String] fmt
       # @return [String]
-      def date(fmt='%a %b %d, %Y')
+      def date(fmt = '%a %b %d, %Y')
         y = rand(20) + 1990
         m = rand(12) + 1
         d = rand(31) + 1
@@ -144,7 +144,7 @@ class Middleman::Extensions::Lorem < ::Middleman::Extension
       # @param [String] size
       # @param [Hash] options
       # @return [String]
-      def image(size, options={})
+      def image(size, options = {})
         domain           = options[:domain] || 'http://placehold.it'
         src              = "#{domain}/#{size}"
         hex              = %w(a b c d e f 0 1 2 3 4 5 6 7 8 9)

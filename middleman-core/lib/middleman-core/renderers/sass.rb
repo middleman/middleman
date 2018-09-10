@@ -16,7 +16,7 @@ module Middleman
       define_setting :sass_source_maps, nil, 'Whether to inline sourcemap into Sass'
 
       # Setup extension
-      def initialize(app, options={}, &block)
+      def initialize(app, options = {}, &block)
         super
 
         logger.info '== Preferring use of LibSass' if defined?(::SassC)
@@ -57,9 +57,9 @@ module Middleman
           @context ||= context
 
           sass_module = if defined?(::SassC)
-            ::SassC
-          else
-            ::Sass
+                          ::SassC
+                        else
+                          ::Sass
           end
 
           @engine = sass_module::Engine.new(data, sass_options)

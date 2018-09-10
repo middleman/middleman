@@ -1,11 +1,13 @@
+# frozen_string_literal: true
+
 require 'rake'
 
-require File.expand_path('../middleman-core/lib/middleman-core/version.rb', __FILE__)
+require File.expand_path('middleman-core/lib/middleman-core/version.rb', __dir__)
 
-ROOT = File.expand_path(File.dirname(__FILE__))
-GEM_NAME = 'middleman'.freeze
+ROOT = __dir__
+GEM_NAME = 'middleman'
 
-middleman_gems = %w(middleman-core middleman-cli middleman)
+middleman_gems = %w[middleman-core middleman-cli middleman]
 GEM_PATHS = middleman_gems.freeze
 
 def sh_rake(command)

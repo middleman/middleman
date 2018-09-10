@@ -101,7 +101,7 @@ module Middleman::Cli
     # @param [String] contents The event contents.
     # @param [String] extra The extra information.
     # @return [void]
-    def on_event(event_type, target, extra=nil)
+    def on_event(event_type, target, extra = nil)
       case event_type
       when :error
         say_status :error, target, :red

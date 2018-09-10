@@ -4,7 +4,7 @@ module Middleman
   class DnsResolver
     # Use network name server to resolve ips and names
     class NetworkResolver < BasicNetworkResolver
-      def initialize(opts={})
+      def initialize(opts = {})
         super
 
         @resolver = opts.fetch(:resolver, Resolv::DNS.new(nameserver_config))

@@ -4,4 +4,4 @@ end
 
 page "/overwrites/*", id: :"something-else"
 
-config[:page_id_generator] = ->(path){ path + "-foo" }
+config[:page_id_generator] = ->(path) { path + "-foo" }

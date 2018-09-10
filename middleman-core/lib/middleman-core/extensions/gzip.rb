@@ -18,7 +18,7 @@ class Middleman::Extensions::Gzip < ::Middleman::Extension
     include ::Padrino::Helpers::NumberHelpers
   end
 
-  def initialize(app, options_hash={})
+  def initialize(app, options_hash = {})
     super
 
     require 'zlib'
