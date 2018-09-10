@@ -179,14 +179,14 @@ Feature: Assets get file hashes appended to them and references to them are upda
         font-size: 14px
       """
     When I go to "/partials/"
-    Then I should see 'href="../stylesheets/uses_partials-58447acf.css'
+    Then I should see 'href="../stylesheets/uses_partials-a3c8302b.css'
     And the file "source/stylesheets/_partial.sass" has the contents
       """
       body
         font-size: 18px !important
       """
     When I go to "/partials/"
-    Then I should see 'href="../stylesheets/uses_partials-72fbbb45.css'
+    Then I should see 'href="../stylesheets/uses_partials-08ee47a7.css'
 
   Scenario: The asset hash should change when a Rack-based filter changes
     Given a fixture app "asset-hash-app"
