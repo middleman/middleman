@@ -279,7 +279,7 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
     end
 
     def partial(template, options={}, &block)
-      including_parent_locals = {}
+      including_parent_locals = Middleman::Util::EnhancedHash.new
       including_parent_locals.merge!(@locs || {})
       including_parent_locals.merge!(options[:locals] || {})
 

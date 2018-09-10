@@ -37,7 +37,7 @@ Feature: Provide Sane Defaults for Partial Behavior
   Scenario: Partials can be passed locals
     Given the Server is running at "partials-app"
     When I go to "/locals.html"
-    Then I should see "Local var is bar"
+    Then I should see "Local vars are 'foo', 'bar' and 'baz'"
 
   Scenario: Partial and Layout use different engines
     Given the Server is running at "different-engine-partial"
