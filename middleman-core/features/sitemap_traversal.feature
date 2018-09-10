@@ -8,7 +8,7 @@ Feature: Step through sitemap as a tree
     Then I should see "Child: sub/index.html"
     Then I should see "Child: root.html"
     Then I should not see "Child: proxied.html"
-  
+
   Scenario: Directories have children and a parent
     Given the Server is running at "traversal-app"
     When I go to "/sub/index.html"
@@ -32,7 +32,7 @@ Feature: Step through sitemap as a tree
     Then I should see "Child: sub/sibling2.html"
     Then I should see "Child: sub/sub2/index.html"
     Then I should see "Sibling: root.html"
-    
+
   Scenario: Page has siblings, parent, and source file
     Given the Server is running at "traversal-app"
     When I go to "/sub/sibling.html"
@@ -42,7 +42,7 @@ Feature: Step through sitemap as a tree
     Then I should see "Sibling: sub/sibling2.html"
     Then I should see "Sibling: sub/sub2/index.html"
     Then I should see "Source: source/sub/sibling.html.erb"
-  
+
   Scenario: Proxied page has siblings, parent, and source file
     Given the Server is running at "traversal-app"
     When I go to "/sub/fake.html"
@@ -81,3 +81,28 @@ Feature: Step through sitemap as a tree
     Then I should see "Sibling: directory-indexed/fake2.html"
     Then I should see "Sibling: directory-indexed/sibling2.html"
     Then I should see "Sibling: directory-indexed/sub2/index.html"
+
+  Scenario: Child pages who have been renamed can see their parent and siblings
+    Given the Server is running at "traversal-app"
+    When I go to "/rename_paths/item_one.html"
+    Then I should see "Path: rename_paths/10_item_one.html"
+    Then I should see "Parent: rename_paths/index.html"
+    Then I should see "Sibling: rename_paths/20_item_two.html"
+    Then I should see "Sibling: rename_paths/30_item_three/index.html"
+
+  Scenario: Child pages within renamed directories can see their parent and siblings
+    Given the Server is running at "traversal-app"
+    When I go to "/rename_paths/item_three/sibling_one.html"
+    Then I should see "Path: rename_paths/30_item_three/sibling_one.html"
+    Then I should see "Parent: rename_paths/30_item_three/index.html"
+    Then I should see "Sibling: rename_paths/30_item_three/20_sibling_two.html"
+
+  Scenario: Renamed child pages within renamed directories can see their parent and siblings
+    Given the Server is running at "traversal-app"
+    When I go to "/rename_paths/item_three/sibling_two.html"
+    Then I should see "Path: rename_paths/30_item_three/20_sibling_two.html"
+    Then I should see "Parent: rename_paths/30_item_three/index.html"
+    Then I should see "Sibling: rename_paths/30_item_three/sibling_one.html"
+
+
+
