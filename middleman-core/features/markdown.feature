@@ -6,7 +6,6 @@ Feature: Markdown support
     When I go to "/index.html"
     Then I should see "<p>Hello World</p>"
 
-  @encoding
   Scenario: Markdown extensions (Maruku)
     Given the Server is running at "markdown-app"
     When I go to "/smarty_pants.html"
