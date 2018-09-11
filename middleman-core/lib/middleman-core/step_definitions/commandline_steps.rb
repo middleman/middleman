@@ -4,7 +4,7 @@ When /^I stop (?:middleman|all commands) if the output( of the last command)? co
       loop do
         raise 'You need to start middleman interactively first.' unless @interactive
 
-        if sanitize_text(@interactive.output) && sanitize_text(@interactive.output).match?(Regexp.new(sanitize_text(expected)))
+        if sanitize_text(@interactive.output)&.match?(Regexp.new(sanitize_text(expected)))
           all_commands.each(&:terminate)
           break
         end

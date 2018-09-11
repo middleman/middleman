@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
   s.files        = `git ls-files -z`.split("\0")
   s.test_files   = `git ls-files -z -- {fixtures,features}/*`.split("\0")
   s.require_path = 'lib'
-  s.required_ruby_version = '>= 2.2.0'
+  s.required_ruby_version = '>= 2.3.0'
 
   # Core
   s.add_dependency('bundler', ['~> 1.1'])
@@ -32,6 +32,7 @@ Gem::Specification.new do |s|
   s.add_dependency('padrino-helpers', ['~> 0.13.0'])
   s.add_dependency('addressable', ['~> 2.3'])
   s.add_dependency('memoist', ['~> 0.14'])
+  s.add_dependency('backports', ['~> 3.11'])
 
   # Watcher
   s.add_dependency('listen', ['~> 3.0'])

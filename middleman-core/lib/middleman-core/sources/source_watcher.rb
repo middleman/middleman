@@ -363,7 +363,7 @@ module Middleman
     private
 
     def without_listener_running
-      listener_running = @listener && @listener.processing?
+      listener_running = @listener&.processing?
 
       stop_listener! if listener_running
 

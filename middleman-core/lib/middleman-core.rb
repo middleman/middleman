@@ -2,6 +2,8 @@
 libdir = __dir__
 $LOAD_PATH.unshift(libdir) unless $LOAD_PATH.include?(libdir)
 
+require 'backports/latest'
+
 # Top-level Middleman namespace
 module Middleman
   autoload :Application, 'middleman-core/application'
