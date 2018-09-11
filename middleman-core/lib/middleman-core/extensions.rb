@@ -63,7 +63,7 @@ module Middleman
 
         registered[name] = if block_given?
                              block
-                           elsif extension_class&.ancestors&.include?(::Middleman::Extension)
+                           elsif extension_class && extension_class.ancestors && extension_class.ancestors.include?(::Middleman::Extension)
                              extension_class
                            else
                              raise 'You must provide a Middleman::Extension or a block that returns a Middleman::Extension'
@@ -124,11 +124,13 @@ module Middleman
 
       def load_settings(app)
         registered.each do |name, _|
-          ext = load(name)
-          unless ext.global_config.all_settings.empty?
-            app.config.load_settings(ext.global_config.all_settings)
+          begin
+            ext = load(name)
+            unless ext.global_config.all_settings.empty?
+              app.config.load_settings(ext.global_config.all_settings)
+            end
+          rescue LoadError
           end
-        rescue LoadError
         end
       end
     end

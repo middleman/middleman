@@ -5,7 +5,7 @@ require 'rake'
 require File.expand_path('middleman-core/lib/middleman-core/version.rb', __dir__)
 
 ROOT = __dir__
-GEM_NAME = 'middleman'
+GEM_NAME = 'middleman'.freeze
 
 middleman_gems = %w[middleman-core middleman-cli middleman]
 GEM_PATHS = middleman_gems.freeze
