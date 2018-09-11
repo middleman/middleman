@@ -21,17 +21,17 @@ module Middleman
     def_delegator :@app, :logger
 
     # Sort order, images, fonts, js/css and finally everything else.
-    SORT_ORDER = %w(.png .jpeg .jpg .gif .bmp .svg .svgz .webp .ico .woff .woff2 .otf .ttf .eot .js .css).freeze
+    SORT_ORDER = %w[.png .jpeg .jpg .gif .bmp .svg .svgz .webp .ico .woff .woff2 .otf .ttf .eot .js .css].freeze
 
     # Create a new Builder instance.
     # @param [Middleman::Application] app The app to build.
     # @param [Hash] opts The builder options
-    def initialize(app, opts={})
+    def initialize(app, opts = {})
       @app = app
       @source_dir = Pathname(File.join(@app.root, @app.config[:source]))
       @build_dir = Pathname(@app.config[:build_dir])
 
-      if @build_dir.expand_path.relative_path_from(@source_dir).to_s =~ /\A[.\/]+\Z/
+      if /\A[.\/]+\Z/.match?(@build_dir.expand_path.relative_path_from(@source_dir).to_s)
         raise ":build_dir (#{@build_dir}) cannot be a parent of :source_dir (#{@source_dir})"
       end
 
@@ -134,10 +134,10 @@ module Middleman
     Contract ResourceList => ResourceList
     def output_resources(resources)
       results = if @parallel
-        ::Parallel.map(resources, &method(:output_resource))
-      else
-        resources.map(&method(:output_resource))
-      end
+                  ::Parallel.map(resources, &method(:output_resource))
+                else
+                  resources.map(&method(:output_resource))
+                end
 
       @has_error = true if results.any? { |r| r == false }
 
@@ -146,11 +146,11 @@ module Middleman
           next unless p.exist?
 
           # handle UTF-8-MAC filename on MacOS
-          cleaned_name = if RUBY_PLATFORM =~ /darwin/
-            p.to_s.encode('UTF-8', 'UTF-8-MAC')
-          else
-            p
-          end
+          cleaned_name = if RUBY_PLATFORM.match?(/darwin/)
+                           p.to_s.encode('UTF-8', 'UTF-8-MAC')
+                         else
+                           p
+                         end
 
           @to_clean.delete(Pathname(cleaned_name))
         end
@@ -199,14 +199,14 @@ module Middleman
       source = write_tempfile(output_file, source.to_s) if source.is_a? String
 
       method, source_path = if source.is_a? Tempfile
-        [::FileUtils.method(:mv), source.path]
-      else
-        [::FileUtils.method(:cp), source.to_s]
-      end
+                              [::FileUtils.method(:mv), source.path]
+                            else
+                              [::FileUtils.method(:cp), source.to_s]
+                            end
 
       mode = which_mode(output_file, source_path)
 
-      if mode == :created || mode == :updated
+      if %i[created updated].include? mode
         ::FileUtils.mkdir_p(output_file.dirname)
         method.call(source_path, output_file.to_s)
       end
@@ -239,7 +239,7 @@ module Middleman
               return false
             end
           end
-        rescue => e
+        rescue StandardError => e
           trigger(:error, output_file, "#{e}\n#{e.backtrace.join("\n")}")
           return false
         end
@@ -267,7 +267,7 @@ module Middleman
 
       # handle UTF-8-MAC filename on MacOS
       @to_clean = @to_clean.map do |path|
-        if RUBY_PLATFORM =~ /darwin/
+        if RUBY_PLATFORM.match?(/darwin/)
           Pathname(path.to_s.encode('UTF-8', 'UTF-8-MAC'))
         else
           Pathname(path)
@@ -295,7 +295,7 @@ module Middleman
     end
 
     Contract Symbol, Or[String, Pathname], Maybe[String] => Any
-    def trigger(event_type, target, extra=nil)
+    def trigger(event_type, target, extra = nil)
       @events[event_type] ||= []
       @events[event_type] << target
 

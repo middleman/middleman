@@ -5,7 +5,6 @@ module Middleman
   class << self
     def setup_load_paths
       @_is_setup ||= begin
-
         # Only look for config.rb if MM_ROOT isn't set
         if !ENV['MM_ROOT'] && (found_path = findup('config.rb'))
           ENV['MM_ROOT'] = found_path
@@ -22,27 +21,28 @@ module Middleman
 
     # Set BUNDLE_GEMFILE and run Bundler setup. Raises an exception if there is no Gemfile
     def setup_bundler
-      if found_gemfile_root = findup('Gemfile', ENV['MM_ROOT'])
+      found_gemfile_root = findup('Gemfile', ENV['MM_ROOT'])
+
+      if found_gemfile_root
         ENV['BUNDLE_GEMFILE'] ||= File.join(found_gemfile_root, 'Gemfile')
       end
 
       unless File.exist?(ENV['BUNDLE_GEMFILE'])
-        ENV['BUNDLE_GEMFILE'] = File.expand_path('../../../../Gemfile', __FILE__)
+        ENV['BUNDLE_GEMFILE'] = File.expand_path('../../../Gemfile', __dir__)
       end
 
-      if File.exist?(ENV['BUNDLE_GEMFILE'])
-        require 'bundler/setup'
-        Bundler.require
-      else
-        raise "Couldn't find your Gemfile. Middleman projects require a Gemfile for specifying dependencies."
-      end
+      raise "Couldn't find your Gemfile. Middleman projects require a Gemfile for specifying dependencies." unless File.exist?(ENV['BUNDLE_GEMFILE'])
+
+      require 'bundler/setup'
+      Bundler.require
     end
 
     # Recursive method to find a file in parent directories
-    def findup(filename, cwd=Dir.pwd)
+    def findup(filename, cwd = Dir.pwd)
       cwd = Pathname(cwd)
       return cwd.to_s if (cwd + filename).exist?
       return false if cwd.root?
+
       findup(filename, cwd.parent)
     end
   end

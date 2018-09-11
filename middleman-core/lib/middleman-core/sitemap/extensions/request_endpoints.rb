@@ -27,7 +27,7 @@ module Middleman
         # @param [Hash] opts The :path value gives a request path if it
         # differs from the output path
         Contract String, Or[{ path: String }, Proc] => EndpointDescriptor
-        def endpoint(path, opts={}, &block)
+        def endpoint(path, opts = {}, &block)
           if block_given?
             EndpointDescriptor.new(path, path, block)
           else

@@ -24,7 +24,7 @@ module Middleman
       }.freeze
 
       # Setup the extension.
-      def initialize(app, config={}, &block)
+      def initialize(app, config = {}, &block)
         super
 
         # Setup source collection.

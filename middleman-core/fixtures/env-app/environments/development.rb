@@ -1,1 +1,1 @@
-set :api_key, "dev1"
+set :api_key, 'dev1'

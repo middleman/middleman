@@ -14,6 +14,7 @@ module Middleman
       def read_template_file(template_path)
         file = app.files.find(:source, "_#{template_path}.liquid")
         raise ::Liquid::FileSystemError, "No such template '#{template_path}'" unless file
+
         file.read
       end
 
@@ -24,7 +25,7 @@ module Middleman
 
         resources.each do |resource|
           next if resource.file_descriptor.nil?
-          next unless resource.file_descriptor[:full_path].to_s =~ %r{\.liquid$}
+          next unless resource.file_descriptor[:full_path].to_s =~ /\.liquid$/
 
           # Convert data object into a hash for liquid
           resource.add_metadata locals: {

@@ -1,5 +1,5 @@
 module HelloHelper
   def hello
-    "Hello World"
+    'Hello World'
   end
 end

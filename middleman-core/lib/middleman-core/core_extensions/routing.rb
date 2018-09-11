@@ -49,7 +49,7 @@ module Middleman
       # @option opts [Hash] data Extra metadata to add to the page. This is the same as frontmatter, though frontmatter will take precedence over metadata defined here. Available via {Resource#data}.
       # @return [void]
       Contract Or[String, Regexp], Hash => PageDescriptor
-      def page(path, opts={})
+      def page(path, opts = {})
         options = opts.dup
 
         page_data = options.delete(:data) || {}

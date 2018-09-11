@@ -1,5 +1,6 @@
-ENV["TEST"] = "true"
+ENV['TEST'] = 'true'
 
+require 'backports/latest'
 require 'sassc'
 
 require 'simplecov'

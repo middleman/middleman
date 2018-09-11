@@ -24,7 +24,7 @@ module Middleman
     include Contracts
 
     # Types which could cause output to change.
-    OUTPUT_TYPES = [:source, :locales, :data].freeze
+    OUTPUT_TYPES = %i[source locales data].freeze
 
     # Types which require a reload to eval ruby
     CODE_TYPES = [:reload].freeze
@@ -56,7 +56,7 @@ module Middleman
     # @param [Hash] options Global options.
     # @param [Array] watchers Default watchers.
     Contract IsA['Middleman::Application'], Maybe[Hash], Maybe[Array] => Any
-    def initialize(app, _options={}, watchers=[])
+    def initialize(app, _options = {}, watchers = [])
       @app = app
       @watchers = watchers
       @sorted_watchers = @watchers.dup.freeze
@@ -88,7 +88,7 @@ module Middleman
     # @param [Proc] block Ignore by block evaluation.
     # @return [void]
     Contract Symbol, Symbol, Or[Regexp, Proc] => Any
-    def ignore(name, type, regex=nil, &block)
+    def ignore(name, type, regex = nil, &block)
       @ignores = @ignores.put(name, type: type,
                                     validator: (block_given? ? block : regex))
 
@@ -116,13 +116,13 @@ module Middleman
     # @param [Hash] options The watcher options.
     # @return [#changed, #deleted]
     Contract Or[Symbol, HANDLER], Maybe[Hash] => HANDLER
-    def watch(type_or_handler, options={})
+    def watch(type_or_handler, options = {})
       handler = if type_or_handler.is_a? Symbol
-        path = File.expand_path(options.delete(:path), app.root)
-        SourceWatcher.new(self, type_or_handler, path, options)
-      else
-        type_or_handler
-      end
+                  path = File.expand_path(options.delete(:path), app.root)
+                  SourceWatcher.new(self, type_or_handler, path, options)
+                else
+                  type_or_handler
+                end
 
       @watchers << handler
 
@@ -188,7 +188,7 @@ module Middleman
     # @param [Boolean] glob If the path contains wildcard or glob characters.
     # @return [Middleman::SourceFile, nil]
     Contract Or[Symbol, ArrayOf[Symbol], SetOf[Symbol]], Or[Pathname, String], Maybe[Bool] => Maybe[SourceFile]
-    def find(types, path, glob=false)
+    def find(types, path, glob = false)
       array_of_types = Array(types)
 
       watchers
@@ -277,7 +277,7 @@ module Middleman
     #
     # @param [nil,Regexp] matcher A Regexp to match the change path against
     Contract Maybe[Matcher] => Any
-    def changed(matcher=nil, &_block)
+    def changed(matcher = nil, &_block)
       on_change OUTPUT_TYPES do |updated, _removed|
         updated
           .select { |f| matcher.nil? ? true : matches?(matcher, f) }
@@ -289,7 +289,7 @@ module Middleman
     #
     # @param [nil,Regexp] matcher A Regexp to match the change path against
     Contract Maybe[Matcher] => Any
-    def deleted(matcher=nil, &_block)
+    def deleted(matcher = nil, &_block)
       on_change OUTPUT_TYPES do |_updated, removed|
         removed
           .select { |f| matcher.nil? ? true : matches?(matcher, f) }

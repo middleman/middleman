@@ -316,6 +316,7 @@ Feature: Run the preview server
     Inspect your site configuration at "http://[::1]:4567/__middleman"
     """
 
+  @wip
   Scenario: Start the server with https
     When I run `middleman server --verbose --https` interactively
     And I stop middleman if the output contains:

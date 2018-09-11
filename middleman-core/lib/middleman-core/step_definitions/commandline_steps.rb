@@ -1,11 +1,11 @@
-When /^I stop (?:middleman|all commands) if the output( of the last command)? contains:$/ do |last_command, expected|
+When /^I stop (?:middleman|all commands) if the output( of the last command)? contains:$/ do |_last_command, expected|
   begin
     Timeout.timeout(aruba.config.exit_timeout) do
       loop do
-        fail "You need to start middleman interactively first." unless @interactive
+        raise 'You need to start middleman interactively first.' unless @interactive
 
-        if sanitize_text(@interactive.output) =~ Regexp.new(sanitize_text(expected))
-          all_commands.each { |p| p.terminate }
+        if sanitize_text(@interactive.output)&.match?(Regexp.new(sanitize_text(expected)))
+          all_commands.each(&:terminate)
           break
         end
 
@@ -80,7 +80,7 @@ end
 
 # Make sure each and every process is really dead
 After do
-  all_commands.each { |p| p.terminate }
+  all_commands.each(&:terminate)
 end
 
 Before '@ruby-2.1' do

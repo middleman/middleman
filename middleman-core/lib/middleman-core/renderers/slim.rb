@@ -13,7 +13,7 @@ class ::Slim::Template
   def initialize(file, line, opts, &block)
     if opts.key?(:context)
       ::Slim::Embedded::SassEngine.disable_option_validator!
-      %w(sass scss markdown).each do |engine|
+      %w[sass scss markdown].each do |engine|
         (::Slim::Embedded.options[engine.to_sym] ||= {})[:context] = opts[:context]
       end
     end
@@ -31,7 +31,7 @@ module Middleman
     # Slim renderer
     class Slim < ::Middleman::Extension
       # Setup extension
-      def initialize(_app, _options={}, &_block)
+      def initialize(_app, _options = {}, &_block)
         super
 
         # Setup Slim options to work with partials

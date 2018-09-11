@@ -39,26 +39,26 @@ module Middleman::Cli
       end
 
       repo_path, repo_branch = if shortname?(options[:template])
-        require 'open-uri'
-        require 'json'
+                                 require 'open-uri'
+                                 require 'json'
 
-        api = 'https://directory.middlemanapp.com/api'
-        uri = ::URI.parse("#{api}/#{options[:template]}.json")
+                                 api = 'https://directory.middlemanapp.com/api'
+                                 uri = ::URI.parse("#{api}/#{options[:template]}.json")
 
-        begin
-          data = ::JSON.parse(uri.read)
-          is_local_dir = false
-          data['links']['github'].split('#')
-        rescue ::OpenURI::HTTPError
-          say "Template `#{options[:template]}` not found in Middleman Directory."
-          say 'Did you mean to use a full `user/repo` path?'
-          exit 1
-        end
-      else
-        repo_name, repo_branch = options[:template].split('#')
-        repo_path, is_local_dir = repository_path(repo_name)
-        [repo_path, repo_branch]
-      end
+                                 begin
+                                   data = ::JSON.parse(uri.read)
+                                   is_local_dir = false
+                                   data['links']['github'].split('#')
+                                 rescue ::OpenURI::HTTPError
+                                   say "Template `#{options[:template]}` not found in Middleman Directory."
+                                   say 'Did you mean to use a full `user/repo` path?'
+                                   exit 1
+                                 end
+                               else
+                                 repo_name, repo_branch = options[:template].split('#')
+                                 repo_path, is_local_dir = repository_path(repo_name)
+                                 [repo_path, repo_branch]
+                               end
 
       begin
         dir = is_local_dir ? repo_path : clone_repository(repo_path, repo_branch)
@@ -88,6 +88,7 @@ module Middleman::Cli
     # Copied from Bundler
     def git_present?
       return @git_present if defined?(@git_present)
+
       @git_present = which(GIT_CMD) || which('git.exe')
     end
 
@@ -126,7 +127,7 @@ module Middleman::Cli
       git_path = "#{branch_cmd}#{repo_path}"
       run("#{GIT_CMD} clone --depth 1 #{branch_cmd}#{repo_path} #{dir}")
 
-      unless $?.success?
+      unless $CHILD_STATUS.success?
         say "Git clone command failed. Make sure git repository exists: #{git_path}", :red
         exit 1
       end

@@ -1,11 +1,11 @@
 # The Cache Buster extension
 class Middleman::Extensions::CacheBuster < ::Middleman::Extension
   option :exts, nil, 'List of extensions that get cache busters strings appended to them.'
-  option :sources, %w(.css .htm .html .js .php .xhtml), 'List of extensions that are searched for bustable assets.'
+  option :sources, %w[.css .htm .html .js .php .xhtml], 'List of extensions that are searched for bustable assets.'
   option :ignore, [], 'Regexes of filenames to skip adding query strings to'
   option :rewrite_ignore, [], 'Regexes of filenames to skip processing for path rewrites'
 
-  def initialize(app, options_hash={}, &block)
+  def initialize(app, options_hash = {}, &block)
     super
 
     app.rewrite_inline_urls id: :cache_buster,

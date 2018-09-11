@@ -10,7 +10,7 @@
 # to .css, .htm, .html, .js, and .xhtml
 #
 class Middleman::Extensions::Gzip < ::Middleman::Extension
-  option :exts, %w(.css .htm .html .js .svg .xhtml), 'File extensions to Gzip when building.'
+  option :exts, %w[.css .htm .html .js .svg .xhtml], 'File extensions to Gzip when building.'
   option :ignore, [], 'Patterns to avoid gzipping'
   option :overwrite, false, 'Overwrite original files instead of adding .gz extension.'
 
@@ -18,13 +18,12 @@ class Middleman::Extensions::Gzip < ::Middleman::Extension
     include ::Padrino::Helpers::NumberHelpers
   end
 
-  def initialize(app, options_hash={})
+  def initialize(app, options_hash = {})
     super
 
     require 'zlib'
     require 'stringio'
     require 'find'
-    require 'thread'
   end
 
   def after_build(builder)
@@ -43,8 +42,11 @@ class Middleman::Extensions::Gzip < ::Middleman::Extension
     out_queue = Queue.new
     num_threads.times.each do
       Thread.new do
-        while path = in_queue.pop
+        path = in_queue.pop
+
+        while path
           out_queue << gzip_file(path.to_s)
+          path = in_queue.pop
         end
       end
     end
@@ -63,7 +65,7 @@ class Middleman::Extensions::Gzip < ::Middleman::Extension
       next unless output_filename
 
       total_savings += (old_size - new_size)
-      size_change_word = (old_size - new_size) > 0 ? 'smaller' : 'larger'
+      size_change_word = (old_size - new_size).positive? ? 'smaller' : 'larger'
       builder.trigger :created, "#{output_filename} (#{NumberHelpers.new.number_to_human_size((old_size - new_size).abs)} #{size_change_word})"
     end
 

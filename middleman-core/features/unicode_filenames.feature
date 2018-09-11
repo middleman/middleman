@@ -1,4 +1,4 @@
-@encoding @travishatesme @wip
+@wip
 
 Feature: Unicode filenames
   In order to support non-ASCII characters in filenames

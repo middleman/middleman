@@ -88,7 +88,7 @@ module Middleman
       end
 
       Contract Symbol, RespondTo[:manipulate_resource_list], Maybe[Or[Num, ArrayOf[Num]]], Maybe[Symbol] => Any
-      def register_resource_list_manipulators(name, manipulator, priority=50, custom_name=nil)
+      def register_resource_list_manipulators(name, manipulator, priority = 50, custom_name = nil)
         Array(priority || 50).each do |p|
           register_resource_list_manipulator(name, manipulator, p, custom_name)
         end
@@ -103,7 +103,7 @@ module Middleman
       # @param [Symbol] custom_name The method name to execute.
       # @return [void]
       Contract Symbol, RespondTo[:manipulate_resource_list], Maybe[Num, Bool], Maybe[Symbol] => Any
-      def register_resource_list_manipulator(name, manipulator, priority=50, custom_name=nil)
+      def register_resource_list_manipulator(name, manipulator, priority = 50, custom_name = nil)
         # The third argument used to be a boolean - handle those who still pass one
         priority = 50 unless priority.is_a? Numeric
         @resource_list_manipulators = @resource_list_manipulators.push(
@@ -171,7 +171,7 @@ module Middleman
       # @param [Boolean] include_ignored Whether to include ignored resources
       # @return [Array<Middleman::Sitemap::Resource>]
       Contract Bool => ResourceList
-      def resources(include_ignored=false)
+      def resources(include_ignored = false)
         @lock.synchronize do
           ensure_resource_list_updated!
           if include_ignored

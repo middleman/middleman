@@ -46,7 +46,7 @@ module Middleman
         # @param [Information] information
         #   The information to be validated
         def validate(information)
-          return if information.bind_address.blank? || information.local_network_interfaces.include?(information.bind_address.to_s) || %w(0.0.0.0 ::).any? { |b| information.bind_address == b } || IPAddr.new('127.0.0.0/8').include?(information.bind_address.to_s)
+          return if information.bind_address.blank? || information.local_network_interfaces.include?(information.bind_address.to_s) || %w[0.0.0.0 ::].any? { |b| information.bind_address == b } || IPAddr.new('127.0.0.0/8').include?(information.bind_address.to_s)
 
           information.valid = false
           information.reason = format('Bind address "%s" is not available on your system. Please use one of %s', information.bind_address, information.local_network_interfaces.map { |i| %("#{i}") }.join(', '))

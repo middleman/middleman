@@ -10,8 +10,8 @@ class Middleman::Extensions::MinifyCss < ::Middleman::Extension
     require 'sass'
     SassCompressor
   }, 'Set the CSS compressor to use.'
-  option :content_types, %w(text/css), 'Content types of resources that contain CSS'
-  option :inline_content_types, %w(text/html text/php), 'Content types of resources that contain inline CSS'
+  option :content_types, %w[text/css], 'Content types of resources that contain CSS'
+  option :inline_content_types, %w[text/html text/php], 'Content types of resources that contain inline CSS'
 
   def ready
     # Setup Rack middleware to minify CSS
@@ -23,7 +23,7 @@ class Middleman::Extensions::MinifyCss < ::Middleman::Extension
   end
 
   class SassCompressor
-    def self.compress(style, options={})
+    def self.compress(style, options = {})
       root_node = ::Sass::SCSS::CssParser.new(style, 'middleman-css-input', 1).parse
       root_node.options = {}.merge!(options).merge!(style: :compressed)
       root_node.render.strip
@@ -44,7 +44,7 @@ class Middleman::Extensions::MinifyCss < ::Middleman::Extension
       inline: Bool,
       compressor: Or[Proc, RespondTo[:to_proc], RespondTo[:compress]]
     } => Any
-    def initialize(app, options={})
+    def initialize(app, options = {})
       @app = app
       @ignore = options.fetch(:ignore)
       @inline = options.fetch(:inline)
@@ -66,10 +66,10 @@ class Middleman::Extensions::MinifyCss < ::Middleman::Extension
       path = env['PATH_INFO']
 
       minified = if @inline && minifiable_inline?(content_type)
-        minify_inline(::Middleman::Util.extract_response_text(response))
-      elsif minifiable?(content_type) && !ignore?(path)
-        minify(::Middleman::Util.extract_response_text(response))
-      end
+                   minify_inline(::Middleman::Util.extract_response_text(response))
+                 elsif minifiable?(content_type) && !ignore?(path)
+                   minify(::Middleman::Util.extract_response_text(response))
+                 end
 
       if minified
         headers['Content-Length'] = minified.bytesize.to_s
@@ -118,7 +118,7 @@ class Middleman::Extensions::MinifyCss < ::Middleman::Extension
     # @return [String]
     def minify_inline(content)
       content.gsub(INLINE_CSS_REGEX) do
-        $1 + minify($2) + $3
+        Regexp.last_match(1) + minify(Regexp.last_match(2)) + Regexp.last_match(3)
       end
     end
     memoize :minify_inline

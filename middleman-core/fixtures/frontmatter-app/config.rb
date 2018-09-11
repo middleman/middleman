@@ -1,1 +1,1 @@
-config[:frontmatter_delims][:yaml] << %w(\\--- \\---)
+config[:frontmatter_delims][:yaml] << %w[\\--- \\---]

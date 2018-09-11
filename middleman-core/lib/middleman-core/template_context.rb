@@ -30,7 +30,7 @@ module Middleman
     # @param [Middleman::Application] app
     # @param [Hash] locs
     # @param [Hash] opts
-    def initialize(app, locs={}, opts={})
+    def initialize(app, locs = {}, opts = {})
       @app = app
       @locs = locs
       @opts = opts
@@ -42,7 +42,8 @@ module Middleman
     # @api private
     # @return [String] The old buffer.
     def save_buffer
-      @_out_buf, buf_was = '', @_out_buf
+      buf_was = @_out_buf
+      @_out_buf = ''
       buf_was
     end
 
@@ -100,7 +101,7 @@ module Middleman
     # @param [Proc] block A block will be evaluated to return internal contents.
     # @return [String]
     Contract Any, Or[Symbol, String], Hash => String, Maybe[Proc] => String
-    def render(_, name, options={}, &block)
+    def render(_, name, options = {}, &block)
       name = name.to_s
 
       partial_file = locate_partial(name, false) || locate_partial(name, true)
@@ -126,30 +127,35 @@ module Middleman
     # @param [String] partial_path
     # @return [String]
     Contract String, Maybe[Bool] => Maybe[IsA['Middleman::SourceFile']]
-    def locate_partial(partial_path, try_static=true)
+    def locate_partial(partial_path, try_static = true)
       partial_file = nil
       lookup_stack = []
       non_root     = partial_path.to_s.sub(/^\//, '')
       non_root_no_underscore = non_root.sub(/^_/, '').sub(/\/_/, '/')
 
-      if resource = current_resource
+      if current_resource
+        resource = current_resource
         current_dir  = resource.file_descriptor[:relative_path].dirname
         relative_dir = current_dir + Pathname(non_root)
         relative_dir_no_underscore = current_dir + Pathname(non_root_no_underscore)
+
+        if relative_dir
+          lookup_stack.push [relative_dir.to_s,
+                             { preferred_engine: resource.file_descriptor[:relative_path]
+                                                         .extname[1..-1].to_sym }]
+        end
       end
 
-      if relative_dir
-        lookup_stack.push [relative_dir.to_s,
-                           { preferred_engine: resource.file_descriptor[:relative_path]
-                             .extname[1..-1].to_sym }]
-      end
       lookup_stack.push [non_root]
+
       lookup_stack.push [non_root,
                          { try_static: try_static }]
+
       if relative_dir_no_underscore
         lookup_stack.push [relative_dir_no_underscore.to_s,
                            { try_static: try_static }]
       end
+
       lookup_stack.push [non_root_no_underscore,
                          { try_static: try_static }]
 
@@ -169,6 +175,7 @@ module Middleman
     # @return [Middleman::Sitemap::Resource]
     def current_resource
       return nil unless current_path
+
       sitemap.find_resource_by_destination_path(current_path)
     end
     alias current_page current_resource

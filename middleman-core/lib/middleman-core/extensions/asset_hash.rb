@@ -2,13 +2,13 @@ require 'middleman-core/util'
 require 'middleman-core/rack'
 
 class Middleman::Extensions::AssetHash < ::Middleman::Extension
-  option :sources, %w(.css .htm .html .js .php .xhtml), 'List of extensions that are searched for hashable assets.'
+  option :sources, %w[.css .htm .html .js .php .xhtml], 'List of extensions that are searched for hashable assets.'
   option :exts, nil, 'List of extensions that get asset hashes appended to them.'
   option :ignore, [], 'Regexes of filenames to skip adding asset hashes to'
   option :rewrite_ignore, [], 'Regexes of filenames to skip processing for path rewrites'
   option :prefix, '', 'Prefix for hash'
 
-  def initialize(app, options_hash={}, &block)
+  def initialize(app, options_hash = {}, &block)
     super
 
     require 'addressable/uri'
@@ -20,7 +20,7 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
 
     # Exclude .ico from the default list because browsers expect it
     # to be named "favicon.ico"
-    @exts = options.exts || (app.config[:asset_extensions] - %w(.ico))
+    @exts = options.exts || (app.config[:asset_extensions] - %w[.ico])
 
     app.rewrite_inline_urls id: :asset_hash,
                             url_extensions: @exts.sort.reverse,
@@ -37,12 +37,14 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
     relative_path = !uri.path.start_with?('/')
 
     full_asset_path = if relative_path
-      dirpath.join(asset_path).to_s
-    else
-      asset_path
-    end
+                        dirpath.join(asset_path).to_s
+                      else
+                        asset_path
+                      end
 
-    return unless asset_page = app.sitemap.find_resource_by_destination_path(full_asset_path) || app.sitemap.find_resource_by_path(full_asset_path)
+    asset_page = app.sitemap.find_resource_by_destination_path(full_asset_path) || app.sitemap.find_resource_by_path(full_asset_path)
+
+    return unless asset_page
 
     replacement_path = "/#{asset_page.destination_path}"
     replacement_path = Pathname.new(replacement_path).relative_path_from(dirpath).to_s if relative_path
@@ -63,9 +65,9 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
     # This is so by the time we get around to the text files (which may reference
     # images and fonts) the static assets' hashes are already calculated.
     resources.sort_by do |a|
-      if %w(.svg .svgz).include? a.ext
+      if %w[.svg .svgz].include? a.ext
         0
-      elsif %w(.js .css).include? a.ext
+      elsif %w[.js .css].include? a.ext
         1
       else
         -1
@@ -80,18 +82,18 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
     return if resource.ignored?
 
     digest = if resource.binary?
-      ::Digest::SHA1.file(resource.source_file).hexdigest[0..7]
-    else
-      # Render through the Rack interface so middleware and mounted apps get a shot
-      response = @rack_client.get(
-        ::URI.escape(resource.destination_path),
-        'bypass_inline_url_rewriter_asset_hash' => 'true'
-      )
+               ::Digest::SHA1.file(resource.source_file).hexdigest[0..7]
+             else
+               # Render through the Rack interface so middleware and mounted apps get a shot
+               response = @rack_client.get(
+                 ::URI.escape(resource.destination_path),
+                 'bypass_inline_url_rewriter_asset_hash' => 'true'
+               )
 
-      raise "#{resource.path} should be in the sitemap!" unless response.status == 200
+               raise "#{resource.path} should be in the sitemap!" unless response.status == 200
 
-      ::Digest::SHA1.hexdigest(response.body)[0..7]
-    end
+               ::Digest::SHA1.hexdigest(response.body)[0..7]
+             end
 
     resource.destination_path = resource.destination_path.sub(/\.(\w+)$/) { |ext| "-#{options.prefix}#{digest}#{ext}" }
     resource

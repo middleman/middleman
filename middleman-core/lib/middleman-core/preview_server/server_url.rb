@@ -10,7 +10,7 @@ module Middleman
 
       public
 
-      def initialize(opts={})
+      def initialize(opts = {})
         @hosts = opts.fetch(:hosts)
         @port  = opts.fetch(:port)
         @https = opts.fetch(:https, false)

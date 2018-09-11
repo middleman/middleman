@@ -44,7 +44,7 @@ module Middleman::Cli
     def build
       root = ENV['MM_ROOT'] || Dir.pwd
 
-      unless File.exists?(File.join(root, "config.rb"))
+      unless File.exist?(File.join(root, 'config.rb'))
         raise Thor::Error, 'Error: Could not find a Middleman project config, perhaps you are in the wrong folder?'
       end
 
@@ -101,7 +101,7 @@ module Middleman::Cli
     # @param [String] contents The event contents.
     # @param [String] extra The extra information.
     # @return [void]
-    def on_event(event_type, target, extra=nil)
+    def on_event(event_type, target, extra = nil)
       case event_type
       when :error
         say_status :error, target, :red

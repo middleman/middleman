@@ -10,8 +10,9 @@ PATH
     middleman-core (4.3.0.rc.2)
       activesupport (>= 4.2, < 5.2)
       addressable (~> 2.3)
+      backports (~> 3.11)
       bundler (~> 1.1)
-      contracts (~> 0.13.0)
+      contracts (~> 0.16.0)
       dotenv
       erubis
       execjs (~> 2.0)
@@ -73,7 +74,7 @@ GEM
       execjs
     coffee-script-source (1.12.2)
     concurrent-ruby (1.0.5)
-    contracts (0.13.0)
+    contracts (0.16.0)
     cucumber (3.1.2)
       builder (>= 2.1.2)
       cucumber-core (~> 3.2.0)
