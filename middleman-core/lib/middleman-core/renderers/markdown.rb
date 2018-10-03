@@ -7,7 +7,7 @@ module Middleman
 
       # Once configuration is parsed
       def after_configuration
-        markdown_exts = %w(markdown mdown md mkd mkdn)
+        markdown_exts = %w[markdown mdown md mkd mkdn]
 
         begin
           # Look for the user's preferred engine
@@ -20,12 +20,12 @@ module Middleman
           elsif app.config[:markdown_engine]
             # Map symbols to classes
             markdown_engine_klass = if app.config[:markdown_engine].is_a? Symbol
-              engine = app.config[:markdown_engine].to_s
-              engine = engine == 'rdiscount' ? 'RDiscount' : engine.camelize
-              app.config[:markdown_engine_prefix].const_get("#{engine}Template")
-            else
-              app.config[:markdown_engine_prefix]
-            end
+                                      engine = app.config[:markdown_engine].to_s
+                                      engine = engine == 'rdiscount' ? 'RDiscount' : engine.camelize
+                                      app.config[:markdown_engine_prefix].const_get("#{engine}Template")
+                                    else
+                                      app.config[:markdown_engine_prefix]
+                                    end
 
             # Tell tilt to use that engine
             ::Tilt.prefer(markdown_engine_klass, *markdown_exts)

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rake'
 require 'yard'
 
@@ -15,19 +17,13 @@ end
 
 require 'cucumber/rake/task'
 Cucumber::Rake::Task.new do |t|
-  exempt_tags = ['--tags ~@wip']
-  exempt_tags << '--tags ~@nojava' if RUBY_PLATFORM == 'java'
-  exempt_tags << '--tags ~@encoding' unless Object.const_defined?(:Encoding)
-  exempt_tags << '--tags ~@nowindows' if Gem.win_platform?
-  exempt_tags << '--tags ~@travishatesme' if ENV['TRAVIS'] == 'true'
-  t.cucumber_opts = "--require features --color #{exempt_tags.join(' ')} --strict"
+  exempt_tags = ["--tags 'not @wip'"]
+  t.cucumber_opts = "--fail-fast --require features --color #{exempt_tags.join(' ')} --strict"
 end
 
 Cucumber::Rake::Task.new(:cucumber_wip) do |t|
   exempt_tags = ['--tags @wip']
-  exempt_tags << '--tags ~@encoding' unless Object.const_defined?(:Encoding)
-  exempt_tags << '--tags ~@nowindows' if Gem.win_platform?
-  t.cucumber_opts = "--require features --color #{exempt_tags.join(' ')} --strict"
+  t.cucumber_opts = "--fail-fast --require features --color #{exempt_tags.join(' ')} --strict"
 end
 
 require 'rspec/core/rake_task'
@@ -38,7 +34,7 @@ RSpec::Core::RakeTask.new do |spec|
 end
 
 desc 'Run tests, both RSpec and Cucumber'
-task test: [:spec, :cucumber]
+task test: %i[spec cucumber]
 
 YARD::Rake::YardocTask.new
 

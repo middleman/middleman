@@ -3,12 +3,12 @@ require 'addressable/uri'
 # Relative Assets extension
 class Middleman::Extensions::RelativeAssets < ::Middleman::Extension
   option :exts, nil, 'List of extensions that get converted to relative paths.'
-  option :sources, %w(.css .htm .html .xhtml), 'List of extensions that are searched for relative assets.'
+  option :sources, %w[.css .htm .html .xhtml], 'List of extensions that are searched for relative assets.'
   option :ignore, [], 'Regexes of filenames to skip converting to relative paths.'
   option :rewrite_ignore, [], 'Regexes of filenames to skip processing for path rewrites.'
   option :helpers_only, false, 'Allow only Ruby helpers to change paths.'
 
-  def initialize(app, options_hash={}, &block)
+  def initialize(app, options_hash = {}, &block)
     super
 
     return if options[:helpers_only]
@@ -46,11 +46,11 @@ class Middleman::Extensions::RelativeAssets < ::Middleman::Extension
   end
 
   helpers do
-    def asset_url(path, prefix='', options={})
+    def asset_url(path, prefix = '', options = {})
       super(path, prefix, app.extensions[:relative_assets].mark_as_relative(super, options, current_resource))
     end
 
-    def asset_path(kind, source, options={})
+    def asset_path(kind, source, options = {})
       super(kind, source, app.extensions[:relative_assets].mark_as_relative(super, options, current_resource))
     end
   end
@@ -64,10 +64,10 @@ class Middleman::Extensions::RelativeAssets < ::Middleman::Extension
     relative_path = uri.host.nil?
 
     full_asset_path = if relative_path
-      dirpath.join(asset_path).to_s
-    else
-      asset_path
-    end
+                        dirpath.join(asset_path).to_s
+                      else
+                        asset_path
+                      end
 
     current_dir = Pathname(request_path).dirname
     result = Pathname(full_asset_path).relative_path_from(current_dir).to_s

@@ -37,17 +37,18 @@ module Middleman
       engine = extension[1..-1].to_sym
 
       # Store last engine for later (could be inside nested renders)
-      context.current_engine, engine_was = engine, context.current_engine
+      engine_was = context.current_engine
+      context.current_engine = engine
 
       # Save current buffer for later
       buf_was = context.save_buffer
 
       # Read from disk or cache the contents of the file
       body = if opts[:template_body]
-        opts.delete(:template_body)
-      else
-        template_data_for_file
-      end
+               opts.delete(:template_body)
+             else
+               template_data_for_file
+             end
 
       # Merge per-extension options from config
       extension = File.extname(path)

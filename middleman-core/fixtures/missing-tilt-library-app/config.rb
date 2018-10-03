@@ -1,2 +1,2 @@
-ignore "danger-zone/*"
-ignore "*.textile"
+ignore 'danger-zone/*'
+ignore '*.textile'

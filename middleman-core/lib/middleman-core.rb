@@ -1,8 +1,8 @@
-# rubocop:disable FileName
-
 # Setup our load paths
-libdir = File.expand_path(File.dirname(__FILE__))
+libdir = __dir__
 $LOAD_PATH.unshift(libdir) unless $LOAD_PATH.include?(libdir)
+
+require 'backports/latest'
 
 # Top-level Middleman namespace
 module Middleman

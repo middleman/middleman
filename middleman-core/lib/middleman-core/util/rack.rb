@@ -27,8 +27,8 @@ module Middleman
       url_fn_prefix = 'url('
 
       body.dup.gsub(matcher) do |match|
-        opening_character = $1
-        asset_path = $2
+        opening_character = Regexp.last_match(1)
+        asset_path = Regexp.last_match(2)
 
         if asset_path.start_with?(url_fn_prefix)
           opening_character << url_fn_prefix
@@ -40,7 +40,7 @@ module Middleman
         begin
           uri = ::Middleman::Util.parse_uri(asset_path)
 
-          if uri.relative? && uri.host.nil? && !(asset_path =~ /^[^\/].*[a-z]+\.[a-z]+\/.*/)
+          if uri.relative? && uri.host.nil? && asset_path !~ /^[^\/].*[a-z]+\.[a-z]+\/.*/
             dest_path = ::Middleman::Util.url_for(app, asset_path, relative: false, current_resource: current_resource)
 
             resource = app.sitemap.find_resource_by_destination_path(dest_path)

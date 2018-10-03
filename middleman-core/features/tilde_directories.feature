@@ -1,5 +1,3 @@
-@encoding
-
 Feature: Tilde directories
   In order to support ~ characters in directories
 

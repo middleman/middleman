@@ -8,12 +8,12 @@ module Middleman
         return to_enum(__method__, per_page) unless block_given?
 
         parts = if per_page.respond_to? :call
-          per_page.call(dup)
-        else
-          each_slice(per_page).reduce([]) do |sum, items|
-            sum << items
-          end
-        end
+                  per_page.call(dup)
+                else
+                  each_slice(per_page).reduce([]) do |sum, items|
+                    sum << items
+                  end
+                end
 
         num_pages = parts.length
         collection = self

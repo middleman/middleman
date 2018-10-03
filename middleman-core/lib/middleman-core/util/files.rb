@@ -119,7 +119,7 @@ module Middleman
 
       all_extensions.uniq!
 
-      app.sitemap.resources.select { |r|
+      app.sitemap.resources.select do |r|
         if r.file_descriptor
           local_extensions = collect_extensions(r.file_descriptor[:full_path].to_s)
           local_extensions |= sass_type_aliasing unless (local_extensions & sass_type_aliasing).empty?
@@ -131,7 +131,7 @@ module Middleman
         else
           false
         end
-      }.map(&:file_descriptor)
+      end.map(&:file_descriptor)
     end
   end
 end

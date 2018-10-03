@@ -1,3 +1,5 @@
 module YetAnotherThingy
-  def two; "Two"; end
+  def two
+    'Two'
+  end
 end

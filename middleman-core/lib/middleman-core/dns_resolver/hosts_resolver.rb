@@ -8,7 +8,7 @@ module Middleman
 
       public
 
-      def initialize(opts={})
+      def initialize(opts = {})
         # using the splat operator works around a non-existing HOSTSRC variable
         # using nil as input does not work, but `*[]` does and then Resolv::Hosts
         # uses its defaults

@@ -1,7 +1,7 @@
 helpers do
   def title
     content_tag :h1 do
-      "Title"
+      'Title'
     end
   end
 end

@@ -45,7 +45,7 @@ module Middleman
       # @param [String] path
       # @return [Array<Hash, String>]
       Contract IsA['Middleman::SourceFile'], Maybe[Symbol] => [Hash, Maybe[String]]
-      def parse(file, frontmatter_delims, known_type=nil)
+      def parse(file, frontmatter_delims, known_type = nil)
         full_path = file[:full_path]
         return [{}, nil] if ::Middleman::Util.binary?(full_path) || file[:types].include?(:binary)
 
@@ -110,7 +110,7 @@ module Middleman
       Contract String, Pathname => Hash
       def parse_yaml(content, full_path)
         c = ::Middleman::Util.instrument 'parse.yaml' do
-          ::YAML.load(content)
+          ::YAML.safe_load(content)
         end
         c ? symbolize_recursive(c) : {}
       rescue StandardError, ::Psych::SyntaxError => error

@@ -29,11 +29,11 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
     # don't completely reload middleman, I18n.load_path can get
     # polluted with paths from other test app directories that don't
     # exist anymore.
-    if ENV['TEST']
-      app.after_configuration_eval do
-        ::I18n.load_path.delete_if { |path| path =~ %r{tmp/aruba} }
-        ::I18n.reload!
-      end
+    return unless ENV['TEST']
+
+    app.after_configuration_eval do
+      ::I18n.load_path.delete_if { |path| path =~ %r{tmp/aruba} }
+      ::I18n.reload!
     end
   end
 
@@ -68,7 +68,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
       ::I18n.t(*args)
     end
 
-    def url_for(path_or_resource, options={})
+    def url_for(path_or_resource, options = {})
       locale = options.delete(:locale) || ::I18n.locale
 
       opts = options.dup
@@ -79,12 +79,9 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
 
       href = super(path_or_resource, opts)
 
-      final_path = if result = extensions[:i18n].localized_path(href, locale)
-        result
-      else
-        # Should we log the missing file?
-        href
-      end
+      result = extensions[:i18n].localized_path(href, locale)
+
+      final_path = result || href
 
       opts[:relative] = should_relativize
 
@@ -95,7 +92,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
       end
     end
 
-    def locate_partial(partial_name, try_static=false)
+    def locate_partial(partial_name, try_static = false)
       locals_dir = extensions[:i18n].options[:templates_dir]
 
       # Try /localizable
@@ -106,10 +103,10 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
       extname = File.extname(partial_name)
       maybe_static = !extname.empty?
       suffixed_partial_name = if maybe_static
-        partial_name.sub(extname, ".#{locale_suffix}#{extname}")
-      else
-        "#{partial_name}.#{locale_suffix}"
-      end
+                                partial_name.sub(extname, ".#{locale_suffix}#{extname}")
+                              else
+                                "#{partial_name}.#{locale_suffix}"
+                              end
 
       if locale_suffix
         super(suffixed_partial_name, maybe_static) ||
@@ -190,7 +187,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
 
       # Process templates with locale suffix
       locales.each do |locale|
-        abs_path = abs_path.sub(".#{locale}.", ".")
+        abs_path = abs_path.sub(".#{locale}.", '.')
       end
 
       sum[abs_path] ||= {}
@@ -204,13 +201,15 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
 
   Contract String, Symbol => Maybe[String]
   def localized_path(path, locale)
-    begin
-      lookup = ::Middleman::Util.parse_uri(path)
-      lookup.path << app.config[:index_file] if lookup.path && lookup.path.end_with?('/')
-      lookup.to_s if @lookup[lookup.path] && lookup.path = @lookup[lookup.path][locale]
-    rescue ::Addressable::URI::InvalidURIError
-      nil
+    lookup = ::Middleman::Util.parse_uri(path)
+    lookup.path << app.config[:index_file] if lookup.path&.end_with?('/')
+
+    if @lookup[lookup.path] && @lookup[lookup.path][locale]
+      lookup.path = @lookup[lookup.path][locale]
+      lookup.to_s
     end
+  rescue ::Addressable::URI::InvalidURIError
+    nil
   end
 
   Contract Symbol => String
@@ -291,6 +290,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
 
     File.dirname(path).split('/').each do |path_sub|
       next if path_sub == ''
+
       partially_localized_path = "#{partially_localized_path}/#{::I18n.t("paths.#{path_sub}", default: path_sub)}"
     end
 

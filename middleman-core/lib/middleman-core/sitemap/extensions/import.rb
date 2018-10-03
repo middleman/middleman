@@ -12,7 +12,7 @@ module Middleman
 
         ImportFileDescriptor = Struct.new(:from, :to) do
           def execute_descriptor(app, resources)
-            source = ::Middleman::SourceFile.new(Pathname(from).relative_path_from(app.source_dir), Pathname(from), app.source_dir, Set.new([:source, :binary]), 0)
+            source = ::Middleman::SourceFile.new(Pathname(from).relative_path_from(app.source_dir), Pathname(from), app.source_dir, Set.new(%i[source binary]), 0)
 
             resources + [
               ::Middleman::Sitemap::Resource.new(app.sitemap, to, source)

@@ -135,7 +135,7 @@ module Middleman
       # @param [Symbol] key The name of the option
       # @param [Object] default The default value for the option
       # @param [String] description A human-readable description of what the option does
-      def option(key, default=nil, description=nil, options={})
+      def option(key, default = nil, description = nil, options = {})
         config.define_setting(key, default, description, options)
       end
 
@@ -152,7 +152,7 @@ module Middleman
       # @param [Symbol] key The name of the option
       # @param [Object] default The default value for the option
       # @param [String] description A human-readable description of what the option does
-      def define_setting(key, default=nil, description=nil, options={})
+      def define_setting(key, default = nil, description = nil, options = {})
         global_config.define_setting(key, default, description, options)
       end
 
@@ -209,7 +209,7 @@ module Middleman
       def expose_to_application(*symbols)
         self.exposed_to_application ||= {}
 
-        if symbols.first && symbols.first.is_a?(Hash)
+        if symbols.first&.is_a?(Hash)
           self.exposed_to_application.merge!(symbols.first)
         elsif symbols.is_a? Array
           symbols.each do |sym|
@@ -229,7 +229,7 @@ module Middleman
       def expose_to_config(*symbols)
         self.exposed_to_config ||= {}
 
-        if symbols.first && symbols.first.is_a?(Hash)
+        if symbols.first&.is_a?(Hash)
           self.exposed_to_config.merge!(symbols.first)
         elsif symbols.is_a? Array
           symbols.each do |sym|
@@ -249,7 +249,7 @@ module Middleman
       def expose_to_template(*symbols)
         self.exposed_to_template ||= {}
 
-        if symbols.first && symbols.first.is_a?(Hash)
+        if symbols.first&.is_a?(Hash)
           self.exposed_to_template.merge!(symbols.first)
         elsif symbols.is_a? Array
           symbols.each do |sym|
@@ -282,7 +282,8 @@ module Middleman
       # @return [void]
       def activated_extension(instance)
         name = instance.class.ext_name
-        return unless @_extension_activation_callbacks && @_extension_activation_callbacks.key?(name)
+        return unless @_extension_activation_callbacks&.key?(name)
+
         @_extension_activation_callbacks[name].each do |block|
           block.arity == 1 ? block.call(instance) : block.call
         end
@@ -307,7 +308,7 @@ module Middleman
     # @param [Hash] options_hash The raw options hash. Subclasses should not manipulate this directly - it will be turned into {#options}.
     # @yield An optional block that can be used to customize options before the extension is activated.
     # @yieldparam [Middleman::Configuration::ConfigurationManager] options Extension options
-    def initialize(app, options_hash={}, &block)
+    def initialize(app, options_hash = {}, &block)
       @_helpers = []
       @app = app
 
@@ -423,18 +424,18 @@ module Middleman
     def generate_resources(resources)
       generator_defs = self.class.resources_generators.reduce({}) do |sum, g|
         resource_definitions = if g.is_a? Hash
-          g
-        elsif g.is_a? Symbol
-          definition = method(g)
+                                 g
+                               elsif g.is_a? Symbol
+                                 definition = method(g)
 
-          if definition.arity == 0
-            send(g)
-          else
-            send(g, resources)
-          end
-        else
-          {}
-        end
+                                 if definition.arity.zero?
+                                   send(g)
+                                 else
+                                   send(g, resources)
+                                 end
+                               else
+                                 {}
+                               end
 
         sum.merge!(resource_definitions)
       end
@@ -443,11 +444,11 @@ module Middleman
         if g.is_a? Symbol
           definition = method(g)
 
-          g = if definition.arity == 0
-            send(g)
-          else
-            send(g, resources)
-          end
+          g = if definition.arity.zero?
+                send(g)
+              else
+                send(g, resources)
+              end
         end
 
         ::Middleman::Sitemap::StringResource.new(
@@ -492,7 +493,7 @@ module Middleman
   end
 
   class ConfigExtension < Extension
-    def initialize(app, config={}, &block)
+    def initialize(app, config = {}, &block)
       @descriptors = {}
       @ready = false
 

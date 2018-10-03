@@ -1,71 +1,71 @@
 AllCops:
+  TargetRubyVersion: 2.3
   Include:
+    - '**/*.rb'
     - '**/Rakefile'
     - '**/Gemfile'
     - '**/config.ru'
-    - '**/gem_rake_helper.rb'
   Exclude:
-    - 'script/**/*'
     - 'vendor/**/*'
     - '**/tmp/**/*'
-    - '**/bin/**/*'
-    - 'middleman-core/lib/middleman-core/step_definitions/**/*'
-    - 'middleman-core/fixtures/**/*'
-    - 'middleman-core/features/**/*'
-    - 'middleman-core/spec/**/*'
     - 'middleman-cli/lib/middleman-cli/templates/**/*'
-    - 'middleman-cli/fixtures/**/*'
-    - 'middleman-cli/features/**/*'
-    - 'middleman-cli/spec/**/*'
-DoubleNegation:
+Metrics/LineLength:
   Enabled: false
-LineLength:
+Metrics/MethodLength:
   Enabled: false
-MethodLength:
-  Enabled: false
-ClassLength:
-  Enabled: false
-Documentation:
-  Enabled: false
-HashSyntax:
-  EnforcedStyle: ruby19
-SpaceAroundEqualsInParameterDefault:
-  EnforcedStyle: no_space
-PerlBackrefs:
-  Enabled: false
-ClassAndModuleChildren:
-  Enabled: false
-AssignmentInCondition:
-  Enabled: false
-CyclomaticComplexity:
-  Enabled: false
-HandleExceptions:
-  Enabled: false
-EndAlignment:
-  EnforcedStyleAlignWith: variable
-SignalException:
-  Enabled: false
-RegexpLiteral:
-  Enabled: false
-FormatString:
-  Enabled: false
-CaseIndentation:
-  EnforcedStyle: end
-TrivialAccessors:
-  Enabled: false
-SingleLineBlockParams:
+Style/Documentation:
   Enabled: false
 Metrics/AbcSize:
   Enabled: false
+Metrics/CyclomaticComplexity:
+  Enabled: false
+Metrics/BlockLength:
+  Enabled: false
+Metrics/ModuleLength:
+  Enabled: false
 Metrics/PerceivedComplexity:
   Enabled: false
-Style/ParallelAssignment:
+Metrics/ClassLength:
   Enabled: false
-Style/BlockDelimiters:
+Lint/AmbiguousRegexpLiteral:
   Enabled: false
-Style/MultilineBlockChain:
+Lint/AmbiguousBlockAssociation:
   Enabled: false
-Style/SpecialGlobalVars:
+Lint/UriEscapeUnescape:
+  Enabled: false
+Lint/HandleExceptions:
+  Enabled: false
+Lint/ShadowedException:
+  Enabled: false
+Naming/FileName:
+  Enabled: false
+Naming/UncommunicativeMethodParamName:
+  Enabled: false
+Naming/MemoizedInstanceVariableName:
+  Enabled: false
+Naming/HeredocDelimiterNaming:
+  Enabled: false
+Security/Eval:
+  Enabled: false
+Style/RegexpLiteral:
+  Enabled: false
+Style/ClassAndModuleChildren:
+  Enabled: false
+Style/MissingRespondToMissing:
+  Enabled: false
+Style/MethodMissingSuper:
   Enabled: false
 Style/FrozenStringLiteralComment:
+  Enabled: false
+Style/FormatStringToken:
+  Enabled: false
+Style/DoubleNegation:
+  Enabled: false
+Style/EvalWithLocation:
+  Enabled: false
+Style/Lambda:
+  Enabled: false
+Style/ClassVars:
+  Enabled: false
+Style/GlobalVars:
   Enabled: false

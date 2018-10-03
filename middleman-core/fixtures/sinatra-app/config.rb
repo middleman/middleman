@@ -1,14 +1,14 @@
-require "sinatra"
+require 'sinatra'
 
 class MySinatra < Sinatra::Base
-  get "/" do
-    "Hello World (Sinatra)"
+  get '/' do
+    'Hello World (Sinatra)'
   end
-  get "/derp.html" do
-    "De doo"
+  get '/derp.html' do
+    'De doo'
   end
 end
 
-map "/sinatra" do
+map '/sinatra' do
   run MySinatra
 end

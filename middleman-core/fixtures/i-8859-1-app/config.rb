@@ -1,1 +1,1 @@
-set :encoding, "ISO-8859-1"
+set :encoding, 'ISO-8859-1'

@@ -7,7 +7,6 @@ require 'tilt'
 
 require 'middleman-core/contracts'
 
-# rubocop:disable ModuleLength
 module Middleman
   module Util
     extend Memoist
@@ -72,24 +71,24 @@ module Middleman
     # @param [Hash] options Data to pass through.
     # @return [String]
     Contract ::Middleman::Application, Symbol, Or[String, Symbol], Hash => String
-    def asset_path(app, kind, source, options={})
+    def asset_path(app, kind, source, options = {})
       return source if source.to_s.include?('//') || source.to_s.start_with?('data:')
 
       asset_folder = case kind
-      when :css
-        app.config[:css_dir]
-      when :js
-        app.config[:js_dir]
-      when :images
-        app.config[:images_dir]
-      when :fonts
-        app.config[:fonts_dir]
-      else
-        kind.to_s
-      end
+                     when :css
+                       app.config[:css_dir]
+                     when :js
+                       app.config[:js_dir]
+                     when :images
+                       app.config[:images_dir]
+                     when :fonts
+                       app.config[:fonts_dir]
+                     else
+                       kind.to_s
+                     end
 
       source = source.to_s.tr(' ', '')
-      ignore_extension = (kind == :images || kind == :fonts) # don't append extension
+      ignore_extension = %i[images fonts].include? kind # don't append extension
       source << ".#{kind}" unless ignore_extension || source.end_with?(".#{kind}")
       asset_folder = '' if source.start_with?('/') # absolute path
 
@@ -103,7 +102,7 @@ module Middleman
     # @param [Hash] options Data to pass through.
     # @return [String] The fully qualified asset url
     Contract ::Middleman::Application, String, String, Hash => String
-    def asset_url(app, path, prefix='', options={})
+    def asset_url(app, path, prefix = '', options = {})
       # Don't touch assets which already have a full path
       return path if path.include?('//') || path.start_with?('data:')
 
@@ -118,18 +117,20 @@ module Middleman
       # relative path, since it only takes absolute url paths.
       dest_path = url_for(app, path, options.merge(relative: false))
 
-      result = if resource = app.sitemap.find_resource_by_path(dest_path)
-        resource.url
-      elsif resource = app.sitemap.find_resource_by_destination_path(dest_path)
-        resource.url
-      else
-        path = ::File.join(prefix, path)
-        if resource = app.sitemap.find_resource_by_path(path)
-          resource.url
-        else
-          ::File.join(app.config[:http_prefix], path)
-        end
-      end
+      resource = app.sitemap.find_resource_by_path(dest_path) || app.sitemap.find_resource_by_destination_path(dest_path)
+
+      result = if resource
+                 resource.url
+               else
+                 path = ::File.join(prefix, path)
+                 resource = app.sitemap.find_resource_by_path(path)
+
+                 if resource
+                   resource.url
+                 else
+                   ::File.join(app.config[:http_prefix], path)
+                 end
+               end
 
       final_result = ::Addressable::URI.encode(
         relative_path_from_resource(
@@ -149,19 +150,19 @@ module Middleman
     # or a Resource, this will produce the nice URL configured for that
     # path, respecting :relative_links, directory indexes, etc.
     Contract ::Middleman::Application, Or[String, Symbol, ::Middleman::Sitemap::Resource], Hash => String
-    def url_for(app, path_or_resource, options={})
+    def url_for(app, path_or_resource, options = {})
       if path_or_resource.is_a?(String) || path_or_resource.is_a?(Symbol)
         r = app.sitemap.find_resource_by_page_id(path_or_resource)
 
-        path_or_resource = r ? r : path_or_resource.to_s
+        path_or_resource = r || path_or_resource.to_s
       end
 
       # Handle Resources and other things which define their own url method
       url = if path_or_resource.respond_to?(:url)
-        path_or_resource.url
-      else
-        path_or_resource.dup
-      end
+              path_or_resource.url
+            else
+              path_or_resource.dup
+            end
 
       # Try to parse URL
       begin
@@ -209,20 +210,22 @@ module Middleman
 
       if resource
         uri.path = if this_resource
-          ::Addressable::URI.encode(
-            relative_path_from_resource(
-              this_resource,
-              resource_url,
-              effective_relative
-            )
-          )
-        else
-          resource_url
-        end
+                     ::Addressable::URI.encode(
+                       relative_path_from_resource(
+                         this_resource,
+                         resource_url,
+                         effective_relative
+                       )
+                     )
+                   else
+                     resource_url
+                   end
       end
 
       # Support a :query option that can be a string or hash
-      if query = options[:query]
+      query = options[:query]
+
+      if query
         uri.query = query.respond_to?(:to_param) ? query.to_param : query.to_s
       end
 

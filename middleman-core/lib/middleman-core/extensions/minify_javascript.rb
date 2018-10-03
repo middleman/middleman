@@ -10,8 +10,8 @@ class Middleman::Extensions::MinifyJavascript < ::Middleman::Extension
     require 'uglifier'
     ::Uglifier.new
   }, 'Set the JS compressor to use.'
-  option :content_types, %w(application/javascript application/ld+json), 'Content types of resources that contain JS'
-  option :inline_content_types, %w(text/html text/php), 'Content types of resources that contain inline JS'
+  option :content_types, %w[application/javascript application/ld+json], 'Content types of resources that contain JS'
+  option :inline_content_types, %w[text/html text/php], 'Content types of resources that contain inline JS'
 
   def ready
     # Setup Rack middleware to minify JS
@@ -36,7 +36,7 @@ class Middleman::Extensions::MinifyJavascript < ::Middleman::Extension
       inline: Bool,
       compressor: Or[Proc, RespondTo[:to_proc], RespondTo[:compress]]
     } => Any
-    def initialize(app, options={})
+    def initialize(app, options = {})
       @app = app
       @ignore = options.fetch(:ignore)
       @inline = options.fetch(:inline)
@@ -58,10 +58,10 @@ class Middleman::Extensions::MinifyJavascript < ::Middleman::Extension
       @path = env['PATH_INFO']
 
       minified = if @inline && minifiable_inline?(type)
-        minify_inline(::Middleman::Util.extract_response_text(response))
-      elsif minifiable?(type) && !ignore?(@path)
-        minify(::Middleman::Util.extract_response_text(response))
-      end
+                   minify_inline(::Middleman::Util.extract_response_text(response))
+                 elsif minifiable?(type) && !ignore?(@path)
+                   minify(::Middleman::Util.extract_response_text(response))
+                 end
 
       if minified
         headers['Content-Length'] = minified.bytesize.to_s
@@ -113,9 +113,9 @@ class Middleman::Extensions::MinifyJavascript < ::Middleman::Extension
     # @return [String]
     def minify_inline(content)
       content.gsub(INLINE_JS_REGEX) do |match|
-        first = $1
-        inline_content = $2
-        last = $3
+        first = Regexp.last_match(1)
+        inline_content = Regexp.last_match(2)
+        last = Regexp.last_match(3)
 
         # Only compress script tags that contain JavaScript (as opposed to
         # something like jQuery templates, identified with a "text/html" type).

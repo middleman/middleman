@@ -1,17 +1,13 @@
 language: ruby
 sudo: false
 cache: bundler
-before_script:
-  - bundle update
 rvm:
   - ruby-head
   - 2.5.1
   - 2.4.4
   - 2.3.7
-  - 2.2.10
 os:
   - linux
-  # - osx
 matrix:
   fast_finish: true
   allow_failures:
@@ -20,6 +16,3 @@ env:
   global:
     - TEST=true
 script: bundle exec rake test
-notifications:
-  email: false
-  slack: middleman:JW9OvXmn1m3XrSERe8866nBR

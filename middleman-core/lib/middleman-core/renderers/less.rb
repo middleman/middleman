@@ -6,7 +6,7 @@ module Middleman
     class Less < ::Middleman::Extension
       define_setting :less, {}, 'LESS compiler options'
 
-      def initialize(app, options={}, &block)
+      def initialize(app, options = {}, &block)
         super
 
         # Tell Tilt to use it as well (for inline sass blocks)

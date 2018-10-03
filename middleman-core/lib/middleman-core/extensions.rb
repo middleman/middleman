@@ -49,8 +49,9 @@ module Middleman
       #        you the ability to require other files only when the
       #        extension is first activated.
       # @return [void]
-      def register(name, extension_class=nil, options={}, &block)
+      def register(name, extension_class = nil, options = {}, &block)
         raise 'Extension name must be a symbol' unless name.is_a?(Symbol)
+
         # If we've already got an extension registered under this name, bail out
         # raise "There is a already an extension registered with the name '#{name}'" if registered.key?(name)
 
@@ -61,12 +62,12 @@ module Middleman
         end
 
         registered[name] = if block_given?
-          block
-        elsif extension_class && extension_class.ancestors.include?(::Middleman::Extension)
-          extension_class
-        else
-          raise 'You must provide a Middleman::Extension or a block that returns a Middleman::Extension'
-        end
+                             block
+                           elsif extension_class && extension_class.ancestors && extension_class.ancestors.include?(::Middleman::Extension)
+                             extension_class
+                           else
+                             raise 'You must provide a Middleman::Extension or a block that returns a Middleman::Extension'
+                           end
 
         return unless options[:auto_activate]
 

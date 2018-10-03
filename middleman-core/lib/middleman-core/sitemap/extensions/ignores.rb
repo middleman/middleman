@@ -12,7 +12,7 @@ module Middleman
         # @param [String, Regexp] path Path glob expression, or path regex
         # @return [IgnoreDescriptor]
         Contract Or[String, Regexp, Proc] => RespondTo[:execute_descriptor]
-        def ignore(path=nil, &block)
+        def ignore(path = nil, &block)
           @app.sitemap.invalidate_resources_not_ignored_cache!
 
           if path.is_a? Regexp
@@ -34,7 +34,7 @@ module Middleman
 
         IgnoreDescriptor = Struct.new(:path, :block) do
           def execute_descriptor(_app, resources)
-            resources.map do |r|
+            resources.each do |r|
               # Ignore based on the source path (without template extensions)
               if ignored?(r.normalized_path)
                 r.ignore!
@@ -42,8 +42,6 @@ module Middleman
                 # This allows files to be ignored by their source file name (with template extensions)
                 r.ignore!
               end
-
-              r
             end
           end
 

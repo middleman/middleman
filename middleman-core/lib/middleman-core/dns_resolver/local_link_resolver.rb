@@ -4,7 +4,7 @@ module Middleman
   class DnsResolver
     # Use network name server to resolve ips and names
     class LocalLinkResolver < BasicNetworkResolver
-      def initialize(opts={})
+      def initialize(opts = {})
         super
 
         @timeouts = opts.fetch(:timeouts, 1)

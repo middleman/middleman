@@ -1,5 +1,8 @@
 # Middleman - Makes developing websites simple
 
+[![Gem Version](http://img.shields.io/gem/v/middleman.svg?style=flat)][gem]
+[![License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)][license]
+[![Build Status](http://img.shields.io/travis/middleman/middleman.svg?style=flat)][travis]
 [![Gitter](https://badges.gitter.im/middleman/middleman.svg)](https://gitter.im/middleman/middleman?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 **Middleman** is a static site generator using all the shortcuts and tools in modern web development. Check out [middlemanapp.com](http://middlemanapp.com/) for detailed tutorials, including a [getting started guide](http://middlemanapp.com/basics/getting-started/). You can also follow [@middlemanapp](https://twitter.com/middlemanapp) for updates.
@@ -61,14 +64,6 @@ This will compile your templates and output a stand-alone site which can be easi
 A full set of in-depth instructional guides are available on the official website at: http://middlemanapp.com
 
 Additionally, up-to-date generated code documentation is available on [RubyDoc]
-
-## Build & Dependency Status
-
-[![Gem Version](http://img.shields.io/gem/v/middleman.svg?style=flat)][gem]
-[![License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)][license]
-[![Dependency Status](http://img.shields.io/gemnasium/middleman/middleman.svg?style=flat)][gemnasium]
-[![Build Status](http://img.shields.io/travis/middleman/middleman.svg?style=flat)][travis]
-[![Gittip](http://img.shields.io/gittip/middleman.svg?style=flat)][gittip]
 
 ## Community
 

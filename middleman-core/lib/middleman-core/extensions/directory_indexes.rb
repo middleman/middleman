@@ -11,7 +11,7 @@ class Middleman::Extensions::DirectoryIndexes < ::Middleman::Extension
     index_file = app.config[:index_file]
     new_index_path = "/#{index_file}"
 
-    extensions = %w(.htm .html .php .xhtml)
+    extensions = %w[.htm .html .php .xhtml]
 
     resources.each do |resource|
       # Check if it would be pointless to reroute

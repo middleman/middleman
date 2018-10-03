@@ -10,9 +10,7 @@ end
 Given /^"([^\"]*)" feature is "([^\"]*)"$/ do |feature, state|
   @activation_commands ||= []
 
-  if state == 'enabled'
-    @activation_commands << lambda { activate(feature.to_sym) }
-  end
+  @activation_commands << -> { activate(feature.to_sym) } if state == 'enabled'
 end
 
 Given /^"([^\"]*)" feature is "enabled" with "([^\"]*)"$/ do |feature, options_str|
@@ -20,7 +18,7 @@ Given /^"([^\"]*)" feature is "enabled" with "([^\"]*)"$/ do |feature, options_s
 
   options = eval("{#{options_str}}")
 
-  @activation_commands << lambda { activate(feature.to_sym, options) }
+  @activation_commands << -> { activate(feature.to_sym, options) }
 end
 
 Given /^"([^\"]*)" is set to "([^\"]*)"$/ do |variable, value|
@@ -31,13 +29,13 @@ Given /^"([^\"]*)" is set to "([^\"]*)"$/ do |variable, value|
 end
 
 Given /^the Server is running$/ do
-  root_dir = File.expand_path(expand_path("."))
+  root_dir = File.expand_path(expand_path('.'))
 
-  if File.exists?(File.join(root_dir, 'source'))
-    ENV['MM_SOURCE'] = 'source'
-  else
-    ENV['MM_SOURCE'] = ''
-  end
+  ENV['MM_SOURCE'] = if File.exist?(File.join(root_dir, 'source'))
+                       'source'
+                     else
+                       ''
+                     end
 
   ENV['MM_ROOT'] = root_dir
 
@@ -54,7 +52,7 @@ Given /^the Server is running$/ do
 
     app.after_configuration_eval do
       activation_commands.each do |p|
-        config_context.instance_exec(&p)
+        instance_exec(&p)
       end
     end
   end
@@ -63,12 +61,12 @@ Given /^the Server is running$/ do
 end
 
 Given /^the Server is running at "([^\"]*)"$/ do |app_path|
-  step %Q{a fixture app "#{app_path}"}
-  step %Q{the Server is running}
+  step %(a fixture app "#{app_path}")
+  step %(the Server is running)
 end
 
 Given /^a template named "([^\"]*)" with:$/ do |name, string|
-  step %Q{a file named "source/#{name}" with:}, string
+  step %(a file named "source/#{name}" with:), string
 end
 
 When /^I go to "([^\"]*)"$/ do |url|
@@ -76,7 +74,7 @@ When /^I go to "([^\"]*)"$/ do |url|
 end
 
 Then /^going to "([^\"]*)" should not raise an exception$/ do |url|
-  expect{ visit(URI.encode(url).to_s) }.to_not raise_exception
+  expect { visit(URI.encode(url).to_s) }.to_not raise_exception
 end
 
 Then /^the content type should be "([^\"]*)"$/ do |expected|
@@ -120,5 +118,5 @@ Then /^the status code should be "([^\"]*)"$/ do |expected|
 end
 
 Then /^I should see "([^\"]*)" lines$/ do |lines|
-  expect(page.body.chomp.split($/).length).to eq lines.to_i
+  expect(page.body.chomp.split($INPUT_RECORD_SEPARATOR).length).to eq lines.to_i
 end

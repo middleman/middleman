@@ -8,7 +8,7 @@ module Middleman
 
       public
 
-      def initialize(opts={})
+      def initialize(opts = {})
         @timeouts = opts.fetch(:timeouts, 2)
       end
 
@@ -21,7 +21,7 @@ module Middleman
       #   Array of Names
       def getnames(ip)
         resolver.getnames(ip.to_s).map(&:to_s)
-      rescue Resolv::ResolvError, Errno::EADDRNOTAVAIL
+      rescue Resolv::ResolvError, Errno::EADDRNOTAVAIL, Errno::ENETUNREACH
         []
       end
 
@@ -34,7 +34,7 @@ module Middleman
       #   Array of ipaddresses
       def getaddresses(name)
         resolver.getaddresses(name.to_s).map(&:to_s)
-      rescue Resolv::ResolvError, Errno::EADDRNOTAVAIL
+      rescue Resolv::ResolvError, Errno::EADDRNOTAVAIL, Errno::ENETUNREACH
         []
       end
 

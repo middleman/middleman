@@ -45,19 +45,19 @@ module Middleman
       # @param [String] path
       # @param [String] source
       Contract IsA['Middleman::Sitemap::Store'], String, Maybe[Or[IsA['Middleman::SourceFile'], String]] => Any
-      def initialize(store, path, source=nil)
+      def initialize(store, path, source = nil)
         @store       = store
         @app         = @store.app
         @path        = path
         @ignored     = false
 
-        source = Pathname(source) if source && source.is_a?(String)
+        source = Pathname(source) if source&.is_a?(String)
 
-        @file_descriptor = if source && source.is_a?(Pathname)
-          ::Middleman::SourceFile.new(source.relative_path_from(@app.source_dir), source, @app.source_dir, Set.new([:source]), 0)
-        else
-          source
-        end
+        @file_descriptor = if source&.is_a?(Pathname)
+                             ::Middleman::SourceFile.new(source.relative_path_from(@app.source_dir), source, @app.source_dir, Set.new([:source]), 0)
+                           else
+                             source
+                           end
 
         @destination_path = @path
 
@@ -75,6 +75,7 @@ module Middleman
       Contract Bool
       def template?
         return false if file_descriptor.nil?
+
         !::Middleman::Util.tilt_class(file_descriptor[:full_path].to_s).nil?
       end
 
@@ -97,14 +98,14 @@ module Middleman
       #   Page are data that is exposed through this resource's data member.
       #   Note: It is named 'page' for backwards compatibility with older MM.
       Contract METADATA_HASH, Maybe[Bool] => METADATA_HASH
-      def add_metadata(meta={}, reverse=false)
+      def add_metadata(meta = {}, reverse = false)
         @page_data = nil
 
         @metadata = if reverse
-          meta.deep_merge(@metadata)
-        else
-          @metadata.deep_merge(meta)
-        end
+                      meta.deep_merge(@metadata)
+                    else
+                      @metadata.deep_merge(meta)
+                    end
       end
 
       # Data about this resource, populated from frontmatter or extensions.
@@ -139,7 +140,7 @@ module Middleman
       # Render this resource
       # @return [String]
       Contract Hash, Hash => String
-      def render(opts={}, locs={})
+      def render(opts = {}, locs = {})
         return ::Middleman::FileRenderer.new(@app, file_descriptor[:full_path].to_s).template_data_for_file unless template?
 
         md   = metadata
@@ -218,14 +219,14 @@ module Middleman
       Contract String => String
       def make_implicit_page_id(path)
         @id ||= begin
-          if prok = @app.config[:page_id_generator]
-            return prok.call(path)
-          end
+          prok = @app.config[:page_id_generator]
+
+          return prok.call(path) if prok
 
           basename = if ext == '.html'
-            File.basename(path, ext)
-          else
-            File.basename(path)
+                       File.basename(path, ext)
+                     else
+                       File.basename(path)
                      end
 
           # Remove leading dot or slash if present
@@ -235,7 +236,7 @@ module Middleman
     end
 
     class StringResource < Resource
-      def initialize(store, path, contents=nil, &block)
+      def initialize(store, path, contents = nil, &block)
         @request_path = path
         @contents = block_given? ? block : contents
         super(store, path)

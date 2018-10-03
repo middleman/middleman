@@ -1,1 +1,1 @@
-set :automatic_directory_matcher, "--"
+set :automatic_directory_matcher, '--'

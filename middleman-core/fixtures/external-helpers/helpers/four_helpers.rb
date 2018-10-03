@@ -1,3 +1,5 @@
 module FourHelpers
-  def four; "Four"; end
+  def four
+    'Four'
+  end
 end

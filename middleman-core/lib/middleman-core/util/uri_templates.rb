@@ -54,6 +54,7 @@ module Middleman
 
         parameterized_string.chars.to_a.each_with_index do |char, i|
           next unless char == '?' && str[i].bytes.count != 1
+
           parameterized_string[i] = str[i]
         end
 
