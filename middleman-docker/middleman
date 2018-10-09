@@ -1,0 +1,32 @@
+#!/bin/sh
+
+VERSION="4.3.0.rc.2"
+VOLUME=middleman-bundler-"$VERSION"
+
+if ! docker volume ls | grep -q "$VOLUME"
+then
+  docker volume create "$VOLUME"
+fi
+
+if [ $0 == "init" ]; then
+  docker run \
+    --mount type=bind,source="$(pwd)",target=/app \
+    --mount source="$VOLUME",target=/usr/local/bundle \
+    --rm \
+    middleman/middleman:"$VERSION" \
+    middleman "$@"
+else
+  docker run \
+    --mount type=bind,source="$(pwd)",target=/app \
+    --mount source="$VOLUME",target=/usr/local/bundle \
+    --rm \
+    middleman/middleman:"$VERSION" \
+    bundle install \
+  && docker run \
+    --mount type=bind,source="$(pwd)",target=/app \
+    --mount source="$VOLUME",target=/usr/local/bundle \
+    --rm \
+    -p 4567:4567 \
+    middleman/middleman:"$VERSION" \
+    bundle exec middleman "$@"
+fi

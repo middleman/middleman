@@ -11,5 +11,3 @@ RUN apk --no-cache add \
     middleman --version $MIDDLEMAN_VERSION
 
 WORKDIR /app
-
-ENTRYPOINT [ "middleman" ]
