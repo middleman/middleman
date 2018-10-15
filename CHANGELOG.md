@@ -1,7 +1,18 @@
 master
 ===
 
-# 4.3.0
+* Docker-ized CLI
+
+# 4.3.0.rc.2
+
+* Add Errno::ENETUNREACH to exception list in BasicNetworkResolver (#2195)
+* Update Rubocop and apply new lint rules
+* Do not create unnecessary array in IgnoreDescriptor (#2183)
+* Fix reload of watched sources with destination_dir (#2190)
+* Fix localisation and recursion issues of Traversal::parent. (#2188)
+* Use EnhancedHash for partial locals (#2169)
+
+# 4.3.0.rc.1
 
 * Test against Ruby 2.5 (#2166)
 * Update Rubocop and Yard (#2161) 
