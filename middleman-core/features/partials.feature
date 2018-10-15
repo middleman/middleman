@@ -62,3 +62,11 @@ Scenario: Works with blocks
     Then I should see "Start"
     And I should see "Contents"
     And I should see "End"
+
+
+Scenario: Frontmatter in Partials is not rendered
+    Given the Server is running at "partials-app"
+    When I go to "/frontmatter.html"
+    Then I should see "Content from frontmatter"
+    And I should not see "---"
+    And I should not see "frontmatter should not appear"
