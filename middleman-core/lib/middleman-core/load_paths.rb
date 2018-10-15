@@ -34,7 +34,10 @@ module Middleman
       raise "Couldn't find your Gemfile. Middleman projects require a Gemfile for specifying dependencies." unless File.exist?(ENV['BUNDLE_GEMFILE'])
 
       require 'bundler/setup'
-      Bundler.require
+      Bundler.require(
+        :default,
+        (ENV['MM_ENV'] || ENV['RACK_ENV'] || 'development').to_sym
+      )
     end
 
     # Recursive method to find a file in parent directories
