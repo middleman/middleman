@@ -1,6 +1,7 @@
 master
 ===
 
+* Reduce mutex hits in parallel build (#2107)
 * Docker-ized CLI
 
 # 4.3.0.rc.2

@@ -133,8 +133,37 @@ module Middleman
 
     Contract ResourceList => ResourceList
     def output_resources(resources)
+      res_count = resources.count
+
+      return resources if res_count.zero?
+
       results = if @parallel
-                  ::Parallel.map(resources, &method(:output_resource))
+                  processes = ::Parallel.processor_count
+                  processes = processes < res_count ? processes : res_count
+                  min_parts = res_count / processes
+                  remainder = res_count % processes
+                  offset = 0
+                  ranges = []
+
+                  while offset < res_count
+                    end_r = offset + min_parts
+
+                    if remainder.positive?
+                      end_r += 1
+                      remainder -= 1
+                    end
+
+                    range = offset...end_r
+                    offset = end_r
+                    ranges << range
+                  end
+
+                  outputs = Parallel.map(ranges, in_processes: processes) do |r|
+                    resources[r].map!(&method(:output_resource))
+                  end
+
+                  outputs.flatten!
+                  outputs
                 else
                   resources.map(&method(:output_resource))
                 end
