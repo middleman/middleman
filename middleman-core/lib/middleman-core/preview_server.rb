@@ -201,8 +201,8 @@ module Middleman
 
         # Add in the meta pages application
         meta_app = Middleman::MetaPages::Application.new(app)
-        app.map '/__middleman' do
-          run meta_app
+        app.map '/__middleman' do |rack|
+          rack.run meta_app
         end
 
         app
