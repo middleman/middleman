@@ -1,6 +1,9 @@
 master
 ===
 
+# 4.3.0.rc.3
+
+* Fix Internal Server Error from `__middleman` meta page in dev. (#2187)
 * Reduce mutex hits in parallel build (#2107)
 * Docker-ized CLI
 
