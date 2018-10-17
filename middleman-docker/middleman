@@ -8,7 +8,7 @@ then
   docker volume create "$VOLUME"
 fi
 
-if [ $0 == "init" ]; then
+if [ $1 == "init" ]; then
   docker run \
     --mount type=bind,source="$(pwd)",target=/app \
     --mount source="$VOLUME",target=/usr/local/bundle \
