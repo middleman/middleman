@@ -177,7 +177,14 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
 
       result = parse_locale_extension(resource.path)
       ext_locale, path, page_id = result
-      new_resources << build_resource(path, resource.path, page_id, ext_locale)
+
+      new_resource = build_resource(path, resource.path, page_id, ext_locale)
+
+      # extension resources replace original i18n attempt.
+      exists = new_resources.find { |r| r.path == new_resource.path }
+      new_resources.delete(exists) if exists
+
+      new_resources << new_resource
 
       resource.ignore!
     end
