@@ -254,3 +254,28 @@ Feature: i18n Preview
     When I go to "/es/"
     Then I should see "Como Esta?"
     Then I should see "Mucho"
+
+  Scenario: Proxy to localized pages.
+    Given a fixture app "i18n-default-app"
+    And a file named "config.rb" with:
+      """
+      langs = [:en, :es]
+      activate :i18n, mount_at_root: false, langs: langs
+
+      ["Tom", "Jen"].each do |name|
+        langs.each do |lang|
+          proxy "/#{lang}/people/#{name.downcase}.html", "/name.html", locals: { name: name }, locale: lang, ignore: true
+        end
+      end
+      """
+    Given the Server is running at "i18n-default-app"
+    When I go to "/name.html"
+    Then I should see "File Not Found"
+    When I go to "/en/people/tom.html"
+    Then I should see "Howdy Tom"
+    When I go to "/en/people/jen.html"
+    Then I should see "Howdy Jen"
+    When I go to "/es/people/tom.html"
+    Then I should see "Como Esta? Tom"
+    When I go to "/es/people/jen.html"
+    Then I should see "Como Esta? Jen"
