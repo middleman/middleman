@@ -19,7 +19,7 @@ module Middleman
           module_name = app.config[:helpers_filename_to_module_name_proc].call(filename)
           next unless module_name
 
-          require filename
+          load filename
           next unless Object.const_defined?(module_name.to_sym)
 
           app.template_context_class.send :include, Object.const_get(module_name.to_sym)

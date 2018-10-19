@@ -65,6 +65,10 @@ Given /^the Server is running at "([^\"]*)"$/ do |app_path|
   step %(the Server is running)
 end
 
+When /^the Server is reloaded$/ do
+  step %(the Server is running)
+end
+
 Given /^a template named "([^\"]*)" with:$/ do |name, string|
   step %(a file named "source/#{name}" with:), string
 end
