@@ -1,6 +1,8 @@
 master
 ===
 
+* i18n was accidently duplicating requests for extension-based template (file.es.html)
+
 # 4.3.0.rc.3
 
 * Fix Internal Server Error from `__middleman` meta page in dev. (#2187)
