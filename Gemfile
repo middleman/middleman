@@ -10,6 +10,7 @@ gem 'yard', '~> 0.9.11', require: false
 gem 'addressable', '~> 2.4', require: false
 gem 'aruba', '~> 0.14.0', require: false
 gem 'byebug'
+gem 'capybara', '~> 2.5.0', require: false
 gem 'cucumber', '~> 3.0', require: false
 gem 'rspec', '~> 3.0', require: false
 
@@ -31,10 +32,6 @@ gem 'stylus', '>= 1.0', require: false
 
 # Dns server to test preview server
 gem 'rubydns', '~> 1.0.1', require: false
-
-# To test javascript
-gem 'phantomjs', '~> 2.1.1.0', require: false
-gem 'poltergeist', '~> 1.8', require: false
 
 # For less, note there is no compatible JS runtime for windows
 gem 'therubyracer', '~> 0.12.3', platforms: :ruby
