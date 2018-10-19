@@ -6,10 +6,7 @@ require 'sassc'
 require 'simplecov'
 SimpleCov.root(File.expand_path(File.dirname(__FILE__) + '/../..'))
 
-require 'phantomjs/poltergeist'
-Capybara.javascript_driver = :poltergeist
-
-Capybara.server = :webrick
+# Capybara.server = :webrick
 
 require 'simplecov'
 SimpleCov.start

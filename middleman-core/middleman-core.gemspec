@@ -37,9 +37,6 @@ Gem::Specification.new do |s|
   # Watcher
   s.add_dependency('listen', ['~> 3.0'])
 
-  # Tests
-  s.add_development_dependency('capybara', ['~> 2.5.0'])
-
   # i18n
   s.add_dependency('i18n', ['~> 0.7'])
 
