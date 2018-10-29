@@ -34,7 +34,7 @@ master
 * chmod before closing file to fix compatibility with JRuby (#2133)
 * Keeps full file path for chained templates (#2117) 
 * Use i18n fallbacks when looking up localized paths (#2116)
-* Compat with latest rails/activsupport < 5.2 (#2095)
+* Compat with latest rails/activesupport < 5.2 (#2095)
 * Update "Port in use"-message for PreviewServer (#2089) 
 * I18n: Keep fragment and query in url_for (#2062)
 * Add support for locale suffixes to link_to (#2065)
