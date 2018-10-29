@@ -28,8 +28,8 @@ module Middleman
           # Does the current page has the name of an index file?
           is_index = current_page == index_file
           # Is the `current_page` in the traversal root?
-          # Note: `traversal_root` is `/` for non localised pages and `/[lang]/` for
-          # localised pages.
+          # Note: `traversal_root` is `/` for non localized pages and `/[lang]/` for
+          # localized pages.
           at_traversal_root = !(child_path =~ /^#{traversal_root}#{current_page}$/).nil?
 
           # Check that we have any path parts left after the pop because if we
@@ -66,8 +66,8 @@ module Middleman
           # E.g. `parts == ['en', 'blog']`, we try to find: `/en/blog.html`
           file_by_parts.call(parts)
 
-          # Try to find an non-localised parent instead if `traversal_root`
-          # indicates the path is localised and there are still more parts
+          # Try to find an non-localized parent instead if `traversal_root`
+          # indicates the path is localized and there are still more parts
           # remaining, and return it.
           # E.g. `parts == ['en', 'blog']`, we try to find: `/blog.html`
           if traversal_root != '/' && parts.length > 1
@@ -80,7 +80,7 @@ module Middleman
           parts.pop if is_index
           index_by_parts.call(parts)
 
-          # Lastly, check for an non-localised index index file in the path
+          # Lastly, check for an non-localized index index file in the path
           # above `current_page`'s path and return it.
           # E.g. `parts == ['en', 'blog']`, we try to find: `/index.html`
           if traversal_root == "#{parts.first}/"
