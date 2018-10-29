@@ -32,7 +32,7 @@ module Middleman
     def render(locs, opts, context, &block)
       path = @path.dup
 
-      # Detect the remdering engine from the extension
+      # Detect the rendering engine from the extension
       extension = File.extname(path)
       engine = extension[1..-1].to_sym
 
