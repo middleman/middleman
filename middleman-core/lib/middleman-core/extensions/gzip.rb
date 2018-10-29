@@ -1,7 +1,7 @@
 # This extension Gzips assets and pages when building.
 # Gzipped assets and pages can be served directly by Apache or
 # Nginx with the proper configuration, and pre-zipping means that we
-# can use a more agressive compression level at no CPU cost per request.
+# can use a more aggressive compression level at no CPU cost per request.
 #
 # Use Nginx's gzip_static directive, or AddEncoding and mod_rewrite in Apache
 # to serve your Gzipped files whenever the normal (non-.gz) filename is requested.
