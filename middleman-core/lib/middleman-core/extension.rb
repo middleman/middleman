@@ -204,7 +204,7 @@ module Middleman
       #   expose_to_application global_name: :local_name
       # @example with Array:
       #   expose_to_application :method1, :method2
-      # @param [Array<Sumbol>, Hash<Symbol, Symbol>] symbols An optional list of symbols representing instance methods to exposed.
+      # @param [Array<Symbol>, Hash<Symbol, Symbol>] symbols An optional list of symbols representing instance methods to exposed.
       # @return [void]
       def expose_to_application(*symbols)
         self.exposed_to_application ||= {}
@@ -224,7 +224,7 @@ module Middleman
       #   expose_to_config global_name: :local_name
       # @example with Array:
       #   expose_to_config :method1, :method2
-      # @param [Array<Sumbol>, Hash<Symbol, Symbol>] symbols An optional list of symbols representing instance methods to exposed.
+      # @param [Array<Symbol>, Hash<Symbol, Symbol>] symbols An optional list of symbols representing instance methods to exposed.
       # @return [void]
       def expose_to_config(*symbols)
         self.exposed_to_config ||= {}
@@ -244,7 +244,7 @@ module Middleman
       #   expose_to_template global_name: :local_name
       # @example with Array:
       #   expose_to_template :method1, :method2
-      # @param [Array<Sumbol>, Hash<Symbol, Symbol>] symbols An optional list of symbols representing instance methods to exposed.
+      # @param [Array<Symbol>, Hash<Symbol, Symbol>] symbols An optional list of symbols representing instance methods to exposed.
       # @return [void]
       def expose_to_template(*symbols)
         self.exposed_to_template ||= {}
