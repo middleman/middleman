@@ -15,7 +15,7 @@ master
 * Update Rubocop and apply new lint rules
 * Do not create unnecessary array in IgnoreDescriptor (#2183)
 * Fix reload of watched sources with destination_dir (#2190)
-* Fix localisation and recursion issues of Traversal::parent. (#2188)
+* Fix localization and recursion issues of Traversal::parent. (#2188)
 * Use EnhancedHash for partial locals (#2169)
 
 # 4.3.0.rc.1
