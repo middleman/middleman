@@ -1,7 +1,7 @@
 master
 ===
 
-* i18n was accidently duplicating requests for extension-based template (file.es.html)
+* i18n was accidentally duplicating requests for extension-based template (file.es.html)
 
 # 4.3.0.rc.3
 
