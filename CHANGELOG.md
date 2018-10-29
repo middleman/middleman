@@ -30,7 +30,7 @@ master
 * Clear lazy map after resolving Tilt templates (#2132)
 * Fix ignore of I18n files (#2143)
 * Fix redirect destination lookup (#2140) 
-* Add LD-JSON to MinifyJavascript content types allowed to be compressed (#2138)
+* Add LD-JSON to MinifyJavaScript content types allowed to be compressed (#2138)
 * chmod before closing file to fix compatibility with JRuby (#2133)
 * Keeps full file path for chained templates (#2117) 
 * Use i18n fallbacks when looking up localized paths (#2116)

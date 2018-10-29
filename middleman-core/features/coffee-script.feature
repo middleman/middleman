@@ -1,5 +1,5 @@
 Feature: Support coffee-script
-  In order to offer an alternative when writing Javascript
+  In order to offer an alternative when writing JavaScript
 
   Scenario: Rendering coffee script
     Given the Server is running at "coffeescript-app"

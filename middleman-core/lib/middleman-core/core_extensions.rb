@@ -100,10 +100,10 @@ Middleman::Extensions.register :minify_css do
   Middleman::Extensions::MinifyCss
 end
 
-# MinifyJavascript compresses JS
+# MinifyJavaScript compresses JS
 Middleman::Extensions.register :minify_javascript do
   require 'middleman-core/extensions/minify_javascript'
-  Middleman::Extensions::MinifyJavascript
+  Middleman::Extensions::MinifyJavaScript
 end
 
 # GZIP assets and pages during build

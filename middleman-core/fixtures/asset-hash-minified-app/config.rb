@@ -1,5 +1,5 @@
 configure :build do
-  # Minify Javascript on build
+  # Minify JavaScript on build
   activate :minify_javascript
   activate :asset_hash
 end
