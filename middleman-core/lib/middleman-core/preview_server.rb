@@ -212,7 +212,7 @@ module Middleman
         @cli_options[key] || config[key]
       end
 
-      # Trap some interupt signals and shut down smoothly
+      # Trap some interrupt signals and shut down smoothly
       # @return [void]
       def register_signal_handlers
         %w[INT HUP TERM QUIT].each do |sig|
