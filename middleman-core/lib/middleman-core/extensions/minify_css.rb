@@ -57,7 +57,7 @@ class Middleman::Extensions::MinifyCss < ::Middleman::Extension
     end
 
     # Rack interface
-    # @param [Rack::Environmemt] env
+    # @param [Rack::Environment] env
     # @return [Array]
     def call(env)
       status, headers, response = @app.call(env)
