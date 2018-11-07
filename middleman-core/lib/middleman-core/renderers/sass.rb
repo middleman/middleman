@@ -9,14 +9,14 @@ module Middleman
   module Renderers
     # Sass renderer
     class Sass < ::Middleman::Extension
-      DEFAULT_SASS_CACHE_LOCATION = './.sass-cache'
+      DEFAULT_SASS_CACHE_LOCATION = './.sass-cache'.freeze
 
       opts = { output_style: :nested }
       opts[:line_comments] = false if ENV['TEST']
       define_setting :sass, opts, 'Sass engine options'
       define_setting :sass_assets_paths, [], 'Paths to extra SASS/SCSS files'
       define_setting :sass_source_maps, nil, 'Whether to inline sourcemap into Sass'
-      define_setting :sass_cache_location, ENV['SASS_CACHE_LOCATION'] || DEFAULT_SASS_CACHE_LOCATION, 'Where to store sass cache files'      
+      define_setting :sass_cache_location, ENV['SASS_CACHE_LOCATION'] || DEFAULT_SASS_CACHE_LOCATION, 'Where to store sass cache files'
 
       # Setup extension
       def initialize(app, options = {}, &block)
