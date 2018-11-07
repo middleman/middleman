@@ -1,5 +1,6 @@
 require 'hamster'
 require 'middleman-core/contracts'
+require 'set'
 
 module Middleman
   # The standard "record" that contains information about a file on disk.
@@ -103,7 +104,7 @@ module Middleman
     Contract SourceFile => Bool
     def globally_ignored?(file)
       @ignores.values.any? do |descriptor|
-        ((descriptor[:type] == :all) || file[:types].include?(descriptor[:type])) &&
+        ((descriptor[:type] == :all) || includes_type?(file[:types], descriptor[:type])) &&
           matches?(descriptor[:validator], file)
       end
     end
@@ -183,40 +184,52 @@ module Middleman
 
     # Find a file given a type and path.
     #
-    # @param [Symbol,Array<Symbol>] types A list of file "type".
+    # @param [Symbol,Array<Symbol>,Set<Symbol>] types A list of file "type".
     # @param [String] path The file path.
     # @param [Boolean] glob If the path contains wildcard or glob characters.
     # @return [Middleman::SourceFile, nil]
     Contract Or[Symbol, ArrayOf[Symbol], SetOf[Symbol]], Or[Pathname, String], Maybe[Bool] => Maybe[SourceFile]
     def find(types, path, glob = false)
-      array_of_types = Array(types)
-
       watchers
         .lazy
-        .select { |d| array_of_types.include?(d.type) }
+        .select { |d| includes_type?(types, d.type) }
         .map { |d| d.find(path, glob) }
         .reject(&:nil?)
         .first
     end
 
-    # Check if a file for a given type exists.
+    # Check if a type is included in the types list.
     #
-    # @param [Symbol,Array<Symbol>] types The list of file "type".
-    # @param [String] path The file path relative to it's source root.
+    # @param [Symbol,Array<Symbol>,Set<Symbol>] types The list of file "type".
+    # @param [Symbol] type The type we are looking for.
     # @return [Boolean]
-    Contract Or[Symbol, ArrayOf[Symbol], SetOf[Symbol]], String => Bool
-    def exists?(types, path)
-      watchers.any? { |d| Array(types).include?(d.type) && d.exists?(path) }
+    Contract Or[Symbol, ArrayOf[Symbol], SetOf[Symbol]], Symbol => Bool
+    def includes_type?(types, type)
+      if types.is_a? Symbol
+        types == type
+      else
+        types.include? type
+      end
     end
 
     # Check if a file for a given type exists.
     #
-    # @param [Symbol,Array<Symbol>] types The list of file "type".
+    # @param [Symbol,Array<Symbol>,Set<Symbol>] types The list of file "type".
+    # @param [String] path The file path relative to it's source root.
+    # @return [Boolean]
+    Contract Or[Symbol, ArrayOf[Symbol], SetOf[Symbol]], String => Bool
+    def exists?(types, path)
+      watchers.any? { |d| includes_type?(types, d.type) && d.exists?(path) }
+    end
+
+    # Check if a file for a given type exists.
+    #
+    # @param [Symbol,Array<Symbol>,Set<Symbol>] types The list of file "type".
     # @param [String] path The file path relative to it's source root.
     # @return [Boolean]
     Contract Or[Symbol, ArrayOf[Symbol], SetOf[Symbol]], String => Maybe[HANDLER]
     def watcher_for_path(types, path)
-      watchers.detect { |d| Array(types).include?(d.type) && d.exists?(path) }
+      watchers.detect { |d| includes_type?(types, d.type) && d.exists?(path) }
     end
 
     # Manually check for new files
@@ -264,7 +277,7 @@ module Middleman
 
     # Add callback to be run on file change or deletion
     #
-    # @param [Symbol,Array<Symbol>] types The change types to register the callback.
+    # @param [Symbol,Array<Symbol>,Set<Symbol>] types The change types to register the callback.
     # @return [void]
     Contract Or[Symbol, ArrayOf[Symbol], SetOf[Symbol]], Proc => Any
     def on_change(types, &block)
@@ -362,8 +375,8 @@ module Middleman
         if callback[:type] == :all
           callback[:proc].call(updated_files, removed_files)
         else
-          valid_updated = updated_files.select { |f| f[:types].include?(callback[:type]) }
-          valid_removed = removed_files.select { |f| f[:types].include?(callback[:type]) }
+          valid_updated = updated_files.select { |f| includes_type?(f[:types], callback[:type]) }
+          valid_removed = removed_files.select { |f| includes_type?(f[:types], callback[:type]) }
 
           callback[:proc].call(valid_updated, valid_removed) unless valid_updated.empty? && valid_removed.empty?
         end

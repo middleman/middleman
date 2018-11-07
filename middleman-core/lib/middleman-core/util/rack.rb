@@ -20,9 +20,9 @@ module Middleman
       result
     end
 
-    Contract String, String, ArrayOf[String], IsA['::Middleman::Application'], Proc => String
+    Contract String, String, SetOf[String], IsA['::Middleman::Application'], Proc => String
     def rewrite_paths(body, path, exts, app, &_block)
-      matcher = /([\'\"\(,]\s*|# sourceMappingURL=)([^\s\'\"\)\(>]+(#{::Regexp.union(exts)}))/
+      matcher = /([\'\"\(,]\s*|# sourceMappingURL=)([^\s\'\"\)\(>]+(#{::Regexp.union(exts.to_a)}))/
 
       url_fn_prefix = 'url('
 

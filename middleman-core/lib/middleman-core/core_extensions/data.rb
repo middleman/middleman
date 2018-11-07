@@ -193,7 +193,8 @@ module Middleman
         end
 
         def key?(key)
-          (@local_data.keys + @local_sources.keys + @callback_sources.keys).include?(key.to_s)
+          string_key = key.to_s
+          @local_data.key?(string_key) || @local_sources.key?(string_key) || @callback_sources.key?(string_key)
         end
 
         alias has_key? key?

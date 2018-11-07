@@ -3,6 +3,7 @@ require 'middleman-core/sitemap/extensions/traversal'
 require 'middleman-core/file_renderer'
 require 'middleman-core/template_renderer'
 require 'middleman-core/contracts'
+require 'set'
 
 module Middleman
   # Sitemap namespace
@@ -60,6 +61,8 @@ module Middleman
                            end
 
         @destination_path = @path
+
+        @set_of_extensions_with_layout = Set.new @app.config.extensions_with_layout
 
         # Options are generally rendering/sitemap options
         # Locals are local variables for rendering this resource's template
@@ -149,7 +152,7 @@ module Middleman
         locs[:current_path] ||= destination_path
 
         # Certain output file types don't use layouts
-        opts[:layout] = false if !opts.key?(:layout) && !@app.config.extensions_with_layout.include?(ext)
+        opts[:layout] = false if !opts.key?(:layout) && !@set_of_extensions_with_layout.include?(ext)
 
         renderer = ::Middleman::TemplateRenderer.new(@app, file_descriptor[:full_path].to_s)
         renderer.render(locs, opts)
