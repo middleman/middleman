@@ -9,11 +9,14 @@ module Middleman
   module Renderers
     # Sass renderer
     class Sass < ::Middleman::Extension
+      DEFAULT_SASS_CACHE_LOCATION = './.sass-cache'.freeze
+
       opts = { output_style: :nested }
       opts[:line_comments] = false if ENV['TEST']
       define_setting :sass, opts, 'Sass engine options'
       define_setting :sass_assets_paths, [], 'Paths to extra SASS/SCSS files'
       define_setting :sass_source_maps, nil, 'Whether to inline sourcemap into Sass'
+      define_setting :sass_cache_location, ENV['SASS_CACHE_LOCATION'] || DEFAULT_SASS_CACHE_LOCATION, 'Where to store sass cache files'
 
       # Setup extension
       def initialize(app, options = {}, &block)
@@ -21,7 +24,9 @@ module Middleman
 
         logger.info '== Preferring use of LibSass' if defined?(::SassC)
 
-        app.files.ignore :sass_cache, :source, /(^|\/)\.sass-cache\//
+        if app.config[:sass_cache_location] == DEFAULT_SASS_CACHE_LOCATION
+          app.files.ignore :sass_cache, :source, /(^|\/)\.sass-cache\//
+        end
 
         # Tell Tilt to use it as well (for inline sass blocks)
         ::Tilt.register 'sass', SassPlusCSSFilenameTemplate
@@ -81,6 +86,7 @@ module Middleman
             filename: eval_file,
             line: line,
             syntax: syntax,
+            cache_location: ctx.app.config[:sass_cache_location],
             custom: {}.merge!(options[:custom] || {}).merge!(
               middleman_context: ctx.app,
               current_resource: ctx.current_resource

@@ -2,6 +2,7 @@ master
 ===
 
 * i18n was accidentally duplicating requests for extension-based template (file.es.html)
+* Make sass cache configurable with either `SASS_CACHE_LOCATION` env variable or `sass_cache_location` Middleman config variable. (#2213)
 
 # 4.3.0.rc.3
 
