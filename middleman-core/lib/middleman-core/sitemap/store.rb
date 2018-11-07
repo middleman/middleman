@@ -121,7 +121,7 @@ module Middleman
         rebuild_resource_list!(:"registered_new_manipulator_#{name}")
       end
 
-      # Rebuild the list of resources from scratch, using registed manipulators
+      # Rebuild the list of resources from scratch, using registered manipulators
       # @return [void]
       Contract Symbol => Any
       def rebuild_resource_list!(name)

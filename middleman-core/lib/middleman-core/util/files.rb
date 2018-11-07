@@ -6,7 +6,7 @@ module Middleman
 
     module_function
 
-    # Get a recusive list of files inside a path.
+    # Get a recursive list of files inside a path.
     # Works with symlinks.
     #
     # @param path Some path string or Pathname

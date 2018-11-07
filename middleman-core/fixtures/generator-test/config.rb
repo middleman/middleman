@@ -42,7 +42,7 @@
 configure :production do
   # activate :minify_css
 
-  # Minify Javascript
+  # Minify JavaScript
   # activate :minify_javascript
 
   # Enable cache buster

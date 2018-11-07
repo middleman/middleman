@@ -1,4 +1,4 @@
-Feature: Minify Javascript
+Feature: Minify JavaScript
   In order reduce bytes sent to client and appease YSlow
 
   Scenario: Rendering inline js with the feature disabled

@@ -2,8 +2,8 @@ require 'active_support/core_ext/object/try'
 require 'middleman-core/contracts'
 require 'memoist'
 
-# Minify Javascript Extension
-class Middleman::Extensions::MinifyJavascript < ::Middleman::Extension
+# Minify JavaScript Extension
+class Middleman::Extensions::MinifyJavaScript < ::Middleman::Extension
   option :inline, false, 'Whether to minify JS inline within HTML files'
   option :ignore, [], 'Patterns to avoid minifying'
   option :compressor, proc {
@@ -49,7 +49,7 @@ class Middleman::Extensions::MinifyJavascript < ::Middleman::Extension
     end
 
     # Rack interface
-    # @param [Rack::Environmemt] env
+    # @param [Rack::Environment] env
     # @return [Array]
     def call(env)
       status, headers, response = @app.call(env)

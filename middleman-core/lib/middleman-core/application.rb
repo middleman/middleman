@@ -439,7 +439,7 @@ module Middleman
     #
     # @deprecated Prefer accessing settings through "config".
     #
-    # @param [Symbol] key Name of the attribue
+    # @param [Symbol] key Name of the attribute
     # @param value Attribute value
     # @return [void]
     def set(key, value = nil, &block)

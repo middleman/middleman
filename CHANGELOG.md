@@ -1,7 +1,7 @@
 master
 ===
 
-* i18n was accidently duplicating requests for extension-based template (file.es.html)
+* i18n was accidentally duplicating requests for extension-based template (file.es.html)
 
 # 4.3.0.rc.3
 
@@ -15,7 +15,7 @@ master
 * Update Rubocop and apply new lint rules
 * Do not create unnecessary array in IgnoreDescriptor (#2183)
 * Fix reload of watched sources with destination_dir (#2190)
-* Fix localisation and recursion issues of Traversal::parent. (#2188)
+* Fix localization and recursion issues of Traversal::parent. (#2188)
 * Use EnhancedHash for partial locals (#2169)
 
 # 4.3.0.rc.1
@@ -30,11 +30,11 @@ master
 * Clear lazy map after resolving Tilt templates (#2132)
 * Fix ignore of I18n files (#2143)
 * Fix redirect destination lookup (#2140) 
-* Add LD-JSON to MinifyJavascript content types allowed to be compressed (#2138)
+* Add LD-JSON to MinifyJavaScript content types allowed to be compressed (#2138)
 * chmod before closing file to fix compatibility with JRuby (#2133)
 * Keeps full file path for chained templates (#2117) 
 * Use i18n fallbacks when looking up localized paths (#2116)
-* Compat with latest rails/activsupport < 5.2 (#2095)
+* Compat with latest rails/activesupport < 5.2 (#2095)
 * Update "Port in use"-message for PreviewServer (#2089) 
 * I18n: Keep fragment and query in url_for (#2062)
 * Add support for locale suffixes to link_to (#2065)
@@ -46,7 +46,7 @@ master
 
 # 4.2.0
 
-Fix #1951. A failed build would "clean" all files in build. Possibly breaking change, "clean" and "after_build" are only run for sucessful builds.
+Fix #1951. A failed build would "clean" all files in build. Possibly breaking change, "clean" and "after_build" are only run for successful builds.
 
 # 4.1.14
 

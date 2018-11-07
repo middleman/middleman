@@ -59,7 +59,7 @@ module Middleman
 
         if path_parts.size == 1
           sitemap_class = SitemapResource
-          # Allow special sitemap resources to use custom metadata view calsses
+          # Allow special sitemap resources to use custom metadata view classes
           sitemap_class = resource.meta_pages_class if resource.respond_to? :meta_pages_class
 
           @children[first_part] = sitemap_class.new(resource)

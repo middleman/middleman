@@ -301,7 +301,7 @@ module Middleman
       [valid_updates, valid_removes]
     end
 
-    # Convert a path to a file resprentation.
+    # Convert a path to a file representation.
     #
     # @param [Pathname] path The path.
     # @return [Middleman::SourceFile]

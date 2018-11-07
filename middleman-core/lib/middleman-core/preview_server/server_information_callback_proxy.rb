@@ -7,7 +7,7 @@ module Middleman
     # * server name
     # * site_addresses
     #
-    # All information is "dupped" and the callback is not meant to be used to
+    # All information is "duped" and the callback is not meant to be used to
     # modify these information.
     class ServerInformationCallbackProxy
       attr_reader :server_name, :port, :site_addresses, :listeners

@@ -87,7 +87,7 @@ describe Middleman::CoreExtensions::Data::DataStore do
     end
 
     context 'given path matches callback data' do
-      it 'returns value of calback lambda' do
+      it 'returns value of callback lambda' do
         @subject.callbacks :foo, -> { { 'bar' => 'baz' } }
         @subject.callbacks :wu, -> { %i[tang clan] }
 
