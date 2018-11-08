@@ -45,10 +45,12 @@ Gem::Specification.new do |s|
 
   # Minify CSS
   s.add_dependency('sass', ['>= 3.4'])
+  s.add_dependency('sassc', ['~> 1.10'])
 
   # Minify JS
   s.add_dependency('uglifier', ['~> 3.0'])
   s.add_dependency('execjs', ['~> 2.0'])
+  s.add_dependency('oj', ['~> 3.7'])
 
   # Testing
   s.add_dependency('contracts', ['~> 0.16.0'])
