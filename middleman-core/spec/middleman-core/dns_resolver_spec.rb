@@ -22,9 +22,7 @@ RSpec.describe Middleman::DnsResolver do
     context 'when hosts resolver can resolve name' do
       before :each do
         expect(hosts_resolver).to receive(:getnames).with(unresolved_ip).and_return(resolved_names)
-        if RUBY_VERSION >= '2.1'
-          expect(local_link_resolver).not_to receive(:getnames)
-        end
+        expect(local_link_resolver).not_to receive(:getnames) if RUBY_VERSION >= '2.1'
         expect(network_resolver).not_to receive(:getnames)
       end
 
@@ -54,9 +52,7 @@ RSpec.describe Middleman::DnsResolver do
     context 'when network resolver can resolve name' do
       before :each do
         expect(hosts_resolver).to receive(:getnames).with(unresolved_ip).and_return([])
-        if RUBY_VERSION >= '2.1'
-          expect(local_link_resolver).to receive(:getnames).with(unresolved_ip).and_return([])
-        end
+        expect(local_link_resolver).to receive(:getnames).with(unresolved_ip).and_return([]) if RUBY_VERSION >= '2.1'
         expect(network_resolver).to receive(:getnames).with(unresolved_ip).and_return(resolved_names)
       end
 
@@ -71,9 +67,7 @@ RSpec.describe Middleman::DnsResolver do
     context 'when hosts resolver can resolve name' do
       before :each do
         expect(hosts_resolver).to receive(:getaddresses).with(unresolved_ips).and_return(resolved_name)
-        if RUBY_VERSION >= '2.1'
-          expect(local_link_resolver).not_to receive(:getaddresses)
-        end
+        expect(local_link_resolver).not_to receive(:getaddresses) if RUBY_VERSION >= '2.1'
         expect(network_resolver).not_to receive(:getaddresses)
       end
 
@@ -103,9 +97,7 @@ RSpec.describe Middleman::DnsResolver do
     context 'when network resolver can resolve name' do
       before :each do
         expect(hosts_resolver).to receive(:getaddresses).with(unresolved_ips).and_return([])
-        if RUBY_VERSION >= '2.1'
-          expect(local_link_resolver).to receive(:getaddresses).with(unresolved_ips).and_return([])
-        end
+        expect(local_link_resolver).to receive(:getaddresses).with(unresolved_ips).and_return([]) if RUBY_VERSION >= '2.1'
         expect(network_resolver).to receive(:getaddresses).with(unresolved_ips).and_return(resolved_name)
       end
 

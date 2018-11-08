@@ -234,9 +234,7 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
       url_arg_index = block_given? ? 0 : 1
       options_index = block_given? ? 1 : 2
 
-      if block_given? && args.size > 2
-        raise ArgumentError, 'Too many arguments to link_to(url, options={}, &block)'
-      end
+      raise ArgumentError, 'Too many arguments to link_to(url, options={}, &block)' if block_given? && args.size > 2
 
       url = args[url_arg_index]
 

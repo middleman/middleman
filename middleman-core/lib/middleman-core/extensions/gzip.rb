@@ -83,9 +83,7 @@ class Middleman::Extensions::Gzip < ::Middleman::Extension
     input_file_time = File.mtime(path)
 
     # Check if the right file's already there
-    if !options.overwrite && File.exist?(output_filename) && File.mtime(output_filename) == input_file_time
-      return [nil, nil, nil]
-    end
+    return [nil, nil, nil] if !options.overwrite && File.exist?(output_filename) && File.mtime(output_filename) == input_file_time
 
     File.open(output_filename, 'wb') do |f|
       gz = Zlib::GzipWriter.new(f, Zlib::BEST_COMPRESSION)

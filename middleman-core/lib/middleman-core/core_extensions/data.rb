@@ -17,7 +17,7 @@ module Middleman
       expose_to_template data: :data_store
 
       # The regex which tells Middleman which files are for data
-      DATA_FILE_MATCHER = /^(.*?)[\w-]+\.(yml|yaml|json)$/
+      DATA_FILE_MATCHER = /^(.*?)[\w-]+\.(yml|yaml|json)$/.freeze
 
       def initialize(app, config = {}, &block)
         super

@@ -34,7 +34,7 @@ class Middleman::Extensions::MinifyCss < ::Middleman::Extension
   class Rack
     extend Memoist
     include Contracts
-    INLINE_CSS_REGEX = /(<style[^>]*>\s*(?:\/\*<!\[CDATA\[\*\/\n)?)(.*?)((?:(?:\n\s*)?\/\*\]\]>\*\/)?\s*<\/style>)/m
+    INLINE_CSS_REGEX = /(<style[^>]*>\s*(?:\/\*<!\[CDATA\[\*\/\n)?)(.*?)((?:(?:\n\s*)?\/\*\]\]>\*\/)?\s*<\/style>)/m.freeze
 
     # Init
     # @param [Class] app

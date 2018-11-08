@@ -26,7 +26,7 @@ class Middleman::Extensions::MinifyJavaScript < ::Middleman::Extension
   class Rack
     extend Memoist
     include Contracts
-    INLINE_JS_REGEX = /(<script[^>]*>\s*(?:\/\/(?:(?:<!--)|(?:<!\[CDATA\[))\n)?)(.*?)((?:(?:\n\s*)?\/\/(?:(?:-->)|(?:\]\]>)))?\s*<\/script>)/m
+    INLINE_JS_REGEX = /(<script[^>]*>\s*(?:\/\/(?:(?:<!--)|(?:<!\[CDATA\[))\n)?)(.*?)((?:(?:\n\s*)?\/\/(?:(?:-->)|(?:\]\]>)))?\s*<\/script>)/m.freeze
 
     # Init
     # @param [Class] app

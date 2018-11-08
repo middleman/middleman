@@ -103,13 +103,9 @@ module Middleman
 
       Contract IsA['Middleman::Sitemap::Resource'], Maybe[Symbol] => Any
       def add_cache(resource, only = nil)
-        if should_run? :path, only
-          @_lookup_by_path[::Middleman::Util.normalize_path(resource.path)] = resource
-        end
+        @_lookup_by_path[::Middleman::Util.normalize_path(resource.path)] = resource if should_run? :path, only
 
-        if should_run? :destination_path, only
-          @_lookup_by_destination_path[::Middleman::Util.normalize_path(resource.destination_path)] = resource
-        end
+        @_lookup_by_destination_path[::Middleman::Util.normalize_path(resource.destination_path)] = resource if should_run? :destination_path, only
 
         if should_run? :binary, only
           if resource.binary?
@@ -132,9 +128,7 @@ module Middleman
           @_lookup_by_destination_extension[::File.extname(resource.destination_path)] << resource
         end
 
-        if should_run? :page_id, only
-          @_lookup_by_page_id[resource.page_id.to_s.to_sym] = resource
-        end
+        @_lookup_by_page_id[resource.page_id.to_s.to_sym] = resource if should_run? :page_id, only
       end
 
       Contract IsA['Middleman::Sitemap::Resource'] => Any
@@ -145,13 +139,9 @@ module Middleman
 
       Contract IsA['Middleman::Sitemap::Resource'], Maybe[Symbol] => Any
       def remove_cache(resource, only = nil)
-        if should_run? :path, only
-          @_lookup_by_path.delete ::Middleman::Util.normalize_path(resource.path)
-        end
+        @_lookup_by_path.delete ::Middleman::Util.normalize_path(resource.path) if should_run? :path, only
 
-        if should_run? :destination_path, only
-          @_lookup_by_destination_path.delete ::Middleman::Util.normalize_path(resource.destination_path)
-        end
+        @_lookup_by_destination_path.delete ::Middleman::Util.normalize_path(resource.destination_path) if should_run? :destination_path, only
 
         if should_run? :binary, only
           if resource.binary?
@@ -167,14 +157,10 @@ module Middleman
         end
 
         if should_run? :destination_extension, only
-          if @_lookup_by_destination_extension.key?(::File.extname(resource.destination_path))
-            @_lookup_by_destination_extension[::File.extname(resource.destination_path)].delete resource
-          end
+          @_lookup_by_destination_extension[::File.extname(resource.destination_path)].delete resource if @_lookup_by_destination_extension.key?(::File.extname(resource.destination_path))
         end
 
-        if should_run? :page_id, only
-          @_lookup_by_page_id.delete resource.page_id.to_s.to_sym
-        end
+        @_lookup_by_page_id.delete resource.page_id.to_s.to_sym if should_run? :page_id, only
       end
 
       Contract IsA['Middleman::Sitemap::Resource'], Maybe[Symbol], Proc => Any
@@ -382,9 +368,7 @@ module Middleman
         relative_path = file.is_a?(Pathname) ? file.to_s : file[:relative_path].to_s
 
         # Replace a file name containing automatic_directory_matcher with a folder
-        unless @app.config[:automatic_directory_matcher].nil?
-          relative_path = relative_path.gsub(@app.config[:automatic_directory_matcher], '/')
-        end
+        relative_path = relative_path.gsub(@app.config[:automatic_directory_matcher], '/') unless @app.config[:automatic_directory_matcher].nil?
 
         extensionless_path(relative_path)
       end

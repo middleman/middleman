@@ -70,9 +70,7 @@ module Middleman
           # indicates the path is localized and there are still more parts
           # remaining, and return it.
           # E.g. `parts == ['en', 'blog']`, we try to find: `/blog.html`
-          if traversal_root != '/' && parts.length > 1
-            file_by_parts.call(parts[1..-1])
-          end
+          file_by_parts.call(parts[1..-1]) if traversal_root != '/' && parts.length > 1
 
           # Now let's drop the last part of the path to try to find an index
           # file in the path above `current_page`'s path and return it.
@@ -83,12 +81,8 @@ module Middleman
           # Lastly, check for an non-localized index index file in the path
           # above `current_page`'s path and return it.
           # E.g. `parts == ['en', 'blog']`, we try to find: `/index.html`
-          if traversal_root == "#{parts.first}/"
-            index_by_parts.call(parts[1..-1] || '')
-          end
-          if !parts.empty? && max_recursion.positive?
-            return parent_helper(parts.join('/'), max_recursion - 1)
-          end
+          index_by_parts.call(parts[1..-1] || '') if traversal_root == "#{parts.first}/"
+          return parent_helper(parts.join('/'), max_recursion - 1) if !parts.empty? && max_recursion.positive?
 
           nil
         end
@@ -141,9 +135,7 @@ module Middleman
         # (e.g., if the resource is named 'gallery.html' and a path exists named 'gallery/', this would return true)
         # @return [Boolean]
         def eponymous_directory?
-          if !path.end_with?("/#{@app.config[:index_file]}") && destination_path.end_with?("/#{@app.config[:index_file]}")
-            return true
-          end
+          return true if !path.end_with?("/#{@app.config[:index_file]}") && destination_path.end_with?("/#{@app.config[:index_file]}")
 
           @app.files.by_type(:source).watchers.any? do |source|
             (source.directory + Pathname(eponymous_directory_path)).directory?

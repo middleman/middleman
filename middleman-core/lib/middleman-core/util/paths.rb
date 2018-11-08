@@ -109,9 +109,7 @@ module Middleman
       # Don't touch assets which already have a full path
       return path if path.include?('//') || path.start_with?('data:')
 
-      if options[:relative] && !options[:current_resource]
-        raise ArgumentError, '#asset_url must be run in a context with current_resource if relative: true'
-      end
+      raise ArgumentError, '#asset_url must be run in a context with current_resource if relative: true' if options[:relative] && !options[:current_resource]
 
       uri = ::Middleman::Util.parse_uri(path)
       path = uri.path
@@ -278,9 +276,7 @@ module Middleman
         relative_path = Pathname(resource_url).relative_path_from(current_dir).to_s
 
         # Put back the trailing slash to avoid unnecessary Apache redirects
-        if resource_url.end_with?('/') && !relative_path.end_with?('/')
-          relative_path << '/'
-        end
+        relative_path << '/' if resource_url.end_with?('/') && !relative_path.end_with?('/')
 
         relative_path
       else

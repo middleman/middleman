@@ -83,9 +83,7 @@ module Middleman
       def load(name)
         raise 'Extension name must be a symbol' unless name.is_a?(Symbol)
 
-        unless registered.key?(name)
-          raise "Unknown Extension: #{name}. Check the name and make sure you have referenced the extension's gem in your Gemfile."
-        end
+        raise "Unknown Extension: #{name}. Check the name and make sure you have referenced the extension's gem in your Gemfile." unless registered.key?(name)
 
         extension_class = registered[name]
         if extension_class.is_a?(Proc)
@@ -93,9 +91,7 @@ module Middleman
           registered[name] = extension_class
         end
 
-        unless extension_class.ancestors.include?(::Middleman::Extension)
-          raise "Tried to activate old-style extension: #{name}. They are no longer supported."
-        end
+        raise "Tried to activate old-style extension: #{name}. They are no longer supported." unless extension_class.ancestors.include?(::Middleman::Extension)
 
         # Set the extension's name to whatever it was registered as.
         extension_class.ext_name = name
@@ -126,9 +122,7 @@ module Middleman
         registered.each do |name, _|
           begin
             ext = load(name)
-            unless ext.global_config.all_settings.empty?
-              app.config.load_settings(ext.global_config.all_settings)
-            end
+            app.config.load_settings(ext.global_config.all_settings) unless ext.global_config.all_settings.empty?
           rescue LoadError
           end
         end

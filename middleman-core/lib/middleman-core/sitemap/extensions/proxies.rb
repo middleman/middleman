@@ -86,13 +86,9 @@ module Middleman
       def target_resource
         resource = @store.find_resource_by_path(@target)
 
-        unless resource
-          raise "Path #{path} proxies to unknown file #{@target}:#{@store.resources.map(&:path)}"
-        end
+        raise "Path #{path} proxies to unknown file #{@target}:#{@store.resources.map(&:path)}" unless resource
 
-        if resource.is_a? ProxyResource
-          raise "You can't proxy #{path} to #{@target} which is itself a proxy."
-        end
+        raise "You can't proxy #{path} to #{@target} which is itself a proxy." if resource.is_a? ProxyResource
 
         resource
       end

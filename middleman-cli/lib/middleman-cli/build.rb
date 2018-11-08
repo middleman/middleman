@@ -44,9 +44,7 @@ module Middleman::Cli
     def build
       root = ENV['MM_ROOT'] || Dir.pwd
 
-      unless File.exist?(File.join(root, 'config.rb'))
-        raise Thor::Error, 'Error: Could not find a Middleman project config, perhaps you are in the wrong folder?'
-      end
+      raise Thor::Error, 'Error: Could not find a Middleman project config, perhaps you are in the wrong folder?' unless File.exist?(File.join(root, 'config.rb'))
 
       require 'middleman-core'
       require 'middleman-core/logger'
@@ -84,9 +82,7 @@ module Middleman::Cli
           puts 'Project built successfully.'
         else
           msg = 'There were errors during this build'
-          unless options['verbose']
-            msg << ', re-run with `middleman build --verbose` to see the full exception.'
-          end
+          msg << ', re-run with `middleman build --verbose` to see the full exception.' unless options['verbose']
           shell.say msg, :red
 
           exit(1)

@@ -18,9 +18,7 @@ module Middleman
       # @return [Addressable::Template] a URI template
       def uri_template(tmpl_src)
         # Support the RFC6470 templates directly if people use them
-        if tmpl_src.include?(':')
-          tmpl_src = tmpl_src.gsub(/:([A-Za-z0-9]+)/, '{\1}')
-        end
+        tmpl_src = tmpl_src.gsub(/:([A-Za-z0-9]+)/, '{\1}') if tmpl_src.include?(':')
 
         ::Addressable::Template.new(::Middleman::Util.normalize_path(tmpl_src))
       end

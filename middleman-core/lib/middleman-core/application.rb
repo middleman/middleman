@@ -296,9 +296,7 @@ module Middleman
       # Post parsing, pre-extension callback
       execute_callbacks(:after_configuration_eval)
 
-      if Object.const_defined?(:Encoding)
-        Encoding.default_external = config[:encoding]
-      end
+      Encoding.default_external = config[:encoding] if Object.const_defined?(:Encoding)
 
       prune_tilt_templates!
 

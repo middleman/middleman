@@ -24,9 +24,7 @@ module Middleman
 
         logger.info '== Preferring use of LibSass' if defined?(::SassC)
 
-        if app.config[:sass_cache_location] == DEFAULT_SASS_CACHE_LOCATION
-          app.files.ignore :sass_cache, :source, /(^|\/)\.sass-cache\//
-        end
+        app.files.ignore :sass_cache, :source, /(^|\/)\.sass-cache\// if app.config[:sass_cache_location] == DEFAULT_SASS_CACHE_LOCATION
 
         # Tell Tilt to use it as well (for inline sass blocks)
         ::Tilt.register 'sass', SassPlusCSSFilenameTemplate
@@ -99,9 +97,7 @@ module Middleman
             more_opts[:source_map_contents] = true
           end
 
-          if ctx.is_a?(::Middleman::TemplateContext) && file
-            more_opts[:css_filename] = file.sub(/\.s[ac]ss$/, '')
-          end
+          more_opts[:css_filename] = file.sub(/\.s[ac]ss$/, '') if ctx.is_a?(::Middleman::TemplateContext) && file
 
           {}.merge!(options).merge!(more_opts)
         end

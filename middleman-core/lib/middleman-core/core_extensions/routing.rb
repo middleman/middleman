@@ -16,9 +16,7 @@ module Middleman
           if normalized_path.is_a?(String) && !normalized_path.include?('*')
             # Normalize path
             normalized_path = ::Middleman::Util.normalize_path(normalized_path)
-            if normalized_path.end_with?('/') || app.files.by_type(:source).watchers.any? { |w| (w.directory + Pathname(normalized_path)).directory? }
-              normalized_path = ::File.join(normalized_path, app.config[:index_file])
-            end
+            normalized_path = ::File.join(normalized_path, app.config[:index_file]) if normalized_path.end_with?('/') || app.files.by_type(:source).watchers.any? { |w| (w.directory + Pathname(normalized_path)).directory? }
           end
 
           normalized_path = '/' + ::Middleman::Util.strip_leading_slash(normalized_path) if normalized_path.is_a?(String)

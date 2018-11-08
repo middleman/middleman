@@ -31,9 +31,7 @@ module Middleman
       @source_dir = Pathname(File.join(@app.root, @app.config[:source]))
       @build_dir = Pathname(@app.config[:build_dir])
 
-      if /\A[.\/]+\Z/.match?(@build_dir.expand_path.relative_path_from(@source_dir).to_s)
-        raise ":build_dir (#{@build_dir}) cannot be a parent of :source_dir (#{@source_dir})"
-      end
+      raise ":build_dir (#{@build_dir}) cannot be a parent of :source_dir (#{@source_dir})" if /\A[.\/]+\Z/.match?(@build_dir.expand_path.relative_path_from(@source_dir).to_s)
 
       @glob = opts.fetch(:glob)
       @cleaning = opts.fetch(:clean)

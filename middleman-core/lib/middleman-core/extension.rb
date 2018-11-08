@@ -406,9 +406,7 @@ module Middleman
       @app.after_configuration do
         ext.after_configuration if ext.respond_to?(:after_configuration)
 
-        if ext.respond_to?(:manipulate_resource_list) || ext.respond_to?(:manipulate_resource_list_container!)
-          ext.app.sitemap.register_resource_list_manipulators(ext.class.ext_name, ext, ext.class.resource_list_manipulator_priority)
-        end
+        ext.app.sitemap.register_resource_list_manipulators(ext.class.ext_name, ext, ext.class.resource_list_manipulator_priority) if ext.respond_to?(:manipulate_resource_list) || ext.respond_to?(:manipulate_resource_list_container!)
 
         if ext.class.resources_generators && !ext.class.resources_generators.empty?
           ext.app.sitemap.register_resource_list_manipulators(

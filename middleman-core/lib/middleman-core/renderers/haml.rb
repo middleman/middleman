@@ -48,9 +48,7 @@ module Middleman
 
         ::Haml::Options.defaults[:context] = nil
         ::Haml::Options.send :attr_accessor, :context
-        if defined?(::Haml::TempleEngine)
-          ::Haml::TempleEngine.define_options context: nil
-        end
+        ::Haml::TempleEngine.define_options context: nil if defined?(::Haml::TempleEngine)
         [::Haml::Filters::Sass, ::Haml::Filters::Scss, ::Haml::Filters::Markdown].each do |f|
           f.class_exec do
             def self.render_with_options(text, compiler_options)

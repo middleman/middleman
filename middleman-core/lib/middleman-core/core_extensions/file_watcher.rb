@@ -59,9 +59,7 @@ module Middleman
           wait_for_delay: app.config[:watcher_wait_for_delay]
         )
 
-        if @original_source_dir != app.config[:source]
-          @watcher.update_path(app.config[:source])
-        end
+        @watcher.update_path(app.config[:source]) if @original_source_dir != app.config[:source]
 
         @sources.start!
         @sources.poll_once!

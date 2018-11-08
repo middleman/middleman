@@ -23,13 +23,9 @@ module Middleman
     def setup_bundler
       found_gemfile_root = findup('Gemfile', ENV['MM_ROOT'])
 
-      if found_gemfile_root
-        ENV['BUNDLE_GEMFILE'] ||= File.join(found_gemfile_root, 'Gemfile')
-      end
+      ENV['BUNDLE_GEMFILE'] ||= File.join(found_gemfile_root, 'Gemfile') if found_gemfile_root
 
-      unless File.exist?(ENV['BUNDLE_GEMFILE'])
-        ENV['BUNDLE_GEMFILE'] = File.expand_path('../../../Gemfile', __dir__)
-      end
+      ENV['BUNDLE_GEMFILE'] = File.expand_path('../../../Gemfile', __dir__) unless File.exist?(ENV['BUNDLE_GEMFILE'])
 
       raise "Couldn't find your Gemfile. Middleman projects require a Gemfile for specifying dependencies." unless File.exist?(ENV['BUNDLE_GEMFILE'])
 

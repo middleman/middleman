@@ -6,9 +6,7 @@ module Middleman
   class Logger < ActiveSupport::Logger
     def self.singleton(*args)
       if !@_logger || !args.empty?
-        if args.length == 1 && (args.first.is_a?(::String) || args.first.respond_to?(:write))
-          args = [0, false, args.first]
-        end
+        args = [0, false, args.first] if args.length == 1 && (args.first.is_a?(::String) || args.first.respond_to?(:write))
         @_logger = new(*args)
       end
 
@@ -21,9 +19,7 @@ module Middleman
       self.level = log_level
       @instrumenting = is_instrumenting
 
-      if @instrumenting != false
-        ::ActiveSupport::Notifications.subscribe(/\.middleman$/, self)
-      end
+      ::ActiveSupport::Notifications.subscribe(/\.middleman$/, self) if @instrumenting != false
 
       @mutex = Mutex.new
     end

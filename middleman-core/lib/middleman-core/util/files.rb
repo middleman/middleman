@@ -90,9 +90,7 @@ module Middleman
       @@extensions_cache[base_name] ||= begin
         result = []
 
-        unless base_name.start_with?('.')
-          step_through_extensions(base_name) { |e| result << e }
-        end
+        step_through_extensions(base_name) { |e| result << e } unless base_name.start_with?('.')
 
         result
       end
