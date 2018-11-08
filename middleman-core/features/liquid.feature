@@ -9,3 +9,8 @@ Feature: Support liquid partials
     Given the Server is running at "liquid-app"
     When I go to "/data2.html"
     Then I should see "OneTwo"
+
+  Scenario: Liquid partial from another folder
+     Given the Server is running at "liquid-app"
+     When I go to "/include-from-folder.html"
+     Then I should see "Include from folder"

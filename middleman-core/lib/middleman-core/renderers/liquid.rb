@@ -12,7 +12,7 @@ module Middleman
 
       # Called by Liquid to retrieve a template file
       def read_template_file(template_path)
-        file = app.files.find(:source, "_#{template_path}.liquid")
+        file = app.files.find(:source, "#{File.dirname(template_path)}/_#{File.basename(template_path)}.liquid")
         raise ::Liquid::FileSystemError, "No such template '#{template_path}'" unless file
 
         file.read
