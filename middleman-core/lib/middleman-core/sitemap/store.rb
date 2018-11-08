@@ -177,7 +177,7 @@ module Middleman
         end
       end
 
-      Contract IsA['Middleman::Sitemap::Resource'], Proc => Any
+      Contract IsA['Middleman::Sitemap::Resource'], Maybe[Symbol], Proc => Any
       def update!(resource, only = nil)
         remove_cache(resource, only)
         yield
