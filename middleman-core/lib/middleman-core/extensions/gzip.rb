@@ -24,6 +24,9 @@ class Middleman::Extensions::Gzip < ::Middleman::Extension
     require 'zlib'
     require 'stringio'
     require 'find'
+    require 'set'
+
+    @set_of_exts = Set.new options.exts
   end
 
   def after_build(builder)
@@ -110,7 +113,9 @@ class Middleman::Extensions::Gzip < ::Middleman::Extension
   # @return [Boolean]
   Contract Pathname => Bool
   def should_gzip?(path)
+    return false unless @set_of_exts.include?(path.extname)
+
     path = path.sub app.config[:build_dir] + '/', ''
-    options.exts.include?(path.extname) && options.ignore.none? { |ignore| Middleman::Util.path_match(ignore, path.to_s) }
+    options.ignore.none? { |ignore| Middleman::Util.path_match(ignore, path.to_s) }
   end
 end

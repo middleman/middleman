@@ -13,9 +13,13 @@ class Middleman::Extensions::RelativeAssets < ::Middleman::Extension
 
     return if options[:helpers_only]
 
+    require 'set'
+    @set_of_exts = Set.new(options.exts || app.config[:asset_extensions])
+    @set_of_sources = Set.new options.sources
+
     app.rewrite_inline_urls id: :relative_assets,
-                            url_extensions: options.exts || app.config[:asset_extensions],
-                            source_extensions: options.sources,
+                            url_extensions: @set_of_exts,
+                            source_extensions: @set_of_sources,
                             ignore: options.ignore,
                             rewrite_ignore: options.rewrite_ignore,
                             proc: method(:rewrite_url)

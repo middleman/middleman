@@ -4,6 +4,7 @@ require 'uri'
 require 'addressable/uri'
 require 'memoist'
 require 'tilt'
+require 'set'
 
 require 'middleman-core/contracts'
 
@@ -63,6 +64,8 @@ module Middleman
     end
     memoize :should_ignore?
 
+    IGNORED_ASSET_EXTENSIONS = Set.new %i[images fonts]
+
     # Get the path of a file of a given type
     #
     # @param [Middleman::Application] app The app.
@@ -88,7 +91,7 @@ module Middleman
                      end
 
       source = source.to_s.tr(' ', '')
-      ignore_extension = %i[images fonts].include? kind # don't append extension
+      ignore_extension = IGNORED_ASSET_EXTENSIONS.include? kind # don't append extension
       source << ".#{kind}" unless ignore_extension || source.end_with?(".#{kind}")
       asset_folder = '' if source.start_with?('/') # absolute path
 
