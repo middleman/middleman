@@ -14,8 +14,8 @@ module Middleman
       REWRITER_DESCRIPTOR = {
         id: Symbol,
         proc: Or[Proc, Method],
-        url_extensions: ArrayOf[String],
-        source_extensions: ArrayOf[String],
+        url_extensions: SetOf[String],
+        source_extensions: SetOf[String],
         ignore: ArrayOf[::Middleman::Util::IGNORE_DESCRIPTOR],
         after: Maybe[Symbol]
       }.freeze
@@ -58,16 +58,15 @@ module Middleman
           @middleman_app = options.fetch(:middleman_app)
           @rewriters = options.fetch(:rewriters)
 
-          all_source_exts = @rewriters
-                            .reduce([]) { |sum, rewriter| sum + rewriter[:source_extensions] }
-                            .flatten
-                            .uniq
-          @source_exts_regex_text = Regexp.union(all_source_exts).to_s
+          all_source_exts = @rewriters.reduce(Set.new) do |sum, rewriter|
+            sum + rewriter[:source_extensions]
+          end
 
-          @all_asset_exts = @rewriters
-                            .reduce([]) { |sum, rewriter| sum + rewriter[:url_extensions] }
-                            .flatten
-                            .uniq
+          @source_exts_regex_text = Regexp.union(all_source_exts.to_a).to_s
+
+          @all_asset_exts = @rewriters.reduce(Set.new) do |sum, rewriter|
+            sum + rewriter[:url_extensions]
+          end
         end
 
         def call(env)

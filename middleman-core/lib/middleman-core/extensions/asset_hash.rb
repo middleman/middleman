@@ -18,13 +18,16 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
     # Allow specifying regexes to ignore, plus always ignore apple touch icons
     @ignore = Array(options.ignore) + [/^apple-touch-icon/]
 
+    require 'set'
+
     # Exclude .ico from the default list because browsers expect it
     # to be named "favicon.ico"
-    @exts = options.exts || (app.config[:asset_extensions] - %w[.ico])
+    @set_of_exts = Set.new(options.exts || (app.config[:asset_extensions] - %w[.ico]))
+    @set_of_sources = Set.new options.sources
 
     app.rewrite_inline_urls id: :asset_hash,
-                            url_extensions: @exts.sort.reverse,
-                            source_extensions: options.sources,
+                            url_extensions: @set_of_exts,
+                            source_extensions: @set_of_sources,
                             ignore: @ignore,
                             rewrite_ignore: options.rewrite_ignore,
                             proc: method(:rewrite_url),
@@ -63,7 +66,7 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
     # Process resources in order: binary images and fonts, then SVG, then JS/CSS.
     # This is so by the time we get around to the text files (which may reference
     # images and fonts) the static assets' hashes are already calculated.
-    sorted_resources = resource_list.by_extensions(@exts).sort_by do |a|
+    sorted_resources = resource_list.by_extensions(@set_of_exts).sort_by do |a|
       if %w[.svg .svgz].include? a.ext
         0
       elsif %w[.js .css].include? a.ext
