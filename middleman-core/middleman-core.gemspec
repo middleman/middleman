@@ -38,7 +38,7 @@ Gem::Specification.new do |s|
   s.add_dependency('listen', ['~> 3.0'])
 
   # i18n
-  s.add_dependency('i18n', ['~> 0.7'])
+  s.add_dependency('i18n', ['~> 0.8'])
 
   # Automatic Image Sizes
   s.add_dependency('fastimage', ['~> 2.0'])
