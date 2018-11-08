@@ -19,7 +19,7 @@ PATH
       fastimage (~> 2.0)
       hamster (~> 3.0)
       hashie (~> 3.4)
-      i18n (~> 0.7)
+      i18n (~> 0.8)
       listen (~> 3.0)
       memoist (~> 0.14)
       padrino-helpers (~> 0.13.0)
@@ -266,4 +266,4 @@ DEPENDENCIES
   yard (~> 0.9.11)
 
 BUNDLED WITH
-   1.16.6
+   1.17.1
