@@ -1,2 +1,2 @@
-default: --require features --tags 'not @wip'
-wip: --require features --tags @wip
+default: --fast-fail --require features --tags 'not @wip'
+wip: --fast-fail --require features --tags @wip

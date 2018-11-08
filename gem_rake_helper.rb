@@ -18,12 +18,12 @@ end
 require 'cucumber/rake/task'
 Cucumber::Rake::Task.new do |t|
   exempt_tags = ["--tags 'not @wip'"]
-  t.cucumber_opts = "--require features --color #{exempt_tags.join(' ')} --strict"
+  t.cucumber_opts = "--fast-fail --require features --color #{exempt_tags.join(' ')} --strict"
 end
 
 Cucumber::Rake::Task.new(:cucumber_wip) do |t|
   exempt_tags = ['--tags @wip']
-  t.cucumber_opts = "--require features --color #{exempt_tags.join(' ')} --strict"
+  t.cucumber_opts = "--fast-fail --require features --color #{exempt_tags.join(' ')} --strict"
 end
 
 require 'rspec/core/rake_task'
