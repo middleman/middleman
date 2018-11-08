@@ -2,7 +2,7 @@
 require 'active_support/core_ext/hash/deep_merge'
 require 'monitor'
 require 'hamster'
-
+require 'set'
 require 'middleman-core/extensions'
 
 # Files on Disk
@@ -52,7 +52,222 @@ require 'middleman-core/contracts'
 module Middleman
   # Sitemap namespace
   module Sitemap
-    ManipulatorDescriptor = Struct.new :name, :manipulator, :priority, :custom_name
+    ManipulatorDescriptor = Struct.new :name, :manipulator, :priority
+
+    class ResourceListContainer
+      extend Forwardable
+      include Contracts
+
+      def_delegators :@_set, :each, :find, :select, :reject
+
+      Contract IsA['Middleman::Sitemap::Store'], Maybe[ArrayOf[IsA['Middleman::Sitemap::Resource']]] => Any
+      def initialize(_store, initial = [])
+        @_set = Set.new
+        @_store = Store
+
+        reset!(initial)
+      end
+
+      Contract Maybe[ArrayOf[IsA['Middleman::Sitemap::Resource']]] => Any
+      def reset!(initial = [])
+        @_set = Set.new
+
+        @_lookup_by_path = {}
+        @_lookup_by_destination_path = {}
+        @_lookup_by_binary = Set.new
+        @_lookup_by_non_binary = Set.new
+        @_lookup_by_source_extension = {}
+        @_lookup_by_destination_extension = {}
+        @_lookup_by_page_id = {}
+
+        add!(*initial)
+      end
+
+      Contract Args[IsA['Middleman::Sitemap::Resource']] => Any
+      def add!(*resources)
+        resources.each(&method(:add_one!))
+      end
+
+      Contract IsA['Middleman::Sitemap::Resource'] => Any
+      def add_one!(resource)
+        @_set.add resource
+        add_cache resource
+      end
+
+      Contract Symbol, Maybe[Symbol] => Bool
+      def should_run?(key, only = nil)
+        return true if only.nil?
+
+        key == only
+      end
+
+      Contract IsA['Middleman::Sitemap::Resource'], Maybe[Symbol] => Any
+      def add_cache(resource, only = nil)
+        if should_run? :path, only
+          @_lookup_by_path[::Middleman::Util.normalize_path(resource.path)] = resource
+        end
+
+        if should_run? :destination_path, only
+          @_lookup_by_destination_path[::Middleman::Util.normalize_path(resource.destination_path)] = resource
+        end
+
+        if should_run? :binary, only
+          if resource.binary?
+            @_lookup_by_binary << resource
+          else
+            @_lookup_by_non_binary << resource
+          end
+        end
+
+        if should_run? :source_extension, only
+          source_ext = resource.file_descriptor && resource.file_descriptor[:full_path] && ::File.extname(resource.file_descriptor[:full_path])
+          if source_ext
+            @_lookup_by_source_extension[source_ext] ||= Set.new
+            @_lookup_by_source_extension[source_ext] << resource
+          end
+        end
+
+        if should_run? :destination_extension, only
+          @_lookup_by_destination_extension[::File.extname(resource.destination_path)] ||= Set.new
+          @_lookup_by_destination_extension[::File.extname(resource.destination_path)] << resource
+        end
+
+        if should_run? :page_id, only
+          @_lookup_by_page_id[resource.page_id.to_s.to_sym] = resource
+        end
+      end
+
+      Contract IsA['Middleman::Sitemap::Resource'] => Any
+      def remove!(resource)
+        @_set.delete resource
+        remove_cache resource
+      end
+
+      Contract IsA['Middleman::Sitemap::Resource'], Maybe[Symbol] => Any
+      def remove_cache(resource, only = nil)
+        if should_run? :path, only
+          @_lookup_by_path.delete ::Middleman::Util.normalize_path(resource.path)
+        end
+
+        if should_run? :destination_path, only
+          @_lookup_by_destination_path.delete ::Middleman::Util.normalize_path(resource.destination_path)
+        end
+
+        if should_run? :binary, only
+          if resource.binary?
+            @_lookup_by_binary.delete resource
+          else
+            @_lookup_by_non_binary.delete resource
+          end
+        end
+
+        if should_run? :source_extension, only
+          source_ext = resource.file_descriptor && resource.file_descriptor[:full_path] && ::File.extname(resource.file_descriptor[:full_path])
+          @_lookup_by_source_extension[source_ext].delete resource if source_ext
+        end
+
+        if should_run? :destination_extension, only
+          if @_lookup_by_destination_extension.key?(::File.extname(resource.destination_path))
+            @_lookup_by_destination_extension[::File.extname(resource.destination_path)].delete resource
+          end
+        end
+
+        if should_run? :page_id, only
+          @_lookup_by_page_id.delete resource.page_id.to_s.to_sym
+        end
+      end
+
+      Contract IsA['Middleman::Sitemap::Resource'], Maybe[Symbol], Proc => Any
+      def update!(resource, only = nil)
+        remove_cache(resource, only)
+        yield
+        add_cache(resource, only)
+      end
+
+      # Find resources given its source extension
+      # @param [String] extension The source extension of a resource.
+      # @return [Middleman::Sitemap::Resource]
+      Contract String => SetOf[IsA['Middleman::Sitemap::Resource']]
+      def by_source_extension(extension)
+        @_lookup_by_source_extension[extension] || Set.new
+      end
+
+      # Find resources given a set of source extensions
+      # @param [Set<String>] extensions The source extensions of a resource.
+      # @return [Middleman::Sitemap::Resource]
+      Contract Or[ArrayOf[String], SetOf[String]] => SetOf[IsA['Middleman::Sitemap::Resource']]
+      def by_source_extensions(extensions)
+        extensions.reduce(Set.new) do |sum, ext|
+          sum | by_source_extension(ext)
+        end
+      end
+
+      # Find resources given its destination extension
+      # @param [String] extension The destination (output) extension of a resource.
+      # @return [Middleman::Sitemap::Resource]
+      Contract String => SetOf[IsA['Middleman::Sitemap::Resource']]
+      def by_extension(extension)
+        @_lookup_by_destination_extension[extension] || Set.new
+      end
+
+      # Find resources given a set of destination extensions
+      # @param [Set<String>] extensions The destination (output) extensions of a resource.
+      # @return [Middleman::Sitemap::Resource]
+      Contract Or[ArrayOf[String], SetOf[String]] => SetOf[IsA['Middleman::Sitemap::Resource']]
+      def by_extensions(extensions)
+        extensions.reduce(Set.new) do |sum, ext|
+          sum | by_extension(ext)
+        end
+      end
+
+      # Find a resource given its original path
+      # @param [String] request_path The original path of a resource.
+      # @return [Middleman::Sitemap::Resource]
+      Contract String => Maybe[IsA['Middleman::Sitemap::Resource']]
+      def by_path(request_path)
+        request_path = ::Middleman::Util.normalize_path(request_path)
+        @_lookup_by_path[request_path]
+      end
+
+      # Find a resource given its destination path
+      # @param [String] request_path The destination (output) path of a resource.
+      # @return [Middleman::Sitemap::Resource]
+      Contract String => Maybe[IsA['Middleman::Sitemap::Resource']]
+      def by_destination_path(request_path)
+        request_path = ::Middleman::Util.normalize_path(request_path)
+        @_lookup_by_destination_path[request_path]
+      end
+
+      # Find a resource given its page id
+      # @param [String] page_id The page id.
+      # @return [Middleman::Sitemap::Resource]
+      Contract Or[String, Symbol] => Maybe[IsA['Middleman::Sitemap::Resource']]
+      def by_page_id(page_id)
+        @_lookup_by_page_id[page_id.to_s.to_sym]
+      end
+
+      # Find a resource given its page id
+      # @param [String] page_id The page id.
+      # @return [Middleman::Sitemap::Resource]
+      Contract Bool => SetOf[IsA['Middleman::Sitemap::Resource']]
+      def by_binary(is_binary)
+        if is_binary
+          @_lookup_by_binary
+        else
+          @_lookup_by_non_binary
+        end
+      end
+
+      Contract ArrayOf[IsA['Middleman::Sitemap::Resource']]
+      def to_a
+        @_set.to_a
+      end
+
+      Contract ArrayOf[IsA['Middleman::Sitemap::Resource']] => IsA['Middleman::Sitemap::ResourceListContainer']
+      def self.from_a(a)
+        new(a)
+      end
+    end
 
     # The Store class
     #
@@ -61,7 +276,17 @@ module Middleman
     # which is the path relative to the source directory, minus any template
     # extensions. All "path" parameters used in this class are source paths.
     class Store
+      extend Forwardable
       include Contracts
+
+      def_delegator :@resource_list_container, :by_path, :find_resource_by_path
+      def_delegator :@resource_list_container, :by_destination_path, :find_resource_by_destination_path
+      def_delegator :@resource_list_container, :by_by_binary, :find_resource_by_by_binary
+      def_delegator :@resource_list_container, :by_page_id, :find_resource_by_page_id
+      def_delegator :@resource_list_container, :by_extension, :find_resource_by_extension
+      def_delegator :@resource_list_container, :by_extensions, :find_resource_by_extensions
+      def_delegator :@resource_list_container, :by_source_extension, :find_resource_by_source_extension
+      def_delegator :@resource_list_container, :by_source_extensions, :find_resource_by_source_extensions
 
       Contract IsA['Middleman::Application']
       attr_reader :app
@@ -69,12 +294,15 @@ module Middleman
       Contract Num
       attr_reader :update_count
 
+      Contract IsA['Middleman::Sitemap::ResourceListContainer']
+      attr_reader :resource_list_container
+
       # Initialize with parent app
       # @param [Middleman::Application] app
       Contract IsA['Middleman::Application'] => Any
       def initialize(app)
         @app = app
-        @resources = []
+        @resource_list_container = ResourceListContainer.new self
         @rebuild_reasons = [:first_run]
         @update_count = 0
 
@@ -82,15 +310,14 @@ module Middleman
         @needs_sitemap_rebuild = true
 
         @lock = Monitor.new
-        reset_lookup_cache!
 
         @app.config_context.class.send :def_delegator, :app, :sitemap
       end
 
-      Contract Symbol, RespondTo[:manipulate_resource_list], Maybe[Or[Num, ArrayOf[Num]]], Maybe[Symbol] => Any
-      def register_resource_list_manipulators(name, manipulator, priority = 50, custom_name = nil)
+      Contract Symbol, Or[RespondTo[:manipulate_resource_list], RespondTo[:manipulate_resource_list_container!]], Maybe[Or[Num, ArrayOf[Num]]] => Any
+      def register_resource_list_manipulators(name, manipulator, priority = 50)
         Array(priority || 50).each do |p|
-          register_resource_list_manipulator(name, manipulator, p, custom_name)
+          register_resource_list_manipulator(name, manipulator, p)
         end
       end
 
@@ -100,14 +327,13 @@ module Middleman
       # @param [Symbol] name Name of the manipulator for debugging
       # @param [#manipulate_resource_list] manipulator Resource list manipulator
       # @param [Numeric] priority Sets the order of this resource list manipulator relative to the rest. By default this is 50, and manipulators run in the order they are registered, but if a priority is provided then this will run ahead of or behind other manipulators.
-      # @param [Symbol] custom_name The method name to execute.
       # @return [void]
-      Contract Symbol, RespondTo[:manipulate_resource_list], Maybe[Num, Bool], Maybe[Symbol] => Any
-      def register_resource_list_manipulator(name, manipulator, priority = 50, custom_name = nil)
+      Contract Symbol, Or[RespondTo[:manipulate_resource_list], RespondTo[:manipulate_resource_list_container!]], Maybe[Num, Bool] => Any
+      def register_resource_list_manipulator(name, manipulator, priority = 50)
         # The third argument used to be a boolean - handle those who still pass one
         priority = 50 unless priority.is_a? Numeric
         @resource_list_manipulators = @resource_list_manipulators.push(
-          ManipulatorDescriptor.new(name, manipulator, priority, custom_name)
+          ManipulatorDescriptor.new(name, manipulator, priority)
         )
 
         # The index trick is used so that the sort is stable - manipulators with the same priority
@@ -132,41 +358,6 @@ module Middleman
         end
       end
 
-      # Find a resource given its original path
-      # @param [String] request_path The original path of a resource.
-      # @return [Middleman::Sitemap::Resource]
-      Contract String => Maybe[IsA['Middleman::Sitemap::Resource']]
-      def find_resource_by_path(request_path)
-        @lock.synchronize do
-          request_path = ::Middleman::Util.normalize_path(request_path)
-          ensure_resource_list_updated!
-          @_lookup_by_path[request_path]
-        end
-      end
-
-      # Find a resource given its destination path
-      # @param [String] request_path The destination (output) path of a resource.
-      # @return [Middleman::Sitemap::Resource]
-      Contract String => Maybe[IsA['Middleman::Sitemap::Resource']]
-      def find_resource_by_destination_path(request_path)
-        @lock.synchronize do
-          request_path = ::Middleman::Util.normalize_path(request_path)
-          ensure_resource_list_updated!
-          @_lookup_by_destination_path[request_path]
-        end
-      end
-
-      # Find a resource given its page id
-      # @param [String] page_id The page id.
-      # @return [Middleman::Sitemap::Resource]
-      Contract Or[String, Symbol] => Maybe[IsA['Middleman::Sitemap::Resource']]
-      def find_resource_by_page_id(page_id)
-        @lock.synchronize do
-          ensure_resource_list_updated!
-          @_lookup_by_page_id[page_id.to_s.to_sym]
-        end
-      end
-
       # Get the array of all resources
       # @param [Boolean] include_ignored Whether to include ignored resources
       # @return [Array<Middleman::Sitemap::Resource>]
@@ -174,18 +365,13 @@ module Middleman
       def resources(include_ignored = false)
         @lock.synchronize do
           ensure_resource_list_updated!
+
           if include_ignored
-            @resources
+            @resource_list_container.to_a
           else
-            @resources_not_ignored ||= @resources.reject(&:ignored?)
+            @resource_list_container.to_a.reject(&:ignored?)
           end
         end
-      end
-
-      # Invalidate our cached view of resource that are not ignored. If your extension
-      # adds ways to ignore files, you should call this to make sure #resources works right.
-      def invalidate_resources_not_ignored_cache!
-        @resources_not_ignored = nil
       end
 
       # Get the URL path for an on-disk file
@@ -226,33 +412,19 @@ module Middleman
 
             @app.logger.debug '== Rebuilding resource list'
 
-            @resources = []
+            @resource_list_container.reset!
 
             @resource_list_manipulators.each do |m|
               ::Middleman::Util.instrument 'sitemap.manipulator', name: m[:name] do
                 @app.logger.debug "== Running manipulator: #{m[:name]} (#{m[:priority]})"
-                @resources = m[:manipulator].send(m[:custom_name] || :manipulate_resource_list, @resources)
 
-                # Reset lookup cache
-                reset_lookup_cache!
-
-                # Rebuild cache
-                @resources.each do |resource|
-                  @_lookup_by_path[::Middleman::Util.normalize_path(resource.path)] = resource
+                if m[:manipulator].respond_to?(:manipulate_resource_list_container!)
+                  m[:manipulator].send(:manipulate_resource_list_container!, @resource_list_container)
+                elsif m[:manipulator].respond_to?(:manipulate_resource_list)
+                  m[:manipulator].send(:manipulate_resource_list, @resource_list_container.to_a).tap do |result|
+                    @resource_list_container.reset!(result)
+                  end
                 end
-
-                @resources.each do |resource|
-                  @_lookup_by_destination_path[::Middleman::Util.normalize_path(resource.destination_path)] = resource
-                end
-
-                # NB: This needs to be done after the previous two steps,
-                # since some proxy resources are looked up by path in order to
-                # get their metadata and subsequently their page_id.
-                @resources.each do |resource|
-                  @_lookup_by_page_id[resource.page_id.to_s.to_sym] = resource
-                end
-
-                invalidate_resources_not_ignored_cache!
               end
             end
 
@@ -264,14 +436,6 @@ module Middleman
       end
 
       private
-
-      def reset_lookup_cache!
-        @lock.synchronize do
-          @_lookup_by_path = {}
-          @_lookup_by_destination_path = {}
-          @_lookup_by_page_id = {}
-        end
-      end
 
       # Remove the locale token from the end of the path
       # @param [String] path

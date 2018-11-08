@@ -137,16 +137,15 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
   alias lang locale
 
   # Update the main sitemap resource list
-  # @return Array<Middleman::Sitemap::Resource>
-  Contract ResourceList => ResourceList
-  def manipulate_resource_list(resources)
+  Contract IsA['Middleman::Sitemap::ResourceListContainer'] => Any
+  def manipulate_resource_list_container!(resource_list)
     new_resources = []
 
-    file_extension_resources = resources.select do |resource|
+    file_extension_resources = resource_list.select do |resource|
       parse_locale_extension(resource.path)
     end
 
-    localizable_folder_resources = resources.select do |resource|
+    localizable_folder_resources = resource_list.select do |resource|
       !file_extension_resources.include?(resource) && File.fnmatch?(File.join(options[:templates_dir], '**'), resource.path)
     end
 
@@ -201,8 +200,8 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
       sum[abs_path][desc.locale] = '/' + desc.path
     end
 
-    new_resources.reduce(resources) do |sum, r|
-      r.execute_descriptor(app, sum)
+    new_resources.each do |r|
+      r.execute_descriptor(app, resource_list)
     end
   end
 
@@ -280,10 +279,10 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
   end
 
   LocalizedPageDescriptor = Struct.new(:path, :source_path, :locale) do
-    def execute_descriptor(app, resources)
+    def execute_descriptor(app, resource_list)
       r = ::Middleman::Sitemap::ProxyResource.new(app.sitemap, path, source_path)
       r.add_metadata options: { locale: locale }
-      resources + [r]
+      resource_list.add! r
     end
   end
 

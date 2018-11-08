@@ -32,7 +32,7 @@ module Middleman
       end
 
       ProxyDescriptor = Struct.new(:path, :target, :metadata) do
-        def execute_descriptor(app, resources)
+        def execute_descriptor(app, resource_list)
           md = metadata.dup
           should_ignore = md.delete(:ignore)
 
@@ -48,10 +48,10 @@ module Middleman
 
           if should_ignore
             d = ::Middleman::Sitemap::Extensions::Ignores::StringIgnoreDescriptor.new(target)
-            d.execute_descriptor(app, resources)
+            d.execute_descriptor(app, resource_list)
           end
 
-          resources + [r]
+          resource_list.add! r
         end
       end
     end

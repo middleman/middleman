@@ -30,11 +30,9 @@ module Middleman::CoreExtensions
       app.files.on_change(:source, &method(:clear_data))
     end
 
-    # @return Array<Middleman::Sitemap::Resource>
-    Contract ResourceList => ResourceList
-    def manipulate_resource_list(resources)
-      resources.each do |resource|
-        next if resource.binary?
+    Contract IsA['Middleman::Sitemap::ResourceListContainer'] => Any
+    def manipulate_resource_list_container!(resource_list)
+      resource_list.by_binary(false).each do |resource|
         next if resource.file_descriptor.nil?
         next if resource.file_descriptor[:types].include?(:no_frontmatter)
 
@@ -51,7 +49,13 @@ module Middleman::CoreExtensions
         # TODO: Enhance data? NOOOO
         # TODO: stringify-keys? immutable/freeze?
 
-        resource.add_metadata options: opts, page: fmdata
+        if fmdata.key?(:id)
+          resource_list.update!(resource, :page_id) do
+            resource.add_metadata options: opts, page: fmdata
+          end
+        else
+          resource.add_metadata options: opts, page: fmdata
+        end
 
         resource.ignore! if ignored == true && !resource.is_a?(::Middleman::Sitemap::ProxyResource)
 

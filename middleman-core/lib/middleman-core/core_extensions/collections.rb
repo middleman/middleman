@@ -82,11 +82,11 @@ module Middleman
           @values_by_name[label]
         end
 
-        Contract ResourceList => ResourceList
-        def manipulate_resource_list(resources)
+        Contract IsA['Middleman::Sitemap::ResourceListContainer'] => Any
+        def manipulate_resource_list_container!(resource_list)
           @lock.synchronize do
             @collector_roots.each do |pair|
-              dataset = pair[:block].call(app, resources)
+              dataset = pair[:block].call(app, resource_list)
               pair[:root].realize!(dataset)
             end
 
@@ -106,13 +106,11 @@ module Middleman
             end
 
             # Inject descriptors
-            results = ctx.descriptors.reduce(resources) do |sum, d|
-              d.execute_descriptor(app, sum)
+            ctx.descriptors.each do |d|
+              d.execute_descriptor(app, resource_list)
             end
 
             StepContext.current = nil
-
-            results
           end
         end
       end

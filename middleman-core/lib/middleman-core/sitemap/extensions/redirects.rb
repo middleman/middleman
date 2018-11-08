@@ -13,7 +13,7 @@ module Middleman
         expose_to_config :redirect
 
         RedirectDescriptor = Struct.new(:path, :to, :template) do
-          def execute_descriptor(app, resources)
+          def execute_descriptor(app, resource_list)
             r = RedirectResource.new(
               app.sitemap,
               path,
@@ -21,7 +21,7 @@ module Middleman
             )
             r.output = template if template
 
-            resources + [r]
+            resource_list.add! r
           end
         end
 

@@ -18,15 +18,11 @@ module Middleman
         file.read
       end
 
-      # @return Array<Middleman::Sitemap::Resource>
-      Contract ResourceList => ResourceList
-      def manipulate_resource_list(resources)
-        return resources unless app.extensions[:data]
+      Contract IsA['Middleman::Sitemap::ResourceListContainer'] => Any
+      def manipulate_resource_list_container!(resource_list)
+        return unless app.extensions[:data]
 
-        resources.each do |resource|
-          next if resource.file_descriptor.nil?
-          next unless resource.file_descriptor[:full_path].to_s =~ /\.liquid$/
-
+        resource_list.by_source_extension('.liquid').each do |resource|
           # Convert data object into a hash for liquid
           resource.add_metadata locals: {
             data: stringify_recursive(app.extensions[:data].data_store.to_h)

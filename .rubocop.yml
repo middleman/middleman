@@ -9,6 +9,8 @@ AllCops:
     - 'vendor/**/*'
     - '**/tmp/**/*'
     - 'middleman-cli/lib/middleman-cli/templates/**/*'
+Style/GuardClause:
+  Enabled: false
 Metrics/LineLength:
   Enabled: false
 Metrics/MethodLength:

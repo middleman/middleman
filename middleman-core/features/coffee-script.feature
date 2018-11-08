@@ -19,4 +19,4 @@ Feature: Support coffee-script
   Scenario: Building broken coffee
     Given a built app at "coffeescript-app"
     Then the output should contain "error  build/javascripts/broken-coffee.js"
-    And the exit status should be 1
+    Then the exit status should not be 0

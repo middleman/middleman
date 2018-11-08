@@ -10,7 +10,7 @@ module Middleman
         expose_to_config :endpoint
 
         EndpointDescriptor = Struct.new(:path, :request_path, :block) do
-          def execute_descriptor(app, resources)
+          def execute_descriptor(app, resource_list)
             r = EndpointResource.new(
               app.sitemap,
               path,
@@ -18,7 +18,7 @@ module Middleman
             )
             r.output = block if block
 
-            resources + [r]
+            resource_list.add! r
           end
         end
 
