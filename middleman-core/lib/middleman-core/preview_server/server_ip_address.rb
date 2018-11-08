@@ -32,7 +32,7 @@ module Middleman
       end
 
       def to_browser
-        format('[%s]', to_s)
+        format('[%<addr>s]', addr: to_s)
       end
 
       if RUBY_VERSION < '2'

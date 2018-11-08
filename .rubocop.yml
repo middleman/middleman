@@ -59,8 +59,6 @@ Style/MethodMissingSuper:
   Enabled: false
 Style/FrozenStringLiteralComment:
   Enabled: false
-Style/FormatStringToken:
-  Enabled: false
 Style/EvalWithLocation:
   Enabled: false
 Style/Lambda:

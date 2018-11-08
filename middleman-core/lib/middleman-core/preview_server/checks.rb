@@ -34,7 +34,11 @@ module Middleman
           return if resolver.ips_for(information.server_name).include? information.bind_address
 
           information.valid = false
-          information.reason = format('Server name "%s" does not resolve to bind address "%s"', information.server_name, information.bind_address)
+          information.reason = format(
+            'Server name "%<name>s" does not resolve to bind address "%<addr>s"',
+            name: information.server_name,
+            addr: information.bind_address
+          )
         end
       end
 
@@ -49,7 +53,11 @@ module Middleman
           return if information.bind_address.blank? || information.local_network_interfaces.include?(information.bind_address.to_s) || %w[0.0.0.0 ::].any? { |b| information.bind_address == b } || IPAddr.new('127.0.0.0/8').include?(information.bind_address.to_s)
 
           information.valid = false
-          information.reason = format('Bind address "%s" is not available on your system. Please use one of %s', information.bind_address, information.local_network_interfaces.map { |i| %("#{i}") }.join(', '))
+          information.reason = format(
+            'Bind address "%<bad_addr>s" is not available on your system. Please use one of %<good_addrs>s',
+            bad_addr: information.bind_address,
+            good_addrs: information.local_network_interfaces.map { |i| %("#{i}") }.join(', ')
+          )
         end
       end
 
@@ -61,7 +69,10 @@ module Middleman
           return unless information.bind_address.blank?
 
           information.valid = false
-          information.reason = format('Server name "%s" does not resolve to an ip address', information.server_name)
+          information.reason = format(
+            'Server name "%<name>s" does not resolve to an ip address',
+            name: information.server_name
+          )
         end
       end
 
