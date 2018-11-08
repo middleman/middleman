@@ -1,5 +1,6 @@
 Feature: Relative Assets (Helpers Only)
 
+  @wip
   Scenario: Rendering css with the feature enabled
     Given a fixture app "relative-assets-app"
     And a file named "config.rb" with:
@@ -88,6 +89,7 @@ Feature: Relative Assets (Helpers Only)
     When I go to "/sub/image_tag.html"
     Then I should see '<img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />'
 
+  @wip
   Scenario: URLs are not rewritten for rewrite ignored paths
     Given a fixture app "relative-assets-app"
     And a file named "config.rb" with:

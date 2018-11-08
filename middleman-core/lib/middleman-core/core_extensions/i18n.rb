@@ -272,13 +272,12 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
   def build_resource(path, source_path, page_id, locale)
     old_locale = ::I18n.locale
     ::I18n.locale = locale
-    localized_page_id = ::I18n.t("paths.#{page_id}", default: page_id, fallback: [])
-
+    localized_page_id = ::I18n.t("paths.#{page_id}", default: page_id, fallback: false)
     partially_localized_path = ''
 
     File.dirname(path).split('/').each do |path_sub|
       next if path_sub == ''
-      partially_localized_path = "#{partially_localized_path}/#{::I18n.t("paths.#{path_sub}", default: path_sub)}"
+      partially_localized_path = "#{partially_localized_path}/#{::I18n.t("paths.#{path_sub}", default: path_sub, fallback: false)}"
     end
 
     path = "#{partially_localized_path}/#{File.basename(path)}"

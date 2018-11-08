@@ -37,11 +37,8 @@ Gem::Specification.new do |s|
   # Watcher
   s.add_dependency('listen', ['~> 3.0.0'])
 
-  # Tests
-  s.add_development_dependency("capybara", ["~> 2.5.0"])
-
   # i18n
-  s.add_dependency('i18n', ['~> 0.8.0'])
+  s.add_dependency('i18n', ['~> 0.9.0'])
 
   # Automatic Image Sizes
   s.add_dependency('fastimage', ['~> 2.0'])
