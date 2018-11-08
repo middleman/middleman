@@ -17,7 +17,7 @@ gem 'pry-stack_explorer'
 gem 'pry-rescue'
 
 # Optional middleman dependencies, included for tests
-gem 'haml', '>= 4.0.5', require: false
+gem 'haml', '~> 4.0', require: false
 gem 'sassc', '~> 1.10.1', require: false
 gem 'coffee-script', '~> 2.2', require: false
 gem 'kramdown', '~> 1.2', require: false
@@ -29,10 +29,6 @@ gem 'redcarpet', '>= 3.1', require: false
 
 # Dns server to test preview server
 gem 'rubydns', '~> 1.0.1', require: false
-
-# To test javascript
-gem 'poltergeist', '~> 1.8', require: false
-gem 'phantomjs', '~> 2.1.1.0', require: false
 
 # For less, note there is no compatible JS runtime for windows
 gem 'therubyrhino', '>= 2.0', platforms: :jruby
