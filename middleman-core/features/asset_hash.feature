@@ -1,3 +1,4 @@
+@wip
 Feature: Assets get file hashes appended to them and references to them are updated
   Scenario: Hashed-asset files are produced, and HTML, CSS, JSON and JavaScript gets rewritten to reference the new files
     Given a successfully built app at "asset-hash-app"
