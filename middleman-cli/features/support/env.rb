@@ -1,12 +1,10 @@
 ENV["TEST"] = "true"
 
+require 'sass'
 require 'sassc'
 
 require 'simplecov'
 SimpleCov.root(File.expand_path(File.dirname(__FILE__) + '/../..'))
-
-require 'phantomjs/poltergeist'
-Capybara.javascript_driver = :poltergeist
 
 require 'coveralls'
 Coveralls.wear!

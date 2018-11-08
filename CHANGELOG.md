@@ -1,6 +1,10 @@
 master
 ===
 
+# 4.2.2
+
+* Require i18n ~> 0.8.0 to handle 0.7.0 security issue.
+
 # 4.2.1
 
 * Fix some issues with Ruby 2.4.0
