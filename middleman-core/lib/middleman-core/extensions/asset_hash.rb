@@ -80,7 +80,7 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
 
   Contract IsA['Middleman::Sitemap::Resource'] => Maybe[IsA['Middleman::Sitemap::Resource']]
   def manipulate_single_resource(resource)
-    return unless @exts.include?(resource.ext)
+    return unless @set_of_exts.include?(resource.ext)
     return if ignored_resource?(resource)
     return if resource.ignored?
 
