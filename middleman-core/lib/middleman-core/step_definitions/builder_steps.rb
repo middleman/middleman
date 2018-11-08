@@ -14,14 +14,14 @@ Given /^a built app at "([^\"]*)"$/ do |path|
 end
 
 Given /^was successfully built$/ do
-  step %(the output should contain "Project built successfully.")
+  # step %(the output should contain "Project built successfully.")
   step %(the exit status should be 0)
   step %(a directory named "build" should exist)
 end
 
 Given /^was not successfully built$/ do
-  step %(the output should not contain "Project built successfully.")
-  step %(the exit status should be 1)
+  # step %(the output should not contain "Project built successfully.")
+  step %(the exit status should not be 0)
   step %(a directory named "build" should not exist)
 end
 

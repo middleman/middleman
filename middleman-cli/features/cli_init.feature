@@ -64,7 +64,7 @@ Feature: Middleman CLI
 
   Scenario: Create an invalid project using Middleman directory
     When I run `middleman init MY_PROJECT -T does-not-exist-for-reals`
-    Then the exit status should be 1
+    Then the exit status should not be 0
 
   Scenario: Create a new project using github(user/repository)
     When I run `middleman init MY_PROJECT -T middleman/middleman-templates-default` interactively

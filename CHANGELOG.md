@@ -1,6 +1,8 @@
 master
 ===
 
+* `manipulate_resource_list_container!` as a faster, less functional approach.
+
 # 4.3.0.rc.4
 
 * i18n was accidentally duplicating requests for extension-based template (file.es.html)

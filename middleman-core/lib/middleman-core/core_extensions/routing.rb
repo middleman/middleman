@@ -10,7 +10,7 @@ module Middleman
       expose_to_config :page
 
       PageDescriptor = Struct.new(:path, :metadata) do
-        def execute_descriptor(app, resources)
+        def execute_descriptor(app, resource_list)
           normalized_path = path.dup
 
           if normalized_path.is_a?(String) && !normalized_path.include?('*')
@@ -23,11 +23,9 @@ module Middleman
 
           normalized_path = '/' + ::Middleman::Util.strip_leading_slash(normalized_path) if normalized_path.is_a?(String)
 
-          resources
+          resource_list
             .select { |r| ::Middleman::Util.path_match(normalized_path, "/#{r.path}") }
             .each { |r| r.add_metadata(metadata, true) }
-
-          resources
         end
       end
 

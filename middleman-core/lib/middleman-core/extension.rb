@@ -406,7 +406,7 @@ module Middleman
       @app.after_configuration do
         ext.after_configuration if ext.respond_to?(:after_configuration)
 
-        if ext.respond_to?(:manipulate_resource_list)
+        if ext.respond_to?(:manipulate_resource_list) || ext.respond_to?(:manipulate_resource_list_container!)
           ext.app.sitemap.register_resource_list_manipulators(ext.class.ext_name, ext, ext.class.resource_list_manipulator_priority)
         end
 
@@ -529,11 +529,10 @@ module Middleman
     end
 
     # Update the main sitemap resource list
-    # @return Array<Middleman::Sitemap::Resource>
-    Contract ResourceList => ResourceList
-    def manipulate_resource_list(resources)
-      @descriptors.values.flatten.reduce(resources) do |sum, c|
-        c.execute_descriptor(app, sum)
+    Contract IsA['Middleman::Sitemap::ResourceListContainer'] => Any
+    def manipulate_resource_list_container!(resource_list)
+      @descriptors.values.flatten.each do |c|
+        c.execute_descriptor(app, resource_list)
       end
     end
 

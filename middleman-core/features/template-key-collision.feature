@@ -23,4 +23,4 @@ Feature: Don't allow template locals to overwrite template helpers
       <%= foo %>
       """
     Given a built app at "empty_app"
-    Then the exit status should be 1
+    Then the exit status should not be 0

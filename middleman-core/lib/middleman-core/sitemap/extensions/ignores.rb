@@ -13,8 +13,6 @@ module Middleman
         # @return [IgnoreDescriptor]
         Contract Or[String, Regexp, Proc] => RespondTo[:execute_descriptor]
         def ignore(path = nil, &block)
-          @app.sitemap.invalidate_resources_not_ignored_cache!
-
           if path.is_a? Regexp
             RegexpIgnoreDescriptor.new(path)
           elsif path.is_a? String
@@ -33,8 +31,8 @@ module Middleman
         end
 
         IgnoreDescriptor = Struct.new(:path, :block) do
-          def execute_descriptor(_app, resources)
-            resources.each do |r|
+          def execute_descriptor(_app, resource_list)
+            resource_list.each do |r|
               # Ignore based on the source path (without template extensions)
               if ignored?(r.normalized_path)
                 r.ignore!

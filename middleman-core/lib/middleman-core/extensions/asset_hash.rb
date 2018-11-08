@@ -53,9 +53,8 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
   end
 
   # Update the main sitemap resource list
-  # @return Array<Middleman::Sitemap::Resource>
-  Contract ResourceList => ResourceList
-  def manipulate_resource_list(resources)
+  Contract IsA['Middleman::Sitemap::ResourceListContainer'] => Any
+  def manipulate_resource_list_container!(resource_list)
     @rack_client ||= begin
       rack_app = ::Middleman::Rack.new(app).to_app
       ::Rack::MockRequest.new(rack_app)
@@ -64,7 +63,7 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
     # Process resources in order: binary images and fonts, then SVG, then JS/CSS.
     # This is so by the time we get around to the text files (which may reference
     # images and fonts) the static assets' hashes are already calculated.
-    resources.sort_by do |a|
+    sorted_resources = resource_list.by_extensions(@exts).sort_by do |a|
       if %w[.svg .svgz].include? a.ext
         0
       elsif %w[.js .css].include? a.ext
@@ -72,12 +71,15 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
       else
         -1
       end
-    end.each(&method(:manipulate_single_resource))
+    end
+
+    sorted_resources.each do |resource|
+      manipulate_single_resource(resource_list, resource)
+    end
   end
 
-  Contract IsA['Middleman::Sitemap::Resource'] => Maybe[IsA['Middleman::Sitemap::Resource']]
-  def manipulate_single_resource(resource)
-    return unless @exts.include?(resource.ext)
+  Contract IsA['Middleman::Sitemap::ResourceListContainer'], IsA['Middleman::Sitemap::Resource'] => Any
+  def manipulate_single_resource(resource_list, resource)
     return if ignored_resource?(resource)
     return if resource.ignored?
 
@@ -95,8 +97,9 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
                ::Digest::SHA1.hexdigest(response.body)[0..7]
              end
 
-    resource.destination_path = resource.destination_path.sub(/\.(\w+)$/) { |ext| "-#{options.prefix}#{digest}#{ext}" }
-    resource
+    resource_list.update!(resource) do
+      resource.destination_path = resource.destination_path.sub(/\.(\w+)$/) { |ext| "-#{options.prefix}#{digest}#{ext}" }
+    end
   end
 
   Contract IsA['Middleman::Sitemap::Resource'] => Bool
