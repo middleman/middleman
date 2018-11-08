@@ -25,7 +25,15 @@ module Middleman
 
           resource_list
             .select { |r| ::Middleman::Util.path_match(normalized_path, "/#{r.path}") }
-            .each { |r| r.add_metadata(metadata, true) }
+            .each do |r|
+              if metadata[:page]&.key?(:id)
+                resource_list.update!(r, :page_id) do
+                  r.add_metadata(metadata, true)
+                end
+              else
+                r.add_metadata(metadata, true)
+              end
+            end
         end
       end
 
