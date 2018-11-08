@@ -330,9 +330,9 @@ module Middleman
     def matches?(validator, file)
       path = file[:relative_path]
       if validator.is_a? Regexp
-        !!(path.to_s =~ validator)
+        !validator.match(path.to_s).nil?
       else
-        !!validator.call(path, @app)
+        validator.call(path, @app)
       end
     end
 

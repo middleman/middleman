@@ -61,8 +61,6 @@ Style/FrozenStringLiteralComment:
   Enabled: false
 Style/FormatStringToken:
   Enabled: false
-Style/DoubleNegation:
-  Enabled: false
 Style/EvalWithLocation:
   Enabled: false
 Style/Lambda:

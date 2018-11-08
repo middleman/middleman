@@ -50,6 +50,8 @@ Gem::Specification.new do |s|
   # Minify JS
   s.add_dependency('uglifier', ['~> 3.0'])
   s.add_dependency('execjs', ['~> 2.0'])
+
+  # Perf
   s.add_dependency('oj', ['~> 3.7'])
 
   # Testing

@@ -50,7 +50,7 @@ module Middleman
     def should_ignore?(validator, value)
       if validator.is_a? Regexp
         # Treat as Regexp
-        !!(value =~ validator)
+        !validator.match(value).nil?
       elsif validator.respond_to? :call
         # Treat as proc
         validator.call(value)
@@ -302,7 +302,7 @@ module Middleman
           path == matcher
         end
       elsif matcher.respond_to?(:match)
-        !!(path =~ matcher)
+        !matcher.match(path).nil?
       elsif matcher.respond_to?(:call)
         matcher.call(path)
       else
