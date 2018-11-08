@@ -17,7 +17,7 @@ module Middleman
             resource_list.each do |r|
               next unless from == r.path || from == r.destination_path
 
-              resource_list.update!(r) do
+              resource_list.update!(r, :destination_path) do
                 r.destination_path = to
               end
             end

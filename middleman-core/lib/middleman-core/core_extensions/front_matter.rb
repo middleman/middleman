@@ -49,10 +49,16 @@ module Middleman::CoreExtensions
         # TODO: Enhance data? NOOOO
         # TODO: stringify-keys? immutable/freeze?
 
-        resource_list.update!(resource) do
+        if fmdata.key?(:id)
+          resource_list.update!(resource, :page_id) do
+            resource.add_metadata options: opts, page: fmdata
+          end
+        else
           resource.add_metadata options: opts, page: fmdata
-          resource.ignore! if ignored == true && !resource.is_a?(::Middleman::Sitemap::ProxyResource)
         end
+
+        resource.ignore! if ignored == true && !resource.is_a?(::Middleman::Sitemap::ProxyResource)
+
         # TODO: Save new template here somewhere?
       end
     end

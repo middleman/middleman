@@ -97,7 +97,7 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
                ::Digest::SHA1.hexdigest(response.body)[0..7]
              end
 
-    resource_list.update!(resource) do
+    resource_list.update!(resource, :destination_path) do
       resource.destination_path = resource.destination_path.sub(/\.(\w+)$/) { |ext| "-#{options.prefix}#{digest}#{ext}" }
     end
   end

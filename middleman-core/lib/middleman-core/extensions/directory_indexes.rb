@@ -19,7 +19,7 @@ class Middleman::Extensions::DirectoryIndexes < ::Middleman::Extension
       # Check if file metadata (options set by "page" in config.rb or frontmatter) turns directory_index off
       next if resource.options[:directory_index] == false
 
-      resource_list.update!(resource) do
+      resource_list.update!(resource, :destination_path) do
         extensions.each do |ext|
           resource.destination_path = resource.destination_path.chomp(ext)
         end

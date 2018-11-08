@@ -94,27 +94,47 @@ module Middleman
         add_cache resource
       end
 
-      Contract IsA['Middleman::Sitemap::Resource'] => Any
-      def add_cache(resource)
-        @_lookup_by_path[::Middleman::Util.normalize_path(resource.path)] = resource
-        @_lookup_by_destination_path[::Middleman::Util.normalize_path(resource.destination_path)] = resource
+      Contract Symbol, Maybe[Symbol] => Bool
+      def should_run?(key, only = nil)
+        return true if only.nil?
 
-        if resource.binary?
-          @_lookup_by_binary << resource
-        else
-          @_lookup_by_non_binary << resource
+        key == only
+      end
+
+      Contract IsA['Middleman::Sitemap::Resource'], Maybe[Symbol] => Any
+      def add_cache(resource, only = nil)
+        if should_run? :path, only
+          @_lookup_by_path[::Middleman::Util.normalize_path(resource.path)] = resource
         end
 
-        source_ext = resource.file_descriptor && resource.file_descriptor[:full_path] && ::File.extname(resource.file_descriptor[:full_path])
-        if source_ext
-          @_lookup_by_source_extension[source_ext] ||= Set.new
-          @_lookup_by_source_extension[source_ext] << resource
+        if should_run? :destination_path, only
+          @_lookup_by_destination_path[::Middleman::Util.normalize_path(resource.destination_path)] = resource
         end
 
-        @_lookup_by_destination_extension[::File.extname(resource.destination_path)] ||= Set.new
-        @_lookup_by_destination_extension[::File.extname(resource.destination_path)] << resource
+        if should_run? :binary, only
+          if resource.binary?
+            @_lookup_by_binary << resource
+          else
+            @_lookup_by_non_binary << resource
+          end
+        end
 
-        @_lookup_by_page_id[resource.page_id.to_s.to_sym] = resource
+        if should_run? :source_extension, only
+          source_ext = resource.file_descriptor && resource.file_descriptor[:full_path] && ::File.extname(resource.file_descriptor[:full_path])
+          if source_ext
+            @_lookup_by_source_extension[source_ext] ||= Set.new
+            @_lookup_by_source_extension[source_ext] << resource
+          end
+        end
+
+        if should_run? :destination_extension, only
+          @_lookup_by_destination_extension[::File.extname(resource.destination_path)] ||= Set.new
+          @_lookup_by_destination_extension[::File.extname(resource.destination_path)] << resource
+        end
+
+        if should_run? :page_id, only
+          @_lookup_by_page_id[resource.page_id.to_s.to_sym] = resource
+        end
       end
 
       Contract IsA['Middleman::Sitemap::Resource'] => Any
@@ -123,32 +143,45 @@ module Middleman
         remove_cache resource
       end
 
-      Contract IsA['Middleman::Sitemap::Resource'] => Any
-      def remove_cache(resource)
-        @_lookup_by_path.delete ::Middleman::Util.normalize_path(resource.path)
-        @_lookup_by_destination_path.delete ::Middleman::Util.normalize_path(resource.destination_path)
-
-        if resource.binary?
-          @_lookup_by_binary.delete resource
-        else
-          @_lookup_by_non_binary.delete resource
+      Contract IsA['Middleman::Sitemap::Resource'], Maybe[Symbol] => Any
+      def remove_cache(resource, only = nil)
+        if should_run? :path, only
+          @_lookup_by_path.delete ::Middleman::Util.normalize_path(resource.path)
         end
 
-        source_ext = resource.file_descriptor && resource.file_descriptor[:full_path] && ::File.extname(resource.file_descriptor[:full_path])
-        @_lookup_by_source_extension[source_ext].delete resource if source_ext
-
-        if @_lookup_by_destination_extension.key?(::File.extname(resource.destination_path))
-          @_lookup_by_destination_extension[::File.extname(resource.destination_path)].delete resource
+        if should_run? :destination_path, only
+          @_lookup_by_destination_path.delete ::Middleman::Util.normalize_path(resource.destination_path)
         end
 
-        @_lookup_by_page_id.delete resource.page_id.to_s.to_sym
+        if should_run? :binary, only
+          if resource.binary?
+            @_lookup_by_binary.delete resource
+          else
+            @_lookup_by_non_binary.delete resource
+          end
+        end
+
+        if should_run? :source_extension, only
+          source_ext = resource.file_descriptor && resource.file_descriptor[:full_path] && ::File.extname(resource.file_descriptor[:full_path])
+          @_lookup_by_source_extension[source_ext].delete resource if source_ext
+        end
+
+        if should_run? :destination_extension, only
+          if @_lookup_by_destination_extension.key?(::File.extname(resource.destination_path))
+            @_lookup_by_destination_extension[::File.extname(resource.destination_path)].delete resource
+          end
+        end
+
+        if should_run? :page_id, only
+          @_lookup_by_page_id.delete resource.page_id.to_s.to_sym
+        end
       end
 
       Contract IsA['Middleman::Sitemap::Resource'], Proc => Any
-      def update!(resource)
-        remove_cache(resource)
+      def update!(resource, only = nil)
+        remove_cache(resource, only)
         yield
-        add_cache(resource)
+        add_cache(resource, only)
       end
 
       # Find resources given its source extension
