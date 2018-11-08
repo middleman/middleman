@@ -61,8 +61,6 @@ Style/FrozenStringLiteralComment:
   Enabled: false
 Style/EvalWithLocation:
   Enabled: false
-Style/Lambda:
-  Enabled: false
 Style/ClassVars:
   Enabled: false
 Style/GlobalVars:
