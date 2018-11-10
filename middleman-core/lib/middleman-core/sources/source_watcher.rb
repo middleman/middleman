@@ -59,7 +59,7 @@ module Middleman
     # @param [String] directory The on-disk path to watch.
     # @param [Hash] options Configuration options.
     Contract IsA['Middleman::Sources'], Symbol, String, Hash => Any
-    def initialize(parent, type, directory, options_hash = {})
+    def initialize(parent, type, directory, options_hash = ::Middleman::EMPTY_HASH)
       @parent = parent
       @options = options_hash
 
@@ -103,7 +103,7 @@ module Middleman
       poll_once!
     end
 
-    def update_config(options_hash = {})
+    def update_config(options_hash = ::Middleman::EMPTY_HASH)
       without_listener_running do
         @disable_watcher = options_hash.fetch(:disable_watcher, false)
         @force_polling = options_hash.fetch(:force_polling, false)

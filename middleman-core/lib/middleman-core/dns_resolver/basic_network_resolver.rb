@@ -8,7 +8,7 @@ module Middleman
 
       public
 
-      def initialize(options_hash = {})
+      def initialize(options_hash = ::Middleman::EMPTY_HASH)
         @timeouts = options_hash.fetch(:timeouts, 2)
       end
 

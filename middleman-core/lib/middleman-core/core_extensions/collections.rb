@@ -34,7 +34,7 @@ module Middleman
           end
         end
 
-        def initialize(app, options_hash = {}, &block)
+        def initialize(app, options_hash = ::Middleman::EMPTY_HASH, &block)
           super
 
           @leaves = Set.new

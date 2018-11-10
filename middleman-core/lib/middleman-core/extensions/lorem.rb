@@ -11,7 +11,7 @@ class Middleman::Extensions::Lorem < ::Middleman::Extension
     # @param [String] size
     # @param [Hash] options
     # @return [String]
-    def placekitten(size, options_hash = {})
+    def placekitten(size, options_hash = ::Middleman::EMPTY_HASH)
       options = options_hash.dup
       options[:domain] = 'http://placekitten.com'
       lorem.image(size, options)
@@ -145,7 +145,7 @@ class Middleman::Extensions::Lorem < ::Middleman::Extension
       # @param [String] size
       # @param [Hash] options
       # @return [String]
-      def image(size, options_hash = {})
+      def image(size, options_hash = ::Middleman::EMPTY_HASH)
         domain           = options_hash[:domain] || 'http://placehold.it'
         src              = "#{domain}/#{size}"
         hex              = %w[a b c d e f 0 1 2 3 4 5 6 7 8 9]

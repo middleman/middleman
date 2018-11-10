@@ -5,7 +5,7 @@ class Middleman::Extensions::AssetHost < ::Middleman::Extension
   option :ignore, [], 'Regexes of filenames to skip adding query strings to'
   option :rewrite_ignore, [], 'Regexes of filenames to skip processing for host rewrites'
 
-  def initialize(app, options_hash = {}, &block)
+  def initialize(app, options_hash = ::Middleman::EMPTY_HASH, &block)
     super
 
     require 'set'

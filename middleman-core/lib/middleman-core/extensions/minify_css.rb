@@ -17,14 +17,14 @@ class Middleman::Extensions::MinifyCss < ::Middleman::Extension
   INLINE_CSS_REGEX = /(<style[^>]*>\s*(?:\/\*<!\[CDATA\[\*\/\n)?)(.*?)((?:(?:\n\s*)?\/\*\]\]>\*\/)?\s*<\/style>)/m.freeze
 
   class SassCompressor
-    def self.compress(style, options_hash = {})
+    def self.compress(style, options_hash = ::Middleman::EMPTY_HASH)
       root_node = ::Sass::SCSS::CssParser.new(style, 'middleman-css-input', 1).parse
       root_node.options = {}.merge!(options_hash).merge!(style: :compressed)
       root_node.render.strip
     end
   end
 
-  def initialize(app, options_hash = {}, &block)
+  def initialize(app, options_hash = ::Middleman::EMPTY_HASH, &block)
     super
 
     @ignore = Array(options.ignore) + [/\.min\./]

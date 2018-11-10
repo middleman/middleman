@@ -10,7 +10,7 @@ module Middleman
 
       public
 
-      def initialize(options_hash = {})
+      def initialize(options_hash = ::Middleman::EMPTY_HASH)
         @hosts = options_hash.fetch(:hosts)
         @port  = options_hash.fetch(:port)
         @https = options_hash.fetch(:https, false)

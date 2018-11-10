@@ -73,7 +73,7 @@ module Middleman
       # @param [String] description A human-readable description of what the option does
       # @param [Hash] options Additional options.
       # @return [ConfigSetting]
-      def define_setting(key, default = nil, description = nil, options_hash = {})
+      def define_setting(key, default = nil, description = nil, options_hash = ::Middleman::EMPTY_HASH)
         raise "Setting #{key} doesn't exist" if @finalized
         raise "Setting #{key} already defined" if @settings.key?(key)
         raise 'Setting key must be a Symbol' unless key.is_a? Symbol
@@ -129,7 +129,7 @@ module Middleman
       # Additional config.
       attr_accessor :options
 
-      def initialize(key, default, description, options_hash = {})
+      def initialize(key, default, description, options_hash = ::Middleman::EMPTY_HASH)
         @value_set = false
         @array_wrapped_value = nil
         @array_wrapped_default = nil

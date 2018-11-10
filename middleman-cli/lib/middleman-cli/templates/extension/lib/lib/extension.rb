@@ -5,7 +5,7 @@ require 'middleman-core'
 class MyExtension < ::Middleman::Extension
   option :my_option, 'default', 'An example option'
 
-  def initialize(app, _options_hash = {}, &block)
+  def initialize(app, _options_hash = ::Middleman::EMPTY_HASH, &block)
     # Call super to build options from the options_hash
     super
 

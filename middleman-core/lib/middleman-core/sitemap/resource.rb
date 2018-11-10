@@ -146,7 +146,7 @@ module Middleman
       # Render this resource
       # @return [String]
       Contract Hash, Hash, Maybe[Proc] => String
-      def render(options_hash = {}, locs = {}, &_block)
+      def render(options_hash = ::Middleman::EMPTY_HASH, locs = {}, &_block)
         body = render_without_filters(options_hash, locs)
 
         return body if @filters.empty?
@@ -183,7 +183,7 @@ module Middleman
       # Render this resource without content filters
       # @return [String]
       Contract Hash, Hash => String
-      def render_without_filters(options_hash = {}, locs = {})
+      def render_without_filters(options_hash = ::Middleman::EMPTY_HASH, locs = {})
         return ::Middleman::FileRenderer.new(@app, file_descriptor[:full_path].to_s).template_data_for_file unless template?
 
         md = metadata

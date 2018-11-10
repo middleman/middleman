@@ -77,7 +77,7 @@ module Middleman
     # @param [Hash] options Data to pass through.
     # @return [String]
     Contract ::Middleman::Application, Symbol, Or[String, Symbol], Hash => String
-    def asset_path(app, kind, source, options_hash = {})
+    def asset_path(app, kind, source, options_hash = ::Middleman::EMPTY_HASH)
       return source if source.to_s.include?('//') || source.to_s.start_with?('data:')
 
       asset_folder = case kind
@@ -108,7 +108,7 @@ module Middleman
     # @param [Hash] options Data to pass through.
     # @return [String] The fully qualified asset url
     Contract ::Middleman::Application, String, String, Hash => String
-    def asset_url(app, path, prefix = '', options_hash = {})
+    def asset_url(app, path, prefix = '', options_hash = ::Middleman::EMPTY_HASH)
       # Don't touch assets which already have a full path
       return path if path.include?('//') || path.start_with?('data:')
 
@@ -154,7 +154,7 @@ module Middleman
     # or a Resource, this will produce the nice URL configured for that
     # path, respecting :relative_links, directory indexes, etc.
     Contract ::Middleman::Application, Or[String, Symbol, ::Middleman::Sitemap::Resource], Hash => String
-    def url_for(app, path_or_resource, options_hash = {})
+    def url_for(app, path_or_resource, options_hash = ::Middleman::EMPTY_HASH)
       if path_or_resource.is_a?(String) || path_or_resource.is_a?(Symbol)
         r = app.sitemap.by_page_id(path_or_resource)
 

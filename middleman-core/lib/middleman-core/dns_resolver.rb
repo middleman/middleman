@@ -27,7 +27,7 @@ module Middleman
     #
     # First the local resolver is queried. If this raises an error or returns
     # nil or [] the network resolver is queried.
-    def initialize(options_hash = {})
+    def initialize(options_hash = ::Middleman::EMPTY_HASH)
       @resolvers = []
       @resolvers << options_hash.fetch(:hosts_resolver, HostsResolver.new)
 

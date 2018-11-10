@@ -43,7 +43,7 @@ module Middleman
 
     # Haml Renderer
     class Haml < ::Middleman::Extension
-      def initialize(app, options_hash = {}, &block)
+      def initialize(app, options_hash = ::Middleman::EMPTY_HASH, &block)
         super
 
         ::Haml::Options.defaults[:context] = nil

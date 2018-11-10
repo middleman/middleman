@@ -22,7 +22,7 @@ module Middleman
 
       attr_writer :https
 
-      def initialize(options_hash = {})
+      def initialize(options_hash = ::Middleman::EMPTY_HASH)
         @resolver     = options_hash.fetch(:resolver, DnsResolver.new)
         @validator    = options_hash.fetch(:validator, ServerInformationValidator.new)
         @network_interface_inventory = options_hash.fetch(:network_interface_inventory, NetworkInterfaceInventory.new)

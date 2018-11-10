@@ -6,11 +6,10 @@ require 'backports/latest'
 
 # Top-level Middleman namespace
 module Middleman
-  EMPTY_HASH = {}.freeze
-
   autoload :Application, 'middleman-core/application'
 end
 
+require 'middleman-core/util/empty_hash'
 require 'middleman-core/version'
 require 'middleman-core/util'
 require 'middleman-core/extensions'

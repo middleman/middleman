@@ -1,6 +1,6 @@
 # Automatic Image Sizes extension
 class Middleman::Extensions::AutomaticImageSizes < ::Middleman::Extension
-  def initialize(app, options_hash = {}, &block)
+  def initialize(app, options_hash = ::Middleman::EMPTY_HASH, &block)
     super
 
     # Include 3rd-party fastimage library
@@ -14,7 +14,7 @@ class Middleman::Extensions::AutomaticImageSizes < ::Middleman::Extension
     # @param [String] path
     # @param [Hash] params
     # @return [String]
-    def image_tag(path, options_hash = {})
+    def image_tag(path, options_hash = ::Middleman::EMPTY_HASH)
       options = options_hash.dup
 
       if !options.key?(:width) && !options.key?(:height) && !path.include?('://')

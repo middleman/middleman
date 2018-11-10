@@ -20,7 +20,7 @@ end
 class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
   define_setting :relative_links, false, 'Whether to generate relative links instead of absolute ones'
 
-  def initialize(app, options_hash = {}, &block)
+  def initialize(app, options_hash = ::Middleman::EMPTY_HASH, &block)
     super
 
     require 'active_support/core_ext/object/to_query'
@@ -163,7 +163,7 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
     # Generate body css classes based on the current path
     #
     # @return [String]
-    def page_classes(path = current_path.dup, options_hash = {})
+    def page_classes(path = current_path.dup, options_hash = ::Middleman::EMPTY_HASH)
       options = options_hash
 
       if path.is_a? Hash
@@ -195,7 +195,7 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
     # @param [String] source The path to the file
     # @param [Hash] options Data to pass through.
     # @return [String]
-    def asset_path(kind, source, options_hash = {})
+    def asset_path(kind, source, options_hash = ::Middleman::EMPTY_HASH)
       options_with_resource = {}.merge!(options_hash).merge!(current_resource: current_resource)
       ::Middleman::Util.asset_path(app, kind, source, options_with_resource)
     end
@@ -206,7 +206,7 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
     # @param [String] prefix The type prefix (such as "images")
     # @param [Hash] options Additional options.
     # @return [String] The fully qualified asset url
-    def asset_url(path, prefix = '', options_hash = {})
+    def asset_url(path, prefix = '', options_hash = ::Middleman::EMPTY_HASH)
       options_with_resource = {}.merge!(options_hash).merge!(current_resource: current_resource)
       ::Middleman::Util.asset_url(app, path, prefix, options_with_resource)
     end
@@ -214,7 +214,7 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
     # Given a source path (referenced either absolutely or relatively)
     # or a Resource, this will produce the nice URL configured for that
     # path, respecting :relative_links, directory indexes, etc.
-    def url_for(path_or_resource, options_hash = {})
+    def url_for(path_or_resource, options_hash = ::Middleman::EMPTY_HASH)
       options_with_resource = {}.merge!(options_hash).merge!(current_resource: current_resource)
       ::Middleman::Util.url_for(app, path_or_resource, options_with_resource)
     end
@@ -256,7 +256,7 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
 
     # Modified Padrino form_for that uses Middleman's url_for
     # to transform the URL.
-    def form_tag(url, options_hash = {}, &block)
+    def form_tag(url, options_hash = ::Middleman::EMPTY_HASH, &block)
       url = url_for(url, options_hash)
       super
     end
@@ -282,7 +282,7 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
       super(path, params)
     end
 
-    def partial(template, options_hash = {}, &block)
+    def partial(template, options_hash = ::Middleman::EMPTY_HASH, &block)
       options = options_hash.dup
 
       including_parent_locals = Middleman::Util::EnhancedHash.new

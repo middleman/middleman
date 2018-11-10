@@ -29,7 +29,7 @@ module Middleman
         # @param [String] path
         # @param [Hash] opts The :to value gives a target path
         Contract String, { to: Or[String, ::Middleman::Sitemap::Resource] }, Maybe[Proc] => RedirectDescriptor
-        def redirect(path, options_hash = {}, &block)
+        def redirect(path, options_hash = ::Middleman::EMPTY_HASH, &block)
           RedirectDescriptor.new(path, options_hash[:to], block_given? ? block : nil)
         end
       end

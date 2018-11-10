@@ -7,6 +7,7 @@ RSpec.configure do |config|
   config.include Aruba::Api
 end
 
+require 'middleman-core/util/empty_hash'
 require_relative 'support/given'
 
 # encoding: utf-8

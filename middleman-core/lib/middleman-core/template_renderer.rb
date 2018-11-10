@@ -52,7 +52,7 @@ module Middleman
     # @option options [Boolean] :preferred_engine If set, try this engine first, then fall back to any engine.
     # @return [String, Boolean] Either the path to the template, or false
     Contract IsA['Middleman::Application'], Or[Symbol, String], Maybe[Hash] => Maybe[IsA['Middleman::SourceFile']]
-    def self.resolve_template(app, request_path, options_hash = {})
+    def self.resolve_template(app, request_path, options_hash = ::Middleman::EMPTY_HASH)
       # Find the path by searching
       relative_path = Util.strip_leading_slash(request_path.to_s)
 
@@ -109,7 +109,7 @@ module Middleman
     # @param [Hash] opts
     # @return [String]
     Contract Hash, Hash => String
-    def render(locs = {}, options_hash = {}, &block)
+    def render(locs = {}, options_hash = ::Middleman::EMPTY_HASH, &block)
       path = @path.dup
       locals = locs.dup.freeze
       options = options_hash.dup
@@ -247,7 +247,7 @@ module Middleman
     # @param [Hash] options
     # @return [Array<String, Symbol>, Boolean]
     Contract String, Hash => ArrayOf[Or[String, Symbol]]
-    def resolve_template(request_path, options_hash = {})
+    def resolve_template(request_path, options_hash = ::Middleman::EMPTY_HASH)
       self.class.resolve_template(@app, request_path, options_hash)
     end
   end

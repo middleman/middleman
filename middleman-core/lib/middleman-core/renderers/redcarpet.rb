@@ -65,7 +65,7 @@ module Middleman
     class MiddlemanRedcarpetHTML < ::Redcarpet::Render::HTML
       cattr_accessor :scope
 
-      def initialize(options_hash = {})
+      def initialize(options_hash = ::Middleman::EMPTY_HASH)
         @local_options = options_hash.dup
 
         super

@@ -50,7 +50,7 @@ module Middleman
     # @param [Hash] options Options to pass to the extension
     # @yield [Middleman::Configuration::ConfigurationManager] Extension options that can be modified before the extension is initialized.
     # @return [void]
-    def activate(ext_name, options_hash = {}, &block)
+    def activate(ext_name, options_hash = ::Middleman::EMPTY_HASH, &block)
       begin
         extension = ::Middleman::Extensions.load(ext_name)
       rescue LoadError => e

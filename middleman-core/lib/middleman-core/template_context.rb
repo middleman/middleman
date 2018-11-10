@@ -30,7 +30,7 @@ module Middleman
     # @param [Middleman::Application] app
     # @param [Hash] locs
     # @param [Hash] opts
-    def initialize(app, locs = {}, options_hash = {})
+    def initialize(app, locs = {}, options_hash = ::Middleman::EMPTY_HASH)
       @app = app
       @locs = locs
       @opts = options_hash
@@ -101,7 +101,7 @@ module Middleman
     # @param [Proc] block A block will be evaluated to return internal contents.
     # @return [String]
     Contract Any, Or[Symbol, String], Hash => String, Maybe[Proc] => String
-    def render(_, name, options_hash = {}, &block)
+    def render(_, name, options_hash = ::Middleman::EMPTY_HASH, &block)
       name = name.to_s
 
       partial_file = locate_partial(name, false) || locate_partial(name, true)

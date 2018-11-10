@@ -15,7 +15,7 @@ class Middleman::Extensions::MinifyJavaScript < ::Middleman::Extension
 
   INLINE_JS_REGEX = /(<script[^>]*>\s*(?:\/\/(?:(?:<!--)|(?:<!\[CDATA\[))\n)?)(.*?)((?:(?:\n\s*)?\/\/(?:(?:-->)|(?:\]\]>)))?\s*<\/script>)/m.freeze
 
-  def initialize(app, options_hash = {}, &block)
+  def initialize(app, options_hash = ::Middleman::EMPTY_HASH, &block)
     super
 
     @ignore = Array(options[:ignore]) + [/\.min\./]

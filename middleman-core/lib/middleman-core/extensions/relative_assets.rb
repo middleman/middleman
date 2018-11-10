@@ -6,7 +6,7 @@ class Middleman::Extensions::RelativeAssets < ::Middleman::Extension
   option :rewrite_ignore, [], 'Regexes of filenames to skip processing for path rewrites.'
   option :helpers_only, false, 'Allow only Ruby helpers to change paths.'
 
-  def initialize(app, options_hash = {}, &block)
+  def initialize(app, options_hash = ::Middleman::EMPTY_HASH, &block)
     super
 
     require 'set'
@@ -57,11 +57,11 @@ class Middleman::Extensions::RelativeAssets < ::Middleman::Extension
   end
 
   helpers do
-    def asset_url(path, prefix = '', options_hash = {})
+    def asset_url(path, prefix = '', options_hash = ::Middleman::EMPTY_HASH)
       super(path, prefix, app.extensions[:relative_assets].mark_as_relative(super, options_hash, current_resource))
     end
 
-    def asset_path(kind, source, options_hash = {})
+    def asset_path(kind, source, options_hash = ::Middleman::EMPTY_HASH)
       super(kind, source, app.extensions[:relative_assets].mark_as_relative(super, options_hash, current_resource))
     end
   end

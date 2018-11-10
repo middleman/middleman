@@ -8,7 +8,7 @@ module Middleman
     attr_reader :filter_name
     attr_reader :after_filter
 
-    def initialize(filter_name, app, resource, options_hash = {})
+    def initialize(filter_name, app, resource, options_hash = ::Middleman::EMPTY_HASH)
       @filter_name = filter_name
       @app = app
       @resource = resource

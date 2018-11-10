@@ -20,7 +20,7 @@ module Middleman::CoreExtensions
       yaml: [%w[--- ---], %w[--- ...]]
     }, 'Allowed frontmatter delimiters'
 
-    def initialize(app, options_hash = {}, &block)
+    def initialize(app, options_hash = ::Middleman::EMPTY_HASH, &block)
       super
 
       @cache = {}

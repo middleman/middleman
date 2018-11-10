@@ -25,7 +25,7 @@ module Middleman
     # Create a new Builder instance.
     # @param [Middleman::Application] app The app to build.
     # @param [Hash] opts The builder options
-    def initialize(app, options_hash = {})
+    def initialize(app, options_hash = ::Middleman::EMPTY_HASH)
       @app = app
       @source_dir = Pathname(File.join(@app.root, @app.config[:source]))
       @build_dir = Pathname(@app.config[:build_dir])

@@ -27,7 +27,7 @@ module Middleman
       #
       # @param [Integer] port
       #   The port to listen on
-      def initialize(options_hash = {})
+      def initialize(options_hash = ::Middleman::EMPTY_HASH)
         @bind_address = ServerIpAddress.new(options_hash[:bind_address])
         @server_name  = ServerHostname.new(options_hash[:server_name])
         @port         = options_hash[:port]
@@ -100,7 +100,7 @@ module Middleman
         after_init
       end
 
-      def self.matches?(options_hash = {})
+      def self.matches?(options_hash = ::Middleman::EMPTY_HASH)
         options_hash[:bind_address].blank? && options_hash[:server_name].blank?
       end
 
@@ -146,7 +146,7 @@ module Middleman
     # This is used if bind address is 0.0.0.0, the server name needs to be
     # blank
     class AllIpv4Interfaces < AllInterfaces
-      def self.matches?(options_hash = {})
+      def self.matches?(options_hash = ::Middleman::EMPTY_HASH)
         options_hash[:bind_address] == '0.0.0.0' && options_hash[:server_name].blank?
       end
 
@@ -164,7 +164,7 @@ module Middleman
 
     # This is used if bind address is ::, the server name needs to be blank
     class AllIpv6Interfaces < AllInterfaces
-      def self.matches?(options_hash = {})
+      def self.matches?(options_hash = ::Middleman::EMPTY_HASH)
         options_hash[:bind_address] == '::' && options_hash[:server_name].blank?
       end
 
@@ -189,7 +189,7 @@ module Middleman
         @site_addresses << bind_address
       end
 
-      def self.matches?(options_hash = {})
+      def self.matches?(options_hash = ::Middleman::EMPTY_HASH)
         !options_hash[:bind_address].blank? && options_hash[:server_name].blank?
       end
 
@@ -222,7 +222,7 @@ module Middleman
         self
       end
 
-      def self.matches?(options_hash = {})
+      def self.matches?(options_hash = ::Middleman::EMPTY_HASH)
         options_hash[:bind_address].blank? && !options_hash[:server_name].blank?
       end
     end
@@ -240,7 +240,7 @@ module Middleman
         @checks << Checks::ServerNameResolvesToBindAddress.new
       end
 
-      def self.matches?(options_hash = {})
+      def self.matches?(options_hash = ::Middleman::EMPTY_HASH)
         !options_hash[:bind_address].blank? && !options_hash[:server_name].blank? && !%w[:: 0.0.0.0].include?(options_hash[:bind_address])
       end
 
@@ -250,7 +250,7 @@ module Middleman
     # If the server name is either an ipv4 or ipv6 address, e.g. 127.0.0.1 or
     # ::1, use this one
     class ServerNameIsIpInformation < BasicInformation
-      def initialize(_options_hash = {})
+      def initialize(_options_hash = ::Middleman::EMPTY_HASH)
         super
 
         ip = ServerIpAddress.new(server_name.to_s)
@@ -261,7 +261,7 @@ module Middleman
 
       def resolve_me(*); end
 
-      def self.matches?(options_hash = {})
+      def self.matches?(options_hash = ::Middleman::EMPTY_HASH)
         ip = IPAddr.new(options_hash[:server_name])
 
         ip.ipv4? || ip.ipv6?

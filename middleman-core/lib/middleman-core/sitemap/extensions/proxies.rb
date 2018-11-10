@@ -22,7 +22,7 @@ module Middleman
         # @option opts [Hash] data Extra metadata to add to the page. This is the same as frontmatter, though frontmatter will take precedence over metadata defined here. Available via {Resource#data}.
         # @return [ProxyDescriptor]
         Contract String, String, Maybe[Hash] => RespondTo[:execute_descriptor]
-        def proxy(path, target, options_hash = {})
+        def proxy(path, target, options_hash = ::Middleman::EMPTY_HASH)
           ProxyDescriptor.new(
             ::Middleman::Util.normalize_path(path),
             ::Middleman::Util.normalize_path(target),

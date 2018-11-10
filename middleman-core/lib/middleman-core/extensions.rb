@@ -49,7 +49,7 @@ module Middleman
       #        you the ability to require other files only when the
       #        extension is first activated.
       # @return [void]
-      def register(name, extension_class = nil, options_hash = {}, &block)
+      def register(name, extension_class = nil, options_hash = ::Middleman::EMPTY_HASH, &block)
         raise 'Extension name must be a symbol' unless name.is_a?(Symbol)
 
         # If we've already got an extension registered under this name, bail out

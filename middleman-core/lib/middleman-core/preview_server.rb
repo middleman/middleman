@@ -17,7 +17,7 @@ module Middleman
 
       # Start an instance of Middleman::Application
       # @return [void]
-      def start(options_hash = {}, cli_options_hash = {})
+      def start(options_hash = ::Middleman::EMPTY_HASH, cli_options_hash = ::Middleman::EMPTY_HASH)
         # Do not buffer output, otherwise testing of output does not work
         $stdout.sync = true
         $stderr.sync = true

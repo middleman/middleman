@@ -68,7 +68,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
       ::I18n.t(*args)
     end
 
-    def url_for(path_or_resource, options_hash = {})
+    def url_for(path_or_resource, options_hash = ::Middleman::EMPTY_HASH)
       opts = options_hash.dup
 
       locale = opts.delete(:locale) || ::I18n.locale

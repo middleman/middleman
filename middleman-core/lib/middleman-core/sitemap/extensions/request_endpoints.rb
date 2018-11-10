@@ -26,7 +26,7 @@ module Middleman
         # @param [String] path
         # differs from the output path
         Contract String, Or[{ path: String }, Proc] => EndpointDescriptor
-        def endpoint(path, options_hash = {}, &block)
+        def endpoint(path, options_hash = ::Middleman::EMPTY_HASH, &block)
           if block_given?
             EndpointDescriptor.new(path, path, block)
           else
