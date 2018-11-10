@@ -91,9 +91,6 @@ module Middleman
       request_path = ::Middleman::Util.full_path(request_path, @middleman)
       full_request_path = File.join(env['SCRIPT_NAME'], request_path) # Path including rack mount
 
-      # Run before callbacks
-      @middleman.execute_callbacks(:before)
-
       # Get the resource object for this path
       resource = @middleman.sitemap.find_resource_by_destination_path(request_path.gsub(' ', '%20'))
 

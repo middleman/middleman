@@ -1,5 +1,3 @@
-require 'addressable/uri'
-
 class Middleman::Extensions::AssetHost < ::Middleman::Extension
   option :host, nil, 'The asset host to use or a Proc to determine asset host', required: true
   option :exts, nil, 'List of extensions that get cache busters strings appended to them.'
@@ -13,13 +11,23 @@ class Middleman::Extensions::AssetHost < ::Middleman::Extension
     require 'set'
     @set_of_exts = Set.new(options.exts || app.config[:asset_extensions])
     @set_of_sources = Set.new options.sources
+  end
 
-    app.rewrite_inline_urls id: :asset_host,
-                            url_extensions: @set_of_exts,
-                            source_extensions: @set_of_sources,
-                            ignore: options.ignore,
-                            rewrite_ignore: options.rewrite_ignore,
-                            proc: method(:rewrite_url)
+  Contract IsA['Middleman::Sitemap::ResourceListContainer'] => Any
+  def manipulate_resource_list_container!(resource_list)
+    resource_list.by_extensions(@set_of_sources).each do |r|
+      next if Array(options.rewrite_ignore || []).any? do |i|
+        ::Middleman::Util.path_match(i, "/#{r.destination_path}")
+      end
+
+      r.filters << ::Middleman::InlineURLRewriter.new(:asset_host,
+                                                      app,
+                                                      r,
+                                                      after_filter: :asset_hash,
+                                                      url_extensions: @set_of_exts,
+                                                      ignore: options.ignore,
+                                                      proc: method(:rewrite_url))
+    end
   end
 
   Contract String, Or[String, Pathname], Any => String
