@@ -145,8 +145,8 @@ module Middleman
 
       # Render this resource
       # @return [String]
-      Contract Hash, Hash => String
-      def render(opts = {}, locs = {})
+      Contract Hash, Hash, Maybe[Proc] => String
+      def render(opts = {}, locs = {}, &_block)
         body = render_without_filters(opts, locs)
 
         return body if @filters.empty?
@@ -292,27 +292,6 @@ module Middleman
 
       def render(*)
         @contents
-      end
-
-      def binary?
-        false
-      end
-    end
-
-    class CallbackResource < Resource
-      Contract IsA['Middleman::Sitemap::Store'], String, Proc => Any
-      def initialize(store, path, &block)
-        @request_path = path
-        @contents = block
-        super(store, path)
-      end
-
-      def template?
-        true
-      end
-
-      def render(*)
-        @contents.call
       end
 
       def binary?

@@ -14,8 +14,9 @@ module Middleman
             r = EndpointResource.new(
               app.sitemap,
               path,
-              &block
+              request_path
             )
+            r.output = block if block
 
             resource_list.add! r
           end

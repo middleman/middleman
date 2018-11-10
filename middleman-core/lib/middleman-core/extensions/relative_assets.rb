@@ -18,7 +18,7 @@ class Middleman::Extensions::RelativeAssets < ::Middleman::Extension
   def manipulate_resource_list_container!(resource_list)
     return if options[:helpers_only]
 
-    resource_list.by_exts(@set_of_sources).each do |r|
+    resource_list.by_extensions(@set_of_sources).each do |r|
       next if Array(options.rewrite_ignore || []).any? do |i|
         ::Middleman::Util.path_match(i, "/#{r.destination_path}")
       end

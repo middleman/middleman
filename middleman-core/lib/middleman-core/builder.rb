@@ -252,7 +252,7 @@ module Middleman
           if resource.binary?
             export_file!(output_file, resource.file_descriptor[:full_path])
           else
-            export_file!(output_file, binary_encode(resource.render))
+            export_file!(output_file, binary_encode(resource.render({}, {})))
           end
         rescue StandardError => e
           trigger(:error, output_file, "#{e}\n#{e.backtrace.join("\n")}")

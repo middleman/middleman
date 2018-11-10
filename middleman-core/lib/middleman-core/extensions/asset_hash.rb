@@ -46,7 +46,7 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
   # Update the main sitemap resource list
   Contract IsA['Middleman::Sitemap::ResourceListContainer'] => Any
   def manipulate_resource_list_container!(resource_list)
-    resource_list.by_exts(@set_of_sources).each do |r|
+    resource_list.by_extensions(@set_of_sources).each do |r|
       next if Array(options.rewrite_ignore || []).any? do |i|
         ::Middleman::Util.path_match(i, "/#{r.destination_path}")
       end
@@ -86,7 +86,7 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
                ::Digest::SHA1.file(resource.source_file).hexdigest[0..7]
              else
                # Render without asset hash
-               body = resource.render { |f| !f.respond_to?(:filter_name) || f.filter_name != :asset_hash }
+               body = resource.render({}, {}) { |f| !f.respond_to?(:filter_name) || f.filter_name != :asset_hash }
                ::Digest::SHA1.hexdigest(body)[0..7]
              end
 
