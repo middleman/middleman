@@ -22,11 +22,11 @@ module Middleman
         # @option opts [Hash] data Extra metadata to add to the page. This is the same as frontmatter, though frontmatter will take precedence over metadata defined here. Available via {Resource#data}.
         # @return [ProxyDescriptor]
         Contract String, String, Maybe[Hash] => RespondTo[:execute_descriptor]
-        def proxy(path, target, opts = {})
+        def proxy(path, target, options_hash = {})
           ProxyDescriptor.new(
             ::Middleman::Util.normalize_path(path),
             ::Middleman::Util.normalize_path(target),
-            opts.dup
+            options_hash
           )
         end
       end
@@ -84,9 +84,9 @@ module Middleman
       # @return [Sitemap::Resource]
       Contract IsA['Middleman::Sitemap::Resource']
       def target_resource
-        resource = @store.find_resource_by_path(@target)
+        resource = @store.by_path(@target)
 
-        raise "Path #{path} proxies to unknown file #{@target}:#{@store.resources.map(&:path)}" unless resource
+        raise "Path #{path} proxies to unknown file #{@target}" unless resource
 
         raise "You can't proxy #{path} to #{@target} which is itself a proxy." if resource.is_a? ProxyResource
 

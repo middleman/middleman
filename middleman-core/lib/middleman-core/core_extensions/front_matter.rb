@@ -57,7 +57,11 @@ module Middleman::CoreExtensions
           resource.add_metadata options: opts, page: fmdata
         end
 
-        resource.ignore! if ignored == true && !resource.is_a?(::Middleman::Sitemap::ProxyResource)
+        next unless ignored == true && !resource.is_a?(::Middleman::Sitemap::ProxyResource)
+
+        resource_list.update!(resource, :ignored) do
+          resource.ignore!
+        end
 
         # TODO: Save new template here somewhere?
       end

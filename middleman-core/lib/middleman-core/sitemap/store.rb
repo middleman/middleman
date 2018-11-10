@@ -2,8 +2,9 @@
 require 'active_support/core_ext/hash/deep_merge'
 require 'monitor'
 require 'hamster'
-require 'set'
 require 'middleman-core/extensions'
+require 'middleman-core/sitemap/resource'
+require 'middleman-core/sitemap/resource_list_container'
 
 # Files on Disk
 ::Middleman::Extensions.register :sitemap_ondisk, auto_activate: :before_configuration do
@@ -47,213 +48,10 @@ end
   ::Middleman::Sitemap::Extensions::Ignores
 end
 
-require 'middleman-core/contracts'
-
 module Middleman
   # Sitemap namespace
   module Sitemap
     ManipulatorDescriptor = Struct.new :name, :manipulator, :priority
-
-    class ResourceListContainer
-      extend Forwardable
-      include Contracts
-
-      def_delegators :@_set, :each, :find, :select, :reject
-
-      Contract IsA['Middleman::Sitemap::Store'], Maybe[ArrayOf[IsA['Middleman::Sitemap::Resource']]] => Any
-      def initialize(_store, initial = [])
-        @_set = Set.new
-        @_store = Store
-
-        reset!(initial)
-      end
-
-      Contract Maybe[ArrayOf[IsA['Middleman::Sitemap::Resource']]] => Any
-      def reset!(initial = [])
-        @_set = Set.new
-
-        @_lookup_by_path = {}
-        @_lookup_by_destination_path = {}
-        @_lookup_by_binary = Set.new
-        @_lookup_by_non_binary = Set.new
-        @_lookup_by_source_extension = {}
-        @_lookup_by_destination_extension = {}
-        @_lookup_by_page_id = {}
-
-        add!(*initial)
-      end
-
-      Contract Args[IsA['Middleman::Sitemap::Resource']] => Any
-      def add!(*resources)
-        resources.each(&method(:add_one!))
-      end
-
-      Contract IsA['Middleman::Sitemap::Resource'] => Any
-      def add_one!(resource)
-        @_set.add resource
-        add_cache resource
-      end
-
-      Contract Symbol, Maybe[Symbol] => Bool
-      def should_run?(key, only = nil)
-        return true if only.nil?
-
-        key == only
-      end
-
-      Contract IsA['Middleman::Sitemap::Resource'], Maybe[Symbol] => Any
-      def add_cache(resource, only = nil)
-        @_lookup_by_path[::Middleman::Util.normalize_path(resource.path)] = resource if should_run? :path, only
-
-        @_lookup_by_destination_path[::Middleman::Util.normalize_path(resource.destination_path)] = resource if should_run? :destination_path, only
-
-        if should_run? :binary, only
-          if resource.binary?
-            @_lookup_by_binary << resource
-          else
-            @_lookup_by_non_binary << resource
-          end
-        end
-
-        if should_run? :source_extension, only
-          source_ext = resource.file_descriptor && resource.file_descriptor[:full_path] && ::File.extname(resource.file_descriptor[:full_path])
-          if source_ext
-            @_lookup_by_source_extension[source_ext] ||= Set.new
-            @_lookup_by_source_extension[source_ext] << resource
-          end
-        end
-
-        if should_run? :destination_extension, only
-          @_lookup_by_destination_extension[::File.extname(resource.destination_path)] ||= Set.new
-          @_lookup_by_destination_extension[::File.extname(resource.destination_path)] << resource
-        end
-
-        @_lookup_by_page_id[resource.page_id.to_s.to_sym] = resource if should_run? :page_id, only
-      end
-
-      Contract IsA['Middleman::Sitemap::Resource'] => Any
-      def remove!(resource)
-        @_set.delete resource
-        remove_cache resource
-      end
-
-      Contract IsA['Middleman::Sitemap::Resource'], Maybe[Symbol] => Any
-      def remove_cache(resource, only = nil)
-        @_lookup_by_path.delete ::Middleman::Util.normalize_path(resource.path) if should_run? :path, only
-
-        @_lookup_by_destination_path.delete ::Middleman::Util.normalize_path(resource.destination_path) if should_run? :destination_path, only
-
-        if should_run? :binary, only
-          if resource.binary?
-            @_lookup_by_binary.delete resource
-          else
-            @_lookup_by_non_binary.delete resource
-          end
-        end
-
-        if should_run? :source_extension, only
-          source_ext = resource.file_descriptor && resource.file_descriptor[:full_path] && ::File.extname(resource.file_descriptor[:full_path])
-          @_lookup_by_source_extension[source_ext].delete resource if source_ext
-        end
-
-        if should_run? :destination_extension, only
-          @_lookup_by_destination_extension[::File.extname(resource.destination_path)].delete resource if @_lookup_by_destination_extension.key?(::File.extname(resource.destination_path))
-        end
-
-        @_lookup_by_page_id.delete resource.page_id.to_s.to_sym if should_run? :page_id, only
-      end
-
-      Contract IsA['Middleman::Sitemap::Resource'], Maybe[Symbol], Proc => Any
-      def update!(resource, only = nil)
-        remove_cache(resource, only)
-        yield
-        add_cache(resource, only)
-      end
-
-      # Find resources given its source extension
-      # @param [String] extension The source extension of a resource.
-      # @return [Middleman::Sitemap::Resource]
-      Contract String => SetOf[IsA['Middleman::Sitemap::Resource']]
-      def by_source_extension(extension)
-        @_lookup_by_source_extension[extension] || Set.new
-      end
-
-      # Find resources given a set of source extensions
-      # @param [Set<String>] extensions The source extensions of a resource.
-      # @return [Middleman::Sitemap::Resource]
-      Contract Or[ArrayOf[String], SetOf[String]] => SetOf[IsA['Middleman::Sitemap::Resource']]
-      def by_source_extensions(extensions)
-        extensions.reduce(Set.new) do |sum, ext|
-          sum | by_source_extension(ext)
-        end
-      end
-
-      # Find resources given its destination extension
-      # @param [String] extension The destination (output) extension of a resource.
-      # @return [Middleman::Sitemap::Resource]
-      Contract String => SetOf[IsA['Middleman::Sitemap::Resource']]
-      def by_extension(extension)
-        @_lookup_by_destination_extension[extension] || Set.new
-      end
-
-      # Find resources given a set of destination extensions
-      # @param [Set<String>] extensions The destination (output) extensions of a resource.
-      # @return [Middleman::Sitemap::Resource]
-      Contract Or[ArrayOf[String], SetOf[String]] => SetOf[IsA['Middleman::Sitemap::Resource']]
-      def by_extensions(extensions)
-        extensions.reduce(Set.new) do |sum, ext|
-          sum | by_extension(ext)
-        end
-      end
-
-      # Find a resource given its original path
-      # @param [String] request_path The original path of a resource.
-      # @return [Middleman::Sitemap::Resource]
-      Contract String => Maybe[IsA['Middleman::Sitemap::Resource']]
-      def by_path(request_path)
-        request_path = ::Middleman::Util.normalize_path(request_path)
-        @_lookup_by_path[request_path]
-      end
-
-      # Find a resource given its destination path
-      # @param [String] request_path The destination (output) path of a resource.
-      # @return [Middleman::Sitemap::Resource]
-      Contract String => Maybe[IsA['Middleman::Sitemap::Resource']]
-      def by_destination_path(request_path)
-        request_path = ::Middleman::Util.normalize_path(request_path)
-        @_lookup_by_destination_path[request_path]
-      end
-
-      # Find a resource given its page id
-      # @param [String] page_id The page id.
-      # @return [Middleman::Sitemap::Resource]
-      Contract Or[String, Symbol] => Maybe[IsA['Middleman::Sitemap::Resource']]
-      def by_page_id(page_id)
-        @_lookup_by_page_id[page_id.to_s.to_sym]
-      end
-
-      # Find a resource given its page id
-      # @param [String] page_id The page id.
-      # @return [Middleman::Sitemap::Resource]
-      Contract Bool => SetOf[IsA['Middleman::Sitemap::Resource']]
-      def by_binary(is_binary)
-        if is_binary
-          @_lookup_by_binary
-        else
-          @_lookup_by_non_binary
-        end
-      end
-
-      Contract ArrayOf[IsA['Middleman::Sitemap::Resource']]
-      def to_a
-        @_set.to_a
-      end
-
-      Contract ArrayOf[IsA['Middleman::Sitemap::Resource']] => IsA['Middleman::Sitemap::ResourceListContainer']
-      def self.from_a(a)
-        new(a)
-      end
-    end
 
     # The Store class
     #
@@ -265,14 +63,7 @@ module Middleman
       extend Forwardable
       include Contracts
 
-      def_delegator :@resource_list_container, :by_path, :find_resource_by_path
-      def_delegator :@resource_list_container, :by_destination_path, :find_resource_by_destination_path
-      def_delegator :@resource_list_container, :by_by_binary, :find_resource_by_by_binary
-      def_delegator :@resource_list_container, :by_page_id, :find_resource_by_page_id
-      def_delegator :@resource_list_container, :by_extension, :find_resource_by_extension
-      def_delegator :@resource_list_container, :by_extensions, :find_resource_by_extensions
-      def_delegator :@resource_list_container, :by_source_extension, :find_resource_by_source_extension
-      def_delegator :@resource_list_container, :by_source_extensions, :find_resource_by_source_extensions
+      def_delegators :@resources, :by_extensions, :by_destination_path, :by_path, :by_binary, :by_page_id, :by_extension, :by_source_extension, :by_source_extensions, :with_ignored, :without_ignored
 
       Contract IsA['Middleman::Application']
       attr_reader :app
@@ -280,15 +71,15 @@ module Middleman
       Contract Num
       attr_reader :update_count
 
-      Contract IsA['Middleman::Sitemap::ResourceListContainer']
-      attr_reader :resource_list_container
+      Contract ::Middleman::Sitemap::ResourceListContainer
+      attr_reader :resources
 
       # Initialize with parent app
       # @param [Middleman::Application] app
       Contract IsA['Middleman::Application'] => Any
       def initialize(app)
         @app = app
-        @resource_list_container = ResourceListContainer.new self
+        @resources = ResourceListContainer.new
         @rebuild_reasons = [:first_run]
         @update_count = 0
 
@@ -344,22 +135,6 @@ module Middleman
         end
       end
 
-      # Get the array of all resources
-      # @param [Boolean] include_ignored Whether to include ignored resources
-      # @return [Array<Middleman::Sitemap::Resource>]
-      Contract Bool => ResourceList
-      def resources(include_ignored = false)
-        @lock.synchronize do
-          ensure_resource_list_updated!
-
-          if include_ignored
-            @resource_list_container.to_a
-          else
-            @resource_list_container.to_a.reject(&:ignored?)
-          end
-        end
-      end
-
       # Get the URL path for an on-disk file
       # @param [String] file
       # @return [String]
@@ -396,17 +171,17 @@ module Middleman
 
             @app.logger.debug '== Rebuilding resource list'
 
-            @resource_list_container.reset!
+            @resources.reset!
 
             @resource_list_manipulators.each do |m|
               ::Middleman::Util.instrument 'sitemap.manipulator', name: m[:name] do
                 @app.logger.debug "== Running manipulator: #{m[:name]} (#{m[:priority]})"
 
                 if m[:manipulator].respond_to?(:manipulate_resource_list_container!)
-                  m[:manipulator].send(:manipulate_resource_list_container!, @resource_list_container)
+                  m[:manipulator].send(:manipulate_resource_list_container!, @resources)
                 elsif m[:manipulator].respond_to?(:manipulate_resource_list)
-                  m[:manipulator].send(:manipulate_resource_list, @resource_list_container.to_a).tap do |result|
-                    @resource_list_container.reset!(result)
+                  m[:manipulator].send(:manipulate_resource_list, @resources.to_a).tap do |result|
+                    @resources.reset!(result)
                   end
                 end
               end

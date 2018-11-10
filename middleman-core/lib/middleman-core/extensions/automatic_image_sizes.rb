@@ -14,8 +14,10 @@ class Middleman::Extensions::AutomaticImageSizes < ::Middleman::Extension
     # @param [String] path
     # @param [Hash] params
     # @return [String]
-    def image_tag(path, params = {})
-      if !params.key?(:width) && !params.key?(:height) && !path.include?('://')
+    def image_tag(path, options_hash = {})
+      options = options_hash.dup
+
+      if !options.key?(:width) && !options.key?(:height) && !path.include?('://')
         real_path = path.dup
         real_path = File.join(config[:images_dir], real_path) unless real_path.start_with?('/')
 
@@ -32,8 +34,8 @@ class Middleman::Extensions::AutomaticImageSizes < ::Middleman::Extension
               width /= factor
               height /= factor
             end
-            params[:width]  = width
-            params[:height] = height
+            options[:width]  = width
+            options[:height] = height
           rescue FastImage::UnknownImageType
             # No message, it's just not supported
           rescue StandardError
@@ -42,7 +44,7 @@ class Middleman::Extensions::AutomaticImageSizes < ::Middleman::Extension
         end
       end
 
-      super(path, params)
+      super(path, options)
     end
   end
 end

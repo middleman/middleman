@@ -136,8 +136,8 @@ module Middleman
       # @param [Symbol] key The name of the option
       # @param [Object] default The default value for the option
       # @param [String] description A human-readable description of what the option does
-      def option(key, default = nil, description = nil, options = {})
-        config.define_setting(key, default, description, options)
+      def option(key, default = nil, description = nil, options_hash = {})
+        config.define_setting(key, default, description, options_hash)
       end
 
       # @api private
@@ -153,8 +153,8 @@ module Middleman
       # @param [Symbol] key The name of the option
       # @param [Object] default The default value for the option
       # @param [String] description A human-readable description of what the option does
-      def define_setting(key, default = nil, description = nil, options = {})
-        global_config.define_setting(key, default, description, options)
+      def define_setting(key, default = nil, description = nil, options_hash = {})
+        global_config.define_setting(key, default, description, options_hash)
       end
 
       # Short-hand for simple Sitemap manipulation
@@ -492,7 +492,7 @@ module Middleman
   end
 
   class ConfigExtension < Extension
-    def initialize(app, config = {}, &block)
+    def initialize(app, _options_hash = {}, &block)
       @descriptors = {}
       @ready = false
 

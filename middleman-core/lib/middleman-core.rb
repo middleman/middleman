@@ -6,6 +6,8 @@ require 'backports/latest'
 
 # Top-level Middleman namespace
 module Middleman
+  EMPTY_HASH = {}.freeze
+
   autoload :Application, 'middleman-core/application'
 end
 

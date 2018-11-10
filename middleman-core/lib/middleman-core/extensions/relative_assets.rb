@@ -16,7 +16,7 @@ class Middleman::Extensions::RelativeAssets < ::Middleman::Extension
 
   Contract IsA['Middleman::Sitemap::ResourceListContainer'] => Any
   def manipulate_resource_list_container!(resource_list)
-    return if options[:helpers_only]
+    return if options.helpers_only
 
     resource_list.by_extensions(@set_of_sources).each do |r|
       next if Array(options.rewrite_ignore || []).any? do |i|
@@ -57,12 +57,12 @@ class Middleman::Extensions::RelativeAssets < ::Middleman::Extension
   end
 
   helpers do
-    def asset_url(path, prefix = '', options = {})
-      super(path, prefix, app.extensions[:relative_assets].mark_as_relative(super, options, current_resource))
+    def asset_url(path, prefix = '', options_hash = {})
+      super(path, prefix, app.extensions[:relative_assets].mark_as_relative(super, options_hash, current_resource))
     end
 
-    def asset_path(kind, source, options = {})
-      super(kind, source, app.extensions[:relative_assets].mark_as_relative(super, options, current_resource))
+    def asset_path(kind, source, options_hash = {})
+      super(kind, source, app.extensions[:relative_assets].mark_as_relative(super, options_hash, current_resource))
     end
   end
 

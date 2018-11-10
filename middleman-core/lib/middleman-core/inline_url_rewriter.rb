@@ -8,11 +8,11 @@ module Middleman
     attr_reader :filter_name
     attr_reader :after_filter
 
-    def initialize(filter_name, app, resource, options = {})
+    def initialize(filter_name, app, resource, options_hash = {})
       @filter_name = filter_name
       @app = app
       @resource = resource
-      @options = options
+      @options = options_hash
 
       @after_filter = @options.fetch(:after_filter, nil)
     end

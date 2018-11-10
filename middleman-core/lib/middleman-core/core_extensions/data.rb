@@ -19,7 +19,7 @@ module Middleman
       # The regex which tells Middleman which files are for data
       DATA_FILE_MATCHER = /^(.*?)[\w-]+\.(yml|yaml|json)$/.freeze
 
-      def initialize(app, config = {}, &block)
+      def initialize(app, options_hash = {}, &block)
         super
 
         @data_store = DataStore.new(app, DATA_FILE_MATCHER)

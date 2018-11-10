@@ -29,7 +29,7 @@ Feature: url_for helper
     set :strip_index_file, true
     helpers do
       def menu_items(path='url_for.html')
-        sitemap.find_resource_by_destination_path(path).children
+        sitemap.by_destination_path(path).children
       end
     end
     """
@@ -105,7 +105,7 @@ Feature: url_for helper
     Given a fixture app "indexable-app"
     And a file named "source/url_for.html.erb" with:
     """
-    "<%= url_for sitemap.find_resource_by_path("/needs_index.html") %>"
+    "<%= url_for sitemap.by_path("/needs_index.html") %>"
     """
     And the Server is running at "indexable-app"
     When I go to "/url_for/"

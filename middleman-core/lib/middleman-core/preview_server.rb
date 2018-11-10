@@ -17,13 +17,13 @@ module Middleman
 
       # Start an instance of Middleman::Application
       # @return [void]
-      def start(opts = {}, cli_options = {})
+      def start(options_hash = {}, cli_options_hash = {})
         # Do not buffer output, otherwise testing of output does not work
         $stdout.sync = true
         $stderr.sync = true
 
-        @options = opts
-        @cli_options = cli_options
+        @options = options_hash
+        @cli_options = cli_options_hash
         @server_information = ServerInformation.new
         @server_information.https = (@options[:https] == true)
 

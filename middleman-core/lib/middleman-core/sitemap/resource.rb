@@ -146,8 +146,8 @@ module Middleman
       # Render this resource
       # @return [String]
       Contract Hash, Hash, Maybe[Proc] => String
-      def render(opts = {}, locs = {}, &_block)
-        body = render_without_filters(opts, locs)
+      def render(options_hash = {}, locs = {}, &_block)
+        body = render_without_filters(options_hash, locs)
 
         return body if @filters.empty?
 
@@ -183,19 +183,19 @@ module Middleman
       # Render this resource without content filters
       # @return [String]
       Contract Hash, Hash => String
-      def render_without_filters(opts = {}, locs = {})
+      def render_without_filters(options_hash = {}, locs = {})
         return ::Middleman::FileRenderer.new(@app, file_descriptor[:full_path].to_s).template_data_for_file unless template?
 
-        md   = metadata
-        opts = md[:options].deep_merge(opts)
+        md = metadata
+        options = md[:options].deep_merge(options_hash)
         locs = md[:locals].deep_merge(locs)
         locs[:current_path] ||= destination_path
 
         # Certain output file types don't use layouts
-        opts[:layout] = false if !opts.key?(:layout) && !@set_of_extensions_with_layout.include?(ext)
+        options[:layout] = false if !options.key?(:layout) && !@set_of_extensions_with_layout.include?(ext)
 
         renderer = ::Middleman::TemplateRenderer.new(@app, file_descriptor[:full_path].to_s)
-        renderer.render(locs, opts).to_str
+        renderer.render(locs, options).to_str
       end
 
       # A path without the directory index - so foo/index.html becomes

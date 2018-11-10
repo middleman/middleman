@@ -68,10 +68,10 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
       ::I18n.t(*args)
     end
 
-    def url_for(path_or_resource, options = {})
-      locale = options.delete(:locale) || ::I18n.locale
+    def url_for(path_or_resource, options_hash = {})
+      opts = options_hash.dup
 
-      opts = options.dup
+      locale = opts.delete(:locale) || ::I18n.locale
 
       should_relativize = opts.key?(:relative) ? opts[:relative] : config[:relative_links]
 
@@ -160,7 +160,9 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
         new_resources << build_resource(path, resource.path, page_id, locale)
       end
 
-      resource.ignore!
+      resource_list.update!(resource, :ignored) do
+        resource.ignore!
+      end
 
       # This is for backwards compatibility with the old provides_metadata-based code
       # that used to be in this extension, but I don't know how much sense it makes.
@@ -185,7 +187,9 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
 
       new_resources << new_resource
 
-      resource.ignore!
+      resource_list.update!(resource, :ignored) do
+        resource.ignore!
+      end
     end
 
     @lookup = new_resources.each_with_object({}) do |desc, sum|

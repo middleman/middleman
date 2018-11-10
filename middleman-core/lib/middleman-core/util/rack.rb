@@ -36,7 +36,7 @@ module Middleman
           asset_path = asset_path[url_fn_prefix.length..-1]
         end
 
-        current_resource = app.sitemap.find_resource_by_destination_path(path)
+        current_resource = app.sitemap.by_destination_path(path)
 
         begin
           uri = ::Middleman::Util.parse_uri(asset_path)
@@ -44,7 +44,7 @@ module Middleman
           if uri.relative? && uri.host.nil? && asset_path !~ /^[^\/].*[a-z]+\.[a-z]+\/.*/
             dest_path = ::Middleman::Util.url_for(app, asset_path, relative: false, current_resource: current_resource)
 
-            resource = app.sitemap.find_resource_by_destination_path(dest_path)
+            resource = app.sitemap.by_destination_path(dest_path)
 
             if resource && (result = yield(asset_path))
               "#{opening_character}#{result}"

@@ -25,16 +25,16 @@ module Middleman
     # Create a new Builder instance.
     # @param [Middleman::Application] app The app to build.
     # @param [Hash] opts The builder options
-    def initialize(app, opts = {})
+    def initialize(app, options_hash = {})
       @app = app
       @source_dir = Pathname(File.join(@app.root, @app.config[:source]))
       @build_dir = Pathname(@app.config[:build_dir])
 
       raise ":build_dir (#{@build_dir}) cannot be a parent of :source_dir (#{@source_dir})" if /\A[.\/]+\Z/.match?(@build_dir.expand_path.relative_path_from(@source_dir).to_s)
 
-      @glob = opts.fetch(:glob)
-      @cleaning = opts.fetch(:clean)
-      @parallel = opts.fetch(:parallel, true)
+      @glob = options_hash.fetch(:glob)
+      @cleaning = options_hash.fetch(:clean)
+      @parallel = options_hash.fetch(:parallel, true)
 
       @callbacks = ::Middleman::CallbackManager.new
       @callbacks.install_methods!(self, [:on_build_event])
@@ -87,8 +87,7 @@ module Middleman
       logger.debug '== Prerendering CSS'
 
       css_files = ::Middleman::Util.instrument 'builder.prerender.output' do
-        resources = @app.sitemap.resources.select { |resource| resource.ext == '.css' }
-        output_resources(resources)
+        output_resources(@app.sitemap.by_extension('.css').to_a)
       end
 
       ::Middleman::Util.instrument 'builder.prerender.check-files' do
@@ -104,13 +103,14 @@ module Middleman
 
     # Find all the files we need to output and do so.
     # @return [Array<Resource>] List of resources that were output.
-    Contract ResourceList
+    Contract OldResourceList
     def output_files
       logger.debug '== Building files'
 
-      resources = @app.sitemap.resources
-                      .reject { |resource| resource.ext == '.css' }
-                      .sort_by { |resource| SORT_ORDER.index(resource.ext) || 100 }
+      non_css_resources = @app.sitemap.without_ignored - @app.sitemap.by_extension('.css')
+
+      resources = non_css_resources
+                  .sort_by { |resource| SORT_ORDER.index(resource.ext) || 100 }
 
       if @glob
         resources = resources.select do |resource|
@@ -122,10 +122,10 @@ module Middleman
         end
       end
 
-      output_resources(resources)
+      output_resources(resources.to_a)
     end
 
-    Contract ResourceList => ResourceList
+    Contract OldResourceList => OldResourceList
     def output_resources(resources)
       res_count = resources.count
 
@@ -218,26 +218,26 @@ module Middleman
     # @return [void]
     Contract Pathname, Or[String, Pathname] => Any
     def export_file!(output_file, source)
-      # ::Middleman::Util.instrument "write_file", output_file: output_file do
-      source = write_tempfile(output_file, source.to_s) if source.is_a? String
+      ::Middleman::Util.instrument 'write_file', output_file: output_file do
+        source = write_tempfile(output_file, source.to_s) if source.is_a? String
 
-      method, source_path = if source.is_a? Tempfile
-                              [::FileUtils.method(:mv), source.path]
-                            else
-                              [::FileUtils.method(:cp), source.to_s]
-                            end
+        method, source_path = if source.is_a? Tempfile
+                                [::FileUtils.method(:mv), source.path]
+                              else
+                                [::FileUtils.method(:cp), source.to_s]
+                              end
 
-      mode = which_mode(output_file, source_path)
+        mode = which_mode(output_file, source_path)
 
-      if %i[created updated].include? mode
-        ::FileUtils.mkdir_p(output_file.dirname)
-        method.call(source_path, output_file.to_s)
+        if %i[created updated].include? mode
+          ::FileUtils.mkdir_p(output_file.dirname)
+          method.call(source_path, output_file.to_s)
+        end
+
+        source.unlink if source.is_a? Tempfile
+
+        trigger(mode, output_file)
       end
-
-      source.unlink if source.is_a? Tempfile
-
-      trigger(mode, output_file)
-      # end
     end
 
     # Try to output a resource and capture errors.

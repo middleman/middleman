@@ -100,7 +100,7 @@ describe Middleman::Util do
       Given.file 'source/a-path/index.html', ''
       Given.file 'source/a-path/images/blank.gif', ''
       @mm = Middleman::Application.new
-      current_resource = @mm.sitemap.find_resource_by_path('a-path/index.html')
+      current_resource = @mm.sitemap.by_path('a-path/index.html')
       expect(Middleman::Util.asset_url(@mm, 'images/blank.gif', 'images', current_resource: current_resource)).to eq '/a-path/images/blank.gif'
     end
 
@@ -124,7 +124,7 @@ describe Middleman::Util do
         end
 
         it 'returns path relative to the provided current_resource' do
-          current_resource = @mm.sitemap.find_resource_by_path('a-path/index.html')
+          current_resource = @mm.sitemap.by_path('a-path/index.html')
           expect(Middleman::Util.asset_url(@mm, 'blank.gif', 'images', current_resource: current_resource,
                                                                        relative: true)).to eq 'blank.gif'
         end

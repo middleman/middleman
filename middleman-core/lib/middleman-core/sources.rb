@@ -57,7 +57,7 @@ module Middleman
     # @param [Hash] options Global options.
     # @param [Array] watchers Default watchers.
     Contract IsA['Middleman::Application'], Maybe[Hash], Maybe[Array] => Any
-    def initialize(app, _options = {}, watchers = [])
+    def initialize(app, _options_hash = {}, watchers = [])
       @app = app
       @watchers = watchers
       @sorted_watchers = @watchers.dup.freeze
@@ -117,10 +117,10 @@ module Middleman
     # @param [Hash] options The watcher options.
     # @return [#changed, #deleted]
     Contract Or[Symbol, HANDLER], Maybe[Hash] => HANDLER
-    def watch(type_or_handler, options = {})
+    def watch(type_or_handler, options_hash = {})
       handler = if type_or_handler.is_a? Symbol
-                  path = File.expand_path(options.delete(:path), app.root)
-                  SourceWatcher.new(self, type_or_handler, path, options)
+                  path = File.expand_path(options_hash.delete(:path), app.root)
+                  SourceWatcher.new(self, type_or_handler, path, options_hash)
                 else
                   type_or_handler
                 end

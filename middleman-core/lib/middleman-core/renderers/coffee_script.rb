@@ -6,7 +6,7 @@ module Middleman
     # CoffeeScript Renderer
     class CoffeeScript < ::Middleman::Extension
       # Setup extension
-      def initialize(app, options = {}, &block)
+      def initialize(app, options_hash = {}, &block)
         super
 
         # Tell Tilt to use it as well (for inline scss blocks)

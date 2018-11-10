@@ -11,7 +11,8 @@ class Middleman::Extensions::Lorem < ::Middleman::Extension
     # @param [String] size
     # @param [Hash] options
     # @return [String]
-    def placekitten(size, options = {})
+    def placekitten(size, options_hash = {})
+      options = options_hash.dup
       options[:domain] = 'http://placekitten.com'
       lorem.image(size, options)
     end
@@ -144,14 +145,14 @@ class Middleman::Extensions::Lorem < ::Middleman::Extension
       # @param [String] size
       # @param [Hash] options
       # @return [String]
-      def image(size, options = {})
-        domain           = options[:domain] || 'http://placehold.it'
+      def image(size, options_hash = {})
+        domain           = options_hash[:domain] || 'http://placehold.it'
         src              = "#{domain}/#{size}"
         hex              = %w[a b c d e f 0 1 2 3 4 5 6 7 8 9]
-        background_color = options[:background_color]
-        color            = options[:color]
+        background_color = options_hash[:background_color]
+        color            = options_hash[:color]
 
-        if options[:random_color]
+        if options_hash[:random_color]
           background_color = hex.sample(6).join
           color = hex.sample(6).join
         end
@@ -159,7 +160,7 @@ class Middleman::Extensions::Lorem < ::Middleman::Extension
         src << "/#{background_color.sub(/^#/, '')}" if background_color
         src << '/ccc' if background_color.nil? && color
         src << "/#{color.sub(/^#/, '')}" if color
-        src << "&text=#{Rack::Utils.escape(options[:text])}" if options[:text]
+        src << "&text=#{Rack::Utils.escape(options_hash[:text])}" if options_hash[:text]
 
         src
       end

@@ -72,7 +72,7 @@ Feature: link_to helper
     set :strip_index_file, true
     helpers do
       def menu_items(path='link_to.html')
-        sitemap.find_resource_by_destination_path(path).children
+        sitemap.by_destination_path(path).children
       end
     end
     """
@@ -148,7 +148,7 @@ Feature: link_to helper
     Given a fixture app "indexable-app"
     And a file named "source/link_to.html.erb" with:
     """
-    <%= link_to "Needs Index", sitemap.find_resource_by_path("/needs_index.html") %>
+    <%= link_to "Needs Index", sitemap.by_path("/needs_index.html") %>
     """
     And the Server is running at "indexable-app"
     When I go to "/link_to/"

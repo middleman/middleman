@@ -10,11 +10,11 @@ module Middleman
 
       public
 
-      def initialize(opts = {})
-        @hosts = opts.fetch(:hosts)
-        @port  = opts.fetch(:port)
-        @https = opts.fetch(:https, false)
-        @format_output = opts.fetch(:format_output, true)
+      def initialize(options_hash = {})
+        @hosts = options_hash.fetch(:hosts)
+        @port  = options_hash.fetch(:port)
+        @https = options_hash.fetch(:https, false)
+        @format_output = options_hash.fetch(:format_output, true)
       end
 
       # Return bind addresses
