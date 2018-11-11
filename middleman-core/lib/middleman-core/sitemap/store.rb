@@ -180,7 +180,7 @@ module Middleman
                 if m[:manipulator].respond_to?(:manipulate_resource_list_container!)
                   m[:manipulator].send(:manipulate_resource_list_container!, @resources)
                 elsif m[:manipulator].respond_to?(:manipulate_resource_list)
-                  m[:manipulator].send(:manipulate_resource_list, @resources.to_a).tap do |result|
+                  m[:manipulator].send(:manipulate_resource_list, resources.to_a).tap do |result|
                     @resources.reset!(result)
                   end
                 end

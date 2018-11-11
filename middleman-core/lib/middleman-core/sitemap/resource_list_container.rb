@@ -8,7 +8,7 @@ module Middleman
       extend Forwardable
       include Contracts
 
-      def_delegators :without_ignored, :each, :find, :select, :reject
+      def_delegators :without_ignored, :each, :find, :select, :reject, :map
 
       Contract Maybe[ArrayOf[Resource]] => Any
       def initialize(initial = nil)
@@ -28,7 +28,17 @@ module Middleman
         @_lookup_by_page_id = ::Hamster::Hash.empty
         @_lookup_by_ignored = ::Hamster::Set.empty
 
-        add!(*initial) unless initial.nil?
+        unless initial.nil?
+          # Have to process real resourced BEFORE proxies
+          sorted_initial = initial.sort do |a, b|
+            a_sort = a.is_a?(::Middleman::Sitemap::ProxyResource) ? -1 : 1
+            b_sort = b.is_a?(::Middleman::Sitemap::ProxyResource) ? -1 : 1
+
+            b_sort <=> a_sort
+          end
+
+          add!(*sorted_initial)
+        end
       end
 
       Contract Args[Resource] => Any

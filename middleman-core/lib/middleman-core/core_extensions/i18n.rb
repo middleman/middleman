@@ -69,9 +69,10 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
     end
 
     def url_for(path_or_resource, options_hash = ::Middleman::EMPTY_HASH)
-      opts = options_hash.dup
+      # Fucked up, intentional mutation :(
+      locale = options_hash.key?(:locale) ? options_hash.delete(:locale) : ::I18n.locale
 
-      locale = opts.delete(:locale) || ::I18n.locale
+      opts = options_hash.dup
 
       should_relativize = opts.key?(:relative) ? opts[:relative] : config[:relative_links]
 
@@ -88,7 +89,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
       begin
         super(final_path, opts)
       rescue RuntimeError
-        super(path_or_resource, options)
+        super(path_or_resource, options_hash)
       end
     end
 

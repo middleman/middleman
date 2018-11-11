@@ -57,7 +57,7 @@ module Middleman
 
         Contract LazyCollectorRoot
         def sitemap_collector
-          live_collector { |_, resources| resources }
+          live_collector { |_, resources| resources.to_a }
         end
 
         Contract LazyCollectorRoot
