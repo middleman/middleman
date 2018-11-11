@@ -35,10 +35,10 @@ module Middleman
             resource_list.each do |r|
               # Ignore based on the source path (without template extensions)
               if ignored?(r.normalized_path)
-                r.ignore!
+                resource_list.update!(r, :ignored) { r.ignore! }
               elsif !r.is_a?(ProxyResource) && r.file_descriptor && ignored?(r.file_descriptor.normalized_relative_path)
                 # This allows files to be ignored by their source file name (with template extensions)
-                r.ignore!
+                resource_list.update!(r, :ignored) { r.ignore! }
               end
             end
           end

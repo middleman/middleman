@@ -9,7 +9,7 @@ module Middleman
       # Expose the `page` method to config.
       expose_to_config :page
 
-      PageDescriptor = Struct.new(:path, :metadata) do
+      PageDescriptor = Struct.new(:path, :locals, :page, :options) do
         def execute_descriptor(app, resource_list)
           normalized_path = path.dup
 
@@ -24,13 +24,19 @@ module Middleman
           resource_list
             .select { |r| ::Middleman::Util.path_match(normalized_path, "/#{r.path}") }
             .each do |r|
-              if metadata[:page]&.key?(:id)
-                resource_list.update!(r, :page_id) do
-                  r.add_metadata(metadata, true)
+              r.add_metadata_locals(locals, true) if locals
+
+              if page
+                if page.key?(:id)
+                  resource_list.update!(r, :page_id) do
+                    r.add_metadata_page(page, true)
+                  end
+                else
+                  r.add_metadata_page(page, true)
                 end
-              else
-                r.add_metadata(metadata, true)
               end
+
+              r.add_metadata_options(options, true) if options
             end
         end
       end
@@ -53,20 +59,13 @@ module Middleman
       # @option opts [Hash] data Extra metadata to add to the page. This is the same as frontmatter, though frontmatter will take precedence over metadata defined here. Available via {Resource#data}.
       # @return [void]
       Contract Or[String, Regexp], Hash => PageDescriptor
-      def page(path, opts = {})
-        options = opts.dup
+      def page(path, options_hash = ::Middleman::EMPTY_HASH)
+        options = options_hash.dup
 
         page_data = options.delete(:data) || {}
         page_data[:id] = options.delete(:id) if options.key?(:id)
 
-        # Default layout
-        metadata = {
-          locals: options.delete(:locals) || {},
-          page: page_data,
-          options: options
-        }
-
-        PageDescriptor.new(path, metadata)
+        PageDescriptor.new(path, options.delete(:locals), page_data, options)
       end
     end
   end

@@ -27,7 +27,7 @@ Feature: Meta redirects
     And a file named "config.rb" with:
     """
     ready do
-      r = sitemap.find_resource_by_path("static.html")
+      r = sitemap.by_path("static.html")
       redirect "hello.html", to: r
     end
     """

@@ -20,7 +20,7 @@ module Middleman::CoreExtensions
       yaml: [%w[--- ---], %w[--- ...]]
     }, 'Allowed frontmatter delimiters'
 
-    def initialize(app, options_hash = {}, &block)
+    def initialize(app, options_hash = ::Middleman::EMPTY_HASH, &block)
       super
 
       @cache = {}
@@ -49,15 +49,21 @@ module Middleman::CoreExtensions
         # TODO: Enhance data? NOOOO
         # TODO: stringify-keys? immutable/freeze?
 
+        resource.add_metadata_options opts
+
         if fmdata.key?(:id)
           resource_list.update!(resource, :page_id) do
-            resource.add_metadata options: opts, page: fmdata
+            resource.add_metadata_page fmdata
           end
         else
-          resource.add_metadata options: opts, page: fmdata
+          resource.add_metadata_page fmdata
         end
 
-        resource.ignore! if ignored == true && !resource.is_a?(::Middleman::Sitemap::ProxyResource)
+        next unless ignored == true && !resource.is_a?(::Middleman::Sitemap::ProxyResource)
+
+        resource_list.update!(resource, :ignored) do
+          resource.ignore!
+        end
 
         # TODO: Save new template here somewhere?
       end

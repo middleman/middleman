@@ -136,8 +136,8 @@ module Middleman
       # @param [Symbol] key The name of the option
       # @param [Object] default The default value for the option
       # @param [String] description A human-readable description of what the option does
-      def option(key, default = nil, description = nil, options = {})
-        config.define_setting(key, default, description, options)
+      def option(key, default = nil, description = nil, options_hash = ::Middleman::EMPTY_HASH)
+        config.define_setting(key, default, description, options_hash)
       end
 
       # @api private
@@ -153,8 +153,8 @@ module Middleman
       # @param [Symbol] key The name of the option
       # @param [Object] default The default value for the option
       # @param [String] description A human-readable description of what the option does
-      def define_setting(key, default = nil, description = nil, options = {})
-        global_config.define_setting(key, default, description, options)
+      def define_setting(key, default = nil, description = nil, options_hash = ::Middleman::EMPTY_HASH)
+        global_config.define_setting(key, default, description, options_hash)
       end
 
       # Short-hand for simple Sitemap manipulation
@@ -309,7 +309,7 @@ module Middleman
     # @param [Hash] options_hash The raw options hash. Subclasses should not manipulate this directly - it will be turned into {#options}.
     # @yield An optional block that can be used to customize options before the extension is activated.
     # @yieldparam [Middleman::Configuration::ConfigurationManager] options Extension options
-    def initialize(app, options_hash = {}, &block)
+    def initialize(app, options_hash = ::Middleman::EMPTY_HASH, &block)
       @_helpers = []
       @app = app
 
@@ -492,7 +492,7 @@ module Middleman
   end
 
   class ConfigExtension < Extension
-    def initialize(app, config = {}, &block)
+    def initialize(app, _options_hash = ::Middleman::EMPTY_HASH, &block)
       @descriptors = {}
       @ready = false
 

@@ -27,16 +27,16 @@ module Middleman
     #
     # First the local resolver is queried. If this raises an error or returns
     # nil or [] the network resolver is queried.
-    def initialize(opts = {})
+    def initialize(options_hash = ::Middleman::EMPTY_HASH)
       @resolvers = []
-      @resolvers << opts.fetch(:hosts_resolver, HostsResolver.new)
+      @resolvers << options_hash.fetch(:hosts_resolver, HostsResolver.new)
 
       if RUBY_VERSION >= '2.1'
         require 'middleman-core/dns_resolver/local_link_resolver'
-        @resolvers << opts.fetch(:local_link_resolver, LocalLinkResolver.new)
+        @resolvers << options_hash.fetch(:local_link_resolver, LocalLinkResolver.new)
       end
 
-      @resolvers << opts.fetch(:network_resolver, NetworkResolver.new)
+      @resolvers << options_hash.fetch(:network_resolver, NetworkResolver.new)
     end
 
     # Get names for given ip

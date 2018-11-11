@@ -46,7 +46,7 @@ module Middleman
 
       # Inspect the sitemap
       def sitemap(_)
-        resources = @middleman.sitemap.resources(true)
+        resources = @middleman.sitemap.with_ignored
 
         sitemap_tree = SitemapTree.new
 

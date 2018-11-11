@@ -41,13 +41,13 @@ module Middleman
 
             # `current_page` must be a page under root, let's return the root
             # index page of the `traversal_root` (`/` or `/[lang]/`).
-            return @store.find_resource_by_path("#{traversal_root}#{index_file}")
+            return @store.by_path("#{traversal_root}#{index_file}")
           end
 
           # Get the index file for the parent path parts, e.g.: `/blog/index.html`
           # for `/blog/`.
           index_by_parts = proc do |subparts|
-            found = @store.find_resource_by_destination_path("#{subparts.join('/')}/#{index_file}")
+            found = @store.by_destination_path("#{subparts.join('/')}/#{index_file}")
             return found unless found.nil?
           end
 

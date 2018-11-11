@@ -17,18 +17,26 @@ class Middleman::Extensions::MinifyCss < ::Middleman::Extension
   INLINE_CSS_REGEX = /(<style[^>]*>\s*(?:\/\*<!\[CDATA\[\*\/\n)?)(.*?)((?:(?:\n\s*)?\/\*\]\]>\*\/)?\s*<\/style>)/m.freeze
 
   class SassCompressor
-    def self.compress(style, options = {})
+    COMPRESSED_OPTIONS = { style: :compressed }.freeze
+
+    def self.compress(style, options_hash = ::Middleman::EMPTY_HASH)
       root_node = ::Sass::SCSS::CssParser.new(style, 'middleman-css-input', 1).parse
-      root_node.options = {}.merge!(options).merge!(style: :compressed)
+
+      root_node.options = if options_hash == ::Middleman::EMPTY_HASH
+                            COMPRESSED_OPTIONS
+                          else
+                            options_hash.merge(COMPRESSED_OPTIONS)
+                          end
+
       root_node.render.strip
     end
   end
 
-  def initialize(app, options_hash = {}, &block)
+  def initialize(app, options_hash = ::Middleman::EMPTY_HASH, &block)
     super
 
-    @ignore = Array(options[:ignore]) + [/\.min\./]
-    @compressor = options[:compressor]
+    @ignore = Array(options.ignore) + [/\.min\./]
+    @compressor = options.compressor
     @compressor = @compressor.to_proc if @compressor.respond_to? :to_proc
     @compressor = @compressor.call if @compressor.is_a? Proc
   end
@@ -38,9 +46,9 @@ class Middleman::Extensions::MinifyCss < ::Middleman::Extension
     resource_list.by_binary(false).each do |r|
       type = r.content_type.try(:slice, /^[^;]*/)
       if options[:inline] && minifiable_inline?(type)
-        r.filters << method(:minify_inline)
+        r.add_filter method(:minify_inline)
       elsif minifiable?(type) && !ignore?(r.destination_path)
-        r.filters << method(:minify)
+        r.add_filter method(:minify)
       end
     end
   end

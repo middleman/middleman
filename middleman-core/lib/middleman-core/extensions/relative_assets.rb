@@ -6,7 +6,7 @@ class Middleman::Extensions::RelativeAssets < ::Middleman::Extension
   option :rewrite_ignore, [], 'Regexes of filenames to skip processing for path rewrites.'
   option :helpers_only, false, 'Allow only Ruby helpers to change paths.'
 
-  def initialize(app, options_hash = {}, &block)
+  def initialize(app, options_hash = ::Middleman::EMPTY_HASH, &block)
     super
 
     require 'set'
@@ -16,14 +16,14 @@ class Middleman::Extensions::RelativeAssets < ::Middleman::Extension
 
   Contract IsA['Middleman::Sitemap::ResourceListContainer'] => Any
   def manipulate_resource_list_container!(resource_list)
-    return if options[:helpers_only]
+    return if options.helpers_only
 
     resource_list.by_extensions(@set_of_sources).each do |r|
       next if Array(options.rewrite_ignore || []).any? do |i|
         ::Middleman::Util.path_match(i, "/#{r.destination_path}")
       end
 
-      r.filters << ::Middleman::InlineURLRewriter.new(:relative_assets,
+      r.add_filter ::Middleman::InlineURLRewriter.new(:relative_assets,
                                                       app,
                                                       r,
                                                       url_extensions: @set_of_exts,
@@ -57,12 +57,12 @@ class Middleman::Extensions::RelativeAssets < ::Middleman::Extension
   end
 
   helpers do
-    def asset_url(path, prefix = '', options = {})
-      super(path, prefix, app.extensions[:relative_assets].mark_as_relative(super, options, current_resource))
+    def asset_url(path, prefix = '', options_hash = ::Middleman::EMPTY_HASH)
+      super(path, prefix, app.extensions[:relative_assets].mark_as_relative(super, options_hash, current_resource))
     end
 
-    def asset_path(kind, source, options = {})
-      super(kind, source, app.extensions[:relative_assets].mark_as_relative(super, options, current_resource))
+    def asset_path(kind, source, options_hash = ::Middleman::EMPTY_HASH)
+      super(kind, source, app.extensions[:relative_assets].mark_as_relative(super, options_hash, current_resource))
     end
   end
 

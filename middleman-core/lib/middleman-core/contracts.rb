@@ -19,7 +19,10 @@ if ENV['CONTRACTS'] != 'false'
     end
 
     VectorOf = Contracts::CollectionOf::Factory.new(::Hamster::Vector)
-    ResourceList = Contracts::ArrayOf[IsA['Middleman::Sitemap::Resource']]
+    ImmutableSetOf = Contracts::CollectionOf::Factory.new(::Hamster::Set)
+    ImmutableSortedSetOf = Contracts::CollectionOf::Factory.new(::Hamster::SortedSet)
+    OldResourceList = Contracts::ArrayOf[IsA['Middleman::Sitemap::Resource']]
+    ResourceList = Contracts::Or[ImmutableSetOf[IsA['Middleman::Sitemap::Resource']], ImmutableSortedSetOf[IsA['Middleman::Sitemap::Resource']], Contracts::ArrayOf[IsA['Middleman::Sitemap::Resource']]]
   end
 else
   module Contracts
@@ -80,6 +83,9 @@ else
     class ResourceList < Callable
     end
 
+    class OldResourceList < Callable
+    end
+
     class Args < Callable
     end
 
@@ -102,6 +108,9 @@ else
     end
 
     class VectorOf < Callable
+    end
+
+    class ImmutableSetOf < Callable
     end
   end
 end

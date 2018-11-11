@@ -19,7 +19,7 @@ module Middleman
       define_setting :sass_cache_location, ENV['SASS_CACHE_LOCATION'] || DEFAULT_SASS_CACHE_LOCATION, 'Where to store sass cache files'
 
       # Setup extension
-      def initialize(app, options = {}, &block)
+      def initialize(app, options_hash = ::Middleman::EMPTY_HASH, &block)
         super
 
         logger.info '== Preferring use of LibSass' if defined?(::SassC)

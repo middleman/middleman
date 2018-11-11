@@ -34,7 +34,7 @@ module Middleman
           end
         end
 
-        def initialize(app, options_hash = {}, &block)
+        def initialize(app, options_hash = ::Middleman::EMPTY_HASH, &block)
           super
 
           @leaves = Set.new
@@ -57,7 +57,7 @@ module Middleman
 
         Contract LazyCollectorRoot
         def sitemap_collector
-          live_collector { |_, resources| resources }
+          live_collector { |_, resources| resources.to_a }
         end
 
         Contract LazyCollectorRoot

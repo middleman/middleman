@@ -7,7 +7,7 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
   option :rewrite_ignore, [], 'Regexes of filenames to skip processing for path rewrites'
   option :prefix, '', 'Prefix for hash'
 
-  def initialize(app, options_hash = {}, &block)
+  def initialize(app, options_hash = ::Middleman::EMPTY_HASH, &block)
     super
 
     require 'digest/sha1'
@@ -34,7 +34,7 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
                         asset_path
                       end
 
-    asset_page = app.sitemap.find_resource_by_destination_path(full_asset_path) || app.sitemap.find_resource_by_path(full_asset_path)
+    asset_page = app.sitemap.by_destination_path(full_asset_path) || app.sitemap.by_path(full_asset_path)
 
     return unless asset_page
 
@@ -51,7 +51,7 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
         ::Middleman::Util.path_match(i, "/#{r.destination_path}")
       end
 
-      r.filters << ::Middleman::InlineURLRewriter.new(:asset_hash,
+      r.add_filter ::Middleman::InlineURLRewriter.new(:asset_hash,
                                                       app,
                                                       r,
                                                       url_extensions: @set_of_exts,

@@ -48,6 +48,7 @@ module Middleman
     memoize :strip_leading_slash
 
     IGNORE_DESCRIPTOR = Or[Regexp, RespondTo[:call], String]
+
     Contract IGNORE_DESCRIPTOR, String => Bool
     def should_ignore?(validator, value)
       if validator.is_a? Regexp
@@ -76,7 +77,7 @@ module Middleman
     # @param [Hash] options Data to pass through.
     # @return [String]
     Contract ::Middleman::Application, Symbol, Or[String, Symbol], Hash => String
-    def asset_path(app, kind, source, options = {})
+    def asset_path(app, kind, source, options_hash = ::Middleman::EMPTY_HASH)
       return source if source.to_s.include?('//') || source.to_s.start_with?('data:')
 
       asset_folder = case kind
@@ -97,7 +98,7 @@ module Middleman
       source << ".#{kind}" unless ignore_extension || source.end_with?(".#{kind}")
       asset_folder = '' if source.start_with?('/') # absolute path
 
-      asset_url(app, source, asset_folder, options)
+      asset_url(app, source, asset_folder, options_hash)
     end
 
     # Get the URL of an asset given a type/prefix
@@ -107,26 +108,26 @@ module Middleman
     # @param [Hash] options Data to pass through.
     # @return [String] The fully qualified asset url
     Contract ::Middleman::Application, String, String, Hash => String
-    def asset_url(app, path, prefix = '', options = {})
+    def asset_url(app, path, prefix = '', options_hash = ::Middleman::EMPTY_HASH)
       # Don't touch assets which already have a full path
       return path if path.include?('//') || path.start_with?('data:')
 
-      raise ArgumentError, '#asset_url must be run in a context with current_resource if relative: true' if options[:relative] && !options[:current_resource]
+      raise ArgumentError, '#asset_url must be run in a context with current_resource if relative: true' if options_hash[:relative] && !options_hash[:current_resource]
 
       uri = ::Middleman::Util.parse_uri(path)
       path = uri.path
 
-      # Ensure the url we pass into find_resource_by_destination_path is not a
+      # Ensure the url we pass into by_destination_path is not a
       # relative path, since it only takes absolute url paths.
-      dest_path = url_for(app, path, options.merge(relative: false))
+      dest_path = url_for(app, path, options_hash.merge(relative: false))
 
-      resource = app.sitemap.find_resource_by_path(dest_path) || app.sitemap.find_resource_by_destination_path(dest_path)
+      resource = app.sitemap.by_path(dest_path) || app.sitemap.by_destination_path(dest_path)
 
       result = if resource
                  resource.url
                else
                  path = ::File.join(prefix, path)
-                 resource = app.sitemap.find_resource_by_path(path)
+                 resource = app.sitemap.by_path(path)
 
                  if resource
                    resource.url
@@ -137,9 +138,9 @@ module Middleman
 
       final_result = ::Addressable::URI.encode(
         relative_path_from_resource(
-          options[:current_resource],
+          options_hash[:current_resource],
           result,
-          options[:relative]
+          options_hash[:relative]
         )
       )
 
@@ -153,9 +154,9 @@ module Middleman
     # or a Resource, this will produce the nice URL configured for that
     # path, respecting :relative_links, directory indexes, etc.
     Contract ::Middleman::Application, Or[String, Symbol, ::Middleman::Sitemap::Resource], Hash => String
-    def url_for(app, path_or_resource, options = {})
+    def url_for(app, path_or_resource, options_hash = ::Middleman::EMPTY_HASH)
       if path_or_resource.is_a?(String) || path_or_resource.is_a?(Symbol)
-        r = app.sitemap.find_resource_by_page_id(path_or_resource)
+        r = app.sitemap.by_page_id(path_or_resource)
 
         path_or_resource = r || path_or_resource.to_s
       end
@@ -175,7 +176,7 @@ module Middleman
         return url
       end
 
-      relative = options[:relative]
+      relative = options_hash[:relative]
       raise "Can't use the relative option with an external URL" if relative && uri.host
 
       # Allow people to turn on relative paths for all links with
@@ -185,7 +186,7 @@ module Middleman
       effective_relative = true if relative.nil? && app.config[:relative_links]
 
       # Try to find a sitemap resource corresponding to the desired path
-      this_resource = options[:current_resource]
+      this_resource = options_hash[:current_resource]
 
       if path_or_resource.is_a?(::Middleman::Sitemap::Resource)
         resource = path_or_resource
@@ -195,7 +196,7 @@ module Middleman
         url_path = Pathname(uri.path)
         current_source_dir = Pathname('/' + this_resource.path).dirname
         url_path = current_source_dir.join(url_path) if url_path.relative?
-        resource = app.sitemap.find_resource_by_path(url_path.to_s)
+        resource = app.sitemap.by_path(url_path.to_s)
         if resource
           resource_url = resource.url
         else
@@ -203,11 +204,11 @@ module Middleman
           url_path = Pathname(uri.path)
           current_source_dir = Pathname('/' + this_resource.destination_path).dirname
           url_path = current_source_dir.join(url_path) if url_path.relative?
-          resource = app.sitemap.find_resource_by_destination_path(url_path.to_s)
+          resource = app.sitemap.by_destination_path(url_path.to_s)
           resource_url = resource.url if resource
         end
-      elsif options[:find_resource] && uri.path && !uri.host
-        resource = app.sitemap.find_resource_by_path(uri.path)
+      elsif options_hash[:find_resource] && uri.path && !uri.host
+        resource = app.sitemap.by_path(uri.path)
         resource_url = resource.url if resource
       end
 
@@ -226,14 +227,14 @@ module Middleman
       end
 
       # Support a :query option that can be a string or hash
-      query = options[:query]
+      query = options_hash[:query]
 
       if query
         uri.query = query.respond_to?(:to_param) ? query.to_param : query.to_s
       end
 
       # Support a :fragment or :anchor option just like Padrino
-      fragment = options[:anchor] || options[:fragment]
+      fragment = options_hash[:anchor] || options_hash[:fragment]
       uri.fragment = fragment.to_s if fragment
 
       # Finally make the URL back into a string
@@ -247,12 +248,12 @@ module Middleman
     # @return [String] Path with index file if necessary.
     Contract String, ::Middleman::Application => String
     def full_path(path, app)
-      resource = app.sitemap.find_resource_by_destination_path(path)
+      resource = app.sitemap.by_destination_path(path)
 
       unless resource
         # Try it with /index.html at the end
         indexed_path = ::File.join(path.sub(%r{/$}, ''), app.config[:index_file])
-        resource = app.sitemap.find_resource_by_destination_path(indexed_path)
+        resource = app.sitemap.by_destination_path(indexed_path)
       end
 
       if resource

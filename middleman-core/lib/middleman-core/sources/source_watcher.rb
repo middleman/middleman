@@ -59,9 +59,9 @@ module Middleman
     # @param [String] directory The on-disk path to watch.
     # @param [Hash] options Configuration options.
     Contract IsA['Middleman::Sources'], Symbol, String, Hash => Any
-    def initialize(parent, type, directory, options = {})
+    def initialize(parent, type, directory, options_hash = ::Middleman::EMPTY_HASH)
       @parent = parent
-      @options = options
+      @options = options_hash
 
       @type = type
       @directory = Pathname(directory)
@@ -69,11 +69,11 @@ module Middleman
       @files = {}
       @extensionless_files = {}
 
-      @frontmatter = options.fetch(:frontmatter, true)
-      @binary = options.fetch(:binary, false)
-      @validator = options.fetch(:validator, proc { true })
-      @ignored = options.fetch(:ignored, proc { false })
-      @only = Array(options.fetch(:only, []))
+      @frontmatter = @options.fetch(:frontmatter, true)
+      @binary = @options.fetch(:binary, false)
+      @validator = @options.fetch(:validator, proc { true })
+      @ignored = @options.fetch(:ignored, proc { false })
+      @only = Array(@options.fetch(:only, []))
 
       @disable_watcher = app.build?
       @force_polling = false
@@ -103,12 +103,12 @@ module Middleman
       poll_once!
     end
 
-    def update_config(options = {})
+    def update_config(options_hash = ::Middleman::EMPTY_HASH)
       without_listener_running do
-        @disable_watcher = options.fetch(:disable_watcher, false)
-        @force_polling = options.fetch(:force_polling, false)
-        @latency = options.fetch(:latency, nil)
-        @wait_for_delay = options.fetch(:wait_for_delay, nil)
+        @disable_watcher = options_hash.fetch(:disable_watcher, false)
+        @force_polling = options_hash.fetch(:force_polling, false)
+        @latency = options_hash.fetch(:latency, nil)
+        @wait_for_delay = options_hash.fetch(:wait_for_delay, nil)
       end
     end
 

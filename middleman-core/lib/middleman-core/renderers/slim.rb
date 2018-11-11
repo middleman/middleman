@@ -31,7 +31,7 @@ module Middleman
     # Slim renderer
     class Slim < ::Middleman::Extension
       # Setup extension
-      def initialize(_app, _options = {}, &_block)
+      def initialize(_app, _options_hash = ::Middleman::EMPTY_HASH, &_block)
         super
 
         # Setup Slim options to work with partials
