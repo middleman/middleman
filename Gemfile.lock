@@ -27,7 +27,7 @@ PATH
       parallel
       rack (>= 1.4.5, < 3)
       sass (>= 3.4)
-      sassc (~> 1.10)
+      sassc (~> 2.0)
       servolux
       tilt (~> 2.0)
       uglifier (~> 4.1)
@@ -198,9 +198,9 @@ GEM
     sass-listen (4.0.0)
       rb-fsevent (~> 0.9, >= 0.9.4)
       rb-inotify (~> 0.9, >= 0.9.7)
-    sassc (1.12.1)
+    sassc (2.0.0)
       ffi (~> 1.9.6)
-      sass (>= 3.3.0)
+      rake
     servolux (0.13.0)
     simplecov (0.16.1)
       docile (~> 1.1)
@@ -258,7 +258,7 @@ DEPENDENCIES
   rspec (~> 3.0)
   rubocop (~> 0.59)
   rubydns (~> 1.0.1)
-  sassc (~> 1.10)
+  sassc (~> 2.0)
   simplecov (~> 0.10)
   sinatra (>= 2.0.0.beta2)
   slim (>= 2.0)
