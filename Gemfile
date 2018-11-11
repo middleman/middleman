@@ -34,7 +34,7 @@ gem 'stylus', '>= 1.0', require: false
 gem 'rubydns', '~> 1.0.1', require: false
 
 # For less, note there is no compatible JS runtime for windows
-gem 'therubyracer', '~> 0.12.3', platforms: :ruby
+gem 'mini_racer', '~> 0.2.4', platforms: :ruby
 gem 'therubyrhino', '>= 2.0', platforms: :jruby
 
 # Code Quality
