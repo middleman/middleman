@@ -11,13 +11,22 @@ class Middleman::Extensions::CacheBuster < ::Middleman::Extension
     require 'set'
     @set_of_exts = Set.new(options.exts || app.config[:asset_extensions])
     @set_of_sources = Set.new options.sources
+  end
 
-    app.rewrite_inline_urls id: :cache_buster,
-                            url_extensions: @set_of_exts,
-                            source_extensions: @set_of_sources,
-                            ignore: options.ignore,
-                            rewrite_ignore: options.rewrite_ignore,
-                            proc: method(:rewrite_url)
+  Contract IsA['Middleman::Sitemap::ResourceListContainer'] => Any
+  def manipulate_resource_list_container!(resource_list)
+    resource_list.by_extensions(@set_of_sources).each do |r|
+      next if Array(options.rewrite_ignore || []).any? do |i|
+        ::Middleman::Util.path_match(i, "/#{r.destination_path}")
+      end
+
+      r.filters << ::Middleman::InlineURLRewriter.new(:cache_buster,
+                                                      app,
+                                                      r,
+                                                      url_extensions: @set_of_exts,
+                                                      ignore: options.ignore,
+                                                      proc: method(:rewrite_url))
+    end
   end
 
   Contract String, Or[String, Pathname], Any => String

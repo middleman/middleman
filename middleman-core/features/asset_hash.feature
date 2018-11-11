@@ -189,23 +189,6 @@ Feature: Assets get file hashes appended to them and references to them are upda
     When I go to "/partials/"
     Then I should see 'href="../stylesheets/uses_partials-08ee47a7.css'
 
-  Scenario: The asset hash should change when a Rack-based filter changes
-    Given a fixture app "asset-hash-app"
-    And a file named "config.rb" with:
-      """
-      activate :asset_hash
-      activate :relative_assets
-      activate :directory_indexes
-      require 'lib/middleware.rb'
-      use ::Middleware
-      """
-    Given the Server is running at "asset-hash-app"
-    When I go to "/"
-    Then I should see 'href="stylesheets/site-41d4c812.css'
-    When I go to "stylesheets/site-41d4c812.css"
-    Then I should see 'background-image: url("../images/100px-5fd6fb90.jpg")'
-    Then I should see 'Added by Rack filter'
-
   Scenario: Hashed-asset files are not produced for ignored paths
     Given a fixture app "asset-hash-app"
     And a file named "config.rb" with:

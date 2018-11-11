@@ -25,13 +25,15 @@ module Middleman
     def tilt_class(path)
       ::Tilt[path]
     end
-    memoize :tilt_class
+    # memoize :tilt_class
 
     # Normalize a path to not include a leading slash
     # @param [String] path
     # @return [String]
-    Contract String => String
+    Contract Any => String
     def normalize_path(path)
+      return path unless path.is_a?(String)
+
       # The tr call works around a bug in Ruby's Unicode handling
       ::URI.decode(path).sub(%r{^/}, '').tr('', '')
     end

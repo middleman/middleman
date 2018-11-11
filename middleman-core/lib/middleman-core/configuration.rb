@@ -1,3 +1,5 @@
+require 'set'
+
 module Middleman
   module Configuration
     # A class that manages a collection of documented settings.
@@ -129,23 +131,33 @@ module Middleman
 
       def initialize(key, default, description, options = {})
         @value_set = false
+        @array_wrapped_value = nil
+        @array_wrapped_default = nil
         self.key = key
         self.default = default
         self.description = description
         self.options = options
+
+        @array_wrapped_default = (Set.new(self.default) if self.default && options[:set] && self.default.is_a?(Array))
       end
 
       # The user-supplied value for this setting, overriding the default
       def value=(value)
         @value = value
         @value_set = true
+
+        @array_wrapped_value = (Set.new(@value) if @value && options[:set] && @value.is_a?(Array))
       end
 
       # The effective value of the setting, which may be the default
       # if the user has not set a value themselves. Note that even if the
       # user sets the value to nil it will override the default.
       def value
-        value_set? ? @value : default
+        if value_set?
+          @array_wrapped_value || @value
+        else
+          @array_wrapped_default || default
+        end
       end
 
       # Whether or not there has been a value set beyond the default
