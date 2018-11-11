@@ -20,7 +20,7 @@ class Middleman::Extensions::CacheBuster < ::Middleman::Extension
         ::Middleman::Util.path_match(i, "/#{r.destination_path}")
       end
 
-      r.filters << ::Middleman::InlineURLRewriter.new(:cache_buster,
+      r.add_filter ::Middleman::InlineURLRewriter.new(:cache_buster,
                                                       app,
                                                       r,
                                                       url_extensions: @set_of_exts,

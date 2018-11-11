@@ -12,6 +12,7 @@ module Middleman
     # Sitemap Resource class
     class Resource
       include Contracts
+      include Comparable
       include Middleman::Sitemap::Extensions::Traversal
 
       # The source path of this resource (relative to the source directory,
@@ -33,27 +34,21 @@ module Middleman
       # @return [String]
       alias request_path destination_path
 
-      METADATA_HASH = { options: Maybe[Hash], locals: Maybe[Hash], page: Maybe[Hash] }.freeze
-
-      # The metadata for this resource
-      # @return [Hash]
-      Contract METADATA_HASH
-      attr_reader :metadata
-
-      attr_accessor :ignored
-      attr_accessor :filters
+      Contract Num
+      attr_reader :priority
 
       # Initialize resource with parent store and URL
       # @param [Middleman::Sitemap::Store] store
       # @param [String] path
       # @param [String] source
-      Contract IsA['Middleman::Sitemap::Store'], String, Maybe[Or[IsA['Middleman::SourceFile'], String]] => Any
-      def initialize(store, path, source = nil)
-        @store       = store
-        @app         = @store.app
-        @path        = path
-        @ignored     = false
-        @filters     = []
+      Contract IsA['Middleman::Sitemap::Store'], String, Maybe[Or[IsA['Middleman::SourceFile'], String]], Maybe[Num] => Any
+      def initialize(store, path, source = nil, priority = 1)
+        @store    = store
+        @app      = @store.app
+        @path     = path
+        @ignored  = false
+        @filters  = ::Hamster::SortedSet.empty
+        @priority = priority
 
         source = Pathname(source) if source&.is_a?(String)
 
@@ -65,14 +60,17 @@ module Middleman
 
         @destination_path = @path
 
-        @set_of_extensions_with_layout = Set.new @app.config.extensions_with_layout
-
         # Options are generally rendering/sitemap options
+        @metadata_options = ::Middleman::EMPTY_HASH
+
         # Locals are local variables for rendering this resource's template
+        @metadata_locals  = ::Middleman::EMPTY_HASH
+
         # Page are data that is exposed through this resource's data member.
         # Note: It is named 'page' for backwards compatibility with older MM.
-        @metadata = { options: {}, locals: {}, page: {} }
+        @metadata_page    = ::Middleman::EMPTY_HASH
 
+        # Recursively enhanced page data cache
         @page_data = nil
       end
 
@@ -94,46 +92,76 @@ module Middleman
 
       Contract Or[Symbol, String, Integer]
       def page_id
-        metadata[:page][:id] || make_implicit_page_id(destination_path)
+        @metadata_page[:id] || make_implicit_page_id(destination_path)
       end
 
-      # Merge in new metadata specific to this resource.
-      # @param [Hash] meta A metadata block with keys :options, :locals, :page.
-      #   Options are generally rendering/sitemap options
-      #   Locals are local variables for rendering this resource's template
-      #   Page are data that is exposed through this resource's data member.
-      #   Note: It is named 'page' for backwards compatibility with older MM.
-      Contract METADATA_HASH, Maybe[Bool] => METADATA_HASH
-      def add_metadata(meta = {}, reverse = false)
+      Contract Hash, Maybe[Bool] => Any
+      def add_metadata_options(opts, reverse = false)
+        if @metadata_options == ::Middleman::EMPTY_HASH
+          @metadata_options = opts.dup
+        else
+          if reverse
+            @metadata_options = opts.deep_merge(@metadata_options)
+          else
+            @metadata_options.deep_merge!(opts)
+          end
+        end
+      end
+
+      Contract Hash, Maybe[Bool] => Any
+      def add_metadata_locals(locs, reverse = false)
+        if @metadata_locals == ::Middleman::EMPTY_HASH
+          @metadata_locals = locs.dup
+        else
+          if reverse
+            @metadata_locals = locs.deep_merge(@metadata_locals)
+          else
+            @metadata_locals.deep_merge!(locs)
+          end
+        end
+      end
+
+      Contract Hash, Maybe[Bool] => Any
+      def add_metadata_page(page, reverse = false)
+        # Clear recursively enhanced cache
         @page_data = nil
 
-        @metadata = if reverse
-                      meta.deep_merge(@metadata)
-                    else
-                      @metadata.deep_merge(meta)
-                    end
+        if @metadata_page == ::Middleman::EMPTY_HASH
+          @metadata_page = page.dup
+        else
+          if reverse
+            @metadata_page = page.deep_merge(@metadata_page)
+          else
+            @metadata_page.deep_merge!(page)
+          end
+        end
       end
 
       # Data about this resource, populated from frontmatter or extensions.
       # @return [Hash]
       Contract RespondTo[:indifferent_access?]
       def data
-        @page_data ||= ::Middleman::Util.recursively_enhance(metadata[:page])
+        @page_data ||= ::Middleman::Util.recursively_enhance(page)
       end
 
+      Contract Hash
+      def page
+        @metadata_page
+      end
+      
       # Options about how this resource is rendered, such as its :layout,
       # :renderer_options, and whether or not to use :directory_indexes.
       # @return [Hash]
       Contract Hash
       def options
-        metadata[:options]
+        @metadata_options
       end
 
       # Local variable mappings that are used when rendering the template for this resource.
       # @return [Hash]
       Contract Hash
       def locals
-        metadata[:locals]
+        @metadata_locals
       end
 
       # Extension of the path (i.e. '.js')
@@ -146,34 +174,16 @@ module Middleman
       # Render this resource
       # @return [String]
       Contract Hash, Hash, Maybe[Proc] => String
-      def render(options_hash = ::Middleman::EMPTY_HASH, locs = {}, &_block)
+      def render(options_hash = ::Middleman::EMPTY_HASH, locs = ::Middleman::EMPTY_HASH, &_block)
         body = render_without_filters(options_hash, locs)
 
         return body if @filters.empty?
 
-        sortable_filters = @filters.select { |f| f.respond_to?(:filter_name) }.sort do |a, b|
-          if b.after_filter == a.filter_name
-            1
-          else
-            -1
-          end
-        end.reverse
-
-        n = 0
-        sorted_filters = @filters.sort_by do |m|
-          n += 1
-          idx = sortable_filters.index(m)
-
-          [idx.nil? ? 0 : idx, n]
-        end
-
-        sorted_filters.reduce(body) do |output, filter|
+        @filters.reduce(body) do |output, filter|
           if block_given? && !yield(filter)
             output
-          elsif filter.respond_to?(:execute_filter)
+          elsif filter.is_a?(Filter)
             filter.execute_filter(output)
-          elsif filter.respond_to?(:call)
-            filter.call(output)
           else
             output
           end
@@ -183,19 +193,28 @@ module Middleman
       # Render this resource without content filters
       # @return [String]
       Contract Hash, Hash => String
-      def render_without_filters(options_hash = ::Middleman::EMPTY_HASH, locs = {})
+      def render_without_filters(options_hash = ::Middleman::EMPTY_HASH, locals_hash = ::Middleman::EMPTY_HASH)
         return ::Middleman::FileRenderer.new(@app, file_descriptor[:full_path].to_s).template_data_for_file unless template?
 
-        md = metadata
-        options = md[:options].deep_merge(options_hash)
-        locs = md[:locals].deep_merge(locs)
-        locs[:current_path] ||= destination_path
+        opts = if options_hash == ::Middleman::EMPTY_HASH
+                 options.dup
+               else
+                 options.deep_merge(options_hash)
+               end
 
         # Certain output file types don't use layouts
-        options[:layout] = false if !options.key?(:layout) && !@set_of_extensions_with_layout.include?(ext)
+        opts[:layout] = false if !opts.key?(:layout) && !@app.set_of_extensions_with_layout.include?(ext)
+
+        locs = if locals_hash == ::Middleman::EMPTY_HASH
+                 locals.dup
+               else
+                 locals.deep_merge(locals_hash)
+               end
+
+        locs[:current_path] ||= destination_path
 
         renderer = ::Middleman::TemplateRenderer.new(@app, file_descriptor[:full_path].to_s)
-        renderer.render(locs, options).to_str
+        renderer.render(locs, opts).to_str
       end
 
       # A path without the directory index - so foo/index.html becomes
@@ -227,6 +246,14 @@ module Middleman
         @ignored = true
       end
 
+      FILTER = Or[RespondTo[:call], Filter]
+      Contract FILTER => Any
+      def add_filter(filter)
+        filter = ProcFilter.new(:"proc_#{filter.object_id}", filter) if filter.respond_to?(:call)
+
+        @filters = @filters.add filter
+      end
+
       # Whether the Resource is ignored
       # @return [Boolean]
       Contract Bool
@@ -246,6 +273,14 @@ module Middleman
       # @return [String]
       def normalized_path
         @normalized_path ||= ::Middleman::Util.normalize_path @path
+      end
+
+      # The `object_id` inclusion is because Hamster::SortedSet will assume
+      # <=> of 0 (same priority) actually means equality and removes duplicates
+      # from the set. Bug filed here: https://github.com/hamstergem/hamster/issues/246
+      Contract RespondTo[:priority] => Num
+      def <=>(other)
+        [priority, object_id] <=> [other.priority, other.object_id]
       end
 
       def to_s

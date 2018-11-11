@@ -51,7 +51,7 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
         ::Middleman::Util.path_match(i, "/#{r.destination_path}")
       end
 
-      r.filters << ::Middleman::InlineURLRewriter.new(:asset_hash,
+      r.add_filter ::Middleman::InlineURLRewriter.new(:asset_hash,
                                                       app,
                                                       r,
                                                       url_extensions: @set_of_exts,

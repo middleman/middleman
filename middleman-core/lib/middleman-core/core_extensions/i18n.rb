@@ -170,7 +170,8 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
       # next if resource.options[:locale]
 
       # $stderr.puts "Defaulting #{resource.path} to #{@mount_at_root}"
-      # resource.add_metadata options: { locale: @mount_at_root }, locals: { locale: @mount_at_root }
+      # resource.add_metadata_options(locale: @mount_at_root)
+      # resource.add_metadata_locals(locale: @mount_at_root)
     end
 
     # If it uses file extension localization
@@ -286,7 +287,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
   LocalizedPageDescriptor = Struct.new(:path, :source_path, :locale) do
     def execute_descriptor(app, resource_list)
       r = ::Middleman::Sitemap::ProxyResource.new(app.sitemap, path, source_path)
-      r.add_metadata options: { locale: locale }
+      r.add_metadata_options(locale: locale)
       resource_list.add! r
     end
   end

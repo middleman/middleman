@@ -29,9 +29,9 @@ class Middleman::Extensions::MinifyJavaScript < ::Middleman::Extension
     resource_list.by_binary(false).each do |r|
       type = r.content_type.try(:slice, /^[^;]*/)
       if options[:inline] && minifiable_inline?(type)
-        r.filters << method(:minify_inline)
+        r.add_filter method(:minify_inline)
       elsif minifiable?(type) && !ignore?(r.destination_path)
-        r.filters << method(:minify)
+        r.add_filter method(:minify)
       end
     end
   end

@@ -20,7 +20,7 @@ class Middleman::Extensions::AssetHost < ::Middleman::Extension
         ::Middleman::Util.path_match(i, "/#{r.destination_path}")
       end
 
-      r.filters << ::Middleman::InlineURLRewriter.new(:asset_host,
+      r.add_filter ::Middleman::InlineURLRewriter.new(:asset_host,
                                                       app,
                                                       r,
                                                       after_filter: :asset_hash,

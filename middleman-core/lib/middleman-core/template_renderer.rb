@@ -109,10 +109,20 @@ module Middleman
     # @param [Hash] opts
     # @return [String]
     Contract Hash, Hash => String
-    def render(locs = {}, options_hash = ::Middleman::EMPTY_HASH, &block)
+    def render(locals_hash = ::Middleman::EMPTY_HASH, options_hash = ::Middleman::EMPTY_HASH, &block)
       path = @path.dup
-      locals = locs.dup.freeze
-      options = options_hash.dup
+
+      locals = if locals_hash == ::Middleman::EMPTY_HASH
+                 locals_hash
+               else
+                 locals_hash.dup.freeze
+               end
+
+      options = if options_hash == ::Middleman::EMPTY_HASH
+                  options_hash
+                else
+                  options_hash.dup
+                end
 
       extension = File.extname(path)
       engine = extension[1..-1].to_sym

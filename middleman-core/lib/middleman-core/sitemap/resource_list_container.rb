@@ -17,28 +17,18 @@ module Middleman
 
       Contract Maybe[ArrayOf[Resource]] => Any
       def reset!(initial = nil)
-        @_set = ::Hamster::Set.empty
+        @_set = ::Hamster::SortedSet.empty
+        @_lookup_by_binary = ::Hamster::SortedSet.empty
+        @_lookup_by_non_binary = ::Hamster::SortedSet.empty
+        @_lookup_by_ignored = ::Hamster::SortedSet.empty
 
         @_lookup_by_path = ::Hamster::Hash.empty
         @_lookup_by_destination_path = ::Hamster::Hash.empty
-        @_lookup_by_binary = ::Hamster::Set.empty
-        @_lookup_by_non_binary = ::Hamster::Set.empty
         @_lookup_by_source_extension = ::Hamster::Hash.empty
         @_lookup_by_destination_extension = ::Hamster::Hash.empty
         @_lookup_by_page_id = ::Hamster::Hash.empty
-        @_lookup_by_ignored = ::Hamster::Set.empty
 
-        unless initial.nil?
-          # Have to process real resourced BEFORE proxies
-          sorted_initial = initial.sort do |a, b|
-            a_sort = a.is_a?(::Middleman::Sitemap::ProxyResource) ? -1 : 1
-            b_sort = b.is_a?(::Middleman::Sitemap::ProxyResource) ? -1 : 1
-
-            b_sort <=> a_sort
-          end
-
-          add!(*sorted_initial)
-        end
+        add!(*initial.sort_by(&:priority)) unless initial.nil?
       end
 
       Contract Args[Resource] => Any
@@ -88,7 +78,7 @@ module Middleman
           source_ext = resource.file_descriptor && resource.file_descriptor[:full_path] && ::File.extname(resource.file_descriptor[:full_path])
           if source_ext
             @_lookup_by_source_extension = @_lookup_by_source_extension.put(source_ext) do |v|
-              v ||= ::Hamster::Set.empty
+              v ||= ::Hamster::SortedSet.empty
               v.add(resource)
             end
           end
@@ -98,7 +88,7 @@ module Middleman
           dest_ext = ::File.extname(resource.destination_path)
 
           @_lookup_by_destination_extension = @_lookup_by_destination_extension.put(dest_ext) do |v|
-            v ||= ::Hamster::Set.empty
+            v ||= ::Hamster::SortedSet.empty
             v.add(resource)
           end
         end
@@ -182,13 +172,13 @@ module Middleman
       # Find resources given its source extension
       Contract String => ResourceList
       def by_source_extension(extension)
-        @_lookup_by_source_extension.fetch(extension, ::Hamster::Set.empty)
+        @_lookup_by_source_extension.fetch(extension, ::Hamster::SortedSet.empty)
       end
 
       # Find resources given a set of source extensions
       Contract Or[ArrayOf[String], SetOf[String]] => ResourceList
       def by_source_extensions(extensions)
-        extensions.reduce(::Hamster::Set.empty) do |sum, ext|
+        extensions.reduce(::Hamster::SortedSet.empty) do |sum, ext|
           sum | by_source_extension(ext)
         end
       end
@@ -196,13 +186,13 @@ module Middleman
       # Find resources given its destination extension
       Contract String => ResourceList
       def by_extension(extension)
-        @_lookup_by_destination_extension.fetch(extension, ::Hamster::Set.empty)
+        @_lookup_by_destination_extension.fetch(extension, ::Hamster::SortedSet.empty)
       end
 
       # Find resources given a set of destination extensions
       Contract Or[ArrayOf[String], SetOf[String]] => ResourceList
       def by_extensions(extensions)
-        extensions.reduce(::Hamster::Set.empty) do |sum, ext|
+        extensions.reduce(::Hamster::SortedSet.empty) do |sum, ext|
           sum | by_extension(ext)
         end
       end
@@ -252,11 +242,6 @@ module Middleman
       Contract ArrayOf[Resource]
       def to_a
         @_set.to_a
-      end
-
-      Contract ArrayOf[Resource] => IsA['Middleman::Sitemap::ResourceListContainer']
-      def self.from_a(a)
-        new(a)
       end
     end
   end

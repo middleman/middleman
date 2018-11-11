@@ -1,5 +1,5 @@
 require 'active_support/core_ext/integer/inflections'
-
+require 'hamster'
 require 'middleman-core/contracts'
 require 'middleman-core/callback_manager'
 require 'middleman-core/logger'
@@ -67,6 +67,9 @@ module Middleman
 
     Contract SetOf[MapDescriptor]
     attr_reader :mappings
+
+    Contract ImmutableSetOf[String]
+    attr_reader :set_of_extensions_with_layout
 
     # Which port preview should start on.
     # @return [Fixnum]
@@ -302,6 +305,8 @@ module Middleman
 
       # After extensions have worked after_config
       execute_callbacks(:after_configuration)
+
+      @set_of_extensions_with_layout = ::Hamster::Set.new config.extensions_with_layout
 
       # Everything is stable
       execute_callbacks(:ready) unless config[:exit_before_ready]

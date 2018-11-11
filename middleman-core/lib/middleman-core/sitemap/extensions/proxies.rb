@@ -40,11 +40,15 @@ module Middleman
           page_data[:id] = md.delete(:id) if md.key?(:id)
 
           r = ProxyResource.new(app.sitemap, path, target)
-          r.add_metadata(
-            locals: md.delete(:locals) || {},
-            page: page_data || {},
-            options: md
-          )
+          if (locs = md.delete(:locals))
+            r.add_metadata_locals(locs)
+          end
+
+          if page_data
+            r.add_metadata_page(page_data)
+          end
+
+          r.add_metadata_options(md)
 
           if should_ignore
             d = ::Middleman::Sitemap::Extensions::Ignores::StringIgnoreDescriptor.new(target)
@@ -71,7 +75,7 @@ module Middleman
       # @param [String] path
       # @param [String] target
       def initialize(store, path, target)
-        super(store, path)
+        super(store, path, nil, 2)
 
         target = ::Middleman::Util.normalize_path(target)
         raise "You can't proxy #{path} to itself!" if target == path
@@ -98,8 +102,16 @@ module Middleman
         target_resource.file_descriptor
       end
 
-      def metadata
-        target_resource.metadata.deep_merge super
+      def page
+        target_resource.page.deep_merge super
+      end
+
+      def options
+        target_resource.options.deep_merge super
+      end
+
+      def locals
+        target_resource.locals.deep_merge super
       end
 
       Contract Maybe[String]

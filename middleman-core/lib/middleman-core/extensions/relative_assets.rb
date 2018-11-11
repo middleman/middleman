@@ -23,7 +23,7 @@ class Middleman::Extensions::RelativeAssets < ::Middleman::Extension
         ::Middleman::Util.path_match(i, "/#{r.destination_path}")
       end
 
-      r.filters << ::Middleman::InlineURLRewriter.new(:relative_assets,
+      r.add_filter ::Middleman::InlineURLRewriter.new(:relative_assets,
                                                       app,
                                                       r,
                                                       url_extensions: @set_of_exts,
