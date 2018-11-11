@@ -1,20 +1,17 @@
 require 'middleman-core/util'
+require 'middleman-core/filter'
 require 'middleman-core/contracts'
 
 module Middleman
-  class InlineURLRewriter
+  class InlineURLRewriter < Filter
     include Contracts
 
-    attr_reader :filter_name
-    attr_reader :after_filter
+    Contract Symbol, IsA['::Middleman::Application'], IsA['::Middleman::Sitemap::Resource'], Hash => Any
+    def initialize(filter_name, app, resource, options_hash = ::Middleman::EMPTY_HASH)
+      super(filter_name, options_hash)
 
-    def initialize(filter_name, app, resource, options = {})
-      @filter_name = filter_name
       @app = app
       @resource = resource
-      @options = options
-
-      @after_filter = @options.fetch(:after_filter, nil)
     end
 
     Contract String => String

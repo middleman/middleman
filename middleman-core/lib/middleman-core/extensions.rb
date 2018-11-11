@@ -1,4 +1,5 @@
 require 'middleman-core/extension'
+require 'middleman-core/util/empty_hash'
 
 module Middleman
   # The Extensions module is used to handle global registration and loading of Middleman Extensions.
@@ -49,11 +50,13 @@ module Middleman
       #        you the ability to require other files only when the
       #        extension is first activated.
       # @return [void]
-      def register(name, extension_class = nil, options = {}, &block)
+      def register(name, extension_class = nil, options_hash = ::Middleman::EMPTY_HASH, &block)
         raise 'Extension name must be a symbol' unless name.is_a?(Symbol)
 
         # If we've already got an extension registered under this name, bail out
         # raise "There is a already an extension registered with the name '#{name}'" if registered.key?(name)
+
+        options = options_hash.dup
 
         # If the extension is defined with a block, grab options out of the "extension_class" parameter.
         if extension_class && block_given? && options.empty? && extension_class.is_a?(Hash)

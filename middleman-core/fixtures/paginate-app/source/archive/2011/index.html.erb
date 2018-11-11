@@ -8,8 +8,8 @@ Num Pages: <%= pagination.num_pages %>
 Per Page: <%= pagination.per_page %>
 Page Start: <%= pagination.page_start %>
 Page End: <%= pagination.page_end %>
-Next Page: '<%= sitemap.find_resource_by_destination_path(next_page).url if next_page %>'
-Prev Page: '<%= sitemap.find_resource_by_destination_path(prev_page).url if prev_page %>'
+Next Page: '<%= sitemap.by_destination_path(next_page).url if next_page %>'
+Prev Page: '<%= sitemap.by_destination_path(prev_page).url if prev_page %>'
 <% end %>
 
 <% items.each do |article| %>

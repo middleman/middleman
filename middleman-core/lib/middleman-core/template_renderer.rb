@@ -52,7 +52,7 @@ module Middleman
     # @option options [Boolean] :preferred_engine If set, try this engine first, then fall back to any engine.
     # @return [String, Boolean] Either the path to the template, or false
     Contract IsA['Middleman::Application'], Or[Symbol, String], Maybe[Hash] => Maybe[IsA['Middleman::SourceFile']]
-    def self.resolve_template(app, request_path, options = {})
+    def self.resolve_template(app, request_path, options_hash = ::Middleman::EMPTY_HASH)
       # Find the path by searching
       relative_path = Util.strip_leading_slash(request_path.to_s)
 
@@ -60,15 +60,15 @@ module Middleman
       preferred_engines = []
 
       # If we're specifically looking for a preferred engine
-      if options.key?(:preferred_engine)
-        extension_class = ::Middleman::Util.tilt_class(options[:preferred_engine])
+      if options_hash.key?(:preferred_engine)
+        extension_class = ::Middleman::Util.tilt_class(options_hash[:preferred_engine])
 
         # Get a list of extensions for a preferred engine
         preferred_engines += ::Tilt.default_mapping.extensions_for(extension_class)
       end
 
       preferred_engines << '*'
-      preferred_engines << nil if options[:try_static]
+      preferred_engines << nil if options_hash[:try_static]
 
       found_template = nil
 
@@ -109,10 +109,20 @@ module Middleman
     # @param [Hash] opts
     # @return [String]
     Contract Hash, Hash => String
-    def render(locs = {}, opts = {}, &block)
+    def render(locals_hash = ::Middleman::EMPTY_HASH, options_hash = ::Middleman::EMPTY_HASH, &block)
       path = @path.dup
-      locals = locs.dup.freeze
-      options = opts.dup
+
+      locals = if locals_hash == ::Middleman::EMPTY_HASH
+                 locals_hash
+               else
+                 locals_hash.dup.freeze
+               end
+
+      options = if options_hash == ::Middleman::EMPTY_HASH
+                  options_hash
+                else
+                  options_hash.dup
+                end
 
       extension = File.extname(path)
       engine = extension[1..-1].to_sym
@@ -247,8 +257,8 @@ module Middleman
     # @param [Hash] options
     # @return [Array<String, Symbol>, Boolean]
     Contract String, Hash => ArrayOf[Or[String, Symbol]]
-    def resolve_template(request_path, options = {})
-      self.class.resolve_template(@app, request_path, options)
+    def resolve_template(request_path, options_hash = ::Middleman::EMPTY_HASH)
+      self.class.resolve_template(@app, request_path, options_hash)
     end
   end
 end

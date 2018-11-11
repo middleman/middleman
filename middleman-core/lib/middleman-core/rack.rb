@@ -92,7 +92,7 @@ module Middleman
       full_request_path = File.join(env['SCRIPT_NAME'], request_path) # Path including rack mount
 
       # Get the resource object for this path
-      resource = @middleman.sitemap.find_resource_by_destination_path(request_path.gsub(' ', '%20'))
+      resource = @middleman.sitemap.by_destination_path(request_path.gsub(' ', '%20'))
 
       # Return 404 if not in sitemap
       return not_found(res, full_request_path) unless resource && !resource.ignored?

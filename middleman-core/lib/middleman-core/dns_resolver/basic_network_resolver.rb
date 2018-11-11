@@ -8,8 +8,8 @@ module Middleman
 
       public
 
-      def initialize(opts = {})
-        @timeouts = opts.fetch(:timeouts, 2)
+      def initialize(options_hash = ::Middleman::EMPTY_HASH)
+        @timeouts = options_hash.fetch(:timeouts, 2)
       end
 
       # Get names for ip

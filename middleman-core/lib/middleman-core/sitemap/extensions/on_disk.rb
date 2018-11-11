@@ -7,7 +7,7 @@ module Middleman
       class OnDisk < Extension
         self.resource_list_manipulator_priority = 0
 
-        def initialize(app, config = {}, &block)
+        def initialize(app, options_hash = ::Middleman::EMPTY_HASH, &block)
           super
 
           @file_paths_on_disk = Set.new

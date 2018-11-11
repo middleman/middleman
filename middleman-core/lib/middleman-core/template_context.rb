@@ -30,10 +30,10 @@ module Middleman
     # @param [Middleman::Application] app
     # @param [Hash] locs
     # @param [Hash] opts
-    def initialize(app, locs = {}, opts = {})
+    def initialize(app, locs = {}, options_hash = ::Middleman::EMPTY_HASH)
       @app = app
       @locs = locs
-      @opts = opts
+      @opts = options_hash
     end
 
     # Return the current buffer to the caller and clear the value internally.
@@ -101,7 +101,7 @@ module Middleman
     # @param [Proc] block A block will be evaluated to return internal contents.
     # @return [String]
     Contract Any, Or[Symbol, String], Hash => String, Maybe[Proc] => String
-    def render(_, name, options = {}, &block)
+    def render(_, name, options_hash = ::Middleman::EMPTY_HASH, &block)
       name = name.to_s
 
       partial_file = locate_partial(name, false) || locate_partial(name, true)
@@ -109,12 +109,12 @@ module Middleman
       raise ::Middleman::TemplateRenderer::TemplateNotFound, "Could not locate partial: #{name}" unless partial_file
 
       source_path = sitemap.file_to_path(partial_file)
-      r = sitemap.find_resource_by_path(source_path)
+      r = sitemap.by_path(source_path)
 
       if (r && !r.template?) || (Tilt[partial_file[:full_path]].nil? && partial_file[:full_path].exist?)
         partial_file.read
       else
-        opts = options.dup
+        opts = options_hash.dup
         locs = opts.delete(:locals)
 
         render_file(partial_file, locs, opts, &block)
@@ -176,7 +176,7 @@ module Middleman
     def current_resource
       return nil unless current_path
 
-      sitemap.find_resource_by_destination_path(current_path)
+      sitemap.by_destination_path(current_path)
     end
     alias current_page current_resource
 
