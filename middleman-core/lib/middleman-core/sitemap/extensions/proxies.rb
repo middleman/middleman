@@ -44,9 +44,7 @@ module Middleman
             r.add_metadata_locals(locs)
           end
 
-          if page_data
-            r.add_metadata_page(page_data)
-          end
+          r.add_metadata_page(page_data) if page_data
 
           r.add_metadata_options(md)
 

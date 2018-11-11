@@ -24,9 +24,7 @@ module Middleman
           resource_list
             .select { |r| ::Middleman::Util.path_match(normalized_path, "/#{r.path}") }
             .each do |r|
-              if locals
-                r.add_metadata_locals(locals, true)
-              end
+              r.add_metadata_locals(locals, true) if locals
 
               if page
                 if page.key?(:id)
@@ -38,9 +36,7 @@ module Middleman
                 end
               end
 
-              if options
-                r.add_metadata_options(options, true)
-              end
+              r.add_metadata_options(options, true) if options
             end
         end
       end

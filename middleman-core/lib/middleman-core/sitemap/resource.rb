@@ -99,12 +99,10 @@ module Middleman
       def add_metadata_options(opts, reverse = false)
         if @metadata_options == ::Middleman::EMPTY_HASH
           @metadata_options = opts.dup
+        elsif reverse
+          @metadata_options = opts.deep_merge(@metadata_options)
         else
-          if reverse
-            @metadata_options = opts.deep_merge(@metadata_options)
-          else
-            @metadata_options.deep_merge!(opts)
-          end
+          @metadata_options.deep_merge!(opts)
         end
       end
 
@@ -112,12 +110,10 @@ module Middleman
       def add_metadata_locals(locs, reverse = false)
         if @metadata_locals == ::Middleman::EMPTY_HASH
           @metadata_locals = locs.dup
+        elsif reverse
+          @metadata_locals = locs.deep_merge(@metadata_locals)
         else
-          if reverse
-            @metadata_locals = locs.deep_merge(@metadata_locals)
-          else
-            @metadata_locals.deep_merge!(locs)
-          end
+          @metadata_locals.deep_merge!(locs)
         end
       end
 
@@ -128,12 +124,10 @@ module Middleman
 
         if @metadata_page == ::Middleman::EMPTY_HASH
           @metadata_page = page.dup
+        elsif reverse
+          @metadata_page = page.deep_merge(@metadata_page)
         else
-          if reverse
-            @metadata_page = page.deep_merge(@metadata_page)
-          else
-            @metadata_page.deep_merge!(page)
-          end
+          @metadata_page.deep_merge!(page)
         end
       end
 
@@ -148,7 +142,7 @@ module Middleman
       def page
         @metadata_page
       end
-      
+
       # Options about how this resource is rendered, such as its :layout,
       # :renderer_options, and whether or not to use :directory_indexes.
       # @return [Hash]
