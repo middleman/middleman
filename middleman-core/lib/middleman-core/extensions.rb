@@ -1,4 +1,5 @@
 require 'middleman-core/extension'
+require 'middleman-core/util/empty_hash'
 
 module Middleman
   # The Extensions module is used to handle global registration and loading of Middleman Extensions.
