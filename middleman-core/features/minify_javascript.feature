@@ -131,14 +131,14 @@ Feature: Minify JavaScript
     Then I should see:
     """
     <script>
-      !function(){should(),all.be(),on={one:line}}();
+      should(),all.be(),on={one:line};
     </script>
     <script>
-    !function(){should(),too()}();
+    should(),too();
     </script>
     <script type='text/javascript'>
     //<!--
-    !function(){one,line(),here()}();
+    one,line(),here();
     //-->
     </script>
     <script type='text/html'>
@@ -159,11 +159,11 @@ Feature: Minify JavaScript
     <?='Hello'?>
 
     <script>
-      !function(){should(),all.be(),on={one:line}}();
+      should(),all.be(),on={one:line};
     </script>
     <script type='text/javascript'>
       //<!--
-    !function(){one,line(),here()}();
+    one,line(),here();
       //-->
     </script>
     <script type='text/html'>
