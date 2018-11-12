@@ -4,7 +4,7 @@ require 'middleman-core/file_renderer'
 require 'middleman-core/template_renderer'
 require 'middleman-core/contracts'
 require 'set'
-require 'middleman-core/inline_url_rewriter'
+require 'middleman-core/inline_url_filter'
 
 module Middleman
   # Sitemap namespace

@@ -19,7 +19,7 @@ module Middleman
       path = "/#{@resource.destination_path}"
       dirpath = ::Pathname.new(File.dirname(path))
 
-      ::Middleman::Util.instrument 'inline_url_rewriter', path: path do
+      ::Middleman::Util.instrument 'inline_url_filter', path: path do
         ::Middleman::Util.rewrite_paths(body, path, @options.fetch(:url_extensions), @app) do |asset_path|
           uri = ::Middleman::Util.parse_uri(asset_path)
 
