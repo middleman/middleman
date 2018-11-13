@@ -284,7 +284,7 @@ module Middleman
           if @track_dependencies && @only_changed
             path = resource.file_descriptor[:full_path].to_s
 
-            if !resource.binary? && @graph.exists?(path) && !@invalidated_files.include?(path) && File.exist?(output_file)
+            if File.exist?(output_file) && !resource.binary? && @graph.exists?(path) && !@invalidated_files.include?(path)
               trigger(:skipped, output_file)
               return [output_file, nil]
             end

@@ -1,7 +1,7 @@
 require 'middleman-core/util'
 
 class Middleman::Extensions::AssetHash < ::Middleman::Extension
-  option :sources, %w[.css .htm .html .js .php .xhtml], 'List of extensions that are searched for hashable assets.'
+  option :sources, %w[.css .htm .html .js .json .php .xhtml], 'List of extensions that are searched for hashable assets.'
   option :exts, nil, 'List of extensions that get asset hashes appended to them.'
   option :ignore, [], 'Regexes of filenames to skip adding asset hashes to'
   option :rewrite_ignore, [], 'Regexes of filenames to skip processing for path rewrites'
