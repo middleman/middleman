@@ -58,8 +58,10 @@ module Middleman
       def invalidated
         invalidated_files = @dependency_map.keys.select do |file|
           if !@hashes.key?(file)
+            # $stderr.puts "#{file} missing hash"
             true
           else
+            # $stderr.puts "#{file} invalid hash"
             hashes[file] != ::Digest::SHA1.file(file).hexdigest
           end
         end
@@ -76,7 +78,7 @@ module Middleman
     module_function
 
     Contract ArrayOf[String]
-    def ruby_files
+    def ruby_files_paths
       Dir['**/*.rb', 'Gemfile.lock']
     end
 
@@ -92,7 +94,7 @@ module Middleman
 
     Contract IsA['::Middleman::Application'], Graph => String
     def serialize(app, graph)
-      ruby_files = ruby_files.reduce([]) do |sum, file|
+      ruby_files = ruby_files_paths.reduce([]) do |sum, file|
         sum << {
           file: relativize(app, file),
           hash: ::Digest::SHA1.file(file).hexdigest # [0..7]
@@ -164,13 +166,13 @@ module Middleman
       source_files = data[:source_files]
 
       hashes = source_files.each_with_object({}) do |row, sum|
-        sum[row[:file]] = row[:hash]
+        sum[fullize(app, row[:file])] = row[:hash]
       end
 
       graph = Graph.new(hashes)
 
       graph.dependency_map = source_files.each_with_object({}) do |row, sum|
-        sum[fullize(app, row[:file])] = Set.new(row[:depended_on_by].add(row[:file]).map { |f| fullize(app, f) })
+        sum[fullize(app, row[:file])] = Set.new((row[:depended_on_by] + [row[:file]]).map { |f| fullize(app, f) })
       end
 
       graph

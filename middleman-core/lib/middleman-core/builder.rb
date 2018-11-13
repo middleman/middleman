@@ -39,9 +39,6 @@ module Middleman
       @track_dependencies = @only_changed || options_hash.fetch(:track_dependencies, false)
       @cleaning = !@only_changed && options_hash.fetch(:clean)
 
-      # TODO: Can middleware actually mark binary files as deps?
-      raise 'The `track-dependencies` flag is not compatible with the `asset_hash` extension at this time.' if @track_dependencies && @app.extensions.active?(:asset_hash)
-
       @callbacks = ::Middleman::CallbackManager.new
       @callbacks.install_methods!(self, [:on_build_event])
     end
@@ -309,13 +306,11 @@ module Middleman
           else
             content = resource.render({}, {})
 
-            if resource.template?
-              unless resource.dependencies.nil?
-                deps = ::Middleman::Dependencies::Dependency.new(
-                  resource.source_file,
-                  resource.dependencies
-                )
-              end
+            unless resource.dependencies.empty?
+              deps = ::Middleman::Dependencies::Dependency.new(
+                resource.source_file,
+                resource.dependencies
+              )
             end
 
             export_file!(output_file, binary_encode(content))

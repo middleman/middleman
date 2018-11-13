@@ -52,7 +52,7 @@ module Middleman
         @ignored  = false
         @filters  = ::Hamster::SortedSet.empty
         @priority = priority
-        @dependencies = nil
+        @dependencies = Set.new
 
         source = Pathname(source) if source&.is_a?(String)
 
@@ -173,6 +173,8 @@ module Middleman
       # @return [String]
       Contract Hash, Hash, Maybe[Proc] => String
       def render(options_hash = ::Middleman::EMPTY_HASH, locs = ::Middleman::EMPTY_HASH, &_block)
+        @dependencies = Set.new
+
         body = render_without_filters(options_hash, locs)
 
         return body if @filters.empty?
@@ -181,7 +183,9 @@ module Middleman
           if block_given? && !yield(filter)
             output
           elsif filter.is_a?(Filter)
-            filter.execute_filter(output)
+            result = filter.execute_filter(output)
+            @dependencies |= result[1] unless result[1].nil?
+            result[0]            
           else
             output
           end
@@ -211,11 +215,9 @@ module Middleman
 
         locs[:current_path] ||= destination_path
 
-        @dependencies = nil
-
         renderer = ::Middleman::TemplateRenderer.new(@app, file_descriptor[:full_path].to_s)
         renderer.render(locs, opts).to_str.tap do
-          @dependencies = renderer.dependencies
+          @dependencies |= renderer.dependencies unless renderer.dependencies.nil?
         end
       end
 

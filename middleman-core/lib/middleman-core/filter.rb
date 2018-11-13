@@ -45,7 +45,7 @@ module Middleman
       @callable = callable
     end
 
-    Contract String => String
+    Contract String => [String, Maybe[SetOf[String]]]
     def execute_filter(body)
       @callable.call(body)
     end

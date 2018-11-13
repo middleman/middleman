@@ -54,6 +54,7 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
       r.add_filter ::Middleman::InlineURLRewriter.new(:asset_hash,
                                                       app,
                                                       r,
+                                                      create_dependencies: true,
                                                       url_extensions: @set_of_exts,
                                                       ignore: options.ignore,
                                                       proc: method(:rewrite_url))
