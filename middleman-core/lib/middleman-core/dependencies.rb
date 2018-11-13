@@ -62,7 +62,7 @@ module Middleman
             true
           else
             # $stderr.puts "#{file} invalid hash"
-            hashes[file] != ::Digest::SHA1.file(file).hexdigest
+            hashes[file] != ::Middleman::Dependencies.hashing_method(file)
           end
         end
 
@@ -76,6 +76,11 @@ module Middleman
     include Contracts
 
     module_function
+
+    Contract String => String
+    def hashing_method(file_name)
+      ::Digest::SHA1.file(file_name).hexdigest
+    end
 
     Contract ArrayOf[String]
     def ruby_files_paths
@@ -97,14 +102,14 @@ module Middleman
       ruby_files = ruby_files_paths.reduce([]) do |sum, file|
         sum << {
           file: relativize(app, file),
-          hash: ::Digest::SHA1.file(file).hexdigest # [0..7]
+          hash: hashing_method(file)
         }
       end
 
       source_files = graph.dependency_map.reduce([]) do |sum, (file, depended_on_by)|
         sum << {
           file: relativize(app, file),
-          hash: ::Digest::SHA1.file(file).hexdigest, # [0..7]
+          hash: hashing_method(file),
           depended_on_by: depended_on_by.delete(file).to_a.sort.map { |p| relativize(app, p) }
         }
       end
@@ -134,7 +139,7 @@ module Middleman
     Contract ArrayOf[String]
     def invalidated_ruby_files(known_files)
       known_files.reject do |file|
-        file[:hash] == ::Digest::SHA1.file(file[:file]).hexdigest
+        file[:hash] == hashing_method(file[:file])
       end
     end
 
@@ -176,8 +181,8 @@ module Middleman
       end
 
       graph
-    rescue StandardError
-      raise InvalidDepsYAML
+      # rescue StandardError
+      #   raise InvalidDepsYAML
     end
   end
 end

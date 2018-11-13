@@ -54,11 +54,9 @@ module Middleman
           result = @options.fetch(:proc).call(asset_path, dirpath, path)
 
           if result
-            if @options.fetch(:create_dependencies, false)
-              deps << target_resource(asset_path, dirpath).source_file
-            end
+            deps << target_resource(asset_path, dirpath).source_file if @options.fetch(:create_dependencies, false)
 
-            asset_path = result 
+            asset_path = result
           end
 
           asset_path

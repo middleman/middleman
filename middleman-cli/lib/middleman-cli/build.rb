@@ -118,6 +118,8 @@ module Middleman::Cli
         say_status :create, target, :green
       when :identical
         say_status :identical, target, :blue
+      when :skipped
+        say_status :skipped, target, :blue
       when :updated
         say_status :updated, target, :yellow
       else

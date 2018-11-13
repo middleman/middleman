@@ -185,7 +185,7 @@ module Middleman
           elsif filter.is_a?(Filter)
             result = filter.execute_filter(output)
             @dependencies |= result[1] unless result[1].nil?
-            result[0]            
+            result[0]
           else
             output
           end
