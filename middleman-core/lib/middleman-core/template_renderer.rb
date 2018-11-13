@@ -1,4 +1,5 @@
 require 'tilt'
+require 'set'
 require 'active_support/core_ext/string/output_safety'
 require 'middleman-core/template_context'
 require 'middleman-core/file_renderer'
@@ -98,9 +99,13 @@ module Middleman
     # Custom error class for handling
     class TemplateNotFound < RuntimeError; end
 
+    Contract Maybe[SetOf[String]]
+    attr_reader :dependencies
+
     def initialize(app, path)
       @app = app
       @path = path
+      @dependencies = nil
     end
 
     # Render a template, with layout, given a path
@@ -189,18 +194,23 @@ module Middleman
       # handles cases like `style.css.sass.erb`
       content = nil
 
+      deps = Set.new
+
       while ::Middleman::Util.tilt_class(path)
         begin
           opts[:template_body] = content if content
 
           content_renderer = ::Middleman::FileRenderer.new(@app, path)
           content = content_renderer.render(locs, opts, context, &block)
+          deps |= content_renderer.dependencies unless content_renderer.dependencies.nil?
 
           path = path.sub(/\.[^.]*\z/, '')
         rescue LocalJumpError
           raise "Tried to render a layout (calls yield) at #{path} like it was a template. Non-default layouts need to be in #{@app.config[:source]}/#{@app.config[:layouts_dir]}."
         end
       end
+
+      @dependencies = deps.empty? ? nil : deps
 
       content
     end

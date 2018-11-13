@@ -37,6 +37,9 @@ module Middleman
       Contract Num
       attr_reader :priority
 
+      Contract Maybe[SetOf[String]]
+      attr_reader :dependencies
+
       # Initialize resource with parent store and URL
       # @param [Middleman::Sitemap::Store] store
       # @param [String] path
@@ -49,6 +52,7 @@ module Middleman
         @ignored  = false
         @filters  = ::Hamster::SortedSet.empty
         @priority = priority
+        @dependencies = nil
 
         source = Pathname(source) if source&.is_a?(String)
 
@@ -207,8 +211,12 @@ module Middleman
 
         locs[:current_path] ||= destination_path
 
+        @dependencies = nil
+
         renderer = ::Middleman::TemplateRenderer.new(@app, file_descriptor[:full_path].to_s)
-        renderer.render(locs, opts).to_str
+        renderer.render(locs, opts).to_str.tap do
+          @dependencies = renderer.dependencies
+        end
       end
 
       # A path without the directory index - so foo/index.html becomes

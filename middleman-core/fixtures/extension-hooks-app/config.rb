@@ -12,14 +12,6 @@ class MyFeature < Middleman::Extension
       puts '/// ready ///'
     end
 
-    app.before_render do |_body, _path, _locs, _template_class|
-      puts '/// before_render ///'
-    end
-
-    app.after_render do |_content, _path, _locs, _template_class|
-      puts '/// after_render ///'
-    end
-
     app.before_build do |_builder|
       puts '/// before_build ///'
     end

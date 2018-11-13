@@ -1,4 +1,5 @@
 require 'tilt'
+require 'set'
 require 'active_support/core_ext/string/output_safety'
 require 'active_support/core_ext/module/delegation'
 require 'middleman-core/contracts'
@@ -15,11 +16,15 @@ module Middleman
       @_cache ||= ::Tilt::Cache.new
     end
 
+    Contract Maybe[SetOf[String]]
+    attr_reader :dependencies
+
     def_delegator :"self.class", :cache
 
     def initialize(app, path)
       @app = app
       @path = path.to_s
+      @dependencies = nil
     end
 
     # Render an on-disk file. Used for everything, including layouts.
@@ -62,26 +67,19 @@ module Middleman
 
       template_class = ::Middleman::Util.tilt_class(path)
 
-      # Allow hooks to manipulate the template before render
-      body = @app.callbacks_for(:before_render).reduce(body) do |sum, callback|
-        callback.call(sum, path, locs, template_class) || sum
-      end
-
       # Read compiled template from disk or cache
       template = ::Tilt.new(path, 1, options) { body }
       # template = cache.fetch(:compiled_template, extension, options, body) do
       #   ::Tilt.new(path, 1, options) { body }
       # end
 
-      # Render using Tilt
-      # content = ::Middleman::Util.instrument 'render.tilt', path: path do
-      #   template.render(context, locs, &block)
-      # end
-      content = template.render(context, locs, &block)
+      @dependencies = nil
 
-      # Allow hooks to manipulate the result after render
-      content = @app.callbacks_for(:after_render).reduce(content) do |sum, callback|
-        callback.call(sum, path, locs, template_class) || sum
+      # Render using Tilt
+      content = ::Middleman::Util.instrument 'render.tilt', path: path do
+        template.render(context, locs, &block).tap do
+          @dependencies = template.dependencies if template.respond_to?(:dependencies)
+        end
       end
 
       output = ::ActiveSupport::SafeBuffer.new ''

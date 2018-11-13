@@ -36,6 +36,10 @@ module Middleman::Cli
                  type: :boolean,
                  default: false,
                  desc: 'Generate profiling report for the build'
+    class_option :only_changed,
+                type: :boolean,
+                default: false,
+                desc: 'Only build changed files'
 
     Middleman::Cli.import_config(self)
 
@@ -71,7 +75,8 @@ module Middleman::Cli
         builder = Middleman::Builder.new(@app,
                                          glob: options['glob'],
                                          clean: options['clean'],
-                                         parallel: options['parallel'])
+                                         parallel: options['parallel'],
+                                         only_changed: options['only_changed'])
         builder.thor = self
         builder.on_build_event(&method(:on_event))
       end

@@ -2,6 +2,7 @@ require 'pathname'
 require 'fileutils'
 require 'tempfile'
 require 'parallel'
+require 'middleman-core/dependencies'
 require 'middleman-core/callback_manager'
 require 'middleman-core/contracts'
 
@@ -33,8 +34,9 @@ module Middleman
       raise ":build_dir (#{@build_dir}) cannot be a parent of :source_dir (#{@source_dir})" if /\A[.\/]+\Z/.match?(@build_dir.expand_path.relative_path_from(@source_dir).to_s)
 
       @glob = options_hash.fetch(:glob)
-      @cleaning = options_hash.fetch(:clean)
       @parallel = options_hash.fetch(:parallel, true)
+      @only_changed = options_hash.fetch(:only_changed, false)
+      @cleaning = !@only_changed && options_hash.fetch(:clean)
 
       @callbacks = ::Middleman::CallbackManager.new
       @callbacks.install_methods!(self, [:on_build_event])
@@ -47,6 +49,8 @@ module Middleman
       @has_error = false
       @events = {}
 
+      @graph = ::Middleman::Dependencies.load_and_deserialize
+
       ::Middleman::Util.instrument 'builder.before' do
         @app.execute_callbacks(:before_build, [self])
       end
@@ -56,18 +60,26 @@ module Middleman
       end
 
       ::Middleman::Util.instrument 'builder.prerender' do
-        prerender_css
+        prerender_css.each do |r|
+          dependency = r[1]
+          @graph.add_dependency(dependency) unless dependency.nil?
+        end
       end
 
       ::Middleman::Profiling.start
 
       ::Middleman::Util.instrument 'builder.output' do
-        output_files
+        output_files.each do |r|
+          dependency = r[1]
+          @graph.add_dependency(dependency) unless dependency.nil?
+        end
       end
 
       ::Middleman::Profiling.report('build')
 
       unless @has_error
+        ::Middleman::Dependencies.serialize_and_save(@graph)
+
         ::Middleman::Util.instrument 'builder.clean' do
           clean! if @cleaning
         end
@@ -82,12 +94,22 @@ module Middleman
 
     # Pre-request CSS to give Compass a chance to build sprites
     # @return [Array<Resource>] List of css resources that were output.
-    Contract ResourceList
+    Contract ArrayOf[[Pathname, Maybe[::Middleman::Dependencies::Dependency]]]
     def prerender_css
       logger.debug '== Prerendering CSS'
 
+      resources = @app.sitemap.by_extension('.css').to_a
+
+      if @only_changed
+        invalidated_files = @graph.invalidated
+
+        resources = resources.select do |resource|
+          resource.template? && invalidated_files.include?(resource.file_descriptor[:full_path].to_s)
+        end
+      end
+
       css_files = ::Middleman::Util.instrument 'builder.prerender.output' do
-        output_resources(@app.sitemap.by_extension('.css').to_a)
+        output_resources(resources)
       end
 
       ::Middleman::Util.instrument 'builder.prerender.check-files' do
@@ -103,7 +125,7 @@ module Middleman
 
     # Find all the files we need to output and do so.
     # @return [Array<Resource>] List of resources that were output.
-    Contract OldResourceList
+    Contract ArrayOf[[Pathname, Maybe[::Middleman::Dependencies::Dependency]]]
     def output_files
       logger.debug '== Building files'
 
@@ -112,7 +134,13 @@ module Middleman
       resources = non_css_resources
                   .sort_by { |resource| SORT_ORDER.index(resource.ext) || 100 }
 
-      if @glob
+      if @only_changed
+        invalidated_files = Set.new(@graph.invalidated)
+
+        resources = resources.select do |resource|
+          resource.template? && invalidated_files.include?(resource.file_descriptor[:full_path].to_s)
+        end
+      elsif @glob
         resources = resources.select do |resource|
           if defined?(::File::FNM_EXTGLOB)
             File.fnmatch(@glob, resource.destination_path, ::File::FNM_EXTGLOB)
@@ -125,7 +153,7 @@ module Middleman
       output_resources(resources.to_a)
     end
 
-    Contract OldResourceList => OldResourceList
+    Contract OldResourceList => ArrayOf[[Pathname, Maybe[::Middleman::Dependencies::Dependency]]]
     def output_resources(resources)
       res_count = resources.count
 
@@ -156,16 +184,17 @@ module Middleman
                     resources[r].map!(&method(:output_resource))
                   end
 
-                  outputs.flatten!
+                  outputs.flatten!(1)
                   outputs
                 else
                   resources.map(&method(:output_resource))
                 end
 
-      @has_error = true if results.any? { |r| r == false }
+      @has_error = true if results.any? { |r| r[0] == false }
 
       if @cleaning && !@has_error
-        results.each do |p|
+        results.each do |r|
+          p = r[0]
           next unless p.exist?
 
           # handle UTF-8-MAC filename on MacOS
@@ -179,7 +208,7 @@ module Middleman
         end
       end
 
-      resources
+      results
     end
 
     # Figure out the correct event mode.
@@ -243,23 +272,36 @@ module Middleman
     # Try to output a resource and capture errors.
     # @param [Middleman::Sitemap::Resource] resource The resource.
     # @return [void]
-    Contract IsA['Middleman::Sitemap::Resource'] => Or[Pathname, Bool]
+    Contract IsA['Middleman::Sitemap::Resource'] => Or[Bool, [Pathname, Maybe[::Middleman::Dependencies::Dependency]]]
     def output_resource(resource)
       ::Middleman::Util.instrument 'builder.output.resource', path: File.basename(resource.destination_path) do
         output_file = @build_dir + resource.destination_path.gsub('%20', ' ')
+
+        deps = nil
 
         begin
           if resource.binary?
             export_file!(output_file, resource.file_descriptor[:full_path])
           else
-            export_file!(output_file, binary_encode(resource.render({}, {})))
+            content = resource.render({}, {})
+
+            if resource.template?
+              unless resource.dependencies.nil?
+                deps = ::Middleman::Dependencies::Dependency.new(
+                  resource.source_file,
+                  resource.dependencies
+                )
+              end
+            end
+
+            export_file!(output_file, binary_encode(content))
           end
         rescue StandardError => e
           trigger(:error, output_file, "#{e}\n#{e.backtrace.join("\n")}")
           return false
         end
 
-        output_file
+        [output_file, deps]
       end
     end
 
