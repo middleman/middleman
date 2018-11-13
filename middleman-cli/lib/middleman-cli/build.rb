@@ -37,13 +37,13 @@ module Middleman::Cli
                  default: false,
                  desc: 'Generate profiling report for the build'
     class_option :track_dependencies,
-                type: :boolean,
-                default: false,
-                desc: 'Track file dependencies'
+                 type: :boolean,
+                 default: false,
+                 desc: 'Track file dependencies'
     class_option :only_changed,
-                type: :boolean,
-                default: false,
-                desc: 'Only build changed files'
+                 type: :boolean,
+                 default: false,
+                 desc: 'Only build changed files'
 
     Middleman::Cli.import_config(self)
 

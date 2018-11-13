@@ -40,9 +40,7 @@ module Middleman
       @cleaning = !@only_changed && options_hash.fetch(:clean)
 
       # TODO: Can middleware actually mark binary files as deps?
-      if @track_dependencies && @app.extensions.active?(:asset_hash)
-        raise "The `track-dependencies` flag is not compatible with the `asset_hash` extension at this time."
-      end
+      raise 'The `track-dependencies` flag is not compatible with the `asset_hash` extension at this time.' if @track_dependencies && @app.extensions.active?(:asset_hash)
 
       @callbacks = ::Middleman::CallbackManager.new
       @callbacks.install_methods!(self, [:on_build_event])
@@ -59,7 +57,7 @@ module Middleman
         begin
           @graph = ::Middleman::Dependencies.load_and_deserialize(@app)
         rescue ::Middleman::Dependencies::InvalidDepsYAML
-          @app.logger.error "dep.yml was corrupt. Dependency graph must be rebuilt."
+          @app.logger.error 'dep.yml was corrupt. Dependency graph must be rebuilt.'
           @graph = ::Middleman::Dependencies::Graph.new
           @only_changed = false
         rescue ::Middleman::Dependencies::InvalidatedRubyFiles => e
@@ -71,9 +69,7 @@ module Middleman
         end
       end
 
-      if @only_changed
-        @invalidated_files = @graph.invalidated
-      end
+      @invalidated_files = @graph.invalidated if @only_changed
 
       ::Middleman::Util.instrument 'builder.before' do
         @app.execute_callbacks(:before_build, [self])
@@ -84,22 +80,26 @@ module Middleman
       end
 
       ::Middleman::Util.instrument 'builder.prerender' do
-        prerender_css.tap do |resources| 
-          resources.each do |r|
-            dependency = r[1]
-            @graph.add_dependency(dependency) unless dependency.nil?
-          end if @track_dependencies
+        prerender_css.tap do |resources|
+          if @track_dependencies
+            resources.each do |r|
+              dependency = r[1]
+              @graph.add_dependency(dependency) unless dependency.nil?
+            end
+          end
         end
       end
 
       ::Middleman::Profiling.start
 
       ::Middleman::Util.instrument 'builder.output' do
-        output_files.tap do |resources| 
-          resources.each do |r|
-            dependency = r[1]
-            @graph.add_dependency(dependency) unless dependency.nil?
-          end if @track_dependencies
+        output_files.tap do |resources|
+          if @track_dependencies
+            resources.each do |r|
+              dependency = r[1]
+              @graph.add_dependency(dependency) unless dependency.nil?
+            end
+          end
         end
       end
 

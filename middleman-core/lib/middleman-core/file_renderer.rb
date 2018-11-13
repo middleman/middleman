@@ -65,8 +65,6 @@ module Middleman
       # Overwrite with frontmatter options
       options = options.deep_merge(options[:renderer_options]) if options[:renderer_options]
 
-      template_class = ::Middleman::Util.tilt_class(path)
-
       # Read compiled template from disk or cache
       template = ::Tilt.new(path, 1, options) { body }
       # template = cache.fetch(:compiled_template, extension, options, body) do
