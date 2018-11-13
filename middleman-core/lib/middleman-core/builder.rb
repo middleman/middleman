@@ -282,7 +282,9 @@ module Middleman
           output_file = @build_dir + resource.destination_path.gsub('%20', ' ')
 
           if @track_dependencies && @only_changed
-            if !resource.binary? && !@invalidated_files.include?(resource.file_descriptor[:full_path].to_s) && File.exist?(output_file)
+            path = resource.file_descriptor[:full_path].to_s
+
+            if !resource.binary? && @graph.exists?(path) && !@invalidated_files.include?(path) && File.exist?(output_file)
               trigger(:skipped, output_file)
               return [output_file, nil]
             end

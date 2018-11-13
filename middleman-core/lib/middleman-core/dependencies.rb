@@ -55,6 +55,12 @@ module Middleman
         end
       end
 
+      Contract String => Bool
+      def exists?(file_path)
+        @dependency_map.key?(file_path)
+      end
+
+      Contract SetOf[String]
       def invalidated
         invalidated_files = @dependency_map.keys.select do |file|
           if !@hashes.key?(file)
@@ -181,8 +187,8 @@ module Middleman
       end
 
       graph
-      # rescue StandardError
-      #   raise InvalidDepsYAML
+    rescue StandardError
+      raise InvalidDepsYAML
     end
   end
 end
