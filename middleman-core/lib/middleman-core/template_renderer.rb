@@ -172,12 +172,17 @@ module Middleman
                     layout_renderer = ::Middleman::FileRenderer.new(@app, layout_file[:relative_path].to_s)
 
                     ::Middleman::Util.instrument 'builder.output.resource.render-layout', path: File.basename(layout_file[:relative_path].to_s) do
-                      layout_renderer.render(locals, options, context) { content }
+                      layout_renderer.render(locals, options, context) { content }.tap do
+                        @dependencies << layout_file[:full_path].to_s
+                        @dependencies |= layout_renderer.dependencies unless layout_renderer.dependencies.nil?
+                      end
                     end
                   else
                     content
                   end
       end
+
+      @dependencies = @dependencies.empty? ? nil : @dependencies
 
       # Return result
       content
@@ -194,7 +199,7 @@ module Middleman
       # handles cases like `style.css.sass.erb`
       content = nil
 
-      deps = Set.new
+      @dependencies = Set.new
 
       while ::Middleman::Util.tilt_class(path)
         begin
@@ -202,15 +207,13 @@ module Middleman
 
           content_renderer = ::Middleman::FileRenderer.new(@app, path)
           content = content_renderer.render(locs, opts, context, &block)
-          deps |= content_renderer.dependencies unless content_renderer.dependencies.nil?
+          @dependencies |= content_renderer.dependencies unless content_renderer.dependencies.nil?
 
           path = path.sub(/\.[^.]*\z/, '')
         rescue LocalJumpError
           raise "Tried to render a layout (calls yield) at #{path} like it was a template. Non-default layouts need to be in #{@app.config[:source]}/#{@app.config[:layouts_dir]}."
         end
       end
-
-      @dependencies = deps.empty? ? nil : deps
 
       content
     end
