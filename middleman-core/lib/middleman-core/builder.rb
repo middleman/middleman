@@ -36,7 +36,13 @@ module Middleman
       @glob = options_hash.fetch(:glob)
       @parallel = options_hash.fetch(:parallel, true)
       @only_changed = options_hash.fetch(:only_changed, false)
+      @track_dependencies = @only_changed || options_hash.fetch(:track_dependencies, false)
       @cleaning = !@only_changed && options_hash.fetch(:clean)
+
+      # TODO: Can middleware actually mark binary files as deps?
+      if @track_dependencies && @app.extensions.active?(:asset_hash)
+        raise "The `track-dependencies` flag is not compatible with the `asset_hash` extension at this time."
+      end
 
       @callbacks = ::Middleman::CallbackManager.new
       @callbacks.install_methods!(self, [:on_build_event])
@@ -49,7 +55,25 @@ module Middleman
       @has_error = false
       @events = {}
 
-      @graph = ::Middleman::Dependencies.load_and_deserialize
+      if @track_dependencies
+        begin
+          @graph = ::Middleman::Dependencies.load_and_deserialize(@app)
+        rescue ::Middleman::Dependencies::InvalidDepsYAML
+          @app.logger.error "dep.yml was corrupt. Dependency graph must be rebuilt."
+          @graph = ::Middleman::Dependencies::Graph.new
+          @only_changed = false
+        rescue ::Middleman::Dependencies::InvalidatedRubyFiles => e
+          changed = e.invalidated.map { |f| f[:file] }.join(', ')
+          @app.logger.error "Some ruby files (#{changed}) have changed since last run. Dependency graph must be rebuilt."
+
+          @graph = ::Middleman::Dependencies::Graph.new
+          @only_changed = false
+        end
+      end
+
+      if @only_changed
+        @invalidated_files = @graph.invalidated
+      end
 
       ::Middleman::Util.instrument 'builder.before' do
         @app.execute_callbacks(:before_build, [self])
@@ -60,25 +84,29 @@ module Middleman
       end
 
       ::Middleman::Util.instrument 'builder.prerender' do
-        prerender_css.each do |r|
-          dependency = r[1]
-          @graph.add_dependency(dependency) unless dependency.nil?
+        prerender_css.tap do |resources| 
+          resources.each do |r|
+            dependency = r[1]
+            @graph.add_dependency(dependency) unless dependency.nil?
+          end if @track_dependencies
         end
       end
 
       ::Middleman::Profiling.start
 
       ::Middleman::Util.instrument 'builder.output' do
-        output_files.each do |r|
-          dependency = r[1]
-          @graph.add_dependency(dependency) unless dependency.nil?
+        output_files.tap do |resources| 
+          resources.each do |r|
+            dependency = r[1]
+            @graph.add_dependency(dependency) unless dependency.nil?
+          end if @track_dependencies
         end
       end
 
       ::Middleman::Profiling.report('build')
 
       unless @has_error
-        ::Middleman::Dependencies.serialize_and_save(@graph)
+        ::Middleman::Dependencies.serialize_and_save(@app, @graph) if @track_dependencies
 
         ::Middleman::Util.instrument 'builder.clean' do
           clean! if @cleaning
@@ -100,11 +128,9 @@ module Middleman
 
       resources = @app.sitemap.by_extension('.css').to_a
 
-      if @only_changed
-        invalidated_files = @graph.invalidated
-
+      if @track_dependencies && @only_changed
         resources = resources.select do |resource|
-          resource.template? && invalidated_files.include?(resource.file_descriptor[:full_path].to_s)
+          resource.template? && @invalidated_files.include?(resource.file_descriptor[:full_path].to_s)
         end
       end
 
@@ -134,11 +160,9 @@ module Middleman
       resources = non_css_resources
                   .sort_by { |resource| SORT_ORDER.index(resource.ext) || 100 }
 
-      if @only_changed
-        invalidated_files = Set.new(@graph.invalidated)
-
+      if @track_dependencies && @only_changed
         resources = resources.select do |resource|
-          resource.template? && invalidated_files.include?(resource.file_descriptor[:full_path].to_s)
+          resource.template? && @invalidated_files.include?(resource.file_descriptor[:full_path].to_s)
         end
       elsif @glob
         resources = resources.select do |resource|

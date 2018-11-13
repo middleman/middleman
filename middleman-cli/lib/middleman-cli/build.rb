@@ -36,6 +36,10 @@ module Middleman::Cli
                  type: :boolean,
                  default: false,
                  desc: 'Generate profiling report for the build'
+    class_option :track_dependencies,
+                type: :boolean,
+                default: false,
+                desc: 'Track file dependencies'
     class_option :only_changed,
                 type: :boolean,
                 default: false,
@@ -76,7 +80,8 @@ module Middleman::Cli
                                          glob: options['glob'],
                                          clean: options['clean'],
                                          parallel: options['parallel'],
-                                         only_changed: options['only_changed'])
+                                         only_changed: options['only_changed'],
+                                         track_dependencies: options['track_dependencies'])
         builder.thor = self
         builder.on_build_event(&method(:on_event))
       end

@@ -1,5 +1,6 @@
 require 'middleman-core/contracts'
 require 'set'
+require 'pathname'
 require 'yaml'
 
 module Middleman
@@ -33,7 +34,7 @@ module Middleman
       attr_reader :hashes
 
       Contract HashOf[String, SetOf[String]]
-      attr_reader :dependency_map
+      attr_accessor :dependency_map
 
       def initialize(hashes = {})
         @hashes = hashes
@@ -42,6 +43,9 @@ module Middleman
       
       Contract Dependency => Any
       def add_dependency(file)
+        @dependency_map[file.file] ||= Set.new
+        @dependency_map[file.file] << file.file
+        
         return if file.depends_on.nil?
 
         file.depends_on.each do |dep|
@@ -53,7 +57,13 @@ module Middleman
 
       def invalidated
         invalidated_files = @dependency_map.keys.select do |file|
-          !@hashes.key?(file) || hashes[file] != ::Digest::SHA1.file(file).hexdigest
+          if !@hashes.key?(file)
+            true
+          elsif hashes[file] != ::Digest::SHA1.file(file).hexdigest
+            true
+          else
+            false
+          end
         end
 
         invalidated_files.reduce(Set.new) do |sum, file|
@@ -67,25 +77,50 @@ module Middleman
 
     module_function
 
-    Contract Graph => String
-    def serialize(graph)
-      deps = graph.dependency_map.reduce([]) do |sum, (file, depends_on)|
+    Contract ArrayOf[String]
+    def get_ruby_files
+      Dir["**/*.rb", "Gemfile.lock"]
+    end
+
+    Contract IsA["::Middleman::Application"], String => String
+    def relativize(app, file)
+      Pathname(File.expand_path(file)).relative_path_from(app.root_path).to_s
+    end
+
+    Contract IsA["::Middleman::Application"], String => String
+    def fullize(app, file)
+      File.expand_path(file, app.root_path)
+    end
+
+    Contract IsA["::Middleman::Application"], Graph => String
+    def serialize(app, graph)
+      ruby_files = get_ruby_files.reduce([]) do |sum, file|
         sum << {
-          file: file,
-          hash: ::Digest::SHA1.file(file).hexdigest, # [0..7]
-          depends_on: depends_on.delete(file).to_a.sort
+          file: relativize(app, file),
+          hash: ::Digest::SHA1.file(file).hexdigest # [0..7]
         }
       end
 
-      ::YAML.dump(deps.sort_by { |d| d[:file] })
+      source_files = graph.dependency_map.reduce([]) do |sum, (file, depended_on_by)|
+        sum << {
+          file: relativize(app, file),
+          hash: ::Digest::SHA1.file(file).hexdigest, # [0..7]
+          depended_on_by: depended_on_by.delete(file).to_a.sort.map { |p| relativize(app, p) }
+        }
+      end
+
+      ::YAML.dump({
+        ruby_files: ruby_files.sort_by { |d| d[:file] },
+        source_files: source_files.sort_by { |d| d[:file] }
+      })
     end
 
     DEFAULT_FILE_PATH = 'deps.yml'
 
-    Contract Graph, Maybe[String] => Any
-    def serialize_and_save(graph, file_path = DEFAULT_FILE_PATH)
+    Contract IsA["::Middleman::Application"], Graph, Maybe[String] => Any
+    def serialize_and_save(app, graph, file_path = DEFAULT_FILE_PATH)
       File.open(file_path, 'w') do |file|
-        file.write serialize(graph)
+        file.write serialize(app, graph)
       end
     end
 
@@ -96,27 +131,57 @@ module Middleman
       warn "YAML Exception parsing dependency graph: #{error.message}"
     end
 
-    Contract Maybe[String] => Graph
-    def load_and_deserialize(file_path = DEFAULT_FILE_PATH)
+    Contract ArrayOf[String]
+    def invalidated_ruby_files(known_files)
+      known_files.select do |file|
+        file[:hash] != ::Digest::SHA1.file(file[:file]).hexdigest
+      end
+    end
+
+    class InvalidDepsYAML < Exception
+    end
+    
+    class InvalidatedRubyFiles < Exception
+      attr_reader :invalidated
+
+      def initialize(invalidated)
+        super()
+
+        @invalidated = invalidated
+      end
+    end
+
+    Contract IsA["::Middleman::Application"], Maybe[String] => Graph
+    def load_and_deserialize(app, file_path = DEFAULT_FILE_PATH)
       graph = Graph.new
 
       return Graph.new unless File.exists?(file_path)
 
       data = deserialize(file_path)
 
-      hashes = data.reduce({}) do |sum, row|
+      ruby_files = data[:ruby_files]
+
+      unless (invalidated = invalidated_ruby_files(ruby_files)).empty?
+        raise InvalidatedRubyFiles.new(invalidated)
+      end
+
+      source_files = data[:source_files]
+
+      hashes = source_files.reduce({}) do |sum, row|
         sum[row[:file]] = row[:hash]
         sum
       end
       
       graph = Graph.new(hashes)
-
-      data.each do |row|
-        deps = Set.new(row[:depends_on])
-        graph.add_dependency Dependency.new(row[:file], deps.add(row[:file]))
-      end
       
+      graph.dependency_map = source_files.reduce({}) do |sum, row|        
+        sum[fullize(app, row[:file])] = deps = Set.new(row[:depended_on_by].add(row[:file]).map { |f| fullize(app, f) })
+        sum
+      end
+
       graph
+    rescue
+      raise InvalidDepsYAML.new
     end
   end
 end

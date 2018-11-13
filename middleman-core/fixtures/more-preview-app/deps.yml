@@ -1,21 +1,21 @@
 ---
-- :file: "/Users/thomasreynolds/Sites/middleman/middleman-core/fixtures/more-preview-app/source/stylesheets/_below_partial.sass"
+:ruby_files:
+- :file: config.rb
+  :hash: da39a3ee5e6b4b0d3255bfef95601890afd80709
+:source_files:
+- :file: source/stylesheets/_below_partial.sass
   :hash: 43168b296719bef86e33aeb5b4454df35da8edf9
-  :depends_on:
-  - "/Users/thomasreynolds/Sites/middleman/middleman-core/fixtures/more-preview-app/source/stylesheets/also_needs_partial.css.scss"
-  - "/Users/thomasreynolds/Sites/middleman/middleman-core/fixtures/more-preview-app/source/stylesheets/main.css.sass"
-- :file: "/Users/thomasreynolds/Sites/middleman/middleman-core/fixtures/more-preview-app/source/stylesheets/_partial.sass"
+  :depended_on_by:
+  - source/stylesheets/also_needs_partial.css.scss
+  - source/stylesheets/main.css.sass
+- :file: source/stylesheets/_partial.sass
   :hash: 5a28d31a617815e4572e18bda35cde0f1db13e62
-  :depends_on:
-  - "/Users/thomasreynolds/Sites/middleman/middleman-core/fixtures/more-preview-app/source/stylesheets/also_needs_partial.css.scss"
-  - "/Users/thomasreynolds/Sites/middleman/middleman-core/fixtures/more-preview-app/source/stylesheets/main.css.sass"
-- :file: "/Users/thomasreynolds/Sites/middleman/middleman-core/fixtures/more-preview-app/source/stylesheets/also_needs_partial.css.scss"
+  :depended_on_by:
+  - source/stylesheets/also_needs_partial.css.scss
+  - source/stylesheets/main.css.sass
+- :file: source/stylesheets/also_needs_partial.css.scss
   :hash: 6563c6f9b5894cdf2537fa40a2a0a04b4651a96c
-  :depends_on:
-  - "/Users/thomasreynolds/Sites/middleman/middleman-core/fixtures/more-preview-app/source/stylesheets/_below_partial.sass"
-  - "/Users/thomasreynolds/Sites/middleman/middleman-core/fixtures/more-preview-app/source/stylesheets/_partial.sass"
-- :file: "/Users/thomasreynolds/Sites/middleman/middleman-core/fixtures/more-preview-app/source/stylesheets/main.css.sass"
+  :depended_on_by: []
+- :file: source/stylesheets/main.css.sass
   :hash: fc5c96624312669fcf1ce5eaa4e5e5a7d38923f3
-  :depends_on:
-  - "/Users/thomasreynolds/Sites/middleman/middleman-core/fixtures/more-preview-app/source/stylesheets/_below_partial.sass"
-  - "/Users/thomasreynolds/Sites/middleman/middleman-core/fixtures/more-preview-app/source/stylesheets/_partial.sass"
+  :depended_on_by: []
