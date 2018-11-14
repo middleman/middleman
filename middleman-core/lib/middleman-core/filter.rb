@@ -47,7 +47,8 @@ module Middleman
 
     Contract String => [String, Maybe[SetOf[String]]]
     def execute_filter(body)
-      @callable.call(body)
+      result = @callable.call(body)
+      result.is_a?(Array) ? result : [result, nil]
     end
   end
 end
