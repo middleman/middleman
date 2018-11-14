@@ -22,6 +22,9 @@ module Middleman
     # Required for Padrino's rendering
     attr_accessor :current_engine
 
+    Contract Maybe[SetOf[String]]
+    attr_reader :dependencies
+
     # Shorthand references to global values on the app instance.
     def_delegators :@app, :config, :logger, :sitemap, :server?, :build?, :environment?, :environment, :data, :extensions, :root, :development?, :production?
 
@@ -34,6 +37,8 @@ module Middleman
       @app = app
       @locs = locs
       @opts = options_hash
+
+      @dependencies = Set.new
     end
 
     # Return the current buffer to the caller and clear the value internally.
@@ -86,6 +91,8 @@ module Middleman
         restore_buffer(buf_was)
       end
 
+      @dependencies << layout_file[:full_path].to_s
+
       # Render the layout, with the contents of the block inside.
       concat_safe_content render_file(layout_file, @locs, @opts) { content }
     ensure
@@ -111,14 +118,18 @@ module Middleman
       source_path = sitemap.file_to_path(partial_file)
       r = sitemap.by_path(source_path)
 
-      if (r && !r.template?) || (Tilt[partial_file[:full_path]].nil? && partial_file[:full_path].exist?)
-        partial_file.read
-      else
-        opts = options_hash.dup
-        locs = opts.delete(:locals)
+      @dependencies << partial_file[:full_path].to_s
 
-        render_file(partial_file, locs, opts, &block)
-      end
+      result = if (r && !r.template?) || (Tilt[partial_file[:full_path]].nil? && partial_file[:full_path].exist?)
+                 partial_file.read
+               else
+                 opts = options_hash.dup
+                 locs = opts.delete(:locals)
+
+                 render_file(partial_file, locs, opts, &block)
+               end
+
+      result
     end
 
     # Locate a partial relative to the current path or the source dir, given a partial's path.
@@ -207,6 +218,7 @@ module Middleman
 
           content_renderer = ::Middleman::FileRenderer.new(@app, path)
           content = content_renderer.render(locs, opts, context, &block)
+          @dependencies |= content_renderer.dependencies unless content_renderer.dependencies.nil?
 
           path = File.basename(path, File.extname(path))
         rescue LocalJumpError

@@ -154,7 +154,7 @@ module Middleman
       output_resources(resources.to_a)
     end
 
-    Contract OldResourceList => ArrayOf[[Pathname, Maybe[::Middleman::Dependencies::Dependency]]]
+    Contract OldResourceList => ArrayOf[Or[Bool, [Pathname, Maybe[::Middleman::Dependencies::Dependency]]]]
     def output_resources(resources)
       res_count = resources.count
 
@@ -191,7 +191,9 @@ module Middleman
                   resources.map(&method(:output_resource))
                 end
 
-      @has_error = true if results.any? { |r| r[0] == false }
+      without_errors = results.reject { |r| r == false }
+
+      @has_error = results.size > without_errors.size
 
       if @cleaning && !@has_error
         results.each do |r|
@@ -209,7 +211,7 @@ module Middleman
         end
       end
 
-      results
+      without_errors
     end
 
     # Figure out the correct event mode.

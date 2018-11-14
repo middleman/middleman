@@ -182,6 +182,7 @@ module Middleman
                   end
       end
 
+      @dependencies |= context.dependencies unless context.dependencies.nil?
       @dependencies = @dependencies.empty? ? nil : @dependencies
 
       # Return result
