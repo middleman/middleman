@@ -36,7 +36,8 @@ module Middleman
       @glob = options_hash.fetch(:glob)
       @parallel = options_hash.fetch(:parallel, true)
       @only_changed = options_hash.fetch(:only_changed, false)
-      @track_dependencies = @only_changed || options_hash.fetch(:track_dependencies, false)
+      @missing_and_changed = !@only_changed && options_hash.fetch(:missing_and_changed, false)
+      @track_dependencies = @only_changed || @missing_and_changed || options_hash.fetch(:track_dependencies, false)
       @cleaning = options_hash.fetch(:clean)
 
       @callbacks = ::Middleman::CallbackManager.new
@@ -56,17 +57,17 @@ module Middleman
         rescue ::Middleman::Dependencies::InvalidDepsYAML
           logger.error 'dep.yml was corrupt. Dependency graph must be rebuilt.'
           @graph = ::Middleman::Dependencies::Graph.new
-          @only_changed = false
+          @only_changed = @missing_and_changed = false
         rescue ::Middleman::Dependencies::InvalidatedRubyFiles => e
           changed = e.invalidated.map { |f| f[:file] }.join(', ')
           logger.error "Some ruby files (#{changed}) have changed since last run. Dependency graph must be rebuilt."
 
           @graph = ::Middleman::Dependencies::Graph.new
-          @only_changed = false
+          @only_changed = @missing_and_changed = false
         end
       end
 
-      @invalidated_files = @graph.invalidated if @only_changed
+      @invalidated_files = @graph.invalidated if @only_changed || @missing_and_changed
 
       ::Middleman::Util.instrument 'builder.before' do
         @app.execute_callbacks(:before_build, [self])
@@ -283,10 +284,13 @@ module Middleman
         begin
           output_file = @build_dir + resource.destination_path.gsub('%20', ' ')
 
-          if @track_dependencies && @only_changed
+          if @track_dependencies && (@only_changed || @missing_and_changed)
             path = resource.file_descriptor[:full_path].to_s
 
-            if File.exist?(output_file) && !resource.binary? && @graph.exists?(path) && !@invalidated_files.include?(path)
+            if @only_changed && !@invalidated_files.include?(path)
+              trigger(:skipped, output_file)
+              return [output_file, nil]
+            elsif @missing_and_changed && File.exist?(output_file) && !@invalidated_files.include?(path)
               trigger(:skipped, output_file)
               return [output_file, nil]
             end

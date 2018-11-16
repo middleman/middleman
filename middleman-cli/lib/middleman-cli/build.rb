@@ -44,6 +44,10 @@ module Middleman::Cli
                  type: :boolean,
                  default: false,
                  desc: 'Only build changed files'
+    class_option :missing_and_changed,
+                 type: :boolean,
+                 default: false,
+                 desc: 'Only build changed files or files missing from build folder'
 
     Middleman::Cli.import_config(self)
 
@@ -81,6 +85,7 @@ module Middleman::Cli
                                          clean: options['clean'],
                                          parallel: options['parallel'],
                                          only_changed: options['only_changed'],
+                                         missing_and_changed: options['missing_and_changed'],
                                          track_dependencies: options['track_dependencies'])
         builder.thor = self
         builder.on_build_event(&method(:on_event))
