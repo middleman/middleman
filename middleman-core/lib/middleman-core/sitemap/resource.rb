@@ -4,7 +4,7 @@ require 'middleman-core/file_renderer'
 require 'middleman-core/template_renderer'
 require 'middleman-core/contracts'
 require 'set'
-require 'middleman-core/inline_url_rewriter'
+require 'middleman-core/inline_url_filter'
 
 module Middleman
   # Sitemap namespace
@@ -37,6 +37,9 @@ module Middleman
       Contract Num
       attr_reader :priority
 
+      Contract Maybe[SetOf[String]]
+      attr_reader :dependencies
+
       # Initialize resource with parent store and URL
       # @param [Middleman::Sitemap::Store] store
       # @param [String] path
@@ -49,6 +52,7 @@ module Middleman
         @ignored  = false
         @filters  = ::Hamster::SortedSet.empty
         @priority = priority
+        @dependencies = Set.new
 
         source = Pathname(source) if source&.is_a?(String)
 
@@ -169,6 +173,8 @@ module Middleman
       # @return [String]
       Contract Hash, Hash, Maybe[Proc] => String
       def render(options_hash = ::Middleman::EMPTY_HASH, locs = ::Middleman::EMPTY_HASH, &_block)
+        @dependencies = Set.new
+
         body = render_without_filters(options_hash, locs)
 
         return body if @filters.empty?
@@ -177,7 +183,9 @@ module Middleman
           if block_given? && !yield(filter)
             output
           elsif filter.is_a?(Filter)
-            filter.execute_filter(output)
+            result = filter.execute_filter(output)
+            @dependencies |= result[1] unless result[1].nil?
+            result[0]
           else
             output
           end
@@ -208,7 +216,9 @@ module Middleman
         locs[:current_path] ||= destination_path
 
         renderer = ::Middleman::TemplateRenderer.new(@app, file_descriptor[:full_path].to_s)
-        renderer.render(locs, opts).to_str
+        renderer.render(locs, opts).to_str.tap do
+          @dependencies |= renderer.dependencies unless renderer.dependencies.nil?
+        end
       end
 
       # A path without the directory index - so foo/index.html becomes

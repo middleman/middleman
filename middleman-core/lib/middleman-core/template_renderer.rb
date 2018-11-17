@@ -1,4 +1,5 @@
 require 'tilt'
+require 'set'
 require 'active_support/core_ext/string/output_safety'
 require 'middleman-core/template_context'
 require 'middleman-core/file_renderer'
@@ -98,9 +99,13 @@ module Middleman
     # Custom error class for handling
     class TemplateNotFound < RuntimeError; end
 
+    Contract Maybe[SetOf[String]]
+    attr_reader :dependencies
+
     def initialize(app, path)
       @app = app
       @path = path
+      @dependencies = nil
     end
 
     # Render a template, with layout, given a path
@@ -167,12 +172,18 @@ module Middleman
                     layout_renderer = ::Middleman::FileRenderer.new(@app, layout_file[:relative_path].to_s)
 
                     ::Middleman::Util.instrument 'builder.output.resource.render-layout', path: File.basename(layout_file[:relative_path].to_s) do
-                      layout_renderer.render(locals, options, context) { content }
+                      layout_renderer.render(locals, options, context) { content }.tap do
+                        @dependencies << layout_file[:full_path].to_s
+                        @dependencies |= layout_renderer.dependencies unless layout_renderer.dependencies.nil?
+                      end
                     end
                   else
                     content
                   end
       end
+
+      @dependencies |= context.dependencies unless context.dependencies.nil?
+      @dependencies = @dependencies.empty? ? nil : @dependencies
 
       # Return result
       content
@@ -189,12 +200,15 @@ module Middleman
       # handles cases like `style.css.sass.erb`
       content = nil
 
+      @dependencies = Set.new
+
       while ::Middleman::Util.tilt_class(path)
         begin
           opts[:template_body] = content if content
 
           content_renderer = ::Middleman::FileRenderer.new(@app, path)
           content = content_renderer.render(locs, opts, context, &block)
+          @dependencies |= content_renderer.dependencies unless content_renderer.dependencies.nil?
 
           path = path.sub(/\.[^.]*\z/, '')
         rescue LocalJumpError

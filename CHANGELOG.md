@@ -1,6 +1,7 @@
 master
 ===
 
+* Incremental builds: `--track-dependencies` and `--only-changed` flags (#2220)
 * Remove Rack support in favor of `resource.filters << proc { |oldbody| newbody }`
 * `manipulate_resource_list_container!` as a faster, less functional approach.
 

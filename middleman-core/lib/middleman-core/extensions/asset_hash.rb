@@ -1,7 +1,7 @@
 require 'middleman-core/util'
 
 class Middleman::Extensions::AssetHash < ::Middleman::Extension
-  option :sources, %w[.css .htm .html .js .php .xhtml], 'List of extensions that are searched for hashable assets.'
+  option :sources, %w[.css .htm .html .js .json .php .xhtml], 'List of extensions that are searched for hashable assets.'
   option :exts, nil, 'List of extensions that get asset hashes appended to them.'
   option :ignore, [], 'Regexes of filenames to skip adding asset hashes to'
   option :rewrite_ignore, [], 'Regexes of filenames to skip processing for path rewrites'
@@ -54,6 +54,7 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
       r.add_filter ::Middleman::InlineURLRewriter.new(:asset_hash,
                                                       app,
                                                       r,
+                                                      create_dependencies: true,
                                                       url_extensions: @set_of_exts,
                                                       ignore: options.ignore,
                                                       proc: method(:rewrite_url))

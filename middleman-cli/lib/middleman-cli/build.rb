@@ -36,6 +36,18 @@ module Middleman::Cli
                  type: :boolean,
                  default: false,
                  desc: 'Generate profiling report for the build'
+    class_option :track_dependencies,
+                 type: :boolean,
+                 default: false,
+                 desc: 'Track file dependencies'
+    class_option :only_changed,
+                 type: :boolean,
+                 default: false,
+                 desc: 'Only build changed files'
+    class_option :missing_and_changed,
+                 type: :boolean,
+                 default: false,
+                 desc: 'Only build changed files or files missing from build folder'
 
     Middleman::Cli.import_config(self)
 
@@ -71,7 +83,10 @@ module Middleman::Cli
         builder = Middleman::Builder.new(@app,
                                          glob: options['glob'],
                                          clean: options['clean'],
-                                         parallel: options['parallel'])
+                                         parallel: options['parallel'],
+                                         only_changed: options['only_changed'],
+                                         missing_and_changed: options['missing_and_changed'],
+                                         track_dependencies: options['track_dependencies'])
         builder.thor = self
         builder.on_build_event(&method(:on_event))
       end
@@ -108,6 +123,8 @@ module Middleman::Cli
         say_status :create, target, :green
       when :identical
         say_status :identical, target, :blue
+      when :skipped
+        say_status :skipped, target, :blue
       when :updated
         say_status :updated, target, :yellow
       else

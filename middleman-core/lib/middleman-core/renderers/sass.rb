@@ -1,3 +1,4 @@
+require 'set'
 require 'sass'
 
 begin
@@ -72,6 +73,11 @@ module Middleman
           rescue sass_module::SyntaxError => e
             ::Sass::SyntaxError.exception_to_css(e)
           end
+        end
+
+        def dependencies
+          files = @engine.dependencies.map(&:filename)
+          files.empty? ? nil : Set.new(files)
         end
 
         # Change Sass path, for url functions, to the build folder if we're building

@@ -237,8 +237,6 @@ module Middleman
                                       :after_build,
                                       :before_shutdown,
                                       :before, # Before Rack requests
-                                      :before_render,
-                                      :after_render,
                                       :before_server,
                                       :reload
                                     ])
