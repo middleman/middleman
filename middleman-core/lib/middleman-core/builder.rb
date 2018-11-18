@@ -264,7 +264,7 @@ module Middleman
 
         mode = which_mode(output_file, source_path, binary)
 
-        if mode == :created
+        if mode == :created || mode == :updated
           ::FileUtils.mkdir_p(output_file.dirname)
           method.call(source_path, output_file.to_s)
         end
