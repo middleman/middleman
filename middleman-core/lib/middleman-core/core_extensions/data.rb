@@ -19,14 +19,16 @@ module Middleman
       # The regex which tells Middleman which files are for data
       DATA_FILE_MATCHER = /^(.*?)[\w-]+\.(yml|yaml|json)$/.freeze
 
+      Contract IsA['::Middleman::Application'], Hash => Any
       def initialize(app, options_hash = ::Middleman::EMPTY_HASH, &block)
         super
 
-        @data_store = DataStore.new(app, DATA_FILE_MATCHER)
+        @data_store = DataStoreController.new(app)
 
         start_watching(app.config[:data_dir])
       end
 
+      Contract String => Any
       def start_watching(dir)
         @original_data_dir = dir
 
@@ -40,48 +42,52 @@ module Middleman
         app.files.on_change(:data, &@data_store.method(:update_files))
       end
 
+      Contract Any
       def after_configuration
         return unless @original_data_dir != app.config[:data_dir]
 
         @watcher.update_path(app.config[:data_dir])
       end
 
-      # The core logic behind the data extension.
-      class DataStore
+      class BaseDataStore
         include Contracts
 
-        # Setup data store
-        #
-        # @param [Middleman::Application] app The current instance of Middleman
-        def initialize(app, data_file_matcher)
+        Contract Symbol => Bool
+        def key?(_k)
+          raise NotImplementedError
+        end
+
+        Contract Symbol => Or[Array, Hash]
+        def [](_k)
+          raise NotImplementedError
+        end
+
+        Contract ArrayOf[Symbol]
+        def keys
+          raise NotImplementedError
+        end
+
+        Contract Hash
+        def to_h
+          keys.each_with_object({}) do |k, sum|
+            sum[k] = self[k]
+          end
+        end
+      end
+
+      # JSON and YAML files in the data/ directory
+      class LocalFileDataStore < BaseDataStore
+        extend Forwardable
+        include Contracts
+
+        def_delegators :@local_data, :keys, :key?, :[]
+
+        # Contract IsA['::Middleman::Application'] => Any
+        def initialize(app)
+          super()
+
           @app = app
-          @data_file_matcher = data_file_matcher
           @local_data = {}
-          @local_data_enhanced = nil
-          @local_sources = {}
-          @callback_sources = {}
-        end
-
-        # Store static data hash
-        #
-        # @param [Symbol] name Name of the data, used for namespacing
-        # @param [Hash] content The content for this data
-        # @return [Hash]
-        Contract Symbol, Or[Hash, Array] => Hash
-        def store(name = nil, content = nil)
-          @local_sources[name.to_s] = content unless name.nil? || content.nil?
-          @local_sources
-        end
-
-        # Store callback-based data
-        #
-        # @param [Symbol] name Name of the data, used for namespacing
-        # @param [Proc] proc The callback which will return data
-        # @return [Hash]
-        Contract Maybe[Symbol], Maybe[Proc] => Hash
-        def callbacks(name = nil, proc = nil)
-          @callback_sources[name.to_s] = proc unless name.nil? || proc.nil?
-          @callback_sources
         end
 
         Contract ArrayOf[IsA['Middleman::SourceFile']], ArrayOf[IsA['Middleman::SourceFile']] => Any
@@ -91,6 +97,10 @@ module Middleman
 
           @app.sitemap.rebuild_resource_list!(:touched_data_file)
         end
+
+        YAML_EXTS = Set.new %w[.yaml .yml]
+        JSON_EXTS = Set.new %w[.json]
+        ALL_EXTS = YAML_EXTS | JSON_EXTS
 
         # Update the internal cache for a given file path
         #
@@ -102,12 +112,12 @@ module Middleman
           extension = File.extname(data_path)
           basename  = File.basename(data_path, extension)
 
-          return unless %w[.yaml .yml .json].include?(extension)
+          return unless ALL_EXTS.include?(extension)
 
-          if %w[.yaml .yml].include?(extension)
+          if YAML_EXTS.include?(extension)
             data, postscript = ::Middleman::Util::Data.parse(file, @app.config[:frontmatter_delims], :yaml)
             data[:postscript] = postscript if !postscript.nil? && data.is_a?(Hash)
-          elsif extension == '.json'
+          elsif JSON_EXTS.include?(extension)
             data, _postscript = ::Middleman::Util::Data.parse(file, @app.config[:frontmatter_delims], :json)
           end
 
@@ -115,13 +125,11 @@ module Middleman
 
           path = data_path.to_s.split(File::SEPARATOR)[0..-2]
           path.each do |dir|
-            data_branch[dir] ||= {}
-            data_branch = data_branch[dir]
+            data_branch[dir.to_sym] ||= {}
+            data_branch = data_branch[dir.to_sym]
           end
 
-          data_branch[basename] = data
-
-          @local_data_enhanced = nil
+          data_branch[basename.to_sym] = data
         end
 
         # Remove a given file from the internal cache
@@ -138,42 +146,122 @@ module Middleman
 
           path = data_path.to_s.split(File::SEPARATOR)[0..-2]
           path.each do |dir|
-            data_branch = data_branch[dir]
+            data_branch = data_branch[dir.to_sym]
           end
 
-          data_branch.delete(basename) if data_branch.key?(basename)
+          data_branch.delete(basename.to_sym) if data_branch.key?(basename.to_sym)
+        end
+      end
 
-          @local_data_enhanced = nil
+      # Arbitrary callbacks, can be used for remote data
+      class CallbackDataStore < BaseDataStore
+        extend Forwardable
+        include Contracts
+
+        def_delegators :@sources, :key?, :keys
+
+        Contract Any
+        def initialize
+          super()
+
+          @sources = {}
         end
 
-        # Get a hash from either internal static data or a callback
-        #
-        # @param [String, Symbol] path The name of the data namespace
-        # @return [Hash, nil]
-        Contract Or[String, Symbol] => Maybe[Or[Array, IsA['Middleman::Util::EnhancedHash']]]
-        def data_for_path(path)
-          response = if store.key?(path.to_s)
-                       store[path.to_s]
-                     elsif callbacks.key?(path.to_s)
-                       callbacks[path.to_s].call
-                     end
+        # Store callback-based data
+        Contract Symbol, Proc => Any
+        def callbacks(name, callback)
+          @sources[name] = callback
+        end
 
-          ::Middleman::Util.recursively_enhance(response)
+        def [](k)
+          return unless key?(k)
+
+          @sources[k].call
+        end
+      end
+
+      # Static data, passed in via config.rb
+      class StaticDataStore < BaseDataStore
+        extend Forwardable
+        include Contracts
+
+        def_delegators :@sources, :key?, :keys, :[]
+
+        Contract Any
+        def initialize
+          super()
+
+          @sources = {}
+        end
+
+        # Store static data hash
+        #
+        # @param [Symbol] name Name of the data, used for namespacing
+        # @param [Hash] content The content for this data
+        # @return [Hash]
+        Contract Symbol, Or[Hash, Array] => Any
+        def store(name, content)
+          @sources[name] = content
+        end
+      end
+
+      # The core logic behind the data extension.
+      class DataStoreController
+        extend Forwardable
+
+        def_delegator :@local_file_data_store, :update_files
+        def_delegator :@static_data_store, :store
+        def_delegator :@callback_data_store, :callbacks
+
+        def initialize(app)
+          @local_file_data_store = LocalFileDataStore.new(app)
+          @static_data_store = StaticDataStore.new
+          @callback_data_store = CallbackDataStore.new
+
+          # Sorted in order of access precedence.
+          @data_stores = [
+            @local_file_data_store,
+            @static_data_store,
+            @callback_data_store
+          ]
+
+          @enhanced_cache = {}
+        end
+
+        def key?(k)
+          @data_stores.any? { |s| s.key?(k) }
+        end
+        alias has_key? key?
+
+        def key(k)
+          source = @data_stores.find { |s| s.key?(k) }
+          source[k] unless source.nil?
+        end
+
+        def enhanced_key(k)
+          value = key(k)
+
+          if @enhanced_cache.key?(k)
+            cached_id, cached_value = @enhanced_cache[k]
+
+            return cached_value if cached_id == value.object_id
+
+            @enhanced_cache.delete(k)
+          end
+
+          enhanced = ::Middleman::Util.recursively_enhance(value)
+
+          @enhanced_cache[k] = [value.object_id, enhanced]
+
+          enhanced
         end
 
         # "Magically" find namespaces of data if they exist
         #
         # @param [String] path The namespace to search for
         # @return [Hash, nil]
-        def method_missing(path)
-          if @local_data.key?(path.to_s)
-            # Any way to cache this?
-            @local_data_enhanced ||= ::Middleman::Util.recursively_enhance(@local_data)
-            return @local_data_enhanced[path.to_s]
-          else
-            result = data_for_path(path)
-            return result if result
-          end
+        def method_missing(method)
+          return enhanced_key(method) if key?(method)
 
           super
         end
@@ -183,42 +271,13 @@ module Middleman
           super || key?(method)
         end
 
-        # Make DataStore act like a hash. Return requested data, or
-        # nil if data does not exist
-        #
-        # @param [String, Symbol] key The name of the data namespace
-        # @return [Hash, nil]
-        def [](key)
-          __send__(key) if key?(key)
-        end
-
-        def key?(key)
-          string_key = key.to_s
-          @local_data.key?(string_key) || @local_sources.key?(string_key) || @callback_sources.key?(string_key)
-        end
-
-        alias has_key? key?
-
         # Convert all the data into a static hash
         #
         # @return [Hash]
-        Contract Hash
         def to_h
-          data = {}
-
-          store.each_key do |k|
-            data[k] = data_for_path(k)
+          @data_stores.reduce({}) do |sum, store|
+            sum.merge(store.to_h)
           end
-
-          callbacks.each_key do |k|
-            data[k] = data_for_path(k)
-          end
-
-          (@local_data || {}).each do |k, v|
-            data[k] = v
-          end
-
-          data
         end
       end
     end
