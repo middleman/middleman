@@ -24,7 +24,7 @@ module Middleman
     # @private
     # @param [Hash] data Normal hash
     # @return [Hash]
-    Contract Any => Maybe[Or[Array, EnhancedHash]]
+    Contract Hash => IsA['::Middleman::Util::EnhancedHash']
     def recursively_enhance(obj)
       if obj.is_a? ::Array
         obj.map { |e| recursively_enhance(e) }

@@ -16,7 +16,7 @@ end
 # to dynamic requests.
 Middleman::Extensions.register :data, auto_activate: :before_sitemap do
   require 'middleman-core/core_extensions/data'
-  Middleman::CoreExtensions::Data
+  Middleman::CoreExtensions::Data::DataExtension
 end
 
 # Catch and show exceptions at the Rack level

@@ -137,7 +137,7 @@ module Middleman
 
       # Data about this resource, populated from frontmatter or extensions.
       # @return [Hash]
-      Contract RespondTo[:indifferent_access?]
+      Contract IsA['::Middleman::Util::EnhancedHash']
       def data
         @page_data ||= ::Middleman::Util.recursively_enhance(page)
       end
