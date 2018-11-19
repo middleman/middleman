@@ -39,6 +39,12 @@ module Middleman
           source[k] unless source.nil?
         end
 
+        def dependencies_for_key(k)
+          @data_stores.reduce(Set.new) do |sum, s|
+            sum | s.dependencies_for_key(k)
+          end
+        end
+
         def enhanced_key(k)
           value = key(k)
 

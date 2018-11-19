@@ -1,3 +1,4 @@
+require 'set'
 require 'middleman-core/contracts'
 
 module Middleman
@@ -20,6 +21,11 @@ module Middleman
           Contract ArrayOf[Symbol]
           def keys
             raise NotImplementedError
+          end
+
+          Contract Symbol => SetOf[IsA['::Middleman::Dependencies::BaseDependency']]
+          def dependencies_for_key(_k)
+            Set.new
           end
 
           Contract Hash

@@ -14,8 +14,8 @@ module Middleman
         # Make the internal `data_store` method available as `app.data`
         expose_to_application data: :data_store
 
-        # Exposes `data` to templates
-        expose_to_template data: :data_store
+        # Exposes `internal_data_store` to templates, to be wrapped by `data` in the context
+        expose_to_template internal_data_store: :data_store
 
         # The regex which tells Middleman which files are for data
         DATA_FILE_MATCHER = /^(.*?)[\w-]+\.(yml|yaml|json)$/.freeze

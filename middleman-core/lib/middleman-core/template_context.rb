@@ -7,6 +7,27 @@ require 'middleman-core/dependencies/vertices/vertex'
 require 'middleman-core/dependencies/vertices/file_vertex'
 
 module Middleman
+  class DataProxy
+    def initialize(ctx)
+      @ctx = ctx
+    end
+
+    def method_missing(method, *args, &block)
+      if @ctx.internal_data_store.key?(method)
+        dep_path = @ctx.internal_data_store.dependencies_for_key(method)
+        @ctx.dependencies |= dep_path unless dep_path.nil?
+        return @ctx.internal_data_store.enhanced_key(method)
+      end
+
+      super
+    end
+
+    # Needed so that method_missing makes sense
+    def respond_to?(method, include_private = false)
+      super || @ctx.internal_data_store.key?(method)
+    end
+  end
+
   # The TemplateContext Class
   #
   # A clean context, separate from Application, in which templates can be executed.
@@ -25,11 +46,13 @@ module Middleman
     # Required for Padrino's rendering
     attr_accessor :current_engine
 
+    attr_reader :data
+
     Contract ImmutableSetOf[::Middleman::Dependencies::Vertex]
     attr_reader :vertices
 
     # Shorthand references to global values on the app instance.
-    def_delegators :@app, :config, :logger, :sitemap, :server?, :build?, :environment?, :environment, :data, :extensions, :root, :development?, :production?
+    def_delegators :@app, :config, :logger, :sitemap, :server?, :build?, :environment?, :environment, :extensions, :root, :development?, :production?
 
     # Initialize a context with the current app and predefined locals and options hashes.
     #
@@ -42,6 +65,7 @@ module Middleman
       @opts = options_hash
 
       @vertices = ::Hamster::Set.empty
+      @data = DataProxy.new(self)
     end
 
     # Return the current buffer to the caller and clear the value internally.
