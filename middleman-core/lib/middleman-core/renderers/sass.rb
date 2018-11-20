@@ -1,6 +1,7 @@
-require 'set'
+require 'hamster'
 require 'sass'
 require 'middleman-core/dependencies'
+require 'middleman-core/dependencies/vertices/file_vertex'
 
 begin
   require 'sassc'
@@ -76,12 +77,10 @@ module Middleman
           end
         end
 
-        def dependencies
-          files = @engine.dependencies.map do |d|
-            ::Middleman::Dependencies::FileDependency.new(@context.app.root_path, d.filename)
+        def vertices
+          @engine.dependencies.reduce(::Hamster::Set.empty) do |sum, d|
+            sum << ::Middleman::Dependencies::FileVertex.new(@context.app.root_path, d.filename)
           end
-
-          files.empty? ? nil : Set.new(files)
         end
 
         # Change Sass path, for url functions, to the build folder if we're building

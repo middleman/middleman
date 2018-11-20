@@ -1,7 +1,10 @@
 require 'pathname'
+require 'hamster'
 require 'middleman-core/file_renderer'
 require 'middleman-core/template_renderer'
 require 'middleman-core/contracts'
+require 'middleman-core/dependencies/vertices/vertex'
+require 'middleman-core/dependencies/vertices/file_vertex'
 
 module Middleman
   # The TemplateContext Class
@@ -22,8 +25,8 @@ module Middleman
     # Required for Padrino's rendering
     attr_accessor :current_engine
 
-    Contract Maybe[SetOf[IsA['::Middleman::Dependencies::BaseDependency']]]
-    attr_reader :dependencies
+    Contract ImmutableSetOf[::Middleman::Dependencies::Vertex]
+    attr_reader :vertices
 
     # Shorthand references to global values on the app instance.
     def_delegators :@app, :config, :logger, :sitemap, :server?, :build?, :environment?, :environment, :data, :extensions, :root, :development?, :production?
@@ -38,7 +41,7 @@ module Middleman
       @locs = locs
       @opts = options_hash
 
-      @dependencies = Set.new
+      @vertices = ::Hamster::Set.empty
     end
 
     # Return the current buffer to the caller and clear the value internally.
@@ -91,7 +94,7 @@ module Middleman
         restore_buffer(buf_was)
       end
 
-      @dependencies << ::Middleman::Dependencies::FileDependency.from_source_file(@app, layout_file)
+      @vertices <<= ::Middleman::Dependencies::FileVertex.from_source_file(@app, layout_file)
 
       # Render the layout, with the contents of the block inside.
       concat_safe_content render_file(layout_file, @locs, @opts) { content }
@@ -118,7 +121,7 @@ module Middleman
       source_path = sitemap.file_to_path(partial_file)
       r = sitemap.by_path(source_path)
 
-      @dependencies << ::Middleman::Dependencies::FileDependency.from_source_file(@app, partial_file)
+      @vertices <<= ::Middleman::Dependencies::FileVertex.from_source_file(@app, partial_file)
 
       result = if (r && !r.template?) || (Tilt[partial_file[:full_path]].nil? && partial_file[:full_path].exist?)
                  partial_file.read
@@ -218,7 +221,7 @@ module Middleman
 
           content_renderer = ::Middleman::FileRenderer.new(@app, path)
           content = content_renderer.render(locs, opts, context, &block)
-          @dependencies |= content_renderer.dependencies unless content_renderer.dependencies.nil?
+          @vertices |= content_renderer.vertices
 
           path = File.basename(path, File.extname(path))
         rescue LocalJumpError

@@ -1,10 +1,12 @@
 require 'rack/mime'
+require 'set'
+require 'hamster'
 require 'middleman-core/sitemap/extensions/traversal'
 require 'middleman-core/file_renderer'
 require 'middleman-core/template_renderer'
 require 'middleman-core/contracts'
-require 'set'
 require 'middleman-core/inline_url_filter'
+require 'middleman-core/dependencies/vertices/vertex'
 
 module Middleman
   # Sitemap namespace
@@ -39,8 +41,8 @@ module Middleman
       Contract Num
       attr_reader :priority
 
-      Contract Maybe[SetOf[IsA['::Middleman::Dependencies::BaseDependency']]]
-      attr_reader :dependencies
+      Contract ImmutableSetOf[::Middleman::Dependencies::Vertex]
+      attr_reader :vertices
 
       # Initialize resource with parent store and URL
       # @param [Middleman::Sitemap::Store] store
@@ -54,7 +56,7 @@ module Middleman
         @ignored  = false
         @filters  = ::Hamster::SortedSet.empty
         @priority = priority
-        @dependencies = Set.new
+        @vertices = ::Hamster::Set.empty
 
         source = Pathname(source) if source&.is_a?(String)
 
@@ -175,7 +177,7 @@ module Middleman
       # @return [String]
       Contract Hash, Hash, Maybe[Proc] => String
       def render(options_hash = ::Middleman::EMPTY_HASH, locs = ::Middleman::EMPTY_HASH, &_block)
-        @dependencies = Set.new
+        @vertices = ::Hamster::Set.empty
 
         body = render_without_filters(options_hash, locs)
 
@@ -186,7 +188,7 @@ module Middleman
             output
           elsif filter.is_a?(Filter)
             result = filter.execute_filter(output)
-            @dependencies |= result[1] unless result[1].nil?
+            @vertices |= result[1]
             result[0]
           else
             output
@@ -219,7 +221,7 @@ module Middleman
 
         renderer = ::Middleman::TemplateRenderer.new(@app, file_descriptor[:full_path].to_s)
         renderer.render(locs, opts).to_str.tap do
-          @dependencies |= renderer.dependencies unless renderer.dependencies.nil?
+          @vertices |= renderer.vertices
         end
       end
 

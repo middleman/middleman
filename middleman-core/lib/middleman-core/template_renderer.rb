@@ -1,10 +1,11 @@
 require 'tilt'
-require 'set'
+require 'hamster'
 require 'active_support/core_ext/string/output_safety'
+require 'middleman-core/contracts'
 require 'middleman-core/template_context'
 require 'middleman-core/file_renderer'
-require 'middleman-core/dependencies'
-require 'middleman-core/contracts'
+require 'middleman-core/dependencies/vertices/vertex'
+require 'middleman-core/dependencies/vertices/file_vertex'
 
 module Middleman
   class TemplateRenderer
@@ -100,13 +101,13 @@ module Middleman
     # Custom error class for handling
     class TemplateNotFound < RuntimeError; end
 
-    Contract Maybe[SetOf[IsA['::Middleman::Dependencies::BaseDependency']]]
-    attr_reader :dependencies
+    Contract ImmutableSetOf[::Middleman::Dependencies::Vertex]
+    attr_reader :vertices
 
     def initialize(app, path)
       @app = app
       @path = path
-      @dependencies = nil
+      @vertices = ::Hamster::Set.empty
     end
 
     # Render a template, with layout, given a path
@@ -174,8 +175,8 @@ module Middleman
 
                     ::Middleman::Util.instrument 'builder.output.resource.render-layout', path: File.basename(layout_file[:relative_path].to_s) do
                       layout_renderer.render(locals, options, context) { content }.tap do
-                        @dependencies << ::Middleman::Dependencies::FileDependency.from_source_file(@app, layout_file)
-                        @dependencies |= layout_renderer.dependencies unless layout_renderer.dependencies.nil?
+                        @vertices <<= ::Middleman::Dependencies::FileVertex.from_source_file(@app, layout_file)
+                        @vertices |= layout_renderer.vertices
                       end
                     end
                   else
@@ -183,8 +184,7 @@ module Middleman
                   end
       end
 
-      @dependencies |= context.dependencies unless context.dependencies.nil?
-      @dependencies = @dependencies.empty? ? nil : @dependencies
+      @vertices |= context.vertices
 
       # Return result
       content
@@ -201,7 +201,7 @@ module Middleman
       # handles cases like `style.css.sass.erb`
       content = nil
 
-      @dependencies = Set.new
+      @vertices = ::Hamster::Set.empty
 
       while ::Middleman::Util.tilt_class(path)
         begin
@@ -209,7 +209,7 @@ module Middleman
 
           content_renderer = ::Middleman::FileRenderer.new(@app, path)
           content = content_renderer.render(locs, opts, context, &block)
-          @dependencies |= content_renderer.dependencies unless content_renderer.dependencies.nil?
+          @vertices |= content_renderer.vertices
 
           path = path.sub(/\.[^.]*\z/, '')
         rescue LocalJumpError
