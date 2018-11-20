@@ -25,7 +25,7 @@ module Middleman
           end
 
           Contract Symbol => ImmutableSetOf[::Middleman::Dependencies::Vertex]
-          def dependencies_for_key(_k)
+          def vertices_for_key(_k)
             Hamster::Set.empty
           end
 
