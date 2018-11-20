@@ -15,6 +15,8 @@ module Middleman
       include Comparable
       include Middleman::Sitemap::Extensions::Traversal
 
+      attr_reader :app
+
       # The source path of this resource (relative to the source directory,
       # without template extensions)
       # @return [String]
@@ -37,7 +39,7 @@ module Middleman
       Contract Num
       attr_reader :priority
 
-      Contract Maybe[SetOf[String]]
+      Contract Maybe[SetOf[IsA['::Middleman::Dependencies::BaseDependency']]]
       attr_reader :dependencies
 
       # Initialize resource with parent store and URL

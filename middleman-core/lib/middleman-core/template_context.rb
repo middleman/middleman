@@ -22,7 +22,7 @@ module Middleman
     # Required for Padrino's rendering
     attr_accessor :current_engine
 
-    Contract Maybe[SetOf[String]]
+    Contract Maybe[SetOf[IsA['::Middleman::Dependencies::BaseDependency']]]
     attr_reader :dependencies
 
     # Shorthand references to global values on the app instance.
@@ -91,7 +91,7 @@ module Middleman
         restore_buffer(buf_was)
       end
 
-      @dependencies << layout_file[:full_path].to_s
+      @dependencies << ::Middleman::Dependencies::FileDependency.from_source_file(@app, layout_file)
 
       # Render the layout, with the contents of the block inside.
       concat_safe_content render_file(layout_file, @locs, @opts) { content }
@@ -118,7 +118,7 @@ module Middleman
       source_path = sitemap.file_to_path(partial_file)
       r = sitemap.by_path(source_path)
 
-      @dependencies << partial_file[:full_path].to_s
+      @dependencies << ::Middleman::Dependencies::FileDependency.from_source_file(@app, partial_file)
 
       result = if (r && !r.template?) || (Tilt[partial_file[:full_path]].nil? && partial_file[:full_path].exist?)
                  partial_file.read
