@@ -19,6 +19,29 @@ if ENV['CONTRACTS'] != 'false'
     end
 
     VectorOf = Contracts::CollectionOf::Factory.new(::Hamster::Vector)
+
+    class ImmutableHashOf < Contracts::CallableClass
+      INVALID_KEY_VALUE_PAIR = 'You should provide only one key-value pair to HashOf contract'.freeze
+
+      def initialize(key, value)
+        @key   = key
+        @value = value
+      end
+
+      def valid?(hash)
+        return false unless hash.is_a?(::Hamster::Hash)
+
+        keys_match = hash.keys.map { |k| Contract.valid?(k, @key) }.all?
+        vals_match = hash.values.map { |v| Contract.valid?(v, @value) }.all?
+
+        [keys_match, vals_match].all?
+      end
+
+      def to_s
+        "ImmutableHash<#{@key}, #{@value}>"
+      end
+    end
+
     ImmutableSetOf = Contracts::CollectionOf::Factory.new(::Hamster::Set)
     ImmutableSortedSetOf = Contracts::CollectionOf::Factory.new(::Hamster::SortedSet)
     OldResourceList = Contracts::ArrayOf[IsA['Middleman::Sitemap::Resource']]
@@ -108,6 +131,9 @@ else
     end
 
     class VectorOf < Callable
+    end
+
+    class ImmutableHashOf < Callable
     end
 
     class ImmutableSetOf < Callable

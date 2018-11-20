@@ -1,8 +1,9 @@
 require 'tilt'
-require 'set'
+require 'hamster'
 require 'active_support/core_ext/string/output_safety'
 require 'active_support/core_ext/module/delegation'
 require 'middleman-core/contracts'
+require 'middleman-core/dependencies/vertices/vertex'
 
 ::Tilt.default_mapping.lazy_map.delete('html')
 ::Tilt.default_mapping.lazy_map.delete('csv')
@@ -16,15 +17,15 @@ module Middleman
       @_cache ||= ::Tilt::Cache.new
     end
 
-    Contract Maybe[SetOf[IsA['::Middleman::Dependencies::BaseDependency']]]
-    attr_reader :dependencies
+    Contract ImmutableSetOf[::Middleman::Dependencies::Vertex]
+    attr_reader :vertices
 
     def_delegator :"self.class", :cache
 
     def initialize(app, path)
       @app = app
       @path = path.to_s
-      @dependencies = nil
+      @vertices = ::Hamster::Set.empty
     end
 
     # Render an on-disk file. Used for everything, including layouts.
@@ -71,12 +72,12 @@ module Middleman
       #   ::Tilt.new(path, 1, options) { body }
       # end
 
-      @dependencies = nil
+      @vertices = ::Hamster::Set.empty
 
       # Render using Tilt
       content = ::Middleman::Util.instrument 'render.tilt', path: path do
         template.render(context, locs, &block).tap do
-          @dependencies = template.dependencies if template.respond_to?(:dependencies)
+          @vertices = template.vertices if template.respond_to?(:vertices)
         end
       end
 

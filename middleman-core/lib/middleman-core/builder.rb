@@ -2,7 +2,9 @@ require 'pathname'
 require 'fileutils'
 require 'tempfile'
 require 'parallel'
-require 'middleman-core/dependencies'
+require 'middleman-core/dependencies/graph'
+require 'middleman-core/dependencies/edge'
+require 'middleman-core/dependencies/vertices/file_vertex'
 require 'middleman-core/callback_manager'
 require 'middleman-core/contracts'
 
@@ -81,8 +83,7 @@ module Middleman
         prerender_css.tap do |resources|
           if @track_dependencies
             resources.each do |r|
-              dependency = r[1]
-              @graph.add_dependency(dependency) unless dependency.nil?
+              @graph.add_edge(r[1]) unless r[1].nil?
             end
           end
         end
@@ -94,8 +95,7 @@ module Middleman
         output_files.tap do |resources|
           if @track_dependencies
             resources.each do |r|
-              dependency = r[1]
-              @graph.add_dependency(dependency) unless dependency.nil?
+              @graph.add_edge(r[1]) unless r[1].nil?
             end
           end
         end
@@ -120,7 +120,7 @@ module Middleman
 
     # Pre-request CSS to give Compass a chance to build sprites
     # @return [Array<Resource>] List of css resources that were output.
-    Contract ArrayOf[[Pathname, Maybe[::Middleman::Dependencies::DependencyLink]]]
+    Contract ArrayOf[[Pathname, Maybe[::Middleman::Dependencies::Edge]]]
     def prerender_css
       logger.debug '== Prerendering CSS'
 
@@ -143,7 +143,7 @@ module Middleman
 
     # Find all the files we need to output and do so.
     # @return [Array<Resource>] List of resources that were output.
-    Contract ArrayOf[[Pathname, Maybe[::Middleman::Dependencies::DependencyLink]]]
+    Contract ArrayOf[[Pathname, Maybe[::Middleman::Dependencies::Edge]]]
     def output_files
       logger.debug '== Building files'
 
@@ -155,7 +155,7 @@ module Middleman
       output_resources(resources.to_a)
     end
 
-    Contract OldResourceList => ArrayOf[Or[Bool, [Pathname, Maybe[::Middleman::Dependencies::DependencyLink]]]]
+    Contract OldResourceList => ArrayOf[Or[Bool, [Pathname, Maybe[::Middleman::Dependencies::Edge]]]]
     def output_resources(resources)
       res_count = resources.count
 
@@ -278,7 +278,7 @@ module Middleman
     # Try to output a resource and capture errors.
     # @param [Middleman::Sitemap::Resource] resource The resource.
     # @return [void]
-    Contract IsA['Middleman::Sitemap::Resource'] => Or[Bool, [Pathname, Maybe[::Middleman::Dependencies::DependencyLink]]]
+    Contract IsA['Middleman::Sitemap::Resource'] => Or[Bool, [Pathname, Maybe[::Middleman::Dependencies::Edge]]]
     def output_resource(resource)
       ::Middleman::Util.instrument 'builder.output.resource', path: File.basename(resource.destination_path) do
         begin
@@ -305,17 +305,17 @@ module Middleman
             end
           end
 
-          deps = nil
+          vertices = nil
 
           if resource.binary?
             export_file!(output_file, resource.file_descriptor[:full_path], true)
           else
             content = resource.render({}, {})
 
-            unless resource.dependencies.empty?
-              deps = ::Middleman::Dependencies::DependencyLink.new(
-                ::Middleman::Dependencies::FileDependency.from_resource(resource),
-                resource.dependencies
+            unless resource.vertices.empty?
+              vertices = ::Middleman::Dependencies::Edge.new(
+                ::Middleman::Dependencies::FileVertex.from_resource(resource),
+                resource.vertices
               )
             end
 
@@ -326,7 +326,7 @@ module Middleman
           return false
         end
 
-        [output_file, deps]
+        [output_file, vertices]
       end
     end
 

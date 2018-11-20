@@ -1,4 +1,6 @@
+require 'hamster'
 require 'middleman-core/contracts'
+require 'middleman-core/dependencies/vertices/vertex'
 
 module Middleman
   class Filter
@@ -31,7 +33,7 @@ module Middleman
       @after_filter = @options.fetch(:after_filter, nil)
     end
 
-    Contract String => String
+    Contract String => [String, ImmutableSetOf[::Middleman::Dependencies::Vertex]]
     def execute_filter(_body)
       raise NotImplementedError
     end
@@ -45,10 +47,10 @@ module Middleman
       @callable = callable
     end
 
-    Contract String => [String, Maybe[SetOf[String]]]
+    Contract String => [String, ImmutableSetOf[::Middleman::Dependencies::Vertex]]
     def execute_filter(body)
       result = @callable.call(body)
-      result.is_a?(Array) ? result : [result, nil]
+      result.is_a?(Array) ? result : [result, ::Hamster::Set.empty]
     end
   end
 end
