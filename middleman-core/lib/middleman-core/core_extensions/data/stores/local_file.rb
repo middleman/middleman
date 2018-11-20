@@ -72,10 +72,10 @@ module Middleman
             # the whole folder.
             if paths.empty?
               @paths_to_file[basename.to_sym] ||= ::Hamster::Set.empty
-              @paths_to_file[basename.to_sym] <<= ::Middleman::Dependencies::FileDependency.from_source_file(@app, file)
+              @paths_to_file[basename.to_sym] <<= ::Middleman::Dependencies::FileVertex.from_source_file(@app, file)
             else
               @paths_to_file[paths.first.to_sym] ||= ::Hamster::Set.empty
-              @paths_to_file[paths.first.to_sym] <<= ::Middleman::Dependencies::FileDependency.from_source_file(@app, file)
+              @paths_to_file[paths.first.to_sym] <<= ::Middleman::Dependencies::FileVertex.from_source_file(@app, file)
             end
 
             data_branch[basename.to_sym] = data
