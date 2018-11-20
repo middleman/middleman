@@ -1,5 +1,6 @@
 require 'set'
 require 'sass'
+require 'middleman-core/dependencies'
 
 begin
   require 'sassc'
@@ -76,7 +77,10 @@ module Middleman
         end
 
         def dependencies
-          files = @engine.dependencies.map(&:filename)
+          files = @engine.dependencies.map do |d|
+            ::Middleman::Dependencies::FileDependency.new(@context.app.root_path, d.filename)
+          end
+
           files.empty? ? nil : Set.new(files)
         end
 
