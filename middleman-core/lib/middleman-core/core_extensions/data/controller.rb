@@ -1,3 +1,4 @@
+require 'hamster'
 require 'middleman-core/util/data'
 require 'middleman-core/core_extensions/data/stores/local_file'
 require 'middleman-core/core_extensions/data/stores/static'
@@ -39,9 +40,9 @@ module Middleman
           source[k] unless source.nil?
         end
 
-        def dependencies_for_key(k)
-          @data_stores.reduce(Set.new) do |sum, s|
-            sum | s.dependencies_for_key(k)
+        def vertices_for_key(k)
+          @data_stores.reduce(::Hamster::Set.empty) do |sum, s|
+            sum | s.vertices_for_key(k)
           end
         end
 

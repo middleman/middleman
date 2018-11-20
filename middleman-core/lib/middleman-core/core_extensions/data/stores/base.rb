@@ -1,4 +1,5 @@
-require 'set'
+require 'hamster'
+require 'middleman-core/dependencies/vertices/vertex'
 require 'middleman-core/contracts'
 
 module Middleman
@@ -23,9 +24,9 @@ module Middleman
             raise NotImplementedError
           end
 
-          Contract Symbol => SetOf[IsA['::Middleman::Dependencies::BaseDependency']]
+          Contract Symbol => ImmutableSetOf[::Middleman::Dependencies::Vertex]
           def dependencies_for_key(_k)
-            Set.new
+            Hamster::Set.empty
           end
 
           Contract Hash
