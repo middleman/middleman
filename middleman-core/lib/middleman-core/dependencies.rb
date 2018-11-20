@@ -8,21 +8,21 @@ module Middleman
     class BaseDependency
       include Contracts
 
-      Key = Or[String, Symbol]
-      Attrs = HashOf[Symbol, String]
-      SerializedDependency = {
+      DEPENDENCY_KEY = Or[String, Symbol]
+      DEPENDENCY_ATTRS = HashOf[Symbol, String]
+      SERIALIZED_DEPENDENCY = {
         key: Any, # Weird inheritance bug
         type: Symbol,
-        attributes: Attrs
+        attributes: DEPENDENCY_ATTRS
       }.freeze
 
-      Contract Key
+      Contract DEPENDENCY_KEY
       attr_reader :key
 
-      Contract Attrs
+      Contract DEPENDENCY_ATTRS
       attr_reader :attributes
 
-      Contract Key, Attrs => Any
+      Contract DEPENDENCY_KEY, DEPENDENCY_ATTRS => Any
       def initialize(key, attributes)
         @key = key
         @attributes = attributes
@@ -39,11 +39,11 @@ module Middleman
       end
 
       Contract IsA['Middleman::Sitemap::Resource'] => Bool
-      def invalidates_resource?(resource)
+      def invalidates_resource?(_resource)
         raise NotImplementedError
       end
 
-      Contract Maybe[Attrs] => SerializedDependency
+      Contract Maybe[DEPENDENCY_ATTRS] => SERIALIZED_DEPENDENCY
       def serialize(attributes = {})
         {
           key: @key,
@@ -75,7 +75,7 @@ module Middleman
 
       TYPE_ID = :file
 
-      Contract IsA['::Middleman::Application'], String, BaseDependency::Attrs => FileDependency
+      Contract IsA['::Middleman::Application'], String, BaseDependency::DEPENDENCY_ATTRS => FileDependency
       def self.deserialize(app, key, attributes)
         FileDependency.new(app.root_path, key, attributes)
       end
@@ -90,7 +90,7 @@ module Middleman
         FileDependency.new(app.root_path, source_file[:full_path].to_s)
       end
 
-      Contract Or[String, Pathname], String, Maybe[Attrs] => Any
+      Contract Or[String, Pathname], String, Maybe[DEPENDENCY_ATTRS] => Any
       def initialize(root, key, attributes = {})
         @root = Pathname(root)
         @full_path = full_path(@root, key)
@@ -108,7 +108,7 @@ module Middleman
         resource.file_descriptor[:full_path].to_s == @full_path
       end
 
-      Contract BaseDependency::SerializedDependency
+      Contract BaseDependency::SERIALIZED_DEPENDENCY
       def serialize
         super({
           hash: valid? && !previous_hash.nil? ? previous_hash : hash_file
@@ -116,7 +116,7 @@ module Middleman
       end
 
       private
-      
+
       Contract Maybe[String]
       def previous_hash
         @attributes[:hash]
@@ -128,7 +128,7 @@ module Middleman
       end
     end
 
-    DependencyClassesByType = {
+    DEPENDENCY_CLASSES_BY_TYPE = {
       FileDependency::TYPE_ID => FileDependency
     }.freeze
 
@@ -157,7 +157,7 @@ module Middleman
     class Graph
       include Contracts
 
-      Contract HashOf[BaseDependency::Key, BaseDependency]
+      Contract HashOf[BaseDependency::DEPENDENCY_KEY, BaseDependency]
       attr_reader :dependencies
 
       Contract HashOf[BaseDependency, SetOf[BaseDependency]]
@@ -243,7 +243,7 @@ module Middleman
         }
       end
 
-      dependencies = graph.dependency_map.reduce([]) do |sum, (dependency, depended_on_by)|
+      dependencies = graph.dependency_map.reduce([]) do |sum, (dependency, _depended_on_by)|
         sum << dependency.serialize
       end
 
@@ -303,7 +303,7 @@ module Middleman
       end
 
       dependencies = data[:dependencies].each_with_object({}) do |row, sum|
-        dep_class = DependencyClassesByType[row[:type]]
+        dep_class = DEPENDENCY_CLASSES_BY_TYPE[row[:type]]
         dep = dep_class.deserialize(app, row[:key], row[:attributes])
         sum[dep.key] = dep
       end
@@ -312,7 +312,7 @@ module Middleman
 
       dependency_links = data[:dependency_links]
       graph.dependency_map = dependency_links.each_with_object({}) do |row, sum|
-        dependency = graph.dependencies[row[:key]] 
+        dependency = graph.dependencies[row[:key]]
         depended_on_by = row[:depended_on_by].map { |k| graph.dependencies[k] }
         sum[dependency] = Set.new(depended_on_by) << dependency
       end
