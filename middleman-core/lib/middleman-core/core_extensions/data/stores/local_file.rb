@@ -3,6 +3,7 @@ require 'set'
 require 'middleman-core/contracts'
 require 'middleman-core/core_extensions/data/stores/base'
 require 'middleman-core/dependencies/vertices/vertex'
+require 'middleman-core/dependencies/vertices/file_vertex'
 
 module Middleman
   module CoreExtensions
@@ -25,12 +26,12 @@ module Middleman
 
             @app = app
             @local_data = {}
-            @paths_to_file = {}
+            @paths_to_vertex = {}
           end
 
           Contract Symbol => ImmutableSetOf[::Middleman::Dependencies::Vertex]
           def vertices_for_key(k)
-            @paths_to_file[k] || ::Hamster::Set.empty
+            @paths_to_vertex[k] || ::Hamster::Set.empty
           end
 
           Contract ArrayOf[IsA['Middleman::SourceFile']], ArrayOf[IsA['Middleman::SourceFile']] => Any
@@ -71,11 +72,11 @@ module Middleman
             # For now, all files nested under a folder in `data/` will invalidate
             # the whole folder.
             if paths.empty?
-              @paths_to_file[basename.to_sym] ||= ::Hamster::Set.empty
-              @paths_to_file[basename.to_sym] <<= ::Middleman::Dependencies::FileVertex.from_source_file(@app, file)
+              @paths_to_vertex[basename.to_sym] ||= ::Hamster::Set.empty
+              @paths_to_vertex[basename.to_sym] <<= ::Middleman::Dependencies::FileVertex.from_source_file(@app, file)
             else
-              @paths_to_file[paths.first.to_sym] ||= ::Hamster::Set.empty
-              @paths_to_file[paths.first.to_sym] <<= ::Middleman::Dependencies::FileVertex.from_source_file(@app, file)
+              @paths_to_vertex[paths.first.to_sym] ||= ::Hamster::Set.empty
+              @paths_to_vertex[paths.first.to_sym] <<= ::Middleman::Dependencies::FileVertex.from_source_file(@app, file)
             end
 
             data_branch[basename.to_sym] = data

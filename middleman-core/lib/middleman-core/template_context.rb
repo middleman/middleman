@@ -48,7 +48,7 @@ module Middleman
     attr_reader :data
 
     Contract ImmutableSetOf[::Middleman::Dependencies::Vertex]
-    attr_reader :vertices
+    attr_accessor :vertices
 
     # Shorthand references to global values on the app instance.
     def_delegators :@app, :config, :logger, :sitemap, :server?, :build?, :environment?, :environment, :extensions, :root, :development?, :production?

@@ -1,5 +1,7 @@
 require 'middleman-core/contracts'
 require 'middleman-core/core_extensions/data/stores/base'
+require 'middleman-core/dependencies/vertices/vertex'
+require 'middleman-core/dependencies/vertices/data_collection_vertex'
 
 module Middleman
   module CoreExtensions
@@ -17,6 +19,12 @@ module Middleman
             super()
 
             @sources = {}
+            @keys_to_vertex = {}
+          end
+
+          Contract Symbol => ImmutableSetOf[::Middleman::Dependencies::Vertex]
+          def vertices_for_key(k)
+            @keys_to_vertex[k] || ::Hamster::Set.empty
           end
 
           # Store static data hash
@@ -27,6 +35,9 @@ module Middleman
           Contract Symbol, Or[Hash, Array] => Any
           def store(name, content)
             @sources[name] = content
+
+            @keys_to_vertex[name] ||= ::Hamster::Set.empty
+            @keys_to_vertex[name] <<= ::Middleman::Dependencies::DataCollectionVertex.from_data(name, content)
           end
         end
       end

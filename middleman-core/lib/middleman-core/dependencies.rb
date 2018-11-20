@@ -1,3 +1,4 @@
+require 'hamster'
 require 'set'
 require 'pathname'
 require 'digest/sha1'
@@ -96,11 +97,13 @@ module Middleman
 
       graph = Graph.new(vertices)
 
+      Contract ImmutableHashOf[Vertex, ImmutableSetOf[Vertex]]
+
       edges = data[:edges]
-      graph.dependency_map = edges.each_with_object({}) do |row, sum|
+      graph.dependency_map = edges.reduce(::Hamster::Hash.empty) do |row, sum|
         vertex = graph.vertices[row[:key]]
         depended_on_by = row[:depended_on_by].map { |k| graph.vertices[k] }
-        sum[vertex] = ::Hamster::Set.new(depended_on_by) << vertex
+        sum.put(vertex, ::Hamster::Set.new(depended_on_by) << vertex)
       end
 
       graph
