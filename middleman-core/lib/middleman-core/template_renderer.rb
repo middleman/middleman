@@ -3,6 +3,7 @@ require 'set'
 require 'active_support/core_ext/string/output_safety'
 require 'middleman-core/template_context'
 require 'middleman-core/file_renderer'
+require 'middleman-core/dependencies'
 require 'middleman-core/contracts'
 
 module Middleman
