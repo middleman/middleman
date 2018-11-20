@@ -120,7 +120,7 @@ module Middleman
 
     # Pre-request CSS to give Compass a chance to build sprites
     # @return [Array<Resource>] List of css resources that were output.
-    Contract ArrayOf[[Pathname, Maybe[::Middleman::Dependencies::Dependency]]]
+    Contract ArrayOf[[Pathname, Maybe[::Middleman::Dependencies::DependencyLink]]]
     def prerender_css
       logger.debug '== Prerendering CSS'
 
@@ -143,7 +143,7 @@ module Middleman
 
     # Find all the files we need to output and do so.
     # @return [Array<Resource>] List of resources that were output.
-    Contract ArrayOf[[Pathname, Maybe[::Middleman::Dependencies::Dependency]]]
+    Contract ArrayOf[[Pathname, Maybe[::Middleman::Dependencies::DependencyLink]]]
     def output_files
       logger.debug '== Building files'
 
@@ -155,7 +155,7 @@ module Middleman
       output_resources(resources.to_a)
     end
 
-    Contract OldResourceList => ArrayOf[Or[Bool, [Pathname, Maybe[::Middleman::Dependencies::Dependency]]]]
+    Contract OldResourceList => ArrayOf[Or[Bool, [Pathname, Maybe[::Middleman::Dependencies::DependencyLink]]]]
     def output_resources(resources)
       res_count = resources.count
 
@@ -278,19 +278,17 @@ module Middleman
     # Try to output a resource and capture errors.
     # @param [Middleman::Sitemap::Resource] resource The resource.
     # @return [void]
-    Contract IsA['Middleman::Sitemap::Resource'] => Or[Bool, [Pathname, Maybe[::Middleman::Dependencies::Dependency]]]
+    Contract IsA['Middleman::Sitemap::Resource'] => Or[Bool, [Pathname, Maybe[::Middleman::Dependencies::DependencyLink]]]
     def output_resource(resource)
       ::Middleman::Util.instrument 'builder.output.resource', path: File.basename(resource.destination_path) do
         begin
           output_file = @build_dir + resource.destination_path.gsub('%20', ' ')
 
           if @track_dependencies && (@only_changed || @missing_and_changed)
-            path = resource.file_descriptor[:full_path].to_s
-
-            if @only_changed && !@invalidated_files.include?(path)
+            if @only_changed && !@graph.invalidates_resource?(resource)
               trigger(:skipped, output_file)
               return [output_file, nil]
-            elsif @missing_and_changed && File.exist?(output_file) && !@invalidated_files.include?(path)
+            elsif @missing_and_changed && File.exist?(output_file) && !@graph.invalidates_resource?(resource)
               trigger(:skipped, output_file)
               return [output_file, nil]
             end
@@ -315,8 +313,8 @@ module Middleman
             content = resource.render({}, {})
 
             unless resource.dependencies.empty?
-              deps = ::Middleman::Dependencies::Dependency.new(
-                resource.source_file,
+              deps = ::Middleman::Dependencies::DependencyLink.new(
+                ::Middleman::Dependencies::FileDependency.from_resource(resource),
                 resource.dependencies
               )
             end

@@ -99,7 +99,7 @@ module Middleman
     # Custom error class for handling
     class TemplateNotFound < RuntimeError; end
 
-    Contract Maybe[SetOf[String]]
+    Contract Maybe[SetOf[IsA['::Middleman::Dependencies::BaseDependency']]]
     attr_reader :dependencies
 
     def initialize(app, path)
@@ -173,7 +173,7 @@ module Middleman
 
                     ::Middleman::Util.instrument 'builder.output.resource.render-layout', path: File.basename(layout_file[:relative_path].to_s) do
                       layout_renderer.render(locals, options, context) { content }.tap do
-                        @dependencies << layout_file[:full_path].to_s
+                        @dependencies << ::Middleman::Dependencies::FileDependency.from_source_file(@app, layout_file)
                         @dependencies |= layout_renderer.dependencies unless layout_renderer.dependencies.nil?
                       end
                     end

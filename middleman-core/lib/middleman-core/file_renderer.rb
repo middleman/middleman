@@ -16,7 +16,7 @@ module Middleman
       @_cache ||= ::Tilt::Cache.new
     end
 
-    Contract Maybe[SetOf[String]]
+    Contract Maybe[SetOf[IsA['::Middleman::Dependencies::BaseDependency']]]
     attr_reader :dependencies
 
     def_delegator :"self.class", :cache
