@@ -35,7 +35,7 @@ module Middleman
         current_hash == previous_hash
       end
 
-      Contract DataCollectionVertex => DataCollectionVertex
+      Contract DataCollectionVertex => Any
       def merge!(other)
         super
         @data = other.data if @data.nil?
@@ -50,7 +50,7 @@ module Middleman
 
       private
 
-      Contract Maybe[Num]
+      Contract Maybe[String]
       def current_hash
         return nil if @data.nil?
 

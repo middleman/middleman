@@ -36,7 +36,7 @@ module Middleman
         raise NotImplementedError
       end
 
-      Contract Vertex => Vertex
+      Contract Vertex => Any
       def merge!(other)
         @attributes.merge!(other.attributes)
       end

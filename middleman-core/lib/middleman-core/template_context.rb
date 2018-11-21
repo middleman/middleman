@@ -2,31 +2,12 @@ require 'pathname'
 require 'hamster'
 require 'middleman-core/file_renderer'
 require 'middleman-core/template_renderer'
+require 'middleman-core/data_proxy'
 require 'middleman-core/contracts'
 require 'middleman-core/dependencies/vertices/vertex'
 require 'middleman-core/dependencies/vertices/file_vertex'
 
 module Middleman
-  class DataProxy
-    def initialize(ctx)
-      @ctx = ctx
-    end
-
-    def method_missing(method, *args, &block)
-      if @ctx.internal_data_store.key?(method)
-        @ctx.vertices |= @ctx.internal_data_store.vertices_for_key(method)
-        return @ctx.internal_data_store.enhanced_key(method)
-      end
-
-      super
-    end
-
-    # Needed so that method_missing makes sense
-    def respond_to?(method, include_private = false)
-      super || @ctx.internal_data_store.key?(method)
-    end
-  end
-
   # The TemplateContext Class
   #
   # A clean context, separate from Application, in which templates can be executed.
@@ -45,6 +26,7 @@ module Middleman
     # Required for Padrino's rendering
     attr_accessor :current_engine
 
+    # Points to the data proxy, which records data accesses
     attr_reader :data
 
     Contract ImmutableSetOf[::Middleman::Dependencies::Vertex]
