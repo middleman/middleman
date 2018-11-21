@@ -40,17 +40,17 @@ describe Middleman::CoreExtensions::Data::DataStoreController do
 
     context 'when given a name and proc' do
       it 'adds a callback at the given name' do
-        @subject.callbacks :foo, -> { 'bar' }
+        @subject.callbacks :foo, -> { ['bar'] }
 
         expect(@subject.key?(:foo)).to be true
-        expect(@subject.foo).to eq 'bar'
+        expect(@subject.foo[0]).to eq 'bar'
       end
 
       it 'overwrites previous keys if given the same key' do
-        @subject.callbacks :foo, -> { 'bar' }
-        @subject.callbacks :foo, -> { 'baz' }
+        @subject.callbacks :foo, -> { ['bar'] }
+        @subject.callbacks :foo, -> { ['baz'] }
 
-        expect(@subject.foo).to eq 'baz'
+        expect(@subject.foo[0]).to eq 'baz'
       end
     end
   end
@@ -84,8 +84,8 @@ describe Middleman::CoreExtensions::Data::DataStoreController do
 
     context 'given path matches both sources' do
       it 'returns match from local data' do
-        @subject.store :foo, 'local' => 'data'
         @subject.callbacks :foo, -> { { 'callback' => 'data' } }
+        @subject.store :foo, 'local' => 'data'
 
         expect(@subject.foo).to eq('local' => 'data')
       end
@@ -103,7 +103,7 @@ describe Middleman::CoreExtensions::Data::DataStoreController do
 
     it 'returns true if key included in local_data, local_sources, or callback_sources' do
       @subject.store :"foo-store", foo: 'bar'
-      @subject.callbacks :"foo-callback", proc { 'bar' }
+      @subject.callbacks :"foo-callback", proc { ['bar'] }
 
       expect(@subject.key?(:'foo-store')).to be true
       expect(@subject.key?(:'foo-callback')).to be true

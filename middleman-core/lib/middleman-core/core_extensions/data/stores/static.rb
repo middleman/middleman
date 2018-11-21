@@ -41,8 +41,14 @@ module Middleman
           def store(name, content)
             @sources[name] = content
 
-            @keys_to_vertex[name] ||= ::Hamster::Set.empty
+            @keys_to_vertex[name] = ::Hamster::Set.empty
             @keys_to_vertex[name] <<= ::Middleman::Dependencies::DataCollectionVertex.from_data(name, content)
+          end
+
+          # Store callback-based data
+          Contract Symbol, Proc => Any
+          def callbacks(name, callback)
+            store(name, callback.call)
           end
         end
       end
