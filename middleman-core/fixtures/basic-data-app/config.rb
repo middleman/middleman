@@ -1,5 +1,5 @@
 page '/data.html', layout: false
 page '/data3.html', layout: false
 
-data.store :static_array, ::YAML.load_file('static_array.yml')
-data.store :static_hash, ::YAML.load_file('static_hash.yml')
+data.store :static_array, ::YAML.load_file(File.expand_path('static_array.yml', File.dirname(__FILE__)))
+data.store :static_hash, ::YAML.load_file(File.expand_path('static_hash.yml', File.dirname(__FILE__)))
