@@ -6,8 +6,8 @@ module Middleman
     class Vertex
       include Contracts
 
-      VERTEX_KEY = Or[String, Symbol]
-      VERTEX_ATTRS = HashOf[Symbol, String]
+      VERTEX_KEY = Symbol
+      VERTEX_ATTRS = HashOf[Symbol, Or[String, Num]]
       SERIALIZED_VERTEX = {
         key: Any, # Weird inheritance bug
         type: Symbol,
@@ -36,9 +36,14 @@ module Middleman
         raise NotImplementedError
       end
 
+      Contract Vertex => Vertex
+      def merge!(other)
+        @attributes.merge!(other.attributes)
+      end
+
       Contract IsA['Middleman::Sitemap::Resource'] => Bool
       def invalidates_resource?(_resource)
-        raise NotImplementedError
+        false
       end
 
       Contract Maybe[VERTEX_ATTRS] => SERIALIZED_VERTEX
@@ -48,6 +53,11 @@ module Middleman
           type: type_id,
           attributes: @attributes.merge(attributes)
         }
+      end
+
+      Contract String
+      def to_s
+        "<Vertex type=#{type_id} key=#{key}>"
       end
 
       protected

@@ -24,6 +24,11 @@ module Middleman
             raise NotImplementedError
           end
 
+          Contract ImmutableSetOf[::Middleman::Dependencies::Vertex]
+          def vertices
+            Hamster::Set.empty
+          end
+
           Contract Symbol => ImmutableSetOf[::Middleman::Dependencies::Vertex]
           def vertices_for_key(_k)
             Hamster::Set.empty

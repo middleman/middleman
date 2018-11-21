@@ -40,6 +40,12 @@ module Middleman
           source[k] unless source.nil?
         end
 
+        def vertices
+          @data_stores.reduce(::Hamster::Set.empty) do |sum, s|
+            sum | s.vertices
+          end
+        end
+
         def vertices_for_key(k)
           @data_stores.reduce(::Hamster::Set.empty) do |sum, s|
             sum | s.vertices_for_key(k)

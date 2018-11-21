@@ -22,6 +22,11 @@ module Middleman
             @keys_to_vertex = {}
           end
 
+          Contract ImmutableSetOf[::Middleman::Dependencies::Vertex]
+          def vertices
+            Hamster::Set.new(@keys_to_vertex.values.flatten(1))
+          end
+
           Contract Symbol => ImmutableSetOf[::Middleman::Dependencies::Vertex]
           def vertices_for_key(k)
             @keys_to_vertex[k] || ::Hamster::Set.empty

@@ -69,7 +69,17 @@ module Middleman
         end
       end
 
-      @invalidated_files = @graph.invalidated if @only_changed || @missing_and_changed
+      if @only_changed || @missing_and_changed
+        @invalidated_files = @graph.invalidated
+
+        if @invalidated_files.empty?
+          logger.debug '== No invalidated files'
+        else
+          @invalidated_files.each do |v|
+            logger.debug "== Invalidated: #{v}"
+          end
+        end
+      end
 
       ::Middleman::Util.instrument 'builder.before' do
         @app.execute_callbacks(:before_build, [self])
@@ -104,7 +114,8 @@ module Middleman
       ::Middleman::Profiling.report('build')
 
       unless @has_error
-        ::Middleman::Dependencies.serialize_and_save(@app, @graph) if @track_dependencies
+        partial_update_with_no_changes = (@only_changed || @missing_and_changed) && !@invalidated_files.empty?
+        ::Middleman::Dependencies.serialize_and_save(@app, @graph) if @track_dependencies && !partial_update_with_no_changes
 
         ::Middleman::Util.instrument 'builder.clean' do
           clean! if @cleaning
