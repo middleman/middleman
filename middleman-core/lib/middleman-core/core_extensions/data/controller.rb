@@ -1,7 +1,7 @@
 require 'hamster'
 require 'middleman-core/util/data'
 require 'middleman-core/core_extensions/data/stores/local_file'
-require 'middleman-core/core_extensions/data/stores/static'
+require 'middleman-core/core_extensions/data/stores/in_memory'
 
 module Middleman
   module CoreExtensions
@@ -11,16 +11,16 @@ module Middleman
         extend Forwardable
 
         def_delegator :@local_file_data_store, :update_files
-        def_delegators :@static_data_store, :store, :callbacks
+        def_delegators :@in_memory_data_store, :store, :callbacks
 
         def initialize(app)
           @local_file_data_store = Data::Stores::LocalFileDataStore.new(app)
-          @static_data_store = Data::Stores::StaticDataStore.new
+          @in_memory_data_store = Data::Stores::InMemoryDataStore.new
 
           # Sorted in order of access precedence.
           @data_stores = [
             @local_file_data_store,
-            @static_data_store
+            @in_memory_data_store
           ]
 
           @enhanced_cache = {}

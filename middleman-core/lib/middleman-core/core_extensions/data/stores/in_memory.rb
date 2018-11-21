@@ -8,7 +8,7 @@ module Middleman
     module Data
       module Stores
         # Static data, passed in via config.rb
-        class StaticDataStore < BaseDataStore
+        class InMemoryDataStore < BaseDataStore
           extend Forwardable
           include Contracts
 
