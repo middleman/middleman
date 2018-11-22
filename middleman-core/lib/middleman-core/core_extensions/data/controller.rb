@@ -2,6 +2,8 @@ require 'hamster'
 require 'middleman-core/util/data'
 require 'middleman-core/core_extensions/data/stores/local_file'
 require 'middleman-core/core_extensions/data/stores/in_memory'
+require 'middleman-core/core_extensions/data/proxies/array'
+require 'middleman-core/core_extensions/data/proxies/hash'
 
 module Middleman
   module CoreExtensions
@@ -48,7 +50,7 @@ module Middleman
           end
         end
 
-        def enhanced_key(k)
+        def enhanced_data(k)
           value = key(k)
 
           if @enhanced_cache.key?(k)
@@ -66,12 +68,24 @@ module Middleman
           enhanced
         end
 
+        def proxied_data(k, parent = nil)
+          data = enhanced_data(k)
+
+          if data.is_a? ::Middleman::Util::EnhancedHash
+            Data::Proxies::HashProxy.new(k, data, parent)
+          elsif data.is_a? ::Array
+            Data::Proxies::ArrayProxy.new(k, data, parent)
+          else
+            raise 'Invalid data to wrap'
+          end
+        end
+
         # "Magically" find namespaces of data if they exist
         #
         # @param [String] path The namespace to search for
         # @return [Hash, nil]
         def method_missing(method)
-          return enhanced_key(method) if key?(method)
+          return proxied_data(method) if key?(method)
 
           super
         end
