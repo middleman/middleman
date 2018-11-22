@@ -17,18 +17,18 @@ describe Middleman::CoreExtensions::Data::DataStoreController do
         @subject.store :baz, %i[wu tang]
 
         expect(@subject.key?(:foo)).to be true
-        expect(@subject.foo).to eq('bar' => 'baz')
+        expect(@subject.foo.to_h).to eq('bar' => 'baz')
         expect(@subject.foo.bar).to eq('baz')
 
         expect(@subject.key?(:baz)).to be true
-        expect(@subject.baz).to match_array %i[wu tang]
+        expect(@subject.baz.to_a).to match_array %i[wu tang]
       end
 
       it 'overwrites previous keys if given the same key' do
         @subject.store :foo, 'bar' => 'baz'
         @subject.store :foo, %i[wu tang]
 
-        expect(@subject.foo).to match_array %i[wu tang]
+        expect(@subject.foo.to_a).to match_array %i[wu tang]
       end
     end
   end
@@ -63,12 +63,12 @@ describe Middleman::CoreExtensions::Data::DataStoreController do
     context 'given path matches local data' do
       it 'returns hash for key' do
         @subject.store :foo, 'bar' => 'baz'
-        expect(@subject.foo).to eq('bar' => 'baz')
+        expect(@subject.foo.to_h).to eq('bar' => 'baz')
       end
 
       it 'returns array for key' do
         @subject.store :foo, %i[bar baz]
-        expect(@subject.foo).to match_array %i[bar baz]
+        expect(@subject.foo.to_a).to match_array %i[bar baz]
       end
     end
 
@@ -77,8 +77,8 @@ describe Middleman::CoreExtensions::Data::DataStoreController do
         @subject.callbacks :foo, -> { { 'bar' => 'baz' } }
         @subject.callbacks :wu, -> { %i[tang clan] }
 
-        expect(@subject.foo).to eq('bar' => 'baz')
-        expect(@subject.wu).to match_array %i[tang clan]
+        expect(@subject.foo.to_h).to eq('bar' => 'baz')
+        expect(@subject.wu.to_a).to match_array %i[tang clan]
       end
     end
 
@@ -87,7 +87,7 @@ describe Middleman::CoreExtensions::Data::DataStoreController do
         @subject.callbacks :foo, -> { { 'callback' => 'data' } }
         @subject.store :foo, 'local' => 'data'
 
-        expect(@subject.foo).to eq('local' => 'data')
+        expect(@subject.foo.to_h).to eq('local' => 'data')
       end
     end
   end
