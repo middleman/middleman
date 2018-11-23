@@ -16,9 +16,23 @@ module Middleman
           end
 
           def method_missing(name, *args, &block)
-            log_access(:__full_access__)
+            if self.class.const_get(:FULL_ACCESS_METHODS).include?(name)
+              log_access(:__full_access__)
 
-            @data.send(name, *args, &block)
+              return @data.send(name, *args, &block)
+            end
+
+            super
+          end
+
+          def _top
+            return @parent._top if @parent.is_a?(BaseProxy)
+
+            self
+          end
+
+          def _replace_parent(new_parent)
+            @parent = new_parent
           end
 
           protected

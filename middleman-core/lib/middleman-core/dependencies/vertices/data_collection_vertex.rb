@@ -10,7 +10,9 @@ module Middleman
 
       TYPE_ID = :data_collection
 
-      Contract Maybe[Or[Hash, Array]]
+      DATA_TYPE = Or[Hash, Array]
+
+      Contract Maybe[DATA_TYPE]
       attr_accessor :data
 
       Contract IsA['::Middleman::Application'], Symbol, Vertex::VERTEX_ATTRS => DataCollectionVertex
@@ -18,12 +20,12 @@ module Middleman
         DataCollectionVertex.new(key, attributes)
       end
 
-      Contract Symbol, Or[Hash, Array] => DataCollectionVertex
+      Contract Symbol, DATA_TYPE => DataCollectionVertex
       def self.from_data(key, data)
         DataCollectionVertex.new(key, {}, data)
       end
 
-      Contract Symbol, Vertex::VERTEX_ATTRS, Maybe[Or[Hash, Array]] => Any
+      Contract Symbol, Vertex::VERTEX_ATTRS, Maybe[DATA_TYPE] => Any
       def initialize(key, attributes, data = nil)
         super(key, attributes)
 
@@ -48,7 +50,7 @@ module Middleman
         })
       end
 
-      private
+      protected
 
       Contract Maybe[String]
       def current_hash

@@ -53,9 +53,6 @@ module Middleman
     # An anonymous subclass of ::Middleman::TemplateContext
     attr_reader :template_context_class
 
-    # An instance of the above anonymous class.
-    attr_reader :generic_template_context
-
     Contract ::Middleman::Configuration::ConfigurationManager
     attr_reader :config
 
@@ -212,7 +209,6 @@ module Middleman
     def_delegator :"::Middleman::Logger", :singleton, :logger
     def_delegator :"::Middleman::Util", :instrument
     def_delegators :"self.class", :root, :root_path
-    def_delegators :@generic_template_context, :link_to, :image_tag, :asset_path
     def_delegators :@extensions, :activate
     def_delegators :config, :define_setting
 
@@ -245,7 +241,6 @@ module Middleman
         @mappings = Set.new
 
         @template_context_class = Class.new(Middleman::TemplateContext)
-        @generic_template_context = @template_context_class.new(self)
         @config_context = ConfigContext.new(self, @template_context_class)
 
         # Setup the default values from calls to set before initialization

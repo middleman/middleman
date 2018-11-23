@@ -39,6 +39,7 @@ module Middleman
           source = @data_stores.find { |s| s.key?(k) }
           source[k] unless source.nil?
         end
+        alias [] key
 
         def vertices
           @data_stores.reduce(::Hamster::Set.empty) do |sum, s|

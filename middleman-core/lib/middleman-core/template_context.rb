@@ -42,11 +42,16 @@ module Middleman
     # @param [Hash] opts
     def initialize(app, locs = {}, options_hash = ::Middleman::EMPTY_HASH)
       @app = app
-      @locs = locs
       @opts = options_hash
 
       @vertices = ::Hamster::Set.empty
       @data = DataProxy.new(self)
+
+      @locs = if @app.config[:track_data_access]
+                @data.take_ownership_of_proxies(locs)
+              else
+                locs
+              end
     end
 
     # Return the current buffer to the caller and clear the value internally.
