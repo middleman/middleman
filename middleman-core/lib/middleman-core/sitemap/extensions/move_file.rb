@@ -13,12 +13,14 @@ module Middleman
         expose_to_config :move_file
 
         MoveFileDescriptor = Struct.new(:from, :to) do
-          def execute_descriptor(_app, resources)
-            resources.each do |r|
-              r.destination_path = to if from == r.path || from == r.destination_path
-            end
+          def execute_descriptor(_app, resource_list)
+            resource_list.each do |r|
+              next unless from == r.path || from == r.destination_path
 
-            resources
+              resource_list.update!(r, :destination_path) do
+                r.destination_path = to
+              end
+            end
           end
         end
 

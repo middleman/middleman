@@ -20,7 +20,7 @@ end
 class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
   define_setting :relative_links, false, 'Whether to generate relative links instead of absolute ones'
 
-  def initialize(app, options_hash={}, &block)
+  def initialize(app, options_hash = ::Middleman::EMPTY_HASH, &block)
     super
 
     require 'active_support/core_ext/object/to_query'
@@ -38,7 +38,7 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
   # The helpers
   helpers do
     # Make all block content html_safe
-    def content_tag(name, content=nil, options=nil, &block)
+    def content_tag(name, content = nil, options = nil, &block)
       # safe_content_tag(name, content, options, &block)
       if block_given?
         options = content if content.is_a?(Hash)
@@ -64,11 +64,13 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
     end
 
     def capture_html(*args, &block)
-      result = if handler = auto_find_proper_handler(&block)
-        handler.capture_from_template(*args, &block)
-      else
-        yield(*args)
-      end
+      handler = auto_find_proper_handler(&block)
+
+      result = if handler
+                 handler.capture_from_template(*args, &block)
+               else
+                 yield(*args)
+               end
 
       ::ActiveSupport::SafeBuffer.new.safe_concat(result)
     end
@@ -140,14 +142,14 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
     # @param [Symbol] asset_ext The type of asset
     # @param [String] asset_dir Where to look for assets
     # @return [void]
-    def auto_tag(asset_ext, asset_dir=nil)
+    def auto_tag(asset_ext, asset_dir = nil)
       if asset_dir.nil?
         asset_dir = case asset_ext
-        when :js
-          config[:js_dir]
-        when :css
-          config[:css_dir]
-        end
+                    when :js
+                      config[:js_dir]
+                    when :css
+                      config[:css_dir]
+                    end
       end
 
       # If the basename of the request as no extension, assume we are serving a
@@ -155,13 +157,15 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
       path = File.join(asset_dir, current_resource.path)
       path = path[0..-(File.extname(path).length + 1)] + ".#{asset_ext}"
 
-      yield path if sitemap.find_resource_by_path(path)
+      yield path if sitemap.by_path(path)
     end
 
     # Generate body css classes based on the current path
     #
     # @return [String]
-    def page_classes(path=current_path.dup, options={})
+    def page_classes(path = current_path.dup, options_hash = ::Middleman::EMPTY_HASH)
+      options = options_hash
+
       if path.is_a? Hash
         options = path
         path = current_path.dup
@@ -191,8 +195,8 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
     # @param [String] source The path to the file
     # @param [Hash] options Data to pass through.
     # @return [String]
-    def asset_path(kind, source, options={})
-      options_with_resource = {}.merge!(options).merge!(current_resource: current_resource)
+    def asset_path(kind, source, options_hash = ::Middleman::EMPTY_HASH)
+      options_with_resource = {}.merge!(options_hash).merge!(current_resource: current_resource)
       ::Middleman::Util.asset_path(app, kind, source, options_with_resource)
     end
 
@@ -202,16 +206,16 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
     # @param [String] prefix The type prefix (such as "images")
     # @param [Hash] options Additional options.
     # @return [String] The fully qualified asset url
-    def asset_url(path, prefix='', options={})
-      options_with_resource = {}.merge!(options).merge!(current_resource: current_resource)
+    def asset_url(path, prefix = '', options_hash = ::Middleman::EMPTY_HASH)
+      options_with_resource = {}.merge!(options_hash).merge!(current_resource: current_resource)
       ::Middleman::Util.asset_url(app, path, prefix, options_with_resource)
     end
 
     # Given a source path (referenced either absolutely or relatively)
     # or a Resource, this will produce the nice URL configured for that
     # path, respecting :relative_links, directory indexes, etc.
-    def url_for(path_or_resource, options={})
-      options_with_resource = {}.merge!(options).merge!(current_resource: current_resource)
+    def url_for(path_or_resource, options_hash = ::Middleman::EMPTY_HASH)
+      options_with_resource = {}.merge!(options_hash).merge!(current_resource: current_resource)
       ::Middleman::Util.url_for(app, path_or_resource, options_with_resource)
     end
 
@@ -232,11 +236,11 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
       url_arg_index = block_given? ? 0 : 1
       options_index = block_given? ? 1 : 2
 
-      if block_given? && args.size > 2
-        raise ArgumentError, 'Too many arguments to link_to(url, options={}, &block)'
-      end
+      raise ArgumentError, 'Too many arguments to link_to(url, options={}, &block)' if block_given? && args.size > 2
 
-      if url = args[url_arg_index]
+      url = args[url_arg_index]
+
+      if url
         options = args[options_index] || {}
         raise ArgumentError, 'Options must be a hash' unless options.is_a?(Hash)
 
@@ -252,14 +256,14 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
 
     # Modified Padrino form_for that uses Middleman's url_for
     # to transform the URL.
-    def form_tag(url, options={}, &block)
-      url = url_for(url, options)
+    def form_tag(url, options_hash = ::Middleman::EMPTY_HASH, &block)
+      url = url_for(url, options_hash)
       super
     end
 
     # Modified Padrino image_tag so that it finds the paths for srcset
     # using asset_path for the images listed in the srcset param
-    def image_tag(path, params={})
+    def image_tag(path, params = {})
       params.symbolize_keys!
 
       if params.key?(:srcset)
@@ -278,8 +282,10 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
       super(path, params)
     end
 
-    def partial(template, options={}, &block)
-      including_parent_locals = {}
+    def partial(template, options_hash = ::Middleman::EMPTY_HASH, &block)
+      options = options_hash.dup
+
+      including_parent_locals = Middleman::Util::EnhancedHash.new
       including_parent_locals.merge!(@locs || {})
       including_parent_locals.merge!(options[:locals] || {})
 

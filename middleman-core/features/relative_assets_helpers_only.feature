@@ -6,7 +6,7 @@ Feature: Relative Assets (Helpers Only)
       """
       activate :relative_assets, helpers_only: true
       """
-    And a file named "source/stylesheets/relative_assets.css.sass.erb" with:
+    And a file named "source/stylesheets/relative_assets_helper.css.sass.erb" with:
       """
       h1
         background: url("<%= asset_url('images/blank.gif') %>")
@@ -38,7 +38,7 @@ Feature: Relative Assets (Helpers Only)
       }
       """
     And the Server is running at "relative-assets-app"
-    When I go to "/stylesheets/relative_assets.css"
+    When I go to "/stylesheets/relative_assets_helper.css"
     Then I should see 'url("../images/blank.gif'
     And I should see 'url("../images/blank2.gif'
     When I go to "/javascripts/application.js"
@@ -96,7 +96,7 @@ Feature: Relative Assets (Helpers Only)
         '/stylesheets/fonts3.css',
       ], helpers_only: true
       """
-    And a file named "source/stylesheets/relative_assets.css.sass.erb" with:
+    And a file named "source/stylesheets/relative_assets_helper.css.sass.erb" with:
       """
       h1
         background: url("<%= asset_url('images/blank.gif') %>")
@@ -117,7 +117,7 @@ Feature: Relative Assets (Helpers Only)
       }
       """
     And the Server is running at "relative-assets-app"
-    When I go to "/stylesheets/relative_assets.css"
+    When I go to "/stylesheets/relative_assets_helper.css"
     Then I should see 'url("../images/blank.gif'
     When I go to "/stylesheets/fonts3.css"
     Then I should see 'url(/fonts/roboto/roboto-regular-webfont.eot'

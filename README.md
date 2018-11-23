@@ -1,5 +1,8 @@
 # Middleman - Makes developing websites simple
 
+[![Gem Version](http://img.shields.io/gem/v/middleman.svg?style=flat)][gem]
+[![License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)][license]
+[![Build Status](http://img.shields.io/travis/middleman/middleman.svg?style=flat)][travis]
 [![Gitter](https://badges.gitter.im/middleman/middleman.svg)](https://gitter.im/middleman/middleman?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 **Middleman** is a static site generator using all the shortcuts and tools in modern web development. Check out [middlemanapp.com](http://middlemanapp.com/) for detailed tutorials, including a [getting started guide](http://middlemanapp.com/basics/getting-started/). You can also follow [@middlemanapp](https://twitter.com/middlemanapp) for updates.
@@ -44,7 +47,7 @@ middleman server
 
 The preview server allows you to build your site, by modifying the contents of the `source` directory, and see your changes reflected in the browser at: `http://localhost:4567/`
 
-To get started, simply develop as you normally would by building HTML, CSS, and Javascript in the `source` directory. When you're ready to use more complex templates, simply add the templating engine's extension to the file and start writing in that format.
+To get started, simply develop as you normally would by building HTML, CSS, and JavaScript in the `source` directory. When you're ready to use more complex templates, simply add the templating engine's extension to the file and start writing in that format.
 
 For example, say I am working on a stylesheet at `source/stylesheets/site.css` and I'd like to start using Sass. I would rename the file to `source/stylesheets/site.css.scss` and Middleman will automatically begin processing that file as Sass. The same would apply to CoffeeScript (`.js.coffee`), Haml (`.html.haml`) and any other templating engine you might want to use.
 
@@ -54,23 +57,13 @@ Finally, you will want to build your project into a stand-alone site. From the p
 middleman build
 ```
 
-This will compile your templates and output a stand-alone site which can be easily hosted or delivered to your client. The build step can also compress images, employ Javascript & CSS dependency management, minify Javascript & CSS and run additional code of your choice. Take a look at the `config.rb` file to see some of the most common extensions which can be activated.
+This will compile your templates and output a stand-alone site which can be easily hosted or delivered to your client. The build step can also compress images, employ JavaScript & CSS dependency management, minify JavaScript & CSS and run additional code of your choice. Take a look at the `config.rb` file to see some of the most common extensions which can be activated.
 
 ## Learn More
 
 A full set of in-depth instructional guides are available on the official website at: http://middlemanapp.com
 
 Additionally, up-to-date generated code documentation is available on [RubyDoc]
-
-## Build & Dependency Status
-
-[![Gem Version](http://img.shields.io/gem/v/middleman.svg?style=flat)][gem]
-[![License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)][license]
-[![Dependency Status](http://img.shields.io/gemnasium/middleman/middleman.svg?style=flat)][gemnasium]
-[![Build Status](http://img.shields.io/travis/middleman/middleman.svg?style=flat)][travis]
-[![Code Coverage](http://img.shields.io/coveralls/middleman/middleman.svg?style=flat)][coveralls]
-[![Code Quality](http://img.shields.io/codeclimate/github/middleman/middleman.svg?style=flat)][codeclimate]
-[![Gittip](http://img.shields.io/gittip/middleman.svg?style=flat)][gittip]
 
 ## Community
 
@@ -116,9 +109,7 @@ Copyright (c) 2010-2017 Thomas Reynolds. MIT Licensed, see [LICENSE] for details
 [middleman]: http://middlemanapp.com
 [gem]: https://rubygems.org/gems/middleman
 [travis]: http://travis-ci.org/middleman/middleman
-[coveralls]: https://coveralls.io/r/middleman/middleman
 [gemnasium]: https://gemnasium.com/middleman/middleman
-[codeclimate]: https://codeclimate.com/github/middleman/middleman
 [gittip]: https://www.gittip.com/middleman/
 [rubyinstaller]: http://rubyinstaller.org/
 [RubyInstaller-Devkit]: https://rubyinstaller.org/add-ons/devkit.html

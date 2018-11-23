@@ -14,8 +14,8 @@ module Middleman
       #   background: url(image-path("image.jpg"));                // background: url("/assets/image.jpg");
       #   background: url(image-path("image.jpg", $digest: true)); // background: url("/assets/image-27a8f1f96afd8d4c67a59eb9447f45bd.jpg");
       #
-      def image_path(source, options={})
-        p = ::Middleman::Util.asset_path(middleman_context, :images, source.value, map_options(options))
+      def image_path(source, options_hash = ::Middleman::EMPTY_HASH)
+        p = ::Middleman::Util.asset_path(middleman_context, :images, source.value, map_options(options_hash))
         ::Sass::Script::String.new p.to_s, :string
       end
 
@@ -28,7 +28,9 @@ module Middleman
       #   background: image-url("image.jpg");                // background: url("/assets/image.jpg");
       #   background: image-url("image.jpg", $digest: true); // background: url("/assets/image-27a8f1f96afd8d4c67a59eb9447f45bd.jpg");
       #
-      def image_url(source, options={}, _cache_buster=nil)
+      def image_url(source, options_hash = ::Middleman::EMPTY_HASH, _cache_buster = nil)
+        options = options_hash.dup
+
         # Work with the Compass #image_url API
         if options.respond_to? :value
           case options.value
@@ -50,8 +52,8 @@ module Middleman
       #   src: url(font-path("font.ttf"));                // src: url("/assets/font.ttf");
       #   src: url(font-path("font.ttf", $digest: true)); // src: url("/assets/font-27a8f1f96afd8d4c67a59eb9447f45bd.ttf");
       #
-      def font_path(source, options={})
-        p = ::Middleman::Util.asset_path(middleman_context, :fonts, source.value, map_options(options))
+      def font_path(source, options_hash = ::Middleman::EMPTY_HASH)
+        p = ::Middleman::Util.asset_path(middleman_context, :fonts, source.value, map_options(options_hash))
         ::Sass::Script::String.new p.to_s, :string
       end
 
@@ -64,7 +66,9 @@ module Middleman
       #   src: font-url("font.ttf");                  // src: url("/assets/font.ttf");
       #   src: font-url("image.jpg", $digest: true);  // src: url("/assets/font-27a8f1f96afd8d4c67a59eb9447f45bd.ttf");
       #
-      def font_url(source, options={})
+      def font_url(source, options_hash = ::Middleman::EMPTY_HASH)
+        options = options_hash.dup
+
         # Work with the Compass #font_url API
         if options.respond_to? :value
           case options.value
@@ -92,7 +96,9 @@ module Middleman
 
       # Returns an options hash where the keys are symbolized
       # and the values are unwrapped Sass literals.
-      def map_options(options={}) # :nodoc:
+      def map_options(options_hash = ::Middleman::EMPTY_HASH) # :nodoc:
+        options = options_hash.dup
+
         ::Sass::Util.map_hash(options) do |key, value|
           [key.to_sym, value.respond_to?(:value) ? value.value : value]
         end

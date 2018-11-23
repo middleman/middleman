@@ -1,3 +1,5 @@
 module OneHelper
-  def one; "One"; end
+  def one
+    'One'
+  end
 end

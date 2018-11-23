@@ -16,13 +16,7 @@ end
 # to dynamic requests.
 Middleman::Extensions.register :data, auto_activate: :before_sitemap do
   require 'middleman-core/core_extensions/data'
-  Middleman::CoreExtensions::Data
-end
-
-# Rewrite embedded URLs via Rack
-Middleman::Extensions.register :inline_url_rewriter, auto_activate: :before_sitemap do
-  require 'middleman-core/core_extensions/inline_url_rewriter'
-  Middleman::CoreExtensions::InlineURLRewriter
+  Middleman::CoreExtensions::Data::DataExtension
 end
 
 # Catch and show exceptions at the Rack level
@@ -100,10 +94,10 @@ Middleman::Extensions.register :minify_css do
   Middleman::Extensions::MinifyCss
 end
 
-# MinifyJavascript compresses JS
+# MinifyJavaScript compresses JS
 Middleman::Extensions.register :minify_javascript do
   require 'middleman-core/extensions/minify_javascript'
-  Middleman::Extensions::MinifyJavascript
+  Middleman::Extensions::MinifyJavaScript
 end
 
 # GZIP assets and pages during build

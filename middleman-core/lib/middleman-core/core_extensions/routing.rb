@@ -9,25 +9,35 @@ module Middleman
       # Expose the `page` method to config.
       expose_to_config :page
 
-      PageDescriptor = Struct.new(:path, :metadata) do
-        def execute_descriptor(app, resources)
+      PageDescriptor = Struct.new(:path, :locals, :page, :options) do
+        def execute_descriptor(app, resource_list)
           normalized_path = path.dup
 
           if normalized_path.is_a?(String) && !normalized_path.include?('*')
             # Normalize path
             normalized_path = ::Middleman::Util.normalize_path(normalized_path)
-            if normalized_path.end_with?('/') || app.files.by_type(:source).watchers.any? { |w| (w.directory + Pathname(normalized_path)).directory? }
-              normalized_path = ::File.join(normalized_path, app.config[:index_file])
-            end
+            normalized_path = ::File.join(normalized_path, app.config[:index_file]) if normalized_path.end_with?('/') || app.files.by_type(:source).watchers.any? { |w| (w.directory + Pathname(normalized_path)).directory? }
           end
 
           normalized_path = '/' + ::Middleman::Util.strip_leading_slash(normalized_path) if normalized_path.is_a?(String)
 
-          resources
+          resource_list
             .select { |r| ::Middleman::Util.path_match(normalized_path, "/#{r.path}") }
-            .each { |r| r.add_metadata(metadata, true) }
+            .each do |r|
+              r.add_metadata_locals(locals, true) if locals
 
-          resources
+              if page
+                if page.key?(:id)
+                  resource_list.update!(r, :page_id) do
+                    r.add_metadata_page(page, true)
+                  end
+                else
+                  r.add_metadata_page(page, true)
+                end
+              end
+
+              r.add_metadata_options(options, true) if options
+            end
         end
       end
 
@@ -49,20 +59,13 @@ module Middleman
       # @option opts [Hash] data Extra metadata to add to the page. This is the same as frontmatter, though frontmatter will take precedence over metadata defined here. Available via {Resource#data}.
       # @return [void]
       Contract Or[String, Regexp], Hash => PageDescriptor
-      def page(path, opts={})
-        options = opts.dup
+      def page(path, options_hash = ::Middleman::EMPTY_HASH)
+        options = options_hash.dup
 
         page_data = options.delete(:data) || {}
         page_data[:id] = options.delete(:id) if options.key?(:id)
 
-        # Default layout
-        metadata = {
-          locals: options.delete(:locals) || {},
-          page: page_data,
-          options: options
-        }
-
-        PageDescriptor.new(path, metadata)
+        PageDescriptor.new(path, options.delete(:locals), page_data, options)
       end
     end
   end

@@ -1,7 +1,9 @@
 require 'tilt'
+require 'hamster'
 require 'active_support/core_ext/string/output_safety'
 require 'active_support/core_ext/module/delegation'
 require 'middleman-core/contracts'
+require 'middleman-core/dependencies/vertices/vertex'
 
 ::Tilt.default_mapping.lazy_map.delete('html')
 ::Tilt.default_mapping.lazy_map.delete('csv')
@@ -15,11 +17,15 @@ module Middleman
       @_cache ||= ::Tilt::Cache.new
     end
 
+    Contract ImmutableSetOf[::Middleman::Dependencies::Vertex]
+    attr_reader :vertices
+
     def_delegator :"self.class", :cache
 
     def initialize(app, path)
       @app = app
       @path = path.to_s
+      @vertices = ::Hamster::Set.empty
     end
 
     # Render an on-disk file. Used for everything, including layouts.
@@ -32,22 +38,23 @@ module Middleman
     def render(locs, opts, context, &block)
       path = @path.dup
 
-      # Detect the remdering engine from the extension
+      # Detect the rendering engine from the extension
       extension = File.extname(path)
       engine = extension[1..-1].to_sym
 
       # Store last engine for later (could be inside nested renders)
-      context.current_engine, engine_was = engine, context.current_engine
+      engine_was = context.current_engine
+      context.current_engine = engine
 
       # Save current buffer for later
       buf_was = context.save_buffer
 
       # Read from disk or cache the contents of the file
       body = if opts[:template_body]
-        opts.delete(:template_body)
-      else
-        template_data_for_file
-      end
+               opts.delete(:template_body)
+             else
+               template_data_for_file
+             end
 
       # Merge per-extension options from config
       extension = File.extname(path)
@@ -59,28 +66,19 @@ module Middleman
       # Overwrite with frontmatter options
       options = options.deep_merge(options[:renderer_options]) if options[:renderer_options]
 
-      template_class = ::Middleman::Util.tilt_class(path)
-
-      # Allow hooks to manipulate the template before render
-      body = @app.callbacks_for(:before_render).reduce(body) do |sum, callback|
-        callback.call(sum, path, locs, template_class) || sum
-      end
-
       # Read compiled template from disk or cache
       template = ::Tilt.new(path, 1, options) { body }
       # template = cache.fetch(:compiled_template, extension, options, body) do
       #   ::Tilt.new(path, 1, options) { body }
       # end
 
-      # Render using Tilt
-      # content = ::Middleman::Util.instrument 'render.tilt', path: path do
-      #   template.render(context, locs, &block)
-      # end
-      content = template.render(context, locs, &block)
+      @vertices = ::Hamster::Set.empty
 
-      # Allow hooks to manipulate the result after render
-      content = @app.callbacks_for(:after_render).reduce(content) do |sum, callback|
-        callback.call(sum, path, locs, template_class) || sum
+      # Render using Tilt
+      content = ::Middleman::Util.instrument 'render.tilt', path: path do
+        template.render(context, locs, &block).tap do
+          @vertices = template.vertices if template.respond_to?(:vertices)
+        end
       end
 
       output = ::ActiveSupport::SafeBuffer.new ''

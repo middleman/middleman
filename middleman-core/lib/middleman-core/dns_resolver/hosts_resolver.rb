@@ -8,11 +8,11 @@ module Middleman
 
       public
 
-      def initialize(opts={})
+      def initialize(options_hash = ::Middleman::EMPTY_HASH)
         # using the splat operator works around a non-existing HOSTSRC variable
         # using nil as input does not work, but `*[]` does and then Resolv::Hosts
         # uses its defaults
-        @resolver = opts.fetch(:resolver, Resolv::Hosts.new(*hosts_file))
+        @resolver = options_hash.fetch(:resolver, Resolv::Hosts.new(*hosts_file))
       end
 
       # Get names for ip

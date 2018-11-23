@@ -22,11 +22,11 @@ module Middleman
 
       attr_writer :https
 
-      def initialize(opts={})
-        @resolver     = opts.fetch(:resolver, DnsResolver.new)
-        @validator    = opts.fetch(:validator, ServerInformationValidator.new)
-        @network_interface_inventory = opts.fetch(:network_interface_inventory, NetworkInterfaceInventory.new)
-        @tcp_port_prober = opts.fetch(:tcp_port_prober, TcpPortProber.new)
+      def initialize(options_hash = ::Middleman::EMPTY_HASH)
+        @resolver     = options_hash.fetch(:resolver, DnsResolver.new)
+        @validator    = options_hash.fetch(:validator, ServerInformationValidator.new)
+        @network_interface_inventory = options_hash.fetch(:network_interface_inventory, NetworkInterfaceInventory.new)
+        @tcp_port_prober = options_hash.fetch(:tcp_port_prober, TcpPortProber.new)
 
         @informations = []
         @informations << AllInterfaces

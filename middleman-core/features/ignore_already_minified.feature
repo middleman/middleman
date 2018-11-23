@@ -1,4 +1,4 @@
-Feature: CSS and Javascripts which are minify shouldn't be re-minified
+Feature: CSS and JavaScripts which are minify shouldn't be re-minified
 
   Scenario: JS files containing ".min" should not be re-compressed
     Given an empty app

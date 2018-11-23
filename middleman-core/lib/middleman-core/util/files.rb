@@ -6,7 +6,7 @@ module Middleman
 
     module_function
 
-    # Get a recusive list of files inside a path.
+    # Get a recursive list of files inside a path.
     # Works with symlinks.
     #
     # @param path Some path string or Pathname
@@ -56,9 +56,8 @@ module Middleman
 
     Contract String => String
     def step_through_extensions(path)
-      while ::Middleman::Util.tilt_class(path)
-        ext = ::File.extname(path)
-        break if ext.empty?
+      while (ext = File.extname(path))
+        break if ext.empty? || !::Middleman::Util.tilt_class(ext)
 
         yield ext if block_given?
 
@@ -90,9 +89,7 @@ module Middleman
       @@extensions_cache[base_name] ||= begin
         result = []
 
-        unless base_name.start_with?('.')
-          step_through_extensions(base_name) { |e| result << e }
-        end
+        step_through_extensions(base_name) { |e| result << e } unless base_name.start_with?('.')
 
         result
       end
@@ -119,7 +116,7 @@ module Middleman
 
       all_extensions.uniq!
 
-      app.sitemap.resources.select { |r|
+      app.sitemap.without_ignored.to_a.select do |r|
         if r.file_descriptor
           local_extensions = collect_extensions(r.file_descriptor[:full_path].to_s)
           local_extensions |= sass_type_aliasing unless (local_extensions & sass_type_aliasing).empty?
@@ -131,7 +128,7 @@ module Middleman
         else
           false
         end
-      }.map(&:file_descriptor)
+      end.map(&:file_descriptor)
     end
   end
 end

@@ -1,4 +1,4 @@
-Feature: Minify Javascript
+Feature: Minify JavaScript
   In order reduce bytes sent to client and appease YSlow
 
   Scenario: Rendering inline js with the feature disabled
@@ -19,23 +19,23 @@ Feature: Minify Javascript
       })();
     </script>
     <script>
-      ;(function() {
-        this;
-        should();
-        too();
-      })();
+    ;(function() {
+      this;
+      should();
+      too();
+    })();
     </script>
     <script type='text/javascript'>
-      //<!--
-      ;(function() {
-        one;
-        line();
-        here();
-      })();
-      //-->
+    //<!--
+    ;(function() {
+      one;
+      line();
+      here();
+    })();
+    //-->
     </script>
     <script type='text/html'>
-      I'm a jQuery {{template}}.
+    I'm a jQuery {{template}}.
     </script>
     """
 
@@ -66,23 +66,23 @@ Feature: Minify Javascript
       })();
     </script>
     <script>
-      ;(function() {
-        this;
-        should();
-        too();
-      })();
+    ;(function() {
+      this;
+      should();
+      too();
+    })();
     </script>
     <script type='text/javascript'>
-      //<!--
-      ;(function() {
-        one;
-        line();
-        here();
-      })();
-      //-->
+    //<!--
+    ;(function() {
+      one;
+      line();
+      here();
+    })();
+    //-->
     </script>
     <script type='text/html'>
-      I'm a jQuery {{template}}.
+    I'm a jQuery {{template}}.
     </script>
     """
 
@@ -108,15 +108,15 @@ Feature: Minify Javascript
       Hello
     </script>
     <script>
-      Hello
+    Hello
     </script>
     <script type='text/javascript'>
-      //<!--
+    //<!--
     Hello
-      //-->
+    //-->
     </script>
     <script type='text/html'>
-      I'm a jQuery {{template}}.
+    I'm a jQuery {{template}}.
     </script>
     """
 
@@ -131,18 +131,18 @@ Feature: Minify Javascript
     Then I should see:
     """
     <script>
-      !function(){should(),all.be(),on={one:line}}();
+      should(),all.be(),on={one:line};
     </script>
     <script>
-      !function(){should(),too()}();
+    should(),too();
     </script>
     <script type='text/javascript'>
-      //<!--
-    !function(){one,line(),here()}();
-      //-->
+    //<!--
+    one,line(),here();
+    //-->
     </script>
     <script type='text/html'>
-      I'm a jQuery {{template}}.
+    I'm a jQuery {{template}}.
     </script>
     """
 
@@ -159,11 +159,11 @@ Feature: Minify Javascript
     <?='Hello'?>
 
     <script>
-      !function(){should(),all.be(),on={one:line}}();
+      should(),all.be(),on={one:line};
     </script>
     <script type='text/javascript'>
       //<!--
-    !function(){one,line(),here()}();
+    one,line(),here();
       //-->
     </script>
     <script type='text/html'>

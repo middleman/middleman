@@ -1,5 +1,5 @@
 Feature: Support coffee-script
-  In order to offer an alternative when writing Javascript
+  In order to offer an alternative when writing JavaScript
 
   Scenario: Rendering coffee script
     Given the Server is running at "coffeescript-app"
@@ -19,4 +19,4 @@ Feature: Support coffee-script
   Scenario: Building broken coffee
     Given a built app at "coffeescript-app"
     Then the output should contain "error  build/javascripts/broken-coffee.js"
-    And the exit status should be 1
+    Then the exit status should not be 0

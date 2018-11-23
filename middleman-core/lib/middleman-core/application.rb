@@ -1,5 +1,5 @@
 require 'active_support/core_ext/integer/inflections'
-
+require 'hamster'
 require 'middleman-core/contracts'
 require 'middleman-core/callback_manager'
 require 'middleman-core/logger'
@@ -53,7 +53,7 @@ module Middleman
     # An anonymous subclass of ::Middleman::TemplateContext
     attr_reader :template_context_class
 
-    # An instance of the above anonymouse class.
+    # An instance of the above anonymous class.
     attr_reader :generic_template_context
 
     Contract ::Middleman::Configuration::ConfigurationManager
@@ -67,6 +67,9 @@ module Middleman
 
     Contract SetOf[MapDescriptor]
     attr_reader :mappings
+
+    Contract ImmutableSetOf[String]
+    attr_reader :set_of_extensions_with_layout
 
     # Which port preview should start on.
     # @return [Fixnum]
@@ -158,11 +161,11 @@ module Middleman
 
     # Which file extensions have a layout by default.
     # @return [Array.<String>]
-    define_setting :extensions_with_layout, %w(.htm .html .xhtml .php), 'Which file extensions have a layout by default.'
+    define_setting :extensions_with_layout, %w[.htm .html .xhtml .php], 'Which file extensions have a layout by default.'
 
     # Which file extensions are "assets."
     # @return [Array.<String>]
-    define_setting :asset_extensions, %w(.css .png .jpg .jpeg .webp .svg .svgz .js .gif .ttf .otf .woff .woff2 .eot .ico .map), 'Which file extensions are treated as assets.'
+    define_setting :asset_extensions, %w[.css .png .jpg .jpeg .webp .svg .svgz .js .gif .ttf .otf .woff .woff2 .eot .ico .map], 'Which file extensions are treated as assets.'
 
     # Default string encoding for templates and output.
     # @return [String]
@@ -182,7 +185,7 @@ module Middleman
         ignored = false
 
         file[:relative_path].ascend do |f|
-          if f.basename.to_s =~ %r{^_[^_]}
+          if /^_[^_]/.match?(f.basename.to_s)
             ignored = true
             break
           end
@@ -191,7 +194,7 @@ module Middleman
         ignored
       end,
 
-      layout: ->(file, app) {
+      layout: lambda { |file, app|
         file[:relative_path].to_s.start_with?('layout.', app.config[:layouts_dir] + '/')
       }
     }, 'Callbacks that can exclude paths from the sitemap'
@@ -234,8 +237,6 @@ module Middleman
                                       :after_build,
                                       :before_shutdown,
                                       :before, # Before Rack requests
-                                      :before_render,
-                                      :after_render,
                                       :before_server,
                                       :reload
                                     ])
@@ -296,14 +297,14 @@ module Middleman
       # Post parsing, pre-extension callback
       execute_callbacks(:after_configuration_eval)
 
-      if Object.const_defined?(:Encoding)
-        Encoding.default_external = config[:encoding]
-      end
+      Encoding.default_external = config[:encoding] if Object.const_defined?(:Encoding)
 
       prune_tilt_templates!
 
       # After extensions have worked after_config
       execute_callbacks(:after_configuration)
+
+      @set_of_extensions_with_layout = ::Hamster::Set.new config.extensions_with_layout
 
       # Everything is stable
       execute_callbacks(:ready) unless config[:exit_before_ready]
@@ -345,13 +346,14 @@ module Middleman
 
     # Clean up missing Tilt exts
     def prune_tilt_templates!
-      ::Tilt.default_mapping.lazy_map.each_key do |key|
+      mapping = ::Tilt.default_mapping
+      mapping.lazy_map.each_key do |key|
         begin
-          ::Tilt[".#{key}"]
+          mapping[key]
         rescue LoadError, NameError
-          ::Tilt.default_mapping.lazy_map.delete(key)
         end
       end
+      mapping.lazy_map.clear
     end
 
     # Whether we're in a specific mode
@@ -438,10 +440,10 @@ module Middleman
     #
     # @deprecated Prefer accessing settings through "config".
     #
-    # @param [Symbol] key Name of the attribue
+    # @param [Symbol] key Name of the attribute
     # @param value Attribute value
     # @return [void]
-    def set(key, value=nil, &block)
+    def set(key, value = nil, &block)
       logger.warn "Warning: `set :#{key}` is deprecated. Use `config[:#{key}] =` instead."
 
       value = block if block_given?

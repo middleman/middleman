@@ -37,15 +37,15 @@ Feature: Builder
 
   Scenario: Build with errors
     Given a built app at "build-with-errors-app"
-    Then the exit status should be 1
+    Then the exit status should not be 0
 
   Scenario: Build empty errors
     Given a built app at "empty-app"
-    Then the exit status should be 1
+    Then was not successfully built
 
   Scenario: Build external_pipeline errors
     Given a built app at "external-pipeline-error"
-    Then the exit status should be 1
+    Then the exit status should not be 0
 
   Scenario: Build alias (b)
     Given a fixture app "large-build-app"

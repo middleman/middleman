@@ -22,17 +22,17 @@ module Middleman
         # @option opts [Hash] data Extra metadata to add to the page. This is the same as frontmatter, though frontmatter will take precedence over metadata defined here. Available via {Resource#data}.
         # @return [ProxyDescriptor]
         Contract String, String, Maybe[Hash] => RespondTo[:execute_descriptor]
-        def proxy(path, target, opts={})
+        def proxy(path, target, options_hash = ::Middleman::EMPTY_HASH)
           ProxyDescriptor.new(
             ::Middleman::Util.normalize_path(path),
             ::Middleman::Util.normalize_path(target),
-            opts.dup
+            options_hash
           )
         end
       end
 
       ProxyDescriptor = Struct.new(:path, :target, :metadata) do
-        def execute_descriptor(app, resources)
+        def execute_descriptor(app, resource_list)
           md = metadata.dup
           should_ignore = md.delete(:ignore)
 
@@ -40,18 +40,20 @@ module Middleman
           page_data[:id] = md.delete(:id) if md.key?(:id)
 
           r = ProxyResource.new(app.sitemap, path, target)
-          r.add_metadata(
-            locals: md.delete(:locals) || {},
-            page: page_data || {},
-            options: md
-          )
+          if (locs = md.delete(:locals))
+            r.add_metadata_locals(locs)
+          end
+
+          r.add_metadata_page(page_data) if page_data
+
+          r.add_metadata_options(md)
 
           if should_ignore
             d = ::Middleman::Sitemap::Extensions::Ignores::StringIgnoreDescriptor.new(target)
-            d.execute_descriptor(app, resources)
+            d.execute_descriptor(app, resource_list)
           end
 
-          resources + [r]
+          resource_list.add! r
         end
       end
     end
@@ -71,10 +73,11 @@ module Middleman
       # @param [String] path
       # @param [String] target
       def initialize(store, path, target)
-        super(store, path)
+        super(store, path, nil, 2)
 
         target = ::Middleman::Util.normalize_path(target)
         raise "You can't proxy #{path} to itself!" if target == path
+
         @target = target
       end
 
@@ -83,15 +86,11 @@ module Middleman
       # @return [Sitemap::Resource]
       Contract IsA['Middleman::Sitemap::Resource']
       def target_resource
-        resource = @store.find_resource_by_path(@target)
+        resource = @store.by_path(@target)
 
-        unless resource
-          raise "Path #{path} proxies to unknown file #{@target}:#{@store.resources.map(&:path)}"
-        end
+        raise "Path #{path} proxies to unknown file #{@target}" unless resource
 
-        if resource.is_a? ProxyResource
-          raise "You can't proxy #{path} to #{@target} which is itself a proxy."
-        end
+        raise "You can't proxy #{path} to #{@target} which is itself a proxy." if resource.is_a? ProxyResource
 
         resource
       end
@@ -101,8 +100,16 @@ module Middleman
         target_resource.file_descriptor
       end
 
-      def metadata
-        target_resource.metadata.deep_merge super
+      def page
+        target_resource.page.deep_merge super
+      end
+
+      def options
+        target_resource.options.deep_merge super
+      end
+
+      def locals
+        target_resource.locals.deep_merge super
       end
 
       Contract Maybe[String]

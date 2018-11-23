@@ -87,17 +87,12 @@ module Middleman
       start_time = Time.now
 
       request_path = URI.decode(env['PATH_INFO'].dup)
-      if request_path.respond_to? :force_encoding
-        request_path.force_encoding('UTF-8')
-      end
+      request_path.force_encoding('UTF-8') if request_path.respond_to? :force_encoding
       request_path = ::Middleman::Util.full_path(request_path, @middleman)
       full_request_path = File.join(env['SCRIPT_NAME'], request_path) # Path including rack mount
 
-      # Run before callbacks
-      @middleman.execute_callbacks(:before)
-
       # Get the resource object for this path
-      resource = @middleman.sitemap.find_resource_by_destination_path(request_path.gsub(' ', '%20'))
+      resource = @middleman.sitemap.by_destination_path(request_path.gsub(' ', '%20'))
 
       # Return 404 if not in sitemap
       return not_found(res, full_request_path) unless resource && !resource.ignored?
@@ -143,12 +138,10 @@ module Middleman
         response = file.serving(env)
       end
       status = response[0]
-      response[1]['Content-Encoding'] = 'gzip' if %w(.svgz .gz).include?(resource.ext)
+      response[1]['Content-Encoding'] = 'gzip' if %w[.svgz .gz].include?(resource.ext)
       # Do not set Content-Type if status is 1xx, 204, 205 or 304, otherwise
       # Rack will throw an error (500)
-      if !(100..199).cover?(status) && ![204, 205, 304].include?(status)
-        response[1]['Content-Type'] = resource.content_type || 'application/octet-stream'
-      end
+      response[1]['Content-Type'] = resource.content_type || 'application/octet-stream' if !(100..199).cover?(status) && ![204, 205, 304].include?(status)
       halt response
     end
   end

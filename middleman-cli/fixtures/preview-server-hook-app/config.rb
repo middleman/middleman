@@ -9,7 +9,7 @@ class MyFeature < Middleman::Extension
       puts "/// #{server_information.port} ///"
       puts "/// #{server_information.server_name} ///"
       puts "/// #{server_information.site_addresses.first} ///"
-      puts "/// ### END ### ///"
+      puts '/// ### END ### ///'
     end
   end
 end

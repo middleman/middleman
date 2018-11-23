@@ -1,13 +1,59 @@
 master
 ===
 
+* Incremental builds: `--track-dependencies` and `--only-changed` flags (#2220)
+* Remove Rack support in favor of `resource.filters << proc { |oldbody| newbody }`
+* `manipulate_resource_list_container!` as a faster, less functional approach.
+
+# 4.3.0.rc.4
+
+* i18n was accidentally duplicating requests for extension-based template (file.es.html)
+* Make sass cache configurable with either `SASS_CACHE_LOCATION` env variable or `sass_cache_location` Middleman config variable. (#2213)
+
+# 4.3.0.rc.3
+
+* Fix Internal Server Error from `__middleman` meta page in dev. (#2187)
+* Reduce mutex hits in parallel build (#2107)
+* Docker-ized CLI
+
+# 4.3.0.rc.2
+
+* Add Errno::ENETUNREACH to exception list in BasicNetworkResolver (#2195)
+* Update Rubocop and apply new lint rules
+* Do not create unnecessary array in IgnoreDescriptor (#2183)
+* Fix reload of watched sources with destination_dir (#2190)
+* Fix localization and recursion issues of Traversal::parent. (#2188)
+* Use EnhancedHash for partial locals (#2169)
+
+# 4.3.0.rc.1
+
+* Test against Ruby 2.5 (#2166)
+* Update Rubocop and Yard (#2161) 
+* Discover template in local directory if applicable (#2157)
+* Better error message when init fails to clone git repo (#2159)
+* Allow bundle path to be specified in init command (#2154)
+* Add ExtensionManager#active? to check if extension is active (#2156)
+* Resolve Haml 5 warnings (#2149)
+* Clear lazy map after resolving Tilt templates (#2132)
+* Fix ignore of I18n files (#2143)
+* Fix redirect destination lookup (#2140) 
+* Add LD-JSON to MinifyJavaScript content types allowed to be compressed (#2138)
+* chmod before closing file to fix compatibility with JRuby (#2133)
+* Keeps full file path for chained templates (#2117) 
+* Use i18n fallbacks when looking up localized paths (#2116)
+* Compat with latest rails/activesupport < 5.2 (#2095)
+* Update "Port in use"-message for PreviewServer (#2089) 
+* I18n: Keep fragment and query in url_for (#2062)
+* Add support for locale suffixes to link_to (#2065)
+* Allow absolute :data_dir paths. Addresses #2042
+
 # 4.2.1
 
 * Fix some issues with Ruby 2.4.0
 
 # 4.2.0
 
-Fix #1951. A failed build would "clean" all files in build. Possibly breaking change, "clean" and "after_build" are only run for sucessful builds.
+Fix #1951. A failed build would "clean" all files in build. Possibly breaking change, "clean" and "after_build" are only run for successful builds.
 
 # 4.1.14
 

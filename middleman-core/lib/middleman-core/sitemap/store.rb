@@ -2,8 +2,9 @@
 require 'active_support/core_ext/hash/deep_merge'
 require 'monitor'
 require 'hamster'
-
 require 'middleman-core/extensions'
+require 'middleman-core/sitemap/resource'
+require 'middleman-core/sitemap/resource_list_container'
 
 # Files on Disk
 ::Middleman::Extensions.register :sitemap_ondisk, auto_activate: :before_configuration do
@@ -47,12 +48,10 @@ end
   ::Middleman::Sitemap::Extensions::Ignores
 end
 
-require 'middleman-core/contracts'
-
 module Middleman
   # Sitemap namespace
   module Sitemap
-    ManipulatorDescriptor = Struct.new :name, :manipulator, :priority, :custom_name
+    ManipulatorDescriptor = Struct.new :name, :manipulator, :priority
 
     # The Store class
     #
@@ -61,7 +60,10 @@ module Middleman
     # which is the path relative to the source directory, minus any template
     # extensions. All "path" parameters used in this class are source paths.
     class Store
+      extend Forwardable
       include Contracts
+
+      def_delegators :@resources, :by_extensions, :by_destination_path, :by_path, :by_binary, :by_page_id, :by_extension, :by_source_extension, :by_source_extensions, :with_ignored, :without_ignored
 
       Contract IsA['Middleman::Application']
       attr_reader :app
@@ -69,12 +71,15 @@ module Middleman
       Contract Num
       attr_reader :update_count
 
+      Contract ::Middleman::Sitemap::ResourceListContainer
+      attr_reader :resources
+
       # Initialize with parent app
       # @param [Middleman::Application] app
       Contract IsA['Middleman::Application'] => Any
       def initialize(app)
         @app = app
-        @resources = []
+        @resources = ResourceListContainer.new
         @rebuild_reasons = [:first_run]
         @update_count = 0
 
@@ -82,15 +87,14 @@ module Middleman
         @needs_sitemap_rebuild = true
 
         @lock = Monitor.new
-        reset_lookup_cache!
 
         @app.config_context.class.send :def_delegator, :app, :sitemap
       end
 
-      Contract Symbol, RespondTo[:manipulate_resource_list], Maybe[Or[Num, ArrayOf[Num]]], Maybe[Symbol] => Any
-      def register_resource_list_manipulators(name, manipulator, priority=50, custom_name=nil)
+      Contract Symbol, Or[RespondTo[:manipulate_resource_list], RespondTo[:manipulate_resource_list_container!]], Maybe[Or[Num, ArrayOf[Num]]] => Any
+      def register_resource_list_manipulators(name, manipulator, priority = 50)
         Array(priority || 50).each do |p|
-          register_resource_list_manipulator(name, manipulator, p, custom_name)
+          register_resource_list_manipulator(name, manipulator, p)
         end
       end
 
@@ -100,14 +104,13 @@ module Middleman
       # @param [Symbol] name Name of the manipulator for debugging
       # @param [#manipulate_resource_list] manipulator Resource list manipulator
       # @param [Numeric] priority Sets the order of this resource list manipulator relative to the rest. By default this is 50, and manipulators run in the order they are registered, but if a priority is provided then this will run ahead of or behind other manipulators.
-      # @param [Symbol] custom_name The method name to execute.
       # @return [void]
-      Contract Symbol, RespondTo[:manipulate_resource_list], Maybe[Num, Bool], Maybe[Symbol] => Any
-      def register_resource_list_manipulator(name, manipulator, priority=50, custom_name=nil)
+      Contract Symbol, Or[RespondTo[:manipulate_resource_list], RespondTo[:manipulate_resource_list_container!]], Maybe[Num, Bool] => Any
+      def register_resource_list_manipulator(name, manipulator, priority = 50)
         # The third argument used to be a boolean - handle those who still pass one
         priority = 50 unless priority.is_a? Numeric
         @resource_list_manipulators = @resource_list_manipulators.push(
-          ManipulatorDescriptor.new(name, manipulator, priority, custom_name)
+          ManipulatorDescriptor.new(name, manipulator, priority)
         )
 
         # The index trick is used so that the sort is stable - manipulators with the same priority
@@ -121,7 +124,7 @@ module Middleman
         rebuild_resource_list!(:"registered_new_manipulator_#{name}")
       end
 
-      # Rebuild the list of resources from scratch, using registed manipulators
+      # Rebuild the list of resources from scratch, using registered manipulators
       # @return [void]
       Contract Symbol => Any
       def rebuild_resource_list!(name)
@@ -132,62 +135,6 @@ module Middleman
         end
       end
 
-      # Find a resource given its original path
-      # @param [String] request_path The original path of a resource.
-      # @return [Middleman::Sitemap::Resource]
-      Contract String => Maybe[IsA['Middleman::Sitemap::Resource']]
-      def find_resource_by_path(request_path)
-        @lock.synchronize do
-          request_path = ::Middleman::Util.normalize_path(request_path)
-          ensure_resource_list_updated!
-          @_lookup_by_path[request_path]
-        end
-      end
-
-      # Find a resource given its destination path
-      # @param [String] request_path The destination (output) path of a resource.
-      # @return [Middleman::Sitemap::Resource]
-      Contract String => Maybe[IsA['Middleman::Sitemap::Resource']]
-      def find_resource_by_destination_path(request_path)
-        @lock.synchronize do
-          request_path = ::Middleman::Util.normalize_path(request_path)
-          ensure_resource_list_updated!
-          @_lookup_by_destination_path[request_path]
-        end
-      end
-
-      # Find a resource given its page id
-      # @param [String] page_id The page id.
-      # @return [Middleman::Sitemap::Resource]
-      Contract Or[String, Symbol] => Maybe[IsA['Middleman::Sitemap::Resource']]
-      def find_resource_by_page_id(page_id)
-        @lock.synchronize do
-          ensure_resource_list_updated!
-          @_lookup_by_page_id[page_id.to_s.to_sym]
-        end
-      end
-
-      # Get the array of all resources
-      # @param [Boolean] include_ignored Whether to include ignored resources
-      # @return [Array<Middleman::Sitemap::Resource>]
-      Contract Bool => ResourceList
-      def resources(include_ignored=false)
-        @lock.synchronize do
-          ensure_resource_list_updated!
-          if include_ignored
-            @resources
-          else
-            @resources_not_ignored ||= @resources.reject(&:ignored?)
-          end
-        end
-      end
-
-      # Invalidate our cached view of resource that are not ignored. If your extension
-      # adds ways to ignore files, you should call this to make sure #resources works right.
-      def invalidate_resources_not_ignored_cache!
-        @resources_not_ignored = nil
-      end
-
       # Get the URL path for an on-disk file
       # @param [String] file
       # @return [String]
@@ -196,9 +143,7 @@ module Middleman
         relative_path = file.is_a?(Pathname) ? file.to_s : file[:relative_path].to_s
 
         # Replace a file name containing automatic_directory_matcher with a folder
-        unless @app.config[:automatic_directory_matcher].nil?
-          relative_path = relative_path.gsub(@app.config[:automatic_directory_matcher], '/')
-        end
+        relative_path = relative_path.gsub(@app.config[:automatic_directory_matcher], '/') unless @app.config[:automatic_directory_matcher].nil?
 
         extensionless_path(relative_path)
       end
@@ -226,33 +171,19 @@ module Middleman
 
             @app.logger.debug '== Rebuilding resource list'
 
-            @resources = []
+            @resources.reset!
 
             @resource_list_manipulators.each do |m|
               ::Middleman::Util.instrument 'sitemap.manipulator', name: m[:name] do
                 @app.logger.debug "== Running manipulator: #{m[:name]} (#{m[:priority]})"
-                @resources = m[:manipulator].send(m[:custom_name] || :manipulate_resource_list, @resources)
 
-                # Reset lookup cache
-                reset_lookup_cache!
-
-                # Rebuild cache
-                @resources.each do |resource|
-                  @_lookup_by_path[resource.path] = resource
+                if m[:manipulator].respond_to?(:manipulate_resource_list_container!)
+                  m[:manipulator].send(:manipulate_resource_list_container!, @resources)
+                elsif m[:manipulator].respond_to?(:manipulate_resource_list)
+                  m[:manipulator].send(:manipulate_resource_list, resources.to_a).tap do |result|
+                    @resources.reset!(result)
+                  end
                 end
-
-                @resources.each do |resource|
-                  @_lookup_by_destination_path[resource.destination_path] = resource
-                end
-
-                # NB: This needs to be done after the previous two steps,
-                # since some proxy resources are looked up by path in order to
-                # get their metadata and subsequently their page_id.
-                @resources.each do |resource|
-                  @_lookup_by_page_id[resource.page_id.to_s.to_sym] = resource
-                end
-
-                invalidate_resources_not_ignored_cache!
               end
             end
 
@@ -264,14 +195,6 @@ module Middleman
       end
 
       private
-
-      def reset_lookup_cache!
-        @lock.synchronize do
-          @_lookup_by_path = {}
-          @_lookup_by_destination_path = {}
-          @_lookup_by_page_id = {}
-        end
-      end
 
       # Remove the locale token from the end of the path
       # @param [String] path

@@ -25,7 +25,7 @@ module Middleman
         end
 
         def self.match?(type)
-          :ipv4 == type
+          type == :ipv4
         end
       end
 
@@ -36,7 +36,7 @@ module Middleman
         end
 
         def self.match?(type)
-          :ipv6 == type
+          type == :ipv6
         end
       end
 
@@ -57,7 +57,7 @@ module Middleman
       #
       # @param [Symbol] type
       #   The type of interface which should be returned
-      def network_interfaces(type=:all)
+      def network_interfaces(type = :all)
         types.find { |t| t.match? type.to_sym }.new.network_interfaces
       end
     end

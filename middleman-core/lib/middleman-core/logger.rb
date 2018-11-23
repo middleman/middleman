@@ -1,31 +1,25 @@
 # Use the Ruby/Rails logger
 require 'active_support/notifications'
 require 'active_support/logger'
-require 'thread'
-
 module Middleman
   # The Middleman Logger
   class Logger < ActiveSupport::Logger
     def self.singleton(*args)
       if !@_logger || !args.empty?
-        if args.length == 1 && (args.first.is_a?(::String) || args.first.respond_to?(:write))
-          args = [0, false, args.first]
-        end
+        args = [0, false, args.first] if args.length == 1 && (args.first.is_a?(::String) || args.first.respond_to?(:write))
         @_logger = new(*args)
       end
 
       @_logger
     end
 
-    def initialize(log_level=1, is_instrumenting=false, target=$stdout)
+    def initialize(log_level = 1, is_instrumenting = false, target = $stdout)
       super(target)
 
       self.level = log_level
       @instrumenting = is_instrumenting
 
-      if @instrumenting != false
-        ::ActiveSupport::Notifications.subscribe(/\.middleman$/, self)
-      end
+      ::ActiveSupport::Notifications.subscribe(/\.middleman$/, self) if @instrumenting != false
 
       @mutex = Mutex.new
     end
@@ -41,6 +35,7 @@ module Middleman
 
       evt = ::ActiveSupport::Notifications::Event.new(message, *args)
       return unless evt.duration > 30
+
       info "== Instrument (#{evt.name.sub(/.middleman$/, '')}): #{evt.duration}ms\n#{args.last}"
     end
   end

@@ -16,11 +16,11 @@ module Middleman::CoreExtensions
 
     # Set textual delimiters that denote the start and end of frontmatter
     define_setting :frontmatter_delims, {
-      json: [%w(;;; ;;;)],
-      yaml: [%w(--- ---), %w(--- ...)]
+      json: [%w[;;; ;;;]],
+      yaml: [%w[--- ---], %w[--- ...]]
     }, 'Allowed frontmatter delimiters'
 
-    def initialize(app, options_hash={}, &block)
+    def initialize(app, options_hash = ::Middleman::EMPTY_HASH, &block)
       super
 
       @cache = {}
@@ -30,11 +30,9 @@ module Middleman::CoreExtensions
       app.files.on_change(:source, &method(:clear_data))
     end
 
-    # @return Array<Middleman::Sitemap::Resource>
-    Contract ResourceList => ResourceList
-    def manipulate_resource_list(resources)
-      resources.each do |resource|
-        next if resource.binary?
+    Contract IsA['Middleman::Sitemap::ResourceListContainer'] => Any
+    def manipulate_resource_list_container!(resource_list)
+      resource_list.by_binary(false).each do |resource|
         next if resource.file_descriptor.nil?
         next if resource.file_descriptor[:types].include?(:no_frontmatter)
 
@@ -51,9 +49,21 @@ module Middleman::CoreExtensions
         # TODO: Enhance data? NOOOO
         # TODO: stringify-keys? immutable/freeze?
 
-        resource.add_metadata options: opts, page: fmdata
+        resource.add_metadata_options opts
 
-        resource.ignore! if ignored == true && !resource.is_a?(::Middleman::Sitemap::ProxyResource)
+        if fmdata.key?(:id)
+          resource_list.update!(resource, :page_id) do
+            resource.add_metadata_page fmdata
+          end
+        else
+          resource.add_metadata_page fmdata
+        end
+
+        next unless ignored == true && !resource.is_a?(::Middleman::Sitemap::ProxyResource)
+
+        resource_list.update!(resource, :ignored) do
+          resource.ignore!
+        end
 
         # TODO: Save new template here somewhere?
       end

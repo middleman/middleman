@@ -1,1 +1,1 @@
-set :build_dir, ".build"
+set :build_dir, '.build'

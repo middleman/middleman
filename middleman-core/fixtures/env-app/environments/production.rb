@@ -1,2 +1,2 @@
-set :api_key, "prod2"
+set :api_key, 'prod2'
 activate :minify_css

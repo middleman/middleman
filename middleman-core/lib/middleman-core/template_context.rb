@@ -1,7 +1,10 @@
 require 'pathname'
+require 'hamster'
 require 'middleman-core/file_renderer'
 require 'middleman-core/template_renderer'
 require 'middleman-core/contracts'
+require 'middleman-core/dependencies/vertices/vertex'
+require 'middleman-core/dependencies/vertices/file_vertex'
 
 module Middleman
   # The TemplateContext Class
@@ -22,6 +25,9 @@ module Middleman
     # Required for Padrino's rendering
     attr_accessor :current_engine
 
+    Contract ImmutableSetOf[::Middleman::Dependencies::Vertex]
+    attr_reader :vertices
+
     # Shorthand references to global values on the app instance.
     def_delegators :@app, :config, :logger, :sitemap, :server?, :build?, :environment?, :environment, :data, :extensions, :root, :development?, :production?
 
@@ -30,10 +36,12 @@ module Middleman
     # @param [Middleman::Application] app
     # @param [Hash] locs
     # @param [Hash] opts
-    def initialize(app, locs={}, opts={})
+    def initialize(app, locs = {}, options_hash = ::Middleman::EMPTY_HASH)
       @app = app
       @locs = locs
-      @opts = opts
+      @opts = options_hash
+
+      @vertices = ::Hamster::Set.empty
     end
 
     # Return the current buffer to the caller and clear the value internally.
@@ -42,7 +50,8 @@ module Middleman
     # @api private
     # @return [String] The old buffer.
     def save_buffer
-      @_out_buf, buf_was = '', @_out_buf
+      buf_was = @_out_buf
+      @_out_buf = ''
       buf_was
     end
 
@@ -85,6 +94,8 @@ module Middleman
         restore_buffer(buf_was)
       end
 
+      @vertices <<= ::Middleman::Dependencies::FileVertex.from_source_file(@app, layout_file)
+
       # Render the layout, with the contents of the block inside.
       concat_safe_content render_file(layout_file, @locs, @opts) { content }
     ensure
@@ -100,7 +111,7 @@ module Middleman
     # @param [Proc] block A block will be evaluated to return internal contents.
     # @return [String]
     Contract Any, Or[Symbol, String], Hash => String, Maybe[Proc] => String
-    def render(_, name, options={}, &block)
+    def render(_, name, options_hash = ::Middleman::EMPTY_HASH, &block)
       name = name.to_s
 
       partial_file = locate_partial(name, false) || locate_partial(name, true)
@@ -108,16 +119,20 @@ module Middleman
       raise ::Middleman::TemplateRenderer::TemplateNotFound, "Could not locate partial: #{name}" unless partial_file
 
       source_path = sitemap.file_to_path(partial_file)
-      r = sitemap.find_resource_by_path(source_path)
+      r = sitemap.by_path(source_path)
 
-      if (r && !r.template?) || (Tilt[partial_file[:full_path]].nil? && partial_file[:full_path].exist?)
-        partial_file.read
-      else
-        opts = options.dup
-        locs = opts.delete(:locals)
+      @vertices <<= ::Middleman::Dependencies::FileVertex.from_source_file(@app, partial_file)
 
-        render_file(partial_file, locs, opts, &block)
-      end
+      result = if (r && !r.template?) || (Tilt[partial_file[:full_path]].nil? && partial_file[:full_path].exist?)
+                 partial_file.read
+               else
+                 opts = options_hash.dup
+                 locs = opts.delete(:locals)
+
+                 render_file(partial_file, locs, opts, &block)
+               end
+
+      result
     end
 
     # Locate a partial relative to the current path or the source dir, given a partial's path.
@@ -126,30 +141,35 @@ module Middleman
     # @param [String] partial_path
     # @return [String]
     Contract String, Maybe[Bool] => Maybe[IsA['Middleman::SourceFile']]
-    def locate_partial(partial_path, try_static=true)
+    def locate_partial(partial_path, try_static = true)
       partial_file = nil
       lookup_stack = []
       non_root     = partial_path.to_s.sub(/^\//, '')
       non_root_no_underscore = non_root.sub(/^_/, '').sub(/\/_/, '/')
 
-      if resource = current_resource
+      if current_resource
+        resource = current_resource
         current_dir  = resource.file_descriptor[:relative_path].dirname
         relative_dir = current_dir + Pathname(non_root)
         relative_dir_no_underscore = current_dir + Pathname(non_root_no_underscore)
+
+        if relative_dir
+          lookup_stack.push [relative_dir.to_s,
+                             { preferred_engine: resource.file_descriptor[:relative_path]
+                                                         .extname[1..-1].to_sym }]
+        end
       end
 
-      if relative_dir
-        lookup_stack.push [relative_dir.to_s,
-                           { preferred_engine: resource.file_descriptor[:relative_path]
-                             .extname[1..-1].to_sym }]
-      end
       lookup_stack.push [non_root]
+
       lookup_stack.push [non_root,
                          { try_static: try_static }]
+
       if relative_dir_no_underscore
         lookup_stack.push [relative_dir_no_underscore.to_s,
                            { try_static: try_static }]
       end
+
       lookup_stack.push [non_root_no_underscore,
                          { try_static: try_static }]
 
@@ -169,7 +189,8 @@ module Middleman
     # @return [Middleman::Sitemap::Resource]
     def current_resource
       return nil unless current_path
-      sitemap.find_resource_by_destination_path(current_path)
+
+      sitemap.by_destination_path(current_path)
     end
     alias current_page current_resource
 
@@ -200,6 +221,7 @@ module Middleman
 
           content_renderer = ::Middleman::FileRenderer.new(@app, path)
           content = content_renderer.render(locs, opts, context, &block)
+          @vertices |= content_renderer.vertices
 
           path = File.basename(path, File.extname(path))
         rescue LocalJumpError

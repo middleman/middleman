@@ -9,7 +9,7 @@ Feature: Run the preview server
     And the default aruba timeout is 30 seconds
 
   Scenario: Start the server with defaults
-    When I run `middleman server` interactively
+    When I run the interactive middleman server
     And I stop middleman if the output contains:
     """
     Inspect your site configuration
@@ -139,6 +139,7 @@ Feature: Run the preview server
     Inspect your site configuration at "http://127.0.0.5:4567/__middleman"
     """
 
+  @wip
   Scenario: Start the server with bind address ::1
     Given a file named ".hosts" with:
     """
@@ -315,6 +316,7 @@ Feature: Run the preview server
     Inspect your site configuration at "http://[::1]:4567/__middleman"
     """
 
+  @wip
   Scenario: Start the server with https
     When I run `middleman server --verbose --https` interactively
     And I stop middleman if the output contains:

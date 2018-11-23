@@ -29,11 +29,11 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
     # don't completely reload middleman, I18n.load_path can get
     # polluted with paths from other test app directories that don't
     # exist anymore.
-    if ENV['TEST']
-      app.after_configuration_eval do
-        ::I18n.load_path.delete_if { |path| path =~ %r{tmp/aruba} }
-        ::I18n.reload!
-      end
+    return unless ENV['TEST']
+
+    app.after_configuration_eval do
+      ::I18n.load_path.delete_if { |path| path =~ %r{tmp/aruba} }
+      ::I18n.reload!
     end
   end
 
@@ -68,10 +68,11 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
       ::I18n.t(*args)
     end
 
-    def url_for(path_or_resource, options={})
-      locale = options.delete(:locale) || ::I18n.locale
+    def url_for(path_or_resource, options_hash = ::Middleman::EMPTY_HASH)
+      # Fucked up, intentional mutation :(
+      locale = options_hash.key?(:locale) ? options_hash.delete(:locale) : ::I18n.locale
 
-      opts = options.dup
+      opts = options_hash.dup
 
       should_relativize = opts.key?(:relative) ? opts[:relative] : config[:relative_links]
 
@@ -79,23 +80,20 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
 
       href = super(path_or_resource, opts)
 
-      final_path = if result = extensions[:i18n].localized_path(href, locale)
-        result
-      else
-        # Should we log the missing file?
-        href
-      end
+      result = extensions[:i18n].localized_path(href, locale)
+
+      final_path = result || href
 
       opts[:relative] = should_relativize
 
       begin
         super(final_path, opts)
       rescue RuntimeError
-        super(path_or_resource, options)
+        super(path_or_resource, options_hash)
       end
     end
 
-    def locate_partial(partial_name, try_static=false)
+    def locate_partial(partial_name, try_static = false)
       locals_dir = extensions[:i18n].options[:templates_dir]
 
       # Try /localizable
@@ -106,10 +104,10 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
       extname = File.extname(partial_name)
       maybe_static = !extname.empty?
       suffixed_partial_name = if maybe_static
-        partial_name.sub(extname, ".#{locale_suffix}#{extname}")
-      else
-        "#{partial_name}.#{locale_suffix}"
-      end
+                                partial_name.sub(extname, ".#{locale_suffix}#{extname}")
+                              else
+                                "#{partial_name}.#{locale_suffix}"
+                              end
 
       if locale_suffix
         super(suffixed_partial_name, maybe_static) ||
@@ -140,21 +138,22 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
   alias lang locale
 
   # Update the main sitemap resource list
-  # @return Array<Middleman::Sitemap::Resource>
-  Contract ResourceList => ResourceList
-  def manipulate_resource_list(resources)
+  Contract IsA['Middleman::Sitemap::ResourceListContainer'] => Any
+  def manipulate_resource_list_container!(resource_list)
     new_resources = []
 
-    file_extension_resources = resources.select do |resource|
+    file_extension_resources = resource_list.select do |resource|
       parse_locale_extension(resource.path)
     end
 
-    localizable_folder_resources = resources.select do |resource|
+    localizable_folder_resources = resource_list.select do |resource|
       !file_extension_resources.include?(resource) && File.fnmatch?(File.join(options[:templates_dir], '**'), resource.path)
     end
 
     # If it's a "localizable template"
     localizable_folder_resources.each do |resource|
+      next if resource.ignored?
+
       page_id = File.basename(resource.path, File.extname(resource.path))
       locales.each do |locale|
         # Remove folder name
@@ -162,23 +161,37 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
         new_resources << build_resource(path, resource.path, page_id, locale)
       end
 
-      resource.ignore!
+      resource_list.update!(resource, :ignored) do
+        resource.ignore!
+      end
 
       # This is for backwards compatibility with the old provides_metadata-based code
       # that used to be in this extension, but I don't know how much sense it makes.
       # next if resource.options[:locale]
 
       # $stderr.puts "Defaulting #{resource.path} to #{@mount_at_root}"
-      # resource.add_metadata options: { locale: @mount_at_root }, locals: { locale: @mount_at_root }
+      # resource.add_metadata_options(locale: @mount_at_root)
+      # resource.add_metadata_locals(locale: @mount_at_root)
     end
 
     # If it uses file extension localization
     file_extension_resources.each do |resource|
+      next if resource.ignored?
+
       result = parse_locale_extension(resource.path)
       ext_locale, path, page_id = result
-      new_resources << build_resource(path, resource.path, page_id, ext_locale)
 
-      resource.ignore!
+      new_resource = build_resource(path, resource.path, page_id, ext_locale)
+
+      # extension resources replace original i18n attempt.
+      exists = new_resources.find { |r| r.path == new_resource.path }
+      new_resources.delete(exists) if exists
+
+      new_resources << new_resource
+
+      resource_list.update!(resource, :ignored) do
+        resource.ignore!
+      end
     end
 
     @lookup = new_resources.each_with_object({}) do |desc, sum|
@@ -186,27 +199,29 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
 
       # Process templates with locale suffix
       locales.each do |locale|
-        abs_path = abs_path.sub(".#{locale}.", ".")
+        abs_path = abs_path.sub(".#{locale}.", '.')
       end
 
       sum[abs_path] ||= {}
       sum[abs_path][desc.locale] = '/' + desc.path
     end
 
-    new_resources.reduce(resources) do |sum, r|
-      r.execute_descriptor(app, sum)
+    new_resources.each do |r|
+      r.execute_descriptor(app, resource_list)
     end
   end
 
   Contract String, Symbol => Maybe[String]
   def localized_path(path, locale)
-    begin
-      lookup = ::Middleman::Util.parse_uri(path)
-      lookup.path << app.config[:index_file] if lookup.path && lookup.path.end_with?('/')
-      lookup.to_s if @lookup[lookup.path] && lookup.path = @lookup[lookup.path][locale]
-    rescue ::Addressable::URI::InvalidURIError
-      nil
+    lookup = ::Middleman::Util.parse_uri(path)
+    lookup.path << app.config[:index_file] if lookup.path&.end_with?('/')
+
+    if @lookup[lookup.path] && @lookup[lookup.path][locale]
+      lookup.path = @lookup[lookup.path][locale]
+      lookup.to_s
     end
+  rescue ::Addressable::URI::InvalidURIError
+    nil
   end
 
   Contract Symbol => String
@@ -270,10 +285,10 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
   end
 
   LocalizedPageDescriptor = Struct.new(:path, :source_path, :locale) do
-    def execute_descriptor(app, resources)
+    def execute_descriptor(app, resource_list)
       r = ::Middleman::Sitemap::ProxyResource.new(app.sitemap, path, source_path)
-      r.add_metadata options: { locale: locale }
-      resources + [r]
+      r.add_metadata_options(locale: locale)
+      resource_list.add! r
     end
   end
 
@@ -281,13 +296,14 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
   def build_resource(path, source_path, page_id, locale)
     old_locale = ::I18n.locale
     ::I18n.locale = locale
-    localized_page_id = ::I18n.t("paths.#{page_id}", default: page_id, fallback: [])
+    localized_page_id = ::I18n.t("paths.#{page_id}", default: page_id, fallback: false)
 
     partially_localized_path = ''
 
     File.dirname(path).split('/').each do |path_sub|
       next if path_sub == ''
-      partially_localized_path = "#{partially_localized_path}/#{::I18n.t("paths.#{path_sub}", default: path_sub)}"
+
+      partially_localized_path = "#{partially_localized_path}/#{::I18n.t("paths.#{path_sub}", default: path_sub, fallback: false)}"
     end
 
     path = "#{partially_localized_path}/#{File.basename(path)}"

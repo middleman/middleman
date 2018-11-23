@@ -10,7 +10,7 @@ module Middleman
         expose_to_config :endpoint
 
         EndpointDescriptor = Struct.new(:path, :request_path, :block) do
-          def execute_descriptor(app, resources)
+          def execute_descriptor(app, resource_list)
             r = EndpointResource.new(
               app.sitemap,
               path,
@@ -18,20 +18,19 @@ module Middleman
             )
             r.output = block if block
 
-            resources + [r]
+            resource_list.add! r
           end
         end
 
         # Setup a proxy from a path to a target
         # @param [String] path
-        # @param [Hash] opts The :path value gives a request path if it
         # differs from the output path
         Contract String, Or[{ path: String }, Proc] => EndpointDescriptor
-        def endpoint(path, opts={}, &block)
+        def endpoint(path, options_hash = ::Middleman::EMPTY_HASH, &block)
           if block_given?
             EndpointDescriptor.new(path, path, block)
           else
-            EndpointDescriptor.new(path, opts[:path] || path, nil)
+            EndpointDescriptor.new(path, options_hash[:path] || path, nil)
           end
         end
       end

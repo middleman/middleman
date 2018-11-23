@@ -16,7 +16,7 @@ module Middleman
       @template_context_class = template_context_class
 
       @callbacks = ::Middleman::CallbackManager.new
-      @callbacks.install_methods!(self, [:before_build, :after_build, :configure, :after_configuration, :ready])
+      @callbacks.install_methods!(self, %i[before_build after_build configure after_configuration ready])
 
       # Trigger internal callbacks when app level are executed.
       app.subscribe_to_callbacks(&method(:execute_callbacks))
@@ -49,7 +49,7 @@ module Middleman
       instance_eval File.read(other_config), other_config, 1
     end
 
-    def set(key, default=nil, &block)
+    def set(key, default = nil, &block)
       config.define_setting(key, default) unless config.defines_setting?(key)
       @app.config[key] = block_given? ? block : default
     end

@@ -1,3 +1,5 @@
+require 'set'
+
 module Middleman
   module Configuration
     # A class that manages a collection of documented settings.
@@ -43,15 +45,15 @@ module Middleman
         if defines_setting?(method) && args.empty?
           self[method]
         elsif method.to_s =~ /^(\w+)=$/ && args.size == 1
-          self[$1.to_sym] = args[0]
+          self[Regexp.last_match(1).to_sym] = args[0]
         else
           super
         end
       end
 
       # Needed so that method_missing makes sense
-      def respond_to?(method, include_private=false)
-        super || defines_setting?(method) || (method =~ /^(\w+)=$/ && defines_setting?($1))
+      def respond_to?(method, include_private = false)
+        super || defines_setting?(method) || (method =~ /^(\w+)=$/ && defines_setting?(Regexp.last_match(1)))
       end
 
       # Does this configuration manager know about the setting identified by key?
@@ -71,12 +73,12 @@ module Middleman
       # @param [String] description A human-readable description of what the option does
       # @param [Hash] options Additional options.
       # @return [ConfigSetting]
-      def define_setting(key, default=nil, description=nil, options={})
+      def define_setting(key, default = nil, description = nil, options_hash = ::Middleman::EMPTY_HASH)
         raise "Setting #{key} doesn't exist" if @finalized
         raise "Setting #{key} already defined" if @settings.key?(key)
         raise 'Setting key must be a Symbol' unless key.is_a? Symbol
 
-        @settings[key] = ConfigSetting.new(key, default, description, options)
+        @settings[key] = ConfigSetting.new(key, default, description, options_hash)
       end
 
       # Switch the configuration manager is finalized, it switches to read-only
@@ -127,25 +129,35 @@ module Middleman
       # Additional config.
       attr_accessor :options
 
-      def initialize(key, default, description, options={})
+      def initialize(key, default, description, options_hash = ::Middleman::EMPTY_HASH)
         @value_set = false
+        @array_wrapped_value = nil
+        @array_wrapped_default = nil
         self.key = key
         self.default = default
         self.description = description
-        self.options = options
+        self.options = options_hash
+
+        @array_wrapped_default = (Set.new(self.default) if self.default && options_hash[:set] && self.default.is_a?(Array))
       end
 
       # The user-supplied value for this setting, overriding the default
       def value=(value)
         @value = value
         @value_set = true
+
+        @array_wrapped_value = (Set.new(@value) if @value && options[:set] && @value.is_a?(Array))
       end
 
       # The effective value of the setting, which may be the default
       # if the user has not set a value themselves. Note that even if the
       # user sets the value to nil it will override the default.
       def value
-        value_set? ? @value : default
+        if value_set?
+          @array_wrapped_value || @value
+        else
+          @array_wrapped_default || default
+        end
       end
 
       # Whether or not there has been a value set beyond the default

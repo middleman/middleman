@@ -9,7 +9,6 @@ pkg
 .sass-cache
 .sassc
 .tmp
-Gemfile.lock
 docs
 .rbenv-*
 .ruby-version
@@ -24,3 +23,5 @@ Makefile
 .idea
 *.sublime-workspace
 /bin
+/vendor/bundle/
+deps.yml

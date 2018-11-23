@@ -36,15 +36,27 @@ module Middleman::Cli
                  type: :boolean,
                  default: false,
                  desc: 'Generate profiling report for the build'
+    class_option :track_dependencies,
+                 type: :boolean,
+                 default: false,
+                 desc: 'Track file dependencies'
+    class_option :only_changed,
+                 type: :boolean,
+                 default: false,
+                 desc: 'Only build changed files'
+    class_option :missing_and_changed,
+                 type: :boolean,
+                 default: false,
+                 desc: 'Only build changed files or files missing from build folder'
 
     Middleman::Cli.import_config(self)
 
     # Core build Thor command
     # @return [void]
     def build
-      unless ENV['MM_ROOT']
-        raise Thor::Error, 'Error: Could not find a Middleman project config, perhaps you are in the wrong folder?'
-      end
+      root = ENV['MM_ROOT'] || Dir.pwd
+
+      raise Thor::Error, 'Error: Could not find a Middleman project config, perhaps you are in the wrong folder?' unless File.exist?(File.join(root, 'config.rb'))
 
       require 'middleman-core'
       require 'middleman-core/logger'
@@ -71,7 +83,10 @@ module Middleman::Cli
         builder = Middleman::Builder.new(@app,
                                          glob: options['glob'],
                                          clean: options['clean'],
-                                         parallel: options['parallel'])
+                                         parallel: options['parallel'],
+                                         only_changed: options['only_changed'],
+                                         missing_and_changed: options['missing_and_changed'],
+                                         track_dependencies: options['track_dependencies'])
         builder.thor = self
         builder.on_build_event(&method(:on_event))
       end
@@ -79,12 +94,10 @@ module Middleman::Cli
       ::Middleman::Util.instrument 'builder.run' do
         if builder.run!
           clean_directories! if options['clean']
-          shell.say 'Project built successfully.'
+          puts 'Project built successfully.'
         else
           msg = 'There were errors during this build'
-          unless options['verbose']
-            msg << ', re-run with `middleman build --verbose` to see the full exception.'
-          end
+          msg << ', re-run with `middleman build --verbose` to see the full exception.' unless options['verbose']
           shell.say msg, :red
 
           exit(1)
@@ -99,7 +112,7 @@ module Middleman::Cli
     # @param [String] contents The event contents.
     # @param [String] extra The extra information.
     # @return [void]
-    def on_event(event_type, target, extra=nil)
+    def on_event(event_type, target, extra = nil)
       case event_type
       when :error
         say_status :error, target, :red
@@ -110,6 +123,8 @@ module Middleman::Cli
         say_status :create, target, :green
       when :identical
         say_status :identical, target, :blue
+      when :skipped
+        say_status :skipped, target, :blue
       when :updated
         say_status :updated, target, :yellow
       else

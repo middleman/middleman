@@ -17,7 +17,7 @@ module Middleman
         server.close
 
         try_port
-      rescue
+      rescue StandardError
         server = TCPServer.open(0)
         port = server.addr[1]
         server.close

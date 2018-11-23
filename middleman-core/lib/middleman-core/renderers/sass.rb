@@ -1,4 +1,7 @@
+require 'hamster'
 require 'sass'
+require 'middleman-core/dependencies'
+require 'middleman-core/dependencies/vertices/file_vertex'
 
 begin
   require 'sassc'
@@ -9,19 +12,22 @@ module Middleman
   module Renderers
     # Sass renderer
     class Sass < ::Middleman::Extension
+      DEFAULT_SASS_CACHE_LOCATION = './.sass-cache'.freeze
+
       opts = { output_style: :nested }
       opts[:line_comments] = false if ENV['TEST']
       define_setting :sass, opts, 'Sass engine options'
       define_setting :sass_assets_paths, [], 'Paths to extra SASS/SCSS files'
       define_setting :sass_source_maps, nil, 'Whether to inline sourcemap into Sass'
+      define_setting :sass_cache_location, ENV['SASS_CACHE_LOCATION'] || DEFAULT_SASS_CACHE_LOCATION, 'Where to store sass cache files'
 
       # Setup extension
-      def initialize(app, options={}, &block)
+      def initialize(app, options_hash = ::Middleman::EMPTY_HASH, &block)
         super
 
         logger.info '== Preferring use of LibSass' if defined?(::SassC)
 
-        app.files.ignore :sass_cache, :source, /(^|\/)\.sass-cache\//
+        app.files.ignore :sass_cache, :source, /(^|\/)\.sass-cache\// if app.config[:sass_cache_location] == DEFAULT_SASS_CACHE_LOCATION
 
         # Tell Tilt to use it as well (for inline sass blocks)
         ::Tilt.register 'sass', SassPlusCSSFilenameTemplate
@@ -57,10 +63,10 @@ module Middleman
           @context ||= context
 
           sass_module = if defined?(::SassC)
-            ::SassC
-          else
-            ::Sass
-          end
+                          ::SassC
+                        else
+                          ::Sass
+                        end
 
           @engine = sass_module::Engine.new(data, sass_options)
 
@@ -68,6 +74,12 @@ module Middleman
             @engine.render
           rescue sass_module::SyntaxError => e
             ::Sass::SyntaxError.exception_to_css(e)
+          end
+        end
+
+        def vertices
+          @engine.dependencies.reduce(::Hamster::Set.empty) do |sum, d|
+            sum << ::Middleman::Dependencies::FileVertex.new(@context.app.root_path, d.filename)
           end
         end
 
@@ -81,6 +93,7 @@ module Middleman
             filename: eval_file,
             line: line,
             syntax: syntax,
+            cache_location: ctx.app.config[:sass_cache_location],
             custom: {}.merge!(options[:custom] || {}).merge!(
               middleman_context: ctx.app,
               current_resource: ctx.current_resource
@@ -93,9 +106,7 @@ module Middleman
             more_opts[:source_map_contents] = true
           end
 
-          if ctx.is_a?(::Middleman::TemplateContext) && file
-            more_opts[:css_filename] = file.sub(/\.s[ac]ss$/, '')
-          end
+          more_opts[:css_filename] = file.sub(/\.s[ac]ss$/, '') if ctx.is_a?(::Middleman::TemplateContext) && file
 
           {}.merge!(options).merge!(more_opts)
         end

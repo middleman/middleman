@@ -24,6 +24,10 @@ module Middleman
       @app.after_configuration_eval(&method(:activate_all))
     end
 
+    def active?(key)
+      @activated.key?(key)
+    end
+
     def auto_activate(key)
       ::Middleman::Extensions.auto_activate(key, @app)
     end
@@ -46,7 +50,7 @@ module Middleman
     # @param [Hash] options Options to pass to the extension
     # @yield [Middleman::Configuration::ConfigurationManager] Extension options that can be modified before the extension is initialized.
     # @return [void]
-    def activate(ext_name, options={}, &block)
+    def activate(ext_name, options_hash = ::Middleman::EMPTY_HASH, &block)
       begin
         extension = ::Middleman::Extensions.load(ext_name)
       rescue LoadError => e
@@ -59,11 +63,11 @@ module Middleman
       if extension.supports_multiple_instances?
         @activated[ext_name] ||= {}
         key = "instance_#{@activated[ext_name].keys.length}"
-        @activated[ext_name][key] = extension.new(@app, options, &block)
-      elsif @activated.key?(ext_name)
+        @activated[ext_name][key] = extension.new(@app, options_hash, &block)
+      elsif active?(ext_name)
         raise "#{ext_name} has already been activated and cannot be re-activated."
       else
-        @activated[ext_name] = extension.new(@app, options, &block)
+        @activated[ext_name] = extension.new(@app, options_hash, &block)
       end
     end
 

@@ -46,7 +46,7 @@ module Middleman
 
       # Inspect the sitemap
       def sitemap(_)
-        resources = @middleman.sitemap.resources(true)
+        resources = @middleman.sitemap.with_ignored
 
         sitemap_tree = SitemapTree.new
 
@@ -93,7 +93,7 @@ module Middleman
       private
 
       # Render a template with the given name and locals
-      def template(template_name, locals={})
+      def template(template_name, locals = {})
         template_path = File.join(File.dirname(__FILE__), 'meta_pages', 'templates', template_name)
         content = Tilt.new(template_path).render(::Object.new, locals)
         response(content)

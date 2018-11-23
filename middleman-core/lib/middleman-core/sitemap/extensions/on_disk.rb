@@ -7,7 +7,7 @@ module Middleman
       class OnDisk < Extension
         self.resource_list_manipulator_priority = 0
 
-        def initialize(app, config={}, &block)
+        def initialize(app, options_hash = ::Middleman::EMPTY_HASH, &block)
           super
 
           @file_paths_on_disk = Set.new
@@ -57,14 +57,15 @@ module Middleman
         end
 
         # Update the main sitemap resource list
-        # @return Array<Middleman::Sitemap::Resource>
-        Contract ResourceList => ResourceList
-        def manipulate_resource_list(resources)
-          resources + files_for_sitemap.map do |file|
-            ::Middleman::Sitemap::Resource.new(
-              @app.sitemap,
-              @app.sitemap.file_to_path(file),
-              file
+        Contract IsA['Middleman::Sitemap::ResourceListContainer'] => Any
+        def manipulate_resource_list_container!(resource_list)
+          files_for_sitemap.each do |file|
+            resource_list.add!(
+              ::Middleman::Sitemap::Resource.new(
+                @app.sitemap,
+                @app.sitemap.file_to_path(file),
+                file
+              )
             )
           end
         end

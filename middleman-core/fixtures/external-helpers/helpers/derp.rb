@@ -1,3 +1,5 @@
 module Derp
-  def three; "Three"; end
+  def three
+    'Three'
+  end
 end

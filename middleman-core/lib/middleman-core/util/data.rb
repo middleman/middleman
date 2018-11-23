@@ -1,7 +1,6 @@
 require 'yaml'
 require 'json'
 require 'pathname'
-require 'backports/2.1.0/array/to_h'
 require 'hashie'
 require 'memoist'
 
@@ -25,7 +24,7 @@ module Middleman
     # @private
     # @param [Hash] data Normal hash
     # @return [Hash]
-    Contract Any => Maybe[Or[Array, EnhancedHash]]
+    Contract Hash => IsA['::Middleman::Util::EnhancedHash']
     def recursively_enhance(obj)
       if obj.is_a? ::Array
         obj.map { |e| recursively_enhance(e) }
@@ -46,7 +45,7 @@ module Middleman
       # @param [String] path
       # @return [Array<Hash, String>]
       Contract IsA['Middleman::SourceFile'], Maybe[Symbol] => [Hash, Maybe[String]]
-      def parse(file, frontmatter_delims, known_type=nil)
+      def parse(file, frontmatter_delims, known_type = nil)
         full_path = file[:full_path]
         return [{}, nil] if ::Middleman::Util.binary?(full_path) || file[:types].include?(:binary)
 

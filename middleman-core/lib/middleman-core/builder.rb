@@ -2,7 +2,9 @@ require 'pathname'
 require 'fileutils'
 require 'tempfile'
 require 'parallel'
-require 'middleman-core/rack'
+require 'middleman-core/dependencies/graph'
+require 'middleman-core/dependencies/edge'
+require 'middleman-core/dependencies/vertices/file_vertex'
 require 'middleman-core/callback_manager'
 require 'middleman-core/contracts'
 
@@ -21,26 +23,24 @@ module Middleman
     def_delegator :@app, :logger
 
     # Sort order, images, fonts, js/css and finally everything else.
-    SORT_ORDER = %w(.png .jpeg .jpg .gif .bmp .svg .svgz .webp .ico .woff .woff2 .otf .ttf .eot .js .css).freeze
+    SORT_ORDER = %w[.png .jpeg .jpg .gif .bmp .svg .svgz .webp .ico .woff .woff2 .otf .ttf .eot .js .css].freeze
 
     # Create a new Builder instance.
     # @param [Middleman::Application] app The app to build.
     # @param [Hash] opts The builder options
-    def initialize(app, opts={})
+    def initialize(app, options_hash = ::Middleman::EMPTY_HASH)
       @app = app
       @source_dir = Pathname(File.join(@app.root, @app.config[:source]))
       @build_dir = Pathname(@app.config[:build_dir])
 
-      if @build_dir.expand_path.relative_path_from(@source_dir).to_s =~ /\A[.\/]+\Z/
-        raise ":build_dir (#{@build_dir}) cannot be a parent of :source_dir (#{@source_dir})"
-      end
+      raise ":build_dir (#{@build_dir}) cannot be a parent of :source_dir (#{@source_dir})" if /\A[.\/]+\Z/.match?(@build_dir.expand_path.relative_path_from(@source_dir).to_s)
 
-      @glob = opts.fetch(:glob)
-      @cleaning = opts.fetch(:clean)
-      @parallel = opts.fetch(:parallel, true)
-
-      rack_app = ::Middleman::Rack.new(@app).to_app
-      @rack = ::Rack::MockRequest.new(rack_app)
+      @glob = options_hash.fetch(:glob)
+      @parallel = options_hash.fetch(:parallel, true)
+      @only_changed = options_hash.fetch(:only_changed, false)
+      @missing_and_changed = !@only_changed && options_hash.fetch(:missing_and_changed, false)
+      @track_dependencies = @only_changed || @missing_and_changed || options_hash.fetch(:track_dependencies, false)
+      @cleaning = options_hash.fetch(:clean)
 
       @callbacks = ::Middleman::CallbackManager.new
       @callbacks.install_methods!(self, [:on_build_event])
@@ -53,6 +53,24 @@ module Middleman
       @has_error = false
       @events = {}
 
+      if @track_dependencies
+        begin
+          @graph = ::Middleman::Dependencies.load_and_deserialize(@app)
+        rescue ::Middleman::Dependencies::InvalidDepsYAML
+          logger.error 'dep.yml was corrupt. Dependency graph must be rebuilt.'
+          @graph = ::Middleman::Dependencies::Graph.new
+          @only_changed = @missing_and_changed = false
+        rescue ::Middleman::Dependencies::InvalidatedRubyFiles => e
+          changed = e.invalidated.map { |f| f[:file] }.join(', ')
+          logger.error "Some ruby files (#{changed}) have changed since last run. Dependency graph must be rebuilt."
+
+          @graph = ::Middleman::Dependencies::Graph.new
+          @only_changed = @missing_and_changed = false
+        end
+      end
+
+      @invalidated_files = @graph.invalidated if @only_changed || @missing_and_changed
+
       ::Middleman::Util.instrument 'builder.before' do
         @app.execute_callbacks(:before_build, [self])
       end
@@ -62,18 +80,32 @@ module Middleman
       end
 
       ::Middleman::Util.instrument 'builder.prerender' do
-        prerender_css
+        prerender_css.tap do |resources|
+          if @track_dependencies
+            resources.each do |r|
+              @graph.add_edge(r[1]) unless r[1].nil?
+            end
+          end
+        end
       end
 
       ::Middleman::Profiling.start
 
       ::Middleman::Util.instrument 'builder.output' do
-        output_files
+        output_files.tap do |resources|
+          if @track_dependencies
+            resources.each do |r|
+              @graph.add_edge(r[1]) unless r[1].nil?
+            end
+          end
+        end
       end
 
       ::Middleman::Profiling.report('build')
 
       unless @has_error
+        ::Middleman::Dependencies.serialize_and_save(@app, @graph) if @track_dependencies
+
         ::Middleman::Util.instrument 'builder.clean' do
           clean! if @cleaning
         end
@@ -88,12 +120,13 @@ module Middleman
 
     # Pre-request CSS to give Compass a chance to build sprites
     # @return [Array<Resource>] List of css resources that were output.
-    Contract ResourceList
+    Contract ArrayOf[[Pathname, Maybe[::Middleman::Dependencies::Edge]]]
     def prerender_css
       logger.debug '== Prerendering CSS'
 
+      resources = @app.sitemap.by_extension('.css').to_a
+
       css_files = ::Middleman::Util.instrument 'builder.prerender.output' do
-        resources = @app.sitemap.resources.select { |resource| resource.ext == '.css' }
         output_resources(resources)
       end
 
@@ -110,65 +143,90 @@ module Middleman
 
     # Find all the files we need to output and do so.
     # @return [Array<Resource>] List of resources that were output.
-    Contract ResourceList
+    Contract ArrayOf[[Pathname, Maybe[::Middleman::Dependencies::Edge]]]
     def output_files
       logger.debug '== Building files'
 
-      resources = @app.sitemap.resources
-                      .reject { |resource| resource.ext == '.css' }
-                      .sort_by { |resource| SORT_ORDER.index(resource.ext) || 100 }
+      non_css_resources = @app.sitemap.without_ignored - @app.sitemap.by_extension('.css')
 
-      if @glob
-        resources = resources.select do |resource|
-          if defined?(::File::FNM_EXTGLOB)
-            File.fnmatch(@glob, resource.destination_path, ::File::FNM_EXTGLOB)
-          else
-            File.fnmatch(@glob, resource.destination_path)
-          end
-        end
-      end
+      resources = non_css_resources
+                  .sort_by { |resource| SORT_ORDER.index(resource.ext) || 100 }
 
-      output_resources(resources)
+      output_resources(resources.to_a)
     end
 
-    Contract ResourceList => ResourceList
+    Contract OldResourceList => ArrayOf[Or[Bool, [Pathname, Maybe[::Middleman::Dependencies::Edge]]]]
     def output_resources(resources)
-      results = if @parallel
-        ::Parallel.map(resources, &method(:output_resource))
-      else
-        resources.map(&method(:output_resource))
-      end
+      res_count = resources.count
 
-      @has_error = true if results.any? { |r| r == false }
+      return resources if res_count.zero?
+
+      results = if @parallel
+                  processes = ::Parallel.processor_count
+                  processes = processes < res_count ? processes : res_count
+                  min_parts = res_count / processes
+                  remainder = res_count % processes
+                  offset = 0
+                  ranges = []
+
+                  while offset < res_count
+                    end_r = offset + min_parts
+
+                    if remainder.positive?
+                      end_r += 1
+                      remainder -= 1
+                    end
+
+                    range = offset...end_r
+                    offset = end_r
+                    ranges << range
+                  end
+
+                  outputs = Parallel.map(ranges, in_processes: processes) do |r|
+                    resources[r].map!(&method(:output_resource))
+                  end
+
+                  outputs.flatten!(1)
+                  outputs
+                else
+                  resources.map(&method(:output_resource))
+                end
+
+      without_errors = results.reject { |r| r == false }
+
+      @has_error = results.size > without_errors.size
 
       if @cleaning && !@has_error
-        results.each do |p|
+        results.each do |r|
+          p = r[0]
           next unless p.exist?
 
           # handle UTF-8-MAC filename on MacOS
-          cleaned_name = if RUBY_PLATFORM =~ /darwin/
-            p.to_s.encode('UTF-8', 'UTF-8-MAC')
-          else
-            p
-          end
+          cleaned_name = if RUBY_PLATFORM.match?(/darwin/)
+                           p.to_s.encode('UTF-8', 'UTF-8-MAC')
+                         else
+                           p
+                         end
 
           @to_clean.delete(Pathname(cleaned_name))
         end
       end
 
-      resources
+      without_errors
     end
 
     # Figure out the correct event mode.
     # @param [Pathname] output_file The output file path.
     # @param [String] source The source file path.
     # @return [Symbol]
-    Contract Pathname, String => Symbol
-    def which_mode(output_file, source)
+    Contract Pathname, String, Bool => Symbol
+    def which_mode(output_file, source, binary)
       if !output_file.exist?
         :created
+      elsif FileUtils.compare_file(source.to_s, output_file.to_s)
+        binary ? :skipped : :identical
       else
-        FileUtils.compare_file(source.to_s, output_file.to_s) ? :identical : :updated
+        :updated
       end
     end
 
@@ -184,8 +242,8 @@ module Middleman
                           ])
       file.binmode
       file.write(contents)
-      file.close
       File.chmod(0o644, file)
+      file.close
       file
     end
 
@@ -193,58 +251,82 @@ module Middleman
     # @param [Pathname] output_file The path to output to.
     # @param [String|Pathname] source The source path or contents.
     # @return [void]
-    Contract Pathname, Or[String, Pathname] => Any
-    def export_file!(output_file, source)
-      # ::Middleman::Util.instrument "write_file", output_file: output_file do
-      source = write_tempfile(output_file, source.to_s) if source.is_a? String
+    Contract Pathname, Or[String, Pathname], Maybe[Bool] => Any
+    def export_file!(output_file, source, binary = false)
+      ::Middleman::Util.instrument 'write_file', output_file: output_file do
+        source = write_tempfile(output_file, source.to_s) if source.is_a? String
 
-      method, source_path = if source.is_a? Tempfile
-        [::FileUtils.method(:mv), source.path]
-      else
-        [::FileUtils.method(:cp), source.to_s]
+        method, source_path = if source.is_a? Tempfile
+                                [::FileUtils.method(:mv), source.path]
+                              else
+                                [::FileUtils.method(:cp), source.to_s]
+                              end
+
+        mode = which_mode(output_file, source_path, binary)
+
+        if %i[created updated].include?(mode)
+          ::FileUtils.mkdir_p(output_file.dirname)
+          method.call(source_path, output_file.to_s)
+        end
+
+        source.unlink if source.is_a? Tempfile
+
+        trigger(mode, output_file)
       end
-
-      mode = which_mode(output_file, source_path)
-
-      if mode == :created || mode == :updated
-        ::FileUtils.mkdir_p(output_file.dirname)
-        method.call(source_path, output_file.to_s)
-      end
-
-      source.unlink if source.is_a? Tempfile
-
-      trigger(mode, output_file)
-      # end
     end
 
     # Try to output a resource and capture errors.
     # @param [Middleman::Sitemap::Resource] resource The resource.
     # @return [void]
-    Contract IsA['Middleman::Sitemap::Resource'] => Or[Pathname, Bool]
+    Contract IsA['Middleman::Sitemap::Resource'] => Or[Bool, [Pathname, Maybe[::Middleman::Dependencies::Edge]]]
     def output_resource(resource)
       ::Middleman::Util.instrument 'builder.output.resource', path: File.basename(resource.destination_path) do
-        output_file = @build_dir + resource.destination_path.gsub('%20', ' ')
-
         begin
-          if resource.binary?
-            export_file!(output_file, resource.file_descriptor[:full_path])
-          else
-            response = @rack.get(::URI.escape(resource.request_path))
+          output_file = @build_dir + resource.destination_path.gsub('%20', ' ')
 
-            # If we get a response, save it to a tempfile.
-            if response.status == 200
-              export_file!(output_file, binary_encode(response.body))
-            else
-              trigger(:error, output_file, response.body)
-              return false
+          if @track_dependencies && (@only_changed || @missing_and_changed)
+            if @only_changed && !@graph.invalidates_resource?(resource)
+              trigger(:skipped, output_file)
+              return [output_file, nil]
+            elsif @missing_and_changed && File.exist?(output_file) && !@graph.invalidates_resource?(resource)
+              trigger(:skipped, output_file)
+              return [output_file, nil]
+            end
+          elsif @glob
+            did_match = if defined?(::File::FNM_EXTGLOB)
+                          File.fnmatch(@glob, resource.destination_path, ::File::FNM_EXTGLOB)
+                        else
+                          File.fnmatch(@glob, resource.destination_path)
+                        end
+
+            unless did_match
+              trigger(:skipped, output_file)
+              return [output_file, nil]
             end
           end
-        rescue => e
+
+          vertices = nil
+
+          if resource.binary?
+            export_file!(output_file, resource.file_descriptor[:full_path], true)
+          else
+            content = resource.render({}, {})
+
+            unless resource.vertices.empty?
+              vertices = ::Middleman::Dependencies::Edge.new(
+                ::Middleman::Dependencies::FileVertex.from_resource(resource),
+                resource.vertices
+              )
+            end
+
+            export_file!(output_file, binary_encode(content))
+          end
+        rescue StandardError => e
           trigger(:error, output_file, "#{e}\n#{e.backtrace.join("\n")}")
           return false
         end
 
-        output_file
+        [output_file, vertices]
       end
     end
 
@@ -267,7 +349,7 @@ module Middleman
 
       # handle UTF-8-MAC filename on MacOS
       @to_clean = @to_clean.map do |path|
-        if RUBY_PLATFORM =~ /darwin/
+        if RUBY_PLATFORM.match?(/darwin/)
           Pathname(path.to_s.encode('UTF-8', 'UTF-8-MAC'))
         else
           Pathname(path)
@@ -295,7 +377,7 @@ module Middleman
     end
 
     Contract Symbol, Or[String, Pathname], Maybe[String] => Any
-    def trigger(event_type, target, extra=nil)
+    def trigger(event_type, target, extra = nil)
       @events[event_type] ||= []
       @events[event_type] << target
 

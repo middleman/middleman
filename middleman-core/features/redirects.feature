@@ -21,12 +21,13 @@ Feature: Meta redirects
     When I go to "/hello.html"
     Then I should see '<meta http-equiv=refresh content="0; url=http://example.com"'
 
+  @wip
   Scenario: Redirect to a resource
     Given a fixture app "large-build-app"
     And a file named "config.rb" with:
     """
     ready do
-      r = sitemap.find_resource_by_path("static.html")
+      r = sitemap.by_path("static.html")
       redirect "hello.html", to: r
     end
     """

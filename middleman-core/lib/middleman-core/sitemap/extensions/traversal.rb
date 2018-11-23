@@ -4,39 +4,87 @@ module Middleman
       module Traversal
         def traversal_root
           root = if !@app.extensions[:i18n]
-            '/'
-          else
-            @app.extensions[:i18n].path_root(::I18n.locale)
-          end
+                   '/'
+                 else
+                   @app.extensions[:i18n].path_root(::I18n.locale)
+                 end
 
           root.sub(/^\//, '')
         end
 
         # This resource's parent resource
         # @return [Middleman::Sitemap::Resource, nil]
-        def parent
-          root = path.sub(/^#{::Regexp.escape(traversal_root)}/, '')
-          parts = root.split('/')
+        def parent(_recurse = false)
+          max_recursion = @app.config[:max_traversal_recursion] || 99
+          parent_helper(path, max_recursion)
+        end
 
-          tail = parts.pop
-          is_index = (tail == @app.config[:index_file])
+        def parent_helper(child_path, max_recursion)
+          # What is the configured format for index pages.
+          index_file = @app.config[:index_file]
+          parts = child_path.split('/')
+          # Reduce the path by the current page to get the parent level path.
+          current_page = parts.pop
+          # Does the current page has the name of an index file?
+          is_index = current_page == index_file
+          # Is the `current_page` in the traversal root?
+          # Note: `traversal_root` is `/` for non localized pages and `/[lang]/` for
+          # localized pages.
+          at_traversal_root = !(child_path =~ /^#{traversal_root}#{current_page}$/).nil?
 
-          if parts.empty?
-            return is_index ? nil : @store.find_resource_by_path(@app.config[:index_file])
+          # Check that we have any path parts left after the pop because if we
+          # don't, `current_page` is either root or another file under root.
+          # Also, if we are `at_traversal_root`, we consider this root.
+          if parts.empty? || at_traversal_root
+            # If this `is_index`, the `current_page` is root and there is no parent.
+            return nil if is_index
+
+            # `current_page` must be a page under root, let's return the root
+            # index page of the `traversal_root` (`/` or `/[lang]/`).
+            return @store.by_path("#{traversal_root}#{index_file}")
           end
 
-          test_expr = parts.join('\\/')
-          # eponymous reverse-lookup
-          found = @store.resources.find do |candidate|
-            candidate.path =~ %r{^#{test_expr}(?:\.[a-zA-Z0-9]+|\/)$}
+          # Get the index file for the parent path parts, e.g.: `/blog/index.html`
+          # for `/blog/`.
+          index_by_parts = proc do |subparts|
+            found = @store.by_destination_path("#{subparts.join('/')}/#{index_file}")
+            return found unless found.nil?
           end
 
-          if found
-            found
-          else
-            parts.pop if is_index
-            @store.find_resource_by_destination_path("#{parts.join('/')}/#{@app.config[:index_file]}")
+          # Get a file that has the name of the parent path parts e.g.:
+          # `/blog.html` for `/blog/`.
+          file_by_parts = proc do |subparts|
+            test_expr = Regexp.escape(subparts.join('/'))
+            # eponymous reverse-lookup
+            found = @store.resources.find do |candidate|
+              candidate.path =~ %r{^#{test_expr}(?:\.[a-zA-Z0-9]+|\/)$}
+            end
+            return found unless found.nil?
           end
+
+          # Try to find a file matching the parent path name and return it.
+          # E.g. `parts == ['en', 'blog']`, we try to find: `/en/blog.html`
+          file_by_parts.call(parts)
+
+          # Try to find an non-localized parent instead if `traversal_root`
+          # indicates the path is localized and there are still more parts
+          # remaining, and return it.
+          # E.g. `parts == ['en', 'blog']`, we try to find: `/blog.html`
+          file_by_parts.call(parts[1..-1]) if traversal_root != '/' && parts.length > 1
+
+          # Now let's drop the last part of the path to try to find an index
+          # file in the path above `current_page`'s path and return it.
+          # E.g. `parts == ['en', 'blog']`, we try to find: `/en/index.html`
+          parts.pop if is_index
+          index_by_parts.call(parts)
+
+          # Lastly, check for an non-localized index index file in the path
+          # above `current_page`'s path and return it.
+          # E.g. `parts == ['en', 'blog']`, we try to find: `/index.html`
+          index_by_parts.call(parts[1..-1] || '') if traversal_root == "#{parts.first}/"
+          return parent_helper(parts.join('/'), max_recursion - 1) if !parts.empty? && max_recursion.positive?
+
+          nil
         end
 
         # This resource's child resources
@@ -45,12 +93,12 @@ module Middleman
           return [] unless directory_index?
 
           base_path = if eponymous_directory?
-            eponymous_directory_path
-          else
-            path.sub(@app.config[:index_file].to_s, '')
-          end
+                        eponymous_directory_path
+                      else
+                        path.sub(@app.config[:index_file].to_s, '')
+                      end
 
-          prefix = %r{^#{base_path.sub("/", "\\/")}}
+          prefix = /^#{base_path.sub("/", "\\/")}/
 
           @store.resources.select do |sub_resource|
             if sub_resource.path == path || sub_resource.path !~ prefix
@@ -73,6 +121,7 @@ module Middleman
         # @return [Array<Middleman::Sitemap::Resource>]
         def siblings
           return [] unless parent
+
           parent.children.reject { |p| p == self }
         end
 
@@ -86,9 +135,7 @@ module Middleman
         # (e.g., if the resource is named 'gallery.html' and a path exists named 'gallery/', this would return true)
         # @return [Boolean]
         def eponymous_directory?
-          if !path.end_with?("/#{@app.config[:index_file]}") && destination_path.end_with?("/#{@app.config[:index_file]}")
-            return true
-          end
+          return true if !path.end_with?("/#{@app.config[:index_file]}") && destination_path.end_with?("/#{@app.config[:index_file]}")
 
           @app.files.by_type(:source).watchers.any? do |source|
             (source.directory + Pathname(eponymous_directory_path)).directory?

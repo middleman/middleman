@@ -14,9 +14,8 @@ Feature: Middleman CLI
       | config.rb                                     |
       | source/index.html.erb                         |
       | source/layouts/layout.erb                     |
-      | source/javascripts/all.js                     |
+      | source/javascripts/site.js                    |
       | source/stylesheets/site.css.scss              |
-      | source/stylesheets/_normalize.scss            |
 
   Scenario: Create a new project in the current directory
     Given a directory named "MY_PROJECT"
@@ -65,7 +64,7 @@ Feature: Middleman CLI
 
   Scenario: Create an invalid project using Middleman directory
     When I run `middleman init MY_PROJECT -T does-not-exist-for-reals`
-    Then the exit status should be 1
+    Then the exit status should not be 0
 
   Scenario: Create a new project using github(user/repository)
     When I run `middleman init MY_PROJECT -T middleman/middleman-templates-default` interactively

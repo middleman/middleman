@@ -22,14 +22,12 @@ RSpec.describe Middleman::DnsResolver do
     context 'when hosts resolver can resolve name' do
       before :each do
         expect(hosts_resolver).to receive(:getnames).with(unresolved_ip).and_return(resolved_names)
-        if RUBY_VERSION >= '2.1'
-          expect(local_link_resolver).not_to receive(:getnames)
-        end
+        expect(local_link_resolver).not_to receive(:getnames) if RUBY_VERSION >= '2.1'
         expect(network_resolver).not_to receive(:getnames)
       end
 
       let(:unresolved_ip) { '127.0.0.1' }
-      let(:resolved_names) { %w(localhost) }
+      let(:resolved_names) { %w[localhost] }
 
       it { expect(resolver.names_for(unresolved_ip)).to eq resolved_names }
     end
@@ -46,7 +44,7 @@ RSpec.describe Middleman::DnsResolver do
       end
 
       let(:unresolved_ip) { '127.0.0.1' }
-      let(:resolved_names) { %w(localhost) }
+      let(:resolved_names) { %w[localhost] }
 
       it { expect(resolver.names_for(unresolved_ip)).to eq resolved_names }
     end
@@ -54,14 +52,12 @@ RSpec.describe Middleman::DnsResolver do
     context 'when network resolver can resolve name' do
       before :each do
         expect(hosts_resolver).to receive(:getnames).with(unresolved_ip).and_return([])
-        if RUBY_VERSION >= '2.1'
-          expect(local_link_resolver).to receive(:getnames).with(unresolved_ip).and_return([])
-        end
+        expect(local_link_resolver).to receive(:getnames).with(unresolved_ip).and_return([]) if RUBY_VERSION >= '2.1'
         expect(network_resolver).to receive(:getnames).with(unresolved_ip).and_return(resolved_names)
       end
 
       let(:unresolved_ip) { '127.0.0.1' }
-      let(:resolved_names) { %w(localhost) }
+      let(:resolved_names) { %w[localhost] }
 
       it { expect(resolver.names_for(unresolved_ip)).to eq resolved_names }
     end
@@ -71,14 +67,12 @@ RSpec.describe Middleman::DnsResolver do
     context 'when hosts resolver can resolve name' do
       before :each do
         expect(hosts_resolver).to receive(:getaddresses).with(unresolved_ips).and_return(resolved_name)
-        if RUBY_VERSION >= '2.1'
-          expect(local_link_resolver).not_to receive(:getaddresses)
-        end
+        expect(local_link_resolver).not_to receive(:getaddresses) if RUBY_VERSION >= '2.1'
         expect(network_resolver).not_to receive(:getaddresses)
       end
 
       let(:unresolved_ips) { '127.0.0.1' }
-      let(:resolved_name) { %w(localhost) }
+      let(:resolved_name) { %w[localhost] }
 
       it { expect(resolver.ips_for(unresolved_ips)).to eq resolved_name }
     end
@@ -95,7 +89,7 @@ RSpec.describe Middleman::DnsResolver do
       end
 
       let(:unresolved_ips) { '127.0.0.1' }
-      let(:resolved_name) { %w(localhost) }
+      let(:resolved_name) { %w[localhost] }
 
       it { expect(resolver.ips_for(unresolved_ips)).to eq resolved_name }
     end
@@ -103,14 +97,12 @@ RSpec.describe Middleman::DnsResolver do
     context 'when network resolver can resolve name' do
       before :each do
         expect(hosts_resolver).to receive(:getaddresses).with(unresolved_ips).and_return([])
-        if RUBY_VERSION >= '2.1'
-          expect(local_link_resolver).to receive(:getaddresses).with(unresolved_ips).and_return([])
-        end
+        expect(local_link_resolver).to receive(:getaddresses).with(unresolved_ips).and_return([]) if RUBY_VERSION >= '2.1'
         expect(network_resolver).to receive(:getaddresses).with(unresolved_ips).and_return(resolved_name)
       end
 
       let(:unresolved_ips) { '127.0.0.1' }
-      let(:resolved_name) { %w(localhost) }
+      let(:resolved_name) { %w[localhost] }
 
       it { expect(resolver.ips_for(unresolved_ips)).to eq resolved_name }
     end

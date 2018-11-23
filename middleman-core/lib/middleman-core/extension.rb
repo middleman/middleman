@@ -61,8 +61,7 @@ module Middleman
   #
   # There are also some less common hooks that can be listened to from within an extension's `initialize` method:
   #
-  # * `app.before_render { |body, path, locs, template_class| ... }` - Manipulate template sources before they are rendered.
-  # * `app.after_render { |content, path, locs, template_class| ... }` - Manipulate output text after a template has been rendered. It is also common to install a Rack middleware to do this instead.
+  # * `app.ready { ... }` - Run code once Middleman is ready to serve or build files (after `after_configuration`).
 
   #
   # @see http://middlemanapp.com/advanced/custom/ Middleman Custom Extensions Documentation
@@ -135,8 +134,8 @@ module Middleman
       # @param [Symbol] key The name of the option
       # @param [Object] default The default value for the option
       # @param [String] description A human-readable description of what the option does
-      def option(key, default=nil, description=nil, options={})
-        config.define_setting(key, default, description, options)
+      def option(key, default = nil, description = nil, options_hash = ::Middleman::EMPTY_HASH)
+        config.define_setting(key, default, description, options_hash)
       end
 
       # @api private
@@ -152,8 +151,8 @@ module Middleman
       # @param [Symbol] key The name of the option
       # @param [Object] default The default value for the option
       # @param [String] description A human-readable description of what the option does
-      def define_setting(key, default=nil, description=nil, options={})
-        global_config.define_setting(key, default, description, options)
+      def define_setting(key, default = nil, description = nil, options_hash = ::Middleman::EMPTY_HASH)
+        global_config.define_setting(key, default, description, options_hash)
       end
 
       # Short-hand for simple Sitemap manipulation
@@ -204,12 +203,12 @@ module Middleman
       #   expose_to_application global_name: :local_name
       # @example with Array:
       #   expose_to_application :method1, :method2
-      # @param [Array<Sumbol>, Hash<Symbol, Symbol>] symbols An optional list of symbols representing instance methods to exposed.
+      # @param [Array<Symbol>, Hash<Symbol, Symbol>] symbols An optional list of symbols representing instance methods to exposed.
       # @return [void]
       def expose_to_application(*symbols)
         self.exposed_to_application ||= {}
 
-        if symbols.first && symbols.first.is_a?(Hash)
+        if symbols.first&.is_a?(Hash)
           self.exposed_to_application.merge!(symbols.first)
         elsif symbols.is_a? Array
           symbols.each do |sym|
@@ -224,12 +223,12 @@ module Middleman
       #   expose_to_config global_name: :local_name
       # @example with Array:
       #   expose_to_config :method1, :method2
-      # @param [Array<Sumbol>, Hash<Symbol, Symbol>] symbols An optional list of symbols representing instance methods to exposed.
+      # @param [Array<Symbol>, Hash<Symbol, Symbol>] symbols An optional list of symbols representing instance methods to exposed.
       # @return [void]
       def expose_to_config(*symbols)
         self.exposed_to_config ||= {}
 
-        if symbols.first && symbols.first.is_a?(Hash)
+        if symbols.first&.is_a?(Hash)
           self.exposed_to_config.merge!(symbols.first)
         elsif symbols.is_a? Array
           symbols.each do |sym|
@@ -244,12 +243,12 @@ module Middleman
       #   expose_to_template global_name: :local_name
       # @example with Array:
       #   expose_to_template :method1, :method2
-      # @param [Array<Sumbol>, Hash<Symbol, Symbol>] symbols An optional list of symbols representing instance methods to exposed.
+      # @param [Array<Symbol>, Hash<Symbol, Symbol>] symbols An optional list of symbols representing instance methods to exposed.
       # @return [void]
       def expose_to_template(*symbols)
         self.exposed_to_template ||= {}
 
-        if symbols.first && symbols.first.is_a?(Hash)
+        if symbols.first&.is_a?(Hash)
           self.exposed_to_template.merge!(symbols.first)
         elsif symbols.is_a? Array
           symbols.each do |sym|
@@ -282,7 +281,8 @@ module Middleman
       # @return [void]
       def activated_extension(instance)
         name = instance.class.ext_name
-        return unless @_extension_activation_callbacks && @_extension_activation_callbacks.key?(name)
+        return unless @_extension_activation_callbacks&.key?(name)
+
         @_extension_activation_callbacks[name].each do |block|
           block.arity == 1 ? block.call(instance) : block.call
         end
@@ -307,7 +307,7 @@ module Middleman
     # @param [Hash] options_hash The raw options hash. Subclasses should not manipulate this directly - it will be turned into {#options}.
     # @yield An optional block that can be used to customize options before the extension is activated.
     # @yieldparam [Middleman::Configuration::ConfigurationManager] options Extension options
-    def initialize(app, options_hash={}, &block)
+    def initialize(app, options_hash = ::Middleman::EMPTY_HASH, &block)
       @_helpers = []
       @app = app
 
@@ -405,9 +405,7 @@ module Middleman
       @app.after_configuration do
         ext.after_configuration if ext.respond_to?(:after_configuration)
 
-        if ext.respond_to?(:manipulate_resource_list)
-          ext.app.sitemap.register_resource_list_manipulators(ext.class.ext_name, ext, ext.class.resource_list_manipulator_priority)
-        end
+        ext.app.sitemap.register_resource_list_manipulators(ext.class.ext_name, ext, ext.class.resource_list_manipulator_priority) if ext.respond_to?(:manipulate_resource_list) || ext.respond_to?(:manipulate_resource_list_container!)
 
         if ext.class.resources_generators && !ext.class.resources_generators.empty?
           ext.app.sitemap.register_resource_list_manipulators(
@@ -423,18 +421,18 @@ module Middleman
     def generate_resources(resources)
       generator_defs = self.class.resources_generators.reduce({}) do |sum, g|
         resource_definitions = if g.is_a? Hash
-          g
-        elsif g.is_a? Symbol
-          definition = method(g)
+                                 g
+                               elsif g.is_a? Symbol
+                                 definition = method(g)
 
-          if definition.arity == 0
-            send(g)
-          else
-            send(g, resources)
-          end
-        else
-          {}
-        end
+                                 if definition.arity.zero?
+                                   send(g)
+                                 else
+                                   send(g, resources)
+                                 end
+                               else
+                                 {}
+                               end
 
         sum.merge!(resource_definitions)
       end
@@ -443,11 +441,11 @@ module Middleman
         if g.is_a? Symbol
           definition = method(g)
 
-          g = if definition.arity == 0
-            send(g)
-          else
-            send(g, resources)
-          end
+          g = if definition.arity.zero?
+                send(g)
+              else
+                send(g, resources)
+              end
         end
 
         ::Middleman::Sitemap::StringResource.new(
@@ -492,7 +490,7 @@ module Middleman
   end
 
   class ConfigExtension < Extension
-    def initialize(app, config={}, &block)
+    def initialize(app, _options_hash = ::Middleman::EMPTY_HASH, &block)
       @descriptors = {}
       @ready = false
 
@@ -528,11 +526,10 @@ module Middleman
     end
 
     # Update the main sitemap resource list
-    # @return Array<Middleman::Sitemap::Resource>
-    Contract ResourceList => ResourceList
-    def manipulate_resource_list(resources)
-      @descriptors.values.flatten.reduce(resources) do |sum, c|
-        c.execute_descriptor(app, sum)
+    Contract IsA['Middleman::Sitemap::ResourceListContainer'] => Any
+    def manipulate_resource_list_container!(resource_list)
+      @descriptors.values.flatten.each do |c|
+        c.execute_descriptor(app, resource_list)
       end
     end
 

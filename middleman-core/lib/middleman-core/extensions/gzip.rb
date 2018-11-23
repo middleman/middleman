@@ -1,7 +1,7 @@
 # This extension Gzips assets and pages when building.
 # Gzipped assets and pages can be served directly by Apache or
 # Nginx with the proper configuration, and pre-zipping means that we
-# can use a more agressive compression level at no CPU cost per request.
+# can use a more aggressive compression level at no CPU cost per request.
 #
 # Use Nginx's gzip_static directive, or AddEncoding and mod_rewrite in Apache
 # to serve your Gzipped files whenever the normal (non-.gz) filename is requested.
@@ -10,7 +10,7 @@
 # to .css, .htm, .html, .js, and .xhtml
 #
 class Middleman::Extensions::Gzip < ::Middleman::Extension
-  option :exts, %w(.css .htm .html .js .svg .xhtml), 'File extensions to Gzip when building.'
+  option :exts, %w[.css .htm .html .js .svg .xhtml], 'File extensions to Gzip when building.'
   option :ignore, [], 'Patterns to avoid gzipping'
   option :overwrite, false, 'Overwrite original files instead of adding .gz extension.'
 
@@ -18,13 +18,15 @@ class Middleman::Extensions::Gzip < ::Middleman::Extension
     include ::Padrino::Helpers::NumberHelpers
   end
 
-  def initialize(app, options_hash={})
+  def initialize(app, options_hash = ::Middleman::EMPTY_HASH)
     super
 
     require 'zlib'
     require 'stringio'
     require 'find'
-    require 'thread'
+    require 'set'
+
+    @set_of_exts = Set.new options.exts
   end
 
   def after_build(builder)
@@ -43,8 +45,11 @@ class Middleman::Extensions::Gzip < ::Middleman::Extension
     out_queue = Queue.new
     num_threads.times.each do
       Thread.new do
-        while path = in_queue.pop
+        path = in_queue.pop
+
+        while path
           out_queue << gzip_file(path.to_s)
+          path = in_queue.pop
         end
       end
     end
@@ -63,7 +68,7 @@ class Middleman::Extensions::Gzip < ::Middleman::Extension
       next unless output_filename
 
       total_savings += (old_size - new_size)
-      size_change_word = (old_size - new_size) > 0 ? 'smaller' : 'larger'
+      size_change_word = (old_size - new_size).positive? ? 'smaller' : 'larger'
       builder.trigger :created, "#{output_filename} (#{NumberHelpers.new.number_to_human_size((old_size - new_size).abs)} #{size_change_word})"
     end
 
@@ -78,9 +83,7 @@ class Middleman::Extensions::Gzip < ::Middleman::Extension
     input_file_time = File.mtime(path)
 
     # Check if the right file's already there
-    if !options.overwrite && File.exist?(output_filename) && File.mtime(output_filename) == input_file_time
-      return [nil, nil, nil]
-    end
+    return [nil, nil, nil] if !options.overwrite && File.exist?(output_filename) && File.mtime(output_filename) == input_file_time
 
     File.open(output_filename, 'wb') do |f|
       gz = Zlib::GzipWriter.new(f, Zlib::BEST_COMPRESSION)
@@ -108,7 +111,9 @@ class Middleman::Extensions::Gzip < ::Middleman::Extension
   # @return [Boolean]
   Contract Pathname => Bool
   def should_gzip?(path)
+    return false unless @set_of_exts.include?(path.extname)
+
     path = path.sub app.config[:build_dir] + '/', ''
-    options.exts.include?(path.extname) && options.ignore.none? { |ignore| Middleman::Util.path_match(ignore, path.to_s) }
+    options.ignore.none? { |ignore| Middleman::Util.path_match(ignore, path.to_s) }
   end
 end

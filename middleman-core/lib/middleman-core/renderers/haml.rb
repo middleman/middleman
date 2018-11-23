@@ -30,6 +30,10 @@ module Middleman
 
       def evaluate(scope, locals, &block)
         options = {}.merge!(@options).merge!(filename: eval_file, line: line, context: @context || scope)
+        if options.include?(:outvar)
+          options[:buffer] = options.delete(:outvar)
+          options[:save_buffer] = true
+        end
         @engine = ::Haml::Engine.new(data, options)
         output = @engine.render(scope, locals, &block)
 
@@ -39,13 +43,12 @@ module Middleman
 
     # Haml Renderer
     class Haml < ::Middleman::Extension
-      def initialize(app, options={}, &block)
+      def initialize(app, options_hash = ::Middleman::EMPTY_HASH, &block)
         super
 
         ::Haml::Options.defaults[:context] = nil
         ::Haml::Options.send :attr_accessor, :context
-
-        # rubocop:disable NestedMethodDefinition
+        ::Haml::TempleEngine.define_options context: nil if defined?(::Haml::TempleEngine)
         [::Haml::Filters::Sass, ::Haml::Filters::Scss, ::Haml::Filters::Markdown].each do |f|
           f.class_exec do
             def self.render_with_options(text, compiler_options)
@@ -57,7 +60,6 @@ module Middleman
             end
           end
         end
-        # rubocop:enable NestedMethodDefinition
 
         ::Tilt.prefer(::Middleman::Renderers::HamlTemplate, :haml)
 

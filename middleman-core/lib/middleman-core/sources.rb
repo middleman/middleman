@@ -1,5 +1,6 @@
 require 'hamster'
 require 'middleman-core/contracts'
+require 'set'
 
 module Middleman
   # The standard "record" that contains information about a file on disk.
@@ -24,7 +25,7 @@ module Middleman
     include Contracts
 
     # Types which could cause output to change.
-    OUTPUT_TYPES = [:source, :locales, :data].freeze
+    OUTPUT_TYPES = %i[source locales data].freeze
 
     # Types which require a reload to eval ruby
     CODE_TYPES = [:reload].freeze
@@ -56,7 +57,7 @@ module Middleman
     # @param [Hash] options Global options.
     # @param [Array] watchers Default watchers.
     Contract IsA['Middleman::Application'], Maybe[Hash], Maybe[Array] => Any
-    def initialize(app, _options={}, watchers=[])
+    def initialize(app, _options_hash = ::Middleman::EMPTY_HASH, watchers = [])
       @app = app
       @watchers = watchers
       @sorted_watchers = @watchers.dup.freeze
@@ -88,7 +89,7 @@ module Middleman
     # @param [Proc] block Ignore by block evaluation.
     # @return [void]
     Contract Symbol, Symbol, Or[Regexp, Proc] => Any
-    def ignore(name, type, regex=nil, &block)
+    def ignore(name, type, regex = nil, &block)
       @ignores = @ignores.put(name, type: type,
                                     validator: (block_given? ? block : regex))
 
@@ -103,7 +104,7 @@ module Middleman
     Contract SourceFile => Bool
     def globally_ignored?(file)
       @ignores.values.any? do |descriptor|
-        ((descriptor[:type] == :all) || file[:types].include?(descriptor[:type])) &&
+        ((descriptor[:type] == :all) || includes_type?(file[:types], descriptor[:type])) &&
           matches?(descriptor[:validator], file)
       end
     end
@@ -116,13 +117,13 @@ module Middleman
     # @param [Hash] options The watcher options.
     # @return [#changed, #deleted]
     Contract Or[Symbol, HANDLER], Maybe[Hash] => HANDLER
-    def watch(type_or_handler, options={})
+    def watch(type_or_handler, options_hash = ::Middleman::EMPTY_HASH)
       handler = if type_or_handler.is_a? Symbol
-        path = File.expand_path(options.delete(:path), app.root)
-        SourceWatcher.new(self, type_or_handler, path, options)
-      else
-        type_or_handler
-      end
+                  path = File.expand_path(options_hash.delete(:path), app.root)
+                  SourceWatcher.new(self, type_or_handler, path, options_hash)
+                else
+                  type_or_handler
+                end
 
       @watchers << handler
 
@@ -183,40 +184,52 @@ module Middleman
 
     # Find a file given a type and path.
     #
-    # @param [Symbol,Array<Symbol>] types A list of file "type".
+    # @param [Symbol,Array<Symbol>,Set<Symbol>] types A list of file "type".
     # @param [String] path The file path.
     # @param [Boolean] glob If the path contains wildcard or glob characters.
     # @return [Middleman::SourceFile, nil]
     Contract Or[Symbol, ArrayOf[Symbol], SetOf[Symbol]], Or[Pathname, String], Maybe[Bool] => Maybe[SourceFile]
-    def find(types, path, glob=false)
-      array_of_types = Array(types)
-
+    def find(types, path, glob = false)
       watchers
         .lazy
-        .select { |d| array_of_types.include?(d.type) }
+        .select { |d| includes_type?(types, d.type) }
         .map { |d| d.find(path, glob) }
         .reject(&:nil?)
         .first
     end
 
-    # Check if a file for a given type exists.
+    # Check if a type is included in the types list.
     #
-    # @param [Symbol,Array<Symbol>] types The list of file "type".
-    # @param [String] path The file path relative to it's source root.
+    # @param [Symbol,Array<Symbol>,Set<Symbol>] types The list of file "type".
+    # @param [Symbol] type The type we are looking for.
     # @return [Boolean]
-    Contract Or[Symbol, ArrayOf[Symbol], SetOf[Symbol]], String => Bool
-    def exists?(types, path)
-      watchers.any? { |d| Array(types).include?(d.type) && d.exists?(path) }
+    Contract Or[Symbol, ArrayOf[Symbol], SetOf[Symbol]], Symbol => Bool
+    def includes_type?(types, type)
+      if types.is_a? Symbol
+        types == type
+      else
+        types.include? type
+      end
     end
 
     # Check if a file for a given type exists.
     #
-    # @param [Symbol,Array<Symbol>] types The list of file "type".
+    # @param [Symbol,Array<Symbol>,Set<Symbol>] types The list of file "type".
+    # @param [String] path The file path relative to it's source root.
+    # @return [Boolean]
+    Contract Or[Symbol, ArrayOf[Symbol], SetOf[Symbol]], String => Bool
+    def exists?(types, path)
+      watchers.any? { |d| includes_type?(types, d.type) && d.exists?(path) }
+    end
+
+    # Check if a file for a given type exists.
+    #
+    # @param [Symbol,Array<Symbol>,Set<Symbol>] types The list of file "type".
     # @param [String] path The file path relative to it's source root.
     # @return [Boolean]
     Contract Or[Symbol, ArrayOf[Symbol], SetOf[Symbol]], String => Maybe[HANDLER]
     def watcher_for_path(types, path)
-      watchers.detect { |d| Array(types).include?(d.type) && d.exists?(path) }
+      watchers.detect { |d| includes_type?(types, d.type) && d.exists?(path) }
     end
 
     # Manually check for new files
@@ -264,7 +277,7 @@ module Middleman
 
     # Add callback to be run on file change or deletion
     #
-    # @param [Symbol,Array<Symbol>] types The change types to register the callback.
+    # @param [Symbol,Array<Symbol>,Set<Symbol>] types The change types to register the callback.
     # @return [void]
     Contract Or[Symbol, ArrayOf[Symbol], SetOf[Symbol]], Proc => Any
     def on_change(types, &block)
@@ -277,7 +290,7 @@ module Middleman
     #
     # @param [nil,Regexp] matcher A Regexp to match the change path against
     Contract Maybe[Matcher] => Any
-    def changed(matcher=nil, &_block)
+    def changed(matcher = nil, &_block)
       on_change OUTPUT_TYPES do |updated, _removed|
         updated
           .select { |f| matcher.nil? ? true : matches?(matcher, f) }
@@ -289,7 +302,7 @@ module Middleman
     #
     # @param [nil,Regexp] matcher A Regexp to match the change path against
     Contract Maybe[Matcher] => Any
-    def deleted(matcher=nil, &_block)
+    def deleted(matcher = nil, &_block)
       on_change OUTPUT_TYPES do |_updated, removed|
         removed
           .select { |f| matcher.nil? ? true : matches?(matcher, f) }
@@ -317,9 +330,9 @@ module Middleman
     def matches?(validator, file)
       path = file[:relative_path]
       if validator.is_a? Regexp
-        !!(path.to_s =~ validator)
+        !validator.match(path.to_s).nil?
       else
-        !!validator.call(path, @app)
+        validator.call(path, @app)
       end
     end
 
@@ -362,8 +375,8 @@ module Middleman
         if callback[:type] == :all
           callback[:proc].call(updated_files, removed_files)
         else
-          valid_updated = updated_files.select { |f| f[:types].include?(callback[:type]) }
-          valid_removed = removed_files.select { |f| f[:types].include?(callback[:type]) }
+          valid_updated = updated_files.select { |f| includes_type?(f[:types], callback[:type]) }
+          valid_removed = removed_files.select { |f| includes_type?(f[:types], callback[:type]) }
 
           callback[:proc].call(valid_updated, valid_removed) unless valid_updated.empty? && valid_removed.empty?
         end

@@ -1,8 +1,12 @@
 require 'rack/mime'
+require 'set'
+require 'hamster'
 require 'middleman-core/sitemap/extensions/traversal'
 require 'middleman-core/file_renderer'
 require 'middleman-core/template_renderer'
 require 'middleman-core/contracts'
+require 'middleman-core/inline_url_filter'
+require 'middleman-core/dependencies/vertices/vertex'
 
 module Middleman
   # Sitemap namespace
@@ -10,7 +14,10 @@ module Middleman
     # Sitemap Resource class
     class Resource
       include Contracts
+      include Comparable
       include Middleman::Sitemap::Extensions::Traversal
+
+      attr_reader :app
 
       # The source path of this resource (relative to the source directory,
       # without template extensions)
@@ -31,42 +38,47 @@ module Middleman
       # @return [String]
       alias request_path destination_path
 
-      METADATA_HASH = { options: Maybe[Hash], locals: Maybe[Hash], page: Maybe[Hash] }.freeze
+      Contract Num
+      attr_reader :priority
 
-      # The metadata for this resource
-      # @return [Hash]
-      Contract METADATA_HASH
-      attr_reader :metadata
-
-      attr_accessor :ignored
+      Contract ImmutableSetOf[::Middleman::Dependencies::Vertex]
+      attr_reader :vertices
 
       # Initialize resource with parent store and URL
       # @param [Middleman::Sitemap::Store] store
       # @param [String] path
       # @param [String] source
-      Contract IsA['Middleman::Sitemap::Store'], String, Maybe[Or[IsA['Middleman::SourceFile'], String]] => Any
-      def initialize(store, path, source=nil)
-        @store       = store
-        @app         = @store.app
-        @path        = path
-        @ignored     = false
+      Contract IsA['Middleman::Sitemap::Store'], String, Maybe[Or[IsA['Middleman::SourceFile'], String]], Maybe[Num] => Any
+      def initialize(store, path, source = nil, priority = 1)
+        @store    = store
+        @app      = @store.app
+        @path     = path
+        @ignored  = false
+        @filters  = ::Hamster::SortedSet.empty
+        @priority = priority
+        @vertices = ::Hamster::Set.empty
 
-        source = Pathname(source) if source && source.is_a?(String)
+        source = Pathname(source) if source&.is_a?(String)
 
-        @file_descriptor = if source && source.is_a?(Pathname)
-          ::Middleman::SourceFile.new(source.relative_path_from(@app.source_dir), source, @app.source_dir, Set.new([:source]), 0)
-        else
-          source
-        end
+        @file_descriptor = if source&.is_a?(Pathname)
+                             ::Middleman::SourceFile.new(source.relative_path_from(@app.source_dir), source, @app.source_dir, Set.new([:source]), 0)
+                           else
+                             source
+                           end
 
         @destination_path = @path
 
         # Options are generally rendering/sitemap options
+        @metadata_options = ::Middleman::EMPTY_HASH
+
         # Locals are local variables for rendering this resource's template
+        @metadata_locals  = ::Middleman::EMPTY_HASH
+
         # Page are data that is exposed through this resource's data member.
         # Note: It is named 'page' for backwards compatibility with older MM.
-        @metadata = { options: {}, locals: {}, page: {} }
+        @metadata_page    = ::Middleman::EMPTY_HASH
 
+        # Recursively enhanced page data cache
         @page_data = nil
       end
 
@@ -75,6 +87,7 @@ module Middleman
       Contract Bool
       def template?
         return false if file_descriptor.nil?
+
         !::Middleman::Util.tilt_class(file_descriptor[:full_path].to_s).nil?
       end
 
@@ -87,31 +100,55 @@ module Middleman
 
       Contract Or[Symbol, String, Integer]
       def page_id
-        metadata[:page][:id] || make_implicit_page_id(destination_path)
+        @metadata_page[:id] || make_implicit_page_id(destination_path)
       end
 
-      # Merge in new metadata specific to this resource.
-      # @param [Hash] meta A metadata block with keys :options, :locals, :page.
-      #   Options are generally rendering/sitemap options
-      #   Locals are local variables for rendering this resource's template
-      #   Page are data that is exposed through this resource's data member.
-      #   Note: It is named 'page' for backwards compatibility with older MM.
-      Contract METADATA_HASH, Maybe[Bool] => METADATA_HASH
-      def add_metadata(meta={}, reverse=false)
+      Contract Hash, Maybe[Bool] => Any
+      def add_metadata_options(opts, reverse = false)
+        if @metadata_options == ::Middleman::EMPTY_HASH
+          @metadata_options = opts.dup
+        elsif reverse
+          @metadata_options = opts.deep_merge(@metadata_options)
+        else
+          @metadata_options.deep_merge!(opts)
+        end
+      end
+
+      Contract Hash, Maybe[Bool] => Any
+      def add_metadata_locals(locs, reverse = false)
+        if @metadata_locals == ::Middleman::EMPTY_HASH
+          @metadata_locals = locs.dup
+        elsif reverse
+          @metadata_locals = locs.deep_merge(@metadata_locals)
+        else
+          @metadata_locals.deep_merge!(locs)
+        end
+      end
+
+      Contract Hash, Maybe[Bool] => Any
+      def add_metadata_page(page, reverse = false)
+        # Clear recursively enhanced cache
         @page_data = nil
 
-        @metadata = if reverse
-          meta.deep_merge(@metadata)
+        if @metadata_page == ::Middleman::EMPTY_HASH
+          @metadata_page = page.dup
+        elsif reverse
+          @metadata_page = page.deep_merge(@metadata_page)
         else
-          @metadata.deep_merge(meta)
+          @metadata_page.deep_merge!(page)
         end
       end
 
       # Data about this resource, populated from frontmatter or extensions.
       # @return [Hash]
-      Contract RespondTo[:indifferent_access?]
+      Contract IsA['::Middleman::Util::EnhancedHash']
       def data
-        @page_data ||= ::Middleman::Util.recursively_enhance(metadata[:page])
+        @page_data ||= ::Middleman::Util.recursively_enhance(page)
+      end
+
+      Contract Hash
+      def page
+        @metadata_page
       end
 
       # Options about how this resource is rendered, such as its :layout,
@@ -119,14 +156,14 @@ module Middleman
       # @return [Hash]
       Contract Hash
       def options
-        metadata[:options]
+        @metadata_options
       end
 
       # Local variable mappings that are used when rendering the template for this resource.
       # @return [Hash]
       Contract Hash
       def locals
-        metadata[:locals]
+        @metadata_locals
       end
 
       # Extension of the path (i.e. '.js')
@@ -138,20 +175,54 @@ module Middleman
 
       # Render this resource
       # @return [String]
+      Contract Hash, Hash, Maybe[Proc] => String
+      def render(options_hash = ::Middleman::EMPTY_HASH, locs = ::Middleman::EMPTY_HASH, &_block)
+        @vertices = ::Hamster::Set.empty
+
+        body = render_without_filters(options_hash, locs)
+
+        return body if @filters.empty?
+
+        @filters.reduce(body) do |output, filter|
+          if block_given? && !yield(filter)
+            output
+          elsif filter.is_a?(Filter)
+            result = filter.execute_filter(output)
+            @vertices |= result[1]
+            result[0]
+          else
+            output
+          end
+        end
+      end
+
+      # Render this resource without content filters
+      # @return [String]
       Contract Hash, Hash => String
-      def render(opts={}, locs={})
+      def render_without_filters(options_hash = ::Middleman::EMPTY_HASH, locals_hash = ::Middleman::EMPTY_HASH)
         return ::Middleman::FileRenderer.new(@app, file_descriptor[:full_path].to_s).template_data_for_file unless template?
 
-        md   = metadata
-        opts = md[:options].deep_merge(opts)
-        locs = md[:locals].deep_merge(locs)
-        locs[:current_path] ||= destination_path
+        opts = if options_hash == ::Middleman::EMPTY_HASH
+                 options.dup
+               else
+                 options.deep_merge(options_hash)
+               end
 
         # Certain output file types don't use layouts
-        opts[:layout] = false if !opts.key?(:layout) && !@app.config.extensions_with_layout.include?(ext)
+        opts[:layout] = false if !opts.key?(:layout) && !@app.set_of_extensions_with_layout.include?(ext)
+
+        locs = if locals_hash == ::Middleman::EMPTY_HASH
+                 locals.dup
+               else
+                 locals.deep_merge(locals_hash)
+               end
+
+        locs[:current_path] ||= destination_path
 
         renderer = ::Middleman::TemplateRenderer.new(@app, file_descriptor[:full_path].to_s)
-        renderer.render(locs, opts)
+        renderer.render(locs, opts).to_str.tap do
+          @vertices |= renderer.vertices
+        end
       end
 
       # A path without the directory index - so foo/index.html becomes
@@ -183,6 +254,14 @@ module Middleman
         @ignored = true
       end
 
+      FILTER = Or[RespondTo[:call], Filter]
+      Contract FILTER => Any
+      def add_filter(filter)
+        filter = ProcFilter.new(:"proc_#{filter.object_id}", filter) if filter.respond_to?(:call)
+
+        @filters = @filters.add filter
+      end
+
       # Whether the Resource is ignored
       # @return [Boolean]
       Contract Bool
@@ -204,6 +283,14 @@ module Middleman
         @normalized_path ||= ::Middleman::Util.normalize_path @path
       end
 
+      # The `object_id` inclusion is because Hamster::SortedSet will assume
+      # <=> of 0 (same priority) actually means equality and removes duplicates
+      # from the set. Bug filed here: https://github.com/hamstergem/hamster/issues/246
+      Contract RespondTo[:priority] => Num
+      def <=>(other)
+        [priority, object_id] <=> [other.priority, other.object_id]
+      end
+
       def to_s
         "#<#{self.class} path=#{@path}>"
       end
@@ -218,14 +305,14 @@ module Middleman
       Contract String => String
       def make_implicit_page_id(path)
         @id ||= begin
-          if prok = @app.config[:page_id_generator]
-            return prok.call(path)
-          end
+          prok = @app.config[:page_id_generator]
+
+          return prok.call(path) if prok
 
           basename = if ext == '.html'
-            File.basename(path, ext)
-          else
-            File.basename(path)
+                       File.basename(path, ext)
+                     else
+                       File.basename(path)
                      end
 
           # Remove leading dot or slash if present
@@ -235,9 +322,10 @@ module Middleman
     end
 
     class StringResource < Resource
-      def initialize(store, path, contents=nil, &block)
+      Contract IsA['Middleman::Sitemap::Store'], String, Maybe[Or[String, Proc]] => Any
+      def initialize(store, path, contents)
         @request_path = path
-        @contents = block_given? ? block : contents
+        @contents = contents
         super(store, path)
       end
 
@@ -246,7 +334,7 @@ module Middleman
       end
 
       def render(*)
-        @contents.respond_to?(:call) ? @contents.call : @contents
+        @contents
       end
 
       def binary?

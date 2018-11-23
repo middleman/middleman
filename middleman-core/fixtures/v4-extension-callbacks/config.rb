@@ -7,7 +7,7 @@ class ExtensionOne < ::Middleman::Extension
 
   attr_reader :extension_two_was_activated
 
-  def initialize(app, options_hash={})
+  def initialize(app, options_hash = {})
     super
 
     after_extension_activated :extension_two do
@@ -27,7 +27,7 @@ class ExtensionTwo < ::Middleman::Extension
 
   attr_reader :extension_one_was_activated
 
-  def initialize(app, options_hash={})
+  def initialize(app, options_hash = {})
     super
 
     after_extension_activated :extension_one do

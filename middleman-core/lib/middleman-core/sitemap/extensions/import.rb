@@ -11,28 +11,27 @@ module Middleman
         expose_to_config :import_file, :import_path
 
         ImportFileDescriptor = Struct.new(:from, :to) do
-          def execute_descriptor(app, resources)
-            source = ::Middleman::SourceFile.new(Pathname(from).relative_path_from(app.source_dir), Pathname(from), app.source_dir, Set.new([:source, :binary]), 0)
-
-            resources + [
-              ::Middleman::Sitemap::Resource.new(app.sitemap, to, source)
-            ]
+          def execute_descriptor(app, resource_list)
+            source = ::Middleman::SourceFile.new(Pathname(from).relative_path_from(app.source_dir), Pathname(from), app.source_dir, Set.new(%i[source binary]), 0)
+            resource_list.add! ::Middleman::Sitemap::Resource.new(app.sitemap, to, source)
           end
         end
 
         ImportPathDescriptor = Struct.new(:from, :renameProc) do
-          def execute_descriptor(app, resources)
-            resources + ::Middleman::Util.glob_directory(File.join(from, '**/*'))
-                                         .reject { |path| File.directory?(path) }
-                                         .map do |path|
-                          target_path = Pathname(path).relative_path_from(Pathname(from).parent).to_s
+          def execute_descriptor(app, resource_list)
+            new_resources = ::Middleman::Util.glob_directory(File.join(from, '**/*'))
+                                             .reject { |path| File.directory?(path) }
+                                             .map do |path|
+              target_path = Pathname(path).relative_path_from(Pathname(from).parent).to_s
 
-                          ::Middleman::Sitemap::Resource.new(
-                            app.sitemap,
-                            renameProc.call(target_path, path),
-                            path
-                          )
-                        end
+              ::Middleman::Sitemap::Resource.new(
+                app.sitemap,
+                renameProc.call(target_path, path),
+                path
+              )
+            end
+
+            resource_list.add!(*new_resources)
           end
         end
 

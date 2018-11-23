@@ -13,7 +13,7 @@ module Middleman
         expose_to_config :redirect
 
         RedirectDescriptor = Struct.new(:path, :to, :directory_index, :template) do
-          def execute_descriptor(app, resources)
+          def execute_descriptor(app, resource_list)
             r = RedirectResource.new(
               app.sitemap,
               path,
@@ -22,7 +22,7 @@ module Middleman
             r.output = template if template
             r.options[:directory_index] = directory_index
 
-            resources + [r]
+            resource_list.add! r
           end
         end
 
@@ -30,11 +30,11 @@ module Middleman
         # @param [String] path
         # @param [Hash] opts The :to value gives a target path
         Contract String, { to: Or[String, ::Middleman::Sitemap::Resource] }, Maybe[Proc] => RedirectDescriptor
-        def redirect(path, opts={}, &block)
+        def redirect(path, options_hash = ::Middleman::EMPTY_HASH, &block)
           RedirectDescriptor.new(
             path,
-            opts[:to],
-            opts[:directory_index],
+            options_hash[:to],
+            options_hash[:directory_index],
             block_given? ? block : nil
           )
         end
