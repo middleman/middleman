@@ -72,12 +72,16 @@ module Middleman::Cli
       ::Middleman::Logger.singleton(verbose, instrument)
 
       ::Middleman::Util.instrument 'builder.setup' do
+        missing_and_changed = !options['only_changed'] && options['missing_and_changed']
+        should_track_dependencies = options['only_changed'] || missing_and_changed || options['track_dependencies']
+
         @app = ::Middleman::Application.new do
           config[:mode] = :build
           config[:show_exceptions] = false
           config[:cli_options] = cli_options.each_with_object({}) do |(k, v), sum|
             sum[k] = v
           end
+          config[:track_data_access] = should_track_dependencies
         end
 
         builder = Middleman::Builder.new(@app,
@@ -85,8 +89,8 @@ module Middleman::Cli
                                          clean: options['clean'],
                                          parallel: options['parallel'],
                                          only_changed: options['only_changed'],
-                                         missing_and_changed: options['missing_and_changed'],
-                                         track_dependencies: options['track_dependencies'])
+                                         missing_and_changed: missing_and_changed,
+                                         track_dependencies: should_track_dependencies)
         builder.thor = self
         builder.on_build_event(&method(:on_event))
       end

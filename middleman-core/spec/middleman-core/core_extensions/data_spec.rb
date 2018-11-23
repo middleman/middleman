@@ -8,7 +8,7 @@ end
 describe Middleman::CoreExtensions::Data::DataStoreController do
   describe '#store' do
     before :each do
-      @subject = described_class.new instance_double('Middleman::Application')
+      @subject = described_class.new(instance_double('Middleman::Application'), false)
     end
 
     context 'when given a name and data' do
@@ -35,7 +35,7 @@ describe Middleman::CoreExtensions::Data::DataStoreController do
 
   describe '#callbacks' do
     before :each do
-      @subject = described_class.new instance_double('Middleman::Application')
+      @subject = described_class.new(instance_double('Middleman::Application'), false)
     end
 
     context 'when given a name and proc' do
@@ -57,7 +57,7 @@ describe Middleman::CoreExtensions::Data::DataStoreController do
 
   describe '#ordering' do
     before :each do
-      @subject = described_class.new instance_double('Middleman::Application')
+      @subject = described_class.new(instance_double('Middleman::Application'), false)
     end
 
     context 'given path matches local data' do
@@ -94,7 +94,7 @@ describe Middleman::CoreExtensions::Data::DataStoreController do
 
   describe '#key?' do
     before :each do
-      @subject = described_class.new instance_double('Middleman::Application')
+      @subject = described_class.new(instance_double('Middleman::Application'), false)
     end
 
     it 'given path matches no sources returns false' do

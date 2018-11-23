@@ -10,6 +10,7 @@ module Middleman
         attr_reader :data_store
 
         define_setting :data_dir, ENV['MM_DATA_DIR'] || 'data', 'The directory data files are stored in'
+        define_setting :track_data_access, false, 'If we should track data accesses'
 
         # Make the internal `data_store` method available as `app.data`
         expose_to_application data: :data_store
@@ -24,7 +25,7 @@ module Middleman
         def initialize(app, options_hash = ::Middleman::EMPTY_HASH, &block)
           super
 
-          @data_store = DataStoreController.new(app)
+          @data_store = DataStoreController.new(app, app.config[:track_data_access])
 
           start_watching(app.config[:data_dir])
         end

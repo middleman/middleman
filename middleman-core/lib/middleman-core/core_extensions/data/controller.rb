@@ -15,7 +15,9 @@ module Middleman
         def_delegator :@local_file_data_store, :update_files
         def_delegators :@in_memory_data_store, :store, :callbacks
 
-        def initialize(app)
+        def initialize(app, track_data_access)
+          @track_data_access = track_data_access
+
           @local_file_data_store = Data::Stores::LocalFileDataStore.new(app)
           @in_memory_data_store = Data::Stores::InMemoryDataStore.new
 
@@ -70,6 +72,8 @@ module Middleman
 
         def proxied_data(k, parent = nil)
           data = enhanced_data(k)
+
+          return data unless @track_data_access
 
           if data.is_a? ::Middleman::Util::EnhancedHash
             Data::Proxies::HashProxy.new(k, data, parent)

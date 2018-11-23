@@ -38,8 +38,8 @@ module Middleman
       @glob = options_hash.fetch(:glob)
       @parallel = options_hash.fetch(:parallel, true)
       @only_changed = options_hash.fetch(:only_changed, false)
-      @missing_and_changed = !@only_changed && options_hash.fetch(:missing_and_changed, false)
-      @track_dependencies = @only_changed || @missing_and_changed || options_hash.fetch(:track_dependencies, false)
+      @missing_and_changed = options_hash.fetch(:missing_and_changed, false)
+      @track_dependencies = options_hash.fetch(:track_dependencies, false)
       @cleaning = options_hash.fetch(:clean)
 
       @callbacks = ::Middleman::CallbackManager.new
