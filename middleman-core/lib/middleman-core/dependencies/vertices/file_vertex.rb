@@ -10,7 +10,7 @@ module Middleman
 
       TYPE_ID = :file
 
-      Contract IsA['::Middleman::Application'], String, Vertex::VERTEX_ATTRS => FileVertex
+      Contract IsA['::Middleman::Application'], Symbol, Vertex::VERTEX_ATTRS => FileVertex
       def self.deserialize(app, key, attributes)
         FileVertex.new(app.root_path, key, attributes)
       end
@@ -22,14 +22,14 @@ module Middleman
 
       Contract IsA['::Middleman::Application'], IsA['::Middleman::SourceFile'] => FileVertex
       def self.from_source_file(app, source_file)
-        FileVertex.new(app.root_path, source_file[:full_path].to_s)
+        FileVertex.new(app.root_path, source_file[:full_path].to_s.to_sym)
       end
 
-      Contract Or[String, Pathname], String, Maybe[VERTEX_ATTRS] => Any
+      Contract Or[String, Pathname], Symbol, Maybe[VERTEX_ATTRS] => Any
       def initialize(root, key, attributes = {})
         @root = Pathname(root)
-        @full_path = full_path(@root, key)
-        super(relative_path(@root, key), attributes)
+        @full_path = full_path(@root, key.to_s)
+        super(relative_path(@root, key.to_s).to_sym, attributes)
       end
 
       Contract Bool

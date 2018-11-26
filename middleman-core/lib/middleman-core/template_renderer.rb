@@ -160,6 +160,8 @@ module Middleman
         end
       end
 
+      @vertices = ::Hamster::Set.empty
+
       content = ::Middleman::Util.instrument 'builder.output.resource.render-template', path: File.basename(path) do
         _render_with_all_renderers(path, locals, context, options, &block)
       end
@@ -200,8 +202,6 @@ module Middleman
       # Keep rendering template until we've used up all extensions. This
       # handles cases like `style.css.sass.erb`
       content = nil
-
-      @vertices = ::Hamster::Set.empty
 
       while ::Middleman::Util.tilt_class(path)
         begin

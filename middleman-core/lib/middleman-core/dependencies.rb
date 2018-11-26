@@ -1,3 +1,4 @@
+require 'hamster'
 require 'set'
 require 'pathname'
 require 'digest/sha1'
@@ -14,6 +15,15 @@ module Middleman
     RUBY_FILES = ['**/*.rb', 'Gemfile.lock'].freeze
 
     module_function
+
+    Contract IsA['::Middleman::Application'], Graph, Maybe[String] => Any
+    def serialize_and_save(app, graph, file_path = DEFAULT_FILE_PATH)
+      new_output = serialize(app, graph)
+
+      File.open(file_path, 'w') do |file|
+        file.write new_output
+      end
+    end
 
     Contract IsA['::Middleman::Application'], Graph => String
     def serialize(app, graph)
@@ -37,16 +47,9 @@ module Middleman
 
       ::YAML.dump(
         ruby_files: ruby_files.sort_by { |d| d[:file] },
-        edges: edges.sort_by { |d| d[:file] },
+        edges: edges.sort_by { |d| d[:key] },
         vertices: vertices.sort_by { |d| d[:key] }
       )
-    end
-
-    Contract IsA['::Middleman::Application'], Graph, Maybe[String] => Any
-    def serialize_and_save(app, graph, file_path = DEFAULT_FILE_PATH)
-      File.open(file_path, 'w') do |file|
-        file.write serialize(app, graph)
-      end
     end
 
     Contract String => Graph
@@ -88,19 +91,30 @@ module Middleman
         raise InvalidatedRubyFiles, invalidated
       end
 
-      vertices = data[:vertices].each_with_object({}) do |row, sum|
+      # Pre-existing vertices (from config.rb)
+      preexisting_vertices = app.data.vertices.each_with_object({}) do |vertex, sum|
+        sum[vertex.key] = vertex
+      end
+
+      vertices = data[:vertices].each_with_object(preexisting_vertices) do |row, sum|
         vertex_class = VERTICES_BY_TYPE[row[:type]]
         vertex = vertex_class.deserialize(app, row[:key], row[:attributes])
-        sum[vertex.key] = vertex
+        if sum[vertex.key]
+          sum[vertex.key].merge!(vertex)
+        else
+          sum[vertex.key] = vertex
+        end
       end
 
       graph = Graph.new(vertices)
 
+      Contract ImmutableHashOf[Vertex, ImmutableSetOf[Vertex]]
+
       edges = data[:edges]
-      graph.dependency_map = edges.each_with_object({}) do |row, sum|
+      graph.dependency_map = edges.reduce(::Hamster::Hash.empty) do |sum, row|
         vertex = graph.vertices[row[:key]]
         depended_on_by = row[:depended_on_by].map { |k| graph.vertices[k] }
-        sum[vertex] = ::Hamster::Set.new(depended_on_by) << vertex
+        sum.put(vertex, ::Hamster::Set.new(depended_on_by) << vertex)
       end
 
       graph

@@ -2,6 +2,7 @@ require 'pathname'
 require 'hamster'
 require 'middleman-core/file_renderer'
 require 'middleman-core/template_renderer'
+require 'middleman-core/data_proxy'
 require 'middleman-core/contracts'
 require 'middleman-core/dependencies/vertices/vertex'
 require 'middleman-core/dependencies/vertices/file_vertex'
@@ -25,11 +26,14 @@ module Middleman
     # Required for Padrino's rendering
     attr_accessor :current_engine
 
+    # Points to the data proxy, which records data accesses
+    attr_reader :data
+
     Contract ImmutableSetOf[::Middleman::Dependencies::Vertex]
-    attr_reader :vertices
+    attr_accessor :vertices
 
     # Shorthand references to global values on the app instance.
-    def_delegators :@app, :config, :logger, :sitemap, :server?, :build?, :environment?, :environment, :data, :extensions, :root, :development?, :production?
+    def_delegators :@app, :config, :logger, :sitemap, :server?, :build?, :environment?, :environment, :extensions, :root, :development?, :production?
 
     # Initialize a context with the current app and predefined locals and options hashes.
     #
@@ -38,10 +42,16 @@ module Middleman
     # @param [Hash] opts
     def initialize(app, locs = {}, options_hash = ::Middleman::EMPTY_HASH)
       @app = app
-      @locs = locs
       @opts = options_hash
 
       @vertices = ::Hamster::Set.empty
+      @data = DataProxy.new(self)
+
+      @locs = if @app.config[:track_data_access]
+                @data.take_ownership_of_proxies(locs)
+              else
+                locs
+              end
     end
 
     # Return the current buffer to the caller and clear the value internally.

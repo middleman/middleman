@@ -20,24 +20,34 @@ module Middleman
       end
 
       Contract Vertex => Vertex
-      def known_vertex_or_new(v)
-        @vertices[v.key] ||= v
+      def merged_vertex_or_new(v)
+        if @vertices[v.key]
+          @vertices[v.key].merge!(v)
+        else
+          @vertices[v.key] = v
+        end
+
+        @vertices[v.key]
       end
 
       Contract Edge => Any
       def add_edge(edge)
-        deduped_vertex = known_vertex_or_new edge.vertex
+        deduped_vertex = merged_vertex_or_new edge.vertex
 
-        @dependency_map.put(deduped_vertex) do |v|
+        # FIXME
+        # Depending on yourself (<< deduped_vertex)
+        # is only useful for files in source/ that can be depended on and also
+        # be their own route
+        @dependency_map = @dependency_map.put(deduped_vertex) do |v|
           (v || ::Hamster::Set.empty) << deduped_vertex
         end
 
         return if edge.depends_on.nil?
 
         edge.depends_on.each do |depended_on|
-          deduped_depended_on = known_vertex_or_new depended_on
+          deduped_depended_on = merged_vertex_or_new depended_on
 
-          @dependency_map.put(deduped_depended_on) do |v|
+          @dependency_map = @dependency_map.put(deduped_depended_on) do |v|
             (v || ::Hamster::Set.empty) << deduped_depended_on << deduped_vertex
           end
         end

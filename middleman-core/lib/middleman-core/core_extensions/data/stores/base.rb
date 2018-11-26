@@ -1,3 +1,5 @@
+require 'hamster'
+require 'middleman-core/dependencies/vertices/vertex'
 require 'middleman-core/contracts'
 
 module Middleman
@@ -20,6 +22,16 @@ module Middleman
           Contract ArrayOf[Symbol]
           def keys
             raise NotImplementedError
+          end
+
+          Contract ImmutableSetOf[::Middleman::Dependencies::Vertex]
+          def vertices
+            Hamster::Set.empty
+          end
+
+          Contract Symbol => ImmutableSetOf[::Middleman::Dependencies::Vertex]
+          def vertices_for_key(_k)
+            Hamster::Set.empty
           end
 
           Contract Hash

@@ -1,6 +1,9 @@
+require 'hamster'
 require 'set'
 require 'middleman-core/contracts'
 require 'middleman-core/core_extensions/data/stores/base'
+require 'middleman-core/dependencies/vertices/vertex'
+require 'middleman-core/dependencies/vertices/file_vertex'
 
 module Middleman
   module CoreExtensions
@@ -11,6 +14,10 @@ module Middleman
           extend Forwardable
           include Contracts
 
+          YAML_EXTS = Set.new %w[.yaml .yml]
+          JSON_EXTS = Set.new %w[.json]
+          ALL_EXTS = YAML_EXTS | JSON_EXTS
+
           def_delegators :@local_data, :keys, :key?, :[]
 
           # Contract IsA['::Middleman::Application'] => Any
@@ -19,6 +26,12 @@ module Middleman
 
             @app = app
             @local_data = {}
+            @paths_to_vertex = {}
+          end
+
+          Contract Symbol => ImmutableSetOf[::Middleman::Dependencies::Vertex]
+          def vertices_for_key(k)
+            @paths_to_vertex[k] || ::Hamster::Set.empty
           end
 
           Contract ArrayOf[IsA['Middleman::SourceFile']], ArrayOf[IsA['Middleman::SourceFile']] => Any
@@ -28,10 +41,6 @@ module Middleman
 
             @app.sitemap.rebuild_resource_list!(:touched_data_file)
           end
-
-          YAML_EXTS = Set.new %w[.yaml .yml]
-          JSON_EXTS = Set.new %w[.json]
-          ALL_EXTS = YAML_EXTS | JSON_EXTS
 
           # Update the internal cache for a given file path
           #
@@ -54,10 +63,20 @@ module Middleman
 
             data_branch = @local_data
 
-            path = data_path.to_s.split(File::SEPARATOR)[0..-2]
-            path.each do |dir|
+            paths = data_path.to_s.split(File::SEPARATOR)[0..-2]
+            paths.each do |dir|
               data_branch[dir.to_sym] ||= {}
               data_branch = data_branch[dir.to_sym]
+            end
+
+            # For now, all files nested under a folder in `data/` will invalidate
+            # the whole folder.
+            if paths.empty?
+              @paths_to_vertex[basename.to_sym] ||= ::Hamster::Set.empty
+              @paths_to_vertex[basename.to_sym] <<= ::Middleman::Dependencies::FileVertex.from_source_file(@app, file)
+            else
+              @paths_to_vertex[paths.first.to_sym] ||= ::Hamster::Set.empty
+              @paths_to_vertex[paths.first.to_sym] <<= ::Middleman::Dependencies::FileVertex.from_source_file(@app, file)
             end
 
             data_branch[basename.to_sym] = data

@@ -1,7 +1,9 @@
+require 'hamster'
 require 'middleman-core/util/data'
 require 'middleman-core/core_extensions/data/stores/local_file'
-require 'middleman-core/core_extensions/data/stores/static'
-require 'middleman-core/core_extensions/data/stores/callback'
+require 'middleman-core/core_extensions/data/stores/in_memory'
+require 'middleman-core/core_extensions/data/proxies/array'
+require 'middleman-core/core_extensions/data/proxies/hash'
 
 module Middleman
   module CoreExtensions
@@ -11,19 +13,18 @@ module Middleman
         extend Forwardable
 
         def_delegator :@local_file_data_store, :update_files
-        def_delegator :@static_data_store, :store
-        def_delegator :@callback_data_store, :callbacks
+        def_delegators :@in_memory_data_store, :store, :callbacks
 
-        def initialize(app)
+        def initialize(app, track_data_access)
+          @track_data_access = track_data_access
+
           @local_file_data_store = Data::Stores::LocalFileDataStore.new(app)
-          @static_data_store = Data::Stores::StaticDataStore.new
-          @callback_data_store = Data::Stores::CallbackDataStore.new
+          @in_memory_data_store = Data::Stores::InMemoryDataStore.new
 
           # Sorted in order of access precedence.
           @data_stores = [
             @local_file_data_store,
-            @static_data_store,
-            @callback_data_store
+            @in_memory_data_store
           ]
 
           @enhanced_cache = {}
@@ -38,8 +39,21 @@ module Middleman
           source = @data_stores.find { |s| s.key?(k) }
           source[k] unless source.nil?
         end
+        alias [] key
 
-        def enhanced_key(k)
+        def vertices
+          @data_stores.reduce(::Hamster::Set.empty) do |sum, s|
+            sum | s.vertices
+          end
+        end
+
+        def vertices_for_key(k)
+          @data_stores.reduce(::Hamster::Set.empty) do |sum, s|
+            sum | s.vertices_for_key(k)
+          end
+        end
+
+        def enhanced_data(k)
           value = key(k)
 
           if @enhanced_cache.key?(k)
@@ -57,12 +71,26 @@ module Middleman
           enhanced
         end
 
+        def proxied_data(k, parent = nil)
+          data = enhanced_data(k)
+
+          return data unless @track_data_access
+
+          if data.is_a? ::Middleman::Util::EnhancedHash
+            Data::Proxies::HashProxy.new(k, data, parent)
+          elsif data.is_a? ::Array
+            Data::Proxies::ArrayProxy.new(k, data, parent)
+          else
+            raise 'Invalid data to wrap'
+          end
+        end
+
         # "Magically" find namespaces of data if they exist
         #
         # @param [String] path The namespace to search for
         # @return [Hash, nil]
         def method_missing(method)
-          return enhanced_key(method) if key?(method)
+          return proxied_data(method) if key?(method)
 
           super
         end

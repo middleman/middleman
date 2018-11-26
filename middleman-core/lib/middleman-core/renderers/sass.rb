@@ -79,7 +79,7 @@ module Middleman
 
         def vertices
           @engine.dependencies.reduce(::Hamster::Set.empty) do |sum, d|
-            sum << ::Middleman::Dependencies::FileVertex.new(@context.app.root_path, d.filename)
+            sum << ::Middleman::Dependencies::FileVertex.new(@context.app.root_path, d.filename.to_sym)
           end
         end
 
