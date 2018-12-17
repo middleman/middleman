@@ -14,9 +14,8 @@ Feature: Middleman CLI
       | config.rb                                     |
       | source/index.html.erb                         |
       | source/layouts/layout.erb                     |
-      | source/javascripts/all.js                     |
+      | source/javascripts/site.js                     |
       | source/stylesheets/site.css.scss              |
-      | source/stylesheets/_normalize.scss            |
 
   Scenario: Create a new project in the current directory
     Given a directory named "MY_PROJECT"
