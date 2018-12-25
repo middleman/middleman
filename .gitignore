@@ -9,7 +9,6 @@ pkg
 .sass-cache
 .sassc
 .tmp
-Gemfile.lock
 docs
 .rbenv-*
 .ruby-version
