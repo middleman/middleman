@@ -7,10 +7,10 @@
 # to serve your Gzipped files whenever the normal (non-.gz) filename is requested.
 #
 # Pass the :exts options to customize which file extensions get zipped (defaults
-# to .css, .htm, .html, .js, and .xhtml
+# to .css, .htm, .html, .js, .mjs, and .xhtml
 #
 class Middleman::Extensions::Gzip < ::Middleman::Extension
-  option :exts, %w[.css .htm .html .js .svg .xhtml], 'File extensions to Gzip when building.'
+  option :exts, %w[.css .htm .html .js .mjs .svg .xhtml], 'File extensions to Gzip when building.'
   option :ignore, [], 'Patterns to avoid gzipping'
   option :overwrite, false, 'Overwrite original files instead of adding .gz extension.'
 

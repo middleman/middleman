@@ -1,5 +1,4 @@
 require 'hamster'
-require 'digest/sha1'
 require 'middleman-core/contracts'
 require 'middleman-core/dependencies/vertices/vertex'
 
@@ -56,7 +55,7 @@ module Middleman
       def current_hash
         return nil if @data.nil?
 
-        @current_hash ||= ::Digest::SHA1.hexdigest(@data.to_s)
+        @current_hash ||= ::Middleman::Util.hash_string(@data.to_s)
       end
 
       Contract Maybe[String]

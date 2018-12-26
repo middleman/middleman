@@ -1,3 +1,4 @@
+require 'digest/sha1'
 require 'set'
 
 module Middleman
@@ -129,6 +130,23 @@ module Middleman
           false
         end
       end.map(&:file_descriptor)
+    end
+
+    Contract String, Maybe[Num] => String
+    def read_file(path, bytes = nil)
+      # puts "Read: #{path}"
+      File.read(path, bytes)
+    end
+
+    Contract String => String
+    def hash_file(path)
+      # puts "Read (hash): #{path}"
+      ::Digest::SHA1.file(path).hexdigest
+    end
+
+    Contract String => String
+    def hash_string(data)
+      ::Digest::SHA1.hexdigest(data)
     end
   end
 end

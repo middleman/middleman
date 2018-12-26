@@ -98,7 +98,7 @@ module Middleman
       return not_found(res, full_request_path) unless resource && !resource.ignored?
 
       # If this path is a binary file, send it immediately
-      return send_file(resource, env) if resource.binary?
+      return send_file(resource, env) if resource.binary? || resource.static_file?
 
       res['Content-Type'] = resource.content_type || 'text/plain'
 

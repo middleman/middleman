@@ -1,7 +1,6 @@
 require 'hamster'
 require 'set'
 require 'pathname'
-require 'digest/sha1'
 require 'yaml'
 require 'middleman-core/contracts'
 require 'middleman-core/dependencies/graph'
@@ -30,7 +29,7 @@ module Middleman
       ruby_files = Dir.glob(RUBY_FILES).reduce([]) do |sum, file|
         sum << {
           file: Pathname(File.expand_path(file)).relative_path_from(app.root_path).to_s,
-          hash: ::Digest::SHA1.file(file).hexdigest
+          hash: ::Middleman::Util.hash_file(file)
         }
       end
 
@@ -62,7 +61,7 @@ module Middleman
     Contract ArrayOf[String]
     def invalidated_ruby_files(known_files)
       known_files.reject do |file|
-        file[:hash] == ::Digest::SHA1.file(file[:file]).hexdigest
+        file[:hash] == ::Middleman::Util.hash_file(file[:file])
       end
     end
 

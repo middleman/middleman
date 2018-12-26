@@ -1,7 +1,7 @@
 require 'middleman-core/util'
 
 class Middleman::Extensions::AssetHash < ::Middleman::Extension
-  option :sources, %w[.css .htm .html .js .json .php .xhtml], 'List of extensions that are searched for hashable assets.'
+  option :sources, %w[.css .htm .html .js .mjs .json .php .xhtml], 'List of extensions that are searched for hashable assets.'
   option :exts, nil, 'List of extensions that get asset hashes appended to them.'
   option :ignore, [], 'Regexes of filenames to skip adding asset hashes to'
   option :rewrite_ignore, [], 'Regexes of filenames to skip processing for path rewrites'
@@ -9,8 +9,6 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
 
   def initialize(app, options_hash = ::Middleman::EMPTY_HASH, &block)
     super
-
-    require 'digest/sha1'
 
     # Allow specifying regexes to ignore, plus always ignore apple touch icons
     @ignore = Array(options.ignore) + [/^apple-touch-icon/]
@@ -66,7 +64,7 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
     sorted_resources = resource_list.by_extensions(@set_of_exts).sort_by do |a|
       if %w[.svg .svgz].include? a.ext
         0
-      elsif %w[.js .css].include? a.ext
+      elsif %w[.js .mjs .css].include? a.ext
         1
       else
         -1
@@ -83,12 +81,12 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
     return if ignored_resource?(resource)
     return if resource.ignored?
 
-    digest = if resource.binary?
-               ::Digest::SHA1.file(resource.source_file).hexdigest[0..7]
+    digest = if resource.binary? || resource.static_file?
+               ::Middleman::Util.hash_file(resource.source_file)[0..7]
              else
                # Render without asset hash
                body = resource.render({}, {}) { |f| !f.respond_to?(:filter_name) || f.filter_name != :asset_hash }
-               ::Digest::SHA1.hexdigest(body)[0..7]
+               ::Middleman::Util.hash_string(body)[0..7]
              end
 
     resource_list.update!(resource, :destination_path) do
