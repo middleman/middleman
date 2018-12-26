@@ -139,6 +139,15 @@ module Middleman
         end
       end
 
+      # Backwards compat to old API from MM v4.
+      MAYBE_METADATA_CONTRACT = { page: Maybe[Hash], options: Maybe[Hash], locals: Maybe[Hash] }.freeze
+      Contract MAYBE_METADATA_CONTRACT, Maybe[Bool] => Any
+      def add_metadata(data, reverse = false)
+        add_metadata_page(data[:page], reverse) if data.key? :page
+        add_metadata_options(data[:options], reverse) if data.key? :options
+        add_metadata_locals(data[:locals], reverse) if data.key? :locals
+      end
+
       # Data about this resource, populated from frontmatter or extensions.
       # @return [Hash]
       Contract IsA['::Middleman::Util::EnhancedHash']
@@ -164,6 +173,17 @@ module Middleman
       Contract Hash
       def locals
         @metadata_locals
+      end
+
+      # Backwards compat to old API from MM v4.
+      METADATA_CONTRACT = { page: Hash, options: Hash, locals: Hash }.freeze
+      Contract METADATA_CONTRACT
+      def metadata
+        {
+          page: page,
+          options: options,
+          locals: locals
+        }.freeze
       end
 
       # Extension of the path (i.e. '.js')
