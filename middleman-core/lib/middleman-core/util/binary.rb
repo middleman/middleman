@@ -11,6 +11,7 @@ KNOWN_NON_STATIC_FILE_EXTENSIONS = Set.new %w[
   mjs
   html
   htm
+  php
 ]
 
 KNOWN_BINARY_FILE_EXTENSIONS = Set.new %w[
