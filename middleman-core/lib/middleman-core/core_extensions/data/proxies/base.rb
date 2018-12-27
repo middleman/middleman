@@ -16,7 +16,7 @@ module Middleman
           end
 
           def method_missing(name, *args, &block)
-            if self.class.const_get(:FULL_ACCESS_METHODS).include?(name)
+            if @data.respond_to?(name)
               log_access(:__full_access__)
 
               return @data.send(name, *args, &block)

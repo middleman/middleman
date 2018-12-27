@@ -5,8 +5,6 @@ module Middleman
     module Data
       module Proxies
         class HashProxy < BaseProxy
-          FULL_ACCESS_METHODS = Set.new %i[size inspect keys key? values each_key]
-
           def fetch(key, default = Undefined, &block)
             wrap_data key.to_sym, @data.fetch(key, default, &block)
           end
@@ -17,7 +15,11 @@ module Middleman
           alias get []
 
           def method_missing(name, *_args)
-            self[name] if @data.key?(name)
+            return self[name] if @data.key?(name)
+
+            super
+          rescue NoMethodError
+            nil
           end
         end
       end

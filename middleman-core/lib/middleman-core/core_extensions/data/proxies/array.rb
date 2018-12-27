@@ -6,8 +6,7 @@ module Middleman
     module Data
       module Proxies
         class ArrayProxy < BaseProxy
-          FULL_ACCESS_METHODS = Set.new %i[size any? inspect join]
-          WRAPPED_LIST_METHODS = Set.new %i[each select sort shuffle reverse]
+          WRAPPED_LIST_METHODS = Set.new %i[each each_with_index select sort shuffle reverse]
 
           def method_missing(name, *args, &block)
             if self.class.const_get(:WRAPPED_LIST_METHODS).include?(name)
