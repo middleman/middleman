@@ -93,6 +93,8 @@ module Middleman
 
       Contract Bool
       def static_file?
+        return false if file_descriptor.nil?
+
         ::Middleman::Util.static_file?(file_descriptor[:full_path].to_s, app.config[:frontmatter_delims])
       end
 
