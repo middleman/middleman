@@ -86,7 +86,7 @@ module Middleman::CoreExtensions
       file_path = file[:full_path].to_s
 
       @cache[file_path] ||= begin
-        if ::Middleman::Util.contains_frontmatter?(file[:full_path].to_s, app.config[:frontmatter_delims])
+        if ::Middleman::Util.contains_frontmatter?(file_path, app.config[:frontmatter_delims])
           ::Middleman::Util::Data.parse(
             file,
             app.config[:frontmatter_delims]
