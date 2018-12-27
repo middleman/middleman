@@ -16,12 +16,8 @@ module Middleman
           end
           alias get []
 
-          def method_missing(name, *args, &block)
-            if @data.key?(name)
-              self[name]
-            else
-              nil
-            end
+          def method_missing(name, *_args)
+            self[name] if @data.key?(name)
           end
         end
       end
