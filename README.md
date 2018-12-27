@@ -2,8 +2,8 @@
 
 [![Gem Version](http://img.shields.io/gem/v/middleman.svg?style=flat)][gem]
 [![License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)][license]
-[![Build Status](http://img.shields.io/travis/middleman/middleman.svg?style=flat)][travis]
-[![Gitter](https://badges.gitter.im/middleman/middleman.svg)](https://gitter.im/middleman/middleman?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Build Status](https://travis-ci.org/middleman/middleman.svg?branch=master)][travis]
+[![Gitter](https://badges.gitter.im/middleman/middleman.svg)][gitter]
 
 **Middleman** is a static site generator using all the shortcuts and tools in modern web development. Check out [middlemanapp.com](http://middlemanapp.com/) for detailed tutorials, including a [getting started guide](http://middlemanapp.com/basics/getting-started/). You can also follow [@middlemanapp](https://twitter.com/middlemanapp) for updates.
 
@@ -109,9 +109,9 @@ Copyright (c) 2010-2017 Thomas Reynolds. MIT Licensed, see [LICENSE] for details
 [middleman]: http://middlemanapp.com
 [gem]: https://rubygems.org/gems/middleman
 [travis]: http://travis-ci.org/middleman/middleman
-[gemnasium]: https://gemnasium.com/middleman/middleman
 [gittip]: https://www.gittip.com/middleman/
 [rubyinstaller]: http://rubyinstaller.org/
 [RubyInstaller-Devkit]: https://rubyinstaller.org/add-ons/devkit.html
 [rubydoc]: http://rubydoc.info/github/middleman/middleman
 [LICENSE]: https://github.com/middleman/middleman/blob/master/LICENSE.md
+[gitter]: https://gitter.im/middleman/middleman?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
