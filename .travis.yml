@@ -1,5 +1,4 @@
 language: ruby
-sudo: false
 cache: bundler
 rvm:
   - ruby-head
