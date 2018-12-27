@@ -48,7 +48,7 @@ module Middleman
       def parse(source_file, frontmatter_delims, known_type = nil)
         full_path = source_file[:full_path]
 
-        return [{}, nil] if ::Middleman::Util.binary?(full_path) || source_file[:types].include?(:binary) || !::Middleman::Util.contains_frontmatter?(full_path.to_s, frontmatter_delims)
+        return [{}, nil] if ::Middleman::Util.binary?(full_path) || source_file[:types].include?(:binary)
 
         # Avoid weird race condition when a file is renamed
         begin
