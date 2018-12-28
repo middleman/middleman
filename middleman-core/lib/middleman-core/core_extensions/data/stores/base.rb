@@ -29,11 +29,6 @@ module Middleman
             Hamster::Set.empty
           end
 
-          Contract Symbol => ImmutableSetOf[::Middleman::Dependencies::Vertex]
-          def vertices_for_key(_k)
-            Hamster::Set.empty
-          end
-
           Contract Hash
           def to_h
             keys.each_with_object({}) do |k, sum|

@@ -26,12 +26,6 @@ module Middleman
 
             @app = app
             @local_data = {}
-            @paths_to_vertex = {}
-          end
-
-          Contract Symbol => ImmutableSetOf[::Middleman::Dependencies::Vertex]
-          def vertices_for_key(k)
-            @paths_to_vertex[k] || ::Hamster::Set.empty
           end
 
           Contract ArrayOf[IsA['Middleman::SourceFile']], ArrayOf[IsA['Middleman::SourceFile']] => Any
@@ -67,16 +61,6 @@ module Middleman
             paths.each do |dir|
               data_branch[dir.to_sym] ||= {}
               data_branch = data_branch[dir.to_sym]
-            end
-
-            # For now, all files nested under a folder in `data/` will invalidate
-            # the whole folder.
-            if paths.empty?
-              @paths_to_vertex[basename.to_sym] ||= ::Hamster::Set.empty
-              @paths_to_vertex[basename.to_sym] <<= ::Middleman::Dependencies::FileVertex.from_source_file(@app, file)
-            else
-              @paths_to_vertex[paths.first.to_sym] ||= ::Hamster::Set.empty
-              @paths_to_vertex[paths.first.to_sym] <<= ::Middleman::Dependencies::FileVertex.from_source_file(@app, file)
             end
 
             data_branch[basename.to_sym] = data

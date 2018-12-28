@@ -23,10 +23,12 @@ module Middleman
           end
 
           def to_s
+            log_access(:__full_access__)
             @data.to_s
           end
 
           def to_json
+            log_access(:__full_access__)
             @data.to_h.to_json
           end
         end
