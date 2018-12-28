@@ -23,7 +23,7 @@ module Middleman
           end
 
           def to_s
-            @data.to_h.to_s
+            @data.to_s
           end
 
           def to_json

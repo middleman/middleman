@@ -4,3 +4,9 @@
 -
   from: "/test2.html"
   to:   "/index.html"
+-
+  from: "/test3.html"
+  to:   "/index.html"
+-
+  from: "/test4.html"
+  to:   "/index.html"

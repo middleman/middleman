@@ -58,7 +58,7 @@ module Middleman
       Contract ArrayOf[Or[Symbol, Num]] => Maybe[DataCollectionPathVertex::DATA_TYPE]
       def lookup_path(path)
         path.reduce(@controller) do |sum, part|
-          sum[part]
+          part === :__full_access__ ? sum : sum[part]
         end
       end
 

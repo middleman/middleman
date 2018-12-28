@@ -37,16 +37,24 @@ module Middleman
           end
           alias [] slice
 
-          def first
-            self[0]
+          def first(length = (missing_length = true))
+            if missing_length || length == 1
+              slice(0)
+            else
+              slice(0, length)
+            end
           end
 
-          def last
-            self[-1]
+          def last(length = (missing_length = true))
+            if missing_length || length == 1
+              slice(-1)
+            else
+              slice(size - length, length)
+            end
           end
 
           def to_s
-            @data.to_a.to_s
+            @data.to_s
           end
 
           def to_json
