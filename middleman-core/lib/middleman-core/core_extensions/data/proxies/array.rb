@@ -25,7 +25,7 @@ module Middleman
             if missing_length
               if arg.is_a?(Range)
                 log_access(:__full_access__)
-                @data.slice(arg, length)
+                @data.slice(arg)
               else
                 relative_index = (@data.size + arg) % @data.size
                 wrap_data(relative_index, @data[relative_index])
