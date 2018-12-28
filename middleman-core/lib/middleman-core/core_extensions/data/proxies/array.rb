@@ -45,6 +45,14 @@ module Middleman
             self[-1]
           end
 
+          def to_s
+            @data.to_a.to_s
+          end
+
+          def to_json
+            @data.to_a.to_json
+          end
+
           private
 
           def wrapped_array

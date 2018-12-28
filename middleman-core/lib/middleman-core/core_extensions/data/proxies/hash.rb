@@ -21,6 +21,14 @@ module Middleman
           rescue NoMethodError
             nil
           end
+
+          def to_s
+            @data.to_h.to_s
+          end
+
+          def to_json
+            @data.to_h.to_json
+          end
         end
       end
     end
