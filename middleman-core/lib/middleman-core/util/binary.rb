@@ -5,6 +5,15 @@ require 'set'
 
 require 'middleman-core/contracts'
 
+KNOWN_NON_STATIC_FILE_EXTENSIONS = Set.new %w[
+  css
+  js
+  mjs
+  html
+  htm
+  php
+]
+
 KNOWN_BINARY_FILE_EXTENSIONS = Set.new %w[
   3dm
   3ds
@@ -329,6 +338,45 @@ module Middleman
       end
 
       false
+    end
+
+    Contract String, Maybe[HashOf[Symbol, Any]] => Bool
+    def static_file?(path, frontmatter_delims)
+      path = Pathname(path)
+      ext = path.extname
+      without_dot = ext.sub('.', '')
+
+      if KNOWN_NON_STATIC_FILE_EXTENSIONS.include?(without_dot) || contains_frontmatter?(path, frontmatter_delims)
+        false
+      else
+        !::Tilt.registered?(without_dot)
+      end
+    end
+
+    Contract String, Maybe[HashOf[Symbol, Any]] => Bool
+    def contains_frontmatter?(path, frontmatter_delims)
+      file = ::File.open(path)
+      first_line = file.gets
+
+      first_line = file.gets if first_line =~ /\A(?:[^\r\n]*coding:[^\r\n]*\r?\n)/
+
+      file.close
+
+      possible_openers = possible_delim_openers(frontmatter_delims)
+      !first_line.nil? && !first_line.match(possible_openers).nil?
+    rescue EOFError, IOError, ::Errno::ENOENT
+      false
+    end
+
+    Contract Maybe[HashOf[Symbol, Any]] => Regexp
+    def possible_delim_openers(frontmatter_delims)
+      all_possible = frontmatter_delims
+                     .values
+                     .flatten(1)
+                     .map(&:first)
+                     .uniq
+
+      /\A#{::Regexp.union(all_possible)}/
     end
   end
 end

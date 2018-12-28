@@ -91,6 +91,13 @@ module Middleman
         !::Middleman::Util.tilt_class(file_descriptor[:full_path].to_s).nil?
       end
 
+      Contract Bool
+      def static_file?
+        return false if file_descriptor.nil?
+
+        ::Middleman::Util.static_file?(file_descriptor[:full_path].to_s, app.config[:frontmatter_delims])
+      end
+
       # Backwards compatible method for turning descriptor into a string.
       # @return [String]
       Contract Maybe[String]

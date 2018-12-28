@@ -102,7 +102,7 @@ module Middleman
         return result unless result.nil?
       end
 
-      file ? file.read : ::File.read(@path)
+      file ? file.read : ::Middleman::Util.read_file(@path)
     end
 
     protected

@@ -36,6 +36,10 @@ module Middleman::Cli
                  type: :boolean,
                  default: false,
                  desc: 'Generate profiling report for the build'
+    class_option :dry_run,
+                 type: :boolean,
+                 default: false,
+                 desc: 'Skip writing output files'
     class_option :track_dependencies,
                  type: :boolean,
                  default: false,
@@ -86,6 +90,7 @@ module Middleman::Cli
 
         builder = Middleman::Builder.new(@app,
                                          glob: options['glob'],
+                                         dry_run: options['dry_run'],
                                          clean: options['clean'],
                                          parallel: options['parallel'],
                                          only_changed: options['only_changed'],

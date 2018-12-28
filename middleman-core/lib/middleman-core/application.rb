@@ -322,13 +322,13 @@ module Middleman
       config_rb = File.join(root, 'config.rb')
       if File.exist? config_rb
         logger.debug '== Reading: Local config: config.rb'
-        config_context.instance_eval File.read(config_rb), config_rb, 1
+        config_context.instance_eval ::Middleman::Util.read_file(config_rb), config_rb, 1
       else
         # Check for and evaluate local configuration in `middleman.rb`
         middleman_rb = File.join(root, 'middleman.rb')
         if File.exist? middleman_rb
           logger.debug '== Reading: Local middleman: middleman.rb'
-          config_context.instance_eval File.read(middleman_rb), middleman_rb, 1
+          config_context.instance_eval ::Middleman::Util.read_file(middleman_rb), middleman_rb, 1
         end
       end
 
@@ -336,7 +336,7 @@ module Middleman
       return unless File.exist? env_config
 
       logger.debug "== Reading: #{config[:environment]} config"
-      config_context.instance_eval File.read(env_config), env_config, 1
+      config_context.instance_eval ::Middleman::Util.read_file(env_config), env_config, 1
     end
 
     # Clean up missing Tilt exts

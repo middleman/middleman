@@ -1,5 +1,4 @@
 require 'hamster'
-require 'digest/sha1'
 require 'middleman-core/contracts'
 require 'middleman-core/dependencies/vertices/vertex'
 require 'middleman-core/core_extensions/data/controller'
@@ -47,7 +46,7 @@ module Middleman
       def current_hash
         @current_hash ||= begin
           data = lookup_path(key_to_path)
-          ::Digest::SHA1.hexdigest(data.to_s)
+          ::Middleman::Util.hash_string(data.to_s)
         end
       end
 

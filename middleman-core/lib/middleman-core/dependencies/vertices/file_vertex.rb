@@ -1,5 +1,4 @@
 require 'pathname'
-require 'digest/sha1'
 require 'middleman-core/contracts'
 require 'middleman-core/dependencies/vertices/vertex'
 
@@ -59,7 +58,7 @@ module Middleman
 
       Contract String
       def hash_file
-        ::Digest::SHA1.file(@full_path).hexdigest
+        ::Middleman::Util.hash_file(@full_path)
       end
     end
   end

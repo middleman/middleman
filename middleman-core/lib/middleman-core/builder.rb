@@ -23,7 +23,7 @@ module Middleman
     def_delegator :@app, :logger
 
     # Sort order, images, fonts, js/css and finally everything else.
-    SORT_ORDER = %w[.png .jpeg .jpg .gif .bmp .svg .svgz .webp .ico .woff .woff2 .otf .ttf .eot .js .css].freeze
+    SORT_ORDER = %w[.png .jpeg .jpg .gif .bmp .svg .svgz .webp .ico .woff .woff2 .otf .ttf .eot .js .mjs .css].freeze
 
     # Create a new Builder instance.
     # @param [Middleman::Application] app The app to build.
@@ -40,7 +40,8 @@ module Middleman
       @only_changed = options_hash.fetch(:only_changed, false)
       @missing_and_changed = options_hash.fetch(:missing_and_changed, false)
       @track_dependencies = options_hash.fetch(:track_dependencies, false)
-      @cleaning = options_hash.fetch(:clean)
+      @dry_run = options_hash.fetch(:dry_run)
+      @cleaning = !@dry_run && options_hash.fetch(:clean)
 
       @callbacks = ::Middleman::CallbackManager.new
       @callbacks.install_methods!(self, [:on_build_event])
@@ -253,7 +254,6 @@ module Middleman
                           ])
       file.binmode
       file.write(contents)
-      File.chmod(0o644, file)
       file.close
       file
     end
@@ -264,6 +264,8 @@ module Middleman
     # @return [void]
     Contract Pathname, Or[String, Pathname], Maybe[Bool] => Any
     def export_file!(output_file, source, binary = false)
+      return if @dry_run
+
       ::Middleman::Util.instrument 'write_file', output_file: output_file do
         source = write_tempfile(output_file, source.to_s) if source.is_a? String
 
@@ -278,6 +280,7 @@ module Middleman
         if %i[created updated].include?(mode)
           ::FileUtils.mkdir_p(output_file.dirname)
           method.call(source_path, output_file.to_s)
+          ::File.chmod(0o644, output_file.to_s)
         end
 
         source.unlink if source.is_a? Tempfile
@@ -318,7 +321,7 @@ module Middleman
 
           vertices = nil
 
-          if resource.binary?
+          if resource.binary? || resource.static_file?
             export_file!(output_file, resource.file_descriptor[:full_path], true)
           else
             content = resource.render({}, {})

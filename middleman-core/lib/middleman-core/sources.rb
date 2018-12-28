@@ -7,7 +7,7 @@ module Middleman
   SourceFile = Struct.new(:relative_path, :full_path, :directory, :types, :version) do
     def read
       ::Middleman::Sources.file_cache[full_path] ||= {}
-      ::Middleman::Sources.file_cache[full_path][version] ||= ::File.read(full_path)
+      ::Middleman::Sources.file_cache[full_path][version] ||= ::Middleman::Util.read_file(full_path.to_s)
     end
 
     def normalized_relative_path

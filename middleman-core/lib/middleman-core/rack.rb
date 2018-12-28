@@ -98,7 +98,7 @@ module Middleman
       return not_found(res, full_request_path) unless resource && !resource.ignored?
 
       # If this path is a binary file, send it immediately
-      return send_file(resource, env) if resource.binary?
+      return send_file(resource, env) if resource.binary? || resource.static_file?
 
       res['Content-Type'] = resource.content_type || 'text/plain'
 
@@ -141,7 +141,10 @@ module Middleman
       response[1]['Content-Encoding'] = 'gzip' if %w[.svgz .gz].include?(resource.ext)
       # Do not set Content-Type if status is 1xx, 204, 205 or 304, otherwise
       # Rack will throw an error (500)
-      response[1]['Content-Type'] = resource.content_type || 'application/octet-stream' if !(100..199).cover?(status) && ![204, 205, 304].include?(status)
+      if !(100..199).cover?(status) && ![204, 205, 304].include?(status)
+        response[1]['Content-Type'] = resource.content_type || (resource.binary? ? 'application/octet-stream' : 'text/plain')
+      end
+
       halt response
     end
   end

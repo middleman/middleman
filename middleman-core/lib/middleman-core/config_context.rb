@@ -46,7 +46,7 @@ module Middleman
 
       return unless File.exist? other_config
 
-      instance_eval File.read(other_config), other_config, 1
+      instance_eval ::Middleman::Util.read_file(other_config), other_config, 1
     end
 
     def set(key, default = nil, &block)
