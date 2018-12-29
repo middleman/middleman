@@ -10,7 +10,15 @@ Given /^a built app at "([^\"]*)"$/ do |path|
   cwd = File.expand_path(aruba.current_directory)
   step %(I set the environment variable "MM_ROOT" to "#{cwd}")
 
-  step %(I run `middleman build --verbose`)
+  step %(I run `middleman build --verbose --no-parallel`)
+end
+
+Then /^build the app tracking dependencies$/ do
+  step %(I run `middleman build --track-dependencies --no-parallel`)
+end
+
+Then /^build app with only changed$/ do
+  step %(I run `middleman build --track-dependencies --only-changed --no-parallel`)
 end
 
 Given /^was successfully built$/ do
@@ -36,7 +44,7 @@ Given /^a built app at "([^\"]*)" with flags "([^\"]*)"$/ do |path, flags|
   cwd = File.expand_path(aruba.current_directory)
   step %(I set the environment variable "MM_ROOT" to "#{cwd}")
 
-  step %(I run `middleman build #{flags}`)
+  step %(I run `middleman build --no-parallel #{flags}`)
 end
 
 Given /^a successfully built app at "([^\"]*)" with flags "([^\"]*)"$/ do |path, flags|
@@ -54,4 +62,8 @@ Given /^I run the interactive middleman server$/ do
   cwd = File.expand_path(aruba.current_directory)
   step %(I set the environment variable "MM_ROOT" to "#{cwd}")
   step %(I run `middleman server` interactively)
+end
+
+Then('there are {string} files which are {string}') do |num, str|
+  expect(last_command_started.output.scan(str).length).to be num.to_i
 end
