@@ -1,12 +1,16 @@
 -
   from: "/test1.html"
   to:   "/index.html"
+  guid: 0
 -
   from: "/test2.html"
   to:   "/index.html"
+  guid: 1
 -
   from: "/test3.html"
   to:   "/index.html"
+  guid: 2
 -
   from: "/test4.html"
   to:   "/index.html"
+  guid: 3

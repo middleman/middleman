@@ -56,9 +56,7 @@ module Middleman
     end
 
     def method_missing(method, *args, &block)
-      if @ctx.internal_data_store.key?(method)
-        return @ctx.internal_data_store.proxied_data(method, self)
-      end
+      return @ctx.internal_data_store.proxied_data(method, self) if @ctx.internal_data_store.key?(method)
 
       super
     end

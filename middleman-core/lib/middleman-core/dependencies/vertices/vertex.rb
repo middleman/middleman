@@ -42,7 +42,7 @@ module Middleman
       end
 
       Contract IsA['Middleman::Sitemap::Resource'] => Bool
-      def invalidates_resource?(_resource)
+      def matches_resource?(_resource)
         false
       end
 

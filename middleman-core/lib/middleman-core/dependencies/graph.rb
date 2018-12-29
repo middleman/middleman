@@ -7,26 +7,28 @@ require 'middleman-core/dependencies/edge'
 module Middleman
   module Dependencies
     class DirectedAdjacencyGraph < ::RGL::DirectedAdjacencyGraph
+      def add_vertex(v)
+        super(merged_vertex_or_new(v))
+      end
 
       def add_edge(u, v)
         super(merged_vertex_or_new(u), merged_vertex_or_new(v))
       end
 
       def remove_vertex(vertex)
-        super(vertex)
-
-        @vertices_dict.each do |k, v|
-          if v.empty? && @vertices_dict.values.none? { |adj| adj.include?(k) }
-            @vertices_dict.delete(k)
-          end
+        each_adjacent(vertex) do |v|
+          remove_vertex(v) unless v == vertex
         end
+
+        super(vertex)
       end
 
       def find_vertex_by_key(key)
         vertices.find { |v| v.key == key }
       end
 
-    protected
+      protected
+
       def merged_vertex_or_new(vertex)
         found_vertex = find_vertex_by_key(vertex.key)
 
@@ -41,11 +43,11 @@ module Middleman
 
     class Graph
       include Contracts
-      
+
       Contract DirectedAdjacencyGraph
       attr_reader :graph
 
-      def initialize(vertices = {})
+      def initialize(_vertices = {})
         @graph = DirectedAdjacencyGraph.new
       end
 
@@ -60,15 +62,19 @@ module Middleman
 
       Contract Vertex, Vertex => Any
       def add_edge(source, target)
-        @graph.add_edge(source, target)
+        if source == target
+          add_vertex(source)
+        else
+          @graph.add_edge(source, target)
+        end
       end
 
       Contract Symbol, Symbol => Any
       def add_edge_by_key(source, target)
         a = @graph.find_vertex_by_key(source)
         b = @graph.find_vertex_by_key(target)
-        
-        @graph.add_edge(a, b)
+
+        add_edge(a, b)
       end
 
       Contract Edge => Any
@@ -87,7 +93,7 @@ module Middleman
             depends_on: edge.source.key
           }
         end
-  
+
         vertices = @graph.vertices.map(&:serialize)
 
         {
@@ -97,25 +103,19 @@ module Middleman
       end
 
       Contract ImmutableSetOf[Vertex]
-      def invalidated
-        binding.pry
-        # @_invalidated_cache ||= begin
-        #   invalidated_vertices = @dependency_map.keys.select do |vertex|
-        #     # Either "Missing from known vertices"
-        #     # Or invalided by the class
-        #     !@vertices.key?(vertex.key) || !vertex.valid?
-        #   end
+      def invalidate_changes!
+        @invalidated = @graph.vertices.reject(&:valid?)
+        @invalidated.each { |v| @graph.remove_vertex(v) }
+      end
 
-        #   invalidated_vertices.reduce(::Hamster::Set.empty) do |sum, vertex|
-        #     sum | invalidated_with_parents(vertex)
-        #   end
-        # end
-        ::Hamster::Set.empty
+      Contract ImmutableSetOf[Vertex]
+      def invalidated
+        ::Hamster::Set.new(@invalidated)
       end
 
       Contract IsA['::Middleman::Sitemap::Resource'] => Bool
       def invalidates_resource?(resource)
-        invalidated.any? { |d| d.invalidates_resource?(resource) }
+        @graph.vertices.none? { |d| d.matches_resource?(resource) }
       end
     end
   end

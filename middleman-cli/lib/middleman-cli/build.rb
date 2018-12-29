@@ -45,9 +45,9 @@ module Middleman::Cli
                  default: false,
                  desc: 'Track file dependencies'
     class_option :visualize_graph,
-                type: :boolean,
-                default: false,
-                desc: 'Generate a visual of the dependency graph'
+                 type: :boolean,
+                 default: false,
+                 desc: 'Generate a visual of the dependency graph'
     class_option :only_changed,
                  type: :boolean,
                  default: false,

@@ -38,7 +38,7 @@ module Middleman
       end
 
       Contract IsA['Middleman::Sitemap::Resource'] => Bool
-      def invalidates_resource?(resource)
+      def matches_resource?(resource)
         resource.file_descriptor[:full_path].to_s == @full_path
       end
 

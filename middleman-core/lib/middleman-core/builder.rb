@@ -116,8 +116,10 @@ module Middleman
       ::Middleman::Profiling.report('build')
 
       unless @has_error
-        partial_update_with_no_changes = (@only_changed || @missing_and_changed) && !@invalidated_files.empty?
+        partial_update_with_no_changes = (@only_changed || @missing_and_changed) && @invalidated_files.empty?
+
         ::Middleman::Dependencies.serialize_and_save(@app, @graph) if @track_dependencies && !partial_update_with_no_changes
+
         ::Middleman::Dependencies.visualize_graph(@app, @graph) if @track_dependencies && @visualize_graph
 
         ::Middleman::Util.instrument 'builder.clean' do
@@ -328,12 +330,11 @@ module Middleman
           else
             content = resource.render({}, {})
 
-            unless resource.vertices.empty?
-              vertices = ::Middleman::Dependencies::Edge.new(
-                ::Middleman::Dependencies::FileVertex.from_resource(resource),
-                resource.vertices
-              )
-            end
+            self_vertex = ::Middleman::Dependencies::FileVertex.from_resource(resource)
+            vertices = ::Middleman::Dependencies::Edge.new(
+              self_vertex,
+              resource.vertices << self_vertex
+            )
 
             export_file!(output_file, binary_encode(content))
           end
