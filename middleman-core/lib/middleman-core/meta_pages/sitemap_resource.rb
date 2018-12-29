@@ -1,4 +1,6 @@
 require 'padrino-helpers'
+require 'padrino-helpers/output_helpers'
+require 'padrino-helpers/tag_helpers'
 
 module Middleman
   module MetaPages
