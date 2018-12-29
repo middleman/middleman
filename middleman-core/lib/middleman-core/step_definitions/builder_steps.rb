@@ -65,5 +65,6 @@ Given /^I run the interactive middleman server$/ do
 end
 
 Then('there are {string} files which are {string}') do |num, str|
+  # $stderr.puts last_command_started.output
   expect(last_command_started.output.scan(str).length).to be num.to_i
 end

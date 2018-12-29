@@ -102,7 +102,7 @@ module Middleman
         }
       end
 
-      Contract ImmutableSetOf[Vertex]
+      Contract Any
       def invalidate_changes!
         @invalidated = @graph.vertices.reject(&:valid?)
         @invalidated.each { |v| @graph.remove_vertex(v) }
