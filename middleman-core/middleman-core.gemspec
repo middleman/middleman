@@ -26,6 +26,7 @@ Gem::Specification.new do |s|
   s.add_dependency('parallel')
   s.add_dependency('servolux')
   s.add_dependency('dotenv')
+  s.add_dependency('rgl', ['~> 0.5.3'])
 
   # Helpers
   s.add_dependency('activesupport', ['>= 4.2', '< 5.2'])

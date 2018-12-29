@@ -26,6 +26,7 @@ PATH
       padrino-helpers (~> 0.13.0)
       parallel
       rack (>= 1.4.5, < 3)
+      rgl (~> 0.5.3)
       sass (>= 3.4)
       sassc (~> 2.0)
       servolux
@@ -113,6 +114,7 @@ GEM
     jaro_winkler (1.5.1)
     json (2.1.0)
     kramdown (1.17.0)
+    lazy_priority_queue (0.1.1)
     libv8 (6.7.288.46.1)
     liquid (4.0.1)
     listen (3.1.5)
@@ -166,6 +168,9 @@ GEM
     rb-inotify (0.10.0)
       ffi (~> 1.0)
     redcarpet (3.4.0)
+    rgl (0.5.3)
+      lazy_priority_queue (~> 0.1.0)
+      stream (~> 0.5.0)
     rspec (3.8.0)
       rspec-core (~> 3.8.0)
       rspec-expectations (~> 3.8.0)
@@ -215,6 +220,7 @@ GEM
     slim (4.0.1)
       temple (>= 0.7.6, < 0.9)
       tilt (>= 2.0.6, < 2.1)
+    stream (0.5)
     stylus (1.0.2)
       execjs
       stylus-source

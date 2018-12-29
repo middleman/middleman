@@ -40,6 +40,7 @@ module Middleman
       @only_changed = options_hash.fetch(:only_changed, false)
       @missing_and_changed = options_hash.fetch(:missing_and_changed, false)
       @track_dependencies = options_hash.fetch(:track_dependencies, false)
+      @visualize_graph = @track_dependencies && options_hash.fetch(:visualize_graph, false)
       @dry_run = options_hash.fetch(:dry_run)
       @cleaning = !@dry_run && options_hash.fetch(:clean)
 
@@ -94,7 +95,7 @@ module Middleman
         prerender_css.tap do |resources|
           if @track_dependencies
             resources.each do |r|
-              @graph.add_edge(r[1]) unless r[1].nil?
+              @graph.add_edge_set(r[1]) unless r[1].nil?
             end
           end
         end
@@ -106,7 +107,7 @@ module Middleman
         output_files.tap do |resources|
           if @track_dependencies
             resources.each do |r|
-              @graph.add_edge(r[1]) unless r[1].nil?
+              @graph.add_edge_set(r[1]) unless r[1].nil?
             end
           end
         end
@@ -117,6 +118,7 @@ module Middleman
       unless @has_error
         partial_update_with_no_changes = (@only_changed || @missing_and_changed) && !@invalidated_files.empty?
         ::Middleman::Dependencies.serialize_and_save(@app, @graph) if @track_dependencies && !partial_update_with_no_changes
+        ::Middleman::Dependencies.visualize_graph(@app, @graph) if @track_dependencies && @visualize_graph
 
         ::Middleman::Util.instrument 'builder.clean' do
           clean! if @cleaning
