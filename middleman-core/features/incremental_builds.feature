@@ -14,7 +14,6 @@ Feature: Incremental builds
       Some other file
       """
     Then build the app tracking dependencies
-    Then was successfully built
     Then the output should contain "create  build/standalone.html"
     Then the following files should exist:
       | build/standalone.html |
@@ -24,7 +23,6 @@ Feature: Incremental builds
       Updated
       """
     Then build app with only changed
-    Then was successfully built
     Then there are "0" files which are "      create  "
     Then there are "1" files which are "     updated  "
     Then the output should contain "updated  build/standalone.html"
@@ -59,7 +57,6 @@ Feature: Incremental builds
       Another page
       """
     Then build the app tracking dependencies
-    Then was successfully built
     Then the output should contain "create  build/page1.html"
     Then the output should contain "create  build/page2.html"
     Then the following files should exist:
@@ -75,7 +72,6 @@ Feature: Incremental builds
       <%= yield %>
       """
     Then build app with only changed
-    Then was successfully built
     Then there are "0" files which are "      create  "
     Then there are "2" files which are "     updated  "
     Then the output should contain "updated  build/page1.html"
@@ -112,7 +108,6 @@ Feature: Incremental builds
       <%= person.name %>
       """
     Then build the app tracking dependencies
-    Then was successfully built
     Then the output should contain "create  build/person-one.html"
     Then the output should contain "create  build/person-two.html"
     Then the following files should exist:
@@ -132,7 +127,6 @@ Feature: Incremental builds
         age: 20
       """
     Then build app with only changed
-    Then was successfully built
     Then there are "0" files which are "      create  "
     Then there are "0" files which are "     updated  "
     Then the following files should exist:
@@ -150,7 +144,6 @@ Feature: Incremental builds
         age: 10
       """
     Then build app with only changed
-    Then was successfully built
     Then there are "0" files which are "      create  "
     Then there are "1" files which are "     updated  "
     Then the output should contain "updated  build/person-two.html"
@@ -170,7 +163,6 @@ Feature: Incremental builds
         age: 10
       """
     Then build app with only changed
-    Then was successfully built
     Then there are "1" files which are "      create  "
     Then there are "1" files which are "      remove  "
     Then there are "0" files which are "     updated  "
