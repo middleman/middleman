@@ -63,6 +63,25 @@ Given /^I run the interactive middleman server$/ do
 end
 
 Then('there are {string} files which are {string}') do |num, str|
-  # $stderr.puts last_command_started.output
   expect(last_command_started.output.scan(str).length).to be num.to_i
+end
+
+Then('there are {string} files which are created') do |num|
+  step %(there are "#{num}" files which are "      create  ")
+end
+
+Then('there are {string} files which are removed') do |num|
+  step %(there are "#{num}" files which are "      remove  ")
+end
+
+Then('there are {string} files which are updated') do |num|
+  step %(there are "#{num}" files which are "     updated  ")
+end
+
+Then('there are {string} files which are identical') do |num|
+  step %(there are "#{num}" files which are "   identical  ")
+end
+
+Then('there are {string} files which are skipped') do |num|
+  step %(there are "#{num}" files which are "     skipped  ")
 end
