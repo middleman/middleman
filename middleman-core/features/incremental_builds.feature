@@ -311,3 +311,49 @@ Feature: Incremental builds
     Then there are "0" files which are removed
     Then there are "0" files which are updated
     Then there are "1" files which are identical
+
+  Scenario: Updating a partial should only update templates which include it
+    Given an empty app
+    When a file named "config.rb" with:
+      """
+      """
+    When a file named "source/bait.html.erb" with:
+      """
+      ---
+      layout: false
+      ---
+
+      Bait
+      """
+    When a file named "source/page-a.html.erb" with:
+      """
+      <%= partial :test %>
+      """
+    When a file named "source/page-b.html.erb" with:
+      """
+      <%= partial :test %>
+      """
+    When a file named "source/_test.erb" with:
+      """
+      I am the partial
+      """
+    Then build the app tracking dependencies
+    Then the output should contain "create  build/bait.html"
+    Then the output should contain "create  build/page-a.html"
+    Then the output should contain "create  build/page-b.html"
+    Then the following files should exist:
+      | build/bait.html |
+      | build/page-a.html |
+      | build/page-b.html |
+    Then build app with only changed
+    Then there are "0" files which are created
+    Then there are "0" files which are removed
+    Then there are "0" files which are updated
+    When a file named "source/_test.erb" with:
+      """
+      Updated partial
+      """
+    Then build app with only changed
+    Then there are "0" files which are created
+    Then there are "0" files which are removed
+    Then there are "2" files which are updated
