@@ -111,8 +111,8 @@ module Middleman
 
       graph.invalidate_changes!
 
-      require 'rgl/dot'
-      graph.graph.write_to_graphic_file('jpg', 'valid')
+      # require 'rgl/dot'
+      # graph.graph.write_to_graphic_file('jpg', 'valid')
 
       graph
     rescue StandardError
