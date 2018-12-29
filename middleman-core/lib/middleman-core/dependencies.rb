@@ -24,8 +24,16 @@ module Middleman
       end
     end
 
+    Contract IsA['::Middleman::Application'], Graph => Any
+    def visualize_graph(_app, graph)
+      require 'rgl/dot'
+      graph.graph.write_to_graphic_file('jpg', 'graph')
+    end
+
     Contract IsA['::Middleman::Application'], Graph => String
     def serialize(app, graph)
+      serialized = graph.serialize
+
       ruby_files = Dir.glob(RUBY_FILES).reduce([]) do |sum, file|
         sum << {
           file: Pathname(File.expand_path(file)).relative_path_from(app.root_path).to_s,
@@ -33,21 +41,10 @@ module Middleman
         }
       end
 
-      edges = graph.dependency_map.reduce([]) do |sum, (vertex, depended_on_by)|
-        sum << {
-          key: vertex.key,
-          depended_on_by: depended_on_by.delete(vertex).to_a.map(&:key).sort
-        }
-      end
-
-      vertices = graph.dependency_map.reduce([]) do |sum, (vertex, _depended_on_by)|
-        sum << vertex.serialize
-      end
-
       ::YAML.dump(
-        ruby_files: ruby_files.sort_by { |d| d[:file] },
-        edges: edges.sort_by { |d| d[:key] },
-        vertices: vertices.sort_by { |d| d[:key] }
+        {
+          ruby_files: ruby_files.sort_by { |d| d[:file] }
+        }.merge(serialized)
       )
     end
 
@@ -105,16 +102,17 @@ module Middleman
         end
       end
 
-      graph = Graph.new(vertices)
+      graph = Graph.new
+      vertices.values.each { |v| graph.add_vertex(v) }
 
-      Contract ImmutableHashOf[Vertex, ImmutableSetOf[Vertex]]
-
-      edges = data[:edges]
-      graph.dependency_map = edges.reduce(::Hamster::Hash.empty) do |sum, row|
-        vertex = graph.vertices[row[:key]]
-        depended_on_by = row[:depended_on_by].map { |k| graph.vertices[k] }
-        sum.put(vertex, ::Hamster::Set.new(depended_on_by) << vertex)
+      data[:edges].each do |e|
+        graph.add_edge_by_key(e[:depends_on], e[:key])
       end
+
+      graph.invalidate_changes!
+
+      # require 'rgl/dot'
+      # graph.graph.write_to_graphic_file('jpg', 'valid')
 
       graph
     rescue StandardError

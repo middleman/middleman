@@ -27,11 +27,6 @@ module Middleman
             Hamster::Set.new(@keys_to_vertex.values.flatten(1))
           end
 
-          Contract Symbol => ImmutableSetOf[::Middleman::Dependencies::Vertex]
-          def vertices_for_key(k)
-            @keys_to_vertex[k] || ::Hamster::Set.empty
-          end
-
           # Store static data hash
           #
           # @param [Symbol] name Name of the data, used for namespacing

@@ -9,6 +9,8 @@ pkg
 .sass-cache
 .sassc
 .tmp
+graph.dot
+graph.jpg
 docs
 .rbenv-*
 .ruby-version

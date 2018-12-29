@@ -7,9 +7,17 @@ Given /^app "([^\"]*)" is using config "([^\"]*)"$/ do |_path, config_name|
 end
 
 Given /^an empty app$/ do
+  ENV['MM_ROOT'] = nil
+
+  # This step can be reentered from several places but we don't want
+  # to keep re-copying and re-cd-ing into ever-deeper directories
+  next if File.basename(expand_path('.')) == 'empty_app'
+
   step %(a directory named "empty_app")
   step %(I cd to "empty_app")
-  ENV['MM_ROOT'] = nil
+
+  cwd = File.expand_path(aruba.current_directory)
+  step %(I set the environment variable "MM_ROOT" to "#{cwd}")
 end
 
 Given /^a fixture app "([^\"]*)"$/ do |path|
@@ -25,6 +33,9 @@ Given /^a fixture app "([^\"]*)"$/ do |path|
   FileUtils.cp_r(target_path, expand_path('.'))
 
   step %(I cd to "#{path}")
+
+  cwd = File.expand_path(aruba.current_directory)
+  step %(I set the environment variable "MM_ROOT" to "#{cwd}")
 end
 
 Then /^the file "([^\"]*)" has the contents$/ do |path, contents|

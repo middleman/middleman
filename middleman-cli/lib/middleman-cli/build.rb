@@ -44,6 +44,10 @@ module Middleman::Cli
                  type: :boolean,
                  default: false,
                  desc: 'Track file dependencies'
+    class_option :visualize_graph,
+                 type: :boolean,
+                 default: false,
+                 desc: 'Generate a visual of the dependency graph'
     class_option :only_changed,
                  type: :boolean,
                  default: false,
@@ -95,7 +99,8 @@ module Middleman::Cli
                                          parallel: options['parallel'],
                                          only_changed: options['only_changed'],
                                          missing_and_changed: missing_and_changed,
-                                         track_dependencies: should_track_dependencies)
+                                         track_dependencies: should_track_dependencies,
+                                         visualize_graph: options['visualize_graph'])
         builder.thor = self
         builder.on_build_event(&method(:on_event))
       end
