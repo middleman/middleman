@@ -2,13 +2,13 @@ require 'active_support/core_ext/object/try'
 require 'memoist'
 require 'middleman-core/contracts'
 require 'rack/mime'
+require 'sassc'
 
 # Minify CSS Extension
 class Middleman::Extensions::MinifyCss < ::Middleman::Extension
   option :inline, false, 'Whether to minify CSS inline within HTML files'
   option :ignore, [], 'Patterns to avoid minifying'
   option :compressor, proc {
-    require 'sass'
     SassCompressor
   }, 'Set the CSS compressor to use.'
   option :content_types, %w[text/css], 'Content types of resources that contain CSS'
@@ -20,15 +20,13 @@ class Middleman::Extensions::MinifyCss < ::Middleman::Extension
     COMPRESSED_OPTIONS = { style: :compressed }.freeze
 
     def self.compress(style, options_hash = ::Middleman::EMPTY_HASH)
-      root_node = ::Sass::SCSS::CssParser.new(style, 'middleman-css-input', 1).parse
+      options = if options_hash == ::Middleman::EMPTY_HASH
+                  COMPRESSED_OPTIONS
+                else
+                  options_hash.merge(COMPRESSED_OPTIONS)
+                end
 
-      root_node.options = if options_hash == ::Middleman::EMPTY_HASH
-                            COMPRESSED_OPTIONS
-                          else
-                            options_hash.merge(COMPRESSED_OPTIONS)
-                          end
-
-      root_node.render.strip
+      ::SassC::Engine.new(style, options).render.strip
     end
   end
 

@@ -27,7 +27,6 @@ PATH
       parallel
       rack (>= 1.4.5, < 3)
       rgl (~> 0.5.3)
-      sass (>= 3.4)
       sassc (~> 2.0)
       servolux
       tilt (~> 2.0.9)
@@ -198,11 +197,6 @@ GEM
       celluloid (= 0.16.0)
       celluloid-io (= 0.16.2)
       timers (~> 4.0.1)
-    sass (3.7.2)
-      sass-listen (~> 4.0.0)
-    sass-listen (4.0.0)
-      rb-fsevent (~> 0.9, >= 0.9.4)
-      rb-inotify (~> 0.9, >= 0.9.7)
     sassc (2.0.0)
       ffi (~> 1.9.6)
       rake

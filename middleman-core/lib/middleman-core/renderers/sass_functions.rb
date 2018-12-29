@@ -16,7 +16,7 @@ module Middleman
       #
       def image_path(source, options_hash = ::Middleman::EMPTY_HASH)
         p = ::Middleman::Util.asset_path(middleman_context, :images, source.value, map_options(options_hash))
-        ::Sass::Script::String.new p.to_s, :string
+        ::SassC::Script::String.new p.to_s, :string
       end
 
       # Using Middleman::Util#asset_path, return the url CSS
@@ -40,7 +40,7 @@ module Middleman
             options = {}
           end
         end
-        ::Sass::Script::String.new "url(#{image_path(source, options)})"
+        ::SassC::Script::String.new "url(#{image_path(source, options)})"
       end
 
       # Using Middleman::Util#asset_path, return the full path
@@ -54,7 +54,7 @@ module Middleman
       #
       def font_path(source, options_hash = ::Middleman::EMPTY_HASH)
         p = ::Middleman::Util.asset_path(middleman_context, :fonts, source.value, map_options(options_hash))
-        ::Sass::Script::String.new p.to_s, :string
+        ::SassC::Script::String.new p.to_s, :string
       end
 
       # Using Middleman::Util#asset_path, return the url CSS
@@ -78,7 +78,7 @@ module Middleman
             options = {}
           end
         end
-        ::Sass::Script::String.new "url(#{font_path(source, options)})"
+        ::SassC::Script::String.new "url(#{font_path(source, options)})"
       end
 
       protected
@@ -99,7 +99,7 @@ module Middleman
       def map_options(options_hash = ::Middleman::EMPTY_HASH) # :nodoc:
         options = options_hash.dup
 
-        ::Sass::Util.map_hash(options) do |key, value|
+        ::SassC::Util.map_hash(options) do |key, value|
           [key.to_sym, value.respond_to?(:value) ? value.value : value]
         end
 
@@ -111,8 +111,4 @@ module Middleman
   end
 end
 
-if defined?(::SassC)
-  ::SassC::Script::Functions.send :include, ::Middleman::Sass::Functions
-elsif defined?(::Sass)
-  ::Sass::Script::Functions.send :include, ::Middleman::Sass::Functions
-end
+::SassC::Script::Functions.send :include, ::Middleman::Sass::Functions
