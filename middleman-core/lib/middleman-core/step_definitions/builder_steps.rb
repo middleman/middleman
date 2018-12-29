@@ -6,10 +6,6 @@ end
 
 Given /^a built app at "([^\"]*)"$/ do |path|
   step %(a fixture app "#{path}")
-
-  cwd = File.expand_path(aruba.current_directory)
-  step %(I set the environment variable "MM_ROOT" to "#{cwd}")
-
   step %(I run `middleman build --verbose --no-parallel`)
 end
 

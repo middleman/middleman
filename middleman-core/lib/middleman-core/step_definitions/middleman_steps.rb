@@ -25,6 +25,9 @@ Given /^a fixture app "([^\"]*)"$/ do |path|
   FileUtils.cp_r(target_path, expand_path('.'))
 
   step %(I cd to "#{path}")
+
+  cwd = File.expand_path(aruba.current_directory)
+  step %(I set the environment variable "MM_ROOT" to "#{cwd}")
 end
 
 Then /^the file "([^\"]*)" has the contents$/ do |path, contents|
