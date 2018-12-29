@@ -16,7 +16,7 @@ module Middleman
       #
       def image_path(source, options_hash = ::Middleman::EMPTY_HASH)
         p = ::Middleman::Util.asset_path(middleman_context, :images, source.value, map_options(options_hash))
-        ::SassC::Script::String.new p.to_s, :string
+        ::SassC::Script::Value::String.new p.to_s, :string
       end
 
       # Using Middleman::Util#asset_path, return the url CSS
@@ -40,7 +40,8 @@ module Middleman
             options = {}
           end
         end
-        ::SassC::Script::String.new "url(#{image_path(source, options)})"
+
+        ::SassC::Script::Value::String.new "url(#{image_path(source, options)})"
       end
 
       # Using Middleman::Util#asset_path, return the full path
@@ -54,7 +55,7 @@ module Middleman
       #
       def font_path(source, options_hash = ::Middleman::EMPTY_HASH)
         p = ::Middleman::Util.asset_path(middleman_context, :fonts, source.value, map_options(options_hash))
-        ::SassC::Script::String.new p.to_s, :string
+        ::SassC::Script::Value::String.new p.to_s, :string
       end
 
       # Using Middleman::Util#asset_path, return the url CSS
@@ -78,7 +79,7 @@ module Middleman
             options = {}
           end
         end
-        ::SassC::Script::String.new "url(#{font_path(source, options)})"
+        ::SassC::Script::Value::String.new "url(#{font_path(source, options)})"
       end
 
       protected
@@ -99,9 +100,9 @@ module Middleman
       def map_options(options_hash = ::Middleman::EMPTY_HASH) # :nodoc:
         options = options_hash.dup
 
-        ::SassC::Util.map_hash(options) do |key, value|
-          [key.to_sym, value.respond_to?(:value) ? value.value : value]
-        end
+        # ::SassC::Util.map_hash(options) do |key, value|
+        #   [key.to_sym, value.respond_to?(:value) ? value.value : value]
+        # end
 
         options[:current_resource] = current_resource
 
