@@ -81,6 +81,8 @@ module Middleman
           @engine.dependencies.reduce(::Hamster::Set.empty) do |sum, d|
             sum << ::Middleman::Dependencies::FileVertex.new(@context.app.root_path, d.filename.to_sym)
           end
+        rescue ::SassC::NotRenderedError
+          ::Hamster::Set.empty
         end
 
         # Change Sass path, for url functions, to the build folder if we're building

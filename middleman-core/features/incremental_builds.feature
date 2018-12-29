@@ -407,3 +407,45 @@ Feature: Incremental builds
     Then there are "0" files which are created
     Then there are "0" files which are removed
     Then there are "2" files which are updated
+
+  Scenario: Updating a sass import should only update files which include it
+    Given an empty app
+    When a file named "config.rb" with:
+      """
+      """
+    When a file named "source/bait.css.scss" with:
+      """
+      body { h1 { color: red } }
+      """
+    When a file named "source/css-a.css.scss" with:
+      """
+      @import 'test';
+      """
+    When a file named "source/css-b.css.scss" with:
+      """
+      @import 'test';
+      """
+    When a file named "source/_test.scss" with:
+      """
+      h1 { bold { text-decoration: underline } }
+      """
+    Then build the app tracking dependencies
+    Then the output should contain "create  build/bait.css"
+    Then the output should contain "create  build/css-a.css"
+    Then the output should contain "create  build/css-b.css"
+    Then the following files should exist:
+      | build/bait.css |
+      | build/css-a.css |
+      | build/css-b.css |
+    Then build app with only changed
+    Then there are "0" files which are created
+    Then there are "0" files which are removed
+    Then there are "0" files which are updated
+    When a file named "source/_test.scss" with:
+      """
+      h1 { bold { text-decoration: none } }
+      """
+    Then build app with only changed
+    Then there are "0" files which are created
+    Then there are "0" files which are removed
+    Then there are "2" files which are updated
