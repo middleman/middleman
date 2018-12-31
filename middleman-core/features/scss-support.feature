@@ -10,3 +10,8 @@ Feature: Support SCSS Syntax
    Given the Server is running at "scss-app"
    When I go to "/stylesheets/layout.css"
    Then I should see "html"
+
+ Scenario: Rendering scss errors
+   Given the Server is running at "scss-app"
+   When I go to "/stylesheets/error.css"
+   Then I should see "Error:"

@@ -60,8 +60,24 @@ module Middleman
           begin
             @engine.render
           rescue ::SassC::SyntaxError => e
-            ::SassC::SyntaxError.exception_to_css(e)
+            exception_to_css(e)
           end
+        end
+
+        def exception_to_css(e)
+          header = "#{e.class}: #{e.message}"
+
+          <<~END
+            /*
+            #{header.gsub('*/', '*\\/')}
+
+            Backtrace:\n#{e.backtrace.join("\n").gsub('*/', '*\\/')}
+            */
+            body:before {
+              white-space: pre;
+              font-family: monospace;
+              content: "#{header.gsub('"', '\"').gsub("\n", '\\A ')}"; }
+          END
         end
 
         def vertices
