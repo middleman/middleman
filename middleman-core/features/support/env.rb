@@ -1,6 +1,5 @@
 ENV["TEST"] = "true"
 
-require 'sass'
 require 'sassc'
 
 require 'simplecov'

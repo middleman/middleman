@@ -16,7 +16,7 @@ module Middleman
       #
       def image_path(source, options={})
         p = ::Middleman::Util.asset_path(middleman_context, :images, source.value, map_options(options))
-        ::Sass::Script::String.new p.to_s, :string
+        ::SassC::Script::Value::String.new p.to_s, :string
       end
 
       # Using Middleman::Util#asset_path, return the url CSS
@@ -38,7 +38,8 @@ module Middleman
             options = {}
           end
         end
-        ::Sass::Script::String.new "url(#{image_path(source, options)})"
+
+        ::SassC::Script::Value::String.new "url(#{image_path(source, options)})"
       end
 
       # Using Middleman::Util#asset_path, return the full path
@@ -52,7 +53,7 @@ module Middleman
       #
       def font_path(source, options={})
         p = ::Middleman::Util.asset_path(middleman_context, :fonts, source.value, map_options(options))
-        ::Sass::Script::String.new p.to_s, :string
+        ::SassC::Script::Value::String.new p.to_s, :string
       end
 
       # Using Middleman::Util#asset_path, return the url CSS
@@ -74,7 +75,7 @@ module Middleman
             options = {}
           end
         end
-        ::Sass::Script::String.new "url(#{font_path(source, options)})"
+        ::SassC::Script::Value::String.new "url(#{font_path(source, options)})"
       end
 
       protected
@@ -93,9 +94,9 @@ module Middleman
       # Returns an options hash where the keys are symbolized
       # and the values are unwrapped Sass literals.
       def map_options(options={}) # :nodoc:
-        ::Sass::Util.map_hash(options) do |key, value|
-          [key.to_sym, value.respond_to?(:value) ? value.value : value]
-        end
+        # ::Sass::Util.map_hash(options) do |key, value|
+        #   [key.to_sym, value.respond_to?(:value) ? value.value : value]
+        # end
 
         options[:current_resource] = current_resource
 
@@ -105,8 +106,4 @@ module Middleman
   end
 end
 
-if defined?(::SassC)
-  ::SassC::Script::Functions.send :include, ::Middleman::Sass::Functions
-elsif defined?(::Sass)
-  ::Sass::Script::Functions.send :include, ::Middleman::Sass::Functions
-end
+::SassC::Script::Functions.send :include, ::Middleman::Sass::Functions
