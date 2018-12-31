@@ -142,7 +142,7 @@ module Middleman
       return nil if p.absolute? && !p.to_s.start_with?(@directory.to_s)
 
       destination_dir = @options[:destination_dir]
-      if destination_dir.present? && p.to_s.start_with?(destination_dir)
+      if !destination_dir.nil? && !destination_dir.empty? && p.to_s.start_with?(destination_dir)
         path_without_destination_dir = p.to_s[destination_dir.to_s.length + 1..-1]
         p = Pathname(path_without_destination_dir)
       end

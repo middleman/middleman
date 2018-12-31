@@ -8,7 +8,7 @@ PATH
   remote: middleman-core
   specs:
     middleman-core (5.0.0.rc.1)
-      activesupport (>= 4.2, < 5.2)
+      activesupport (~> 5.2)
       addressable (~> 2.3)
       backports (~> 3.11)
       bundler
@@ -23,7 +23,7 @@ PATH
       listen (~> 3.0)
       memoist (~> 0.14)
       oj (~> 3.7)
-      padrino-helpers (~> 0.13.0)
+      padrino-helpers (~> 0.14.4)
       parallel
       rack (>= 1.4.5, < 3)
       rgl (~> 0.5.3)
@@ -35,7 +35,7 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
-    activesupport (5.1.6.1)
+    activesupport (5.2.2)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (>= 0.7, < 2)
       minitest (~> 5.1)
@@ -135,13 +135,12 @@ GEM
     nio4r (2.3.1)
     nokogiri (1.9.1)
       mini_portile2 (~> 2.4.0)
-    oj (3.7.5)
-    padrino-helpers (0.13.3.4)
+    oj (3.7.6)
+    padrino-helpers (0.14.4)
       i18n (~> 0.6, >= 0.6.7)
-      padrino-support (= 0.13.3.4)
+      padrino-support (= 0.14.4)
       tilt (>= 1.4.1, < 3)
-    padrino-support (0.13.3.4)
-      activesupport (>= 3.1)
+    padrino-support (0.14.4)
     parallel (1.12.1)
     parser (2.5.3.0)
       ast (~> 2.4.0)
