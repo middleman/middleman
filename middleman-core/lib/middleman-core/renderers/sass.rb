@@ -1,12 +1,7 @@
 require 'hamster'
-require 'sass'
+require 'sassc'
 require 'middleman-core/dependencies'
 require 'middleman-core/dependencies/vertices/file_vertex'
-
-begin
-  require 'sassc'
-rescue LoadError
-end
 
 module Middleman
   module Renderers
@@ -24,8 +19,6 @@ module Middleman
       # Setup extension
       def initialize(app, options_hash = ::Middleman::EMPTY_HASH, &block)
         super
-
-        logger.info '== Preferring use of LibSass' if defined?(::SassC)
 
         app.files.ignore :sass_cache, :source, /(^|\/)\.sass-cache\// if app.config[:sass_cache_location] == DEFAULT_SASS_CACHE_LOCATION
 
@@ -62,19 +55,29 @@ module Middleman
         def evaluate(context, _)
           @context ||= context
 
-          sass_module = if defined?(::SassC)
-                          ::SassC
-                        else
-                          ::Sass
-                        end
-
-          @engine = sass_module::Engine.new(data, sass_options)
+          @engine = ::SassC::Engine.new(data, sass_options)
 
           begin
             @engine.render
-          rescue sass_module::SyntaxError => e
-            ::Sass::SyntaxError.exception_to_css(e)
+          rescue ::SassC::SyntaxError => e
+            exception_to_css(e)
           end
+        end
+
+        def exception_to_css(e)
+          header = "#{e.class}: #{e.message}"
+
+          <<~END
+            /*
+            #{header.gsub('*/', '*\\/')}
+
+            Backtrace:\n#{e.backtrace.join("\n").gsub('*/', '*\\/')}
+            */
+            body:before {
+              white-space: pre;
+              font-family: monospace;
+              content: "#{header.gsub('"', '\"').gsub("\n", '\\A ')}"; }
+          END
         end
 
         def vertices
@@ -91,7 +94,7 @@ module Middleman
           ctx = @context
 
           more_opts = {
-            load_paths: ::Sass.load_paths | ctx.app.config[:sass_assets_paths],
+            load_paths: ctx.app.config[:sass_assets_paths],
             filename: eval_file,
             line: line,
             syntax: syntax,
