@@ -3,6 +3,7 @@ master
 
 # 4.2.2
 
+* Fix API to allow rack server according to docs (middleman/middlemanapp.com#794)
 * Require i18n ~> 0.8.0 to handle 0.7.0 security issue.
 * Allow Bundler 2
 
