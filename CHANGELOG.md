@@ -49,6 +49,11 @@ master
 * I18n: Keep fragment and query in url_for (#2062)
 * Add support for locale suffixes to link_to (#2065)
 * Allow absolute :data_dir paths. Addresses #2042
+# 4.2.2
+
+* Fix API to allow rack server according to docs (middleman/middlemanapp.com#794)
+* Require i18n ~> 0.8.0 to handle 0.7.0 security issue.
+* Allow Bundler 2
 
 # 4.2.1
 
