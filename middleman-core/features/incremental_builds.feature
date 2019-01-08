@@ -1,3 +1,4 @@
+
 Feature: Incremental builds
 
   Scenario: Changing a page should only rebuild that page
@@ -449,3 +450,18 @@ Feature: Incremental builds
     Then there are "0" files which are created
     Then there are "0" files which are removed
     Then there are "2" files which are updated
+
+  Scenario: Should ignore vendored dependencies
+    Given an empty app
+    When a file named "config.rb" with:
+      """
+      """
+    When a file named "vendor/dep.rb" with:
+      """
+      """
+    When a file named "source/index.html.erb" with:
+      """
+      Hello
+      """
+    Then build the app tracking dependencies
+    Then the file "deps.yml" should not contain "file: vendor/"

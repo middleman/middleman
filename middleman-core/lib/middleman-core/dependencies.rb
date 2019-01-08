@@ -11,7 +11,7 @@ module Middleman
     include Contracts
 
     DEFAULT_FILE_PATH = 'deps.yml'.freeze
-    RUBY_FILES = ['**/*.rb', 'Gemfile.lock'].freeze
+    RUBY_FILES = ['config.rb', 'lib/**/*.rb', 'helpers/**/*.rb', 'Gemfile.lock'].freeze
 
     module_function
 
