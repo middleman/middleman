@@ -18,6 +18,21 @@ Feature: Local Data API
     When I go to "/data.html"
     Then I should see "No Test Data"
 
+  Scenario: Numeric keys in YAML
+    Given the Server is running at "basic-data-app"
+    When the file "data/by_year.yml" has the contents
+      """
+      -
+        2018: 1
+        2019: 2
+      """
+    And the file "source/years.html.erb" has the contents
+      """
+        <%= data.by_year.first['2018'] %>:<%= data.by_year.first['2019'] %>
+      """
+    When I go to "/years.html"
+    Then I should see "1:2"
+
   Scenario: Rendering json
     Given the Server is running at "basic-data-app"
     When I go to "/data3.html"

@@ -110,13 +110,16 @@ module Middleman
       # @return [Hash]
       Contract String, Pathname => Hash
       def parse_yaml(content, full_path)
-        c = ::Middleman::Util.instrument 'parse.yaml' do
-          ::YAML.load(content)
+        c = begin
+          ::Middleman::Util.instrument 'parse.yaml' do
+            ::YAML.load(content)
+          end
+        rescue StandardError, ::Psych::SyntaxError => error
+          warn "YAML Exception parsing #{full_path}: #{error.message}"
+          {}
         end
+      
         c ? symbolize_recursive(c) : {}
-      rescue StandardError, ::Psych::SyntaxError => error
-        warn "YAML Exception parsing #{full_path}: #{error.message}"
-        {}
       end
       memoize :parse_yaml
 
@@ -125,20 +128,23 @@ module Middleman
       # @return [Hash]
       Contract String, Pathname => Hash
       def parse_json(content, full_path)
-        c = ::Middleman::Util.instrument 'parse.json' do
-          ::JSON.parse(content)
+        c = begin
+          ::Middleman::Util.instrument 'parse.json' do
+            ::JSON.parse(content)
+          end
+        rescue StandardError => error
+          warn "JSON Exception parsing #{full_path}: #{error.message}"
+          {}
         end
+
         c ? symbolize_recursive(c) : {}
-      rescue StandardError => error
-        warn "JSON Exception parsing #{full_path}: #{error.message}"
-        {}
       end
       memoize :parse_json
 
       def symbolize_recursive(value)
         case value
         when Hash
-          value.map { |k, v| [k.to_sym, symbolize_recursive(v)] }.to_h
+          value.map { |k, v| [k.to_s.to_sym, symbolize_recursive(v)] }.to_h
         when Array
           value.map { |v| symbolize_recursive(v) }
         else
