@@ -28,7 +28,23 @@ Feature: Local Data API
       """
     And the file "source/years.html.erb" has the contents
       """
-        <%= data.by_year.first['2018'] %>:<%= data.by_year.first['2019'] %>
+        <%= data.by_year.first[2018] %>:<%= data.by_year.first[2019] %>
+      """
+    When I go to "/years.html"
+    Then I should see "1:2"
+
+  Scenario: Date keys in YAML
+    Given the Server is running at "basic-data-app"
+    When the file "data/dates.yml" has the contents
+      """
+      2016-03-25:
+        title: "1"
+      2018-03-25:
+        title: "2"
+      """
+    And the file "source/years.html.erb" has the contents
+      """
+        <%= data.dates.values.map(&:title).join(":") %>
       """
     When I go to "/years.html"
     Then I should see "1:2"

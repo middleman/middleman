@@ -144,7 +144,10 @@ module Middleman
       def symbolize_recursive(value)
         case value
         when Hash
-          value.map { |k, v| [k.to_s.to_sym, symbolize_recursive(v)] }.to_h
+          value.map do |k, v|
+            key = k.is_a?(String) ? k.to_sym : k
+            [key, symbolize_recursive(v)]
+          end.to_h
         when Array
           value.map { |v| symbolize_recursive(v) }
         else
