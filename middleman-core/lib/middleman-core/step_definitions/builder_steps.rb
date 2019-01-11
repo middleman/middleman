@@ -14,7 +14,7 @@ Then /^build the app tracking dependencies$/ do
   step %(was successfully built)
 end
 
-Then("build the app tracking dependencies with depth {string}") do |depth|
+Then('build the app tracking dependencies with depth {string}') do |depth|
   step %(I run `middleman build --track-dependencies --no-parallel --verbose --data-collection-depth=#{depth}`)
   step %(was successfully built)
 end
