@@ -92,7 +92,7 @@ GEM
     debug_inspector (0.0.3)
     diff-lcs (1.3)
     docile (1.3.1)
-    dotenv (2.5.0)
+    dotenv (2.6.0)
     erubis (2.7.0)
     execjs (2.7.0)
     fast_blank (1.0.0)
@@ -108,7 +108,7 @@ GEM
     i18n (0.9.5)
       concurrent-ruby (~> 1.0)
     interception (0.5)
-    jaro_winkler (1.5.1)
+    jaro_winkler (1.5.2)
     json (2.1.0)
     kramdown (1.17.0)
     libv8 (3.16.14.19)
@@ -127,7 +127,7 @@ GEM
     multi_test (0.1.2)
     mustermann (1.0.3)
     nio4r (2.3.1)
-    nokogiri (1.9.1)
+    nokogiri (1.10.0)
       mini_portile2 (~> 2.4.0)
     padrino-helpers (0.13.3.4)
       i18n (~> 0.6, >= 0.6.7)
@@ -173,7 +173,7 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.8.0)
     rspec-support (3.8.0)
-    rubocop (0.61.1)
+    rubocop (0.62.0)
       jaro_winkler (~> 1.5.1)
       parallel (~> 1.10)
       parser (>= 2.5, != 2.5.1.1)
@@ -186,7 +186,7 @@ GEM
       celluloid (= 0.16.0)
       celluloid-io (= 0.16.2)
       timers (~> 4.0.1)
-    sass (3.7.2)
+    sass (3.7.3)
       sass-listen (~> 4.0.0)
     sass-listen (4.0.0)
       rb-fsevent (~> 0.9, >= 0.9.4)
@@ -269,4 +269,4 @@ DEPENDENCIES
   yard (~> 0.8)
 
 BUNDLED WITH
-   1.16.6
+   2.0.1
