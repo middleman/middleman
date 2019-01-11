@@ -141,6 +141,10 @@ module Middleman
     Contract String => String
     def hash_file(path)
       # puts "Read (hash): #{path}"
+      # Get list of changed in git: git update-index -q --refresh --ignore-submodules && git diff-index --ignore-submodules HEAD --
+      # If column 4 (1 indexed) is all 00000s, it is a uncommitted change
+      # If path not changed in git, use `git rev-parse HEAD:$path` to get hash
+      # Otherwise use below
       ::Digest::SHA1.file(path).hexdigest
     end
 

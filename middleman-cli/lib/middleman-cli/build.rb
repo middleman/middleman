@@ -44,6 +44,10 @@ module Middleman::Cli
                  type: :boolean,
                  default: false,
                  desc: 'Track file dependencies'
+    class_option :data_collection_depth,
+                 type: :numeric,
+                 default: ::Float::INFINITY,
+                 desc: 'How deep to recurse into data structures when tracking changes.'
     class_option :visualize_graph,
                  type: :boolean,
                  default: false,
@@ -82,6 +86,7 @@ module Middleman::Cli
       ::Middleman::Util.instrument 'builder.setup' do
         missing_and_changed = !options['only_changed'] && options['missing_and_changed']
         should_track_dependencies = options['only_changed'] || missing_and_changed || options['track_dependencies']
+        data_collection_depth = options['data_collection_depth']
 
         @app = ::Middleman::Application.new do
           config[:mode] = :build
@@ -90,6 +95,7 @@ module Middleman::Cli
             sum[k] = v
           end
           config[:track_data_access] = should_track_dependencies
+          config[:data_collection_depth] = data_collection_depth
         end
 
         builder = Middleman::Builder.new(@app,

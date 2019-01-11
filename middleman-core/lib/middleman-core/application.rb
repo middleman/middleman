@@ -198,6 +198,8 @@ module Middleman
 
     define_setting :skip_build_clean, proc { |p| [/\.git/].any? { |r| p =~ r } }, 'Whether some paths should not be removed during a clean build.'
 
+    define_setting :data_collection_depth, ::Float::INFINITY, 'How deep to recurse into data structures when tracking changes.'
+
     define_setting :cli_options, {}, 'Options from the Command Line.'
 
     define_setting :watcher_disable, false, 'If the Listen watcher should not run'

@@ -7,11 +7,16 @@ module Middleman
       module Proxies
         class BaseProxy
           attr_reader :accessed_keys
+          attr_reader :depth
 
-          def initialize(key, data, parent = nil)
+          def initialize(key, data, data_collection_depth, parent = nil)
             @key = key
             @data = data
             @parent = parent
+
+            @data_collection_depth = data_collection_depth
+            @depth = @parent.nil? || !@parent.is_a?(BaseProxy) ? 0 : @parent.depth + 1
+
             @accessed_keys = ::Hamster::Set.new
           end
 
@@ -49,10 +54,13 @@ module Middleman
           end
 
           def wrap_data(key, data)
-            if data.is_a? ::Middleman::Util::EnhancedHash
-              HashProxy.new(key, data, self)
+            if @depth >= @data_collection_depth
+              log_access(:__full_access__)
+              data
+            elsif data.is_a? ::Middleman::Util::EnhancedHash
+              HashProxy.new(key, data, @data_collection_depth, self)
             elsif data.is_a? ::Array
-              ArrayProxy.new(key, data, self)
+              ArrayProxy.new(key, data, @data_collection_depth, self)
             else
               log_access(key)
               data
