@@ -3,12 +3,12 @@ sudo: false
 cache: bundler
 rvm:
   - ruby-head
-  - 2.4.0
-  - 2.3.1
-  - 2.2.4
+  - 2.6.0
+  - 2.5.3
+  - 2.4.5
+  - 2.3.8
 os:
   - linux
-  # - osx
 matrix:
   fast_finish: true
   allow_failures:
