@@ -1,4 +1,3 @@
-
 require 'spec_helper'
 require 'middleman-core/core_extensions'
 require 'middleman-core/core_extensions/data'
@@ -7,9 +6,9 @@ describe Middleman::CoreExtensions::Data::DataStoreController do
   describe '#store' do
     before :each do
       app = instance_double('Middleman::Application')
-      allow(app).to receive(:config).and_return({
+      allow(app).to receive(:config).and_return(
         data_collection_depth: ::Float::INFINITY
-      })
+      )
       @subject = described_class.new(app, false)
     end
 
@@ -38,9 +37,9 @@ describe Middleman::CoreExtensions::Data::DataStoreController do
   describe '#callbacks' do
     before :each do
       app = instance_double('Middleman::Application')
-      allow(app).to receive(:config).and_return({
+      allow(app).to receive(:config).and_return(
         data_collection_depth: ::Float::INFINITY
-      })
+      )
       @subject = described_class.new(app, false)
     end
 
@@ -64,9 +63,9 @@ describe Middleman::CoreExtensions::Data::DataStoreController do
   describe '#ordering' do
     before :each do
       app = instance_double('Middleman::Application')
-      allow(app).to receive(:config).and_return({
+      allow(app).to receive(:config).and_return(
         data_collection_depth: ::Float::INFINITY
-      })
+      )
       @subject = described_class.new(app, false)
     end
 
@@ -105,9 +104,9 @@ describe Middleman::CoreExtensions::Data::DataStoreController do
   describe '#key?' do
     before :each do
       app = instance_double('Middleman::Application')
-      allow(app).to receive(:config).and_return({
+      allow(app).to receive(:config).and_return(
         data_collection_depth: ::Float::INFINITY
-      })
+      )
       @subject = described_class.new(app, false)
     end
 
