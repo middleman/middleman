@@ -2,13 +2,14 @@ require 'spec_helper'
 require 'middleman-core/core_extensions'
 require 'middleman-core/core_extensions/data'
 
-describe Middleman::CoreExtensions::Data do
-end
-
 describe Middleman::CoreExtensions::Data::DataStoreController do
   describe '#store' do
     before :each do
-      @subject = described_class.new(instance_double('Middleman::Application'), false)
+      app = instance_double('Middleman::Application')
+      allow(app).to receive(:config).and_return(
+        data_collection_depth: ::Float::INFINITY
+      )
+      @subject = described_class.new(app, false)
     end
 
     context 'when given a name and data' do
@@ -35,7 +36,11 @@ describe Middleman::CoreExtensions::Data::DataStoreController do
 
   describe '#callbacks' do
     before :each do
-      @subject = described_class.new(instance_double('Middleman::Application'), false)
+      app = instance_double('Middleman::Application')
+      allow(app).to receive(:config).and_return(
+        data_collection_depth: ::Float::INFINITY
+      )
+      @subject = described_class.new(app, false)
     end
 
     context 'when given a name and proc' do
@@ -57,7 +62,11 @@ describe Middleman::CoreExtensions::Data::DataStoreController do
 
   describe '#ordering' do
     before :each do
-      @subject = described_class.new(instance_double('Middleman::Application'), false)
+      app = instance_double('Middleman::Application')
+      allow(app).to receive(:config).and_return(
+        data_collection_depth: ::Float::INFINITY
+      )
+      @subject = described_class.new(app, false)
     end
 
     context 'given path matches local data' do
@@ -94,7 +103,11 @@ describe Middleman::CoreExtensions::Data::DataStoreController do
 
   describe '#key?' do
     before :each do
-      @subject = described_class.new(instance_double('Middleman::Application'), false)
+      app = instance_double('Middleman::Application')
+      allow(app).to receive(:config).and_return(
+        data_collection_depth: ::Float::INFINITY
+      )
+      @subject = described_class.new(app, false)
     end
 
     it 'given path matches no sources returns false' do

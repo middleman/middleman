@@ -43,6 +43,7 @@ module Middleman
 
       ::YAML.dump(
         {
+          data_collection_depth: app.config[:data_collection_depth],
           ruby_files: ruby_files.sort_by { |d| d[:file] }
         }.merge(serialized)
       )
@@ -65,6 +66,9 @@ module Middleman
     class InvalidDepsYAML < RuntimeError
     end
 
+    class ChangedDepth < RuntimeError
+    end
+
     class InvalidatedRubyFiles < RuntimeError
       attr_reader :invalidated
 
@@ -82,6 +86,8 @@ module Middleman
       data = parse_yaml(file_path)
 
       ruby_files = data[:ruby_files]
+
+      raise ChangedDepth if data[:data_collection_depth] != app.config[:data_collection_depth]
 
       unless (invalidated = invalidated_ruby_files(ruby_files)).empty?
         raise InvalidatedRubyFiles, invalidated
@@ -115,8 +121,8 @@ module Middleman
       # graph.graph.write_to_graphic_file('jpg', 'valid')
 
       graph
-    rescue StandardError
-      raise InvalidDepsYAML
+      # rescue StandardError
+      #   raise InvalidDepsYAML
     end
   end
 end

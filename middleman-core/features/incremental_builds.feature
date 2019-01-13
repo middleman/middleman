@@ -465,3 +465,115 @@ Feature: Incremental builds
       """
     Then build the app tracking dependencies
     Then the file "deps.yml" should not contain "file: vendor/"
+
+  Scenario: Changing a piece of data nested below the maximum depth will rebuild on change to the entire object
+    Given an empty app
+    When a file named "config.rb" with:
+      """
+      """
+    When a file named "data/people.yml" with:
+      """
+      -
+        slug: "one"
+        parts:
+          - 1
+          - 2
+          - 3
+      -
+        slug: "two"
+        parts:
+          - 4
+          - 5
+          - 6
+      """
+    When a file named "source/part-one.html.erb" with:
+      """
+      Part = <%= data.people.last.parts.first %>
+      """
+    When a file named "source/part-two.html.erb" with:
+      """
+      Part = <%= data.people.last.parts[1] %>
+      """
+    Then build the app tracking dependencies
+    Then the output should contain "create  build/part-one.html"
+    Then the output should contain "create  build/part-two.html"
+    Then the following files should exist:
+      | build/part-one.html   |
+      | build/part-two.html   |
+    And the file "build/part-one.html" should contain "Part = 4"
+    And the file "build/part-two.html" should contain "Part = 5"
+    When a file named "data/people.yml" with:
+      """
+      -
+        slug: "one"
+        parts:
+          - 1
+          - 2
+          - 3
+      -
+        slug: "two"
+        parts:
+          - 4
+          - 5
+          - 7
+      """
+    Then build app with only changed
+    Then there are "0" files which are created
+    Then there are "0" files which are updated
+    Then the following files should exist:
+      | build/part-one.html   |
+      | build/part-two.html   |
+    When a file named "data/people.yml" with:
+      """
+      -
+        slug: "one"
+        parts:
+          - 1
+          - 2
+          - 3
+      -
+        slug: "two"
+        parts:
+          - 4
+          - 6
+          - 7
+      """
+    Then build app with only changed
+    Then there are "0" files which are created
+    Then there are "1" files which are updated
+    Then the output should contain "updated  build/part-two.html"
+    Then the following files should exist:
+      | build/part-one.html   |
+      | build/part-two.html   |
+    And the file "build/part-two.html" should contain "Part = 6"
+
+    # Rebuilding with limited depth
+    Then build the app tracking dependencies with depth "1"
+
+    When a file named "data/people.yml" with:
+      """
+      -
+        slug: "one"
+        parts:
+          - 1
+          - 2
+          - 3
+      -
+        slug: "two"
+        parts:
+          - 4
+          - 6
+          - 8
+      """
+    Then build app with only changed
+    Then there are "0" files which are created
+    Then there are "0" files which are removed
+    Then there are "0" files which are updated
+    Then there are "2" files which are identical
+    Then the output should contain "identical  build/part-one.html"
+    Then the output should contain "identical  build/part-two.html"
+    Then the following files should exist:
+      | build/part-one.html |
+      | build/part-two.html |
+    And the file "build/part-one.html" should contain "Part = 4"
+    And the file "build/part-two.html" should contain "Part = 6"

@@ -16,6 +16,7 @@ module Middleman
         def_delegators :@in_memory_data_store, :store, :callbacks
 
         def initialize(app, track_data_access)
+          @data_collection_depth = app.config[:data_collection_depth]
           @track_data_access = track_data_access
 
           @local_file_data_store = Data::Stores::LocalFileDataStore.new(app)
@@ -71,9 +72,9 @@ module Middleman
           return data unless @track_data_access
 
           if data.is_a? ::Middleman::Util::EnhancedHash
-            Data::Proxies::HashProxy.new(k, data, parent)
+            Data::Proxies::HashProxy.new(k, data, @data_collection_depth, parent)
           elsif data.is_a? ::Array
-            Data::Proxies::ArrayProxy.new(k, data, parent)
+            Data::Proxies::ArrayProxy.new(k, data, @data_collection_depth, parent)
           else
             raise 'Invalid data to wrap'
           end

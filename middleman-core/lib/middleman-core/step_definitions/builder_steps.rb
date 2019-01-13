@@ -10,12 +10,17 @@ Given /^a built app at "([^\"]*)"$/ do |path|
 end
 
 Then /^build the app tracking dependencies$/ do
-  step %(I run `middleman build --track-dependencies --no-parallel`)
+  step %(I run `middleman build --track-dependencies --no-parallel --verbose`)
+  step %(was successfully built)
+end
+
+Then('build the app tracking dependencies with depth {string}') do |depth|
+  step %(I run `middleman build --track-dependencies --no-parallel --verbose --data-collection-depth=#{depth}`)
   step %(was successfully built)
 end
 
 Then /^build app with only changed$/ do
-  step %(I run `middleman build --track-dependencies --only-changed --no-parallel`)
+  step %(I run `middleman build --track-dependencies --only-changed --no-parallel --verbose`)
   step %(was successfully built)
 end
 

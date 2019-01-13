@@ -12,7 +12,7 @@ describe ::Middleman::CoreExtensions::Data::Proxies::HashProxy do
           { street: '4321 S Somewhere' }
         ]
       }
-      @subject = described_class.new :people, ::Middleman::Util.recursively_enhance(@raw_data)
+      @subject = described_class.new :people, ::Middleman::Util.recursively_enhance(@raw_data), ::Float::INFINITY
     end
 
     it 'should fully convert to proxies' do
