@@ -9,9 +9,9 @@ module Middleman
 
       TYPE_ID = :file
 
-      Contract IsA['::Middleman::Application'], Symbol, Vertex::VERTEX_ATTRS => FileVertex
+      Contract IsA['::Middleman::Application'], Symbol, Vertex::SERIALIZED_VERTEX_ATTRS => FileVertex
       def self.deserialize(app, key, attributes)
-        FileVertex.new(app.root_path, key, attributes)
+        FileVertex.new(app.root_path, key, attributes.symbolize_keys)
       end
 
       Contract IsA['Middleman::Sitemap::Resource'] => FileVertex

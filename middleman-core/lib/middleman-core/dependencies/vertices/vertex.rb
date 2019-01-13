@@ -7,11 +7,12 @@ module Middleman
       include Contracts
 
       VERTEX_KEY = Symbol
-      VERTEX_ATTRS = HashOf[Symbol, Or[String, Num]]
+      VERTEX_ATTRS = HashOf[Symbol, String]
+      SERIALIZED_VERTEX_ATTRS = HashOf[String, String]
       SERIALIZED_VERTEX = {
-        key: Any, # Weird inheritance bug
-        type: Symbol,
-        attributes: VERTEX_ATTRS
+        'key' => Any, # Weird type inheritance bug
+        'type' => String,
+        'attrs' => SERIALIZED_VERTEX_ATTRS
       }.freeze
 
       Contract VERTEX_KEY
@@ -49,9 +50,9 @@ module Middleman
       Contract Maybe[VERTEX_ATTRS] => SERIALIZED_VERTEX
       def serialize(attributes = {})
         {
-          key: @key,
-          type: type_id,
-          attributes: @attributes.merge(attributes)
+          'key' => @key.to_s,
+          'type' => type_id.to_s,
+          'attrs' => @attributes.merge(attributes).stringify_keys
         }
       end
 
@@ -60,12 +61,12 @@ module Middleman
         "<Vertex type=#{type_id} key=#{key}>"
       end
 
-      protected
-
       Contract Symbol
       def type_id
         self.class.const_get :TYPE_ID
       end
+
+      protected
 
       Contract Pathname, String => String
       def relative_path(root, file)

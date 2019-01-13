@@ -87,18 +87,31 @@ module Middleman
       end
 
       def serialize
-        edges = @graph.edges.map do |edge|
-          {
-            key: edge.target.key,
-            depends_on: edge.source.key
-          }
+        edges = @graph.edges
+                      .sort_by { |edge| edge.target.key }
+                      .each_with_object({}) do |edge, sum|
+          sum[edge.target.key.to_s] ||= []
+          sum[edge.target.key.to_s] << edge.source.key.to_s
         end
 
-        vertices = @graph.vertices.map(&:serialize)
+        # Sort dependencies list
+        edges = edges.each { |(k, v)| edges[k] = v.sort }
+
+        vertices = @graph.vertices
+                         .sort_by { |v| [v.type_id, v.key] }
+                         .each_with_object({}) do |v, sum|
+          s = v.serialize
+          k = s.delete 'key'
+          t = s.delete 'type'
+          a = s.delete 'attrs'
+
+          sum[t] ||= {}
+          sum[t][k] = a['hash']
+        end
 
         {
-          edges: edges.sort_by { |d| [d[:key], d[:depends_on]] },
-          vertices: vertices.sort_by { |d| d[:key] }
+          'edges' => edges,
+          'vertices' => vertices
         }
       end
 

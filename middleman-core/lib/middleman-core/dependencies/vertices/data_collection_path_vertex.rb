@@ -8,13 +8,13 @@ module Middleman
     class DataCollectionPathVertex < Vertex
       include Contracts
 
-      TYPE_ID = :data_collection_path
+      TYPE_ID = :data_path
 
       DATA_TYPE = Or[Num, String, Symbol, Hash, Array]
 
-      Contract IsA['::Middleman::Application'], Symbol, Vertex::VERTEX_ATTRS => DataCollectionPathVertex
+      Contract IsA['::Middleman::Application'], Symbol, Vertex::SERIALIZED_VERTEX_ATTRS => DataCollectionPathVertex
       def self.deserialize(app, key, attributes)
-        DataCollectionPathVertex.new(key, attributes, app.data)
+        DataCollectionPathVertex.new(key, attributes.symbolize_keys, app.data)
       end
       Contract IsA['::Middleman::Application'], ArrayOf[Or[Symbol, Num]] => DataCollectionPathVertex
       def self.from_data(app, path)
