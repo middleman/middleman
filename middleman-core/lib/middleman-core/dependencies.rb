@@ -11,7 +11,7 @@ module Middleman
     include Contracts
 
     DEFAULT_FILE_PATH = 'deps.yml'.freeze
-    RUBY_FILES = ['config.rb', 'lib/**/*.rb', 'helpers/**/*.rb', 'Gemfile.lock'].freeze
+    GLOBAL_FILES = ['config.rb', 'lib/**/*.rb', 'helpers/**/*.rb', 'Gemfile.lock'].freeze
 
     module_function
 
@@ -34,17 +34,17 @@ module Middleman
     def serialize(app, graph)
       serialized = graph.serialize
 
-      ruby_files = Dir.glob(RUBY_FILES).reduce([]) do |sum, file|
-        sum << {
-          file: Pathname(File.expand_path(file)).relative_path_from(app.root_path).to_s,
-          hash: ::Middleman::Util.hash_file(file)
-        }
+      global = Dir.glob(GLOBAL_FILES)
+                  .sort
+                  .each_with_object({}) do |file, sum|
+        p = Pathname(File.expand_path(file)).relative_path_from(app.root_path).to_s
+        sum[p] = ::Middleman::Util.hash_file(file)
       end
 
       ::YAML.dump(
         {
-          data_collection_depth: app.config[:data_collection_depth],
-          ruby_files: ruby_files.sort_by { |d| d[:file] }
+          'data_depth' => app.config[:data_collection_depth],
+          'global' => global
         }.merge(serialized)
       )
     end
@@ -56,10 +56,10 @@ module Middleman
       warn "YAML Exception parsing dependency graph: #{error.message}"
     end
 
-    Contract ArrayOf[String]
-    def invalidated_ruby_files(known_files)
-      known_files.reject do |file|
-        file[:hash] == ::Middleman::Util.hash_file(file[:file])
+    Contract Hash[String, String] => Array[String]
+    def invalidated_global(known_files)
+      known_files.keys.reject do |key|
+        known_files[key] == ::Middleman::Util.hash_file(key)
       end
     end
 
@@ -69,7 +69,7 @@ module Middleman
     class ChangedDepth < RuntimeError
     end
 
-    class InvalidatedRubyFiles < RuntimeError
+    class InvalidatedGlobalFiles < RuntimeError
       attr_reader :invalidated
 
       def initialize(invalidated)
@@ -85,12 +85,12 @@ module Middleman
 
       data = parse_yaml(file_path)
 
-      ruby_files = data[:ruby_files]
+      global = data['global']
 
-      raise ChangedDepth if data[:data_collection_depth] != app.config[:data_collection_depth]
+      raise ChangedDepth if data['data_depth'] != app.config[:data_collection_depth]
 
-      unless (invalidated = invalidated_ruby_files(ruby_files)).empty?
-        raise InvalidatedRubyFiles, invalidated
+      unless (invalidated = invalidated_global(global)).empty?
+        raise InvalidatedGlobalFiles, invalidated
       end
 
       # Pre-existing vertices (from config.rb)
@@ -98,21 +98,25 @@ module Middleman
         sum[vertex.key] = vertex
       end
 
-      vertices = data[:vertices].each_with_object(preexisting_vertices) do |row, sum|
-        vertex_class = VERTICES_BY_TYPE[row[:type]]
-        vertex = vertex_class.deserialize(app, row[:key], row[:attributes])
-        if sum[vertex.key]
-          sum[vertex.key].merge!(vertex)
-        else
-          sum[vertex.key] = vertex
+      vertices = data['vertices'].each_with_object(preexisting_vertices) do |(type, verts), sum|
+        verts.each do |(k, h)|
+          vertex_class = VERTICES_BY_TYPE[type.to_sym]
+          vertex = vertex_class.deserialize(app, k.to_sym, 'hash' => h)
+          if sum[vertex.key.to_sym]
+            sum[vertex.key.to_sym].merge!(vertex)
+          else
+            sum[vertex.key.to_sym] = vertex
+          end
         end
       end
 
       graph = Graph.new
       vertices.values.each { |v| graph.add_vertex(v) }
 
-      data[:edges].each do |e|
-        graph.add_edge_by_key(e[:depends_on], e[:key])
+      data['edges'].each do |k, deps|
+        deps.each do |d|
+          graph.add_edge_by_key(d.to_sym, k.to_sym)
+        end
       end
 
       graph.invalidate_changes!

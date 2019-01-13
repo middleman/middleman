@@ -7,16 +7,16 @@ module Middleman
     class DataCollectionVertex < Vertex
       include Contracts
 
-      TYPE_ID = :data_collection
+      TYPE_ID = :data
 
       DATA_TYPE = Or[Hash, Array]
 
       Contract Maybe[DATA_TYPE]
       attr_accessor :data
 
-      Contract IsA['::Middleman::Application'], Symbol, Vertex::VERTEX_ATTRS => DataCollectionVertex
+      Contract IsA['::Middleman::Application'], Symbol, Vertex::SERIALIZED_VERTEX_ATTRS => DataCollectionVertex
       def self.deserialize(_app, key, attributes)
-        DataCollectionVertex.new(key, attributes)
+        DataCollectionVertex.new(key, attributes.symbolize_keys)
       end
 
       Contract Symbol, DATA_TYPE => DataCollectionVertex

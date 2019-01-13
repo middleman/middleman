@@ -66,9 +66,9 @@ module Middleman
           logger.error ':data_collection_depth changed. Dependency graph must be rebuilt.'
           @graph = ::Middleman::Dependencies::Graph.new
           @only_changed = @missing_and_changed = false
-        rescue ::Middleman::Dependencies::InvalidatedRubyFiles => e
-          changed = e.invalidated.map { |f| f[:file] }.join(', ')
-          logger.error "Some ruby files (#{changed}) have changed since last run. Dependency graph must be rebuilt."
+        rescue ::Middleman::Dependencies::InvalidatedGlobalFiles => e
+          changed = e.invalidated.join(', ')
+          logger.error "Some global files (#{changed}) have changed since last run. Dependency graph must be rebuilt."
 
           @graph = ::Middleman::Dependencies::Graph.new
           @only_changed = @missing_and_changed = false
