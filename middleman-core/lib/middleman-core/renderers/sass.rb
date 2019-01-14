@@ -54,9 +54,9 @@ module Middleman
           begin
             @engine.render
           rescue ::SassC::SyntaxError => e
-            exception_to_css(e)
-
             raise e if @context.app.build?
+
+            exception_to_css(e)
           end
         end
 
