@@ -61,6 +61,8 @@ module Middleman
             @engine.render
           rescue ::SassC::SyntaxError => e
             exception_to_css(e)
+
+            raise e if @context.app.build?
           end
         end
 
@@ -93,8 +95,14 @@ module Middleman
         def sass_options
           ctx = @context
 
+          preexisting_load_paths = begin
+            ::Sass.load_paths
+          rescue
+            []
+          end
+
           more_opts = {
-            load_paths: ctx.app.config[:sass_assets_paths],
+            load_paths: preexisting_load_paths + ctx.app.config[:sass_assets_paths],
             filename: eval_file,
             line: line,
             syntax: syntax,
