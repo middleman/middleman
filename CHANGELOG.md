@@ -1,7 +1,11 @@
 master
 ===
 
-# 4.2.2
+# 4.3.1
+
+* Fix sassc imports of gem files that expect old sass to be present.
+
+# 4.3.0
 
 * Only SassC from now on.
 * Fix regression (all the way back to v3) for Integer/Date keys in YAML. #2238
