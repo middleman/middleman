@@ -97,8 +97,8 @@ module Middleman
 
           preexisting_load_paths = begin
             ::Sass.load_paths
-          rescue
-            []
+                                   rescue StandardError
+                                     []
           end
 
           more_opts = {
