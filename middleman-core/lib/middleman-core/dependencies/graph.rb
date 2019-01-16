@@ -115,15 +115,12 @@ module Middleman
         }
       end
 
-      Contract Any
-      def invalidate_changes!
-        @invalidated = @graph.vertices.reject(&:valid?)
-        @invalidated.each { |v| @graph.remove_vertex(v) }
-      end
-
       Contract ImmutableSetOf[Vertex]
       def invalidated
-        ::Hamster::Set.new(@invalidated)
+        invalidated = @graph.vertices.reject(&:valid?)
+        invalidated.each { |v| @graph.remove_vertex(v) }
+
+        ::Hamster::Set.new(invalidated)
       end
 
       Contract IsA['::Middleman::Sitemap::Resource'] => Bool

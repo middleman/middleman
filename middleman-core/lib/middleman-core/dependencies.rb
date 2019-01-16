@@ -119,8 +119,6 @@ module Middleman
         end
       end
 
-      graph.invalidate_changes!
-
       # require 'rgl/dot'
       # graph.graph.write_to_graphic_file('jpg', 'valid')
 
