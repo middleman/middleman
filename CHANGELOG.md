@@ -1,6 +1,10 @@
 master
 ===
 
+# 4.3.2
+
+* Resolve Haml 5 warnings (#2149)
+
 # 4.3.1
 
 * Fix sassc imports of gem files that expect old sass to be present.
