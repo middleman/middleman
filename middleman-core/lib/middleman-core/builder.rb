@@ -203,11 +203,33 @@ module Middleman
                   end
 
                   outputs = Parallel.map(ranges, in_processes: processes) do |r|
-                    resources[r].map!(&method(:output_resource))
+                    resources[r].map! { |res| output_resource(res, true) }
                   end
 
                   outputs.flatten!(1)
-                  outputs
+                  outputs.map do |pair|
+                    if pair == false
+                      false
+                    else
+                      output_file = pair[0]
+
+                      serialized_dep = pair[1]
+
+                      edge = if serialized_dep.nil?
+                        nil
+                      else
+                        self_vertex = ::Middleman::Dependencies.deserialize_vertex(@app, serialized_dep[:self_vertex])
+                        depends_on = serialized_dep[:depends_on].map { |d| ::Middleman::Dependencies.deserialize_vertex(@app, d) }
+                        
+                        ::Middleman::Dependencies::Edge.new(
+                          self_vertex,
+                          depends_on << self_vertex
+                        )
+                      end
+
+                      [output_file, edge]
+                    end
+                  end
                 else
                   resources.map(&method(:output_resource))
                 end
@@ -300,17 +322,19 @@ module Middleman
     # Try to output a resource and capture errors.
     # @param [Middleman::Sitemap::Resource] resource The resource.
     # @return [void]
-    Contract IsA['Middleman::Sitemap::Resource'] => Or[Bool, [Pathname, Maybe[::Middleman::Dependencies::Edge]]]
-    def output_resource(resource)
+    SERIALIZED_DEP = { self_vertex: ::Middleman::Dependencies::Vertex::SERIALIZED_VERTEX, depends_on: ImmutableSetOf[::Middleman::Dependencies::Vertex::SERIALIZED_VERTEX] }.freeze
+    Contract IsA['Middleman::Sitemap::Resource'], Maybe[Bool] => Or[Bool, [Pathname, Maybe[Or[SERIALIZED_DEP,::Middleman::Dependencies::Edge]]]]
+    def output_resource(resource, serialize_deps = false)
       ::Middleman::Util.instrument 'builder.output.resource', path: File.basename(resource.destination_path) do
         begin
           output_file = @build_dir + resource.destination_path.gsub('%20', ' ')
 
           if @track_dependencies && (@only_changed || @missing_and_changed)
-            if @only_changed && !@graph.invalidates_resource?(resource)
+            invalidated_resource = @graph.invalidates_resource?(resource)
+            if @only_changed && !invalidated_resource
               trigger(:skipped, output_file)
               return [output_file, nil]
-            elsif @missing_and_changed && File.exist?(output_file) && !@graph.invalidates_resource?(resource)
+            elsif @missing_and_changed && File.exist?(output_file) && !invalidated_resource
               trigger(:skipped, output_file)
               return [output_file, nil]
             end
@@ -327,7 +351,7 @@ module Middleman
             end
           end
 
-          vertices = nil
+          edge = nil
 
           if resource.binary? || resource.static_file?
             export_file!(output_file, resource.file_descriptor[:full_path], true)
@@ -335,10 +359,18 @@ module Middleman
             content = resource.render({}, {})
 
             self_vertex = ::Middleman::Dependencies::FileVertex.from_resource(resource)
-            vertices = ::Middleman::Dependencies::Edge.new(
-              self_vertex,
-              resource.vertices << self_vertex
-            )
+
+            edge = if serialize_deps
+              { 
+                self_vertex: self_vertex.serialize,
+                depends_on: resource.vertices.map(&:serialize)
+              }
+            else
+               ::Middleman::Dependencies::Edge.new(
+                self_vertex,
+                resource.vertices << self_vertex
+              )
+            end
 
             export_file!(output_file, binary_encode(content))
           end
@@ -347,7 +379,7 @@ module Middleman
           return false
         end
 
-        [output_file, vertices]
+        [output_file, edge]
       end
     end
 

@@ -9,5 +9,10 @@ module Middleman
       DataCollectionPathVertex::TYPE_ID => DataCollectionPathVertex,
       FileVertex::TYPE_ID => FileVertex
     }.freeze
+
+    def self.deserialize_vertex(app, data)
+      vertex_class = VERTICES_BY_TYPE[data['type'].to_sym]
+      vertex_class.deserialize(app, data['key'].to_sym, data['attrs'])
+    end
   end
 end
