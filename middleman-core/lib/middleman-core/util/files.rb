@@ -1,5 +1,7 @@
 require 'digest/sha1'
 require 'set'
+require 'open3'
+require 'shellwords'
 
 module Middleman
   module Util
@@ -143,7 +145,11 @@ module Middleman
       # puts "Read (hash): #{path}"
 
       if ENV['MIDDLEMAN_SHELL_OUT_TO_GIT_HASH'] == 'true'
-        `git hash-object #{path}`.strip
+        output, status = ::Open3.capture2e("git hash-object #{::Shellwords.escape(path)}")
+
+        raise "Failed to get hash for '#{path}' from git." if status.exitstatus != 0 || output.empty?
+
+        output.strip
       else
         ::Digest::SHA1.file(path).hexdigest
       end

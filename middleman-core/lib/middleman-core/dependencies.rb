@@ -56,10 +56,10 @@ module Middleman
       warn "YAML Exception parsing dependency graph: #{error.message}"
     end
 
-    Contract Hash[String, String] => Array[String]
-    def invalidated_global(known_files)
+    Contract IsA['::Middleman::Application'], Hash[String, String] => Array[String]
+    def invalidated_global(app, known_files)
       known_files.keys.reject do |key|
-        known_files[key] == ::Middleman::Util.hash_file(key)
+        known_files[key] == ::Middleman::Util.hash_file(File.expand_path(key, app.root))
       end
     end
 
@@ -89,7 +89,7 @@ module Middleman
 
       raise ChangedDepth if data['data_depth'] != app.config[:data_collection_depth]
 
-      unless (invalidated = invalidated_global(global)).empty?
+      unless (invalidated = invalidated_global(app, global)).empty?
         raise InvalidatedGlobalFiles, invalidated
       end
 
