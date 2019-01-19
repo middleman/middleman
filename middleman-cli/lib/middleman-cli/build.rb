@@ -28,6 +28,10 @@ module Middleman::Cli
                  type: :boolean,
                  default: false,
                  desc: 'Print debug messages'
+    class_option :bail,
+                 type: :boolean,
+                 default: false,
+                 desc: 'Fail out on the first error and print error messages'
     class_option :instrument,
                  type: :boolean,
                  default: false,
@@ -136,7 +140,9 @@ module Middleman::Cli
       case event_type
       when :error
         say_status :error, target, :red
-        shell.say extra, :red if options['verbose']
+        shell.say extra, :red if options['verbose'] || options['bail']
+
+        raise 'Build error' if options['bail']
       when :deleted
         say_status :remove, target, :green
       when :created
