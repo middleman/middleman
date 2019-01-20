@@ -1,6 +1,7 @@
 master
 ===
 
+* Add `--bail` to fail a build upon the first error and show the error messages. (#2246)
 * Update activesupport to 5.x and padrino to 0.14.x
 * Only SassC from now on.
 * Add `--dry-run` to run a build, but skip outputting to disk.
