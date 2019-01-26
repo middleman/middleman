@@ -6,6 +6,7 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
   option :ignore, [], 'Regexes of filenames to skip adding asset hashes to'
   option :rewrite_ignore, [], 'Regexes of filenames to skip processing for path rewrites'
   option :prefix, '', 'Prefix for hash'
+  option :remove_filename, false, 'Remove the filename of the asset, naming it with the hash only'
 
   def initialize(app, options_hash = ::Middleman::EMPTY_HASH, &block)
     super
@@ -90,7 +91,9 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
              end
 
     resource_list.update!(resource, :destination_path) do
-      resource.destination_path = resource.destination_path.sub(/\.(\w+)$/) { |ext| "-#{options.prefix}#{digest}#{ext}" }
+      path, basename, extension = split_path(resource.destination_path)
+      basename = "" if options.remove_filename
+      resource.destination_path = "#{path}#{basename}#{"-" unless basename.empty?}#{options.prefix}#{digest}#{extension}"
     end
   end
 
@@ -99,5 +102,14 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
     @ignore.any? do |ignore|
       Middleman::Util.path_match(ignore, resource.destination_path)
     end
+  end
+
+  private
+  # Splits resource path into path, basename and extension
+  # (e.g. "/images/landscape.png" => ["/images/", "landscape", ".png]
+  def split_path(filepath)
+    basename = File.basename(filepath, extension = File.extname(filepath))
+    path = filepath.chomp(basename+extension)
+    [path, basename, extension]
   end
 end
