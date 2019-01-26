@@ -92,8 +92,8 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
 
     resource_list.update!(resource, :destination_path) do
       path, basename, extension = split_path(resource.destination_path)
-      basename = "" if options.remove_filename
-      resource.destination_path = "#{path}#{basename}#{"-" unless basename.empty?}#{options.prefix}#{digest}#{extension}"
+      basename = '' if options.remove_filename
+      resource.destination_path = "#{path}#{basename}#{'-' unless basename.empty?}#{options.prefix}#{digest}#{extension}"
     end
   end
 
@@ -105,11 +105,12 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
   end
 
   private
+
   # Splits resource path into path, basename and extension
   # (e.g. "/images/landscape.png" => ["/images/", "landscape", ".png]
   def split_path(filepath)
     basename = File.basename(filepath, extension = File.extname(filepath))
-    path = filepath.chomp(basename+extension)
+    path = filepath.chomp(basename + extension)
     [path, basename, extension]
   end
 end
