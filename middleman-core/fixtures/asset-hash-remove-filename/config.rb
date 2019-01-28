@@ -1,5 +1,7 @@
 activate :asset_hash,
-         remove_filename: true
+  rename_proc: -> (path, basename, digest, extension, options) {
+    "#{path}#{digest}#{extension}"
+  }
 
 activate :relative_assets
 
