@@ -6,7 +6,9 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
   option :ignore, [], 'Regexes of filenames to skip adding asset hashes to'
   option :rewrite_ignore, [], 'Regexes of filenames to skip processing for path rewrites'
   option :prefix, '', 'Prefix for hash'
-  option :remove_filename, false, 'Remove the filename of the asset, naming it with the hash only'
+  option :rename_proc, proc { |path, basename, digest, extension, options|
+    "#{path}#{basename}-#{options.prefix}#{digest}#{extension}"
+  }, 'Accepts path parameters and returns path name'
 
   def initialize(app, options_hash = ::Middleman::EMPTY_HASH, &block)
     super
@@ -92,8 +94,7 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
 
     resource_list.update!(resource, :destination_path) do
       path, basename, extension = split_path(resource.destination_path)
-      basename = '' if options.remove_filename
-      resource.destination_path = "#{path}#{basename}#{'-' unless basename.empty?}#{options.prefix}#{digest}#{extension}"
+      resource.destination_path = options.rename_proc.call(path, basename, digest, extension, options)
     end
   end
 
