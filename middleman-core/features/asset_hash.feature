@@ -322,3 +322,17 @@ Feature: Assets get file hashes appended to them and references to them are upda
       | javascripts/application.js.map |
 
     And the file "javascripts/application-myprefix-4553338c.js" should contain "//# sourceMappingURL=application.js-myprefix-22cc2b5f.map"
+
+  Scenario: Filenames can be removed by option
+    Given a successfully built app at "asset-hash-remove-filename"
+    When I cd to "build"
+    Then the following files should exist:
+      | index.html |
+      | javascripts/4553338c.js |
+      | javascripts/22cc2b5f.map |
+      | index.html |
+    And the following files should not exist:
+      | javascripts/application.js |
+      | javascripts/application.js.map |
+
+    And the file "javascripts/4553338c.js" should contain "//# sourceMappingURL=22cc2b5f.map"
