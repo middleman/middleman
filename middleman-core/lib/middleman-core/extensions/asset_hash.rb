@@ -6,6 +6,9 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
   option :ignore, [], 'Regexes of filenames to skip adding asset hashes to'
   option :rewrite_ignore, [], 'Regexes of filenames to skip processing for path rewrites'
   option :prefix, '', 'Prefix for hash'
+  option :rename_proc, proc { |path, basename, digest, extension, options|
+    "#{path}#{basename}-#{options.prefix}#{digest}#{extension}"
+  }, 'Accepts path parameters and returns path name'
 
   def initialize(app, options_hash = ::Middleman::EMPTY_HASH, &block)
     super
@@ -90,7 +93,8 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
              end
 
     resource_list.update!(resource, :destination_path) do
-      resource.destination_path = resource.destination_path.sub(/\.(\w+)$/) { |ext| "-#{options.prefix}#{digest}#{ext}" }
+      path, basename, extension = split_path(resource.destination_path)
+      resource.destination_path = options.rename_proc.call(path, basename, digest, extension, options)
     end
   end
 
@@ -99,5 +103,15 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
     @ignore.any? do |ignore|
       Middleman::Util.path_match(ignore, resource.destination_path)
     end
+  end
+
+  private
+
+  # Splits resource path into path, basename and extension
+  # (e.g. "/images/landscape.png" => ["/images/", "landscape", ".png]
+  def split_path(filepath)
+    basename = File.basename(filepath, extension = File.extname(filepath))
+    path = filepath.chomp(basename + extension)
+    [path, basename, extension]
   end
 end
