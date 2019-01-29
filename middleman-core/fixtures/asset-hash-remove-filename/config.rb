@@ -1,7 +1,7 @@
 activate :asset_hash,
-  rename_proc: -> (path, basename, digest, extension, options) {
-    "#{path}#{digest}#{extension}"
-  }
+         rename_proc: lambda do |path, _basename, digest, extension, _options|
+           "#{path}#{digest}#{extension}"
+         end
 
 activate :relative_assets
 
