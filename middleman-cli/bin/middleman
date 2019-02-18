@@ -60,5 +60,8 @@ require 'middleman-cli/build'
 require 'middleman-cli/console'
 require 'middleman-cli/config'
 
+# Support NO_COLOR: https://no-color.org
+ENV['THOR_SHELL'] = 'Basic' if ENV['NO_COLOR']
+
 # Start the CLI
 Middleman::Cli::Base.start(ARGV)
