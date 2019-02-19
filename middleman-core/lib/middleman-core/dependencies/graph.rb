@@ -7,8 +7,18 @@ require 'middleman-core/dependencies/edge'
 module Middleman
   module Dependencies
     class DirectedAdjacencyGraph < ::RGL::DirectedAdjacencyGraph
+      def initialize(*args)
+        super
+
+        @vertices_by_key = {}
+      end
+
       def add_vertex(v)
-        super(merged_vertex_or_new(v))
+        mv = merged_vertex_or_new(v)
+
+        @vertices_by_key[mv.key] = mv
+
+        super(mv)
       end
 
       def add_edge(u, v)
@@ -20,11 +30,13 @@ module Middleman
           remove_vertex(v) unless v == vertex
         end
 
+        @vertices_by_key.delete(vertex.key)
+
         super(vertex)
       end
 
       def find_vertex_by_key(key)
-        vertices.find { |v| v.key == key }
+        @vertices_by_key[key]
       end
 
       protected

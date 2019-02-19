@@ -59,7 +59,8 @@ module Middleman
     Contract IsA['::Middleman::Application'], Hash[String, String] => Array[String]
     def invalidated_global(app, known_files)
       known_files.keys.reject do |key|
-        known_files[key] == ::Middleman::Util.hash_file(File.expand_path(key, app.root))
+        p = File.expand_path(key, app.root)
+        !(File.exist? p) || known_files[key] == ::Middleman::Util.hash_file(p)
       end
     end
 
@@ -123,8 +124,8 @@ module Middleman
       # graph.graph.write_to_graphic_file('jpg', 'valid')
 
       graph
-      # rescue StandardError
-      #   raise InvalidDepsYAML
+    rescue StandardError
+      raise InvalidDepsYAML
     end
   end
 end
