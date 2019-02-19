@@ -30,7 +30,7 @@ module Middleman
           remove_vertex(v) unless v == vertex
         end
 
-        @vertices_by_key.delete(mv.key)
+        @vertices_by_key.delete(vertex.key)
 
         super(vertex)
       end

@@ -60,7 +60,7 @@ module Middleman
     def invalidated_global(app, known_files)
       known_files.keys.reject do |key|
         p = File.expand_path(key, app.root)
-        known_files[key] == (File.exist? p) && ::Middleman::Util.hash_file(p)
+        !(File.exist? p) || known_files[key] == ::Middleman::Util.hash_file(p)
       end
     end
 
