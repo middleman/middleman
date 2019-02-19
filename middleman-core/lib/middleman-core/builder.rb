@@ -57,7 +57,9 @@ module Middleman
 
       if @track_dependencies
         begin
-          @graph = ::Middleman::Dependencies.load_and_deserialize(@app)
+          ::Middleman::Util.instrument 'dependencies.load_and_deserialize' do
+            @graph = ::Middleman::Dependencies.load_and_deserialize(@app)
+          end
         rescue ::Middleman::Dependencies::InvalidDepsYAML
           logger.error 'dep.yml was corrupt. Dependency graph must be rebuilt.'
           @graph = ::Middleman::Dependencies::Graph.new

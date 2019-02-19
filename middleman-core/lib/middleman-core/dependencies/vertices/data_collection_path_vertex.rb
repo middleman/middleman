@@ -16,6 +16,7 @@ module Middleman
       def self.deserialize(app, key, attributes)
         DataCollectionPathVertex.new(key, attributes.symbolize_keys, app.data)
       end
+
       Contract IsA['::Middleman::Application'], ArrayOf[Or[Symbol, Num]] => DataCollectionPathVertex
       def self.from_data(app, path)
         DataCollectionPathVertex.new(path.map(&:to_s).join('.').to_sym, {}, app.data)
