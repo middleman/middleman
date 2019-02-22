@@ -56,7 +56,7 @@ module Middleman
           def wrap_data(key, data)
             if @depth >= @data_collection_depth
               log_access(:__full_access__)
-              data
+              ::Middleman::Util.recursively_enhance(data)
             elsif data.is_a? ::Middleman::Util::EnhancedHash
               HashProxy.new(key, data, @data_collection_depth, self)
             elsif data.is_a? ::Array
