@@ -27,9 +27,9 @@ module Middleman
             @data.to_s
           end
 
-          def to_json
+          def to_json(*args)
             log_access(:__full_access__)
-            @data.to_h.to_json
+            @data.to_h.to_json(*args)
           end
         end
       end

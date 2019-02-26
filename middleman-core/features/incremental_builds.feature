@@ -577,3 +577,23 @@ Feature: Incremental builds
       | build/part-two.html |
     And the file "build/part-one.html" should contain "Part = 4"
     And the file "build/part-two.html" should contain "Part = 6"
+
+  Scenario: Wrapped collection methods, like `select`, should effect downstream methods.
+    Given an empty app
+    When a file named "config.rb" with:
+      """
+      """
+    When a file named "data/roles.yml" with:
+      """
+      - title: "Job"
+        salary: 1111
+      """
+    When a file named "source/roles/data.json.erb" with:
+      """
+      {
+        "roles": <%= data.roles.select(&:salary).to_json %>
+      }
+      """
+    Then build the app tracking dependencies
+    Then there are "1" files which are created
+    # with depth "1"
