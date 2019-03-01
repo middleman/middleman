@@ -1,5 +1,4 @@
 require 'redcarpet'
-require 'active_support/core_ext/module/attribute_accessors'
 
 module Middleman
   module Renderers

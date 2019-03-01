@@ -591,9 +591,9 @@ Feature: Incremental builds
     When a file named "source/roles/data.json.erb" with:
       """
       {
-        "roles": <%= data.roles.select(&:salary).to_json %>
+        "roles": <%= data.roles.select(&:salary).to_json %>,
+        "roles2": <%= data.roles.first.as_json %>
       }
       """
-    Then build the app tracking dependencies
+    Then build the app tracking dependencies with depth "1"
     Then there are "1" files which are created
-    # with depth "1"

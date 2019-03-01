@@ -13,7 +13,7 @@ module Middleman
         def precompiled_preamble(locals)
           original = super
           "__in_erb_template = true\n" << original
-          # .rpartition("\n").first << "#{@outvar} = _buf = ActiveSupport::SafeBuffer.new\n"
+          # .rpartition("\n").first << "#{@outvar} = _buf = ::ActiveSupport::SafeBuffer.new\n"
         end
       end
     end

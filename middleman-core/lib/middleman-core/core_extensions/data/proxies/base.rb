@@ -20,6 +20,10 @@ module Middleman
             @accessed_keys = ::Hamster::Set.new
           end
 
+          def respond_to_missing?(name, *)
+            @data.respond_to?(name) || super
+          end
+
           def method_missing(name, *args, &block)
             if @data.respond_to?(name)
               log_access(:__full_access__)
@@ -38,6 +42,11 @@ module Middleman
 
           def _replace_parent(new_parent)
             @parent = new_parent
+          end
+
+          def as_json(*args)
+            log_access(:__full_access__)
+            @data.as_json(*args)
           end
 
           protected

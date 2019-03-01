@@ -4,8 +4,6 @@ require 'pathname'
 # DbC
 require 'middleman-core/contracts'
 
-require 'active_support/core_ext/hash/keys'
-
 require 'middleman-core/util/data'
 
 # Extensions namespace

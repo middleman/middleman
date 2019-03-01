@@ -1,9 +1,7 @@
 # Use the Ruby/Rails logger
-require 'active_support/notifications'
-require 'active_support/logger'
 module Middleman
   # The Middleman Logger
-  class Logger < ActiveSupport::Logger
+  class Logger < ::ActiveSupport::Logger
     def self.singleton(*args)
       if !@_logger || !args.empty?
         args = [0, false, args.first] if args.length == 1 && (args.first.is_a?(::String) || args.first.respond_to?(:write))

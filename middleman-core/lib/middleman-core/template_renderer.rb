@@ -1,6 +1,5 @@
 require 'tilt'
 require 'hamster'
-require 'active_support/core_ext/string/output_safety'
 require 'middleman-core/contracts'
 require 'middleman-core/template_context'
 require 'middleman-core/file_renderer'

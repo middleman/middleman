@@ -1,7 +1,5 @@
 require 'tilt'
 require 'hamster'
-require 'active_support/core_ext/string/output_safety'
-require 'active_support/core_ext/module/delegation'
 require 'middleman-core/contracts'
 require 'middleman-core/dependencies/vertices/vertex'
 

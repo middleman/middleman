@@ -23,8 +23,6 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
   def initialize(app, options_hash = ::Middleman::EMPTY_HASH, &block)
     super
 
-    require 'active_support/core_ext/object/to_query'
-
     ::Middleman::TemplateContext.send :include, ::Padrino::Helpers::OutputHelpers
     ::Middleman::TemplateContext.send :include, ::Padrino::Helpers::TagHelpers
     ::Middleman::TemplateContext.send :include, ::Padrino::Helpers::AssetTagHelpers
@@ -47,7 +45,7 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
 
       options    = parse_data_options(name, options)
       attributes = tag_attributes(options)
-      output = ActiveSupport::SafeBuffer.new
+      output = ::ActiveSupport::SafeBuffer.new
       output.safe_concat "<#{name}#{attributes}>"
 
       if content.respond_to?(:each) && !content.is_a?(String)
