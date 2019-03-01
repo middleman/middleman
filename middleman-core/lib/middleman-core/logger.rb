@@ -1,6 +1,4 @@
 # Use the Ruby/Rails logger
-require 'active_support/notifications'
-require 'active_support/logger'
 module Middleman
   # The Middleman Logger
   class Logger < ActiveSupport::Logger

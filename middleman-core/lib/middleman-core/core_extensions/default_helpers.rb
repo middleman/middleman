@@ -23,8 +23,6 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
   def initialize(app, options_hash = ::Middleman::EMPTY_HASH, &block)
     super
 
-    require 'active_support/core_ext/object/to_query'
-
     ::Middleman::TemplateContext.send :include, ::Padrino::Helpers::OutputHelpers
     ::Middleman::TemplateContext.send :include, ::Padrino::Helpers::TagHelpers
     ::Middleman::TemplateContext.send :include, ::Padrino::Helpers::AssetTagHelpers

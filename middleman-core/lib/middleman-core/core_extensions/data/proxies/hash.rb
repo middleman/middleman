@@ -14,22 +14,16 @@ module Middleman
           end
           alias get []
 
+          def respond_to_missing?(name, *)
+            @data.key?(name) || super
+          end
+
           def method_missing(name, *_args)
             return self[name] if @data.key?(name)
 
             super
           rescue NoMethodError
             nil
-          end
-
-          def to_s
-            log_access(:__full_access__)
-            @data.to_s
-          end
-
-          def to_json(*args)
-            log_access(:__full_access__)
-            @data.to_h.to_json(*args)
           end
         end
       end

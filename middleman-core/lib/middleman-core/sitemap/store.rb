@@ -1,5 +1,4 @@
 # Used for merging results of metadata callbacks
-require 'active_support/core_ext/hash/deep_merge'
 require 'monitor'
 require 'hamster'
 require 'middleman-core/extensions'

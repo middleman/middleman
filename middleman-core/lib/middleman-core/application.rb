@@ -1,4 +1,3 @@
-require 'active_support/core_ext/integer/inflections'
 require 'hamster'
 require 'middleman-core/contracts'
 require 'middleman-core/callback_manager'

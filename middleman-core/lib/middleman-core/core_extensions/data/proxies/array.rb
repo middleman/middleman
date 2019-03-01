@@ -8,6 +8,10 @@ module Middleman
         class ArrayProxy < BaseProxy
           WRAPPED_LIST_METHODS = Set.new %i[each each_with_index select sort shuffle reverse rotate sample]
 
+          def respond_to_missing?(name, *)
+            self.class.const_get(:WRAPPED_LIST_METHODS).include?(name) || super
+          end
+
           def method_missing(name, *args, &block)
             if self.class.const_get(:WRAPPED_LIST_METHODS).include?(name)
               log_access(:__full_access__)
@@ -51,16 +55,6 @@ module Middleman
             else
               slice(size - length, length)
             end
-          end
-
-          def to_s
-            log_access(:__full_access__)
-            @data.to_s
-          end
-
-          def to_json(*args)
-            log_access(:__full_access__)
-            @data.to_a.to_json(*args)
           end
 
           private

@@ -1,5 +1,4 @@
 require 'ipaddr'
-require 'active_support/core_ext/object/blank'
 require 'middleman-core/preview_server/checks'
 require 'middleman-core/preview_server/server_hostname'
 require 'middleman-core/preview_server/server_ip_address'

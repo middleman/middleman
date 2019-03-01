@@ -1,6 +1,3 @@
-# For instrumenting
-require 'active_support/notifications'
-
 require 'middleman-core/application'
 require 'middleman-core/sources'
 require 'middleman-core/sitemap/resource'

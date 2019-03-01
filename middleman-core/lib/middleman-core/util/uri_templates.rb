@@ -1,8 +1,6 @@
 # For URI templating
 require 'addressable/uri'
 require 'addressable/template'
-require 'active_support/inflector'
-require 'active_support/inflector/transliterate'
 
 module Middleman
   module Util
