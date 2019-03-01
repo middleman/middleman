@@ -45,7 +45,7 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
 
       options    = parse_data_options(name, options)
       attributes = tag_attributes(options)
-      output = ActiveSupport::SafeBuffer.new
+      output = ::ActiveSupport::SafeBuffer.new
       output.safe_concat "<#{name}#{attributes}>"
 
       if content.respond_to?(:each) && !content.is_a?(String)
