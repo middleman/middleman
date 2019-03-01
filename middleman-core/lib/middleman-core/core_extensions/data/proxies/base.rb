@@ -9,8 +9,6 @@ module Middleman
           attr_reader :accessed_keys
           attr_reader :depth
 
-          INJECTED_METHODS = Set.new %i[at_json]
-
           def initialize(key, data, data_collection_depth, parent = nil)
             @key = key
             @data = data
@@ -23,11 +21,11 @@ module Middleman
           end
 
           def respond_to_missing?(name, *)
-            @data.respond_to?(name) || self.class.const_get(:INJECTED_METHODS).include?(name) || super
+            @data.respond_to?(name) || super
           end
 
           def method_missing(name, *args, &block)
-            if @data.respond_to?(name) || self.class.const_get(:INJECTED_METHODS).include?(name)
+            if @data.respond_to?(name)
               log_access(:__full_access__)
 
               return @data.send(name, *args, &block)
@@ -44,6 +42,11 @@ module Middleman
 
           def _replace_parent(new_parent)
             @parent = new_parent
+          end
+
+          def as_json(*args)
+            log_access(:__full_access__)
+            @data.as_json(*args)
           end
 
           protected
