@@ -207,3 +207,136 @@ Feature: i18n Paths
     Then I should see "Page Lang: Spanish"
     Then I should see 'Current: /es/article.html'
     Then I should see 'Other: /article.html'
+
+  Scenario: url_for is both i18n and directory_indexes aware
+    Given a fixture app "empty-app"
+    And a file named "data/pages.yml" with:
+      """
+      - hello.html
+      - article.html
+      """
+    And a file named "locales/en.yml" with:
+      """
+      ---
+      en:
+        msg: Hello
+      """
+    And a file named "locales/es.yml" with:
+      """
+      ---
+      es:
+        paths:
+          hello: "hola"
+        msg: Hola
+      """
+    And a file named "source/localizable/hello.html.erb" with:
+      """
+      Page: <%= t(:msg) %>
+      <% data.pages.each_with_index do |p, i| %>
+        Current: <%= url_for "/#{p}" %>
+        Other: <%= url_for "/#{p}", locale: ::I18n.locale == :en ? :es : :en %>
+      <% end %>
+      """
+    And a file named "source/localizable/article.html.erb" with:
+      """
+      Page Lang: Default
+
+      Current: <%= url_for "/article.html" %>
+      Other: <%= url_for "/article.html", locale: ::I18n.locale == :en ? :es : :en %>
+      """
+    And a file named "source/localizable/article.es.html.erb" with:
+      """
+      Page Lang: Spanish
+
+      Current: <%= url_for "/article.html" %>
+      Other: <%= url_for "/article.html", locale: :en %>
+      """
+    And a file named "config.rb" with:
+      """
+      activate :i18n, mount_at_root: :en
+      activate :directory_indexes
+      """
+    Given the Server is running at "empty-app"
+    When I go to "/hello/"
+    Then I should see "Page: Hello"
+    Then I should see 'Current: /hello/'
+    Then I should see 'Other: /es/hola/'
+    When I go to "/es/hola/"
+    Then I should see "Page: Hola"
+    Then I should see 'Current: /es/hola/'
+    Then I should see 'Other: /hello/'
+    When I go to "/article/"
+    Then I should see "Page Lang: Default"
+    Then I should see 'Current: /article/'
+    Then I should see 'Other: /es/article/'
+    When I go to "/es/article/"
+    Then I should see "Page Lang: Spanish"
+    Then I should see 'Current: /es/article/'
+    Then I should see 'Other: /article/'
+
+  Scenario: url_for and i18n support http_prefix
+    Given a fixture app "empty-app"
+    And a file named "data/pages.yml" with:
+      """
+      - hello.html
+      - article.html
+      """
+    And a file named "locales/en.yml" with:
+      """
+      ---
+      en:
+        msg: Hello
+      """
+    And a file named "locales/es.yml" with:
+      """
+      ---
+      es:
+        paths:
+          hello: "hola"
+        msg: Hola
+      """
+    And a file named "source/localizable/hello.html.erb" with:
+      """
+      Page: <%= t(:msg) %>
+      <% data.pages.each_with_index do |p, i| %>
+        Current: <%= url_for "/#{p}" %>
+        Other: <%= url_for "/#{p}", locale: ::I18n.locale == :en ? :es : :en %>
+      <% end %>
+      """
+    And a file named "source/localizable/article.html.erb" with:
+      """
+      Page Lang: Default
+
+      Current: <%= url_for "/article.html" %>
+      Other: <%= url_for "/article.html", locale: ::I18n.locale == :en ? :es : :en %>
+      """
+    And a file named "source/localizable/article.es.html.erb" with:
+      """
+      Page Lang: Spanish
+
+      Current: <%= url_for "/article.html" %>
+      Other: <%= url_for "/article.html", locale: :en %>
+      """
+    And a file named "config.rb" with:
+      """
+      activate :i18n, mount_at_root: :en
+      activate :directory_indexes
+      set :http_prefix, '/my_prefix/'
+      """
+    Given the Server is running at "empty-app"
+    When I go to "/hello/"
+    Then I should see "Page: Hello"
+    Then I should see 'Current: /my_prefix/hello/'
+    Then I should see 'Other: /my_prefix/es/hola/'
+    When I go to "/es/hola/"
+    Then I should see "Page: Hola"
+    Then I should see 'Current: /my_prefix/es/hola/'
+    Then I should see 'Other: /my_prefix/hello/'
+    When I go to "/article/"
+    Then I should see "Page Lang: Default"
+    Then I should see 'Current: /my_prefix/article/'
+    Then I should see 'Other: /my_prefix/es/article/'
+    When I go to "/es/article/"
+    Then I should see "Page Lang: Spanish"
+    Then I should see 'Current: /my_prefix/es/article/'
+    Then I should see 'Other: /my_prefix/article/'
