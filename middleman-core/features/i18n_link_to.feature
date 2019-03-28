@@ -207,3 +207,26 @@ Feature: i18n Paths
     Then I should see "Page Lang: Spanish"
     Then I should see 'Current: /es/article.html'
     Then I should see 'Other: /article.html'
+
+  Scenario: url_for can link to the current page in a different language with localized templates
+    Given a fixture app "empty-app"
+    And a file named "source/localizable/index.de.html.erb" with:
+      """
+      Deutsch. Die Englische Version finden Sie unter "<%= url_for current_page, locale: :en %>"
+      """
+    And a file named "source/localizable/index.en.html.erb" with:
+      """
+      English. The German version can be found at "<%= url_for current_page, locale: :de %>"
+      """
+    And a file named "config.rb" with:
+      """
+      # FIXME: Auto-discover does not work if there are no locale files.
+      activate :i18n, mount_at_root: :en, :locales => [:en, :de]
+      """
+    Given the Server is running at "empty-app"
+    When I go to "/index.html"
+    Then I should see "English"
+    Then I should see '"/de/"'
+    When I go to "/de/index.html"
+    Then I should see "Deutsch"
+    Then I should see '"/"'
