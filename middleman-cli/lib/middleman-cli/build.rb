@@ -133,7 +133,7 @@ module Middleman::Cli
 
     # Handles incoming events from the builder.
     # @param [Symbol] event_type The type of event.
-    # @param [String] contents The event contents.
+    # @param [String] target The event contents.
     # @param [String] extra The extra information.
     # @return [void]
     def on_event(event_type, target, extra = nil)
