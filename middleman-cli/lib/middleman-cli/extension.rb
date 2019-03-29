@@ -24,7 +24,6 @@ module Middleman::Cli
     class_option :git, type: :boolean, default: true
 
     # The extension task
-    # @param [String] name
     def extension
       copy_file 'extension/gitignore', File.join(name, '.gitignore') unless options[:'skip-git']
       template 'extension/Rakefile', File.join(name, 'Rakefile')
