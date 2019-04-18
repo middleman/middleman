@@ -71,6 +71,7 @@ module Middleman
 
       @frontmatter = options.fetch(:frontmatter, true)
       @binary = options.fetch(:binary, false)
+      @pessimistic_partial_update_events = options.fetch(:pessimistic_partial_update_events, true)
       @validator = options.fetch(:validator, proc { true })
       @ignored = options.fetch(:ignored, proc { false })
       @only = Array(options.fetch(:only, []))
@@ -266,14 +267,16 @@ module Middleman
         logger.debug "== Change (#{f[:types].inspect}): #{f[:relative_path]}"
       end
 
-      related_sources = valid_updates.map { |u| u[:full_path] } + removed_paths
-      related_updates = ::Middleman::Util.find_related_files(app, related_sources).select(&method(:valid?))
+      if @pessimistic_partial_update_events
+        related_sources = valid_updates.map { |u| u[:full_path] } + removed_paths
+        related_updates = ::Middleman::Util.find_related_files(app, related_sources).select(&method(:valid?))
 
-      related_updates.each do |f|
-        logger.debug "== Possible Change (#{f[:types].inspect}): #{f[:relative_path]}"
+        related_updates.each do |f|
+          logger.debug "== Possible Change (#{f[:types].inspect}): #{f[:relative_path]}"
+        end
+
+        valid_updates |= related_updates
       end
-
-      valid_updates |= related_updates
 
       valid_removes = removed_paths
                       .select(&@files.method(:key?))

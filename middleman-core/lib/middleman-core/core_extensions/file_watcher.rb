@@ -9,6 +9,9 @@ module Middleman
       Contract IsA['Middleman::Sources']
       attr_reader :sources
 
+      # Defaults to true for 4.x, could become false for 5.x
+      define_setting :pessimistic_partial_update, true, 'Whether a change to a partial should cause a pessimistic reload of all files which could include it.'
+
       # Make the internal `sources` method available as `app.files`
       expose_to_application files: :sources
 
@@ -75,7 +78,7 @@ module Middleman
       Contract String => Any
       def start_watching(dir)
         @original_source_dir = dir
-        @watcher = @sources.watch :source, path: File.join(app.root, dir)
+        @watcher = @sources.watch :source, path: File.join(app.root, dir), pessimistic_partial_update_events: app.config[:pessimistic_partial_update]
       end
     end
   end
