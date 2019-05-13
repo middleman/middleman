@@ -1,5 +1,9 @@
 # master
 
+# 4.3.4
+
+- Fix `ignore` of files controlled by i18n. #2039 #2143
+
 # 4.3.3
 
 - Add `--bail` to fail a build upon the first error and show the error messages. (#2246)
