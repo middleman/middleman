@@ -1,43 +1,30 @@
 # master
 
+# 5.0.0.rc.1
+
 - Support NO_COLOR: https://no-color.org
-- Add `--bail` to fail a build upon the first error and show the error messages. (#2246)
 - Update activesupport to 5.x and padrino to 0.14.x
-- Only SassC from now on.
 - Add `--dry-run` to run a build, but skip outputting to disk.
 - Incremental builds: `--track-dependencies` and `--only-changed` flags (#2220)
 - Remove Rack support in favor of `resource.filters << proc { |oldbody| newbody }`
 - `manipulate_resource_list_container!` as a faster, less functional approach.
-
-# 4.3.0.rc.4
-
 - i18n was accidentally duplicating requests for extension-based template (file.es.html)
 - Make sass cache configurable with either `SASS_CACHE_LOCATION` env variable or `sass_cache_location` Middleman config variable. (#2213)
-
-# 4.3.0.rc.3
-
 - Fix Internal Server Error from `__middleman` meta page in dev. (#2187)
 - Reduce mutex hits in parallel build (#2107)
 - Docker-ized CLI
-
-# 4.3.0.rc.2
-
 - Add Errno::ENETUNREACH to exception list in BasicNetworkResolver (#2195)
 - Update Rubocop and apply new lint rules
 - Do not create unnecessary array in IgnoreDescriptor (#2183)
 - Fix reload of watched sources with destination_dir (#2190)
 - Fix localization and recursion issues of Traversal::parent. (#2188)
 - Use EnhancedHash for partial locals (#2169)
-
-# 4.3.0.rc.1
-
 - Test against Ruby 2.5 (#2166)
 - Update Rubocop and Yard (#2161)
 - Discover template in local directory if applicable (#2157)
 - Better error message when init fails to clone git repo (#2159)
 - Allow bundle path to be specified in init command (#2154)
 - Add ExtensionManager#active? to check if extension is active (#2156)
-- Resolve Haml 5 warnings (#2149)
 - Clear lazy map after resolving Tilt templates (#2132)
 - Fix ignore of I18n files (#2143)
 - Fix redirect destination lookup (#2140)
@@ -51,8 +38,25 @@
 - Add support for locale suffixes to link_to (#2065)
 - Allow absolute :data_dir paths. Addresses #2042
 
-# 4.2.2
+# 4.3.4
 
+- Fix `ignore` of files controlled by i18n. #2039 #2143
+
+# 4.3.3
+
+- Add `--bail` to fail a build upon the first error and show the error messages. (#2246)
+
+# 4.3.2
+
+- Resolve Haml 5 warnings (#2149)
+
+# 4.3.1
+
+- Fix sassc imports of gem files that expect old sass to be present.
+
+# 4.3.0
+
+- Only SassC from now on.
 - Fix regression (all the way back to v3) for Integer/Date keys in YAML. #2238
 - Fix API to allow rack server according to docs (middleman/middlemanapp.com#794)
 - Require i18n ~> 0.8.0 to handle 0.7.0 security issue.
