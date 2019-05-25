@@ -4,8 +4,6 @@ rvm:
   - ruby-head
   - 2.6.2
   - 2.5.5
-  - 2.4.6
-  - 2.3.8
 os:
   - linux
 before_install:

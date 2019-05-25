@@ -123,11 +123,9 @@ module Middleman
 
       def load_settings(app)
         registered.each do |name, _|
-          begin
-            ext = load(name)
-            app.config.load_settings(ext.global_config.all_settings) unless ext.global_config.all_settings.empty?
-          rescue LoadError
-          end
+          ext = load(name)
+          app.config.load_settings(ext.global_config.all_settings) unless ext.global_config.all_settings.empty?
+        rescue LoadError
         end
       end
     end

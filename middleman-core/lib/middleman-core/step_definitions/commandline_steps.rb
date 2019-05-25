@@ -1,23 +1,21 @@
 When /^I stop (?:middleman|all commands) if the output( of the last command)? contains:$/ do |_last_command, expected|
-  begin
-    Timeout.timeout(aruba.config.exit_timeout) do
-      loop do
-        raise 'You need to start middleman interactively first.' unless @interactive
+  Timeout.timeout(aruba.config.exit_timeout) do
+    loop do
+      raise 'You need to start middleman interactively first.' unless @interactive
 
-        if sanitize_text(@interactive.output)&.match?(Regexp.new(sanitize_text(expected)))
-          all_commands.each(&:terminate)
-          break
-        end
-
-        sleep 0.1
+      if sanitize_text(@interactive.output)&.match?(Regexp.new(sanitize_text(expected)))
+        all_commands.each(&:terminate)
+        break
       end
+
+      sleep 0.1
     end
-  rescue ChildProcess::TimeoutError, TimeoutError
-    @interactive.terminate
-  ensure
-    announcer.stdout @interactive.stdout
-    announcer.stderr @interactive.stderr
   end
+rescue ChildProcess::TimeoutError, TimeoutError
+  @interactive.terminate
+ensure
+  announcer.stdout @interactive.stdout
+  announcer.stderr @interactive.stderr
 end
 
 # Make it just a long running process

@@ -66,11 +66,9 @@ module Middleman
       Contract ArrayOf[Or[Symbol, Num]]
       def key_to_path
         @key.to_s.split('.').map do |part|
-          begin
-            Integer(part)
-          rescue StandardError
-            part.to_sym
-          end
+          Integer(part)
+        rescue StandardError
+          part.to_sym
         end
       end
     end

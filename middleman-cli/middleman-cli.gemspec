@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
   s.files       = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(fixtures|features|spec)/}) }
   s.executable   = 'middleman'
   s.require_path = 'lib'
-  s.required_ruby_version = '>= 2.3.0'
+  s.required_ruby_version = '>= 2.5.0'
 
   # CLI
   s.add_dependency('thor', ['>= 0.17.0', '< 2.0'])

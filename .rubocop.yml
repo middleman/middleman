@@ -1,14 +1,16 @@
+require: rubocop-performance
+
 AllCops:
-  TargetRubyVersion: 2.3
+  TargetRubyVersion: 2.5
   Include:
-    - '**/*.rb'
-    - '**/Rakefile'
-    - '**/Gemfile'
-    - '**/config.ru'
+    - "**/*.rb"
+    - "**/Rakefile"
+    - "**/Gemfile"
+    - "**/config.ru"
   Exclude:
-    - 'vendor/**/*'
-    - '**/tmp/**/*'
-    - 'middleman-cli/lib/middleman-cli/templates/**/*'
+    - "vendor/**/*"
+    - "**/tmp/**/*"
+    - "middleman-cli/lib/middleman-cli/templates/**/*"
 Security/YAMLLoad:
   Enabled: false
 Style/GuardClause:
