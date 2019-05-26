@@ -5,16 +5,16 @@
 [![Build Status](https://travis-ci.org/middleman/middleman.svg?branch=master)][travis]
 [![Gitter](https://badges.gitter.im/middleman/middleman.svg)][gitter]
 
-**Middleman** is a static site generator using all the shortcuts and tools in modern web development. Check out [middlemanapp.com](http://middlemanapp.com/) for detailed tutorials, including a [getting started guide](http://middlemanapp.com/basics/getting-started/). You can also follow [@middlemanapp](https://twitter.com/middlemanapp) for updates.
+**Middleman** is a static site generator using all the shortcuts and tools in modern web development. Check out [middlemanapp.com](https://middlemanapp.com/) for detailed tutorials, including a [getting started guide](https://middlemanapp.com/basics/getting-started/). You can also follow [@middlemanapp](https://twitter.com/middlemanapp) for updates.
 
 ## Why Middleman?
 
 The last few years have seen an explosion in the amount and variety of tools developers can use to build web applications. Ruby on Rails selects a handful of these tools:
 
-* [Sass](http://sass-lang.com/) for DRY stylesheets
-* [CoffeeScript](http://coffeescript.org/) for safer and less verbose javascript
-* Multiple asset management solutions, including [Sprockets](https://github.com/rails/sprockets)
-* [ERb](http://ruby-doc.org/stdlib-2.0.0/libdoc/erb/rdoc/ERB.html) & [Haml](http://haml.info/) for dynamic pages and simplified HTML syntax
+- [Sass](http://sass-lang.com/) for DRY stylesheets
+- [CoffeeScript](http://coffeescript.org/) for safer and less verbose javascript
+- Multiple asset management solutions, including [Sprockets](https://github.com/rails/sprockets)
+- [ERb](http://ruby-doc.org/stdlib-2.0.0/libdoc/erb/rdoc/ERB.html) & [Haml](http://haml.info/) for dynamic pages and simplified HTML syntax
 
 **Middleman** gives the stand-alone developer access to all these tools and many, many more. Why would you use a stand-alone framework instead of Ruby on Rails?
 
@@ -61,7 +61,7 @@ This will compile your templates and output a stand-alone site which can be easi
 
 ## Learn More
 
-A full set of in-depth instructional guides are available on the official website at: http://middlemanapp.com
+A full set of in-depth instructional guides are available on the official website at: https://middlemanapp.com
 
 Additionally, up-to-date generated code documentation is available on [RubyDoc]
 
@@ -106,12 +106,12 @@ Constraint][pvc] with two digits of precision. For example:
 
 Copyright (c) 2010-2017 Thomas Reynolds. MIT Licensed, see [LICENSE] for details.
 
-[middleman]: http://middlemanapp.com
+[middleman]: https://middlemanapp.com
 [gem]: https://rubygems.org/gems/middleman
 [travis]: http://travis-ci.org/middleman/middleman
 [gittip]: https://www.gittip.com/middleman/
 [rubyinstaller]: http://rubyinstaller.org/
-[RubyInstaller-Devkit]: https://rubyinstaller.org/add-ons/devkit.html
+[rubyinstaller-devkit]: https://rubyinstaller.org/add-ons/devkit.html
 [rubydoc]: http://rubydoc.info/github/middleman/middleman
-[LICENSE]: https://github.com/middleman/middleman/blob/master/LICENSE.md
+[license]: https://github.com/middleman/middleman/blob/master/LICENSE.md
 [gitter]: https://gitter.im/middleman/middleman?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
