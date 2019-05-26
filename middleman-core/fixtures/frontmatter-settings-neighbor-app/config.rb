@@ -16,7 +16,7 @@ class NeighborFrontmatter < ::Middleman::Extension
       next if resource.file_descriptor[:relative_path].extname == '.frontmatter'
 
       [
-        "#{resource.url.sub(/^\//, '')}.frontmatter",
+        "#{resource.url.sub(%r{^/}, '')}.frontmatter",
         "#{resource.file_descriptor[:relative_path]}.frontmatter"
       ].each do |n|
         file = app.files.find(:source, n)

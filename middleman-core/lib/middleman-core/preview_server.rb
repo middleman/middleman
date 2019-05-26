@@ -172,7 +172,7 @@ module Middleman
               watcher.listener.ignore(/^\.sass-cache/)
 
               # Hack around bundler cache in root.
-              watcher.listener.ignore(/^vendor\/bundle/)
+              watcher.listener.ignore(%r{^vendor/bundle})
             end
           end
         end

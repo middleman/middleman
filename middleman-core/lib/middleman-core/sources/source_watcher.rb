@@ -183,7 +183,7 @@ module Middleman
 
       @listener.ignore(/^\.sass-cache/)
       @listener.ignore(/^node_modules/)
-      @listener.ignore(/^vendor\/bundle/)
+      @listener.ignore(%r{^vendor/bundle})
 
       @listener.start
     end

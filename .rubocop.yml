@@ -53,8 +53,6 @@ Naming/HeredocDelimiterNaming:
   Enabled: false
 Security/Eval:
   Enabled: false
-Style/RegexpLiteral:
-  Enabled: false
 Style/ClassAndModuleChildren:
   Enabled: false
 Style/MissingRespondToMissing:

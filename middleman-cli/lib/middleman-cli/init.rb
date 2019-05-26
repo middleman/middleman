@@ -72,7 +72,7 @@ module Middleman::Cli
             invoke 'middleman:generator'
           else
             source_paths << dir
-            directory dir, '.', exclude_pattern: /\.git\/|\.gitignore$/
+            directory dir, '.', exclude_pattern: %r{\.git/|\.gitignore$}
           end
 
           bundle_args = options[:'bundle-path'] ? " --path=#{options[:'bundle-path']}" : ''

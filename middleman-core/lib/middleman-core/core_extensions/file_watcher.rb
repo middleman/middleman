@@ -17,10 +17,10 @@ module Middleman
 
       # The default list of ignores.
       IGNORES = {
-        emacs_files: /(^|\/)\.?#/,
+        emacs_files: %r{(^|/)\.?#},
         tilde_files: /~$/,
         ds_store: /\.DS_Store$/,
-        git: /(^|\/)\.git(ignore|modules|\/)/
+        git: %r{(^|/)\.git(ignore|modules|/)}
       }.freeze
 
       # Setup the extension.
