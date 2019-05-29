@@ -13,7 +13,7 @@ class Middleman::Extensions::MinifyCss < ::Middleman::Extension
   option :content_types, %w[text/css], 'Content types of resources that contain CSS'
   option :inline_content_types, %w[text/html text/php], 'Content types of resources that contain inline CSS'
 
-  INLINE_CSS_REGEX = /(<style[^>]*>\s*(?:\/\*<!\[CDATA\[\*\/\n)?)(.*?)((?:(?:\n\s*)?\/\*\]\]>\*\/)?\s*<\/style>)/m.freeze
+  INLINE_CSS_REGEX = %r{(<style[^>]*>\s*(?:/\*<!\[CDATA\[\*/\n)?)(.*?)((?:(?:\n\s*)?/\*\]\]>\*/)?\s*</style>)}m.freeze
 
   class SassCompressor
     COMPRESSED_OPTIONS = { style: :compressed }.freeze

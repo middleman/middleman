@@ -114,8 +114,8 @@ module Middleman
           ::Middleman::Util.instrument 'parse.yaml' do
             ::YAML.load(content)
           end
-            rescue StandardError, ::Psych::SyntaxError => error
-              warn "YAML Exception parsing #{full_path}: #{error.message}"
+            rescue StandardError, ::Psych::SyntaxError => e
+              warn "YAML Exception parsing #{full_path}: #{e.message}"
               {}
         end
 
@@ -132,8 +132,8 @@ module Middleman
           ::Middleman::Util.instrument 'parse.json' do
             ::JSON.parse(content)
           end
-            rescue StandardError => error
-              warn "JSON Exception parsing #{full_path}: #{error.message}"
+            rescue StandardError => e
+              warn "JSON Exception parsing #{full_path}: #{e.message}"
               {}
         end
 

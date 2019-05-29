@@ -259,7 +259,7 @@ module Middleman
       def url
         url_path = destination_path
         if @app.config[:strip_index_file]
-          url_path = url_path.sub(/(^|\/)#{Regexp.escape(@app.config[:index_file])}$/,
+          url_path = url_path.sub(%r{(^|/)#{Regexp.escape(@app.config[:index_file])}$},
                                   @app.config[:trailing_slash] ? '/' : '')
         end
         File.join(@app.config[:http_prefix], url_path)
@@ -343,7 +343,7 @@ module Middleman
                      end
 
           # Remove leading dot or slash if present
-          File.join(File.dirname(path), basename).gsub(/^\.?\//, '')
+          File.join(File.dirname(path), basename).gsub(%r{^\.?/}, '')
         end
       end
     end

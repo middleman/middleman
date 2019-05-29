@@ -154,8 +154,8 @@ module Middleman
     def locate_partial(partial_path, try_static = true)
       partial_file = nil
       lookup_stack = []
-      non_root     = partial_path.to_s.sub(/^\//, '')
-      non_root_no_underscore = non_root.sub(/^_/, '').sub(/\/_/, '/')
+      non_root     = partial_path.to_s.sub(%r{^/}, '')
+      non_root_no_underscore = non_root.sub(/^_/, '').sub(%r{/_}, '/')
 
       if current_resource
         resource = current_resource

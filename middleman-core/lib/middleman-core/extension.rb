@@ -63,7 +63,7 @@ module Middleman
   # * `app.ready { ... }` - Run code once Middleman is ready to serve or build files (after `after_configuration`).
 
   #
-  # @see http://middlemanapp.com/advanced/custom/ Middleman Custom Extensions Documentation
+  # @see https://middlemanapp.com/advanced/custom/ Middleman Custom Extensions Documentation
   class Extension
     extend Forwardable
     extend Memoist
@@ -346,7 +346,7 @@ module Middleman
     #   Manipulate the resource list by transforming or adding {Sitemap::Resource}s.
     #   Sitemap manipulation is a powerful way of interacting with a project, since it can modify each {Sitemap::Resource} or generate new {Sitemap::Resources}. This method is used in a pipeline where each sitemap manipulator is run in turn, with each one being fed the output of the previous manipulator. See the source of built-in Middleman extensions like {Middleman::Extensions::DirectoryIndexes} and {Middleman::Extensions::AssetHash} for examples of how to use this.
     #   @note This method *must* return the full set of resources, because its return value will be used as the new sitemap.
-    #   @see http://middlemanapp.com/advanced/sitemap/ Sitemap Documentation
+    #   @see https://middlemanapp.com/advanced/sitemap/ Sitemap Documentation
     #   @see Sitemap::Store
     #   @see Sitemap::Resource
     #   @param [Array<Sitemap::Resource>] resources A list of all the resources known to the sitemap.

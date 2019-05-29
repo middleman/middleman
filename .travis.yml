@@ -2,15 +2,13 @@ language: ruby
 cache: bundler
 rvm:
   - ruby-head
-  - 2.6.2
+  - 2.6.3
   - 2.5.5
-  - 2.4.6
-  - 2.3.8
+before_install:
+  - gem update --system
+  - gem install bundler
 os:
   - linux
-before_install:
-  - gem uninstall -v '>= 2' -i $(rvm gemdir)@global -ax bundler || true
-  - gem install bundler -v '< 2'
 matrix:
   fast_finish: true
   allow_failures:

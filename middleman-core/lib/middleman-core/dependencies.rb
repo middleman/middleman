@@ -52,8 +52,8 @@ module Middleman
     Contract String => Graph
     def parse_yaml(file_path)
       ::YAML.load_file(file_path)
-    rescue StandardError, ::Psych::SyntaxError => error
-      warn "YAML Exception parsing dependency graph: #{error.message}"
+    rescue StandardError, ::Psych::SyntaxError => e
+      warn "YAML Exception parsing dependency graph: #{e.message}"
     end
 
     Contract IsA['::Middleman::Application'], Hash[String, String] => Array[String]

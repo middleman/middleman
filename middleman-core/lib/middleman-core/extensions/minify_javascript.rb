@@ -12,7 +12,7 @@ class Middleman::Extensions::MinifyJavaScript < ::Middleman::Extension
   option :content_types, %w[application/javascript], 'Content types of resources that contain JS'
   option :inline_content_types, %w[text/html text/php], 'Content types of resources that contain inline JS'
 
-  INLINE_JS_REGEX = /(<script[^>]*>\s*(?:\/\/(?:(?:<!--)|(?:<!\[CDATA\[))\n)?)(.*?)((?:(?:\n\s*)?\/\/(?:(?:-->)|(?:\]\]>)))?\s*<\/script>)/m.freeze
+  INLINE_JS_REGEX = %r{(<script[^>]*>\s*(?://(?:(?:<!--)|(?:<!\[CDATA\[))\n)?)(.*?)((?:(?:\n\s*)?//(?:(?:-->)|(?:\]\]>)))?\s*</script>)}m.freeze
 
   def initialize(app, options_hash = ::Middleman::EMPTY_HASH, &block)
     super

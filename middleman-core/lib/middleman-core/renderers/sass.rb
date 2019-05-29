@@ -20,7 +20,7 @@ module Middleman
       def initialize(app, options_hash = ::Middleman::EMPTY_HASH, &block)
         super
 
-        app.files.ignore :sass_cache, :source, /(^|\/)\.sass-cache\// if app.config[:sass_cache_location] == DEFAULT_SASS_CACHE_LOCATION
+        app.files.ignore :sass_cache, :source, %r{(^|/)\.sass-cache/} if app.config[:sass_cache_location] == DEFAULT_SASS_CACHE_LOCATION
 
         # Tell Tilt to use it as well (for inline sass blocks)
         ::Tilt.register 'sass', SassPlusCSSFilenameTemplate

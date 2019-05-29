@@ -9,7 +9,7 @@ module Middleman
                    @app.extensions[:i18n].path_root(::I18n.locale)
                  end
 
-          root.sub(/^\//, '')
+          root.sub(%r{^/}, '')
         end
 
         # This resource's parent resource
@@ -128,7 +128,7 @@ module Middleman
         # Whether this resource is either a directory index, or has the same name as an existing directory in the source
         # @return [Boolean]
         def directory_index?
-          path.include?(@app.config[:index_file]) || path =~ /\/$/ || eponymous_directory?
+          path.include?(@app.config[:index_file]) || path =~ %r{/$} || eponymous_directory?
         end
 
         # Whether the resource has the same name as a directory in the source
@@ -146,7 +146,7 @@ module Middleman
         # (e.g., for 'gallery.html' this would return 'gallery/')
         # @return [String]
         def eponymous_directory_path
-          path.sub(ext, '/').sub(/\/$/, '') + '/'
+          path.sub(ext, '/').sub(%r{/$}, '') + '/'
         end
       end
     end
