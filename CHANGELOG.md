@@ -1,5 +1,7 @@
 # master
 
+- Always write `deps.yml` if `--track-dependencies` is set and the file doesn't exist
+
 # 5.0.0.rc.1
 
 - Support NO_COLOR: https://no-color.org

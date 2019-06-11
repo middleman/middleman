@@ -54,14 +54,19 @@ module Middleman
     def run!
       @has_error = false
       @events = {}
+      create_deps_yml = false
 
       if @track_dependencies
         begin
           ::Middleman::Util.instrument 'dependencies.load_and_deserialize' do
             @graph = ::Middleman::Dependencies.load_and_deserialize(@app)
           end
+        rescue ::Middleman::Dependencies::MissingDepsYAML
+          logger.info 'deps.yml was missing. Dependency graph must be rebuilt.'
+          @graph = ::Middleman::Dependencies::Graph.new
+          create_deps_yml = true
         rescue ::Middleman::Dependencies::InvalidDepsYAML
-          logger.error 'dep.yml was corrupt. Dependency graph must be rebuilt.'
+          logger.error 'deps.yml was corrupt. Dependency graph must be rebuilt.'
           @graph = ::Middleman::Dependencies::Graph.new
           @only_changed = @missing_and_changed = false
         rescue ::Middleman::Dependencies::ChangedDepth
@@ -124,7 +129,7 @@ module Middleman
       unless @has_error
         partial_update_with_no_changes = (@only_changed || @missing_and_changed) && @invalidated_files.empty?
 
-        ::Middleman::Dependencies.serialize_and_save(@app, @graph) if @track_dependencies && !partial_update_with_no_changes
+        ::Middleman::Dependencies.serialize_and_save(@app, @graph) if @track_dependencies && (create_deps_yml || !partial_update_with_no_changes)
 
         ::Middleman::Dependencies.visualize_graph(@app, @graph) if @track_dependencies && @visualize_graph
 
