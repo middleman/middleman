@@ -12,7 +12,7 @@ describe ::Middleman::Dependencies do
       end
 
       it 'raises MissingDepsYAML' do
-        expect { described_class.load_and_deserialize(app) }
+        expect { described_class.load_and_deserialize(app, 'deps.yml') }
           .to raise_error(described_class::MissingDepsYAML)
       end
     end
@@ -29,7 +29,7 @@ describe ::Middleman::Dependencies do
         let(:data) { 1 }
 
         it 'raises InvalidDepsYAML' do
-          expect { described_class.load_and_deserialize(app) }
+          expect { described_class.load_and_deserialize(app, 'deps.yml') }
             .to raise_error(described_class::InvalidDepsYAML)
         end
       end
@@ -38,7 +38,7 @@ describe ::Middleman::Dependencies do
         let(:config) { { data_collection_depth: 0 } }
 
         it 'raises ChangedDepth' do
-          expect { described_class.load_and_deserialize(app) }
+          expect { described_class.load_and_deserialize(app, 'deps.yml') }
             .to raise_error(described_class::ChangedDepth)
         end
       end
@@ -49,7 +49,7 @@ describe ::Middleman::Dependencies do
         end
 
         it 'raises InvalidatedGlobalFiles' do
-          expect { described_class.load_and_deserialize(app) }
+          expect { described_class.load_and_deserialize(app, 'deps.yml') }
             .to raise_error(described_class::InvalidatedGlobalFiles)
         end
       end

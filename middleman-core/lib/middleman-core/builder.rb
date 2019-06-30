@@ -39,6 +39,7 @@ module Middleman
       @parallel = options_hash.fetch(:parallel, true)
       @only_changed = options_hash.fetch(:only_changed, false)
       @missing_and_changed = options_hash.fetch(:missing_and_changed, false)
+      @dependency_file = options_hash.fetch(:dependency_file)
       @track_dependencies = options_hash.fetch(:track_dependencies, false)
       @visualize_graph = @track_dependencies && options_hash.fetch(:visualize_graph, false)
       @dry_run = options_hash.fetch(:dry_run)
@@ -59,14 +60,14 @@ module Middleman
       if @track_dependencies
         begin
           ::Middleman::Util.instrument 'dependencies.load_and_deserialize' do
-            @graph = ::Middleman::Dependencies.load_and_deserialize(@app)
+            @graph = ::Middleman::Dependencies.load_and_deserialize(@app, @dependency_file)
           end
         rescue ::Middleman::Dependencies::MissingDepsYAML
-          logger.info 'deps.yml was missing. Dependency graph must be rebuilt.'
+          logger.info "#{@dependency_file} was missing. Dependency graph must be rebuilt."
           @graph = ::Middleman::Dependencies::Graph.new
           create_deps_yml = true
         rescue ::Middleman::Dependencies::InvalidDepsYAML
-          logger.error 'deps.yml was corrupt. Dependency graph must be rebuilt.'
+          logger.error "#{@dependency_file} was corrupt. Dependency graph must be rebuilt."
           @graph = ::Middleman::Dependencies::Graph.new
           @only_changed = @missing_and_changed = false
         rescue ::Middleman::Dependencies::ChangedDepth
@@ -129,7 +130,7 @@ module Middleman
       unless @has_error
         partial_update_with_no_changes = (@only_changed || @missing_and_changed) && @invalidated_files.empty?
 
-        ::Middleman::Dependencies.serialize_and_save(@app, @graph) if @track_dependencies && (create_deps_yml || !partial_update_with_no_changes)
+        ::Middleman::Dependencies.serialize_and_save(@app, @graph, @dependency_file) if @track_dependencies && (create_deps_yml || !partial_update_with_no_changes)
 
         ::Middleman::Dependencies.visualize_graph(@app, @graph) if @track_dependencies && @visualize_graph
 

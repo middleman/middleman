@@ -2,6 +2,7 @@ require 'hamster'
 require 'set'
 require 'pathname'
 require 'yaml'
+require 'fileutils'
 require 'middleman-core/contracts'
 require 'middleman-core/dependencies/graph'
 require 'middleman-core/dependencies/vertices'
@@ -10,14 +11,15 @@ module Middleman
   module Dependencies
     include Contracts
 
-    DEFAULT_FILE_PATH = 'deps.yml'.freeze
     GLOBAL_FILES = ['config.rb', 'lib/**/*.rb', 'helpers/**/*.rb', 'Gemfile.lock'].freeze
 
     module_function
 
-    Contract IsA['::Middleman::Application'], Graph, Maybe[String] => Any
-    def serialize_and_save(app, graph, file_path = DEFAULT_FILE_PATH)
+    Contract IsA['::Middleman::Application'], Graph, String => Any
+    def serialize_and_save(app, graph, file_path)
       new_output = serialize(app, graph)
+
+      FileUtils.mkdir_p(File.dirname(file_path))
 
       File.open(file_path, 'w') do |file|
         file.write new_output
@@ -86,8 +88,8 @@ module Middleman
       end
     end
 
-    Contract IsA['::Middleman::Application'], Maybe[String] => Graph
-    def load_and_deserialize(app, file_path = DEFAULT_FILE_PATH)
+    Contract IsA['::Middleman::Application'], String => Graph
+    def load_and_deserialize(app, file_path)
       raise MissingDepsYAML unless File.exist?(file_path)
 
       data = parse_yaml(file_path)

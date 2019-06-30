@@ -1,6 +1,7 @@
 # master
 
 - Always write `deps.yml` if `--track-dependencies` is set and the file doesn't exist
+- Add `--dependency-file` flag to configure the file location.
 
 # 5.0.0.rc.1
 

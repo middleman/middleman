@@ -48,9 +48,13 @@ module Middleman::Cli
                  type: :boolean,
                  default: false,
                  desc: 'Track file dependencies'
+    class_option :dependency_file,
+                 type: :string,
+                 default: 'deps.yml',
+                 desc: 'Track file dependencies'
     class_option :data_collection_depth,
                  type: :numeric,
-                 default: ::Float::INFINITY,
+                 default: 1,
                  desc: 'How deep to recurse into data structures when tracking changes.'
     class_option :visualize_graph,
                  type: :boolean,
@@ -110,7 +114,8 @@ module Middleman::Cli
                                          only_changed: options['only_changed'],
                                          missing_and_changed: missing_and_changed,
                                          track_dependencies: should_track_dependencies,
-                                         visualize_graph: options['visualize_graph'])
+                                         visualize_graph: options['visualize_graph'],
+                                         dependency_file: File.expand_path(options['dependency_file']))
         builder.thor = self
         builder.on_build_event(&method(:on_event))
       end
