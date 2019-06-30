@@ -115,7 +115,7 @@ module Middleman::Cli
                                          missing_and_changed: missing_and_changed,
                                          track_dependencies: should_track_dependencies,
                                          visualize_graph: options['visualize_graph'],
-                                         dependency_file: File.expand_path(options['dependency_file']))
+                                         dependency_file: options['dependency_file'])
         builder.thor = self
         builder.on_build_event(&method(:on_event))
       end
