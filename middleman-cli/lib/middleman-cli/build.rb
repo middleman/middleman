@@ -54,7 +54,7 @@ module Middleman::Cli
                  desc: 'Track file dependencies'
     class_option :data_collection_depth,
                  type: :numeric,
-                 default: Infinity,
+                 default: ::Float::INFINITY,
                  desc: 'How deep to recurse into data structures when tracking changes.'
     class_option :visualize_graph,
                  type: :boolean,
