@@ -12,7 +12,7 @@ module Middleman::Cli
 
     class_option 'template',
                  aliases: '-T',
-                 default: 'middleman/middleman-templates-default',
+                 default: 'middleman/middleman-templates-default-v5',
                  desc: 'Use a project template'
 
     # Do not run bundle install
