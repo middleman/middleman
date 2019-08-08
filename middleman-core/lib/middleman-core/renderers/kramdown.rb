@@ -44,6 +44,7 @@ module Middleman
 
         attr = el.attr.dup
         link = attr.delete('href')
+        attr.transform_keys! { | key | key.to_sym }
 
         scope.link_to(content, link, attr)
       end
