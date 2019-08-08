@@ -75,8 +75,12 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
       opts = options_hash.dup
 
       should_relativize = opts.key?(:relative) ? opts[:relative] : config[:relative_links]
+      anchor = opts[:anchor]
 
+      # The first call to `super()` is only to find the correct URL. The next
+      # call will relativize and add the anchor.
       opts[:relative] = false
+      opts[:anchor] = nil
 
       href = super(path_or_resource, opts)
 
@@ -85,6 +89,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
       final_path = result || href
 
       opts[:relative] = should_relativize
+      opts[:anchor] = anchor
 
       begin
         super(final_path, opts)
