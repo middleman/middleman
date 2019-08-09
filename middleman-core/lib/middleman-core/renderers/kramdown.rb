@@ -47,7 +47,7 @@ module Middleman
 
         # options to link_to are expected to be symbols, but in Markdown
         # everything is a string.
-        attr.transform_keys! { | key | key.to_sym }
+        attr.transform_keys!(&:to_sym)
 
         scope.link_to(content, link, attr)
       end
