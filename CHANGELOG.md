@@ -2,6 +2,10 @@
 
 # 4.3.4
 
+- Fix using the `:anchor` argument with i18n's `url_for`. #2286
+
+# 4.3.4
+
 - Fix `ignore` of files controlled by i18n. #2039 #2143
 
 # 4.3.3
