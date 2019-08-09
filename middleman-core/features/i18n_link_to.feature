@@ -197,6 +197,7 @@ Feature: i18n Paths
 
       Current: <%= url_for "/article.html" %>
       Other: <%= url_for "/article.html", locale: ::I18n.locale == :en ? :es : :en %>
+      Current with anchor: <%= url_for "/article.html", :anchor => "test-anchor" %>
       """
     And a file named "source/localizable/article.es.html.erb" with:
       """
@@ -204,6 +205,7 @@ Feature: i18n Paths
 
       Current: <%= url_for "/article.html" %>
       Other: <%= url_for "/article.html", locale: :en %>
+      Current with anchor: <%= url_for "/article.html", :anchor => "test-anchor" %>
       """
     And a file named "config.rb" with:
       """
@@ -226,10 +228,12 @@ Feature: i18n Paths
     Then I should see "Page Lang: Default"
     Then I should see 'Current: /article.html'
     Then I should see 'Other: /es/article.html'
+    Then I should see 'Current with anchor: /article.html#test-anchor'
     When I go to "/es/article.html"
     Then I should see "Page Lang: Spanish"
     Then I should see 'Current: /es/article.html'
     Then I should see 'Other: /article.html'
+    Then I should see 'Current with anchor: /es/article.html#test-anchor'
 
   Scenario: url_for can link to the current page in a different language with localized templates
     Given a fixture app "empty-app"
