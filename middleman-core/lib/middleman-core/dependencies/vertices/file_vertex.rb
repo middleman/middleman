@@ -33,7 +33,7 @@ module Middleman
 
       Contract Bool
       def valid?
-        @is_valid = ((File.exist? @full_path) && (previous_hash.nil? || hash_file == previous_hash)) if @is_valid.nil?
+        @is_valid = (previous_hash.nil? || hash_file == previous_hash) if @is_valid.nil?
         @is_valid
       end
 

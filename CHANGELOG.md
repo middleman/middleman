@@ -2,7 +2,6 @@
 
 - Always write `deps.yml` if `--track-dependencies` is set and the file doesn't exist
 - Add `--dependency-file` flag to configure the file location.
-- Handle the removal of a file in dependencies. Fixes #2292
 
 # 5.0.0.rc.1
 

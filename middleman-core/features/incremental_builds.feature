@@ -39,42 +39,6 @@ Feature: Incremental builds
       | build/standalone.html |
     And the file "build/standalone.html" should contain "Updated"
 
-  Scenario: Removing a file after an initial build should not crash
-    Given an empty app
-    When a file named "config.rb" with:
-      """
-      """
-    When a file named "source/layout.erb" with:
-      """
-      <%= yield %>
-      """
-    When a file named "source/standalone.html.erb" with:
-      """
-      Initial
-      """
-    When a file named "source/other.html.erb" with:
-      """
-      Some other file
-      """
-    Then build the app tracking dependencies
-    Then the output should contain "create  build/standalone.html"
-    Then the output should contain "create  build/other.html"
-    Then the following files should exist:
-      | build/standalone.html |
-      | build/other.html      |
-    When I remove the file "source/other.html.erb"
-    Then build app with only changed
-    Then there are "0" files which are created
-    Then there are "0" files which are updated
-    Then there are "1" files which are removed
-    Then the output should contain "skipped  build/standalone.html"
-    Then the output should contain "remove  build/other.html"
-    Then the following files should exist:
-      | build/standalone.html |
-    Then the following files should not exist:
-      | build/other.html |
-    And the file "deps.yml" should not contain "other.html.erb"
-
   Scenario: Changing a layout should only rebuild pages which use that layout
     Given an empty app
     When a file named "config.rb" with:
@@ -142,7 +106,7 @@ Feature: Incremental builds
     When a file named "config.rb" with:
       """
       data.people.each do |p|
-      proxy "/person-#{p.slug}.html", '/person.html', ignore: true, locals: { person: p }
+        proxy "/person-#{p.slug}.html", '/person.html', ignore: true, locals: { person: p }
       end
       """
     When a file named "source/bait.html.erb" with:
@@ -156,13 +120,13 @@ Feature: Incremental builds
     When a file named "data/people.yml" with:
       """
       -
-      slug: "one"
-      name: "Person One"
-      age: 5
+        slug: "one"
+        name: "Person One"
+        age: 5
       -
-      slug: "two"
-      name: "Person Two"
-      age: 10
+        slug: "two"
+        name: "Person Two"
+        age: 10
       """
     When a file named "source/person.html.erb" with:
       """
@@ -172,56 +136,56 @@ Feature: Incremental builds
     Then the output should contain "create  build/person-one.html"
     Then the output should contain "create  build/person-two.html"
     Then the following files should exist:
-      | build/person-one.html |
-      | build/person-two.html |
+      | build/person-one.html   |
+      | build/person-two.html   |
     And the file "build/person-one.html" should contain "Person One"
     And the file "build/person-two.html" should contain "Person Two"
     When a file named "data/people.yml" with:
       """
       -
-      slug: "one"
-      name: "Person One"
-      age: 15
+        slug: "one"
+        name: "Person One"
+        age: 15
       -
-      slug: "two"
-      name: "Person Two"
-      age: 20
+        slug: "two"
+        name: "Person Two"
+        age: 20
       """
     Then build app with only changed
     Then there are "0" files which are created
     Then there are "0" files which are updated
     Then the following files should exist:
-      | build/person-one.html |
-      | build/person-two.html |
+      | build/person-one.html   |
+      | build/person-two.html   |
     When a file named "data/people.yml" with:
       """
       -
-      slug: "one"
-      name: "Person One"
-      age: 5
+        slug: "one"
+        name: "Person One"
+        age: 5
       -
-      slug: "two"
-      name: "Person Updated"
-      age: 10
+        slug: "two"
+        name: "Person Updated"
+        age: 10
       """
     Then build app with only changed
     Then there are "0" files which are created
     Then there are "1" files which are updated
     Then the output should contain "updated  build/person-two.html"
     Then the following files should exist:
-      | build/person-one.html |
-      | build/person-two.html |
+      | build/person-one.html   |
+      | build/person-two.html   |
     And the file "build/person-two.html" should contain "Person Updated"
     When a file named "data/people.yml" with:
       """
       -
-      slug: "updated-slug"
-      name: "Person New Slug"
-      age: 5
+        slug: "updated-slug"
+        name: "Person New Slug"
+        age: 5
       -
-      slug: "two"
-      name: "Person Updated"
-      age: 10
+        slug: "two"
+        name: "Person Updated"
+        age: 10
       """
     Then build app with only changed
     Then there are "1" files which are created
@@ -231,7 +195,7 @@ Feature: Incremental builds
     Then the output should contain "remove  build/person-one.html"
     Then the following files should exist:
       | build/person-updated-slug.html |
-      | build/person-two.html          |
+      | build/person-two.html   |
     And the file "build/person-updated-slug.html" should contain "Person New Slug"
 
   Scenario: Accessing a method which can't wrap data indexes (to_json) will rebuild on change to the entire object
@@ -250,9 +214,9 @@ Feature: Incremental builds
     When a file named "data/people.yml" with:
       """
       -
-      name: "Person One"
+        name: "Person One"
       -
-      name: "Person Two"
+        name: "Person Two"
       """
     When a file named "source/people.json.erb" with:
       """
@@ -269,9 +233,9 @@ Feature: Incremental builds
     When a file named "data/people.yml" with:
       """
       -
-      name: "Person One"
+        name: "Person One"
       -
-      name: "Person Two Updated"
+        name: "Person Two Updated"
       """
     Then build app with only changed
     Then there are "0" files which are created
@@ -280,9 +244,9 @@ Feature: Incremental builds
     When a file named "data/people.yml" with:
       """
       -
-      name: "Person One Updated"
+        name: "Person One Updated"
       -
-      name: "Person Two Updated"
+        name: "Person Two Updated"
       """
     Then build app with only changed
     Then there are "0" files which are created
@@ -306,8 +270,8 @@ Feature: Incremental builds
       """
       name: "Person One"
       items:
-      - 1
-      - 2
+        - 1
+        - 2
       """
     When a file named "source/items.html.erb" with:
       """
@@ -326,9 +290,9 @@ Feature: Incremental builds
       """
       name: "Person One"
       items:
-      - 1
-      - 2
-      - 3
+        - 1
+        - 2
+        - 3
       """
     Then build app with only changed
     Then there are "0" files which are created
@@ -339,9 +303,9 @@ Feature: Incremental builds
       """
       name: "Person One"
       items:
-      - 4
-      - 2
-      - 3
+        - 4
+        - 2
+        - 3
       """
     Then build app with only changed
     Then there are "0" files which are created
@@ -379,7 +343,7 @@ Feature: Incremental builds
     Then the output should contain "create  build/page-a.html"
     Then the output should contain "create  build/page-b.html"
     Then the following files should exist:
-      | build/bait.html   |
+      | build/bait.html |
       | build/page-a.html |
       | build/page-b.html |
     Then build app with only changed
@@ -429,7 +393,7 @@ Feature: Incremental builds
     Then the output should contain "create  build/page-a.html"
     Then the output should contain "create  build/page-b.html"
     Then the following files should exist:
-      | build/bait.html   |
+      | build/bait.html |
       | build/page-a.html |
       | build/page-b.html |
     Then build app with only changed
@@ -471,7 +435,7 @@ Feature: Incremental builds
     Then the output should contain "create  build/css-a.css"
     Then the output should contain "create  build/css-b.css"
     Then the following files should exist:
-      | build/bait.css  |
+      | build/bait.css |
       | build/css-a.css |
       | build/css-b.css |
     Then build app with only changed
@@ -510,17 +474,17 @@ Feature: Incremental builds
     When a file named "data/people.yml" with:
       """
       -
-      slug: "one"
-      parts:
-      - 1
-      - 2
-      - 3
+        slug: "one"
+        parts:
+          - 1
+          - 2
+          - 3
       -
-      slug: "two"
-      parts:
-      - 4
-      - 5
-      - 6
+        slug: "two"
+        parts:
+          - 4
+          - 5
+          - 6
       """
     When a file named "source/part-one.html.erb" with:
       """
@@ -534,53 +498,53 @@ Feature: Incremental builds
     Then the output should contain "create  build/part-one.html"
     Then the output should contain "create  build/part-two.html"
     Then the following files should exist:
-      | build/part-one.html |
-      | build/part-two.html |
+      | build/part-one.html   |
+      | build/part-two.html   |
     And the file "build/part-one.html" should contain "Part = 4"
     And the file "build/part-two.html" should contain "Part = 5"
     When a file named "data/people.yml" with:
       """
       -
-      slug: "one"
-      parts:
-      - 1
-      - 2
-      - 3
+        slug: "one"
+        parts:
+          - 1
+          - 2
+          - 3
       -
-      slug: "two"
-      parts:
-      - 4
-      - 5
-      - 7
+        slug: "two"
+        parts:
+          - 4
+          - 5
+          - 7
       """
     Then build app with only changed
     Then there are "0" files which are created
     Then there are "0" files which are updated
     Then the following files should exist:
-      | build/part-one.html |
-      | build/part-two.html |
+      | build/part-one.html   |
+      | build/part-two.html   |
     When a file named "data/people.yml" with:
       """
       -
-      slug: "one"
-      parts:
-      - 1
-      - 2
-      - 3
+        slug: "one"
+        parts:
+          - 1
+          - 2
+          - 3
       -
-      slug: "two"
-      parts:
-      - 4
-      - 6
-      - 7
+        slug: "two"
+        parts:
+          - 4
+          - 6
+          - 7
       """
     Then build app with only changed
     Then there are "0" files which are created
     Then there are "1" files which are updated
     Then the output should contain "updated  build/part-two.html"
     Then the following files should exist:
-      | build/part-one.html |
-      | build/part-two.html |
+      | build/part-one.html   |
+      | build/part-two.html   |
     And the file "build/part-two.html" should contain "Part = 6"
 
     # Rebuilding with limited depth
@@ -589,17 +553,17 @@ Feature: Incremental builds
     When a file named "data/people.yml" with:
       """
       -
-      slug: "one"
-      parts:
-      - 1
-      - 2
-      - 3
+        slug: "one"
+        parts:
+          - 1
+          - 2
+          - 3
       -
-      slug: "two"
-      parts:
-      - 4
-      - 6
-      - 8
+        slug: "two"
+        parts:
+          - 4
+          - 6
+          - 8
       """
     Then build app with only changed
     Then there are "0" files which are created
@@ -622,13 +586,13 @@ Feature: Incremental builds
     When a file named "data/roles.yml" with:
       """
       - title: "Job"
-      salary: 1111
+        salary: 1111
       """
     When a file named "source/roles/data.json.erb" with:
       """
       {
-      "roles": <%= data.roles.select(&:salary).to_json %>,
-      "roles2": <%= data.roles.first.as_json %>
+        "roles": <%= data.roles.select(&:salary).to_json %>,
+        "roles2": <%= data.roles.first.as_json %>
       }
       """
     Then build the app tracking dependencies with depth "1"
