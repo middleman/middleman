@@ -39,6 +39,43 @@ Feature: Incremental builds
       | build/standalone.html |
     And the file "build/standalone.html" should contain "Updated"
 
+
+    Scenario: Removing a file after an initial build should not crash
+     Given an empty app
+     When a file named "config.rb" with:
+       """
+       """
+     When a file named "source/layout.erb" with:
+       """
+       <%= yield %>
+       """
+     When a file named "source/standalone.html.erb" with:
+       """
+       Initial
+       """
+     When a file named "source/other.html.erb" with:
+       """
+       Some other file
+       """
+     Then build the app tracking dependencies
+     Then the output should contain "create  build/standalone.html"
+     Then the output should contain "create  build/other.html"
+     Then the following files should exist:
+       | build/standalone.html |
+       | build/other.html      |
+     When I remove the file "source/other.html.erb"
+     Then build app with only changed
+     Then there are "0" files which are created
+     Then there are "0" files which are updated
+     Then there are "1" files which are removed
+     Then the output should contain "skipped  build/standalone.html"
+     Then the output should contain "remove  build/other.html"
+     Then the following files should exist:
+       | build/standalone.html |
+     Then the following files should not exist:
+       | build/other.html |
+     And the file "deps.yml" should not contain "other.html.erb"
+
   Scenario: Changing a layout should only rebuild pages which use that layout
     Given an empty app
     When a file named "config.rb" with:
