@@ -6,9 +6,9 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   # s.authors     = ["Your Name"]
   # s.email       = ["email@example.com"]
-  # s.homepage    = "http://example.com"
-  # s.summary     = %q{A short summary of your extension}
-  # s.description = %q{A longer description of your extension}
+  s.homepage    = "TODO: Put your gem's website or public repo URL here."
+  s.summary     = %q{TODO: A short summary of your extension}
+  s.description = %q{TODO: A longer description of your extension}
 
   s.files       = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(fixtures|features|spec)/}) }
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
