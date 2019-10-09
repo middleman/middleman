@@ -4,8 +4,8 @@ Gem::Specification.new do |s|
   s.name        = "<%= name %>"
   s.version     = "0.0.1"
   s.platform    = Gem::Platform::RUBY
-  # s.authors     = ["Your Name"]
-  # s.email       = ["email@example.com"]
+  s.authors     = ["<%= config[:git_username] %>"]
+  s.email       = ["<%= config[:git_email] %>"]
   s.homepage    = "TODO: Put your gem's website or public repo URL here."
   s.summary     = %q{TODO: A short summary of your extension}
   s.description = %q{TODO: A longer description of your extension}

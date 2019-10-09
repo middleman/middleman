@@ -25,9 +25,14 @@ module Middleman::Cli
 
     # The extension task
     def extension
+      config = {
+        git_username: git_username,
+        git_email: git_email
+      }
+
       copy_file 'extension/gitignore', File.join(name, '.gitignore') unless options[:'skip-git']
       template 'extension/Rakefile', File.join(name, 'Rakefile')
-      template 'extension/gemspec', File.join(name, "#{name}.gemspec")
+      template 'extension/gemspec', File.join(name, "#{name}.gemspec"), config
       template 'extension/Gemfile', File.join(name, 'Gemfile')
       template 'extension/lib/lib.rb', File.join(name, 'lib', "#{name}.rb")
       template 'extension/lib/lib/extension.rb', File.join(name, 'lib', name, 'extension.rb')
@@ -37,5 +42,20 @@ module Middleman::Cli
 
     # Add to CLI
     Base.register(self, 'extension', 'extension [options]', 'Create a new Middleman extension')
+
+    private
+
+    def git_exist?
+      @git_exist = !`which git`.empty? unless defined?(@git_exist)
+      @git_exist
+    end
+
+    def git_username
+      git_exist? ? `git config user.name`.chomp : ''
+    end
+
+    def git_email
+      git_exist? ? `git config user.email`.chomp : ''
+    end
   end
 end
