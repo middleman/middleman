@@ -1,3 +1,4 @@
+@skip-windows
 Feature: Map special characters to automatically put files in a directory
   
   Scenario: Building files with special character escape
