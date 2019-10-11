@@ -1,3 +1,5 @@
+require 'fileutils'
+
 module Given
   ROOT = File.expand_path('../..', __dir__)
   TMP  = File.join(ROOT, 'tmp')
@@ -6,7 +8,8 @@ module Given
     def fixture(name)
       cleanup!
 
-      `rsync -av #{File.join(ROOT, 'fixtures', name)}/ #{TMP}/`
+      FileUtils.cp_r(File.join(ROOT, 'fixtures', name), TMP)
+
       Dir.chdir TMP
       ENV['MM_ROOT'] = TMP
     end
@@ -32,7 +35,8 @@ module Given
 
     def cleanup!
       Dir.chdir ROOT
-      `rm -rf #{TMP}` if File.exist? TMP
+
+      FileUtils.remove_entry_secure(TMP) if File.exist? TMP
     end
   end
 end
