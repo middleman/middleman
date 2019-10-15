@@ -1,6 +1,7 @@
 require 'resolv'
 require 'middleman-core/dns_resolver/network_resolver'
 require 'middleman-core/dns_resolver/hosts_resolver'
+require 'middleman-core/util/empty_hash'
 
 module Middleman
   # This resolves IP address to names and vice versa
