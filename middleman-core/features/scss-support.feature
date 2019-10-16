@@ -11,6 +11,7 @@ Feature: Support SCSS Syntax
    When I go to "/stylesheets/layout.css"
    Then I should see "html"
 
+@skip-windows
  Scenario: Rendering scss errors
    Given the Server is running at "scss-app"
    When I go to "/stylesheets/error.css"

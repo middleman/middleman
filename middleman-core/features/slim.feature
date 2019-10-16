@@ -28,6 +28,7 @@ Feature: Support slim templating language
     Then I should see "Content for main:Content Main"
     Then I should see "Content for B:Content B"
 
+  @skip-windows
   Scenario: Rendering Scss in a Slim filter
     Given an empty app
     And a file named "config.rb" with:
