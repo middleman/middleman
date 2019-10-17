@@ -1,3 +1,4 @@
+@skip-windows
 Feature: Run the preview server
 
   As a software developer
