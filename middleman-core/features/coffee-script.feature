@@ -1,3 +1,4 @@
+@skip-windows
 Feature: Support coffee-script
   In order to offer an alternative when writing JavaScript
 
