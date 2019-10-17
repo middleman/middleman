@@ -1,3 +1,4 @@
+@skip-windows
 Feature: Support SASS assets paths
  In order to import common shared assets when writing Sass
 
