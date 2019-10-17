@@ -17,7 +17,11 @@ end
 
 require 'cucumber/rake/task'
 Cucumber::Rake::Task.new do |t|
-  exempt_tags = ["--tags 'not @wip'"]
+  exempt_tags = if Gem.win_platform?
+                  ["--tags 'not(@wip or @skip-windows)'"]
+                else
+                  ["--tags 'not @wip'"]
+                end
   t.cucumber_opts = "--fail-fast --require features --color #{exempt_tags.join(' ')} --strict"
 end
 
