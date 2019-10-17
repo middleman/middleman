@@ -1,3 +1,4 @@
+@skip-windows
 Feature: Run preview server before hook
 
   Scenario: When run
