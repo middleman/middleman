@@ -8,6 +8,8 @@ require 'middleman-core/util'
 require 'middleman-core/logger'
 require 'middleman-core/template_renderer'
 
+require 'webrick'
+
 # CSSPIE HTC File
 ::Rack::Mime::MIME_TYPES['.htc'] = 'text/x-component'
 
@@ -86,7 +88,7 @@ module Middleman
     def process_request(env, req, res)
       start_time = Time.now
 
-      request_path = URI.decode(env['PATH_INFO'].dup)
+      request_path = WEBrick::HTTPUtils.unescape(env['PATH_INFO'].dup)
       request_path.force_encoding('UTF-8') if request_path.respond_to? :force_encoding
       request_path = ::Middleman::Util.full_path(request_path, @middleman)
       full_request_path = File.join(env['SCRIPT_NAME'], request_path) # Path including rack mount
