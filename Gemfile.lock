@@ -10,7 +10,6 @@ PATH
     middleman-core (5.0.0.rc.1)
       activesupport (~> 5.2)
       addressable (~> 2.3)
-      backports (~> 3.11)
       bundler
       contracts (~> 0.16.0)
       dotenv

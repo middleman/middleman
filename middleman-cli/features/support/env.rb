@@ -1,6 +1,5 @@
 ENV['TEST'] = 'true'
 
-require 'backports/latest'
 require 'active_support/all'
 
 require 'sassc'
