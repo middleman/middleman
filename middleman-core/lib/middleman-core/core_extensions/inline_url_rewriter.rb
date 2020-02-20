@@ -123,6 +123,11 @@ module Middleman
             end
           end
 
+          # Rewriting might have changed Content-Length, so we need
+          # to reset it to the actual result. The rewritten result is
+          # always a String, not an Array or Enumerable.
+          headers['Content-Length'] = rewritten.bytesize.to_s
+
           ::Rack::Response.new(
             rewritten,
             status,
