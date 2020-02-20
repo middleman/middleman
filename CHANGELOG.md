@@ -1,5 +1,14 @@
 # master
 
+# 4.3.6
+
+- Reset Content-Length header when rewriting (#2316)
+- Add Ruby 2.7.0 to CI
+
+# 4.3.5
+
+- Fix i18n with anchor v4 (#2287)
+
 # 4.3.4
 
 - Fix using the `:anchor` argument with i18n's `url_for`. #2286
