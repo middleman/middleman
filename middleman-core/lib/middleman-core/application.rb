@@ -359,14 +359,14 @@ module Middleman
     end
 
     # Whether we're in server mode
-    # @return [Boolean] If we're in dev mode
+    # @return [Boolean]
     Contract Bool
     def server?
       mode?(:server)
     end
 
     # Whether we're in build mode
-    # @return [Boolean] If we're in dev mode
+    # @return [Boolean]
     Contract Bool
     def build?
       mode?(:build)
