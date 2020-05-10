@@ -127,13 +127,6 @@ Middleman::Extensions.register :automatic_image_sizes do
   Middleman::Extensions::AutomaticImageSizes
 end
 
-# AutomaticAltTags uses the file name of the `image_tag` to generate
-# a default `:alt` value.
-Middleman::Extensions.register :automatic_alt_tags do
-  require 'middleman-core/extensions/automatic_alt_tags'
-  Middleman::Extensions::AutomaticAltTags
-end
-
 Middleman::Extensions.register :external_pipeline do
   require 'middleman-core/extensions/external_pipeline'
   Middleman::Extensions::ExternalPipeline
