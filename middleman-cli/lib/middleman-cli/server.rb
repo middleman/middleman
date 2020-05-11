@@ -45,7 +45,6 @@ module Middleman::Cli
       params = {
         debug: options['verbose'],
         instrumenting: options['instrument'],
-        reload_paths: options['reload_paths'],
         daemon: options['daemon']
       }
 
