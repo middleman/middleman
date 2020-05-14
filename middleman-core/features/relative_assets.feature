@@ -131,7 +131,7 @@ Feature: Relative Assets
       """
     And the Server is running at "relative-assets-app"
     When I go to "/sub/image_tag.html"
-    Then I should see '<img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />'
+    Then I should see '<img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="" />'
 
   Scenario: URLs are not rewritten for rewrite ignored paths
     Given a fixture app "relative-assets-app"
