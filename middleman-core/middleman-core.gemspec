@@ -28,7 +28,7 @@ Gem::Specification.new do |s|
   s.add_dependency('rgl', ['~> 0.5.3'])
 
   # Helpers
-  s.add_dependency('activesupport')
+  s.add_dependency('activesupport', ['>= 5.0.0'])
   s.add_dependency('padrino-helpers', ['~> 0.14.4'])
   s.add_dependency('addressable', ['~> 2.3'])
   s.add_dependency('memoist', ['~> 0.14'])
