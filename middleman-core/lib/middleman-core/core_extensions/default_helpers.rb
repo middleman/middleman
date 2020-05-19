@@ -282,6 +282,8 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
         params[:srcset] = images_sources.join(', ')
       end
 
+      params[:alt] ||= ''
+
       super(path, params)
     end
 
