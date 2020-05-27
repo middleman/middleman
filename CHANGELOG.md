@@ -1,5 +1,9 @@
 # master
 
+# 4.3.7
+
+- Allow ActiveSupport a wider range to avoid security warnings. #2327
+
 # 4.3.6
 
 - Reset Content-Length header when rewriting (#2316)
