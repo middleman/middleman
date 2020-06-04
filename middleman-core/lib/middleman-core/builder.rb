@@ -365,20 +365,23 @@ module Middleman
             export_file!(output_file, resource.file_descriptor[:full_path], true)
           else
             content = resource.render({}, {})
+            if resource.file_descriptor.nil?
+              edge = nil
+            else
+              self_vertex = ::Middleman::Dependencies::FileVertex.from_resource(resource)
 
-            self_vertex = ::Middleman::Dependencies::FileVertex.from_resource(resource)
-
-            edge = if serialize_deps
-                     {
-                       self_vertex: self_vertex.serialize,
-                       depends_on: resource.vertices.map(&:serialize)
-                     }
-                   else
-                     ::Middleman::Dependencies::Edge.new(
-                       self_vertex,
-                       resource.vertices << self_vertex
-                     )
-                   end
+              edge = if serialize_deps
+                       {
+                         self_vertex: self_vertex.serialize,
+                         depends_on: resource.vertices.map(&:serialize)
+                       }
+                     else
+                       ::Middleman::Dependencies::Edge.new(
+                         self_vertex,
+                         resource.vertices << self_vertex
+                       )
+                     end
+            end
 
             export_file!(output_file, binary_encode(content))
           end
