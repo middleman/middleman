@@ -60,3 +60,7 @@ Feature: Meta redirects
     And the Server is running at "large-build-app"
     When I go to "/hello.html"
     Then I should see 'hello.html to world.html'
+
+  Scenario: Build a redirect
+    Given a successfully built app at "redirect-app"
+    Then the file "build/external.html" should contain '<meta http-equiv=refresh content="0; url=http://example.com"'
