@@ -27,9 +27,6 @@ module Middleman
     # Types which could cause output to change.
     OUTPUT_TYPES = %i[source locales data].freeze
 
-    # Types which require a reload to eval ruby
-    CODE_TYPES = [:reload].freeze
-
     Matcher = Or[Regexp, RespondTo[:call]]
 
     # A reference to the current app.
