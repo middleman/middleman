@@ -2,9 +2,9 @@ language: ruby
 cache: bundler
 rvm:
   - ruby-head
-  - 2.7.0
-  - 2.6.3
-  - 2.5.5
+  - 2.7
+  - 2.6
+  - 2.5
 os:
   - linux
 matrix:
