@@ -1,0 +1,5 @@
+<% if data.respond_to?(:json_source) %>
+  <%= data.json_source.map { |r| r.title }.join(":") %>
+<% else %>
+  No Test Data
+<% end %>
