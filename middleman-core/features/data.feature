@@ -76,9 +76,6 @@ Feature: Local Data API
     Given the Server is running at "data-app"
     When I go to "/test1.html"
     Then I should see "Welcome"
-
-  Scenario: Using data2 in config.rb
-    Given the Server is running at "data-app"
     When I go to "/test2.html"
     Then I should see "Welcome"
 
