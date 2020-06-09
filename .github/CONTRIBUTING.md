@@ -35,12 +35,26 @@ Ideally, a bug report should include a pull request with failing specs.
 1. [Fork the repository.][fork]
 2. Create a topic [branch]. `git checkout -b local_topic_branch`
 3. Add specs for your unimplemented feature or bug fix.
-4. Run `bundle exec rake test`. If your specs pass, return to step 3.
+4. [Run the tests](#running-the-tests). If your specs pass, return to step 3.
 5. Implement your feature or bug fix.
-6. Run `bundle exec rake test`. If your specs fail, return to step 5.
+6. Run the tests. If your specs fail, return to step 5.
 7. Add, commit, and push your changes. To push your topic branch use `git push -u origin local_topic_branch`.
 8. [Submit a pull request.][pr]
 
 [fork]: http://help.github.com/fork-a-repo/
 [branch]: https://help.github.com/articles/fork-a-repo#create-branches
 [pr]: http://help.github.com/send-pull-requests/
+
+## Testing
+
+Internally, we test Middleman using a combination of [Cucumber][cucumber] and [RSpec][rspec]. Cucumber is used for specifying behavior a high level, whereas RSpec is used for testing components in isolation.
+
+### Running the tests
+
+1. Checkout Repository: `git clone https://github.com/middleman/middleman.git`
+2. Install Bundler: `gem install bundler`
+3. Run `bundle install` inside the project root to install the gem dependencies.
+4. Run test cases: `bundle exec rake test`
+
+[cucumber]: https://cucumber.io/
+[rspec]: https://rspec.info/
