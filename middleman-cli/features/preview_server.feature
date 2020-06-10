@@ -536,3 +536,22 @@ Feature: Run the preview server
     """
     Inspect your site configuration at "http://host.local:4567/__middleman", "http://127.0.0.1:4567/__middleman"
     """
+
+  Scenario: Server reloads when config.rb changes
+    When I run `middleman server --verbose` interactively
+    And I wait for the output to contain:
+      """
+      The Middleman is running
+      """
+    When a file named "config.rb" with:
+      """
+      set :layout, false
+      """
+    And I stop middleman if the output contains:
+      """
+      The Middleman is reloading
+      """
+    Then the output should contain:
+      """
+      The Middleman is reloading
+      """

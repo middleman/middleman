@@ -1,12 +1,14 @@
 When /^I stop (?:middleman|all commands) if the output( of the last command)? contains:$/ do |_last_command, expected|
+  step 'I wait for the output to contain:', expected
+  all_commands.each(&:terminate)
+end
+
+When /^I wait for the output to contain:$/ do |expected|
   Timeout.timeout(aruba.config.exit_timeout) do
     loop do
       raise 'You need to start middleman interactively first.' unless @interactive
 
-      if sanitize_text(@interactive.output)&.match?(Regexp.new(sanitize_text(expected)))
-        all_commands.each(&:terminate)
-        break
-      end
+      break if sanitize_text(@interactive.output)&.match?(Regexp.new(sanitize_text(expected)))
 
       sleep 0.1
     end
