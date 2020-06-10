@@ -80,7 +80,3 @@ end
 After do
   all_commands.each(&:terminate)
 end
-
-Before '@ruby-2.1' do
-  skip_this_scenario if RUBY_VERSION < '2.1'
-end
