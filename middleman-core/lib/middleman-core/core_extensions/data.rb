@@ -46,9 +46,11 @@ module Middleman
 
         Contract Any
         def after_configuration
-          return unless @original_data_dir != app.config[:data_dir]
+          @watcher.update_path(app.config[:data_dir]) if @original_data_dir != app.config[:data_dir]
 
-          @watcher.update_path(app.config[:data_dir])
+          app.files.watch :reload,
+                          path: File.expand_path(@watcher.directory, app.root),
+                          only: DATA_FILE_MATCHER
         end
       end
     end
