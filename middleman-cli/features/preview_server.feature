@@ -553,3 +553,26 @@ Feature: Run the preview server
       """
       The Middleman is reloading
       """
+
+  Scenario: Server reloads when data changes
+    When I run `middleman server --verbose` interactively
+    And a file named "data/people.yml" with:
+      """
+      - Tom
+      """
+    And I wait for the output to contain:
+      """
+      The Middleman is running
+      """
+    When a file named "data/people.yml" with:
+      """
+      - Bob
+      """
+    And I stop middleman if the output contains:
+      """
+      The Middleman is reloading
+      """
+    Then the output should contain:
+      """
+      The Middleman is reloading
+      """
