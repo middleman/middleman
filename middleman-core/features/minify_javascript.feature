@@ -206,7 +206,7 @@ Feature: Minify JavaScript
     Then I should see "1" lines
 
   Scenario: Rendering external js with a passthrough minifier
-    And the Server is running at "passthrough-app"
+    Given the Server is running at "passthrough-app"
     When I go to "/javascripts/js_test.js"
     Then I should see "8" lines
 
@@ -263,4 +263,3 @@ Feature: Minify JavaScript
     And the Server is running at "passthrough-app"
     When I go to "/javascripts/coffee_test.js"
     Then I should see "11" lines
-
