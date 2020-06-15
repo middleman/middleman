@@ -2,7 +2,6 @@
 Feature: encoding option
 
   Scenario: No encoding set
-    Given a fixture app "clean-app"
     Given the Server is running at "clean-app"
 
     When I go to "/index.html"
