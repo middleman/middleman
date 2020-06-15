@@ -67,10 +67,10 @@ Feature: Local Data API
     Then I should see "No Test Data"
 
   Scenario: Storing static data
-  Given the Server is running at "basic-data-app"
-  When I go to "/static-data.html"
-  Then I should see "First: one"
-  Then I should see "Name: Test"
+    Given the Server is running at "basic-data-app"
+    When I go to "/static-data.html"
+    Then I should see "First: one"
+    Then I should see "Name: Test"
 
   Scenario: Using data in config.rb
     Given the Server is running at "data-app"
