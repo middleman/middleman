@@ -261,6 +261,8 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
   Contract String, Symbol => Maybe[String]
   def localized_path(path, locale)
     lookup = ::Middleman::Util.parse_uri(path)
+    return path if lookup.host
+
     lookup.path << app.config[:index_file] if lookup.path&.end_with?('/')
 
     if @lookup[lookup.path] && @lookup[lookup.path][locale]
