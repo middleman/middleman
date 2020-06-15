@@ -57,7 +57,7 @@ Feature: i18n Paths
       set :strip_index_file, false
       activate :i18n, mount_at_root: :en
       """
-    Given the Server is running at "empty-app"
+    Given the Server is running
     When I go to "/hello.html"
     Then I should see "Page: Hello"
     Then I should see '<a href="/index.html" class="current">Current Home</a>'
@@ -133,7 +133,7 @@ Feature: i18n Paths
       activate :i18n, mount_at_root: :en
       activate :relative_assets
       """
-    Given the Server is running at "empty-app"
+    Given the Server is running
     When I go to "/index.html"
     Then I should see "assets/css/main.css"
     When I go to "/hello.html"
@@ -211,7 +211,7 @@ Feature: i18n Paths
       """
       activate :i18n, mount_at_root: :en
       """
-    Given the Server is running at "empty-app"
+    Given the Server is running
     When I go to "/hello.html"
     Then I should see "Page: Hello"
     Then I should see 'Current: /hello.html'
@@ -250,7 +250,7 @@ Feature: i18n Paths
       # FIXME: Auto-discover does not work if there are no locale files.
       activate :i18n, mount_at_root: :en, :locales => [:en, :de]
       """
-    Given the Server is running at "empty-app"
+    Given the Server is running
     When I go to "/index.html"
     Then I should see "English"
     Then I should see '"/de/"'

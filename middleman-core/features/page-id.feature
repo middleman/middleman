@@ -38,7 +38,7 @@ Feature: Page IDs
   Scenario: Override page ID derivation with a proc
     Given a fixture app "page-id-app"
     And app "page-id-app" is using config "proc"
-    And the Server is running at "page-id-app"
+    And the Server is running
 
     When I go to "/index.html"
     Then I should see "I am: index.html-foo"

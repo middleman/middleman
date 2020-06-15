@@ -13,7 +13,7 @@ Feature: Sass/SCSS support in Slim
         .sass
           margin: 0
       """
-    Given the Server is running at "sass-in-slim-app"
+    Given the Server is running
     When I go to "/sass_filter/"
     Then I should see "text/css"
     Then I should see ".sass"
@@ -33,7 +33,7 @@ Feature: Sass/SCSS support in Slim
           margin: 0;
         }
       """
-    Given the Server is running at "sass-in-slim-app"
+    Given the Server is running
     When I go to "/scss_filter/"
     Then I should see "text/css"
     Then I should see ".scss"

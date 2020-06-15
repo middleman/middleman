@@ -6,7 +6,7 @@ Feature: Meta redirects
     """
     redirect "hello.html", to: "world.html"
     """
-    And the Server is running at "large-build-app"
+    And the Server is running
     When I go to "/hello.html"
     Then I should see '<link rel="canonical" href="world.html"'
     Then I should see '<meta http-equiv=refresh content="0; url=world.html"'
@@ -17,7 +17,7 @@ Feature: Meta redirects
     """
     redirect "hello.html", to: "http://example.com"
     """
-    And the Server is running at "large-build-app"
+    And the Server is running
     When I go to "/hello.html"
     Then I should see '<meta http-equiv=refresh content="0; url=http://example.com"'
 
@@ -31,7 +31,7 @@ Feature: Meta redirects
       redirect "hello.html", to: r
     end
     """
-    And the Server is running at "large-build-app"
+    And the Server is running
     When I go to "/hello.html"
     Then I should see '<meta http-equiv=refresh content="0; url=/static.html"'
 
@@ -43,7 +43,7 @@ Feature: Meta redirects
     redirect "hello.html", to: "link_test.html"
     redirect "hello2.html", to: "services/index.html"
     """
-    And the Server is running at "large-build-app"
+    And the Server is running
     When I go to "/hello/index.html"
     Then I should see '<meta http-equiv=refresh content="0; url=/link_test/"'
     When I go to "/hello2/index.html"
@@ -57,7 +57,7 @@ Feature: Meta redirects
       "#{from} to #{to}"
     end
     """
-    And the Server is running at "large-build-app"
+    And the Server is running
     When I go to "/hello.html"
     Then I should see 'hello.html to world.html'
 

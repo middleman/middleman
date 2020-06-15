@@ -37,7 +37,7 @@ Feature: Relative Assets (Helpers Only)
         font-style: normal;
       }
       """
-    And the Server is running at "relative-assets-app"
+    And the Server is running
     When I go to "/stylesheets/relative_assets_helper.css"
     Then I should see 'url("../images/blank.gif'
     And I should see 'url("../images/blank2.gif'
@@ -56,7 +56,7 @@ Feature: Relative Assets (Helpers Only)
       activate :directory_indexes
       activate :relative_assets, helpers_only: true
       """
-    And the Server is running at "relative-assets-app"
+    And the Server is running
     When I go to "/relative_image/index.html"
     Then I should see "../stylesheets/relative_assets.css"
 
@@ -70,7 +70,7 @@ Feature: Relative Assets (Helpers Only)
       """
       <%= image_tag '/img/blank.gif' %>
       """
-    And the Server is running at "relative-assets-app"
+    And the Server is running
     When I go to "/sub/image_tag.html"
     Then I should see '<img src="../img/blank.gif"'
 
@@ -84,7 +84,7 @@ Feature: Relative Assets (Helpers Only)
       """
       <%= image_tag "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" %>
       """
-    And the Server is running at "relative-assets-app"
+    And the Server is running
     When I go to "/sub/image_tag.html"
     Then I should see '<img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />'
 
@@ -116,7 +116,7 @@ Feature: Relative Assets (Helpers Only)
         font-style: normal;
       }
       """
-    And the Server is running at "relative-assets-app"
+    And the Server is running
     When I go to "/stylesheets/relative_assets_helper.css"
     Then I should see 'url("../images/blank.gif'
     When I go to "/stylesheets/fonts3.css"

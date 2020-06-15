@@ -16,7 +16,7 @@ Feature: Support slim templating language
         body
           h1 Welcome to Slim
       """
-    And the Server is running at "empty_app"
+    And the Server is running
     When I go to "/slim.html"
     Then I should see "<h1>Welcome to Slim</h1>"
 
@@ -72,7 +72,7 @@ Feature: Support slim templating language
         body
           h1 Welcome to Slim
       """
-    And the Server is running at "empty_app"
+    And the Server is running
     When I go to "/scss.html"
     Then I should see "html,body,div"
     When I go to "/sass.html"

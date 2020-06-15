@@ -17,11 +17,9 @@ Feature: Built-in macro view helpers
     """
     set :http_prefix, "/foo"
     """
-    And the Server is running at "padrino-helpers-app"
+    And the Server is running
     When I go to "/former_padrino_test.html"
     And I should see 'src="/foo/images/test2.png"'
     And I should see 'src="/foo/images/100px.png"'
     And I should see 'src="/foo/javascripts/test1.js"'
     And I should see 'href="/foo/stylesheets/test1.css"'
-
-                

@@ -50,7 +50,7 @@ Feature: Describe which files get layouts
 
       <test>Hi</test>
       """
-    And the Server is running at "empty_app"
+    And the Server is running
 
   Scenario: Normal Template
     When I go to "/index.html"
@@ -87,4 +87,3 @@ Feature: Describe which files get layouts
     When I go to "/test.xml"
     Then I should see "<test>Hi</test>"
     And I should see "<title>Second Layout</title>"
-

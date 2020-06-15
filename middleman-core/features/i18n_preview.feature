@@ -7,7 +7,7 @@ Feature: i18n Preview
       """
       activate :i18n
       """
-    Given the Server is running at "i18n-test-app"
+    Given the Server is running
     When I go to "/"
     Then I should see "Howdy"
     When I go to "/hello.html"
@@ -43,7 +43,7 @@ Feature: i18n Preview
       """
       activate :i18n
       """
-    Given the Server is running at "i18n-test-app"
+    Given the Server is running
     And the file "locales/en.yml" has the contents
       """
       ---
@@ -73,7 +73,7 @@ Feature: i18n Preview
       """
       activate :i18n, path: "/lang_:locale/"
       """
-    Given the Server is running at "i18n-test-app"
+    Given the Server is running
     When I go to "/"
     Then I should see "Howdy"
     When I go to "/hello.html"
@@ -92,7 +92,7 @@ Feature: i18n Preview
       """
       activate :i18n, templates_dir: "lang_data"
       """
-    Given the Server is running at "i18n-alt-root-app"
+    Given the Server is running
     When I go to "/"
     Then I should see "Howdy"
     When I go to "/hello.html"
@@ -110,7 +110,7 @@ Feature: i18n Preview
       """
       activate :i18n, lang_map: { en: :english, es: :spanish }
       """
-    Given the Server is running at "i18n-test-app"
+    Given the Server is running
     When I go to "/"
     Then I should see "Howdy"
     When I go to "/hello.html"
@@ -128,7 +128,7 @@ Feature: i18n Preview
       """
       activate :i18n, mount_at_root: :es
       """
-    Given the Server is running at "i18n-test-app"
+    Given the Server is running
     When I go to "/en/index.html"
     Then I should see "Howdy"
     When I go to "/en/hello.html"
@@ -156,7 +156,7 @@ Feature: i18n Preview
       """
       activate :i18n, langs: :es
       """
-    Given the Server is running at "i18n-test-app"
+    Given the Server is running
     When I go to "/en/index.html"
     Then I should see "File Not Found"
     When I go to "/en/hello.html"
@@ -179,7 +179,7 @@ Feature: i18n Preview
       """
       activate :i18n, mount_at_root: false
       """
-    Given the Server is running at "i18n-test-app"
+    Given the Server is running
     When I go to "/en/index.html"
     Then I should see "Howdy"
     When I go to "/en/hello.html"
@@ -199,7 +199,7 @@ Feature: i18n Preview
       """
       activate :i18n, langs: [:en]
       """
-    Given the Server is running at "i18n-test-app"
+    Given the Server is running
     When I go to "/"
     Then I should see "Howdy"
     When I go to "/hello.html"
@@ -218,7 +218,7 @@ Feature: i18n Preview
       activate :i18n
       activate :relative_assets
       """
-    Given the Server is running at "i18n-test-app"
+    Given the Server is running
     When I go to "/"
     Then I should see '"stylesheets/site.css"'
     When I go to "/hello.html"
@@ -234,7 +234,7 @@ Feature: i18n Preview
       """
       activate :i18n, mount_at_root: :es
       """
-    Given the Server is running at "i18n-default-app"
+    Given the Server is running
     When I go to "/en/"
     Then I should see "Default locale: es"
     Then I should see "Current locale: en"
@@ -247,7 +247,7 @@ Feature: i18n Preview
       """
       activate :i18n
       """
-    Given the Server is running at "i18n-nested-app"
+    Given the Server is running
     When I go to "/"
     Then I should see "Howdy"
     Then I should see "More"
@@ -268,7 +268,7 @@ Feature: i18n Preview
         end
       end
       """
-    Given the Server is running at "i18n-default-app"
+    Given the Server is running
     When I go to "/name.html"
     Then I should see "File Not Found"
     When I go to "/en/people/tom.html"

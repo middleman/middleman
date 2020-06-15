@@ -117,7 +117,7 @@ Feature: Assets get file hashes appended to them and references to them are upda
       activate :directory_indexes
       activate :asset_host, host: 'https://middlemanapp.com'
       """
-    Given the Server is running at "asset-hash-host-app"
+    Given the Server is running
     When I go to "/"
     Then I should see 'href="https://middlemanapp.com/stylesheets/site-7474cadd.css"'
     Then I should see 'href="https://middlemanapp.com/stylesheets/fragment-2902933e.css"'
@@ -149,7 +149,7 @@ Feature: Assets get file hashes appended to them and references to them are upda
       activate :directory_indexes
       activate :asset_hash
       """
-    Given the Server is running at "asset-hash-host-app"
+    Given the Server is running
     When I go to "/"
     Then I should see 'href="https://middlemanapp.com/stylesheets/site-7474cadd.css"'
     Then I should see 'href="https://middlemanapp.com/stylesheets/fragment-2902933e.css"'
