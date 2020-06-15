@@ -23,7 +23,7 @@ Feature: Setting the right content type for files
     proxy "bar", "index.html", content_type: 'text/custom'
     proxy "foo", "README" # auto-delegate to target content type
     """
-    And the Server is running at "content-type-app"
+    And the Server is running
     When I go to "/README"
     Then the content type should be "text/awesome"
     When I go to "/bar"
@@ -40,7 +40,6 @@ Feature: Setting the right content type for files
     """
     mime_type('.js', 'application/x-javascript')
     """
-    And the Server is running at "content-type-app"
+    And the Server is running
     When I go to "/javascripts/app.js"
     Then the content type should be "application/x-javascript"
-

@@ -15,7 +15,7 @@ Feature: Markdown support in Slim (Kramdown)
 
         paragraph
       """
-    Given the Server is running at "markdown-in-slim-app"
+    Given the Server is running
     When I go to "/markdown_filter/"
     Then I should see ">H1</h1>"
     Then I should see "<p>paragraph</p>"
@@ -35,7 +35,7 @@ Feature: Markdown support in Slim (Kramdown)
 
         ![image](blank.gif){: srcset="image_2x.jpg 2x"}
       """
-    Given the Server is running at "markdown-in-slim-app"
+    Given the Server is running
     When I go to "/link_and_image/"
     Then I should see "/link_target/"
     Then I should see "/images/image_2x.jpg 2x"

@@ -12,6 +12,6 @@ Feature: Generic block based pages
     """
     Hi
     """
-    And the Server is running at "empty_app"
+    And the Server is running
     When I go to "/hello.html"
     Then I should see "world"

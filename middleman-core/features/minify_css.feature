@@ -7,7 +7,7 @@ Feature: Minify CSS
       """
       config[:sass_source_maps] = false
       """
-    And the Server is running at "minify-css-app"
+    And the Server is running
     When I go to "/stylesheets/site.css"
     Then I should see "7" lines
     And I should see "only screen and (device-width"
@@ -20,7 +20,7 @@ Feature: Minify CSS
 
       activate :minify_css
       """
-    And the Server is running at "minify-css-app"
+    And the Server is running
     When I go to "/stylesheets/site.css"
     Then I should see "1" lines
     And I should see "only screen and (device-width"
@@ -38,7 +38,7 @@ Feature: Minify CSS
       activate :minify_css
       proxy '/css-proxy', '/stylesheets/site.css', ignore: true
       """
-    And the Server is running at "minify-css-app"
+    And the Server is running
     When I go to "/css-proxy"
     Then I should see "1" lines
     And I should see "only screen and (device-width"
@@ -57,7 +57,7 @@ Feature: Minify CSS
 
       activate :minify_css, compressor: ::PassThrough
       """
-    And the Server is running at "passthrough-app"
+    And the Server is running
     When I go to "/stylesheets/site.css"
     Then I should see "5" lines
 
@@ -67,7 +67,7 @@ Feature: Minify CSS
       """
       config[:sass_source_maps] = false
       """
-    And the Server is running at "minify-css-app"
+    And the Server is running
     When I go to "/inline-css.html"
     Then I should see:
     """
@@ -95,7 +95,7 @@ Feature: Minify CSS
 
       page "/inline-css.html", layout: false
       """
-    And the Server is running at "passthrough-app"
+    And the Server is running
     When I go to "/inline-css.html"
     Then I should see:
     """
@@ -122,7 +122,7 @@ Feature: Minify CSS
 
       page "/inline-css.html", layout: false
       """
-    And the Server is running at "passthrough-app"
+    And the Server is running
     When I go to "/inline-css.html"
     Then I should see:
     """
@@ -139,7 +139,7 @@ Feature: Minify CSS
 
       activate :minify_css, inline: true
       """
-    And the Server is running at "minify-css-app"
+    And the Server is running
     When I go to "/inline-css.html"
     Then I should see:
     """
@@ -156,7 +156,7 @@ Feature: Minify CSS
 
       activate :minify_css, inline: true
       """
-    And the Server is running at "minify-css-app"
+    And the Server is running
     When I go to "/inline-css.php"
     Then I should see:
     """
@@ -176,7 +176,7 @@ Feature: Minify CSS
       activate :minify_css, inline: true
       proxy '/inline-css-proxy', '/inline-css.html', ignore: true
       """
-    And the Server is running at "minify-css-app"
+    And the Server is running
     When I go to "/inline-css-proxy"
     Then I should see:
     """
@@ -197,7 +197,7 @@ Feature: Minify CSS
                             inline: true,
                             inline_content_types: ['text/html']
       """
-    And the Server is running at "minify-css-app"
+    And the Server is running
     When I go to "/stylesheets/site.xcss"
     Then I should see "1" lines
     And I should see "only screen and (device-width"

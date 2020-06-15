@@ -6,7 +6,7 @@ Feature: Minify JavaScript
     And a file named "config.rb" with:
       """
       """
-    And the Server is running at "minify-js-app"
+    And the Server is running
     When I go to "/inline-js.html"
     Then I should see:
     """
@@ -53,7 +53,7 @@ Feature: Minify JavaScript
 
       page "/inline-js.html", layout: false
       """
-    And the Server is running at "passthrough-app"
+    And the Server is running
     When I go to "/inline-js.html"
     Then I should see:
     """
@@ -100,7 +100,7 @@ Feature: Minify JavaScript
 
       page "/inline-js.html", layout: false
       """
-    And the Server is running at "passthrough-app"
+    And the Server is running
     When I go to "/inline-js.html"
     Then I should see:
     """
@@ -126,7 +126,7 @@ Feature: Minify JavaScript
       """
       activate :minify_javascript, inline: true
       """
-    And the Server is running at "minify-js-app"
+    And the Server is running
     When I go to "/inline-js.html"
     Then I should see:
     """
@@ -152,7 +152,7 @@ Feature: Minify JavaScript
       """
       activate :minify_javascript, inline: true
       """
-    And the Server is running at "minify-js-app"
+    And the Server is running
     When I go to "/inline-js.php"
     Then I should see:
     """
@@ -178,7 +178,7 @@ Feature: Minify JavaScript
       activate :minify_javascript, inline: true
       proxy '/inline-js-proxy', '/inline-js.html', ignore: true
       """
-    And the Server is running at "minify-js-app"
+    And the Server is running
     When I go to "/inline-js-proxy"
     Then I should see "14" lines
 
@@ -188,7 +188,7 @@ Feature: Minify JavaScript
       """
       activate :minify_javascript
       """
-    And the Server is running at "minify-js-app"
+    And the Server is running
     When I go to "/javascripts/js_test.js"
     Then I should see "1" lines
     When I go to "/more-js/other.js"
@@ -201,7 +201,7 @@ Feature: Minify JavaScript
       activate :minify_javascript
       proxy '/js-proxy', '/javascripts/js_test.js', ignore: true
       """
-    And the Server is running at "minify-js-app"
+    And the Server is running
     When I go to "/js-proxy"
     Then I should see "1" lines
 
@@ -216,7 +216,7 @@ Feature: Minify JavaScript
       """
       activate :minify_javascript, inline: true
       """
-    And the Server is running at "minify-js-app"
+    And the Server is running
     When I go to "/inline-coffeescript.html"
     Then I should see "3" lines
 
@@ -226,7 +226,7 @@ Feature: Minify JavaScript
       """
       activate :minify_javascript
       """
-    And the Server is running at "minify-js-app"
+    And the Server is running
     When I go to "/javascripts/coffee_test.js"
     Then I should see "1" lines
 
@@ -244,7 +244,7 @@ Feature: Minify JavaScript
 
       page "/inline-coffeescript.html", layout: false
       """
-    And the Server is running at "passthrough-app"
+    And the Server is running
     When I go to "/inline-coffeescript.html"
     Then I should see "13" lines
 
@@ -260,6 +260,6 @@ Feature: Minify JavaScript
 
       activate :minify_javascript, compressor: ::PassThrough
       """
-    And the Server is running at "passthrough-app"
+    And the Server is running
     When I go to "/javascripts/coffee_test.js"
     Then I should see "11" lines

@@ -67,7 +67,7 @@ Feature: Directory Index
     relative_link_to: <%= link_to "Relative", "../needs_index.html" %>
     link_to_with_spaces: <%= link_to "Spaces", "../evil%20spaces.html" %>
     """
-    And the Server is running at "indexable-app"
+    And the Server is running
     When I go to "/link_to/"
     Then I should see 'link_to: <a href="/needs_index/">Needs Index</a>'
     Then I should see 'explicit_link_to: <a href="/needs_index/">Explicit</a>'

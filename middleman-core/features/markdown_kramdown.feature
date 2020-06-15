@@ -8,7 +8,7 @@ Feature: Markdown (Kramdown) support
       set :markdown_engine, :kramdown
       set :markdown, smartypants: true
       """
-    Given the Server is running at "markdown-app"
+    Given the Server is running
     When I go to "/smarty_pants.html"
     Then I should see "“Hello”"
 
@@ -28,7 +28,7 @@ Feature: Markdown (Kramdown) support
 
       [mail@mail.com](mailto:mail@mail.com)
       """
-    Given the Server is running at "markdown-app"
+    Given the Server is running
     When I go to "/link_and_image/"
     Then I should see "/smarty_pants/"
     Then I should see 'width="1"'
@@ -49,7 +49,7 @@ Feature: Markdown (Kramdown) support
       [A link](/smarty_pants.html)
       [A second link](/smarty_pants.html){: anchor="test-anchor"}
       """
-    Given the Server is running at "markdown-app"
+    Given the Server is running
     When I go to "/links/"
     Then I should see "/smarty_pants/"
     And I should see "/smarty_pants/#test-anchor"

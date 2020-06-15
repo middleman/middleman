@@ -6,7 +6,7 @@ Feature: i18n Partials
       """
       activate :i18n
       """
-    Given the Server is running at "i18n-test-app"
+    Given the Server is running
     When I go to "/partials/index.html"
     Then I should see "Country: USA"
     Then I should see "State: District of Columbia"

@@ -7,7 +7,7 @@ Feature: select_tag helper
     """
     options as array: <%= select_tag :colors, options: ["red", "blue", "blorange"], include_blank: "Choose a color" %>
     """
-    And the Server is running at "indexable-app"
+    And the Server is running
     When I go to "/select_tag.html"
     Then I should see '<select name="colors"'
     Then I should see '<option value="">Choose a color</option>'

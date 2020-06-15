@@ -15,7 +15,7 @@ Feature: Markdown support in Haml
 
         paragraph
       """
-    Given the Server is running at "markdown-in-haml-app"
+    Given the Server is running
     When I go to "/markdown_filter/"
     Then I should see ">H1</h1>"
     Then I should see "<p>paragraph</p>"
@@ -35,7 +35,7 @@ Feature: Markdown support in Haml
 
         ![image](blank.gif)
       """
-    Given the Server is running at "markdown-in-haml-app"
+    Given the Server is running
     When I go to "/link_and_image/"
     Then I should see "/link_target/"
     Then I should see 'src="/images/blank.gif"'
