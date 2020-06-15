@@ -1,0 +1,1 @@
+activate :i18n

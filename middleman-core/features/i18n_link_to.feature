@@ -257,3 +257,13 @@ Feature: i18n Paths
     When I go to "/de/index.html"
     Then I should see "Deutsch"
     Then I should see '"/"'
+
+  Scenario: link_to is i18n aware and leaves absolute URLs unchanged
+    Given a fixture app "i18n-default-app"
+    And a file named "source/localizable/index.html.erb" with:
+      """
+      <%= link_to "Example", "https://www.example.org/" %>
+      """
+    And the Server is running
+    When I go to "/index.html"
+    Then I should see '<a href="https://www.example.org/">Example</a>'
