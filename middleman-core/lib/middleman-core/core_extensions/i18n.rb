@@ -24,17 +24,6 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
     # Don't fail on invalid locale, that's not what our current
     # users expect.
     ::I18n.enforce_available_locales = false
-
-    # This is for making the tests work - since the tests
-    # don't completely reload middleman, I18n.load_path can get
-    # polluted with paths from other test app directories that don't
-    # exist anymore.
-    return unless ENV['TEST']
-
-    app.after_configuration_eval do
-      ::I18n.load_path.delete_if { |path| path =~ %r{tmp/aruba} }
-      ::I18n.reload!
-    end
   end
 
   def after_configuration

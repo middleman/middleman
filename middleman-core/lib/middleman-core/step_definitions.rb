@@ -19,3 +19,14 @@ World(ArubaMonkeypatch)
 Before do
   @aruba_timeout_seconds = RUBY_PLATFORM == 'java' ? 120 : 60
 end
+
+# This is for making the tests work - since the tests
+# don't completely reload middleman, I18n.load_path can get
+# polluted with paths from other test app directories that don't
+# exist anymore.
+After do
+  if defined?(I18n)
+    I18n.load_path.delete_if { |path| path =~ %r{tmp/aruba} }
+    I18n.reload!
+  end
+end
