@@ -1,10 +1,6 @@
 require 'padrino-helpers'
 require 'middleman-core/contracts'
 
-# Don't fail on invalid locale, that's not what our current
-# users expect.
-::I18n.enforce_available_locales = false
-
 class Padrino::Helpers::OutputHelpers::ErbHandler
   # Force Erb capture not to use safebuffer
   def capture_from_template(*args, &block)
