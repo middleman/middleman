@@ -6,8 +6,6 @@ require 'sassc'
 
 require 'simplecov'
 SimpleCov.root(File.expand_path(File.dirname(__FILE__) + '/../..'))
-
-require 'simplecov'
 SimpleCov.start
 
 PROJECT_ROOT_PATH = File.dirname(File.dirname(File.dirname(__FILE__)))
