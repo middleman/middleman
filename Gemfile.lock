@@ -110,7 +110,8 @@ GEM
       concurrent-ruby (~> 1.0)
     interception (0.5)
     jaro_winkler (1.5.4)
-    kramdown (1.17.0)
+    kramdown (2.3.0)
+      rexml
     lazy_priority_queue (0.1.1)
     libv8 (7.3.492.27.1)
     liquid (4.0.3)
@@ -163,6 +164,7 @@ GEM
     rb-inotify (0.10.1)
       ffi (~> 1.0)
     redcarpet (3.5.0)
+    rexml (3.2.4)
     rgl (0.5.6)
       lazy_priority_queue (~> 0.1.0)
       stream (~> 0.5.2)
@@ -241,7 +243,7 @@ DEPENDENCIES
   coffee-script (~> 2.2)
   cucumber (~> 3.0)
   haml (>= 4.0.5)
-  kramdown (~> 1.2)
+  kramdown (~> 2.3)
   liquid (>= 3.0)
   middleman-cli!
   middleman-core!

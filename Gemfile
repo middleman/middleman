@@ -22,7 +22,7 @@ gem 'pry-stack_explorer'
 # Optional middleman dependencies, included for tests
 gem 'coffee-script', '~> 2.2', require: false
 gem 'haml', '>= 4.0.5', require: false
-gem 'kramdown', '~> 1.2', require: false
+gem 'kramdown', '~> 2.3', require: false
 gem 'liquid', '>= 3.0', require: false
 gem 'redcarpet', '>= 3.1', require: false
 gem 'sassc', '~> 2.0', require: false
