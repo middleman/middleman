@@ -1,5 +1,9 @@
 # master
 
+# 4.3.8
+
+- Update kramdown to avoid CVE-2020-14001 in v4 (#2348)
+
 # 4.3.7
 
 - Allow ActiveSupport a wider range to avoid security warnings. #2327
