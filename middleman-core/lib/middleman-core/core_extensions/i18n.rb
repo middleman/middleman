@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
   option :no_fallbacks, false, 'Disable I18n fallbacks'
   option :locales, nil, 'List of locales, will autodiscover by default'
@@ -30,7 +32,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
     # See https://github.com/svenfuchs/i18n/wiki/Fallbacks
     unless options[:no_fallbacks]
       require 'i18n/backend/fallbacks'
-      ::I18n::Backend::Simple.send(:include, ::I18n::Backend::Fallbacks)
+      ::I18n::Backend::Simple.include ::I18n::Backend::Fallbacks
     end
 
     locales_file_path = options[:data]
@@ -232,13 +234,13 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
       # We also generate a map with the same infos, but with the locales as keys.
       # e.g. {:en => '/en/index.html', :de => '/de/index.html', :es => '/index.html'}
       locale_map = resources.each_with_object({}) do |resource, map|
-        map[resource.locale] = '/' + resource.path
+        map[resource.locale] = "/#{resource.path}"
       end
 
       # Then we add those to the lookup table, so every path has a
       # cross-reference to any other path in other locales.
       exposed_paths.each do |path|
-        @lookup['/' + path] = locale_map
+        @lookup["/#{path}"] = locale_map
       end
     end
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'padrino-helpers'
 
 module Middleman
@@ -12,9 +14,9 @@ module Middleman
       end
 
       def render
-        classes = 'resource-details'
-        classes << ' ignored' if @resource.ignored?
-        content_tag :div, class: classes do
+        classes = ['resource-details']
+        classes << 'ignored' if @resource.ignored?
+        content_tag :div, class: classes.join(' ') do
           content_tag :table do
             content = ''
             resource_properties.each do |label, value|

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'middleman-core/contracts'
 require 'middleman-core/core_extensions/data/stores/base'
 require 'middleman-core/dependencies/vertices/vertex'

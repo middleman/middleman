@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'pathname'
 require 'hamster'
 require 'middleman-core/file_renderer'
@@ -159,7 +161,7 @@ module Middleman
 
       if current_resource
         resource = current_resource
-        current_dir  = resource.file_descriptor[:relative_path].dirname
+        current_dir = resource.file_descriptor[:relative_path].dirname
         relative_dir = current_dir + Pathname(non_root)
         relative_dir_no_underscore = current_dir + Pathname(non_root_no_underscore)
 

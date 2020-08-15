@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'resolv'
 require 'middleman-core/dns_resolver/network_resolver'
 require 'middleman-core/dns_resolver/hosts_resolver'

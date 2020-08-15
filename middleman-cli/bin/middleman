@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
 require 'middleman-core/profiling'
 Middleman::Profiling.profiler = Middleman::Profiling::RubyProfProfiler.new if ARGV.include? '--profile'

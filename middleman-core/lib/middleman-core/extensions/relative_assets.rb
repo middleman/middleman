@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Relative Assets extension
 class Middleman::Extensions::RelativeAssets < ::Middleman::Extension
   option :exts, nil, 'List of extensions that get converted to relative paths.'

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'tilt'
 require 'hamster'
 require 'middleman-core/contracts'
@@ -76,7 +78,7 @@ module Middleman
 
       preferred_engines.each do |preferred_engine|
         path_with_ext = relative_path.dup
-        path_with_ext << ('.' + preferred_engine) unless preferred_engine.nil?
+        path_with_ext = "#{path_with_ext}.#{preferred_engine}" unless preferred_engine.nil?
 
         globbing = preferred_engine == '*'
 

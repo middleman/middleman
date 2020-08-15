@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'hamster'
 require 'sassc'
 require 'middleman-core/dependencies'
@@ -7,7 +9,7 @@ module Middleman
   module Renderers
     # Sass renderer
     class Sass < ::Middleman::Extension
-      DEFAULT_SASS_CACHE_LOCATION = './.sass-cache'.freeze
+      DEFAULT_SASS_CACHE_LOCATION = './.sass-cache'
 
       opts = { output_style: :nested }
       opts[:line_comments] = false if ENV['TEST']
@@ -69,7 +71,7 @@ module Middleman
         def exception_to_css(e)
           header = "#{e.class}: #{e.message}"
 
-          <<~END
+          error_msg = <<~END
             /*
             #{header.gsub('*/', '*\\/')}
 
@@ -80,6 +82,8 @@ module Middleman
               font-family: monospace;
               content: "#{header.gsub('"', '\"').gsub("\n", '\\A ')}"; }
           END
+          error_msg = error_msg.dup if error_msg.frozen? # slim will fail, if we pass frozen string as render result
+          error_msg
         end
 
         def vertices

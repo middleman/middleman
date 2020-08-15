@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 proxy '/fake.html', '/real.html', layout: false
 
 ignore '/should_be_ignored.html'

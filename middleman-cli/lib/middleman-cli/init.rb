@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 # CLI Module
 module Middleman::Cli
   # A thor task for creating new projects
   class Init < Thor::Group
     include Thor::Actions
 
-    GIT_CMD = 'git'.freeze
+    GIT_CMD = 'git'
 
     check_unknown_options!
 
@@ -32,9 +34,11 @@ module Middleman::Cli
       require 'tmpdir'
 
       unless git_present?
-        msg =  'You need to install the git command line tool to initialize a new project. '
-        msg << "For help installing git, please refer to GitHub's tutorial at https://help.github.com/articles/set-up-git"
-        say msg, :red
+        msg_array = [
+          'You need to install the git command line tool to initialize a new project. ',
+          "For help installing git, please refer to GitHub's tutorial at https://help.github.com/articles/set-up-git"
+        ]
+        say msg_array.join, :red
         exit 1
       end
 

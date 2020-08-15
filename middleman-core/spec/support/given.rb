@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Given
   ROOT = File.expand_path('../..', __dir__)
   TMP  = File.join(ROOT, 'tmp')

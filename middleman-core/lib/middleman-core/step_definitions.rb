@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'aruba/cucumber'
 require 'middleman-core/step_definitions/middleman_steps'
 require 'middleman-core/step_definitions/builder_steps'

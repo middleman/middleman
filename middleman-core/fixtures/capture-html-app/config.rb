@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'slim'
 
 page '/capture_html_erb.html', layout: :capture_html

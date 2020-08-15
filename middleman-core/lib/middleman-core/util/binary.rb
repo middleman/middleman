@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Template and Mime detection
 require 'tilt'
 require 'rack/mime'
@@ -358,7 +360,7 @@ module Middleman
       file = ::File.open(path)
       first_line = file.gets
 
-      first_line = file.gets if first_line =~ /\A(?:[^\r\n]*coding:[^\r\n]*\r?\n)/
+      first_line = file.gets if /\A(?:[^\r\n]*coding:[^\r\n]*\r?\n)/.match?(first_line)
 
       file.close
 

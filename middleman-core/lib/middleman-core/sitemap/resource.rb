@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rack/mime'
 require 'set'
 require 'hamster'
@@ -72,11 +74,11 @@ module Middleman
         @metadata_options = ::Middleman::EMPTY_HASH
 
         # Locals are local variables for rendering this resource's template
-        @metadata_locals  = ::Middleman::EMPTY_HASH
+        @metadata_locals = ::Middleman::EMPTY_HASH
 
         # Page are data that is exposed through this resource's data member.
         # Note: It is named 'page' for backwards compatibility with older MM.
-        @metadata_page    = ::Middleman::EMPTY_HASH
+        @metadata_page = ::Middleman::EMPTY_HASH
 
         # Recursively enhanced page data cache
         @page_data = nil

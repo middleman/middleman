@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Require gem
 require 'coffee_script'
 

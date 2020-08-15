@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'webrick'
 require 'webrick/https'
 require 'openssl'
@@ -337,7 +339,7 @@ module Middleman
 
     class FilteredWebrickLog < ::WEBrick::Log
       def log(level, data)
-        super(level, data) unless data =~ /Could not determine content-length of response body./
+        super(level, data) unless /Could not determine content-length of response body./.match?(data)
       end
     end
   end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'monitor'
 require 'middleman-core/core_extensions/collections/pagination'
 require 'middleman-core/core_extensions/collections/step_context'

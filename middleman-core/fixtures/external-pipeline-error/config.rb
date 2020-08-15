@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 activate :external_pipeline,
          name: :failing,
          command: 'mv does-not-exist tmp/file.js',

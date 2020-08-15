@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Around('@preserve_mime_types') do |_scenario, block|
   mime_types = ::Rack::Mime::MIME_TYPES.clone
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 if ENV['CONTRACTS'] != 'false'
   require 'contracts'
   require 'hamster'
@@ -21,7 +23,7 @@ if ENV['CONTRACTS'] != 'false'
     VectorOf = Contracts::CollectionOf::Factory.new(::Hamster::Vector)
 
     class ImmutableHashOf < Contracts::CallableClass
-      INVALID_KEY_VALUE_PAIR = 'You should provide only one key-value pair to HashOf contract'.freeze
+      INVALID_KEY_VALUE_PAIR = 'You should provide only one key-value pair to HashOf contract'
 
       def initialize(key, value)
         @key   = key
@@ -53,9 +55,9 @@ else
       base.extend self
     end
 
-    # rubocop:disable MethodName
+    # rubocop:disable Naming/MethodName
     def Contract(*); end
-    # rubocop:enable MethodName
+    # rubocop:enable Naming/MethodName
 
     class Callable
       def self.[](*); end

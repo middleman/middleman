@@ -38,8 +38,8 @@ gem 'mini_racer', '~> 0.2.4', platforms: :ruby
 gem 'therubyrhino', '>= 2.0', platforms: :jruby
 
 # Code Quality
-gem 'rubocop', '~> 0.70.0', require: false
-gem 'rubocop-performance', require: false
+gem 'rubocop', '~> 0.89', require: false
+gem 'rubocop-performance', '~> 1.7', require: false
 gem 'simplecov', '~> 0.10', require: false
 
 # Middleman itself

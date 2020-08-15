@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'middleman-core/application'
 require 'middleman-core/sources'
 require 'middleman-core/sitemap/resource'

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'middleman-core/dns_resolver'
 require 'middleman-core/preview_server/information'
 require 'middleman-core/preview_server/network_interface_inventory'

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 set :fonts_dir, 'fonts'
 
 configure :build do

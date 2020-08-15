@@ -1,4 +1,5 @@
 language: ruby
+dist: xenial
 cache: bundler
 rvm:
   - ruby-head
@@ -7,11 +8,10 @@ rvm:
   - 2.5
 os:
   - linux
-matrix:
+jobs:
   fast_finish: true
   allow_failures:
     - rvm: ruby-head
 env:
   global:
     - TEST=true
-script: bundle exec rake test

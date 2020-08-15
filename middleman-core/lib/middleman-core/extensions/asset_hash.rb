@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'middleman-core/util'
 
 class Middleman::Extensions::AssetHash < ::Middleman::Extension

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class LayoutDisabler < Middleman::Extension
   def initialize(app, options_hash = {}, &block)
     super

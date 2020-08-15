@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'hamster'
 require 'middleman-core/util/data'
 require 'middleman-core/core_extensions/data/stores/local_file'

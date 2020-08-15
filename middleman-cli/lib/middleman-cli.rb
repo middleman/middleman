@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Setup our load paths
 libdir = __dir__
 $LOAD_PATH.unshift(libdir) unless $LOAD_PATH.include?(libdir)

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 set :build_dir, '.build'
 
 ignore '/should_be_ignored.html'

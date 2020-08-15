@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'middleman-core/sitemap/resource'
 require 'middleman-core/contracts'
 

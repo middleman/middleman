@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Middleman
   class PreviewServer
     # This class wraps server information to be used in call back

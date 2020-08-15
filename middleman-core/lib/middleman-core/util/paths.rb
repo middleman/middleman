@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Core Pathname library used for traversal
 require 'pathname'
 require 'addressable/uri'
@@ -95,7 +97,7 @@ module Middleman
 
       source = source.to_s.tr(' ', '')
       ignore_extension = IGNORED_ASSET_EXTENSIONS.include? kind # don't append extension
-      source << ".#{kind}" unless ignore_extension || source.end_with?(".#{kind}")
+      source = "#{source}.#{kind}" unless ignore_extension || source.end_with?(".#{kind}")
       asset_folder = '' if source.start_with?('/') # absolute path
 
       asset_url(app, source, asset_folder, options_hash)
@@ -194,7 +196,7 @@ module Middleman
       elsif this_resource && uri.path && !uri.host
         # Handle relative urls
         url_path = Pathname(uri.path)
-        current_source_dir = Pathname('/' + this_resource.path).dirname
+        current_source_dir = Pathname("/#{this_resource.path}").dirname
         url_path = current_source_dir.join(url_path) if url_path.relative?
         resource = app.sitemap.by_path(url_path.to_s)
         if resource
@@ -202,7 +204,7 @@ module Middleman
         else
           # Try to find a resource relative to destination paths
           url_path = Pathname(uri.path)
-          current_source_dir = Pathname('/' + this_resource.destination_path).dirname
+          current_source_dir = Pathname("/#{this_resource.destination_path}").dirname
           url_path = current_source_dir.join(url_path) if url_path.relative?
           resource = app.sitemap.by_destination_path(url_path.to_s)
           resource_url = resource.url if resource
@@ -257,9 +259,9 @@ module Middleman
       end
 
       if resource
-        '/' + resource.destination_path
+        "/#{resource.destination_path}"
       else
-        '/' + normalize_path(path)
+        "/#{normalize_path(path)}"
       end
     end
 
@@ -275,11 +277,11 @@ module Middleman
       # if we've been asked to.
       if relative
         # Output urls relative to the destination path, not the source path
-        current_dir = Pathname('/' + curr_resource.destination_path).dirname
+        current_dir = Pathname("/#{curr_resource.destination_path}").dirname
         relative_path = Pathname(resource_url).relative_path_from(current_dir).to_s
 
         # Put back the trailing slash to avoid unnecessary Apache redirects
-        relative_path << '/' if resource_url.end_with?('/') && !relative_path.end_with?('/')
+        relative_path = "#{relative_path}/" if resource_url.end_with?('/') && !relative_path.end_with?('/')
 
         relative_path
       else

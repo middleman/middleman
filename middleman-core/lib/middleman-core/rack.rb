@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rack'
 require 'rack/file'
 require 'rack/lint'
@@ -89,7 +91,10 @@ module Middleman
       start_time = Time.now
 
       request_path = WEBrick::HTTPUtils.unescape(env['PATH_INFO'].dup)
-      request_path.force_encoding('UTF-8') if request_path.respond_to? :force_encoding
+      if request_path.respond_to? :force_encoding
+        request_path = request_path.dup if request_path.frozen?
+        request_path = request_path.force_encoding('UTF-8')
+      end
       request_path = ::Middleman::Util.full_path(request_path, @middleman)
       full_request_path = File.join(env['SCRIPT_NAME'], request_path) # Path including rack mount
 
