@@ -25,7 +25,7 @@ gem 'haml', '>= 4.0.5', require: false
 gem 'kramdown', '~> 2.3', require: false
 gem 'liquid', '>= 3.0', require: false
 gem 'redcarpet', '>= 3.1', require: false
-gem 'sassc', '~> 2.0', require: false
+gem 'sassc', '~> 2.4', require: false
 gem 'sinatra', '>= 2.0.0.beta2', require: false
 gem 'slim', '>= 2.0', require: false
 gem 'stylus', '>= 1.0', require: false
