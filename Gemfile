@@ -10,7 +10,7 @@ gem 'yard', '~> 0.9.11', require: false
 gem 'addressable', '~> 2.4', require: false
 gem 'aruba', '~> 0.14.0', require: false
 gem 'byebug'
-gem 'capybara', '~> 2.5.0', require: false
+gem 'capybara', '~> 3.33.0', require: false
 gem 'cucumber', '~> 3.0', require: false
 gem 'rspec', '~> 3.0', require: false
 
