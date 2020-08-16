@@ -112,7 +112,7 @@ GEM
     kramdown (2.3.0)
       rexml
     lazy_priority_queue (0.1.1)
-    libv8 (7.3.492.27.1)
+    libv8 (8.4.255.0)
     liquid (4.0.3)
     listen (3.2.1)
       rb-fsevent (~> 0.10, >= 0.10.3)
@@ -123,8 +123,8 @@ GEM
       mime-types-data (~> 3.2015)
     mime-types-data (3.2020.0512)
     mini_portile2 (2.4.0)
-    mini_racer (0.2.14)
-      libv8 (> 7.3)
+    mini_racer (0.3.1)
+      libv8 (~> 8.4.255)
     minitest (5.14.1)
     multi_json (1.14.1)
     multi_test (0.1.2)
@@ -251,7 +251,7 @@ DEPENDENCIES
   liquid (>= 3.0)
   middleman-cli!
   middleman-core!
-  mini_racer (~> 0.2.4)
+  mini_racer (~> 0.3.1)
   pry
   pry-rescue
   pry-stack_explorer
