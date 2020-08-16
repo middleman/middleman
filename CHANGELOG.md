@@ -1,5 +1,9 @@
 # master
 
+- Handle the removal of a file in dependencies. Fixes #2292
+- Update rubocop + use enable-frozen-string-literal (#2354)
+- Add ability to external pipeline ignore process exit code (#2353)
+- Trigger a reload for the preview server when data changes (#2340)
 - Always write `deps.yml` if `--track-dependencies` is set and the file doesn't exist
 - Add `--dependency-file` flag to configure the file location.
 - Handle the removal of a file in dependencies. Fixes #2292
