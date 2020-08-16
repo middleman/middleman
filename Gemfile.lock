@@ -67,7 +67,7 @@ GEM
       celluloid (>= 0.16.0)
       nio4r (>= 1.1.0)
     childprocess (3.0.0)
-    coderay (1.1.2)
+    coderay (1.1.3)
     coffee-script (2.4.1)
       coffee-script-source
       execjs
@@ -145,7 +145,7 @@ GEM
     pry (0.13.1)
       coderay (~> 1.1)
       method_source (~> 1.0)
-    pry-rescue (1.5.0)
+    pry-rescue (1.5.2)
       interception (>= 0.5)
       pry (>= 0.12.0)
     pry-stack_explorer (0.4.9.3)
