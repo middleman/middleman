@@ -31,7 +31,7 @@ gem 'slim', '>= 2.0', require: false
 gem 'stylus', '>= 1.0', require: false
 
 # Dns server to test preview server
-gem 'rubydns', '~> 1.0.1', require: false
+gem 'rubydns', '~> 2.0.2', require: false
 
 # For less, note there is no compatible JS runtime for windows
 gem 'mini_racer', '~> 0.2.4', platforms: :ruby
