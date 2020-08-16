@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Core Pathname library used for traversal
 require 'pathname'
 

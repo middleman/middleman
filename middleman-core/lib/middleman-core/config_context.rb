@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rack/mime'
 require 'middleman-core/callback_manager'
 

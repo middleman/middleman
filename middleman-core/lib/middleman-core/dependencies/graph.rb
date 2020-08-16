@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'set'
 require 'rgl/adjacency'
 require 'middleman-core/contracts'

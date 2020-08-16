@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'middleman-core/application'
 
 # CLI Module
@@ -126,7 +128,7 @@ module Middleman::Cli
           puts 'Project built successfully.'
         else
           msg = 'There were errors during this build'
-          msg << ', re-run with `middleman build --verbose` to see the full exception.' unless options['verbose']
+          msg = "#{msg}, re-run with `middleman build --verbose` to see the full exception." unless options['verbose']
           shell.say msg, :red
 
           exit(1)

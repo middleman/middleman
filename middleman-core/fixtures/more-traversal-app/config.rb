@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 activate :directory_indexes
 
 proxy '/sub/fake.html', '/proxied.html', ignore: true

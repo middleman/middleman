@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'slim'
 
 page '/content_for_erb.html', layout: :content_for

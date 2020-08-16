@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Routing extension
 module Middleman
   module CoreExtensions
@@ -19,7 +21,7 @@ module Middleman
             normalized_path = ::File.join(normalized_path, app.config[:index_file]) if normalized_path.end_with?('/') || app.files.by_type(:source).watchers.any? { |w| (w.directory + Pathname(normalized_path)).directory? }
           end
 
-          normalized_path = '/' + ::Middleman::Util.strip_leading_slash(normalized_path) if normalized_path.is_a?(String)
+          normalized_path = "/#{::Middleman::Util.strip_leading_slash(normalized_path)}" if normalized_path.is_a?(String)
 
           resource_list
             .select { |r| ::Middleman::Util.path_match(normalized_path, "/#{r.path}") }

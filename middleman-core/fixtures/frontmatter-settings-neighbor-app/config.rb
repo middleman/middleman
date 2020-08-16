@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Proxy ignored.html, which should ignore itself through a frontmatter
 proxy 'proxied.html', 'ignored.html'
 proxy 'proxied_with_frontmatter.html', 'ignored.html'

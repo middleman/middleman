@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Middleman::Extensions::AssetHost < ::Middleman::Extension
   option :host, nil, 'The asset host to use or a Proc to determine asset host', required: true
   option :exts, nil, 'List of extensions that get cache busters strings appended to them.'

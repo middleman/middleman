@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 require 'middleman-core'
 
@@ -63,7 +65,7 @@ describe Middleman::Util do
     it 'returns Array with strings, or IndifferentHash, true, false' do
       indifferent_hash = { test: 'subject' }
       regular_hash     = { regular: 'hash' }
-      input   = [indifferent_hash, regular_hash, true, false]
+      input = [indifferent_hash, regular_hash, true, false]
       subject = Middleman::Util.recursively_enhance input
 
       expect(subject[1].regular).to eq 'hash'

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Automatic Image Sizes extension
 class Middleman::Extensions::AutomaticImageSizes < ::Middleman::Extension
   def initialize(app, options_hash = ::Middleman::EMPTY_HASH, &block)

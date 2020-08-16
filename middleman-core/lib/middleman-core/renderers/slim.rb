@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Load gem
 require 'slim'
 
@@ -7,9 +9,7 @@ module SafeTemplate
   end
 end
 
-class ::Slim::Template
-  include SafeTemplate
-
+module SlimTemplatePatch
   def initialize(file, line, opts, &block)
     if opts.key?(:context)
       ::Slim::Embedded::SassEngine.disable_option_validator!
@@ -22,9 +22,13 @@ class ::Slim::Template
   end
 
   def precompiled_preamble(locals)
-    "__in_slim_template = true\n" << super
+    original = super
+    "__in_slim_template = true\n#{original}"
   end
 end
+
+::Slim::Template.include SafeTemplate
+::Slim::Template.prepend SlimTemplatePatch
 
 module Middleman
   module Renderers

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'pp'
 
 module Middleman
@@ -12,7 +14,7 @@ module Middleman
       end
 
       def render
-        content = ''
+        content = []
         key_classes = ['key']
         key_classes << 'modified' if @setting.value_set?
         content << content_tag(:span, @setting.key.pretty_inspect.strip, class: key_classes.join(' '))
@@ -30,7 +32,7 @@ module Middleman
           end
         end
 
-        content
+        content.join
       end
     end
   end

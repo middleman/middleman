@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Use the Ruby/Rails logger
 module Middleman
   # The Middleman Logger

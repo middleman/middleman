@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'middleman-core/meta_pages/sitemap_resource'
 
 module Middleman
@@ -35,12 +37,14 @@ module Middleman
 
         sorted_children_keys.reduce('') do |content, path_part|
           subtree = @children[path_part]
-          content << "<details class='#{subtree.css_classes.join(' ')}'>"
-          content << '<summary>'
-          content << "<i class='icon-folder-open'></i>" unless subtree.is_a? SitemapResource
-          content << "#{path_part}</summary>"
-          content << subtree.render
-          content << '</details>'
+          additional_content = []
+          additional_content << "<details class='#{subtree.css_classes.join(' ')}'>"
+          additional_content << '<summary>'
+          additional_content << "<i class='icon-folder-open'></i>" unless subtree.is_a? SitemapResource
+          additional_content << "#{path_part}</summary>"
+          additional_content << subtree.render
+          additional_content << '</details>'
+          "#{content}#{additional_content.join}"
         end
       end
 

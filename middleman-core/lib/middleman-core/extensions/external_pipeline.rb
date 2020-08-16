@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Middleman::Extensions::ExternalPipeline < ::Middleman::Extension
   self.supports_multiple_instances = true
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'middleman-core/extensions'
 
 # File Change Notifier

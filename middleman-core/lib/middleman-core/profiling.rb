@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Middleman
   module Profiling
     class << self
@@ -42,7 +44,7 @@ module Middleman
 
         printer = RubyProf::GraphHtmlPrinter.new(result)
         outfile = File.join('profile', report_name)
-        outfile = (outfile + '.html') unless outfile.end_with? '.html'
+        outfile = "#{outfile}.html" unless outfile.end_with? '.html'
         FileUtils.mkdir_p(File.dirname(outfile))
         File.open(outfile, 'w') do |f|
           printer.print(f, min_percent: 1)

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'pathname'
 require 'fileutils'
 require 'tempfile'
@@ -436,7 +438,10 @@ module Middleman
 
     Contract String => String
     def binary_encode(string)
-      string.force_encoding('ascii-8bit') if string.respond_to?(:force_encoding)
+      if string.respond_to?(:force_encoding)
+        string = string.dup if string.frozen?
+        string = string.force_encoding('ascii-8bit')
+      end
       string
     end
 

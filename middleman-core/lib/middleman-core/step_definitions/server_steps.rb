@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'middleman-core/rack'
 require 'rspec/expectations'
 require 'capybara/cucumber'

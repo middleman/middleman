@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Middleman
   module Sass
     module Functions
@@ -112,4 +114,4 @@ module Middleman
   end
 end
 
-::SassC::Script::Functions.send :include, ::Middleman::Sass::Functions
+::SassC::Script::Functions.include ::Middleman::Sass::Functions

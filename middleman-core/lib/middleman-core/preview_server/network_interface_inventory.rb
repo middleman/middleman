@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'middleman-core/preview_server/server_ip_address'
 
 module Middleman

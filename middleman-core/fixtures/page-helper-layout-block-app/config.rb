@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 page '/path/*', layout: 'alt'
 
 # Doesn't work, and shouldn't

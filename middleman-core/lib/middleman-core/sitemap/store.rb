@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Used for merging results of metadata callbacks
 require 'monitor'
 require 'hamster'

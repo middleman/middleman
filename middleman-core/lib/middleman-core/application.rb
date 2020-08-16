@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'hamster'
 require 'middleman-core/contracts'
 require 'middleman-core/callback_manager'
@@ -33,7 +35,7 @@ module Middleman
       # @return [String]
       def root
         r = ENV['MM_ROOT'] ? ENV['MM_ROOT'].dup : ::Middleman::Util.current_directory
-        r.encode!('UTF-8', 'UTF-8-MAC') if RUBY_PLATFORM =~ /darwin/
+        r = r.encode('UTF-8', 'UTF-8-MAC') if RUBY_PLATFORM.match?(/darwin/)
         r
       end
 
@@ -191,7 +193,7 @@ module Middleman
       end,
 
       layout: lambda { |file, app|
-        file[:relative_path].to_s.start_with?('layout.', app.config[:layouts_dir] + '/')
+        file[:relative_path].to_s.start_with?('layout.', "#{app.config[:layouts_dir]}/")
       }
     }, 'Callbacks that can exclude paths from the sitemap'
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Middleman
   module Sitemap
     module Extensions
@@ -146,7 +148,7 @@ module Middleman
         # (e.g., for 'gallery.html' this would return 'gallery/')
         # @return [String]
         def eponymous_directory_path
-          path.sub(ext, '/').sub(%r{/$}, '') + '/'
+          "#{path.sub(ext, '/').sub(%r{/$}, '')}/"
         end
       end
     end

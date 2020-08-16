@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'middleman-core/contracts'
 
 module Middleman
@@ -13,11 +15,11 @@ module Middleman
     Contract RespondTo[:each] => String
     def extract_response_text(response)
       # The rack spec states all response bodies must respond to each
-      result = ''
+      result = []
       response.each do |part, _|
         result << part
       end
-      result
+      result.join
     end
 
     Contract String, String, SetOf[String], IsA['::Middleman::Application'], Proc => String
@@ -32,7 +34,7 @@ module Middleman
         asset_path = Regexp.last_match(2)
 
         if asset_path.start_with?(url_fn_prefix)
-          opening_character << url_fn_prefix
+          opening_character = "#{opening_character}#{url_fn_prefix}"
           asset_path = asset_path[url_fn_prefix.length..-1]
         end
 

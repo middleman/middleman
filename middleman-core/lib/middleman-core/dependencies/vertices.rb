@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'middleman-core/dependencies/vertices/data_collection_vertex'
 require 'middleman-core/dependencies/vertices/data_collection_path_vertex'
 require 'middleman-core/dependencies/vertices/file_vertex'

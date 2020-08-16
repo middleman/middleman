@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'ipaddr'
 require 'middleman-core/preview_server/checks'
 require 'middleman-core/preview_server/server_hostname'

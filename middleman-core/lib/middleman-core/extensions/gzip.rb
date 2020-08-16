@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'padrino-helpers'
 
 # This extension Gzips assets and pages when building.
@@ -81,7 +83,7 @@ class Middleman::Extensions::Gzip < ::Middleman::Extension
   Contract String => [Maybe[String], Maybe[Num], Maybe[Num]]
   def gzip_file(path)
     input_file = File.open(path, 'rb').read
-    output_filename = options.overwrite ? path : path + '.gz'
+    output_filename = options.overwrite ? path : "#{path}.gz"
     input_file_time = File.mtime(path)
 
     # Check if the right file's already there
@@ -115,7 +117,7 @@ class Middleman::Extensions::Gzip < ::Middleman::Extension
   def should_gzip?(path)
     return false unless @set_of_exts.include?(path.extname)
 
-    path = path.sub app.config[:build_dir] + '/', ''
+    path = path.sub "#{app.config[:build_dir]}/", ''
     options.ignore.none? { |ignore| Middleman::Util.path_match(ignore, path.to_s) }
   end
 end

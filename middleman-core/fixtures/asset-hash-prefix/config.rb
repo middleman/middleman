@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 activate :asset_hash,
          prefix: 'myprefix-'
 

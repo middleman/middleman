@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 When /^I stop (?:middleman|all commands) if the output( of the last command)? contains:$/ do |_last_command, expected|
   step 'I wait for the output to contain:', expected
   all_commands.each(&:terminate)
@@ -16,8 +18,8 @@ When /^I wait for the output to contain:$/ do |expected|
 rescue ChildProcess::TimeoutError, TimeoutError
   @interactive.terminate
 ensure
-  aruba.announcer.stdout @interactive.stdout
-  aruba.announcer.stderr @interactive.stderr
+  aruba.announcer.announce(:stdout, @interactive.stdout)
+  aruba.announcer.announce(:stderr, @interactive.stderr)
 end
 
 # Make it just a long running process

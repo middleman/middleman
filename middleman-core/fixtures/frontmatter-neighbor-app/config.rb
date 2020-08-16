@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 ignore '*.frontmatter'
 
 # Reads neighbor for every file on every refresh.
