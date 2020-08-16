@@ -40,7 +40,7 @@ gem 'therubyrhino', '>= 2.0', platforms: :jruby
 # Code Quality
 gem 'rubocop', '~> 0.89', require: false
 gem 'rubocop-performance', '~> 1.7', require: false
-gem 'simplecov', '~> 0.10', require: false
+gem 'simplecov', '~> 0.19', require: false
 
 # Middleman itself
 gem 'middleman-cli', path: 'middleman-cli'
