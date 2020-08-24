@@ -235,10 +235,6 @@ GEM
       temple (>= 0.7.6, < 0.9)
       tilt (>= 2.0.6, < 2.1)
     stream (0.5.2)
-    stylus (1.0.2)
-      execjs
-      stylus-source
-    stylus-source (0.54.5)
     sys-uname (1.2.1)
       ffi (>= 1.0.0)
     temple (0.8.2)
@@ -285,7 +281,6 @@ DEPENDENCIES
   simplecov (~> 0.19)
   sinatra (>= 2.0.0.beta2)
   slim (>= 2.0)
-  stylus (>= 1.0)
   therubyrhino (>= 2.0)
   yard (~> 0.9.11)
 
