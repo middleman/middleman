@@ -18,10 +18,10 @@ module Middleman
         classes << 'ignored' if @resource.ignored?
         content_tag :div, class: classes.join(' ') do
           content_tag :table do
-            content = ''
+            content = ''.dup
             resource_properties.each do |label, value|
               content << content_tag(:tr) do
-                row_content = ''
+                row_content = ''.dup
                 row_content << content_tag(:th, label)
                 row_content << content_tag(:td, value)
                 row_content.html_safe
