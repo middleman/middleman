@@ -63,13 +63,16 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
                                                       proc: method(:rewrite_url))
     end
 
+    svg_exts = %w[.svg .svgz]
+    css_js_extrs = %w[.js .mjs .css]
+
     # Process resources in order: binary images and fonts, then SVG, then JS/CSS.
     # This is so by the time we get around to the text files (which may reference
     # images and fonts) the static assets' hashes are already calculated.
     sorted_resources = resource_list.by_extensions(@set_of_exts).sort_by do |a|
-      if %w[.svg .svgz].include? a.ext
+      if svg_exts.include? a.ext
         0
-      elsif %w[.js .mjs .css].include? a.ext
+      elsif css_js_extrs.include? a.ext
         1
       else
         -1
