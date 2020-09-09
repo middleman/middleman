@@ -1,5 +1,9 @@
 # master
 
+# 4.3.9
+
+- Fix liquid page compilation (#2083)
+
 # 4.3.8
 
 - Update kramdown to avoid CVE-2020-14001 in v4 (#2348)
