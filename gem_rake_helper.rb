@@ -4,14 +4,14 @@ require 'yard'
 require 'bundler/gem_tasks'
 
 # Skip the releasing tag
-class Bundler::GemHelper
-  def release_gem(*args)
-    p args
-    guard_clean
-    built_gem_path = build_gem
-    rubygem_push(built_gem_path)
-  end
-end
+# class Bundler::GemHelper
+#   def release_gem(*args)
+#     p args
+#     guard_clean
+#     built_gem_path = build_gem
+#     rubygem_push(built_gem_path)
+#   end
+# end
 
 require 'cucumber/rake/task'
 Cucumber::Rake::Task.new do |t|
