@@ -10,7 +10,7 @@ module SafeTemplate
 end
 
 module SlimTemplatePatch
-  def initialize(file, line, opts, &block)
+  def initialize(file = nil, line = nil, opts = {}, &block)
     if opts.key?(:context)
       ::Slim::Embedded::SassEngine.disable_option_validator!
       %w[sass scss markdown].each do |engine|
