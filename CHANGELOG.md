@@ -1,8 +1,16 @@
 # master
 
-# 4.3.9
+# 4.3.11
+
+- Fix URI.unescape deprecation warning (#2312)
+
+# 4.3.10
 
 - Fix liquid page compilation (#2083)
+
+# 4.3.9
+
+- Bad build, yanked.
 
 # 4.3.8
 
