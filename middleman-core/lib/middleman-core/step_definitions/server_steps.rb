@@ -1,6 +1,7 @@
 require 'middleman-core/rack'
 require 'rspec/expectations'
 require 'capybara/cucumber'
+require 'webrick'
 
 Given /^a clean server$/ do
   @initialize_commands = []
@@ -72,11 +73,11 @@ Given /^a template named "([^\"]*)" with:$/ do |name, string|
 end
 
 When /^I go to "([^\"]*)"$/ do |url|
-  visit(URI.encode(url).to_s)
+  visit(WEBrick::HTTPUtils.escape(url))
 end
 
 Then /^going to "([^\"]*)" should not raise an exception$/ do |url|
-  expect{ visit(URI.encode(url).to_s) }.to_not raise_exception
+  expect{ visit(WEBrick::HTTPUtils.escape(url)) }.to_not raise_exception
 end
 
 Then /^the content type should be "([^\"]*)"$/ do |expected|

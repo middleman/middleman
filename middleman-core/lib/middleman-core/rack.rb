@@ -3,6 +3,7 @@ require 'rack/file'
 require 'rack/lint'
 require 'rack/head'
 require 'rack/utils'
+require 'webrick'
 
 require 'middleman-core/util'
 require 'middleman-core/logger'
@@ -86,7 +87,7 @@ module Middleman
     def process_request(env, req, res)
       start_time = Time.now
 
-      request_path = URI.decode(env['PATH_INFO'].dup)
+      request_path = WEBrick::HTTPUtils.unescape(env['PATH_INFO'].dup)
       if request_path.respond_to? :force_encoding
         request_path.force_encoding('UTF-8')
       end
