@@ -8,18 +8,18 @@ end
 When /^I wait for the output to contain:$/ do |expected|
   Timeout.timeout(aruba.config.exit_timeout) do
     loop do
-      raise 'You need to start middleman interactively first.' unless @interactive
+      raise 'You need to start middleman interactively first.' unless last_command_started
 
-      break if sanitize_text(@interactive.output)&.match?(Regexp.new(sanitize_text(expected)))
+      break if sanitize_text(last_command_started.output)&.match?(Regexp.new(sanitize_text(expected)))
 
       sleep 0.1
     end
   end
-rescue ChildProcess::TimeoutError, TimeoutError
-  @interactive.terminate
+rescue ChildProcess::TimeoutError, Timeout::Error
+  last_command_started.terminate
 ensure
-  aruba.announcer.announce(:stdout, @interactive.stdout)
-  aruba.announcer.announce(:stderr, @interactive.stderr)
+  aruba.announcer.announce(:stdout, last_command_started.stdout)
+  aruba.announcer.announce(:stderr, last_command_started.stderr)
 end
 
 # Make it just a long running process
