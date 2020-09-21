@@ -9,16 +9,13 @@
 
 ## Why Middleman?
 
-The last few years have seen an explosion in the amount and variety of tools developers can use to build web applications. Ruby on Rails selects a handful of these tools:
-
-- [Sass](http://sass-lang.com/) for DRY stylesheets
-- [CoffeeScript](http://coffeescript.org/) for safer and less verbose javascript
-- Multiple asset management solutions, including [Sprockets](https://github.com/rails/sprockets)
-- [ERb](http://ruby-doc.org/stdlib-2.0.0/libdoc/erb/rdoc/ERB.html) & [Haml](http://haml.info/) for dynamic pages and simplified HTML syntax
-
-**Middleman** gives the stand-alone developer access to all these tools and many, many more. Why would you use a stand-alone framework instead of Ruby on Rails?
-
 These days, many websites are built with an API in mind. Rather than package the frontend and the backend together, both can be built and deployed independently using the public API to pull data from the backend and display it on the frontend. Static websites are incredibly fast and require very little RAM. A front-end built to stand-alone can be deployed directly to the cloud or a CDN. Many designers and developers simply deliver static HTML/JS/CSS to their clients.
+
+- Uses [Sass](https://sass-lang.com/) for DRY stylesheets.
+- Bring your own asset pipeline (WebPack, Babel, Sprockets or any other).
+- Easy templating with [ERb](https://ruby-doc.org/stdlib-2.0.0/libdoc/erb/rdoc/ERB.html) or [Haml](https://haml.info/).
+
+**Middleman** gives the stand-alone developer access to all these tools and many, many more.
 
 ## Installation
 
@@ -67,7 +64,7 @@ Additionally, up-to-date generated code documentation is available on [RubyDoc]
 
 ## Community
 
-The official community forum is available at: http://forum.middlemanapp.com
+The official community forum is available at: https://forum.middlemanapp.com
 
 ## Contributing to Middleman
 
@@ -90,19 +87,19 @@ Constraint][pvc] with two digits of precision. For example:
 
     spec.add_dependency 'middleman-core', '~> 4.0'
 
-[semver]: http://semver.org/
-[pvc]: http://guides.rubygems.org/patterns/#pessimistic-version-constraint
+[semver]: https://semver.org/
+[pvc]: https://guides.rubygems.org/patterns/#pessimistic-version-constraint
 
 ## License
 
-Copyright (c) 2010-2017 Thomas Reynolds. MIT Licensed, see [LICENSE] for details.
+Copyright (c) 2010-today Thomas Reynolds. MIT Licensed, see [LICENSE] for details.
 
 [middleman]: https://middlemanapp.com
 [gem]: https://rubygems.org/gems/middleman
-[travis]: http://travis-ci.org/middleman/middleman
+[travis]: https://travis-ci.org/middleman/middleman
 [gittip]: https://www.gittip.com/middleman/
-[rubyinstaller]: http://rubyinstaller.org/
+[rubyinstaller]: https://rubyinstaller.org/
 [rubyinstaller-devkit]: https://rubyinstaller.org/add-ons/devkit.html
-[rubydoc]: http://rubydoc.info/github/middleman/middleman
+[rubydoc]: https://rubydoc.info/github/middleman/middleman
 [license]: https://github.com/middleman/middleman/blob/master/LICENSE.md
 [gitter]: https://gitter.im/middleman/middleman?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
