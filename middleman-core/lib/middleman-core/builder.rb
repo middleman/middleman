@@ -229,7 +229,7 @@ module Middleman
           if resource.binary?
             export_file!(output_file, resource.file_descriptor[:full_path])
           else
-            response = @rack.get(::URI.escape(resource.request_path))
+            response = @rack.get(::WEBrick::HTTPUtils.escape(resource.request_path))
 
             # If we get a response, save it to a tempfile.
             if response.status == 200
