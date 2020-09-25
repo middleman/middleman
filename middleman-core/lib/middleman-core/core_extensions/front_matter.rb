@@ -17,7 +17,22 @@ module Middleman::CoreExtensions
     # Set textual delimiters that denote the start and end of frontmatter
     define_setting :frontmatter_delims, {
       json: [%w[;;; ;;;]],
-      yaml: [%w[--- ---], %w[--- ...]]
+      yaml: [
+        # Normal
+        %w[--- ---], 
+        
+        # Pandoc
+        %w[--- ...], 
+        
+        # Haml with commented frontmatter
+        ["-#\n  ---", "  ---"], 
+        
+        # Slim with commented frontmatter
+        ["\/\n  ---", "  ---"], 
+        
+        # ERb with commented frontmatter
+        ["<%#\n  ---", "  ---\n%>"]
+      ]
     }, 'Allowed frontmatter delimiters'
 
     def initialize(app, options_hash = ::Middleman::EMPTY_HASH, &block)

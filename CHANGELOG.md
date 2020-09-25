@@ -6,7 +6,7 @@
 - Trigger a reload for the preview server when data changes (#2340)
 - Always write `deps.yml` if `--track-dependencies` is set and the file doesn't exist
 - Add `--dependency-file` flag to configure the file location.
-- Handle the removal of a file in dependencies. Fixes #2292
+- Allow multi-line frontmatter delimiters to support frontmatter in comment blocks (makes IDE syntax highlighting better). #2385
 
 # 5.0.0.rc.1
 

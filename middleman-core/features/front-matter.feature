@@ -33,6 +33,24 @@ Feature: YAML Front Matter
     When I go to "/front-matter-haml.html"
     Then I should see "<h1>This is the title</h1>"
     Then I should not see "---"
+    
+  Scenario: Rendering Haml (commented yaml)
+    Given the Server is running at "frontmatter-app"
+    When I go to "/front-matter-haml-commented.html"
+    Then I should see "<h1>This is the title commented</h1>"
+    Then I should not see "---"
+
+  Scenario: Rendering Slim (commented yaml)
+    Given the Server is running at "frontmatter-app"
+    When I go to "/front-matter-slim-commented.html"
+    Then I should see "<h1>This is the title commented</h1>"
+    Then I should not see "---"
+
+  Scenario: Rendering Erb (commented yaml)
+    Given the Server is running at "frontmatter-app"
+    When I go to "/front-matter-erb-commented.html"
+    Then I should see "<h1>This is the title commented</h1>"
+    Then I should not see "---"
 
   Scenario: YAML not on first line, no encoding
     Given the Server is running at "frontmatter-app"

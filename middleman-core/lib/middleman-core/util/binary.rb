@@ -358,27 +358,33 @@ module Middleman
     Contract String, Maybe[HashOf[Symbol, Any]] => Bool
     def contains_frontmatter?(path, frontmatter_delims)
       file = ::File.open(path)
-      first_line = file.gets
 
-      first_line = file.gets if /\A(?:[^\r\n]*coding:[^\r\n]*\r?\n)/.match?(first_line)
-
+      first_three_lines = [file.gets, file.gets, file.gets]
       file.close
+      
+      first_two_lines = if /\A(?:[^\r\n]*coding:[^\r\n]*\r?\n)/.match?(first_three_lines.first)
+        [first_three_lines[1], first_three_lines[2]]
+      else
+        [first_three_lines[0], first_three_lines[1]]
+      end
 
       possible_openers = possible_delim_openers(frontmatter_delims)
-      !first_line.nil? && !first_line.match(possible_openers).nil?
+
+      !first_two_lines[0].nil? && possible_openers.any? do |delim|
+        !first_two_lines.join("").match(/\A#{delim}/).nil?
+      end
     rescue EOFError, IOError, ::Errno::ENOENT
       false
     end
 
     Contract Maybe[HashOf[Symbol, Any]] => Regexp
     def possible_delim_openers(frontmatter_delims)
-      all_possible = frontmatter_delims
+      frontmatter_delims
                      .values
                      .flatten(1)
                      .map(&:first)
                      .uniq
-
-      /\A#{::Regexp.union(all_possible)}/
+                     .map { |d| Regexp.escape(d) }
     end
   end
 end

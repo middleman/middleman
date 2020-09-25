@@ -59,7 +59,11 @@ module Middleman
           return [{}, nil]
         end
 
-        match = build_regex(frontmatter_delims).match(content) || {}
+        match = build_regexes(frontmatter_delims)
+          .lazy
+          .map { |r| r.match(content) }
+          .select { |r| !r.nil? }
+          .first || {}
 
         unless match[:frontmatter]
           case known_type
@@ -89,23 +93,22 @@ module Middleman
         end
       end
 
-      def build_regex(frontmatter_delims)
-        start_delims, stop_delims = frontmatter_delims
-                                    .values
-                                    .flatten(1)
-                                    .transpose
-                                    .map(&::Regexp.method(:union))
-
-        /
-          \A(?:[^\r\n]*coding:[^\r\n]*\r?\n)?
-          (?<start>#{start_delims})[ ]*\r?\n
-          (?<frontmatter>.*?)[ ]*\r?\n?
-          ^(?<stop>#{stop_delims})[ ]*\r?\n?
-          \r?\n?
-          (?<additional_content>.*)
-        /mx
+      def build_regexes(frontmatter_delims)
+        frontmatter_delims
+          .values
+          .flatten(1)
+          .map do |start, stop|
+          /
+            \A(?:[^\r\n]*coding:[^\r\n]*\r?\n)?
+            (?<start>#{Regexp.escape(start)})[ ]*\r?\n
+            (?<frontmatter>.*?)[ ]*\r?\n?
+            ^(?<stop>#{Regexp.escape(stop)})[ ]*\r?\n?
+            \r?\n?
+            (?<additional_content>.*)
+          /mx
+        end
       end
-      memoize :build_regex
+      memoize :build_regexes
 
       # Parse YAML frontmatter out of a string
       # @param [String] content
