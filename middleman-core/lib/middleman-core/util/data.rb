@@ -60,10 +60,10 @@ module Middleman
         end
 
         match = build_regexes(frontmatter_delims)
-          .lazy
-          .map { |r| r.match(content) }
-          .select { |r| !r.nil? }
-          .first || {}
+                .lazy
+                .map { |r| r.match(content) }
+                .reject(&:nil?)
+                .first || {}
 
         unless match[:frontmatter]
           case known_type

@@ -19,17 +19,17 @@ module Middleman::CoreExtensions
       json: [%w[;;; ;;;]],
       yaml: [
         # Normal
-        %w[--- ---], 
-        
+        %w[--- ---],
+
         # Pandoc
-        %w[--- ...], 
-        
+        %w[--- ...],
+
         # Haml with commented frontmatter
-        ["-#\n  ---", "  ---"], 
-        
+        ["-#\n  ---", '  ---'],
+
         # Slim with commented frontmatter
-        ["\/\n  ---", "  ---"], 
-        
+        ["\/\n  ---", '  ---'],
+
         # ERb with commented frontmatter
         ["<%#\n  ---", "  ---\n%>"]
       ]
