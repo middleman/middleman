@@ -361,17 +361,17 @@ module Middleman
 
       first_three_lines = [file.gets, file.gets, file.gets]
       file.close
-      
+
       first_two_lines = if /\A(?:[^\r\n]*coding:[^\r\n]*\r?\n)/.match?(first_three_lines.first)
-        [first_three_lines[1], first_three_lines[2]]
-      else
-        [first_three_lines[0], first_three_lines[1]]
-      end
+                          [first_three_lines[1], first_three_lines[2]]
+                        else
+                          [first_three_lines[0], first_three_lines[1]]
+                        end
 
       possible_openers = possible_delim_openers(frontmatter_delims)
 
       !first_two_lines[0].nil? && possible_openers.any? do |delim|
-        !first_two_lines.join("").match(/\A#{delim}/).nil?
+        !first_two_lines.join('').match(/\A#{delim}/).nil?
       end
     rescue EOFError, IOError, ::Errno::ENOENT
       false
@@ -380,11 +380,11 @@ module Middleman
     Contract Maybe[HashOf[Symbol, Any]] => Regexp
     def possible_delim_openers(frontmatter_delims)
       frontmatter_delims
-                     .values
-                     .flatten(1)
-                     .map(&:first)
-                     .uniq
-                     .map { |d| Regexp.escape(d) }
+        .values
+        .flatten(1)
+        .map(&:first)
+        .uniq
+        .map { |d| Regexp.escape(d) }
     end
   end
 end
