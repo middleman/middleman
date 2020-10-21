@@ -36,7 +36,7 @@ module Middleman
       app.use ::Rack::Head
 
       @middleman.middleware.each do |middleware|
-        app.use(middleware[:class], *middleware[:options], &middleware[:block])
+        app.use(middleware[:klass], *middleware[:options], &middleware[:block])
       end
 
       inner_app = self

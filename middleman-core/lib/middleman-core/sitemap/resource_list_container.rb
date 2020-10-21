@@ -102,9 +102,7 @@ module Middleman
           )
         end
 
-        if should_run? :ignored, only
-          @_lookup_by_ignored = @_lookup_by_ignored << resource if resource.ignored?
-        end
+        @_lookup_by_ignored = @_lookup_by_ignored << resource if should_run?(:ignored, only) && resource.ignored?
       end
 
       Contract Resource => Any

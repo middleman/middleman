@@ -28,9 +28,10 @@ module Middleman
     # @return [Hash]
     Contract Hash => IsA['::Middleman::Util::EnhancedHash']
     def recursively_enhance(obj)
-      if obj.is_a? ::Array
+      case obj
+      when ::Array
         obj.map { |e| recursively_enhance(e) }
-      elsif obj.is_a? ::Hash
+      when ::Hash
         EnhancedHash.new(obj)
       else
         obj
@@ -119,9 +120,9 @@ module Middleman
           ::Middleman::Util.instrument 'parse.yaml' do
             ::YAML.load(content)
           end
-            rescue StandardError, ::Psych::SyntaxError => e
-              warn "YAML Exception parsing #{full_path}: #{e.message}"
-              {}
+        rescue StandardError, ::Psych::SyntaxError => e
+          warn "YAML Exception parsing #{full_path}: #{e.message}"
+          {}
         end
 
         c ? symbolize_recursive(c) : {}
@@ -137,9 +138,9 @@ module Middleman
           ::Middleman::Util.instrument 'parse.json' do
             ::JSON.parse(content)
           end
-            rescue StandardError => e
-              warn "JSON Exception parsing #{full_path}: #{e.message}"
-              {}
+        rescue StandardError => e
+          warn "JSON Exception parsing #{full_path}: #{e.message}"
+          {}
         end
 
         c ? symbolize_recursive(c) : {}

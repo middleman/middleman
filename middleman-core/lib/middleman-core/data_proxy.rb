@@ -33,13 +33,14 @@ module Middleman
     end
 
     def take_ownership_of_value(v)
-      if v.is_a?(::Array)
+      case v
+      when ::Array
         take_ownership_of_array(v)
-      elsif v.is_a?(::Hash)
+      when ::Hash
         take_ownership_of_hash(v)
-      elsif v.is_a?(::Middleman::CoreExtensions::Data::Proxies::ArrayProxy)
+      when ::Middleman::CoreExtensions::Data::Proxies::ArrayProxy
         v.clone.tap { |p| p._top._replace_parent(self) }
-      elsif v.is_a?(::Middleman::CoreExtensions::Data::Proxies::HashProxy)
+      when ::Middleman::CoreExtensions::Data::Proxies::HashProxy
         v.clone.tap { |p| p._top._replace_parent(self) }
       else
         v

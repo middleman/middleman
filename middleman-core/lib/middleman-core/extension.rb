@@ -209,7 +209,7 @@ module Middleman
       def expose_to_application(*symbols)
         self.exposed_to_application ||= {}
 
-        if symbols.first&.is_a?(Hash)
+        if symbols.first.is_a?(Hash)
           self.exposed_to_application.merge!(symbols.first)
         elsif symbols.is_a? Array
           symbols.each do |sym|
@@ -229,7 +229,7 @@ module Middleman
       def expose_to_config(*symbols)
         self.exposed_to_config ||= {}
 
-        if symbols.first&.is_a?(Hash)
+        if symbols.first.is_a?(Hash)
           self.exposed_to_config.merge!(symbols.first)
         elsif symbols.is_a? Array
           symbols.each do |sym|
@@ -249,7 +249,7 @@ module Middleman
       def expose_to_template(*symbols)
         self.exposed_to_template ||= {}
 
-        if symbols.first&.is_a?(Hash)
+        if symbols.first.is_a?(Hash)
           self.exposed_to_template.merge!(symbols.first)
         elsif symbols.is_a? Array
           symbols.each do |sym|
@@ -421,9 +421,10 @@ module Middleman
 
     def generate_resources(resources)
       generator_defs = self.class.resources_generators.reduce({}) do |sum, g|
-        resource_definitions = if g.is_a? Hash
+        resource_definitions = case g
+                               when Hash
                                  g
-                               elsif g.is_a? Symbol
+                               when Symbol
                                  definition = method(g)
 
                                  if definition.arity.zero?
@@ -475,9 +476,10 @@ module Middleman
       return unless ext.respond_to?(:after_build)
 
       @app.after_build do |builder|
-        if ext.method(:after_build).arity == 1
+        case ext.method(:after_build).arity
+        when 1
           ext.after_build(builder)
-        elsif ext.method(:after_build).arity == 2
+        when 2
           ext.after_build(builder, builder.thor)
         else
           ext.after_build

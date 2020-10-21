@@ -43,9 +43,10 @@ class Middleman::Extensions::AssetHost < ::Middleman::Extension
                         asset_path
                       end
 
-    asset_prefix = if options[:host].is_a?(Proc)
+    asset_prefix = case options[:host]
+                   when Proc
                      options[:host].call(full_asset_path)
-                   elsif options[:host].is_a?(String)
+                   when String
                      options[:host]
                    end
 

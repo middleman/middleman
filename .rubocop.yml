@@ -66,6 +66,8 @@ Style/MissingRespondToMissing:
   Enabled: false
 Lint/MissingSuper:
   Enabled: false
+Lint/EmptyFile:
+  Enabled: false
 Style/EvalWithLocation:
   Enabled: false
 Style/ClassVars:
@@ -73,4 +75,14 @@ Style/ClassVars:
 Style/GlobalVars:
   Enabled: false
 Style/Proc:
+  Enabled: false
+Style/OptionalBooleanParameter:
+  Enabled: false
+Style/AccessorGrouping:
+  Enabled: false
+Style/RedundantRegexpEscape:
+  Enabled: false
+Style/StringConcatenation:
+  Enabled: false
+Style/RedundantSelfAssignment:
   Enabled: false
