@@ -11,7 +11,7 @@ gem 'addressable', '~> 2.4', require: false
 gem 'aruba', '~> 1.0.0', require: false
 gem 'byebug'
 gem 'capybara', '~> 3.33.0', require: false
-gem 'cucumber', '~> 5.1', require: false
+gem 'cucumber', '~> 5.2', require: false
 gem 'rspec', '~> 3.0', require: false
 
 # Pry tools
