@@ -14,7 +14,7 @@ require 'middleman-core/template_renderer'
 
 # Core Middleman Class
 module Middleman
-  MiddlewareDescriptor = Struct.new(:class, :options, :block)
+  MiddlewareDescriptor = Struct.new(:klass, :options, :block)
   MapDescriptor = Struct.new(:path, :block)
 
   class Application
