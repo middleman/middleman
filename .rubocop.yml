@@ -92,5 +92,3 @@ Style/RedundantSelfAssignment:
   Enabled: false
 Style/SoleNestedConditional:
   Enabled: false
-Lint/RedundantSafeNavigation:
-  Enabled: false
