@@ -108,9 +108,10 @@ module Middleman
             else
               inner_path = sub_resource.path.sub(prefix, '')
               parts = inner_path.split('/')
-              if parts.length == 1
+              case parts.length
+              when 1
                 true
-              elsif parts.length == 2
+              when 2
                 parts.last == @app.config[:index_file]
               else
                 false

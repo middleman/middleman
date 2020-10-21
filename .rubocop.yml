@@ -84,7 +84,5 @@ Style/RedundantRegexpEscape:
   Enabled: false
 Style/StringConcatenation:
   Enabled: false
-Style/CaseLikeIf:
-  Enabled: false
 Style/RedundantSelfAssignment:
   Enabled: false

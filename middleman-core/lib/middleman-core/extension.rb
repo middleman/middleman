@@ -421,9 +421,10 @@ module Middleman
 
     def generate_resources(resources)
       generator_defs = self.class.resources_generators.reduce({}) do |sum, g|
-        resource_definitions = if g.is_a? Hash
+        resource_definitions = case g
+                               when Hash
                                  g
-                               elsif g.is_a? Symbol
+                               when Symbol
                                  definition = method(g)
 
                                  if definition.arity.zero?
@@ -475,9 +476,10 @@ module Middleman
       return unless ext.respond_to?(:after_build)
 
       @app.after_build do |builder|
-        if ext.method(:after_build).arity == 1
+        case ext.method(:after_build).arity
+        when 1
           ext.after_build(builder)
-        elsif ext.method(:after_build).arity == 2
+        when 2
           ext.after_build(builder, builder.thor)
         else
           ext.after_build

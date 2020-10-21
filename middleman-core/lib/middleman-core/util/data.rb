@@ -28,9 +28,10 @@ module Middleman
     # @return [Hash]
     Contract Hash => IsA['::Middleman::Util::EnhancedHash']
     def recursively_enhance(obj)
-      if obj.is_a? ::Array
+      case obj
+      when ::Array
         obj.map { |e| recursively_enhance(e) }
-      elsif obj.is_a? ::Hash
+      when ::Hash
         EnhancedHash.new(obj)
       else
         obj
