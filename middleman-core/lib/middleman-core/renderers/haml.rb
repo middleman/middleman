@@ -35,9 +35,7 @@ module Middleman
           options[:save_buffer] = true
         end
         @engine = ::Haml::Engine.new(data, options)
-        output = @engine.render(scope, locals, &block)
-
-        output
+        @engine.render(scope, locals, &block)
       end
     end
 

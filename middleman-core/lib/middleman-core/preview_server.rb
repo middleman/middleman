@@ -309,7 +309,7 @@ module Middleman
         cert.add_extension(aki)
         cert.add_extension ef.create_extension('subjectAltName', aliases.map { |d| "DNS: #{d}" }.join(','))
 
-        cert.sign(rsa, OpenSSL::Digest::SHA1.new)
+        cert.sign(rsa, OpenSSL::Digest.new('SHA1'))
 
         [cert, rsa]
       end

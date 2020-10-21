@@ -122,7 +122,7 @@ module Middleman
       end
 
       graph = Graph.new
-      vertices.values.each { |v| graph.add_vertex(v) }
+      vertices.each_value { |v| graph.add_vertex(v) }
 
       data['edges'].each do |k, deps|
         deps.each do |d|

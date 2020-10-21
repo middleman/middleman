@@ -83,7 +83,7 @@ class Middleman::Extensions::RelativeAssets < ::Middleman::Extension
                       end
 
     current_dir = Pathname(request_path).dirname
-    
+
     Pathname(full_asset_path).relative_path_from(current_dir).to_s
   end
   memoize :rewrite_url

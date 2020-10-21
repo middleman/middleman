@@ -5,6 +5,7 @@ module Middleman
     class << self
       # The profiler instance. There can only be one!
       attr_writer :profiler
+
       def profiler
         @profiler ||= NullProfiler.new
       end
