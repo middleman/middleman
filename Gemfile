@@ -37,7 +37,7 @@ gem 'mini_racer', '~> 0.3.1', platforms: :ruby
 gem 'therubyrhino', '>= 2.0', platforms: :jruby
 
 # Code Quality
-gem 'rubocop', '~> 1.1', require: false
+gem 'rubocop', '~> 1.2', require: false
 gem 'rubocop-performance', '~> 1.8', require: false
 gem 'simplecov', '~> 0.19', require: false
 
