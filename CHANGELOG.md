@@ -1,5 +1,9 @@
 # master
 
+# 4.4.0
+
+- Support TOML as frontmatter and data.
+
 # 4.3.11
 
 - Fix URI.unescape deprecation warning (#2312)

@@ -17,6 +17,7 @@ module Middleman::CoreExtensions
     # Set textual delimiters that denote the start and end of frontmatter
     define_setting :frontmatter_delims, {
       json: [%w(;;; ;;;)],
+      toml: [%w(+++ +++)],
       yaml: [%w(--- ---), %w(--- ...)]
     }, 'Allowed frontmatter delimiters'
 

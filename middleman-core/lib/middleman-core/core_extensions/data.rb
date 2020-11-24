@@ -17,7 +17,7 @@ module Middleman
       expose_to_template data: :data_store
 
       # The regex which tells Middleman which files are for data
-      DATA_FILE_MATCHER = /^(.*?)[\w-]+\.(yml|yaml|json)$/
+      DATA_FILE_MATCHER = /^(.*?)[\w-]+\.(yml|yaml|json|toml)$/
 
       def initialize(app, config={}, &block)
         super
@@ -102,13 +102,15 @@ module Middleman
           extension = File.extname(data_path)
           basename  = File.basename(data_path, extension)
 
-          return unless %w(.yaml .yml .json).include?(extension)
+          return unless %w(.yaml .yml .json .toml).include?(extension)
 
           if %w(.yaml .yml).include?(extension)
             data, postscript = ::Middleman::Util::Data.parse(file, @app.config[:frontmatter_delims], :yaml)
             data[:postscript] = postscript if !postscript.nil? && data.is_a?(Hash)
           elsif extension == '.json'
             data, _postscript = ::Middleman::Util::Data.parse(file, @app.config[:frontmatter_delims], :json)
+          elsif extension == '.toml'
+            data, _postscript = ::Middleman::Util::Data.parse(file, @app.config[:frontmatter_delims], :toml)
           end
 
           data_branch = @local_data
