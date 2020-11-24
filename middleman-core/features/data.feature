@@ -8,9 +8,9 @@ Feature: Local Data API
     When the file "data/test.yml" has the contents
       """
       -
-      title: "Three"
+        title: "Three"
       -
-      title: "Four"
+        title: "Four"
       """
     When I go to "/data.html"
     Then I should see "Three:Four"
@@ -23,12 +23,12 @@ Feature: Local Data API
     When the file "data/by_year.yml" has the contents
       """
       -
-      2018: 1
-      2019: 2
+        2018: 1
+        2019: 2
       """
     And the file "source/years.html.erb" has the contents
       """
-      <%= data.by_year.first[2018] %>:<%= data.by_year.first[2019] %>
+        <%= data.by_year.first[2018] %>:<%= data.by_year.first[2019] %>
       """
     When I go to "/years.html"
     Then I should see "1:2"
@@ -38,13 +38,13 @@ Feature: Local Data API
     When the file "data/dates.yml" has the contents
       """
       2016-03-25:
-      title: "1"
+        title: "1"
       2018-03-25:
-      title: "2"
+        title: "2"
       """
     And the file "source/years.html.erb" has the contents
       """
-      <%= data.dates.values.map(&:title).join(":") %>
+        <%= data.dates.values.map(&:title).join(":") %>
       """
     When I go to "/years.html"
     Then I should see "1:2"
@@ -56,12 +56,8 @@ Feature: Local Data API
     When the file "data/test2.json" has the contents
       """
       [
-        {
-          "title": "Three"
-        },
-        {
-          "title": "Four"
-        }
+        { "title": "Three" },
+        { "title": "Four" }
       ]
       """
     When I go to "/data3.html"
@@ -103,10 +99,10 @@ Feature: Local Data API
       [titles]
 
       [titles.first]
-      title = "Three"
+        title = "Three"
 
       [titles.second]
-      title = "Four"
+        title = "Four"
       """
     When I go to "/data4.html"
     Then I should see "Three:Four"
