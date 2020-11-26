@@ -2,6 +2,7 @@
 
 require 'yaml'
 require 'json'
+require 'toml'
 require 'pathname'
 require 'hashie'
 require 'memoist'
@@ -72,6 +73,8 @@ module Middleman
             return [parse_yaml(content, full_path), nil]
           when :json
             return [parse_json(content, full_path), nil]
+          when :toml
+            return [parse_toml(content, full_path), nil]
           end
         end
 
@@ -84,6 +87,11 @@ module Middleman
         when *frontmatter_delims[:json]
           [
             parse_json("{#{match[:frontmatter]}}", full_path),
+            match[:additional_content]
+          ]
+        when *frontmatter_delims[:toml]
+          [
+            parse_toml(match[:frontmatter], full_path),
             match[:additional_content]
           ]
         else
@@ -122,6 +130,26 @@ module Middleman
           end
         rescue StandardError, ::Psych::SyntaxError => e
           warn "YAML Exception parsing #{full_path}: #{e.message}"
+          {}
+        end
+
+        c ? symbolize_recursive(c) : {}
+      end
+      memoize :parse_yaml
+
+      # Parse TOML frontmatter out of a string
+      # @param [String] content
+      # @return [Hash]
+      Contract String, Pathname => Hash
+      def parse_toml(content, full_path)
+        c = begin
+          ::Middleman::Util.instrument 'parse.toml' do
+            ::TOML.load(content)
+          end
+        rescue StandardError
+          # TOML parser swallows useful error, so we can't warn about it.
+          # https://github.com/jm/toml/issues/47
+          warn "TOML Exception parsing #{full_path}"
           {}
         end
 

@@ -16,7 +16,30 @@ module Middleman::CoreExtensions
 
     # Set textual delimiters that denote the start and end of frontmatter
     define_setting :frontmatter_delims, {
-      json: [%w[;;; ;;;]],
+      json: [
+        %w[;;; ;;;],
+
+        # Haml with commented frontmatter
+        ["-#\n  ;;;", '  ;;;'],
+
+        # Slim with commented frontmatter
+        ["\/\n  ;;;", '  ;;;'],
+
+        # ERb with commented frontmatter
+        ["<%#\n  ;;;", "  ;;;\n%>"]
+      ],
+      toml: [
+        %w[+++ +++],
+
+        # Haml with commented frontmatter
+        ["-#\n  +++", '  +++'],
+
+        # Slim with commented frontmatter
+        ["\/\n  +++", '  +++'],
+
+        # ERb with commented frontmatter
+        ["<%#\n  +++", "  +++\n%>"]
+      ],
       yaml: [
         # Normal
         %w[--- ---],

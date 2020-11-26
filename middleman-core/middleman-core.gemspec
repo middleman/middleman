@@ -26,6 +26,7 @@ Gem::Specification.new do |s|
   s.add_dependency('servolux')
   s.add_dependency('dotenv')
   s.add_dependency('rgl', ['~> 0.5.3'])
+  s.add_dependency('toml')
 
   # Helpers
   s.add_dependency('activesupport', ['>= 5.0.0'])

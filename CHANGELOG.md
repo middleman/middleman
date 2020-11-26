@@ -1,5 +1,6 @@
 # master
 
+- Support TOML as frontmatter and data.
 - Handle the removal of a file in dependencies. Fixes #2292
 - Update rubocop + use enable-frozen-string-literal (#2354)
 - Add ability to external pipeline ignore process exit code (#2353)

@@ -1,0 +1,5 @@
+<% if data.respond_to?(:test3) && data.test3.respond_to?(:titles) %>
+  <%= data.test3.titles.map { |r| r[1].title }.join(":") %>
+<% else %>
+  No Test Data
+<% end %>

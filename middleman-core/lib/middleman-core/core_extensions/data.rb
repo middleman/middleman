@@ -21,7 +21,7 @@ module Middleman
         expose_to_template internal_data_store: :data_store
 
         # The regex which tells Middleman which files are for data
-        DATA_FILE_MATCHER = /^(.*?)[\w-]+\.(yml|yaml|json)$/.freeze
+        DATA_FILE_MATCHER = /^(.*?)[\w-]+\.(yml|yaml|json|toml)$/.freeze
 
         Contract IsA['::Middleman::Application'], Hash => Any
         def initialize(app, options_hash = ::Middleman::EMPTY_HASH, &block)
