@@ -29,6 +29,7 @@ PATH
       sassc (~> 2.0)
       servolux
       tilt (~> 2.0.9)
+      toml
       uglifier (~> 3.0)
 
 GEM
@@ -137,6 +138,7 @@ GEM
     parallel (1.12.1)
     parser (2.5.3.0)
       ast (~> 2.4.0)
+    parslet (1.8.2)
     powerpack (0.1.2)
     pry (0.12.2)
       coderay (~> 1.1.0)
@@ -213,7 +215,9 @@ GEM
     timers (4.0.4)
       hitimes
     tins (1.20.2)
-    tzinfo (1.2.7)
+    toml (0.2.0)
+      parslet (~> 1.8.0)
+    tzinfo (1.2.8)
       thread_safe (~> 0.1)
     uglifier (3.2.0)
       execjs (>= 0.3.0, < 3)

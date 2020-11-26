@@ -23,6 +23,12 @@ Feature: Neighboring YAML Front Matter
     When I go to "/raw-front-matter.php.frontmatter"
     Then I should see "File Not Found"
 
+  Scenario: Rendering raw (template-less) (toml)
+    Given the Server is running at "frontmatter-neighbor-app"
+    When I go to "/raw-front-matter-toml.html"
+    Then I should see "<h1><%= current_page.data.title %></h1>"
+    Then I should not see "---"
+
   Scenario: YAML not on first line, with encoding
     Given the Server is running at "frontmatter-neighbor-app"
     When I go to "/front-matter-encoding.html"
@@ -65,10 +71,10 @@ Feature: Neighboring YAML Front Matter
   Scenario: A template should handle an empty YAML feed
     Given the Server is running at "frontmatter-neighbor-app"
     And the file "source/front-matter-change.html.erb.frontmatter" has the contents
-    """
-    ---
-    ---
-    """
+      """
+      ---
+      ---
+      """
     When I go to "/front-matter-change.html"
     Then I should not see "Hello World"
     Then I should not see "Hola Mundo"
@@ -78,14 +84,14 @@ Feature: Neighboring YAML Front Matter
   Scenario: Setting layout, ignoring, and disabling directory indexes through frontmatter (build)
     Given a successfully built app at "frontmatter-settings-neighbor-app"
     Then the following files should exist:
-      | build/proxied.html  |
+      | build/proxied.html |
     And the file "build/alternate_layout.html" should contain "Alternate layout"
     And the following files should not exist:
-      | build/ignored.html  |
-      | build/alternate_layout.html.erb.frontmatter  |
-      | build/ignored.html.erb.frontmatter  |
+      | build/ignored.html                          |
+      | build/alternate_layout.html.erb.frontmatter |
+      | build/ignored.html.erb.frontmatter          |
       | build/override_layout.html.erb.frontmatter  |
-      | build/page_mentioned.html.erb.frontmatter  |
+      | build/page_mentioned.html.erb.frontmatter   |
 
   Scenario: Setting layout, ignoring, and disabling directory indexes through frontmatter (preview)
     Given the Server is running at "frontmatter-settings-neighbor-app"
@@ -130,22 +136,22 @@ Feature: Neighboring YAML Front Matter
     When I go to "/page_mentioned.html.erb.frontmatter"
     Then I should see "File Not Found"
 
-  # Scenario: Neighbor frontmatter for destination of proxy resources
-  #   Given the Server is running at "frontmatter-settings-neighbor-app"
-  #   And the file "source/proxied_with_frontmatter.html.frontmatter" has the contents
-  #     """
-  #     ---
-  #     title: Proxied title
-  #     ---
-  #     """
-  #   And the file "source/ignored.html.erb" has the contents
-  #     """
-  #     ---
-  #     ignored: true
-  #     ---
+# Scenario: Neighbor frontmatter for destination of proxy resources
+#   Given the Server is running at "frontmatter-settings-neighbor-app"
+#   And the file "source/proxied_with_frontmatter.html.frontmatter" has the contents
+#     """
+#     ---
+#     title: Proxied title
+#     ---
+#     """
+#   And the file "source/ignored.html.erb" has the contents
+#     """
+#     ---
+#     ignored: true
+#     ---
 
-  #     <%= current_resource.data.inspect %>
-  #     <%= current_resource.data.title %>
-  #     """
-  #   When I go to "/proxied_with_frontmatter.html"
-  #   Then I should see "Proxied title"
+#     <%= current_resource.data.inspect %>
+#     <%= current_resource.data.title %>
+#     """
+#   When I go to "/proxied_with_frontmatter.html"
+#   Then I should see "Proxied title"

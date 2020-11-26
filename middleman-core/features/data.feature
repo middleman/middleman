@@ -89,3 +89,23 @@ Feature: Local Data API
     Then I should see "<h1>With Content</h1>"
     Then I should see '<h2 id="header-2">Header 2</h2>'
     Then I should see "<p>Paragraph 1</p>"
+
+  Scenario: Rendering toml
+    Given the Server is running at "basic-data-app"
+    When I go to "/data4.html"
+    Then I should see "One:Two"
+    When the file "data/test3.toml" has the contents
+      """
+      [titles]
+
+      [titles.first]
+        title = "Three"
+
+      [titles.second]
+        title = "Four"
+      """
+    When I go to "/data4.html"
+    Then I should see "Three:Four"
+    When the file "data/test3.toml" is removed
+    When I go to "/data4.html"
+    Then I should see "No Test Data"

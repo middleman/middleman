@@ -72,10 +72,16 @@ Feature: YAML Front Matter
   Scenario: A template should handle an empty YAML feed
     Given the Server is running at "frontmatter-app"
     And the file "source/front-matter-change.html.erb" has the contents
-    """
-    ---
-    ---
-    Hello World
-    """
+      """
+      ---
+      ---
+      Hello World
+      """
     When I go to "/front-matter-change.html"
     Then I should see "Hello World"
+
+  Scenario: Rendering raw (template-less) (toml)
+    Given the Server is running at "frontmatter-app"
+    When I go to "/raw-front-matter-toml.html"
+    Then I should see "<h1><%= current_page.data.title %></h1>"
+    Then I should not see "---"
