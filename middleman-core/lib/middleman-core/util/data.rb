@@ -84,7 +84,7 @@ module Middleman
           ]
         when *frontmatter_delims[:toml]
           [
-            parse_toml("{#{match[:frontmatter]}}", full_path),
+            parse_toml(match[:frontmatter], full_path),
             match[:additional_content]
           ]
         else
