@@ -6,6 +6,7 @@ class Middleman::Extensions::AssetHost < ::Middleman::Extension
   option :sources, %w(.css .htm .html .js .php .xhtml), 'List of extensions that are searched for bustable assets.'
   option :ignore, [], 'Regexes of filenames to skip adding query strings to'
   option :rewrite_ignore, [], 'Regexes of filenames to skip processing for host rewrites'
+  option :asset_path_rewriter, nil, 'Proc to modify the asset path before the host is added'
 
   def initialize(app, options_hash={}, &block)
     super
@@ -27,6 +28,12 @@ class Middleman::Extensions::AssetHost < ::Middleman::Extension
       dirpath.join(asset_path).to_s
     else
       asset_path
+    end
+
+    full_asset_path = if options[:asset_path_rewriter].is_a?(Proc)
+      options[:asset_path_rewriter].call(full_asset_path)
+    else
+      full_asset_path
     end
 
     asset_prefix = if options[:host].is_a?(Proc)

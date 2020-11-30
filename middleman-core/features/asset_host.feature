@@ -14,6 +14,7 @@ Feature: Alternate between multiple asset hosts
     Then I should not see content matching %r{http://assets1.example.com//}
     Then I should see content matching %r{<a href="https://github.com/angular/angular.js">Angular.js</a>}
     Then I should see content matching %r{'//www.example.com/script.js'}
+    Then I should see content matching %r{blank0.gif}
     When I go to "/stylesheets/asset_host.css"
     Then I should see content matching %r{http://assets1.example.com/}
     Then I should not see content matching %r{http://assets1.example.com//}
@@ -53,3 +54,23 @@ Feature: Alternate between multiple asset hosts
     Then I should see content matching %r{http://assets1.example.com/}
     When I go to "/stylesheets/asset_host.css"
     Then I should not see content matching %r{http://assets1.example.com/}
+
+  Scenario: Host is rewritten with a proc
+    Given a fixture app "asset-host-app"
+    And a file named "config.rb" with:
+      """
+      activate :asset_host, host: "http://assets1.example.com", asset_path_rewriter: Proc.new { |full_asset_path|
+        full_asset_path.upcase
+      }
+      """
+    And the Server is running
+    When I go to "/asset_host.html"
+    Then I should see content matching %r{http://assets1.example.com/}
+    Then I should see content matching %r{BLANK0.GIF}
+    Then I should not see content matching %r{blank0.gif}
+    When I go to "/stylesheets/asset_host.css"
+    Then I should see content matching %r{http://assets1.example.com/}
+    Then I should not see content matching %r{http://assets1.example.com//}
+    When I go to "/javascripts/asset_host.js"
+    Then I should not see content matching %r{http://assets1.example.com/}
+ 
