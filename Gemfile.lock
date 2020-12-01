@@ -119,7 +119,7 @@ GEM
     execjs (2.7.0)
     fastimage (2.2.0)
     ffi (1.13.1)
-    haml (5.2.0)
+    haml (5.2.1)
       temple (>= 0.8.0)
       tilt
     hamster (3.0.0)
