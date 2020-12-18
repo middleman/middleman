@@ -9,7 +9,7 @@
 - Add `--dependency-file` flag to configure the file location.
 - Allow multi-line frontmatter delimiters to support frontmatter in comment blocks (makes IDE syntax highlighting better). #2385
 
-# 5.0.0.rc.1
+# 5.0.0.rc.1 (2019-05-24)
 
 - Support NO_COLOR: https://no-color.org
 - Update activesupport to 5.x and padrino to 0.14.x
@@ -47,23 +47,23 @@
 - Add support for locale suffixes to link_to (#2065)
 - Allow absolute :data_dir paths. Addresses #2042
 
-# 4.3.4
+# 4.3.4 (2019-05-13)
 
 - Fix `ignore` of files controlled by i18n. #2039 #2143
 
-# 4.3.3
+# 4.3.3 (2019-02-18)
 
 - Add `--bail` to fail a build upon the first error and show the error messages. (#2246)
 
-# 4.3.2
+# 4.3.2 (2019-01-16)
 
 - Resolve Haml 5 warnings (#2149)
 
-# 4.3.1
+# 4.3.1 (2019-01-14)
 
 - Fix sassc imports of gem files that expect old sass to be present.
 
-# 4.3.0
+# 4.3.0 (2019-01-11)
 
 - Only SassC from now on.
 - Fix regression (all the way back to v3) for Integer/Date keys in YAML. #2238
