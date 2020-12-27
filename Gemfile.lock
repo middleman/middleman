@@ -31,6 +31,7 @@ PATH
       tilt (~> 2.0.9)
       toml
       uglifier (~> 4.1)
+      webrick
 
 GEM
   remote: https://rubygems.org/
@@ -254,6 +255,7 @@ GEM
     uglifier (4.2.0)
       execjs (>= 0.3.0, < 3)
     unicode-display_width (1.7.0)
+    webrick (1.7.0)
     xpath (3.2.0)
       nokogiri (~> 1.8)
     yard (0.9.25)
