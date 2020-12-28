@@ -31,6 +31,7 @@ PATH
       tilt (~> 2.0.9)
       toml
       uglifier (~> 3.0)
+      webrick
 
 GEM
   remote: https://rubygems.org/
@@ -97,7 +98,7 @@ GEM
     erubis (2.7.0)
     execjs (2.7.0)
     fast_blank (1.0.0)
-    fastimage (2.2.0)
+    fastimage (2.2.1)
     ffi (1.9.25)
     gherkin (4.1.3)
     haml (4.0.7)
@@ -217,11 +218,12 @@ GEM
     tins (1.20.2)
     toml (0.2.0)
       parslet (~> 1.8.0)
-    tzinfo (1.2.8)
+    tzinfo (1.2.9)
       thread_safe (~> 0.1)
     uglifier (3.2.0)
       execjs (>= 0.3.0, < 3)
     unicode-display_width (1.4.1)
+    webrick (1.7.0)
     xpath (2.1.0)
       nokogiri (~> 1.3)
     yard (0.9.20)
