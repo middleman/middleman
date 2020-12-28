@@ -28,6 +28,7 @@ Gem::Specification.new do |s|
   s.add_dependency('servolux')
   s.add_dependency('dotenv')
   s.add_dependency('toml')
+  s.add_dependency('webrick')
 
   # Helpers
   s.add_dependency('activesupport', ['>= 4.2', '< 6.0'])
