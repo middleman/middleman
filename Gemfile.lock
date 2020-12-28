@@ -31,6 +31,7 @@ PATH
       tilt (~> 2.0.9)
       toml
       uglifier (~> 4.1)
+      webrick
 
 GEM
   remote: https://rubygems.org/
@@ -57,7 +58,7 @@ GEM
       timers (~> 4.1)
     async-dns (1.2.5)
       async-io (~> 1.15)
-    async-io (1.30.0)
+    async-io (1.30.1)
       async (~> 1.14)
     binding_of_caller (0.8.0)
       debug_inspector (>= 0.0.1)
@@ -254,6 +255,7 @@ GEM
     uglifier (4.2.0)
       execjs (>= 0.3.0, < 3)
     unicode-display_width (1.7.0)
+    webrick (1.7.0)
     xpath (3.2.0)
       nokogiri (~> 1.8)
     yard (0.9.25)
@@ -292,4 +294,4 @@ DEPENDENCIES
   yard (~> 0.9.11)
 
 BUNDLED WITH
-   2.1.4
+   2.2.3
