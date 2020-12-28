@@ -4,7 +4,7 @@ source 'https://rubygems.org'
 
 # Build and doc tools
 gem 'rake', '~> 13.0', require: false
-gem 'yard', '~> 0.9.11', require: false
+gem 'yard', '~> 0.9.26', require: false
 
 # Test tools
 gem 'addressable', '~> 2.4', require: false
