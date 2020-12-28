@@ -1,0 +1,29 @@
+name: CI
+on:
+  push:
+    branches: [ $default-branch ]
+  pull_request:
+    branches: [ $default-branch ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    continue-on-error: ${{ matrix.experimental == true }}
+    name: ruby-${{ matrix.ruby-version }}
+    strategy:
+      matrix:
+        ruby-version: [head, 3.0, 2.7, 2.6, 2.5]
+        include:
+          - ruby-version: head
+            experimental: true
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby-version }}
+          bundler-cache: true
+      - name: Runs tests
+        run: bundle exec rake
+        env:
+          test: true
