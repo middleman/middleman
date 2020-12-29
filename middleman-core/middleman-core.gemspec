@@ -16,11 +16,11 @@ Gem::Specification.new do |s|
   s.files        = `git ls-files -z`.split("\0")
   s.test_files   = `git ls-files -z -- {fixtures,features}/*`.split("\0")
   s.require_path = 'lib'
-  s.required_ruby_version = '>= 2.2.0'
+  s.required_ruby_version = '>= 2.4.0'
 
   # Core
-  s.add_dependency('bundler')
-  s.add_dependency('rack', ['>= 1.4.5', '< 3'])
+  s.add_dependency('bundler', '~> 2.0')
+  s.add_dependency('rack', ['>= 1.4.5', '< 2.1'])
   s.add_dependency('tilt', ['~> 2.0.9'])
   s.add_dependency('erubis')
   s.add_dependency('fast_blank')
@@ -28,6 +28,7 @@ Gem::Specification.new do |s|
   s.add_dependency('servolux')
   s.add_dependency('dotenv')
   s.add_dependency('toml')
+  s.add_dependency('webrick')
 
   # Helpers
   s.add_dependency('activesupport', ['>= 4.2', '< 6.0'])

@@ -15,7 +15,7 @@ gem 'rspec', '~> 3.0', require: false
 # Pry tools
 gem 'pry'
 gem 'pry-rescue'
-gem 'pry-stack_explorer'
+# gem 'pry-stack_explorer', require: false
 
 # Optional middleman dependencies, included for tests
 gem 'coffee-script', '~> 2.2', require: false

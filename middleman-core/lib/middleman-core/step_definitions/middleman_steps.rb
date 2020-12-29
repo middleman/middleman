@@ -35,7 +35,7 @@ Then /^the file "([^\"]*)" has the contents$/ do |path, contents|
 end
 
 Then /^the file "([^\"]*)" is removed$/ do |path|
-  step %Q{I remove the file "#{path}"}
+  FileUtils.rm(expand_path(path))
 
   @server_inst.files.poll_once!
 end

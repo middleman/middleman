@@ -4,13 +4,12 @@ on: [push, pull_request]
 
 jobs:
   test:
-    runs-on: ${{ matrix.os }}-latest
+    runs-on: ubuntu-latest
     continue-on-error: ${{ matrix.experimental == true }}
-    name: ${{ matrix.os }}-ruby-${{ matrix.ruby-version }}
+    name: ubuntu-ruby-${{ matrix.ruby-version }}
     strategy:
       matrix:
-        os: [ubuntu, macos]
-        ruby-version: [3.0, 2.7, 2.6, 2.5, 2.4, 2.3]
+        ruby-version: [3.0, 2.7, 2.6, 2.5, 2.4]
     steps:
     - uses: actions/checkout@v2
     - name: Set up Ruby
@@ -18,6 +17,10 @@ jobs:
       with:
         ruby-version: ${{ matrix.ruby-version }}
         bundler-cache: true
+    - name: Set up Node
+      uses: actions/setup-node@v2
+      with:
+        node-version: '12'
     - name: Install dependencies
       run: bundle install
     - name: Runs linter
