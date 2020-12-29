@@ -3,7 +3,7 @@ updates:
   - package-ecosystem: bundler
     directory: "/"
     schedule:
-      interval: daily
+      interval: monthly
       time: "08:00"
       timezone: America/New_York
     open-pull-requests-limit: 10
