@@ -1,4 +1,4 @@
-@encoding @travishatesme @wip
+@encoding @wip
 
 Feature: Unicode filenames
   In order to support non-ASCII characters in filenames
@@ -12,7 +12,7 @@ Feature: Unicode filenames
       """
       Snowman!
       <div style="text-align:center; font-size:4000%;">
-        ☃
+      ☃
       </div>
       """
     And a successfully built app at "empty-app"
@@ -28,7 +28,7 @@ Feature: Unicode filenames
       """
       Snowman!
       <div style="text-align:center; font-size:4000%;">
-        ☃
+      ☃
       </div>
       """
     And the Server is running
