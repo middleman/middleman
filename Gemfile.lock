@@ -11,7 +11,7 @@ PATH
       activesupport (>= 4.2, < 6.0)
       addressable (~> 2.3)
       backports (~> 3.6)
-      bundler
+      bundler (~> 2.0)
       contracts (~> 0.13.0)
       dotenv
       erubis
@@ -260,4 +260,4 @@ DEPENDENCIES
   yard (~> 0.9.20)
 
 BUNDLED WITH
-   1.17.3
+   2.2.3
