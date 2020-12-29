@@ -20,7 +20,7 @@ Gem::Specification.new do |s|
 
   # Core
   s.add_dependency('bundler')
-  s.add_dependency('rack', ['>= 1.4.5', '< 3'])
+  s.add_dependency('rack', ['>= 1.4.5', '< 2.1'])
   s.add_dependency('tilt', ['~> 2.0.9'])
   s.add_dependency('erubis')
   s.add_dependency('fast_blank')
