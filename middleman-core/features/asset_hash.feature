@@ -171,6 +171,7 @@ Feature: Assets get file hashes appended to them and references to them are upda
     And I should see 'url("http://middlemanapp.com/images/100px-5fd6fb90.jpg?#test")'
     And I should see 'url("http://middlemanapp.com/images/100px-5fd6fb90.jpg#test")'
 
+  @wip
   Scenario: The asset hash should change when a SASS partial changes
     Given the Server is running at "asset-hash-app"
     And the file "source/stylesheets/_partial.sass" has the contents
