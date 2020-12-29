@@ -48,8 +48,6 @@ GEM
       rspec-expectations (>= 2.7.0)
     ast (2.4.1)
     backports (3.19.0)
-    binding_of_caller (0.8.0)
-      debug_inspector (>= 0.0.1)
     builder (3.2.4)
     byebug (11.1.3)
     capybara (2.5.0)
@@ -90,7 +88,6 @@ GEM
     cucumber-core (1.5.0)
       gherkin (~> 4.0)
     cucumber-wire (0.0.1)
-    debug_inspector (1.0.0)
     diff-lcs (1.4.4)
     docile (1.3.4)
     dotenv (2.7.6)
@@ -145,9 +142,6 @@ GEM
     pry-rescue (1.5.2)
       interception (>= 0.5)
       pry (>= 0.12.0)
-    pry-stack_explorer (0.5.1)
-      binding_of_caller (~> 0.7)
-      pry (~> 0.13)
     rack (2.2.3)
     rack-protection (2.1.0)
       rack
@@ -253,7 +247,6 @@ DEPENDENCIES
   middleman-core!
   pry
   pry-rescue
-  pry-stack_explorer
   rake (~> 10.3)
   redcarpet (>= 3.1)
   rspec (~> 3.0)
