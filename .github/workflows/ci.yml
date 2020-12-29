@@ -17,6 +17,10 @@ jobs:
       with:
         ruby-version: ${{ matrix.ruby-version }}
         bundler-cache: true
+    - name: Set up Node
+      uses: node/setup-node@v2
+      with:
+        node-version: '12'
     - name: Install dependencies
       run: bundle install
     - name: Runs linter
