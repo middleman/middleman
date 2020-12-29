@@ -48,8 +48,8 @@ Feature: i18n Preview
       """
       ---
       en:
-        greetings: "Howdy"
-        hi: "Hello"
+      greetings: "Howdy"
+      hi: "Hello"
       """
     When I go to "/"
     Then I should see "Howdy"
@@ -59,8 +59,8 @@ Feature: i18n Preview
       """
       ---
       en:
-        greetings: "How You Doin"
-        hi: "Sup"
+      greetings: "How You Doin"
+      hi: "Sup"
       """
     When I go to "/"
     Then I should see "How You Doin"
@@ -86,23 +86,23 @@ Feature: i18n Preview
     Then I should see "Hola World"
 
 
-  Scenario: Running localize with the alt root config
-    Given a fixture app "i18n-alt-root-app"
-    And a file named "config.rb" with:
-      """
-      activate :i18n, templates_dir: "lang_data"
-      """
-    Given the Server is running
-    When I go to "/"
-    Then I should see "Howdy"
-    When I go to "/hello.html"
-    Then I should see "Hello World"
-    When I go to "/en/index.html"
-    Then I should see "File Not Found"
-    When I go to "/es/index.html"
-    Then I should see "Como Esta?"
-    When I go to "/es/hola.html"
-    Then I should see "Hola World"
+  # Scenario: Running localize with the alt root config
+  #   Given a fixture app "i18n-alt-root-app"
+  #   And a file named "config.rb" with:
+  #     """
+  #     activate :i18n, templates_dir: "lang_data"
+  #     """
+  #   Given the Server is running
+  #   When I go to "/"
+  #   Then I should see "Howdy"
+  #   When I go to "/hello.html"
+  #   Then I should see "Hello World"
+  #   When I go to "/en/index.html"
+  #   Then I should see "File Not Found"
+  #   When I go to "/es/index.html"
+  #   Then I should see "Como Esta?"
+  #   When I go to "/es/hola.html"
+  #   Then I should see "Hola World"
 
   Scenario: Running localize with the lang map config
     Given a fixture app "i18n-test-app"
@@ -263,9 +263,9 @@ Feature: i18n Preview
       activate :i18n, mount_at_root: false, langs: langs
 
       ["Tom", "Jen"].each do |name|
-        langs.each do |lang|
-          proxy "/#{lang}/people/#{name.downcase}.html", "/name.html", locals: { name: name }, locale: lang, ignore: true
-        end
+      langs.each do |lang|
+      proxy "/#{lang}/people/#{name.downcase}.html", "/name.html", locals: { name: name }, locale: lang, ignore: true
+      end
       end
       """
     Given the Server is running
