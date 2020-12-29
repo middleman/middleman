@@ -3,27 +3,27 @@ Feature: Assets get file hashes appended to them and references to them are upda
     Given a successfully built app at "asset-hash-app"
     When I cd to "build"
     Then the following files should exist:
-      | index.html |
-      | apple-touch-icon.png |
-      | favicon.ico |
-      | images/100px-1242c368.png |
-      | images/100px-5fd6fb90.jpg |
-      | images/200px-c11eb203.jpg |
-      | images/300px-59adce76.jpg |
-      | images/100px-5fd6fb90.gif |
+      | index.html                          |
+      | apple-touch-icon.png                |
+      | favicon.ico                         |
+      | images/100px-1242c368.png           |
+      | images/100px-5fd6fb90.jpg           |
+      | images/200px-c11eb203.jpg           |
+      | images/300px-59adce76.jpg           |
+      | images/100px-5fd6fb90.gif           |
       | javascripts/application-1d8d5276.js |
-      | stylesheets/site-8bc55985.css |
-      | index.html |
-      | subdir/index.html |
-      | other/index.html |
-      | api.json |
-      | subdir/api.json |
+      | stylesheets/site-8bc55985.css       |
+      | index.html                          |
+      | subdir/index.html                   |
+      | other/index.html                    |
+      | api.json                            |
+      | subdir/api.json                     |
     And the following files should not exist:
-      | images/100px.png |
-      | images/100px.jpg |
-      | images/100px.gif |
+      | images/100px.png           |
+      | images/100px.jpg           |
+      | images/100px.gif           |
       | javascripts/application.js |
-      | stylesheets/site.css |
+      | stylesheets/site.css       |
 
     And the file "javascripts/application-1d8d5276.js" should contain "img.src = '/images/100px-5fd6fb90.jpg'"
     And the file "stylesheets/site-8bc55985.css" should contain:
@@ -54,7 +54,7 @@ Feature: Assets get file hashes appended to them and references to them are upda
     Given a successfully built app at "asset-hash-app"
     When I cd to "build"
     Then the following files should exist:
-      | fonts/fontawesome-webfont-56ce13e7.woff |
+      | fonts/fontawesome-webfont-56ce13e7.woff  |
       | fonts/fontawesome-webfont-10752316.woff2 |
     And the file "stylesheets/uses_fonts-88aa3e2b.css" should contain "src: url('../fonts/fontawesome-webfont-10752316.woff2')"
     And the file "stylesheets/uses_fonts-88aa3e2b.css" should contain "url('../fonts/fontawesome-webfont-56ce13e7.woff')"
@@ -176,18 +176,19 @@ Feature: Assets get file hashes appended to them and references to them are upda
     And the file "source/stylesheets/_partial.sass" has the contents
       """
       body
-        font-size: 14px
+      font-size: 14px
       """
     When I go to "/partials/"
     Then I should see 'href="../stylesheets/uses_partials-a3c8302b.css'
     And the file "source/stylesheets/_partial.sass" has the contents
       """
       body
-        font-size: 18px !important
+      font-size: 18px !important
       """
     When I go to "/partials/"
     Then I should see 'href="../stylesheets/uses_partials-08ee47a7.css'
 
+  @wip
   Scenario: The asset hash should change when a Rack-based filter changes
     Given a fixture app "asset-hash-app"
     And a file named "config.rb" with:
@@ -211,9 +212,9 @@ Feature: Assets get file hashes appended to them and references to them are upda
       """
       is_stylesheet = proc { |path| path.start_with? 'stylesheets' }
       activate :asset_hash, ignore: [
-        %r(javascripts/*),
-        'images/*',
-        is_stylesheet
+      %r(javascripts/*),
+      'images/*',
+      is_stylesheet
       ]
       activate :relative_assets
       activate :directory_indexes
@@ -221,25 +222,25 @@ Feature: Assets get file hashes appended to them and references to them are upda
     And a successfully built app at "asset-hash-app"
     When I cd to "build"
     Then the following files should exist:
-      | index.html |
-      | apple-touch-icon.png |
-      | favicon.ico |
-      | images/100px.png |
-      | images/100px.jpg |
-      | images/100px.gif |
+      | index.html                 |
+      | apple-touch-icon.png       |
+      | favicon.ico                |
+      | images/100px.png           |
+      | images/100px.jpg           |
+      | images/100px.gif           |
       | javascripts/application.js |
-      | stylesheets/site.css |
-      | index.html |
-      | subdir/index.html |
-      | other/index.html |
-      | api.json |
-      | subdir/api.json |
+      | stylesheets/site.css       |
+      | index.html                 |
+      | subdir/index.html          |
+      | other/index.html           |
+      | api.json                   |
+      | subdir/api.json            |
     And the following files should not exist:
-      | images/100px-1242c368.png |
-      | images/100px-5fd6fb90.jpg |
-      | images/100px-5fd6fb90.gif |
+      | images/100px-1242c368.png           |
+      | images/100px-5fd6fb90.jpg           |
+      | images/100px-5fd6fb90.gif           |
       | javascripts/application-1d8d5276.js |
-      | stylesheets/site-7474cadd.css |
+      | stylesheets/site-7474cadd.css       |
 
   Scenario: Hashed-asset files are not replaced for rewrite ignored paths
     Given a fixture app "asset-hash-app"
@@ -247,9 +248,9 @@ Feature: Assets get file hashes appended to them and references to them are upda
       """
       is_stylesheet = proc { |path| path.start_with? '/stylesheets' }
       activate :asset_hash, rewrite_ignore: [
-        %r(javascripts/*),
-        '/subdir/*',
-        is_stylesheet
+      %r(javascripts/*),
+      '/subdir/*',
+      is_stylesheet
       ]
       activate :relative_assets
       activate :directory_indexes
@@ -257,15 +258,15 @@ Feature: Assets get file hashes appended to them and references to them are upda
     And a successfully built app at "asset-hash-app"
     When I cd to "build"
     Then the following files should exist:
-      | index.html |
-      | subdir/index.html |
-      | images/100px-5fd6fb90.jpg |
+      | index.html                          |
+      | subdir/index.html                   |
+      | images/100px-5fd6fb90.jpg           |
       | javascripts/application-1d8d5276.js |
-      | stylesheets/site-8bc55985.css |
+      | stylesheets/site-8bc55985.css       |
     And the following files should not exist:
-      | images/100px.jpg |
+      | images/100px.jpg           |
       | javascripts/application.js |
-      | stylesheets/site.css |
+      | stylesheets/site.css       |
     And the file "javascripts/application-1d8d5276.js" should contain "img.src = '/images/100px.jpg'"
     And the file "stylesheets/site-8bc55985.css" should contain:
       """
@@ -285,7 +286,7 @@ Feature: Assets get file hashes appended to them and references to them are upda
     When I cd to "build"
     Then the following files should exist:
       | javascripts/jquery.min-276c87ff.js |
-      | stylesheets/test-7de2ad06.css |
+      | stylesheets/test-7de2ad06.css      |
     And the following files should not exist:
       | javascripts/jquery.min.js |
     And the file "stylesheets/test-7de2ad06.css" should contain:
@@ -299,12 +300,12 @@ Feature: Assets get file hashes appended to them and references to them are upda
     Given a successfully built app at "asset-hash-source-map"
     When I cd to "build"
     Then the following files should exist:
-      | index.html |
-      | javascripts/application-4553338c.js |
+      | index.html                              |
+      | javascripts/application-4553338c.js     |
       | javascripts/application.js-22cc2b5f.map |
-      | index.html |
+      | index.html                              |
     And the following files should not exist:
-      | javascripts/application.js |
+      | javascripts/application.js     |
       | javascripts/application.js.map |
 
     And the file "javascripts/application-4553338c.js" should contain "//# sourceMappingURL=application.js-22cc2b5f.map"
@@ -313,12 +314,12 @@ Feature: Assets get file hashes appended to them and references to them are upda
     Given a successfully built app at "asset-hash-prefix"
     When I cd to "build"
     Then the following files should exist:
-      | index.html |
-      | javascripts/application-myprefix-4553338c.js |
+      | index.html                                       |
+      | javascripts/application-myprefix-4553338c.js     |
       | javascripts/application.js-myprefix-22cc2b5f.map |
-      | index.html |
+      | index.html                                       |
     And the following files should not exist:
-      | javascripts/application.js |
+      | javascripts/application.js     |
       | javascripts/application.js.map |
 
     And the file "javascripts/application-myprefix-4553338c.js" should contain "//# sourceMappingURL=application.js-myprefix-22cc2b5f.map"
@@ -327,12 +328,12 @@ Feature: Assets get file hashes appended to them and references to them are upda
     Given a successfully built app at "asset-hash-remove-filename"
     When I cd to "build"
     Then the following files should exist:
-      | index.html |
-      | javascripts/4553338c.js |
+      | index.html               |
+      | javascripts/4553338c.js  |
       | javascripts/22cc2b5f.map |
-      | index.html |
+      | index.html               |
     And the following files should not exist:
-      | javascripts/application.js |
+      | javascripts/application.js     |
       | javascripts/application.js.map |
 
     And the file "javascripts/4553338c.js" should contain "//# sourceMappingURL=22cc2b5f.map"
