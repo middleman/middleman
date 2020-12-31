@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-if ENV['CONTRACTS'] == 'true' || ENV['TEST'] = 'true'
+if ENV['CONTRACTS'] == 'true' || ENV['TEST'] == 'true'
   require 'contracts'
   require 'hamster'
 

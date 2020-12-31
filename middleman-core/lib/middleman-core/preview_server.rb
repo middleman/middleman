@@ -160,21 +160,21 @@ module Middleman
               ]
 
               # config.rb
-              # watcher = files.watch :reload,
-              #                       path: root,
-              #                       only: match_against
+              watcher = files.watch :reload,
+                                    path: root,
+                                    only: match_against
 
-              # # Hack around bower_components in root.
-              # watcher.listener.ignore(/^bower_components/)
+              # Hack around bower_components in root.
+              watcher.listener.ignore(/^bower_components/)
 
-              # # Hack around node_modules in root.
-              # watcher.listener.ignore(/^node_modules/)
+              # Hack around node_modules in root.
+              watcher.listener.ignore(/^node_modules/)
 
-              # # Hack around sass cache in root.
-              # watcher.listener.ignore(/^\.sass-cache/)
+              # Hack around sass cache in root.
+              watcher.listener.ignore(/^\.sass-cache/)
 
-              # # Hack around bundler cache in root.
-              # watcher.listener.ignore(%r{^vendor/bundle})
+              # Hack around bundler cache in root.
+              watcher.listener.ignore(%r{^vendor/bundle})
             end
           end
         end
