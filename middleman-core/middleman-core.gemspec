@@ -58,6 +58,6 @@ Gem::Specification.new do |s|
   s.add_dependency('contracts', ['~> 0.16.0'])
 
   # Hash stuff
-  s.add_dependency('hashie', ['~> 3.4'])
+  s.add_dependency('hashie', ['~> 4.0'])
   s.add_dependency('hamster', ['~> 3.0'])
 end
