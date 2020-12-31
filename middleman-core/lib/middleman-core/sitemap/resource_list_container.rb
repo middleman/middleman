@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'hamster'
+require 'set'
 require 'middleman-core/contracts'
 require 'middleman-core/sitemap/resource'
 
@@ -19,16 +19,16 @@ module Middleman
 
       Contract Maybe[ArrayOf[Resource]] => Any
       def reset!(initial = nil)
-        @_set = ::Hamster::SortedSet.empty
-        @_lookup_by_binary = ::Hamster::SortedSet.empty
-        @_lookup_by_non_binary = ::Hamster::SortedSet.empty
-        @_lookup_by_ignored = ::Hamster::SortedSet.empty
+        @_set = Set.new
+        @_lookup_by_binary = Set.new
+        @_lookup_by_non_binary = Set.new
+        @_lookup_by_ignored = Set.new
 
-        @_lookup_by_path = ::Hamster::Hash.empty
-        @_lookup_by_destination_path = ::Hamster::Hash.empty
-        @_lookup_by_source_extension = ::Hamster::Hash.empty
-        @_lookup_by_destination_extension = ::Hamster::Hash.empty
-        @_lookup_by_page_id = ::Hamster::Hash.empty
+        @_lookup_by_path = {}
+        @_lookup_by_destination_path = {}
+        @_lookup_by_source_extension = {}
+        @_lookup_by_destination_extension = {}
+        @_lookup_by_page_id = {}
 
         add!(*initial.sort_by(&:priority)) unless initial.nil?
       end
@@ -40,7 +40,7 @@ module Middleman
 
       Contract Resource => Any
       def add_one!(resource)
-        @_set = @_set.add(resource)
+        @_set.add(resource)
 
         add_cache resource
       end
@@ -55,59 +55,46 @@ module Middleman
       Contract Resource, Maybe[Symbol] => Any
       def add_cache(resource, only = nil)
         if should_run? :path, only
-          @_lookup_by_path = @_lookup_by_path.put(
-            ::Middleman::Util.normalize_path(resource.path),
-            resource
-          )
+          @_lookup_by_path[::Middleman::Util.normalize_path(resource.path)] = resource
         end
 
         if should_run? :destination_path, only
-          @_lookup_by_destination_path = @_lookup_by_destination_path.put(
-            ::Middleman::Util.normalize_path(resource.destination_path),
-            resource
-          )
+          @_lookup_by_destination_path[::Middleman::Util.normalize_path(resource.destination_path)] = resource
         end
 
         if should_run? :binary, only
           if resource.binary?
-            @_lookup_by_binary = @_lookup_by_binary.add(resource)
+            @_lookup_by_binary.add(resource)
           else
-            @_lookup_by_non_binary = @_lookup_by_non_binary.add(resource)
+            @_lookup_by_non_binary.add(resource)
           end
         end
 
         if should_run? :source_extension, only
           source_ext = resource.file_descriptor && resource.file_descriptor[:full_path] && ::File.extname(resource.file_descriptor[:full_path])
           if source_ext
-            @_lookup_by_source_extension = @_lookup_by_source_extension.put(source_ext) do |v|
-              v ||= ::Hamster::SortedSet.empty
-              v.add(resource)
-            end
+            @_lookup_by_source_extension[source_ext] ||= Set.new
+            @_lookup_by_source_extension[source_ext].add(resource)
           end
         end
 
         if should_run? :destination_extension, only
           dest_ext = ::File.extname(resource.destination_path)
 
-          @_lookup_by_destination_extension = @_lookup_by_destination_extension.put(dest_ext) do |v|
-            v ||= ::Hamster::SortedSet.empty
-            v.add(resource)
-          end
+          v = @_lookup_by_destination_extension[dest_ext] ||= Set.new
+          v.add(resource)
         end
 
         if should_run? :page_id, only
-          @_lookup_by_page_id = @_lookup_by_page_id.put(
-            resource.page_id.to_s.to_sym,
-            resource
-          )
+          @_lookup_by_page_id[resource.page_id.to_s.to_sym] = resource
         end
 
-        @_lookup_by_ignored = @_lookup_by_ignored << resource if should_run?(:ignored, only) && resource.ignored?
+        @_lookup_by_ignored.add(resource) if should_run?(:ignored, only) && resource.ignored?
       end
 
       Contract Resource => Any
       def remove!(resource)
-        @_set = @_set.delete resource
+        @_set.delete resource
 
         remove_cache resource
       end
@@ -115,49 +102,45 @@ module Middleman
       Contract Resource, Maybe[Symbol] => Any
       def remove_cache(resource, only = nil)
         if should_run? :path, only
-          @_lookup_by_path = @_lookup_by_path.delete(
+          @_lookup_by_path.delete(
             ::Middleman::Util.normalize_path(resource.path)
           )
         end
 
         if should_run? :destination_path, only
-          @_lookup_by_destination_path = @_lookup_by_destination_path.delete(
+          @_lookup_by_destination_path.delete(
             ::Middleman::Util.normalize_path(resource.destination_path)
           )
         end
 
         if should_run? :binary, only
           if resource.binary?
-            @_lookup_by_binary = @_lookup_by_binary.delete(resource)
+            @_lookup_by_binary.delete(resource)
           else
-            @_lookup_by_non_binary = @_lookup_by_non_binary.delete(resource)
+            @_lookup_by_non_binary.delete(resource)
           end
         end
 
         if should_run? :source_extension, only
           source_ext = resource.file_descriptor && resource.file_descriptor[:full_path] && ::File.extname(resource.file_descriptor[:full_path])
           if source_ext
-            @_lookup_by_source_extension = @_lookup_by_source_extension.put(source_ext) do |v|
-              v.delete(resource)
-            end
+            @_lookup_by_source_extension[source_ext] && @_lookup_by_source_extension[source_ext].delete(resource)
           end
         end
 
         if should_run? :destination_extension, only
           dest_ext = ::File.extname(resource.destination_path)
 
-          @_lookup_by_destination_extension = @_lookup_by_destination_extension.put(dest_ext) do |v|
-            v.delete(resource)
-          end
+          @_lookup_by_destination_extension[dest_ext] && @_lookup_by_destination_extension[dest_ext].delete(resource)
         end
 
         if should_run? :page_id, only
-          @_lookup_by_page_id = @_lookup_by_page_id.delete(
+          @_lookup_by_page_id.delete(
             resource.page_id.to_s.to_sym
           )
         end
 
-        @_lookup_by_ignored = @_lookup_by_ignored.delete(resource) if should_run? :ignored, only
+        @_lookup_by_ignored.delete(resource) if should_run? :ignored, only
       end
 
       Contract Resource, Maybe[Symbol], Proc => Any
@@ -172,13 +155,13 @@ module Middleman
       # Find resources given its source extension
       Contract String => ResourceList
       def by_source_extension(extension)
-        @_lookup_by_source_extension.fetch(extension, ::Hamster::SortedSet.empty)
+        @_lookup_by_source_extension[extension] || Set.new
       end
 
       # Find resources given a set of source extensions
       Contract Or[ArrayOf[String], SetOf[String]] => ResourceList
       def by_source_extensions(extensions)
-        extensions.reduce(::Hamster::SortedSet.empty) do |sum, ext|
+        extensions.reduce(Set.new) do |sum, ext|
           sum | by_source_extension(ext)
         end
       end
@@ -186,13 +169,13 @@ module Middleman
       # Find resources given its destination extension
       Contract String => ResourceList
       def by_extension(extension)
-        @_lookup_by_destination_extension.fetch(extension, ::Hamster::SortedSet.empty)
+        @_lookup_by_destination_extension[extension] || Set.new
       end
 
       # Find resources given a set of destination extensions
       Contract Or[ArrayOf[String], SetOf[String]] => ResourceList
       def by_extensions(extensions)
-        extensions.reduce(::Hamster::SortedSet.empty) do |sum, ext|
+        extensions.reduce(Set.new) do |sum, ext|
           sum | by_extension(ext)
         end
       end
@@ -201,20 +184,20 @@ module Middleman
       Contract String => Maybe[Resource]
       def by_path(request_path)
         request_path = ::Middleman::Util.normalize_path(request_path)
-        @_lookup_by_path.get(request_path)
+        @_lookup_by_path[request_path]
       end
 
       # Find a resource given its destination path
       Contract String => Maybe[Resource]
       def by_destination_path(request_path)
         request_path = ::Middleman::Util.normalize_path(request_path)
-        @_lookup_by_destination_path.get(request_path)
+        @_lookup_by_destination_path[request_path]
       end
 
       # Find a resource given its page id
       Contract Or[String, Symbol] => Maybe[Resource]
       def by_page_id(page_id)
-        @_lookup_by_page_id.get(page_id.to_s.to_sym)
+        @_lookup_by_page_id[page_id.to_s.to_sym]
       end
 
       # Find a resource given its page id
@@ -237,6 +220,11 @@ module Middleman
       Contract ResourceList
       def without_ignored
         @_set - @_lookup_by_ignored
+      end
+
+      Contract ArrayOf[Resource]
+      def by_priority
+        without_ignored.sort
       end
 
       Contract ArrayOf[Resource]

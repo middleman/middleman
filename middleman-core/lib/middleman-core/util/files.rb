@@ -121,7 +121,7 @@ module Middleman
 
       all_extensions.uniq!
 
-      app.sitemap.without_ignored.to_a.select do |r|
+      app.sitemap.by_priority.select do |r|
         if r.file_descriptor
           local_extensions = collect_extensions(r.file_descriptor[:full_path].to_s)
           local_extensions |= sass_type_aliasing unless (local_extensions & sass_type_aliasing).empty?

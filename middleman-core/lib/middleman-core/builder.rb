@@ -177,7 +177,7 @@ module Middleman
     def output_files
       logger.debug '== Building files'
 
-      non_css_resources = @app.sitemap.without_ignored - @app.sitemap.by_extension('.css')
+      non_css_resources = @app.sitemap.by_priority.reject { |r| ::File.extname(r.destination_path) == '.css' }
 
       resources = non_css_resources
                   .sort_by { |resource| SORT_ORDER.index(resource.ext) || 100 }
