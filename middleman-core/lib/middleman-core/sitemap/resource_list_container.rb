@@ -54,13 +54,9 @@ module Middleman
 
       Contract Resource, Maybe[Symbol] => Any
       def add_cache(resource, only = nil)
-        if should_run? :path, only
-          @_lookup_by_path[::Middleman::Util.normalize_path(resource.path)] = resource
-        end
+        @_lookup_by_path[::Middleman::Util.normalize_path(resource.path)] = resource if should_run? :path, only
 
-        if should_run? :destination_path, only
-          @_lookup_by_destination_path[::Middleman::Util.normalize_path(resource.destination_path)] = resource
-        end
+        @_lookup_by_destination_path[::Middleman::Util.normalize_path(resource.destination_path)] = resource if should_run? :destination_path, only
 
         if should_run? :binary, only
           if resource.binary?
@@ -85,9 +81,7 @@ module Middleman
           v.add(resource)
         end
 
-        if should_run? :page_id, only
-          @_lookup_by_page_id[resource.page_id.to_s.to_sym] = resource
-        end
+        @_lookup_by_page_id[resource.page_id.to_s.to_sym] = resource if should_run? :page_id, only
 
         @_lookup_by_ignored.add(resource) if should_run?(:ignored, only) && resource.ignored?
       end
@@ -123,15 +117,13 @@ module Middleman
 
         if should_run? :source_extension, only
           source_ext = resource.file_descriptor && resource.file_descriptor[:full_path] && ::File.extname(resource.file_descriptor[:full_path])
-          if source_ext
-            @_lookup_by_source_extension[source_ext] && @_lookup_by_source_extension[source_ext].delete(resource)
-          end
+          @_lookup_by_source_extension[source_ext]&.delete(resource) if source_ext
         end
 
         if should_run? :destination_extension, only
           dest_ext = ::File.extname(resource.destination_path)
 
-          @_lookup_by_destination_extension[dest_ext] && @_lookup_by_destination_extension[dest_ext].delete(resource)
+          @_lookup_by_destination_extension[dest_ext]&.delete(resource)
         end
 
         if should_run? :page_id, only
