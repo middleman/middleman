@@ -162,3 +162,44 @@ Feature: i18n Builder
     And the file "hello.html" should contain '"stylesheets/site.css"'
     And the file "es/index.html" should contain '"../stylesheets/site.css"'
     And the file "es/hola.html" should contain '"../stylesheets/site.css"'
+
+  Scenario: Running localize with no templates dir config
+    Given a fixture app "i18n-no-templates-dir-app"
+    Given a successfully built app at "i18n-no-templates-dir-app"
+    When I cd to "build"
+    Then the following files should exist:
+      | index.html                                    |
+      | other.html                                    |
+      | es/index.html                                 |
+      | with-all-extensions/index.html                |
+      | without-default-extension/index.html          |
+      | with-partials/index.html                      |
+      | es/with-all-extensions/index.html             |
+      | es/without-default-extension/index.html       |
+      | es/with-partials/index.html                   |
+      | CNAME                                         |
+      | password.txt                                  |
+    Then the following files should not exist:
+      | en/index.html                                 |
+      | en/other.html                                 |
+      | en/with-all-extensions/index.html             |
+      | en/without-default-extension/index.html       |
+      | es/other.html                                 |
+      | with-partials/_localized_partial.html         |
+      | en/with-partials/_localized_partial.html      |
+      | es/with-partials/_localized_partial.html      |
+    And the file "index.html" should contain "howdy"
+    And the file "other.html" should contain "other"
+    And the file "es/index.html" should contain "hola"
+    And the file "with-all-extensions/index.html" should contain "with all extensions"
+    And the file "without-default-extension/index.html" should contain "without default extension"
+    And the file "with-partials/index.html" should contain "with partials"
+    And the file "with-partials/index.html" should contain "localized"
+    And the file "with-partials/index.html" should contain "unlocalized"
+    And the file "es/with-all-extensions/index.html" should contain "con todas las extensiones"
+    And the file "es/without-default-extension/index.html" should contain "sin la extensión estándar"
+    And the file "es/with-partials/index.html" should contain "con parciales"
+    And the file "es/with-partials/index.html" should contain "localizado"
+    And the file "es/with-partials/index.html" should contain "unlocalized"
+    And the file "CNAME" should contain "test.github.com"
+    And the file "password.txt" should contain "hunter2"

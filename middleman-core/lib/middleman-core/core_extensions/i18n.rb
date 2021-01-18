@@ -7,7 +7,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
   option :locale_map, {}, 'Locale shortname map'
   option :lang_map, nil, 'Backwards compatibility if old option name. Use `locale_map` instead.'
   option :path, '/:locale/', 'URL prefix path'
-  option :templates_dir, 'localizable', 'Location of templates to be localized'
+  option :templates_dir, 'localizable', 'Location of templates to be localized or `false` for none.'
   option :mount_at_root, nil, 'Mount a specific locale at the root of the site'
   option :data, 'locales', 'The directory holding your locale configurations'
 
@@ -22,6 +22,8 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
     options[:locales] = options[:langs] unless options[:langs].nil?
 
     options[:locale_map] = options[:lang_map] unless options[:lang_map].nil?
+
+    options[:templates_dir] = nil if options[:templates_dir] == false
 
     # Don't fail on invalid locale, that's not what our current
     # users expect.
@@ -90,10 +92,10 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
     end
 
     def locate_partial(partial_name, try_static = false)
-      locals_dir = extensions[:i18n].options[:templates_dir]
+      templates_dir = extensions[:i18n].options[:templates_dir]
 
       # Try /localizable
-      partials_path = File.join(locals_dir, partial_name)
+      partials_path = File.join(*[templates_dir, partial_name].compact)
 
       locale_suffix = ::I18n.locale
 
@@ -107,7 +109,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
 
       if locale_suffix
         super(suffixed_partial_name, maybe_static) ||
-          super(File.join(locals_dir, suffixed_partial_name), maybe_static) ||
+          super(File.join(*[templates_dir, suffixed_partial_name].compact), maybe_static) ||
           super(partials_path, try_static) ||
           super
       else
@@ -138,14 +140,25 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
   def manipulate_resource_list_container!(resource_list)
     new_resources = []
 
-    file_extension_resources = resource_list.select do |resource|
-      # Ignore resources which are outside of the localizable directory
-      File.fnmatch?(File.join(options[:templates_dir], '**'), resource.path) &&
-        parse_locale_extension(resource.path)
-    end
+    if options[:templates_dir]
+      templates_glob = File.join(options[:templates_dir], '**')
 
-    localizable_folder_resources = resource_list.select do |resource|
-      !file_extension_resources.include?(resource) && File.fnmatch?(File.join(options[:templates_dir], '**'), resource.path)
+      file_extension_resources = resource_list.select do |resource|
+        # Ignore resources which are outside of the localizable directory
+        File.fnmatch?(templates_glob, resource.path) &&
+          parse_locale_extension(resource.path)
+      end
+
+      localizable_folder_resources = resource_list.select do |resource|
+        !file_extension_resources.include?(resource) &&
+          File.fnmatch?(templates_glob, resource.path)
+      end
+    else
+      file_extension_resources = resource_list.select do |resource|
+        parse_locale_extension(resource.path)
+      end
+
+      localizable_folder_resources = []
     end
 
     # If it's a "localizable template"
@@ -355,7 +368,8 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
       File.join(prefix, path.sub(page_id, localized_page_id))
     )
 
-    path = path.sub(options[:templates_dir] + '/', '')
+    path = path.sub(options[:templates_dir] + '/', '') if options[:templates_dir]
+    path = Pathname(path).cleanpath.to_s
 
     ::I18n.locale = old_locale
 
