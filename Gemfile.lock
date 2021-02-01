@@ -78,11 +78,11 @@ GEM
       coffee-script-source
       execjs
     coffee-script-source (1.12.2)
-    concurrent-ruby (1.1.7)
+    concurrent-ruby (1.1.8)
     console (1.10.1)
       fiber-local
     contracts (0.16.0)
-    cucumber (5.2.0)
+    cucumber (5.3.0)
       builder (~> 3.2, >= 3.2.4)
       cucumber-core (~> 8.0, >= 8.0.1)
       cucumber-create-meta (~> 2.0, >= 2.0.2)
@@ -147,7 +147,7 @@ GEM
     mini_portile2 (2.4.0)
     mini_racer (0.3.1)
       libv8 (~> 8.4.255)
-    minitest (5.14.2)
+    minitest (5.14.3)
     multi_test (0.1.2)
     mustermann (1.1.1)
       ruby2_keywords (~> 0.0.1)
@@ -248,7 +248,7 @@ GEM
     sys-uname (1.2.2)
       ffi (~> 1.1)
     temple (0.8.2)
-    thor (1.0.1)
+    thor (1.1.0)
     thread_safe (0.3.6)
     tilt (2.0.10)
     timers (4.3.2)
@@ -274,7 +274,7 @@ DEPENDENCIES
   byebug
   capybara (~> 3.34.0)
   coffee-script (~> 2.2)
-  cucumber (~> 5.2)
+  cucumber (~> 5.3)
   haml (>= 4.0.5)
   kramdown (~> 2.3)
   liquid (>= 3.0)
