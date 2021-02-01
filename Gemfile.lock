@@ -44,11 +44,10 @@ GEM
       zeitwerk (~> 2.2, >= 2.2.2)
     addressable (2.7.0)
       public_suffix (>= 2.0.2, < 5.0)
-    aruba (1.0.3)
+    aruba (1.0.4)
       childprocess (>= 2.0, < 5.0)
       contracts (~> 0.16.0)
       cucumber (>= 2.4, < 6.0)
-      ffi (~> 1.9)
       rspec-expectations (~> 3.4)
       thor (~> 1.0)
     ast (2.4.1)
@@ -209,7 +208,7 @@ GEM
     rspec-mocks (3.10.1)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.10.0)
-    rspec-support (3.10.1)
+    rspec-support (3.10.2)
     rubocop (1.7.0)
       parallel (~> 1.10)
       parser (>= 2.7.1.5)
@@ -272,7 +271,7 @@ PLATFORMS
 
 DEPENDENCIES
   addressable (~> 2.4)
-  aruba (~> 1.0.0)
+  aruba (~> 1.0.4)
   byebug
   capybara (~> 3.35.3)
   coffee-script (~> 2.2)
