@@ -6,7 +6,6 @@ require 'addressable/uri'
 require 'memoist'
 require 'tilt'
 require 'set'
-require 'webrick'
 
 require 'middleman-core/contracts'
 
@@ -37,7 +36,7 @@ module Middleman
       return path unless path.is_a?(String)
 
       # The tr call works around a bug in Ruby's Unicode handling
-      WEBrick::HTTPUtils.unescape(path).sub(%r{^/}, '').tr('', '')
+      Addressable::URI.unencode(path).sub(%r{^/}, '').tr('', '')
     end
     memoize :normalize_path
 

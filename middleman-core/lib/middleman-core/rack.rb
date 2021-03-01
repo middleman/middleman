@@ -5,12 +5,11 @@ require 'rack/file'
 require 'rack/lint'
 require 'rack/head'
 require 'rack/utils'
+require 'addressable/uri'
 
 require 'middleman-core/util'
 require 'middleman-core/logger'
 require 'middleman-core/template_renderer'
-
-require 'webrick'
 
 # CSSPIE HTC File
 ::Rack::Mime::MIME_TYPES['.htc'] = 'text/x-component'
@@ -90,7 +89,7 @@ module Middleman
     def process_request(env, req, res)
       start_time = Time.now
 
-      request_path = WEBrick::HTTPUtils.unescape(env['PATH_INFO'].dup)
+      request_path = Addressable::URI.unencode(env['PATH_INFO'].dup)
       if request_path.respond_to? :force_encoding
         request_path = request_path.dup if request_path.frozen?
         request_path = request_path.force_encoding('UTF-8')
