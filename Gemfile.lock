@@ -169,7 +169,7 @@ GEM
       middleware
       thor
       thread_safe
-    pry (0.13.1)
+    pry (0.14.0)
       coderay (~> 1.1)
       method_source (~> 1.0)
     pry-rescue (1.5.2)
