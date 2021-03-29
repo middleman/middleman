@@ -131,7 +131,7 @@ GEM
     i18n (0.9.5)
       concurrent-ruby (~> 1.0)
     interception (0.5)
-    kramdown (2.3.0)
+    kramdown (2.3.1)
       rexml
     lazy_priority_queue (0.1.1)
     libv8 (8.4.255.0)
