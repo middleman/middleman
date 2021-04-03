@@ -189,6 +189,7 @@ Feature: Assets get file hashes appended to them and references to them are upda
     When I go to "/partials/"
     Then I should see 'href="../stylesheets/uses_partials-08ee47a7.css'
 
+  @wip
   Scenario: The asset hash should change when a Rack-based filter changes
     Given a fixture app "asset-hash-app"
     And a file named "config.rb" with:
