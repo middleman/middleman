@@ -8,7 +8,7 @@ PATH
   remote: middleman-core
   specs:
     middleman-core (4.3.11)
-      activesupport (>= 4.2, < 6.0)
+      activesupport (>= 4.2, < 6.1)
       addressable (~> 2.3)
       backports (~> 3.6)
       bundler (~> 2.0)
