@@ -46,13 +46,9 @@ html {
     font-size: 100.01%;
 }
 body {
-    color: #655740;
     font-family: "Helvetica Neue",Arial,Helvetica,sans-serif;
     font-size: 87.5%;
     line-height: 1.5;
-}
-h1, h2, h3, h4, h5, h6 {
-    color: #002B36;
 }
 h1 {
     font-size: 3em;
@@ -87,14 +83,7 @@ h1 img, h2 img, h3 img, h4 img, h5 img, h6 img {
 p {
     margin: 0 0 1.5em;
 }
-a {
-    color: #002B36;
-}
-a:visited, a:hover, a:focus, a:active {
-    color: #002B36;
-}
 blockquote {
-    color: #666666;
     font-style: italic;
     margin: 1.5em;
 }
@@ -108,14 +97,13 @@ sup, sub {
     line-height: 0;
 }
 abbr, acronym {
-    border-bottom: 1px dotted #666666;
+    border-bottom-color: #666666;
+    border-bottom-width: 1px;
+    border-bottom-style: dotted;
 }
 address {
     font-style: italic;
     margin: 0 0 1.5em;
-}
-del {
-    color: #666666;
 }
 pre {
     margin: 1.5em 0;
@@ -156,7 +144,6 @@ th, td {
     padding: 2px 10px 2px 0;
 }
 body {
-    background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAABQAgMAAADzfxo+AAAADFBMVEXx6tfv6NXs5dLg3czcnqHfAAAARUlEQVR4Xu2RsQkAIAwEE3UAR3KJOKRLuJeVCOZbBSvhrwjPw3NFxJxqQKTkpOsEJH0sPxZRRFE8lc3pA/Fuzh9tKKJoAr91xp3fgwThAAAAAElFTkSuQmCC") repeat scroll 0 0 #EFE8D5;
     margin: 0;
 }
 .container {
@@ -245,28 +232,6 @@ body {
 .grid .toc-block:nth-child(3n+1) {
     clear: left;
 }
-pre .comment, pre .template_comment, pre .diff .header, pre .doctype, pre .lisp .string, pre .javadoc {
-    color: #93A1A1;
-    font-style: italic;
-}
-pre .keyword, pre .css .rule .keyword, pre .winutils, pre .javascript .title, pre .method, pre .addition, pre .css .tag, pre .lisp .title {
-    color: #859900;
-}
-pre .number, pre .command, pre .string, pre .tag .value, pre .phpdoc, pre .tex .formula, pre .regexp, pre .hexcolor {
-    color: #2AA198;
-}
-pre .title, pre .localvars, pre .function .title, pre .chunk, pre .decorator, pre .builtin, pre .built_in, pre .lisp .title, pre .identifier, pre .title .keymethods, pre .id {
-    color: #268BD2;
-}
-pre .attribute, pre .variable, pre .instancevar, pre .lisp .body, pre .smalltalk .number, pre .constant, pre .class .title, pre .parent, pre .haskell .label {
-    color: #B58900;
-}
-pre .preprocessor, pre .pi, pre .shebang, pre .symbol, pre .diff .change, pre .special, pre .keymethods, pre .attr_selector, pre .important, pre .subst, pre .cdata {
-    color: #CB4B16;
-}
-pre .deletion {
-    color: #DC322F;
-}
 pre .tex .formula {
     background: none repeat scroll 0 0 #EEE8D5;
 }
@@ -321,7 +286,6 @@ pre .tex .formula {
 }
 #header .toc-nav-link {
     -moz-box-sizing: border-box;
-    color: #002B36;
     display: inline;
     float: right;
     font-family: "Arvo","andale mono","lucida console",monospace;
