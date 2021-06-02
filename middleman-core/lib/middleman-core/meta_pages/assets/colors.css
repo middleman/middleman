@@ -1,0 +1,57 @@
+@media (prefers-color-scheme: dark) {
+    a, a:visited, a:hover, a:focus, a:active,
+    h1, h2, h3, h4, h5, h6,
+    summary,
+    .extension.active, .key, .value,
+    #header h1 .logo, #header .toc-nav-link {
+        color: #C88D04;
+        background-color: transparent;
+    }
+    body {
+        background-color: #032129;
+        color: #FBC547;
+    }
+    html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
+        letter-spacing: 0.1rem;
+        word-spacing: 0.1rem;
+    }
+    [class^="icon-"],
+    [class*=" icon-"] ,
+    details > summary:before {
+        filter: invert(0.5);
+    }
+    .inactive, .inactive:after, .ignored > summary, .ignored > summary:after {
+        color: #A8A8A8;
+        background-color: transparent;
+    }
+    #main footer {
+        background-color: #FBC547;
+        border-top-color: #FBC547;
+    }
+}
+@media (prefers-color-scheme: light) {
+    a, a:visited, a:hover, a:focus, a:active,
+    h1, h2, h3, h4, h5, h6,
+    summary,
+    .extension.active, .key, .value,
+    #header h1 .logo, #header .toc-nav-link {
+        color: #002B36;
+    }
+    body {
+        background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAABQAgMAAADzfxo+AAAADFBMVEXx6tfv6NXs5dLg3czcnqHfAAAARUlEQVR4Xu2RsQkAIAwEE3UAR3KJOKRLuJeVCOZbBSvhrwjPw3NFxJxqQKTkpOsEJH0sPxZRRFE8lc3pA/Fuzh9tKKJoAr91xp3fgwThAAAAAElFTkSuQmCC") repeat scroll 0 0 #EFE8D5;
+        color: #655740;
+    }
+    .inactive, .inactive:after, .ignored > summary, .ignored > summary:after {
+        color: #999999;
+    }
+    #main footer {
+        background-color: #C6BDA8;
+        border-top-color: #C6BDA8;
+    }
+    #main pre {
+        background-color: #F8F8F8;
+        box-shadow:
+            0 1px 1px #A89A7A inset,
+            0 1px 0 #FFFFFF;
+    }
+}

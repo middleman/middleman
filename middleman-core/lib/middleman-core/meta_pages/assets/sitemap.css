@@ -1,7 +1,6 @@
 summary {
     display: block;
     font-family: "Arvo","andale mono","lucida console",monospace;
-    color: #002B36;
 }
 
 details > details {
@@ -41,18 +40,14 @@ summary > i {
     font-family: "Arvo","andale mono","lucida console",monospace;
 }
 
-.ignored > summary {
-    color: #999999;
-}
-
 .ignored i {
     opacity: 0.4;
 }
 
+
 .ignored > summary:after {
     content: "Ignored";
     font-weight: bold;
-    color: #999999;
     margin-left: 10px;
     font-size: .7em;
 }
