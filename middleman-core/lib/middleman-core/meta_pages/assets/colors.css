@@ -62,3 +62,11 @@
         box-shadow: 0 1px 1px #A89A7A inset, 0 1px 0 white;
     }
 }
+@media (prefers-color-scheme: light) {
+    summary {
+        color: #002B36;
+    }
+    .ignored > summary, .ignored > summary:after {
+        color: #999999;
+    }
+}
