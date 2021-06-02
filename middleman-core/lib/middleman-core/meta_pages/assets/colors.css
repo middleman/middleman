@@ -1,0 +1,62 @@
+a {
+    color: #002B36;
+}
+a:visited, a:hover, a:focus, a:active {
+    color: #002B36;
+}
+abbr, acronym {
+    border-bottom-color: #666666;
+}
+blockquote {
+    color: #666666;
+}
+body {
+    background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAABQAgMAAADzfxo+AAAADFBMVEXx6tfv6NXs5dLg3czcnqHfAAAARUlEQVR4Xu2RsQkAIAwEE3UAR3KJOKRLuJeVCOZbBSvhrwjPw3NFxJxqQKTkpOsEJH0sPxZRRFE8lc3pA/Fuzh9tKKJoAr91xp3fgwThAAAAAElFTkSuQmCC") repeat scroll 0 0 #EFE8D5;
+}
+body {
+    color: #655740;
+}
+del {
+    color: #666666;
+}
+h1, h2, h3, h4, h5, h6 {
+    color: #002B36;
+}
+pre .comment, pre .template_comment, pre .diff .header, pre .doctype, pre .lisp .string, pre .javadoc {
+    color: #93A1A1;
+}
+pre .keyword, pre .css .rule .keyword, pre .winutils, pre .javascript .title, pre .method, pre .addition, pre .css .tag, pre .lisp .title {
+    color: #859900;
+}
+pre .number, pre .command, pre .string, pre .tag .value, pre .phpdoc, pre .tex .formula, pre .regexp, pre .hexcolor {
+    color: #2AA198;
+}
+pre .tex .formula {
+    background: none repeat scroll 0 0 #EEE8D5;
+}
+pre .title, pre .localvars, pre .function .title, pre .chunk, pre .decorator, pre .builtin, pre .built_in, pre .lisp .title, pre .identifier, pre .title .keymethods, pre .id {
+    color: #268BD2;
+}
+pre .attribute, pre .variable, pre .instancevar, pre .lisp .body, pre .smalltalk .number, pre .constant, pre .class .title, pre .parent, pre .haskell .label {
+    color: #B58900;
+}
+pre .preprocessor, pre .pi, pre .shebang, pre .symbol, pre .diff .change, pre .special, pre .keymethods, pre .attr_selector, pre .important, pre .subst, pre .cdata {
+    color: #CB4B16;
+}
+pre .deletion {
+    color: #DC322F;
+}
+#header h1 .logo {
+    background: none repeat scroll 0 0 #002B36;
+}
+#header .toc-nav-link {
+    color: #002B36;
+}
+#main footer {
+    background: none repeat scroll 0 0 #C6BDA8;
+    border-top: 1px solid #C6BDA8;
+}
+#main pre {
+    background: none repeat scroll 0 0 #F8F8F8;
+    box-shadow: 0 1px 1px #A89A7A inset, 0 1px 0 white;
+}
