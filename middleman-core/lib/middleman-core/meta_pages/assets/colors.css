@@ -70,3 +70,11 @@
         color: #999999;
     }
 }
+@media (prefers-color-scheme: light) {
+    .extension.active, .key, .value {
+        color: #002B36;
+    }
+    .inactive, .inactive:after {
+        color: #999999;
+    }
+}
