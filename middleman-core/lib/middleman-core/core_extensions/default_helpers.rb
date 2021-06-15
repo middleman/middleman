@@ -6,6 +6,7 @@ require 'padrino-helpers/format_helpers'
 require 'padrino-helpers/number_helpers'
 require 'padrino-helpers/output_helpers'
 require 'padrino-helpers/render_helpers'
+require 'active_support/core_ext/array/extract_options'
 require 'middleman-core/contracts'
 
 # Don't fail on invalid locale, that's not what our current

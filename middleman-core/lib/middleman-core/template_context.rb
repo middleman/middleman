@@ -99,8 +99,8 @@ module Middleman
     # @param [Hash] options
     # @param [Proc] block A block will be evaluated to return internal contents.
     # @return [String]
-    Contract Any, Or[Symbol, String], Hash => String, Maybe[Proc] => String
-    def render(_, name, options={}, &block)
+    Contract Any, Or[Symbol, String], Hash, Hash, Maybe[Proc] => String
+    def render(_, name, options={}, locals={}, &block)
       name = name.to_s
 
       partial_file = locate_partial(name, false) || locate_partial(name, true)
@@ -114,7 +114,7 @@ module Middleman
         partial_file.read
       else
         opts = options.dup
-        locs = opts.delete(:locals)
+        locs = locals.dup
 
         render_file(partial_file, locs, opts, &block)
       end

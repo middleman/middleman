@@ -2,6 +2,9 @@
 
 # 4.4.0
 
+- Ruby 3.0 support.
+- ActiveSupport 6.1 (drop support for Ruby 2.4)
+- Remove Stylus support
 - Support TOML as frontmatter and data.
 
 # 4.3.11
