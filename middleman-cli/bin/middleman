@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
 require 'middleman-core/profiling'
 Middleman::Profiling.profiler = Middleman::Profiling::RubyProfProfiler.new if ARGV.include? '--profile'
@@ -19,11 +20,12 @@ module Middleman::Cli
 
   def self.import_config(base)
     ::Middleman::Cli.config.all_settings.each do |setting|
-      if setting.default.is_a?(String) || setting.default.is_a?(NilClass)
+      case setting.default
+      when String, NilClass
         base.class_option setting.key,
                           type: :string,
                           desc: setting.description
-      elsif setting.default.is_a?(TrueClass) || setting.default.is_a?(FalseClass)
+      when TrueClass, FalseClass
         base.class_option setting.key,
                           type: :boolean,
                           desc: setting.description

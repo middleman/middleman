@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'pathname'
 require 'fileutils'
 require 'tempfile'
@@ -39,6 +41,7 @@ module Middleman
       @parallel = options_hash.fetch(:parallel, true)
       @only_changed = options_hash.fetch(:only_changed, false)
       @missing_and_changed = options_hash.fetch(:missing_and_changed, false)
+      @dependency_file = options_hash.fetch(:dependency_file)
       @track_dependencies = options_hash.fetch(:track_dependencies, false)
       @visualize_graph = @track_dependencies && options_hash.fetch(:visualize_graph, false)
       @dry_run = options_hash.fetch(:dry_run)
@@ -54,14 +57,19 @@ module Middleman
     def run!
       @has_error = false
       @events = {}
+      create_deps_yml = false
 
       if @track_dependencies
         begin
           ::Middleman::Util.instrument 'dependencies.load_and_deserialize' do
-            @graph = ::Middleman::Dependencies.load_and_deserialize(@app)
+            @graph = ::Middleman::Dependencies.load_and_deserialize(@app, @dependency_file)
           end
+        rescue ::Middleman::Dependencies::MissingDepsYAML
+          logger.info "#{@dependency_file} was missing. Dependency graph must be rebuilt."
+          @graph = ::Middleman::Dependencies::Graph.new
+          create_deps_yml = true
         rescue ::Middleman::Dependencies::InvalidDepsYAML
-          logger.error 'dep.yml was corrupt. Dependency graph must be rebuilt.'
+          logger.error "#{@dependency_file} was corrupt. Dependency graph must be rebuilt."
           @graph = ::Middleman::Dependencies::Graph.new
           @only_changed = @missing_and_changed = false
         rescue ::Middleman::Dependencies::ChangedDepth
@@ -124,7 +132,7 @@ module Middleman
       unless @has_error
         partial_update_with_no_changes = (@only_changed || @missing_and_changed) && @invalidated_files.empty?
 
-        ::Middleman::Dependencies.serialize_and_save(@app, @graph) if @track_dependencies && !partial_update_with_no_changes
+        ::Middleman::Dependencies.serialize_and_save(@app, @graph, @dependency_file) if @track_dependencies && (create_deps_yml || !partial_update_with_no_changes)
 
         ::Middleman::Dependencies.visualize_graph(@app, @graph) if @track_dependencies && @visualize_graph
 
@@ -169,7 +177,7 @@ module Middleman
     def output_files
       logger.debug '== Building files'
 
-      non_css_resources = @app.sitemap.without_ignored - @app.sitemap.by_extension('.css')
+      non_css_resources = @app.sitemap.by_priority.reject { |r| ::File.extname(r.destination_path) == '.css' }
 
       resources = non_css_resources
                   .sort_by { |resource| SORT_ORDER.index(resource.ext) || 100 }
@@ -359,20 +367,23 @@ module Middleman
             export_file!(output_file, resource.file_descriptor[:full_path], true)
           else
             content = resource.render({}, {})
+            if resource.file_descriptor.nil?
+              edge = nil
+            else
+              self_vertex = ::Middleman::Dependencies::FileVertex.from_resource(resource)
 
-            self_vertex = ::Middleman::Dependencies::FileVertex.from_resource(resource)
-
-            edge = if serialize_deps
-                     {
-                       self_vertex: self_vertex.serialize,
-                       depends_on: resource.vertices.map(&:serialize)
-                     }
-                   else
-                     ::Middleman::Dependencies::Edge.new(
-                       self_vertex,
-                       resource.vertices << self_vertex
-                     )
-                   end
+              edge = if serialize_deps
+                       {
+                         self_vertex: self_vertex.serialize,
+                         depends_on: resource.vertices.map(&:serialize)
+                       }
+                     else
+                       ::Middleman::Dependencies::Edge.new(
+                         self_vertex,
+                         resource.vertices << self_vertex
+                       )
+                     end
+            end
 
             export_file!(output_file, binary_encode(content))
           end
@@ -427,7 +438,10 @@ module Middleman
 
     Contract String => String
     def binary_encode(string)
-      string.force_encoding('ascii-8bit') if string.respond_to?(:force_encoding)
+      if string.respond_to?(:force_encoding)
+        string = string.dup if string.frozen?
+        string = string.force_encoding('ascii-8bit')
+      end
       string
     end
 

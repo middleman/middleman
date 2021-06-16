@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'middleman-core/sitemap/resource'
 require 'middleman-core/core_extensions/collections/step_context'
 
@@ -68,6 +70,9 @@ module Middleman
       Contract String
       attr_reader :target
 
+      Contract IsA['Middleman::Sitemap::Resource']
+      attr_reader :target_resource
+
       # Initialize resource with parent store and URL
       # @param [Middleman::Sitemap::Store] store
       # @param [String] path
@@ -79,20 +84,10 @@ module Middleman
         raise "You can't proxy #{path} to itself!" if target == path
 
         @target = target
-      end
+        @target_resource = @store.by_path(@target)
 
-      # The resource for the page this page is proxied to. Throws an exception
-      # if there is no resource.
-      # @return [Sitemap::Resource]
-      Contract IsA['Middleman::Sitemap::Resource']
-      def target_resource
-        resource = @store.by_path(@target)
-
-        raise "Path #{path} proxies to unknown file #{@target}" unless resource
-
-        raise "You can't proxy #{path} to #{@target} which is itself a proxy." if resource.is_a? ProxyResource
-
-        resource
+        raise "Path #{path} proxies to unknown file #{@target}" unless @target_resource
+        raise "You can't proxy #{path} to #{@target} which is itself a proxy." if @target_resource.is_a? ProxyResource
       end
 
       Contract IsA['Middleman::SourceFile']

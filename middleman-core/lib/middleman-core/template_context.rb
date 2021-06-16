@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'pathname'
 require 'hamster'
 require 'middleman-core/file_renderer'
@@ -133,16 +135,14 @@ module Middleman
 
       @vertices <<= ::Middleman::Dependencies::FileVertex.from_source_file(@app, partial_file)
 
-      result = if (r && !r.template?) || (Tilt[partial_file[:full_path]].nil? && partial_file[:full_path].exist?)
-                 partial_file.read
-               else
-                 opts = options_hash.dup
-                 locs = locals
+      if (r && !r.template?) || (Tilt[partial_file[:full_path]].nil? && partial_file[:full_path].exist?)
+        partial_file.read
+      else
+        opts = options_hash.dup
+        locs = locals
 
-                 render_file(partial_file, locs, opts, &block)
-               end
-
-      result
+        render_file(partial_file, locs, opts, &block)
+      end
     end
 
     # Locate a partial relative to the current path or the source dir, given a partial's path.
@@ -159,7 +159,7 @@ module Middleman
 
       if current_resource
         resource = current_resource
-        current_dir  = resource.file_descriptor[:relative_path].dirname
+        current_dir = resource.file_descriptor[:relative_path].dirname
         relative_dir = current_dir + Pathname(non_root)
         relative_dir_no_underscore = current_dir + Pathname(non_root_no_underscore)
 

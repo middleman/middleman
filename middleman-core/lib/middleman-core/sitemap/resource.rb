@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rack/mime'
 require 'set'
 require 'hamster'
@@ -58,9 +60,9 @@ module Middleman
         @priority = priority
         @vertices = ::Hamster::Set.empty
 
-        source = Pathname(source) if source&.is_a?(String)
+        source = Pathname(source) if source.is_a?(String)
 
-        @file_descriptor = if source&.is_a?(Pathname)
+        @file_descriptor = if source.is_a?(Pathname)
                              ::Middleman::SourceFile.new(source.relative_path_from(@app.source_dir), source, @app.source_dir, Set.new([:source]), 0)
                            else
                              source
@@ -72,11 +74,11 @@ module Middleman
         @metadata_options = ::Middleman::EMPTY_HASH
 
         # Locals are local variables for rendering this resource's template
-        @metadata_locals  = ::Middleman::EMPTY_HASH
+        @metadata_locals = ::Middleman::EMPTY_HASH
 
         # Page are data that is exposed through this resource's data member.
         # Note: It is named 'page' for backwards compatibility with older MM.
-        @metadata_page    = ::Middleman::EMPTY_HASH
+        @metadata_page = ::Middleman::EMPTY_HASH
 
         # Recursively enhanced page data cache
         @page_data = nil

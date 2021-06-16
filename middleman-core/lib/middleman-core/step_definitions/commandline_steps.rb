@@ -1,26 +1,30 @@
+# frozen_string_literal: true
+
 When /^I stop (?:middleman|all commands) if the output( of the last command)? contains:$/ do |_last_command, expected|
+  step 'I wait for the output to contain:', expected
+  all_commands.each(&:terminate)
+end
+
+When /^I wait for the output to contain:$/ do |expected|
   Timeout.timeout(aruba.config.exit_timeout) do
     loop do
-      raise 'You need to start middleman interactively first.' unless @interactive
+      raise 'You need to start middleman interactively first.' unless last_command_started
 
-      if sanitize_text(@interactive.output)&.match?(Regexp.new(sanitize_text(expected)))
-        all_commands.each(&:terminate)
-        break
-      end
+      break if sanitize_text(last_command_started.output)&.match?(Regexp.new(sanitize_text(expected)))
 
       sleep 0.1
     end
   end
-rescue ChildProcess::TimeoutError, TimeoutError
-  @interactive.terminate
+rescue ChildProcess::TimeoutError, Timeout::Error
+  last_command_started.terminate
 ensure
-  announcer.stdout @interactive.stdout
-  announcer.stderr @interactive.stderr
+  aruba.announcer.announce(:stdout, last_command_started.stdout)
+  aruba.announcer.announce(:stderr, last_command_started.stderr)
 end
 
 # Make it just a long running process
 Given /`(.*?)` is running in background/ do |cmd|
-  run(cmd, 120)
+  run_command(cmd, timeout: 120)
 end
 
 Given /I have a local hosts file with:/ do |string|
@@ -47,10 +51,10 @@ Given /I start a dns server with:/ do |string|
     )
   )
 
-  set_env 'PATH', File.expand_path(File.join(current_dir, 'bin')) + ':' + ENV['PATH']
+  set_environment_variable 'PATH', File.expand_path(File.join(expand_path('.'), 'bin')) + ':' + ENV['PATH']
   write_file db_file, string
 
-  @dns_server = run("dns_server.rb #{db_file} #{port}", 120)
+  @dns_server = run_command("dns_server.rb #{db_file} #{port}", timeout: 120)
 end
 
 Given /I start a mdns server with:/ do |string|
@@ -66,10 +70,10 @@ Given /I start a mdns server with:/ do |string|
     )
   )
 
-  set_env 'PATH', File.expand_path(File.join(current_dir, 'bin')) + ':' + ENV['PATH']
+  set_environment_variable 'PATH', File.expand_path(File.join(expand_path('.'), 'bin')) + ':' + ENV['PATH']
   write_file db_file, string
 
-  @mdns_server = run("dns_server.rb #{db_file} #{port}", 120)
+  @mdns_server = run_command("dns_server.rb #{db_file} #{port}", timeout: 120)
 end
 
 Given /I start a mdns server for the local hostname/ do
@@ -79,8 +83,4 @@ end
 # Make sure each and every process is really dead
 After do
   all_commands.each(&:terminate)
-end
-
-Before '@ruby-2.1' do
-  skip_this_scenario if RUBY_VERSION < '2.1'
 end

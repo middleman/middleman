@@ -1,0 +1,5 @@
+<% if data.respond_to?(:yaml_source) %>
+  <%= data.yaml_source.map { |r| r.title }.join(":") %>
+<% else %>
+  No Test Data
+<% end %>

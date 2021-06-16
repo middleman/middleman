@@ -471,7 +471,6 @@ Feature: Run the preview server
     Inspect your site configuration at "http://www.example.com:4567/__middleman", "http://127.0.0.1:4567/__middleman"
     """
 
-  @ruby-2.1
   @wip
   Scenario: Start the server with server name "host.local" and the link local name server is used to resolve the server name
 
@@ -504,7 +503,6 @@ Feature: Run the preview server
     Inspect your site configuration at "http://host.local:4567/__middleman", "http://127.0.0.1:4567/__middleman"
     """
 
-  @ruby-2.1
   @wip
   Scenario: Start the server with server name "host" and the link local name server is used to resolve the server name
 
@@ -536,3 +534,45 @@ Feature: Run the preview server
     """
     Inspect your site configuration at "http://host.local:4567/__middleman", "http://127.0.0.1:4567/__middleman"
     """
+
+  Scenario: Server reloads when config.rb changes
+    When I run `middleman server --verbose` interactively
+    And I wait for the output to contain:
+      """
+      The Middleman is running
+      """
+    When a file named "config.rb" with:
+      """
+      set :layout, false
+      """
+    And I stop middleman if the output contains:
+      """
+      The Middleman is reloading
+      """
+    Then the output should contain:
+      """
+      The Middleman is reloading
+      """
+
+  Scenario: Server reloads when data changes
+    When I run `middleman server --verbose` interactively
+    And a file named "data/people.yml" with:
+      """
+      - Tom
+      """
+    And I wait for the output to contain:
+      """
+      The Middleman is running
+      """
+    When a file named "data/people.yml" with:
+      """
+      - Bob
+      """
+    And I stop middleman if the output contains:
+      """
+      The Middleman is reloading
+      """
+    Then the output should contain:
+      """
+      The Middleman is reloading
+      """

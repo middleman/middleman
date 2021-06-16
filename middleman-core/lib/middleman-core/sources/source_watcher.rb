@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Watcher Library
 require 'listen'
 require 'middleman-core/contracts'
@@ -135,7 +137,7 @@ module Middleman
     # @return [Middleman::SourceFile, nil]
     Contract Or[String, Pathname], Maybe[Bool] => Maybe[IsA['Middleman::SourceFile']]
     def find(path, glob = false)
-      path = path.to_s.encode!('UTF-8', 'UTF-8-MAC') if RUBY_PLATFORM =~ /darwin/
+      path = path.to_s.encode('UTF-8', 'UTF-8-MAC') if RUBY_PLATFORM.match?(/darwin/)
 
       p = Pathname(path)
 
@@ -342,7 +344,7 @@ module Middleman
     Contract Pathname => Pathname
     def strip_extensions(p)
       p = p.sub_ext('') while ::Tilt[p.to_s] || p.extname == '.html'
-      Pathname(p.to_s + '.*')
+      Pathname("#{p}.*")
     end
 
     # Check if this watcher should care about a file.

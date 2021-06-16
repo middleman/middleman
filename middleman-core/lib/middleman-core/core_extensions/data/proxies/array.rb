@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'set'
 require 'middleman-core/core_extensions/data/proxies/base'
 

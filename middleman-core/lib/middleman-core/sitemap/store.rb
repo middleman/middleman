@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Used for merging results of metadata callbacks
 require 'monitor'
 require 'hamster'
@@ -62,7 +64,7 @@ module Middleman
       extend Forwardable
       include Contracts
 
-      def_delegators :@resources, :by_extensions, :by_destination_path, :by_path, :by_binary, :by_page_id, :by_extension, :by_source_extension, :by_source_extensions, :with_ignored, :without_ignored
+      def_delegators :@resources, :by_extensions, :by_destination_path, :by_path, :by_binary, :by_page_id, :by_extension, :by_source_extension, :by_source_extensions, :with_ignored, :without_ignored, :by_priority
 
       # Backwards compat to old API from MM v4.
       alias find_resource_by_path by_path

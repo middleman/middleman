@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'middleman-core/dns_resolver/basic_network_resolver'
 
 module Middleman

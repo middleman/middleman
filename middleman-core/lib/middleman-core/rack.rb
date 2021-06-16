@@ -1,8 +1,11 @@
+# frozen_string_literal: true
+
 require 'rack'
 require 'rack/file'
 require 'rack/lint'
 require 'rack/head'
 require 'rack/utils'
+require 'addressable/uri'
 
 require 'middleman-core/util'
 require 'middleman-core/logger'
@@ -32,7 +35,7 @@ module Middleman
       app.use ::Rack::Head
 
       @middleman.middleware.each do |middleware|
-        app.use(middleware[:class], *middleware[:options], &middleware[:block])
+        app.use(middleware[:klass], *middleware[:options], &middleware[:block])
       end
 
       inner_app = self
@@ -86,8 +89,11 @@ module Middleman
     def process_request(env, req, res)
       start_time = Time.now
 
-      request_path = URI.decode(env['PATH_INFO'].dup)
-      request_path.force_encoding('UTF-8') if request_path.respond_to? :force_encoding
+      request_path = Addressable::URI.unencode(env['PATH_INFO'].dup)
+      if request_path.respond_to? :force_encoding
+        request_path = request_path.dup if request_path.frozen?
+        request_path = request_path.force_encoding('UTF-8')
+      end
       request_path = ::Middleman::Util.full_path(request_path, @middleman)
       full_request_path = File.join(env['SCRIPT_NAME'], request_path) # Path including rack mount
 

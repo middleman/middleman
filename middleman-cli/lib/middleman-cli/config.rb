@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # CLI Module
 module Middleman::Cli
   # The CLI Config class

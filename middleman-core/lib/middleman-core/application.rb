@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'hamster'
 require 'middleman-core/contracts'
 require 'middleman-core/callback_manager'
@@ -12,7 +14,7 @@ require 'middleman-core/template_renderer'
 
 # Core Middleman Class
 module Middleman
-  MiddlewareDescriptor = Struct.new(:class, :options, :block)
+  MiddlewareDescriptor = Struct.new(:klass, :options, :block)
   MapDescriptor = Struct.new(:path, :block)
 
   class Application
@@ -33,7 +35,7 @@ module Middleman
       # @return [String]
       def root
         r = ENV['MM_ROOT'] ? ENV['MM_ROOT'].dup : ::Middleman::Util.current_directory
-        r.encode!('UTF-8', 'UTF-8-MAC') if RUBY_PLATFORM =~ /darwin/
+        r = r.encode('UTF-8', 'UTF-8-MAC') if RUBY_PLATFORM.match?(/darwin/)
         r
       end
 
@@ -191,7 +193,7 @@ module Middleman
       end,
 
       layout: lambda { |file, app|
-        file[:relative_path].to_s.start_with?('layout.', app.config[:layouts_dir] + '/')
+        file[:relative_path].to_s.start_with?('layout.', "#{app.config[:layouts_dir]}/")
       }
     }, 'Callbacks that can exclude paths from the sitemap'
 
@@ -359,14 +361,14 @@ module Middleman
     end
 
     # Whether we're in server mode
-    # @return [Boolean] If we're in dev mode
+    # @return [Boolean]
     Contract Bool
     def server?
       mode?(:server)
     end
 
     # Whether we're in build mode
-    # @return [Boolean] If we're in dev mode
+    # @return [Boolean]
     Contract Bool
     def build?
       mode?(:build)

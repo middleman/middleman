@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Middleman::Extensions::AssetHost < ::Middleman::Extension
   option :host, nil, 'The asset host to use or a Proc to determine asset host', required: true
   option :exts, nil, 'List of extensions that get cache busters strings appended to them.'
@@ -41,9 +43,10 @@ class Middleman::Extensions::AssetHost < ::Middleman::Extension
                         asset_path
                       end
 
-    asset_prefix = if options[:host].is_a?(Proc)
+    asset_prefix = case options[:host]
+                   when Proc
                      options[:host].call(full_asset_path)
-                   elsif options[:host].is_a?(String)
+                   when String
                      options[:host]
                    end
 

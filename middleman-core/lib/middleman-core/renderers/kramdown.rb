@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'kramdown'
 
 module Middleman
@@ -36,14 +38,15 @@ module Middleman
         content = inner(el, indent)
 
         if el.attr['href'].start_with?('mailto:')
-          mail_addr = el.attr['href'].sub(/\Amailto:/, '')
-          href = obfuscate('mailto') << ':' << obfuscate(mail_addr)
+          mail_addr = el.attr['href'].delete_prefix('mailto:')
+          href = "#{obfuscate('mailto')}:#{obfuscate(mail_addr)}"
           content = obfuscate(content) if content == mail_addr
           return %(<a href="#{href}">#{content}</a>)
         end
 
         attr = el.attr.dup
         link = attr.delete('href')
+        attr.transform_keys!(&:to_sym)
 
         scope.link_to(content, link, attr)
       end

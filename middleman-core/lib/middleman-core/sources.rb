@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'hamster'
 require 'middleman-core/contracts'
 require 'set'
@@ -26,9 +28,6 @@ module Middleman
 
     # Types which could cause output to change.
     OUTPUT_TYPES = %i[source locales data].freeze
-
-    # Types which require a reload to eval ruby
-    CODE_TYPES = [:reload].freeze
 
     Matcher = Or[Regexp, RespondTo[:call]]
 

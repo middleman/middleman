@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 %w[
   /auto-js.html
   /auto-js

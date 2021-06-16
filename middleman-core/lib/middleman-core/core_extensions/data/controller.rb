@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'hamster'
 require 'middleman-core/util/data'
 require 'middleman-core/core_extensions/data/stores/local_file'
@@ -71,9 +73,10 @@ module Middleman
 
           return data unless @track_data_access
 
-          if data.is_a? ::Middleman::Util::EnhancedHash
+          case data
+          when ::Middleman::Util::EnhancedHash
             Data::Proxies::HashProxy.new(k, data, @data_collection_depth, parent)
-          elsif data.is_a? ::Array
+          when ::Array
             Data::Proxies::ArrayProxy.new(k, data, @data_collection_depth, parent)
           else
             raise 'Invalid data to wrap'

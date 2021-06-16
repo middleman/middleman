@@ -1,3 +1,5 @@
-RAKE_ROOT = __FILE__.freeze
-GEM_NAME = 'middleman-cli'.freeze
+# frozen_string_literal: true
+
+RAKE_ROOT = __FILE__
+GEM_NAME = 'middleman-cli'
 require File.expand_path(File.dirname(__FILE__) + '/../gem_rake_helper')

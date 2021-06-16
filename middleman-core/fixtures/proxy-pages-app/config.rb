@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 proxy '/fake.html', '/real.html', layout: false
 proxy 'fake2.html', '/real.html', layout: false
 proxy 'fake3.html', 'real.html', layout: false

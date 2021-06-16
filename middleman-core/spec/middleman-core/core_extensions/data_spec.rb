@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 require 'middleman-core/core_extensions'
 require 'middleman-core/core_extensions/data'

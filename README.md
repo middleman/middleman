@@ -2,23 +2,18 @@
 
 [![Gem Version](http://img.shields.io/gem/v/middleman.svg?style=flat)][gem]
 [![License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)][license]
-[![Build Status](https://travis-ci.org/middleman/middleman.svg?branch=master)][travis]
-[![Gitter](https://badges.gitter.im/middleman/middleman.svg)][gitter]
 
 **Middleman** is a static site generator using all the shortcuts and tools in modern web development. Check out [middlemanapp.com](https://middlemanapp.com/) for detailed tutorials, including a [getting started guide](https://middlemanapp.com/basics/getting-started/). You can also follow [@middlemanapp](https://twitter.com/middlemanapp) for updates.
 
 ## Why Middleman?
 
-The last few years have seen an explosion in the amount and variety of tools developers can use to build web applications. Ruby on Rails selects a handful of these tools:
-
-- [Sass](http://sass-lang.com/) for DRY stylesheets
-- [CoffeeScript](http://coffeescript.org/) for safer and less verbose javascript
-- Multiple asset management solutions, including [Sprockets](https://github.com/rails/sprockets)
-- [ERb](http://ruby-doc.org/stdlib-2.0.0/libdoc/erb/rdoc/ERB.html) & [Haml](http://haml.info/) for dynamic pages and simplified HTML syntax
-
-**Middleman** gives the stand-alone developer access to all these tools and many, many more. Why would you use a stand-alone framework instead of Ruby on Rails?
-
 These days, many websites are built with an API in mind. Rather than package the frontend and the backend together, both can be built and deployed independently using the public API to pull data from the backend and display it on the frontend. Static websites are incredibly fast and require very little RAM. A front-end built to stand-alone can be deployed directly to the cloud or a CDN. Many designers and developers simply deliver static HTML/JS/CSS to their clients.
+
+- Uses [Sass](https://sass-lang.com/) for DRY stylesheets.
+- Bring your own asset pipeline (WebPack, Babel, Sprockets or any other).
+- Easy templating with [ERb](https://ruby-doc.org/stdlib-2.0.0/libdoc/erb/rdoc/ERB.html) or [Haml](https://haml.info/).
+
+**Middleman** gives the stand-alone developer access to all these tools and many, many more.
 
 ## Installation
 
@@ -67,20 +62,11 @@ Additionally, up-to-date generated code documentation is available on [RubyDoc]
 
 ## Community
 
-The official community forum is available at: http://forum.middlemanapp.com
+The official community forum is available at: https://forum.middlemanapp.com
 
-## Bug Reports
+## Contributing to Middleman
 
-Github Issues are used for managing bug reports and feature requests. If you run into issues, please search the issues and submit new problems: https://github.com/middleman/middleman/issues
-
-The best way to get quick responses to your issues and swift fixes to your bugs is to submit detailed bug reports, include test cases and respond to developer questions in a timely manner. Even better, if you know Ruby, you can submit [Pull Requests](https://help.github.com/articles/using-pull-requests) containing Cucumber Features which describe how your feature should work or exploit the bug you are submitting.
-
-## How to Run Cucumber Tests
-
-1. Checkout Repository: `git clone https://github.com/middleman/middleman.git`
-2. Install Bundler: `gem install bundler`
-3. Run `bundle install` inside the project root to install the gem dependencies.
-4. Run test cases: `bundle exec rake test`
+Contributions are welcomed! To get started, please see our [contribution guidelines](https://github.com/middleman/middleman/blob/master/.github/CONTRIBUTING.md), which include information on [submitting bug reports](https://github.com/middleman/middleman/blob/master/.github/CONTRIBUTING.md#submitting-an-issue), and [running the tests](https://github.com/middleman/middleman/blob/master/.github/CONTRIBUTING.md#testing).
 
 ## Donate
 
@@ -99,19 +85,18 @@ Constraint][pvc] with two digits of precision. For example:
 
     spec.add_dependency 'middleman-core', '~> 4.0'
 
-[semver]: http://semver.org/
-[pvc]: http://guides.rubygems.org/patterns/#pessimistic-version-constraint
+[semver]: https://semver.org/
+[pvc]: https://guides.rubygems.org/patterns/#pessimistic-version-constraint
 
 ## License
 
-Copyright (c) 2010-2017 Thomas Reynolds. MIT Licensed, see [LICENSE] for details.
+Copyright (c) 2010-today Thomas Reynolds. MIT Licensed, see [LICENSE] for details.
 
 [middleman]: https://middlemanapp.com
 [gem]: https://rubygems.org/gems/middleman
-[travis]: http://travis-ci.org/middleman/middleman
 [gittip]: https://www.gittip.com/middleman/
-[rubyinstaller]: http://rubyinstaller.org/
+[rubyinstaller]: https://rubyinstaller.org/
 [rubyinstaller-devkit]: https://rubyinstaller.org/add-ons/devkit.html
-[rubydoc]: http://rubydoc.info/github/middleman/middleman
+[rubydoc]: https://rubydoc.info/github/middleman/middleman
 [license]: https://github.com/middleman/middleman/blob/master/LICENSE.md
 [gitter]: https://gitter.im/middleman/middleman?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge

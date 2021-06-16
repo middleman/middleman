@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'middleman-core/application'
 
 # CLI Module
@@ -47,6 +49,10 @@ module Middleman::Cli
     class_option :track_dependencies,
                  type: :boolean,
                  default: false,
+                 desc: 'Track file dependencies'
+    class_option :dependency_file,
+                 type: :string,
+                 default: 'deps.yml',
                  desc: 'Track file dependencies'
     class_option :data_collection_depth,
                  type: :numeric,
@@ -110,7 +116,8 @@ module Middleman::Cli
                                          only_changed: options['only_changed'],
                                          missing_and_changed: missing_and_changed,
                                          track_dependencies: should_track_dependencies,
-                                         visualize_graph: options['visualize_graph'])
+                                         visualize_graph: options['visualize_graph'],
+                                         dependency_file: options['dependency_file'])
         builder.thor = self
         builder.on_build_event(&method(:on_event))
       end
@@ -121,7 +128,7 @@ module Middleman::Cli
           puts 'Project built successfully.'
         else
           msg = 'There were errors during this build'
-          msg << ', re-run with `middleman build --verbose` to see the full exception.' unless options['verbose']
+          msg = "#{msg}, re-run with `middleman build --verbose` to see the full exception." unless options['verbose']
           shell.say msg, :red
 
           exit(1)

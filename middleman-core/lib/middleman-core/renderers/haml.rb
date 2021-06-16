@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Require gem
 require 'haml'
 
@@ -10,9 +12,7 @@ module SafeTemplate
   end
 end
 
-class Tilt::HamlTemplate
-  include SafeTemplate
-end
+::Tilt::HamlTemplate.include SafeTemplate
 
 module Middleman
   module Renderers
@@ -38,9 +38,7 @@ module Middleman
           options[:save_buffer] = true
         end
         @engine = ::Haml::Engine.new(data, options)
-        output = @engine.render(scope, locals, &block)
-
-        output
+        @engine.render(scope, locals, &block)
       end
     end
 
@@ -67,7 +65,7 @@ module Middleman
         ::Tilt.prefer(::Middleman::Renderers::HamlTemplate, :haml)
 
         # Add haml helpers to context
-        ::Middleman::TemplateContext.send :include, ::Haml::Helpers
+        ::Middleman::TemplateContext.include ::Haml::Helpers
       end
 
       def add_exposed_to_context(context)

@@ -1,2 +1,2 @@
-default: --fail-fast --require features --tags 'not @wip'
+default: --publish-quiet --fail-fast --require features --tags 'not @wip'
 wip: --fail-fast --require features --tags @wip

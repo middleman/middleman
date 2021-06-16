@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Middleman
   class DnsResolver
     # Use network name server to resolve ips and names

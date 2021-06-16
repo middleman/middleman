@@ -6,7 +6,7 @@ Feature: Move files
     """
     move_file "/static.html", "/static2.html"
     """
-    And the Server is running at "large-build-app"
+    And the Server is running
     When I go to "/static.html"
     Then I should see 'Not Found'
     When I go to "/static2.html"
@@ -19,7 +19,7 @@ Feature: Move files
     activate :directory_indexes
     move_file "/static.html", "/static2.html"
     """
-    And the Server is running at "large-build-app"
+    And the Server is running
     When I go to "/static.html"
     Then I should see 'Not Found'
     When I go to "/static/index.html"
@@ -34,11 +34,10 @@ Feature: Move files
     activate :directory_indexes
     move_file "/static/index.html", "/static2.html"
     """
-    And the Server is running at "large-build-app"
+    And the Server is running
     When I go to "/static.html"
     Then I should see 'Not Found'
     When I go to "/static/index.html"
     Then I should see 'Not Found'
     When I go to "/static2.html"
     Then I should see 'Static, no code!'
-

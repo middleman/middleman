@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'tilt'
 require 'hamster'
 require 'middleman-core/contracts'

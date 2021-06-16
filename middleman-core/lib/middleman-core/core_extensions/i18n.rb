@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
   option :no_fallbacks, false, 'Disable I18n fallbacks'
   option :locales, nil, 'List of locales, will autodiscover by default'
@@ -5,7 +7,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
   option :locale_map, {}, 'Locale shortname map'
   option :lang_map, nil, 'Backwards compatibility if old option name. Use `locale_map` instead.'
   option :path, '/:locale/', 'URL prefix path'
-  option :templates_dir, 'localizable', 'Location of templates to be localized'
+  option :templates_dir, 'localizable', 'Location of templates to be localized or `false` for none.'
   option :mount_at_root, nil, 'Mount a specific locale at the root of the site'
   option :data, 'locales', 'The directory holding your locale configurations'
 
@@ -21,27 +23,18 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
 
     options[:locale_map] = options[:lang_map] unless options[:lang_map].nil?
 
+    options[:templates_dir] = nil if options[:templates_dir] == false
+
     # Don't fail on invalid locale, that's not what our current
     # users expect.
     ::I18n.enforce_available_locales = false
-
-    # This is for making the tests work - since the tests
-    # don't completely reload middleman, I18n.load_path can get
-    # polluted with paths from other test app directories that don't
-    # exist anymore.
-    return unless ENV['TEST']
-
-    app.after_configuration_eval do
-      ::I18n.load_path.delete_if { |path| path =~ %r{tmp/aruba} }
-      ::I18n.reload!
-    end
   end
 
   def after_configuration
     # See https://github.com/svenfuchs/i18n/wiki/Fallbacks
     unless options[:no_fallbacks]
       require 'i18n/backend/fallbacks'
-      ::I18n::Backend::Simple.send(:include, ::I18n::Backend::Fallbacks)
+      ::I18n::Backend::Simple.include ::I18n::Backend::Fallbacks
     end
 
     locales_file_path = options[:data]
@@ -75,8 +68,12 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
       opts = options_hash.dup
 
       should_relativize = opts.key?(:relative) ? opts[:relative] : config[:relative_links]
+      anchor = opts[:anchor]
 
+      # The first call to `super()` is only to find the correct URL. The next
+      # call will relativize and add the anchor.
       opts[:relative] = false
+      opts[:anchor] = nil
 
       href = super(path_or_resource, opts)
 
@@ -85,6 +82,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
       final_path = result || href
 
       opts[:relative] = should_relativize
+      opts[:anchor] = anchor
 
       begin
         super(final_path, opts)
@@ -94,10 +92,10 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
     end
 
     def locate_partial(partial_name, try_static = false)
-      locals_dir = extensions[:i18n].options[:templates_dir]
+      templates_dir = extensions[:i18n].options[:templates_dir]
 
       # Try /localizable
-      partials_path = File.join(locals_dir, partial_name)
+      partials_path = File.join(*[templates_dir, partial_name].compact)
 
       locale_suffix = ::I18n.locale
 
@@ -111,7 +109,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
 
       if locale_suffix
         super(suffixed_partial_name, maybe_static) ||
-          super(File.join(locals_dir, suffixed_partial_name), maybe_static) ||
+          super(File.join(*[templates_dir, suffixed_partial_name].compact), maybe_static) ||
           super(partials_path, try_static) ||
           super
       else
@@ -142,14 +140,25 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
   def manipulate_resource_list_container!(resource_list)
     new_resources = []
 
-    file_extension_resources = resource_list.select do |resource|
-      # Ignore resources which are outside of the localizable directory
-      File.fnmatch?(File.join(options[:templates_dir], '**'), resource.path) &&
-        parse_locale_extension(resource.path)
-    end
+    if options[:templates_dir]
+      templates_glob = File.join(options[:templates_dir], '**')
 
-    localizable_folder_resources = resource_list.select do |resource|
-      !file_extension_resources.include?(resource) && File.fnmatch?(File.join(options[:templates_dir], '**'), resource.path)
+      file_extension_resources = resource_list.select do |resource|
+        # Ignore resources which are outside of the localizable directory
+        File.fnmatch?(templates_glob, resource.path) &&
+          parse_locale_extension(resource.path)
+      end
+
+      localizable_folder_resources = resource_list.select do |resource|
+        !file_extension_resources.include?(resource) &&
+          File.fnmatch?(templates_glob, resource.path)
+      end
+    else
+      file_extension_resources = resource_list.select do |resource|
+        parse_locale_extension(resource.path)
+      end
+
+      localizable_folder_resources = []
     end
 
     # If it's a "localizable template"
@@ -238,13 +247,13 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
       # We also generate a map with the same infos, but with the locales as keys.
       # e.g. {:en => '/en/index.html', :de => '/de/index.html', :es => '/index.html'}
       locale_map = resources.each_with_object({}) do |resource, map|
-        map[resource.locale] = '/' + resource.path
+        map[resource.locale] = "/#{resource.path}"
       end
 
       # Then we add those to the lookup table, so every path has a
       # cross-reference to any other path in other locales.
       exposed_paths.each do |path|
-        @lookup['/' + path] = locale_map
+        @lookup["/#{path}"] = locale_map
       end
     end
 
@@ -256,6 +265,8 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
   Contract String, Symbol => Maybe[String]
   def localized_path(path, locale)
     lookup = ::Middleman::Util.parse_uri(path)
+    return path if lookup.host
+
     lookup.path << app.config[:index_file] if lookup.path&.end_with?('/')
 
     if @lookup[lookup.path] && @lookup[lookup.path][locale]
@@ -357,7 +368,8 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
       File.join(prefix, path.sub(page_id, localized_page_id))
     )
 
-    path = path.sub(options[:templates_dir] + '/', '')
+    path = path.sub(options[:templates_dir] + '/', '') if options[:templates_dir]
+    path = Pathname(path).cleanpath.to_s
 
     ::I18n.locale = old_locale
 

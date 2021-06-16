@@ -1,0 +1,26 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}-latest
+    continue-on-error: ${{ matrix.experimental == true }}
+    name: ${{ matrix.os }}-ruby-${{ matrix.ruby-version }}
+    strategy:
+      matrix:
+        os: [ubuntu, macos]
+        ruby-version: ['3.0', 2.7]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby-version }}
+        bundler-cache: true
+    - name: Runs linter
+      run: bundle exec rake rubocop
+    - name: Runs tests
+      run: bundle exec rake test
+      env:
+        TEST: true

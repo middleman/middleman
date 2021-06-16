@@ -6,7 +6,7 @@ Feature: Automatically detect and insert image dimensions into tags
     And a file named "config.rb" with:
       """
       """
-    And the Server is running at "automatic-image-size-app"
+    And the Server is running
     When I go to "/auto-image-sizes.html"
     Then I should not see "width="
     And I should not see "height="
@@ -20,7 +20,7 @@ Feature: Automatically detect and insert image dimensions into tags
       """
       activate :automatic_image_sizes
       """
-    And the Server is running at "automatic-image-size-app"
+    And the Server is running
     When I go to "/auto-image-sizes.html"
     Then I should see 'width="1"'
     And I should see 'height="1"'

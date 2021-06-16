@@ -69,7 +69,7 @@ Feature: Collections
 
       First Tag: <%= collection(:first_tag) %>
       """
-    Given the Server is running at "collections-app"
+    Given the Server is running
     When I go to "index.html"
     Then I should see 'Article1: Blog1 Newer Article'
     And I should see 'Article1: Blog1 Another Article'
@@ -101,7 +101,7 @@ Feature: Collections
         Article: <%= article.data.title || article.file_descriptor[:relative_path] %>
       <% end %>
       """
-    Given the Server is running at "collections-app"
+    Given the Server is running
     When I go to "index.html"
     Then I should not see "Article: index.html.erb"
     Then I should see 'Article: Blog2 Newer Article'
@@ -166,7 +166,7 @@ Feature: Collections
       - "/blog1/2011-01-01-new-article.html"
       - "/blog2/2011-01-02-another-article.html"
       """
-    Given the Server is running at "collections-app"
+    Given the Server is running
     When I go to "0-ok.html"
     Then I should see 'Newer Article Content'
     When I go to "1-ok.html"
@@ -186,7 +186,7 @@ Feature: Collections
       - "/blog1/2011-01-01-new-article.html"
       - "/blog2/2011-01-02-another-article.html"
       """
-    Given the Server is running at "collections-app"
+    Given the Server is running
     When I go to "0.html"
     Then I should see 'Newer Article Content'
     When I go to "1.html"
@@ -243,7 +243,7 @@ Feature: Collections
       """
       Test1
       """
-    Given the Server is running at "collections-app"
+    Given the Server is running
     When I go to "test1.html"
     Then I should see 'Test1'
     When I go to "test2.html"

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 import_file File.expand_path('static.html', root), '/static2.html'
 
 import_path File.expand_path('bower_components/', root)

@@ -57,7 +57,7 @@ Feature: i18n Paths
       set :strip_index_file, false
       activate :i18n, mount_at_root: :en
       """
-    Given the Server is running at "empty-app"
+    Given the Server is running
     When I go to "/hello.html"
     Then I should see "Page: Hello"
     Then I should see '<a href="/index.html" class="current">Current Home</a>'
@@ -133,7 +133,7 @@ Feature: i18n Paths
       activate :i18n, mount_at_root: :en
       activate :relative_assets
       """
-    Given the Server is running at "empty-app"
+    Given the Server is running
     When I go to "/index.html"
     Then I should see "assets/css/main.css"
     When I go to "/hello.html"
@@ -197,6 +197,7 @@ Feature: i18n Paths
 
       Current: <%= url_for "/article.html" %>
       Other: <%= url_for "/article.html", locale: ::I18n.locale == :en ? :es : :en %>
+      Current with anchor: <%= url_for "/article.html", :anchor => "test-anchor" %>
       """
     And a file named "source/localizable/article.es.html.erb" with:
       """
@@ -204,12 +205,13 @@ Feature: i18n Paths
 
       Current: <%= url_for "/article.html" %>
       Other: <%= url_for "/article.html", locale: :en %>
+      Current with anchor: <%= url_for "/article.html", :anchor => "test-anchor" %>
       """
     And a file named "config.rb" with:
       """
       activate :i18n, mount_at_root: :en
       """
-    Given the Server is running at "empty-app"
+    Given the Server is running
     When I go to "/hello.html"
     Then I should see "Page: Hello"
     Then I should see 'Current: /hello.html'
@@ -226,10 +228,12 @@ Feature: i18n Paths
     Then I should see "Page Lang: Default"
     Then I should see 'Current: /article.html'
     Then I should see 'Other: /es/article.html'
+    Then I should see 'Current with anchor: /article.html#test-anchor'
     When I go to "/es/article.html"
     Then I should see "Page Lang: Spanish"
     Then I should see 'Current: /es/article.html'
     Then I should see 'Other: /article.html'
+    Then I should see 'Current with anchor: /es/article.html#test-anchor'
 
   Scenario: url_for can link to the current page in a different language with localized templates
     Given a fixture app "empty-app"
@@ -246,10 +250,20 @@ Feature: i18n Paths
       # FIXME: Auto-discover does not work if there are no locale files.
       activate :i18n, mount_at_root: :en, :locales => [:en, :de]
       """
-    Given the Server is running at "empty-app"
+    Given the Server is running
     When I go to "/index.html"
     Then I should see "English"
     Then I should see '"/de/"'
     When I go to "/de/index.html"
     Then I should see "Deutsch"
     Then I should see '"/"'
+
+  Scenario: link_to is i18n aware and leaves absolute URLs unchanged
+    Given a fixture app "i18n-default-app"
+    And a file named "source/localizable/index.html.erb" with:
+      """
+      <%= link_to "Example", "https://www.example.org/" %>
+      """
+    And the Server is running
+    When I go to "/index.html"
+    Then I should see '<a href="https://www.example.org/">Example</a>'

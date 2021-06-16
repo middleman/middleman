@@ -8,7 +8,7 @@ Feature: Markdown (Kramdown) support
       set :markdown_engine, :kramdown
       set :markdown, smartypants: true
       """
-    Given the Server is running at "markdown-app"
+    Given the Server is running
     When I go to "/smarty_pants.html"
     Then I should see "“Hello”"
 
@@ -28,7 +28,7 @@ Feature: Markdown (Kramdown) support
 
       [mail@mail.com](mailto:mail@mail.com)
       """
-    Given the Server is running at "markdown-app"
+    Given the Server is running
     When I go to "/link_and_image/"
     Then I should see "/smarty_pants/"
     Then I should see 'width="1"'
@@ -36,3 +36,20 @@ Feature: Markdown (Kramdown) support
     And I should see 'src="/images/blank.gif"'
     And I should see 'src="/images/blank.gif"'
     And I should see "&#109;&#097;&#105;&#108;&#064;&#109;&#097;&#105;&#108;&#046;&#099;&#111;&#109;"
+
+  Scenario: Kramdown uses our link_to with options parameter
+    Given a fixture app "markdown-app"
+    And a file named "config.rb" with:
+      """
+      set :markdown_engine, :kramdown
+      activate :directory_indexes
+      """
+    And a file named "source/links.html.markdown" with:
+      """
+      [A link](/smarty_pants.html)
+      [A second link](/smarty_pants.html){: anchor="test-anchor"}
+      """
+    Given the Server is running
+    When I go to "/links/"
+    Then I should see "/smarty_pants/"
+    And I should see "/smarty_pants/#test-anchor"

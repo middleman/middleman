@@ -3,19 +3,19 @@ Feature: Local Data API
 
   Scenario: Rendering html
     Given the Server is running at "basic-data-app"
-    When I go to "/data.html"
+    When I go to "/yaml-source.html"
     Then I should see "One:Two"
-    When the file "data/test.yml" has the contents
+    When the file "data/yaml_source.yml" has the contents
       """
       -
         title: "Three"
       -
         title: "Four"
       """
-    When I go to "/data.html"
+    When I go to "/yaml-source.html"
     Then I should see "Three:Four"
-    When the file "data/test.yml" is removed
-    When I go to "/data.html"
+    When the file "data/yaml_source.yml" is removed
+    When I go to "/yaml-source.html"
     Then I should see "No Test Data"
 
   Scenario: Numeric keys in YAML
@@ -51,28 +51,31 @@ Feature: Local Data API
 
   Scenario: Rendering json
     Given the Server is running at "basic-data-app"
-    When I go to "/data3.html"
+    When I go to "/json-source.html"
     Then I should see "One:Two"
-    When the file "data/test2.json" has the contents
+    When the file "data/json_source.json" has the contents
       """
       [
         { "title": "Three" },
         { "title": "Four" }
       ]
       """
-    When I go to "/data3.html"
+    When I go to "/json-source.html"
     Then I should see "Three:Four"
-    When the file "data/test2.json" is removed
-    When I go to "/data3.html"
+    When the file "data/json_source.json" is removed
+    When I go to "/json-source.html"
     Then I should see "No Test Data"
+
+  Scenario: Storing static data
+    Given the Server is running at "basic-data-app"
+    When I go to "/static-data.html"
+    Then I should see "First: one"
+    Then I should see "Name: Test"
 
   Scenario: Using data in config.rb
     Given the Server is running at "data-app"
     When I go to "/test1.html"
     Then I should see "Welcome"
-
-  Scenario: Using data2 in config.rb
-    Given the Server is running at "data-app"
     When I go to "/test2.html"
     Then I should see "Welcome"
 
@@ -89,3 +92,23 @@ Feature: Local Data API
     Then I should see "<h1>With Content</h1>"
     Then I should see '<h2 id="header-2">Header 2</h2>'
     Then I should see "<p>Paragraph 1</p>"
+
+  Scenario: Rendering toml
+    Given the Server is running at "basic-data-app"
+    When I go to "/data4.html"
+    Then I should see "One:Two"
+    When the file "data/test3.toml" has the contents
+      """
+      [titles]
+
+      [titles.first]
+        title = "Three"
+
+      [titles.second]
+        title = "Four"
+      """
+    When I go to "/data4.html"
+    Then I should see "Three:Four"
+    When the file "data/test3.toml" is removed
+    When I go to "/data4.html"
+    Then I should see "No Test Data"

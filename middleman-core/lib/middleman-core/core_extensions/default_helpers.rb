@@ -1,14 +1,13 @@
+# frozen_string_literal: true
+
+require 'rack'
 require 'padrino-helpers'
 require 'middleman-core/contracts'
-
-# Don't fail on invalid locale, that's not what our current
-# users expect.
-::I18n.enforce_available_locales = false
 
 class Padrino::Helpers::OutputHelpers::ErbHandler
   # Force Erb capture not to use safebuffer
   def capture_from_template(*args, &block)
-    self.output_buffer = ''
+    self.output_buffer = +''
     buf_was = output_buffer
     raw = yield(*args)
     captured = template.instance_variable_get(:@_out_buf)
@@ -23,13 +22,13 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
   def initialize(app, options_hash = ::Middleman::EMPTY_HASH, &block)
     super
 
-    ::Middleman::TemplateContext.send :include, ::Padrino::Helpers::OutputHelpers
-    ::Middleman::TemplateContext.send :include, ::Padrino::Helpers::TagHelpers
-    ::Middleman::TemplateContext.send :include, ::Padrino::Helpers::AssetTagHelpers
-    ::Middleman::TemplateContext.send :include, ::Padrino::Helpers::FormHelpers
-    ::Middleman::TemplateContext.send :include, ::Padrino::Helpers::FormatHelpers
-    ::Middleman::TemplateContext.send :include, ::Padrino::Helpers::RenderHelpers
-    ::Middleman::TemplateContext.send :include, ::Padrino::Helpers::NumberHelpers
+    ::Middleman::TemplateContext.include ::Padrino::Helpers::OutputHelpers
+    ::Middleman::TemplateContext.include ::Padrino::Helpers::TagHelpers
+    ::Middleman::TemplateContext.include ::Padrino::Helpers::AssetTagHelpers
+    ::Middleman::TemplateContext.include ::Padrino::Helpers::FormHelpers
+    ::Middleman::TemplateContext.include ::Padrino::Helpers::FormatHelpers
+    ::Middleman::TemplateContext.include ::Padrino::Helpers::RenderHelpers
+    ::Middleman::TemplateContext.include ::Padrino::Helpers::NumberHelpers
     # ::Middleman::TemplateContext.send :include, ::Padrino::Helpers::TranslationHelpers
   end
 
@@ -153,7 +152,7 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
       # If the basename of the request as no extension, assume we are serving a
       # directory and join index_file to the path.
       path = File.join(asset_dir, current_resource.path)
-      path = path[0..-(File.extname(path).length + 1)] + ".#{asset_ext}"
+      path = "#{path[0..-(File.extname(path).length + 1)]}.#{asset_ext}"
 
       yield path if sitemap.by_path(path)
     end
@@ -182,7 +181,7 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
         c = c.gsub(/[^a-zA-Z0-9\-_]/, '-')
 
         # Class names can't start with a digit
-        c = "#{prefix}#{c}" if c =~ /\A\d/
+        c = "#{prefix}#{c}" if /\A\d/.match?(c)
         c
       end.join(' ')
     end
@@ -270,7 +269,7 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
             src_def
           else
             image_def, size_def = src_def.strip.split(/\s+/)
-            asset_path(:images, image_def) + ' ' + size_def
+            "#{asset_path(:images, image_def)} #{size_def}"
           end
         end
 

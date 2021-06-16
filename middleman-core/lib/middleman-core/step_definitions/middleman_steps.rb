@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'fileutils'
 
 Given /^app "([^\"]*)" is using config "([^\"]*)"$/ do |_path, config_name|

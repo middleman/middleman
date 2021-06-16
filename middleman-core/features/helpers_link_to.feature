@@ -19,7 +19,7 @@ Feature: link_to helper
     """
     <%= link_to "test", "http://google.com/test.html" %>
     """
-    And the Server is running at "link-to-app"
+    And the Server is running
     When I go to "/link_to_absolute.html"
     Then I should see '<a href="http://google.com/test.html">test</a>'
 
@@ -52,7 +52,7 @@ Feature: link_to helper
     absolute spaces: <%= link_to "Spaces Index", "/evil spaces.html", relative: true %>
     relative spaces: <%= link_to "Spaces Relative", "../evil spaces.html", relative: true %>
     """
-    And the Server is running at "indexable-app"
+    And the Server is running
     When I go to "/link_to.html"
     Then I should see 'absolute: <a href="needs_index.html">Needs Index</a>'
     Then I should see 'relative: <a href="needs_index.html">Relative</a>'
@@ -115,7 +115,7 @@ Feature: link_to helper
     absolute: <%= link_to "Needs Index", "/needs_index.html" %>
     relative: <%= link_to "Relative", "../needs_index.html" %>
     """
-    And the Server is running at "indexable-app"
+    And the Server is running
     When I go to "/link_to.html"
     Then I should see 'absolute: <a href="needs_index.html">Needs Index</a>'
     Then I should see 'relative: <a href="/needs_index.html">Relative</a>'
@@ -150,7 +150,7 @@ Feature: link_to helper
     """
     <%= link_to "Needs Index", sitemap.by_path("/needs_index.html") %>
     """
-    And the Server is running at "indexable-app"
+    And the Server is running
     When I go to "/link_to/"
     Then I should see '<a href="/needs_index/">Needs Index</a>'
 
@@ -176,7 +176,7 @@ Feature: link_to helper
     <%= link_to "Needs Index Query", "/needs_index.html?foo" %>
     <%= link_to "Needs Index Query and Anchor", "/needs_index.html?foo#foo" %>
     """
-    And the Server is running at "indexable-app"
+    And the Server is running
     When I go to "/link_to/"
     Then I should see '<a href="/needs_index/#foo">Needs Index Anchor</a>'
     Then I should see '<a href="/needs_index/?foo">Needs Index Query</a>'

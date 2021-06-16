@@ -13,7 +13,7 @@ Feature: url_for helper
     absolute: <%= url_for "/needs_index.html", relative: true %>
     relative: <%= url_for "../needs_index.html", relative: true %>
     """
-    And the Server is running at "indexable-app"
+    And the Server is running
     When I go to "/url_for.html"
     Then I should see 'absolute: needs_index.html'
     Then I should see 'relative: needs_index.html'
@@ -47,7 +47,7 @@ Feature: url_for helper
         "<%= url_for(item) %>"
     <% end %>
     """
-    And the Server is running at "indexable-app"
+    And the Server is running
     When I go to "/url_for.html"
     Then I should see '"url_for/sub.html"'
     Then I should not see "/url_for/sub.html"
@@ -72,7 +72,7 @@ Feature: url_for helper
     absolute: <%= url_for "/needs_index.html" %>
     relative: <%= url_for "../needs_index.html" %>
     """
-    And the Server is running at "indexable-app"
+    And the Server is running
     When I go to "/url_for.html"
     Then I should see 'absolute: needs_index.html'
     Then I should see 'relative: /needs_index.html'
@@ -80,7 +80,7 @@ Feature: url_for helper
     When I go to "/url_for/sub.html"
     Then I should see 'absolute: ../needs_index.html'
     Then I should see 'relative: ../needs_index.html'
-  
+
   Scenario: url_for knows about directory indexes
     Given a fixture app "indexable-app"
     And a file named "source/url_for.html.erb" with:
@@ -93,7 +93,7 @@ Feature: url_for helper
     absolute: <%= url_for "/needs_index.html", relative: true %>
     relative: <%= url_for "../needs_index.html", relative: true %>
     """
-    And the Server is running at "indexable-app"
+    And the Server is running
     When I go to "/url_for/"
     Then I should see 'absolute: ../needs_index/'
     Then I should see 'relative: ../needs_index/'
@@ -107,7 +107,7 @@ Feature: url_for helper
     """
     "<%= url_for sitemap.by_path("/needs_index.html") %>"
     """
-    And the Server is running at "indexable-app"
+    And the Server is running
     When I go to "/url_for/"
     Then I should see '"/needs_index/"'
 
@@ -121,7 +121,7 @@ Feature: url_for helper
     """
     <%= url_for "/needs_index.html" %>
     """
-    And the Server is running at "indexable-app"
+    And the Server is running
     When I go to "/url_for.html"
     Then I should see '/foo/needs_index.html'
 
@@ -133,7 +133,7 @@ Feature: url_for helper
     Needs Index Query <%= url_for "/needs_index.html?foo" %>
     Needs Index Query and Anchor <%= url_for "/needs_index.html?foo#foo" %>
     """
-    And the Server is running at "indexable-app"
+    And the Server is running
     When I go to "/url_for/"
     Then I should see 'Needs Index Anchor /needs_index/#foo'
     Then I should see 'Needs Index Query /needs_index/?foo'
@@ -146,7 +146,7 @@ Feature: url_for helper
     Needs Index String <%= url_for "/needs_index.html", query: "foo" %>
     Needs Index Hash <%= url_for "/needs_index.html", query: { foo: :bar } %>
     """
-    And the Server is running at "indexable-app"
+    And the Server is running
     When I go to "/url_for/"
     Then I should see 'Needs Index String /needs_index/?foo'
     Then I should see 'Needs Index Hash /needs_index/?foo=bar'

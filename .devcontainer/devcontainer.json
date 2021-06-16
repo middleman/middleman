@@ -1,0 +1,37 @@
+// For format details, see https://aka.ms/vscode-remote/devcontainer.json or this file's README at:
+// https://github.com/microsoft/vscode-dev-containers/tree/v0.134.1/containers/ruby
+{
+	"name": "Ruby",
+	"build": {
+		"dockerfile": "Dockerfile",
+		"args": { 
+			// Update 'VARIANT' to pick a Ruby version: 2, 2.7, 2.6, 2.5
+			"VARIANT": "2",
+			// Options
+			"INSTALL_NODE": "true",
+			"NODE_VERSION": "lts/*"
+		}
+	},
+
+	// Set *default* container specific settings.json values on container create.
+	"settings": { 
+		"terminal.integrated.shell.linux": "/bin/bash"
+	},
+
+	// Add the IDs of extensions you want installed when the container is created.
+	"extensions": [
+		"rebornix.Ruby",
+		"alexkrechik.cucumberautocomplete",
+		"neilding.language-liquid"
+	]
+	
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// "forwardPorts": [],
+
+	// Use 'postCreateCommand' to run commands after the container is created.
+	// "postCreateCommand": "ruby --version",
+
+	// Uncomment to connect as a non-root user. See https://aka.ms/vscode-remote/containers/non-root.
+	// "remoteUser": "vscode"
+
+}

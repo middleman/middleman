@@ -16,7 +16,7 @@ Feature: Markdown (Redcarpet) support
                      lax_spacing: true
 
       """
-    Given the Server is running at "markdown-app"
+    Given the Server is running
     When I go to "/no_intra_emphasis.html"
     Then I should not see "<em>"
     When I go to "/tables.html"
@@ -45,7 +45,7 @@ Feature: Markdown (Redcarpet) support
                      highlight: true,
                      disable_indented_code_blocks: true
       """
-    Given the Server is running at "markdown-app"
+    Given the Server is running
     When I go to "/underline.html"
     Then I should see "<u>underlined</u>"
     When I go to "/highlighted.html"
@@ -60,7 +60,7 @@ Feature: Markdown (Redcarpet) support
       set :markdown_engine, :redcarpet
       set :markdown, smartypants: true
       """
-    Given the Server is running at "markdown-app"
+    Given the Server is running
     When I go to "/smarty_pants.html"
     Then I should see "&ldquo;"
 
@@ -78,7 +78,7 @@ Feature: Markdown (Redcarpet) support
                      prettify: true
 
       """
-    Given the Server is running at "markdown-app"
+    Given the Server is running
     When I go to "/filter_html.html"
     Then I should not see "<em>"
     When I go to "/img.html"
@@ -108,7 +108,7 @@ Feature: Markdown (Redcarpet) support
       """
       [A link](/foo.html)
       """
-    Given the Server is running at "markdown-app"
+    Given the Server is running
     When I go to "/link.html"
     Then I should see 'target="_blank"'
 
@@ -120,7 +120,7 @@ Feature: Markdown (Redcarpet) support
       set :markdown, xhtml: true,
                      hard_wrap: true
       """
-    Given the Server is running at "markdown-app"
+    Given the Server is running
     When I go to "/hard_wrap.html"
     Then I should see "<br/>"
 
@@ -131,7 +131,7 @@ Feature: Markdown (Redcarpet) support
       set :markdown_engine, :redcarpet
       set :markdown, smartypants: true
       """
-    Given the Server is running at "markdown-frontmatter-options-app"
+    Given the Server is running
     When I go to "/smarty_pants-default.html"
     Then I should see "&ldquo;"
     When I go to "/smarty_pants-on.html"
@@ -159,7 +159,7 @@ Feature: Markdown (Redcarpet) support
 
       ![image](blank.gif)
       """
-    Given the Server is running at "markdown-app"
+    Given the Server is running
     When I go to "/link_and_image/"
     Then I should see "/smarty_pants/"
     Then I should see 'width="1"'

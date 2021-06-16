@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'tilt'
 require 'hamster'
 require 'middleman-core/contracts'
@@ -76,7 +78,7 @@ module Middleman
 
       preferred_engines.each do |preferred_engine|
         path_with_ext = relative_path.dup
-        path_with_ext << ('.' + preferred_engine) unless preferred_engine.nil?
+        path_with_ext = "#{path_with_ext}.#{preferred_engine}" unless preferred_engine.nil?
 
         globbing = preferred_engine == '*'
 
@@ -147,8 +149,10 @@ module Middleman
       # Add extension helpers to context.
       @app.extensions.add_exposed_to_context(context)
 
+      known_keys = %i[current_path paginate page_articles blog_controller lang locale data]
+
       locals.each do |k, _|
-        next unless context.respond_to?(k) && !%i[current_path paginate page_articles blog_controller lang locale data].include?(k.to_sym)
+        next unless context.respond_to?(k) && !known_keys.include?(k.to_sym)
 
         msg = "Template local `#{k}` tried to overwrite an existing context value. Please rename the key when passing to `locals`"
 

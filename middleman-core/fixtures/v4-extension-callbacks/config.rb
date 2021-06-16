@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ExtensionOne < ::Middleman::Extension
   helpers do
     def extension_two_was_activated

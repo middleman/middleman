@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # ERb renderer
 module Middleman
   module Renderers
@@ -12,7 +14,7 @@ module Middleman
         #
         def precompiled_preamble(locals)
           original = super
-          "__in_erb_template = true\n" << original
+          "__in_erb_template = true\n#{original}"
           # .rpartition("\n").first << "#{@outvar} = _buf = ::ActiveSupport::SafeBuffer.new\n"
         end
       end

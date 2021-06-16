@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'hamster'
 require 'set'
 require 'middleman-core/contracts'
@@ -16,7 +18,8 @@ module Middleman
 
           YAML_EXTS = Set.new %w[.yaml .yml]
           JSON_EXTS = Set.new %w[.json]
-          ALL_EXTS = YAML_EXTS | JSON_EXTS
+          TOML_EXTS = Set.new %w[.toml]
+          ALL_EXTS = YAML_EXTS | JSON_EXTS | TOML_EXTS
 
           def_delegators :@local_data, :keys, :key?, :[]
 
@@ -53,6 +56,8 @@ module Middleman
               data[:postscript] = postscript if !postscript.nil? && data.is_a?(Hash)
             elsif JSON_EXTS.include?(extension)
               data, _postscript = ::Middleman::Util::Data.parse(file, @app.config[:frontmatter_delims], :json)
+            elsif TOML_EXTS.include?(extension)
+              data, _postscript = ::Middleman::Util::Data.parse(file, @app.config[:frontmatter_delims], :toml)
             end
 
             data_branch = @local_data

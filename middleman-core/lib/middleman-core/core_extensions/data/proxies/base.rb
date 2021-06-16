@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'hamster'
 require 'middleman-core/util/data'
 
@@ -63,6 +65,9 @@ module Middleman
           end
 
           def wrap_data(key, data)
+            require_relative 'hash'
+            require_relative 'array'
+
             if @depth >= @data_collection_depth
               log_access(:__full_access__)
               ::Middleman::Util.recursively_enhance(data)

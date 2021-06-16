@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rack/builder'
 require 'rack/static'
 require 'tilt'

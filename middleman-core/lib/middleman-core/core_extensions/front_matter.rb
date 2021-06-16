@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Core Pathname library used for traversal
 require 'pathname'
 
@@ -14,8 +16,46 @@ module Middleman::CoreExtensions
 
     # Set textual delimiters that denote the start and end of frontmatter
     define_setting :frontmatter_delims, {
-      json: [%w[;;; ;;;]],
-      yaml: [%w[--- ---], %w[--- ...]]
+      json: [
+        %w[;;; ;;;],
+
+        # Haml with commented frontmatter
+        ["-#\n  ;;;", '  ;;;'],
+
+        # Slim with commented frontmatter
+        ["\/\n  ;;;", '  ;;;'],
+
+        # ERb with commented frontmatter
+        ["<%#\n  ;;;", "  ;;;\n%>"]
+      ],
+      toml: [
+        %w[+++ +++],
+
+        # Haml with commented frontmatter
+        ["-#\n  +++", '  +++'],
+
+        # Slim with commented frontmatter
+        ["\/\n  +++", '  +++'],
+
+        # ERb with commented frontmatter
+        ["<%#\n  +++", "  +++\n%>"]
+      ],
+      yaml: [
+        # Normal
+        %w[--- ---],
+
+        # Pandoc
+        %w[--- ...],
+
+        # Haml with commented frontmatter
+        ["-#\n  ---", '  ---'],
+
+        # Slim with commented frontmatter
+        ["\/\n  ---", '  ---'],
+
+        # ERb with commented frontmatter
+        ["<%#\n  ---", "  ---\n%>"]
+      ]
     }, 'Allowed frontmatter delimiters'
 
     def initialize(app, options_hash = ::Middleman::EMPTY_HASH, &block)
@@ -83,16 +123,14 @@ module Middleman::CoreExtensions
 
       file_path = file[:full_path].to_s
 
-      @cache[file_path] ||= begin
-        if ::Middleman::Util.contains_frontmatter?(file_path, app.config[:frontmatter_delims])
-          ::Middleman::Util::Data.parse(
-            file,
-            app.config[:frontmatter_delims]
-          )
-        else
-          [{}, nil]
-        end
-      end
+      @cache[file_path] ||= if ::Middleman::Util.contains_frontmatter?(file_path, app.config[:frontmatter_delims])
+                              ::Middleman::Util::Data.parse(
+                                file,
+                                app.config[:frontmatter_delims]
+                              )
+                            else
+                              [{}, nil]
+                            end
     end
 
     Contract ArrayOf[IsA['Middleman::SourceFile']], ArrayOf[IsA['Middleman::SourceFile']] => Any

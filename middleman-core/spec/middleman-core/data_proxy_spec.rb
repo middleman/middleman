@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 require 'middleman-core/core_extensions/data/proxies/hash'
 require 'middleman-core/util/data'

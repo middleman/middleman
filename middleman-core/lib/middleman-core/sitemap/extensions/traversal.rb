@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Middleman
   module Sitemap
     module Extensions
@@ -106,9 +108,10 @@ module Middleman
             else
               inner_path = sub_resource.path.sub(prefix, '')
               parts = inner_path.split('/')
-              if parts.length == 1
+              case parts.length
+              when 1
                 true
-              elsif parts.length == 2
+              when 2
                 parts.last == @app.config[:index_file]
               else
                 false
@@ -146,7 +149,7 @@ module Middleman
         # (e.g., for 'gallery.html' this would return 'gallery/')
         # @return [String]
         def eponymous_directory_path
-          path.sub(ext, '/').sub(%r{/$}, '') + '/'
+          "#{path.sub(ext, '/').sub(%r{/$}, '')}/"
         end
       end
     end

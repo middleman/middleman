@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'webrick'
 require 'webrick/https'
 require 'openssl'
@@ -307,7 +309,7 @@ module Middleman
         cert.add_extension(aki)
         cert.add_extension ef.create_extension('subjectAltName', aliases.map { |d| "DNS: #{d}" }.join(','))
 
-        cert.sign(rsa, OpenSSL::Digest::SHA1.new)
+        cert.sign(rsa, OpenSSL::Digest.new('SHA1'))
 
         [cert, rsa]
       end
@@ -337,7 +339,7 @@ module Middleman
 
     class FilteredWebrickLog < ::WEBrick::Log
       def log(level, data)
-        super(level, data) unless data =~ /Could not determine content-length of response body./
+        super(level, data) unless /Could not determine content-length of response body./.match?(data)
       end
     end
   end

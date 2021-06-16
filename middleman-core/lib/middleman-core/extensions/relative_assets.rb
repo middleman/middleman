@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Relative Assets extension
 class Middleman::Extensions::RelativeAssets < ::Middleman::Extension
   option :exts, nil, 'List of extensions that get converted to relative paths.'
@@ -81,9 +83,8 @@ class Middleman::Extensions::RelativeAssets < ::Middleman::Extension
                       end
 
     current_dir = Pathname(request_path).dirname
-    result = Pathname(full_asset_path).relative_path_from(current_dir).to_s
 
-    result
+    Pathname(full_asset_path).relative_path_from(current_dir).to_s
   end
   memoize :rewrite_url
 end

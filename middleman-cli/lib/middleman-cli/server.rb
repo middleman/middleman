@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # CLI Module
 module Middleman::Cli
   # Server thor task
@@ -45,7 +47,6 @@ module Middleman::Cli
       params = {
         debug: options['verbose'],
         instrumenting: options['instrument'],
-        reload_paths: options['reload_paths'],
         daemon: options['daemon']
       }
 

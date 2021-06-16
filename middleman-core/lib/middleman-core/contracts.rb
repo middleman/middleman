@@ -1,4 +1,6 @@
-if ENV['CONTRACTS'] != 'false'
+# frozen_string_literal: true
+
+if ENV['CONTRACTS'] == 'true' || ENV['TEST'] == 'true'
   require 'contracts'
   require 'hamster'
 
@@ -21,7 +23,7 @@ if ENV['CONTRACTS'] != 'false'
     VectorOf = Contracts::CollectionOf::Factory.new(::Hamster::Vector)
 
     class ImmutableHashOf < Contracts::CallableClass
-      INVALID_KEY_VALUE_PAIR = 'You should provide only one key-value pair to HashOf contract'.freeze
+      INVALID_KEY_VALUE_PAIR = 'You should provide only one key-value pair to HashOf contract'
 
       def initialize(key, value)
         @key   = key
@@ -43,9 +45,8 @@ if ENV['CONTRACTS'] != 'false'
     end
 
     ImmutableSetOf = Contracts::CollectionOf::Factory.new(::Hamster::Set)
-    ImmutableSortedSetOf = Contracts::CollectionOf::Factory.new(::Hamster::SortedSet)
     OldResourceList = Contracts::ArrayOf[IsA['Middleman::Sitemap::Resource']]
-    ResourceList = Contracts::Or[ImmutableSetOf[IsA['Middleman::Sitemap::Resource']], ImmutableSortedSetOf[IsA['Middleman::Sitemap::Resource']], Contracts::ArrayOf[IsA['Middleman::Sitemap::Resource']]]
+    ResourceList = Contracts::Or[SetOf[IsA['Middleman::Sitemap::Resource']], SetOf[IsA['Middleman::Sitemap::Resource']], Contracts::ArrayOf[IsA['Middleman::Sitemap::Resource']]]
   end
 else
   module Contracts
@@ -53,9 +54,9 @@ else
       base.extend self
     end
 
-    # rubocop:disable MethodName
+    # rubocop:disable Naming/MethodName
     def Contract(*); end
-    # rubocop:enable MethodName
+    # rubocop:enable Naming/MethodName
 
     class Callable
       def self.[](*); end

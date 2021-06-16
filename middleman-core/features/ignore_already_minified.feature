@@ -19,10 +19,10 @@ Feature: CSS and JavaScripts which are minify shouldn't be re-minified
       9,
       10 ];
       """
-    And the Server is running at "empty_app"
+    And the Server is running
     When I go to "/javascripts/test.min.js"
     Then I should see "10" lines
-    
+
   Scenario: CSS files containing ".min" should not be re-compressed
     Given an empty app
     And a file named "config.rb" with:
@@ -39,9 +39,9 @@ Feature: CSS and JavaScripts which are minify shouldn't be re-minified
         six: 6;
         seven: 7;
         eight: 8;
-        nine: 9; 
+        nine: 9;
         ten: 10; }
       """
-    And the Server is running at "empty_app"
+    And the Server is running
     When I go to "/stylesheets/test.min.css"
     Then I should see "10" lines

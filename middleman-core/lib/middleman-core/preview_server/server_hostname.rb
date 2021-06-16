@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Middleman
   class PreviewServer
     class ServerHostname
@@ -15,7 +17,7 @@ module Middleman
 
       class ServerPlainHostname < SimpleDelegator
         def to_s
-          __getobj__.gsub(/\s/, '+') + '.local'
+          "#{__getobj__.gsub(/\s/, '+')}.local"
         end
 
         def self.match?(name)

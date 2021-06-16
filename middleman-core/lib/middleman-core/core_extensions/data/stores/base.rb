@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'hamster'
 require 'middleman-core/dependencies/vertices/vertex'
 require 'middleman-core/contracts'

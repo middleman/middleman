@@ -7,7 +7,7 @@ Feature: Custom layouts
       """
       page '/custom-layout.html', layout: :custom
       """
-    And the Server is running at "custom-layout-app2"
+    And the Server is running
     When I go to "/custom-layout.html"
     Then I should see "Custom Layout"
 
@@ -21,7 +21,7 @@ Feature: Custom layouts
         proxy "/test/#{who}.html", "/custom-layout.html"
       end
       """
-    And the Server is running at "custom-layout-app2"
+    And the Server is running
     When I go to "/test/me.html"
     Then I should see "Custom Layout"
     When I go to "/test/you.html"
@@ -33,7 +33,7 @@ Feature: Custom layouts
       """
       page '/custom-layout-dir/', layout: :custom
       """
-    And the Server is running at "custom-layout-app2"
+    And the Server is running
     When I go to "/custom-layout-dir"
     Then I should see "Custom Layout"
     When I go to "/custom-layout-dir/"
@@ -47,7 +47,7 @@ Feature: Custom layouts
       """
       page '/custom-layout-dir', layout: :custom
       """
-    And the Server is running at "custom-layout-app2"
+    And the Server is running
     When I go to "/custom-layout-dir"
     Then I should see "Custom Layout"
     When I go to "/custom-layout-dir/"
@@ -61,7 +61,7 @@ Feature: Custom layouts
       """
       page '/custom-layout-dir/index.html', layout: :custom
       """
-    And the Server is running at "custom-layout-app2"
+    And the Server is running
     When I go to "/custom-layout-dir"
     Then I should see "Custom Layout"
     When I go to "/custom-layout-dir/"

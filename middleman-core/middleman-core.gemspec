@@ -26,13 +26,14 @@ Gem::Specification.new do |s|
   s.add_dependency('servolux')
   s.add_dependency('dotenv')
   s.add_dependency('rgl', ['~> 0.5.3'])
+  s.add_dependency('toml')
+  s.add_dependency('webrick')
 
   # Helpers
-  s.add_dependency('activesupport', ['~> 5.2'])
+  s.add_dependency('activesupport', ['>= 5.0.0'])
   s.add_dependency('padrino-helpers', ['~> 0.14.4'])
   s.add_dependency('addressable', ['~> 2.3'])
   s.add_dependency('memoist', ['~> 0.14'])
-  s.add_dependency('backports', ['~> 3.11'])
 
   # Watcher
   s.add_dependency('listen', ['~> 3.0'])
@@ -57,6 +58,6 @@ Gem::Specification.new do |s|
   s.add_dependency('contracts', ['~> 0.16.0'])
 
   # Hash stuff
-  s.add_dependency('hashie', ['~> 3.4'])
+  s.add_dependency('hashie', ['~> 4.0'])
   s.add_dependency('hamster', ['~> 3.0'])
 end

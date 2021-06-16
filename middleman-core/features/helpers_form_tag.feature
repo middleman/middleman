@@ -17,7 +17,7 @@ Feature: form_tag helper
     relative: <% form_tag "../needs_index.html#relative", relative: true do %>
     <% end %>
     """
-    And the Server is running at "indexable-app"
+    And the Server is running
     When I go to "/form_tag.html"
     Then I should see 'action="needs_index.html#absolute"'
     Then I should see 'action="needs_index.html#relative"'

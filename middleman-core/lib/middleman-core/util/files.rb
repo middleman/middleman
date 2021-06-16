@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'digest/sha1'
 require 'set'
 require 'open3'
@@ -40,7 +42,7 @@ module Middleman
     def glob_directory(path)
       results = ::Dir[path]
 
-      return results unless RUBY_PLATFORM =~ /darwin/
+      return results unless RUBY_PLATFORM.match?(/darwin/)
 
       results.map { |r| r.encode('UTF-8', 'UTF-8-MAC') }
     end
@@ -52,7 +54,7 @@ module Middleman
     def current_directory
       result = ::Dir.pwd
 
-      return result unless RUBY_PLATFORM =~ /darwin/
+      return result unless RUBY_PLATFORM.match?(/darwin/)
 
       result.encode('UTF-8', 'UTF-8-MAC')
     end
@@ -119,7 +121,7 @@ module Middleman
 
       all_extensions.uniq!
 
-      app.sitemap.without_ignored.to_a.select do |r|
+      app.sitemap.by_priority.select do |r|
         if r.file_descriptor
           local_extensions = collect_extensions(r.file_descriptor[:full_path].to_s)
           local_extensions |= sass_type_aliasing unless (local_extensions & sass_type_aliasing).empty?

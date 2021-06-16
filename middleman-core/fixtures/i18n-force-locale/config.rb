@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 %i[en es].each do |locale|
   proxy "/#{locale}/index.html", 'index.html', ignore: true, lang: locale
 end

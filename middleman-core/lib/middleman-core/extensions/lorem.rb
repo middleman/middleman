@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Middleman::Extensions::Lorem < ::Middleman::Extension
   helpers do
     # Access to the Lorem object
@@ -147,7 +149,7 @@ class Middleman::Extensions::Lorem < ::Middleman::Extension
       # @return [String]
       def image(size, options_hash = ::Middleman::EMPTY_HASH)
         domain           = options_hash[:domain] || 'http://placehold.it'
-        src              = "#{domain}/#{size}"
+        src_array        = ["#{domain}/#{size}"]
         hex              = %w[a b c d e f 0 1 2 3 4 5 6 7 8 9]
         background_color = options_hash[:background_color]
         color            = options_hash[:color]
@@ -157,12 +159,12 @@ class Middleman::Extensions::Lorem < ::Middleman::Extension
           color = hex.sample(6).join
         end
 
-        src << "/#{background_color.sub(/^#/, '')}" if background_color
-        src << '/ccc' if background_color.nil? && color
-        src << "/#{color.sub(/^#/, '')}" if color
-        src << "&text=#{Rack::Utils.escape(options_hash[:text])}" if options_hash[:text]
+        src_array << "/#{background_color.sub(/^#/, '')}" if background_color
+        src_array << '/ccc' if background_color.nil? && color
+        src_array << "/#{color.sub(/^#/, '')}" if color
+        src_array << "&text=#{Rack::Utils.escape(options_hash[:text])}" if options_hash[:text]
 
-        src
+        src_array.join
       end
 
       # Pick a random item from a given range

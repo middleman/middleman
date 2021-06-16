@@ -118,7 +118,7 @@ Feature: Relative Assets
       """
       <%= image_tag '/img/blank.gif' %>
       """
-    And the Server is running at "relative-assets-app"
+    And the Server is running
     When I go to "/sub/image_tag.html"
     Then I should see '<img src="../img/blank.gif"'
 
@@ -129,7 +129,7 @@ Feature: Relative Assets
       """
       <%= image_tag "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" %>
       """
-    And the Server is running at "relative-assets-app"
+    And the Server is running
     When I go to "/sub/image_tag.html"
     Then I should see '<img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />'
 
@@ -141,7 +141,7 @@ Feature: Relative Assets
         '/stylesheets/fonts.css',
       ]
       """
-    And the Server is running at "relative-assets-app"
+    And the Server is running
     When I go to "/stylesheets/relative_assets.css"
     Then I should see 'url("../images/blank.gif'
     When I go to "/stylesheets/fonts.css"
