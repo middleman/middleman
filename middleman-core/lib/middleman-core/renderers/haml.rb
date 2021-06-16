@@ -29,7 +29,10 @@ module Middleman
       def prepare; end
 
       def evaluate(scope, locals, &block)
-        options = {}.merge!(@options).merge!(filename: eval_file, line: line, context: @context || scope)
+        options = @options.dup
+        options.delete(:lang)
+        options.delete(:locale)
+        options.merge!(filename: eval_file, line: line, context: @context || scope)
         if options.include?(:outvar)
           options[:buffer] = options.delete(:outvar)
           options[:save_buffer] = true
