@@ -43,8 +43,6 @@ module Middleman
       # @param [Integer] value
       #   The timeout value
       def timeouts=(timeouts)
-        return if RUBY_VERSION < '2'
-
         resolver.timeouts = timeouts
       end
     end

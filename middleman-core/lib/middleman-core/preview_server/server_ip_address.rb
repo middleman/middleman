@@ -35,20 +35,11 @@ module Middleman
         format('[%s]', to_s)
       end
 
-      if RUBY_VERSION < '2'
-        def self.match?(str)
-          str = str.to_s.sub(/%.*$/, '')
-          IPAddr.new(str).ipv6?
-        rescue StandardError
-          false
-        end
-      else
-        def self.match?(str)
-          str = str.to_s.sub(/%.*$/, '')
-          IPAddr.new(str).ipv6?
-        rescue IPAddr::InvalidAddressError, IPAddr::AddressFamilyError
-          false
-        end
+      def self.match?(str)
+        str = str.to_s.sub(/%.*$/, '')
+        IPAddr.new(str).ipv6?
+      rescue IPAddr::InvalidAddressError, IPAddr::AddressFamilyError
+        false
       end
     end
   end

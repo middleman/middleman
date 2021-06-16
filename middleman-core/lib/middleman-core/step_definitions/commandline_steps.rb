@@ -82,7 +82,3 @@ end
 After do
   only_processes.each { |p| p.terminate }
 end
-
-Before '@ruby-2.1' do
-  skip_this_scenario if RUBY_VERSION < '2.1'
-end

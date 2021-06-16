@@ -31,10 +31,8 @@ module Middleman
       @resolvers = []
       @resolvers << opts.fetch(:hosts_resolver, HostsResolver.new)
 
-      if RUBY_VERSION >= '2.1'
-        require 'middleman-core/dns_resolver/local_link_resolver'
-        @resolvers << opts.fetch(:local_link_resolver, LocalLinkResolver.new)
-      end
+      require 'middleman-core/dns_resolver/local_link_resolver'
+      @resolvers << opts.fetch(:local_link_resolver, LocalLinkResolver.new)
 
       @resolvers << opts.fetch(:network_resolver, NetworkResolver.new)
     end
