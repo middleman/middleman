@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'webrick'
-require 'webrick/https'
 require 'openssl'
 require 'middleman-core/meta_pages'
 require 'middleman-core/logger'
@@ -15,7 +13,7 @@ module Middleman
     class << self
       extend Forwardable
 
-      attr_reader :app, :ssl_certificate, :ssl_private_key, :environment, :server_information
+      attr_reader :app, :server_pid, :signals_queue, :ssl_certificate, :ssl_private_key, :environment, :server_information
 
       # Start an instance of Middleman::Application
       # @return [void]
@@ -40,33 +38,29 @@ module Middleman
           exit 1
         end
 
-        mount_instance(the_app)
-
-        app.logger.debug %(== Server information is provided by #{server_information.handler})
-        app.logger.debug %(== The Middleman is running in "#{environment}" environment)
-        app.logger.debug format('== The Middleman preview server is bound to %<url>s', url: ServerUrl.new(hosts: server_information.listeners, port: server_information.port, https: server_information.https?).to_bind_addresses.join(', '))
-        app.logger.info format('== View your site at %<url>s', url: ServerUrl.new(hosts: server_information.site_addresses, port: server_information.port, https: server_information.https?).to_urls.join(', '))
-        app.logger.info format('== Inspect your site configuration at %<url>s', url: ServerUrl.new(hosts: server_information.site_addresses, port: server_information.port, https: server_information.https?).to_config_urls.join(', '))
+        logger.debug %(== Server information is provided by #{server_information.handler})
+        logger.debug %(== The Middleman is running in "#{environment}" environment)
+        logger.debug format('== The Middleman preview server is bound to %<url>s', url: ServerUrl.new(hosts: server_information.listeners, port: server_information.port, https: server_information.https?).to_bind_addresses.join(', '))
+        logger.info format('== View your site at %<url>s', url: ServerUrl.new(hosts: server_information.site_addresses, port: server_information.port, https: server_information.https?).to_urls.join(', '))
+        logger.info format('== Inspect your site configuration at %<url>s', url: ServerUrl.new(hosts: server_information.site_addresses, port: server_information.port, https: server_information.https?).to_config_urls.join(', '))
 
         @initialized ||= false
         return if @initialized
 
         @initialized = true
 
-        register_signal_handlers
-
         # Save the last-used @options so it may be re-used when
         # reloading later on.
         ::Middleman::Profiling.report('server_start')
 
-        app.execute_callbacks(:before_server, [ServerInformationCallbackProxy.new(server_information)])
+        the_app.execute_callbacks(:before_server, [ServerInformationCallbackProxy.new(server_information)])
 
         if @options[:daemon]
           # To output the child PID, let's make preview server a daemon by hand
           child_pid = fork
 
           if child_pid
-            app.logger.info "== Middleman preview server is running in background with PID #{child_pid}"
+            logger.info "== Middleman preview server is running in background with PID #{child_pid}"
             Process.detach child_pid
             exit 0
           else
@@ -76,17 +70,50 @@ module Middleman
           end
         end
 
-        loop do
-          @webrick.start
+        signals_queue = Queue.new
 
-          # $mm_shutdown is set by the signal handler
-          if $mm_shutdown
-            shutdown
-            exit
-          elsif $mm_reload
-            $mm_reload = false
-            reload
+        %w[INT HUP TERM QUIT].each do |sig|
+          next unless Signal.list[sig]
+
+          Signal.trap(sig) do
+            signals_queue << sig
           end
+        end
+
+        start_webserver(the_app)
+
+        signals_queue.pop # waiting for quit signals
+
+        stop
+      end
+
+      def start_webserver(app)
+        @app = app
+        @server_pid = fork do
+          server = ::Rack::Handler.get(server_information.server) || ::Rack::Handler.default
+
+          %w[INT HUP TERM QUIT].each do |sig|
+            next unless Signal.list[sig]
+
+            Signal.trap(sig) do
+              if server.respond_to?(:shutdown)
+                server.shutdown
+              else
+                exit
+              end
+            end
+          end
+
+          server_options = basic_server_options
+
+          if server == ::Rack::Handler::WEBrick
+            server_options[:Logger] = (@options[:debug] ? logger : ::WEBrick::Log.new(nil, 0))
+          elsif server == ::Rack::Handler::Puma
+            server_options[:Silent] = !@options[:debug]
+            server_options[:Verbose] = @options[:debug]
+          end
+
+          server.run(::Middleman::Rack.new(app).to_app, **server_options)
         end
       end
 
@@ -94,44 +121,44 @@ module Middleman
       # @return [void]
       def stop
         begin
-          app.logger.info '== The Middleman is shutting down'
+          logger.info '== The Middleman is shutting down'
         rescue StandardError
           # if the user closed their terminal STDOUT/STDERR won't exist
         end
 
-        unmount_instance
+        stop_server_and_app
+      end
+
+      def logger
+        @logger ||= Logger.new(@options[:debug] ? :debug : :info)
       end
 
       # Simply stop, then start the server
       # @return [void]
       def reload
-        app.logger.info '== The Middleman is reloading'
+        logger.info '== The Middleman is reloading'
 
         app.execute_callbacks(:reload)
 
         begin
-          app = initialize_new_app
+          the_app = initialize_new_app
         rescue StandardError => e
           warn "Error reloading Middleman: #{e}\n#{e.backtrace.join("\n")}"
-          app.logger.info '== The Middleman is still running the application from before the error'
+          logger.info '== The Middleman is still running the application from before the error'
           return
         end
 
-        unmount_instance
+        stop_server_and_app
 
-        @webrick.shutdown
-        @webrick = nil
+        start_webserver(the_app)
 
-        mount_instance(app)
-
-        app.logger.info '== The Middleman has reloaded'
+        logger.info '== The Middleman has reloaded'
       end
 
-      # Stop the current instance, exit Webrick
+      # Stop the current instance, exit server
       # @return [void]
       def shutdown
         stop
-        @webrick.shutdown
       end
 
       private
@@ -190,7 +217,7 @@ module Middleman
                                https: possible_from_cli(:https, app.config))
 
         unless server_information.port == configured_port
-          app.logger.warn format(
+          logger.warn format(
             '== The Middleman uses a different port "%<new_port>s" then the configured one "%<old_port>s" because some other server is listening on that port.',
             new_port: server_information.port,
             old_port: configured_port
@@ -203,8 +230,7 @@ module Middleman
         @ssl_private_key = possible_from_cli(:ssl_private_key, app.config)
 
         app.files.on_change :reload do
-          $mm_reload = true
-          @webrick.stop
+          reload
         end
 
         # Add in the meta pages application
@@ -220,24 +246,9 @@ module Middleman
         @cli_options[key] || config[key]
       end
 
-      # Trap some interrupt signals and shut down smoothly
+      # Get server options
       # @return [void]
-      def register_signal_handlers
-        %w[INT HUP TERM QUIT].each do |sig|
-          next unless Signal.list[sig]
-
-          Signal.trap(sig) do
-            # Do as little work as possible in the signal context
-            $mm_shutdown = true
-
-            @webrick.stop
-          end
-        end
-      end
-
-      # Initialize webrick
-      # @return [void]
-      def setup_webrick(is_logging)
+      def basic_server_options
         http_opts = {
           Port: server_information.port,
           AccessLog: [],
@@ -266,18 +277,7 @@ module Middleman
           end
         end
 
-        http_opts[:Logger] = if is_logging
-                               FilteredWebrickLog.new
-                             else
-                               ::WEBrick::Log.new(nil, 0)
-                             end
-
-        begin
-          ::WEBrick::HTTPServer.new(http_opts)
-        rescue Errno::EADDRINUSE
-          port = http_opts[:Port]
-          warn %(== Port #{port} is already in use. This could mean another instance of middleman is already running. Please make sure port #{port} is free and start `middleman server` again, or choose another port by running `middleman server —-port=#{port + 1}` instead.)
-        end
+        http_opts
       end
 
       # Copy of https://github.com/nahi/ruby/blob/webrick_trunk/lib/webrick/ssl.rb#L39
@@ -314,32 +314,16 @@ module Middleman
         [cert, rsa]
       end
 
-      # Attach a new Middleman::Application instance
-      # @param [Middleman::Application] app
+      # Stop Middleman::Application instance and web server
       # @return [void]
-      def mount_instance(app)
-        @app = app
+      def stop_server_and_app
+        app.shutdown!
 
-        @webrick ||= setup_webrick(@options[:debug] || false)
+        Process.kill('QUIT', server_pid)
+        Process.wait(server_pid)
 
-        rack_app = ::Middleman::Rack.new(@app).to_app
-        @webrick.mount '/', ::Rack::Handler::WEBrick, rack_app
-      end
-
-      # Detach the current Middleman::Application instance
-      # @return [void]
-      def unmount_instance
-        @webrick.unmount '/'
-
-        @app.shutdown!
-
+        @server_pid = nil
         @app = nil
-      end
-    end
-
-    class FilteredWebrickLog < ::WEBrick::Log
-      def log(level, data)
-        super(level, data) unless /Could not determine content-length of response body./.match?(data)
       end
     end
   end

@@ -69,11 +69,13 @@ module Middleman
         @port         = config[:port]
         @server_name  = config[:server_name]
         @https        = config[:https]
+        @server       = config[:server]
 
         config[:bind_address] = bind_address
         config[:port]         = port
         config[:server_name]  = server_name
         config[:https]        = https?
+        config[:server]       = server
       end
 
       # Make information of internal server class avaible to make debugging
@@ -149,6 +151,11 @@ module Middleman
       # Is https enabled?
       def https?
         @https == true
+      end
+
+      # return server type
+      def server
+        @server&.to_sym
       end
     end
   end
