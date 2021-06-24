@@ -13,7 +13,7 @@ module Middleman
     class << self
       extend Forwardable
 
-      attr_reader :app, :server_pid, :signals_queue, :ssl_certificate, :ssl_private_key, :environment, :server_information
+      attr_reader :app, :server_pid, :ssl_certificate, :ssl_private_key, :environment, :server_information
 
       # Start an instance of Middleman::Application
       # @return [void]
