@@ -153,9 +153,9 @@ module Middleman
         @https == true
       end
 
-      # return server type
+      # return server type (with https works only webrick)
       def server
-        @server&.to_sym
+        https? ? :webrick : @server&.to_sym
       end
     end
   end

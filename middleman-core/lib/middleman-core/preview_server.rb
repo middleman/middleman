@@ -49,25 +49,11 @@ module Middleman
 
         @initialized = true
 
-        # Save the last-used @options so it may be re-used when
-        # reloading later on.
-        ::Middleman::Profiling.report('server_start')
-
-        the_app.execute_callbacks(:before_server, [ServerInformationCallbackProxy.new(server_information)])
-
+        # Transform the current process into a daemon
         if @options[:daemon]
           # To output the child PID, let's make preview server a daemon by hand
-          child_pid = fork
-
-          if child_pid
-            logger.info "== Middleman preview server is running in background with PID #{child_pid}"
-            Process.detach child_pid
-            exit 0
-          else
-            $stdout.reopen('/dev/null', 'w')
-            $stderr.reopen('/dev/null', 'w')
-            $stdin.reopen('/dev/null', 'r')
-          end
+          Process.daemon(true)
+          logger.info "== Middleman preview server is running in background with PID #{Process.pid}"
         end
 
         signals_queue = Queue.new
@@ -89,8 +75,14 @@ module Middleman
 
       def start_webserver(app)
         @app = app
+        @app.execute_callbacks(:before_server, [ServerInformationCallbackProxy.new(server_information)])
+
+        ::Middleman::Profiling.report('server_start')
+
         @server_pid = fork do
           server = ::Rack::Handler.get(server_information.server) || ::Rack::Handler.default
+
+          logger.info %(== The Middleman selected #{server} rack handler)
 
           %w[INT HUP TERM QUIT].each do |sig|
             next unless Signal.list[sig]
@@ -106,9 +98,9 @@ module Middleman
 
           server_options = basic_server_options
 
-          if server == ::Rack::Handler::WEBrick
+          if server.to_s == 'Rack::Handler::WEBrick'
             server_options[:Logger] = (@options[:debug] ? logger : ::WEBrick::Log.new(nil, 0))
-          elsif server == ::Rack::Handler::Puma
+          elsif server.to_s == 'Rack::Handler::Puma'
             server_options[:Silent] = !@options[:debug]
             server_options[:Verbose] = @options[:debug]
           end
@@ -269,9 +261,9 @@ module Middleman
             # use a generated self-signed cert
             http_opts[:SSLCertName] = [
               %w[CN localhost],
-              ['CN', host]
+              ['CN', server_information.server_name]
             ].uniq
-            cert, key = create_self_signed_cert(1024, [['CN', server_information.server_name]], server_information.site_addresses, 'Middleman Preview Server')
+            cert, key = create_self_signed_cert(4096, [['CN', server_information.server_name]], server_information.site_addresses, 'Middleman Preview Server')
             http_opts[:SSLCertificate] = cert
             http_opts[:SSLPrivateKey] = key
           end
@@ -309,7 +301,7 @@ module Middleman
         cert.add_extension(aki)
         cert.add_extension ef.create_extension('subjectAltName', aliases.map { |d| "DNS: #{d}" }.join(','))
 
-        cert.sign(rsa, OpenSSL::Digest.new('SHA1'))
+        cert.sign(rsa, OpenSSL::Digest::SHA1.new)
 
         [cert, rsa]
       end
