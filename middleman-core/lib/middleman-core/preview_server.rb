@@ -258,7 +258,7 @@ module Middleman
             # use a generated self-signed cert
             http_opts[:SSLCertName] = [
               %w[CN localhost],
-              ['CN', host]
+              ['CN', server_information.server_name]
             ].uniq
             cert, key = create_self_signed_cert(4096, [['CN', server_information.server_name]], server_information.site_addresses, 'Middleman Preview Server')
             http_opts[:SSLCertificate] = cert
