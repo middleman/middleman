@@ -42,7 +42,7 @@ GEM
       minitest (~> 5.1)
       tzinfo (~> 1.1)
       zeitwerk (~> 2.2, >= 2.2.2)
-    addressable (2.7.0)
+    addressable (2.8.0)
       public_suffix (>= 2.0.2, < 5.0)
     aruba (1.0.4)
       childprocess (>= 2.0, < 5.0)
@@ -270,7 +270,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  addressable (~> 2.4)
+  addressable (~> 2.8)
   aruba (~> 1.0.4)
   byebug
   capybara (~> 3.35.3)
