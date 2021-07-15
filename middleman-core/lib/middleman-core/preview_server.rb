@@ -258,9 +258,9 @@ module Middleman
             # use a generated self-signed cert
             http_opts[:SSLCertName] = [
               %w[CN localhost],
-              ['CN', host]
+              ['CN', server_information.server_name]
             ].uniq
-            cert, key = create_self_signed_cert(1024, [['CN', server_information.server_name]], server_information.site_addresses, 'Middleman Preview Server')
+            cert, key = create_self_signed_cert(4096, [['CN', server_information.server_name]], server_information.site_addresses, 'Middleman Preview Server')
             http_opts[:SSLCertificate] = cert
             http_opts[:SSLPrivateKey] = key
           end
@@ -309,7 +309,7 @@ module Middleman
         cert.add_extension(aki)
         cert.add_extension ef.create_extension('subjectAltName', aliases.map { |d| "DNS: #{d}" }.join(','))
 
-        cert.sign(rsa, OpenSSL::Digest.new('SHA1'))
+        cert.sign(rsa, OpenSSL::Digest.new('SHA256'))
 
         [cert, rsa]
       end
