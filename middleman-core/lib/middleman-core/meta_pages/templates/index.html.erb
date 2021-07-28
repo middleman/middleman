@@ -1,18 +1,22 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8">
+    <meta charset="utf-8" />
     <title>Middleman Info</title>
-    <link type="text/css" rel="stylesheet" href="/__middleman/assets/meta.css">
+    <link type="text/css" rel="stylesheet" href="/__middleman/assets/colors.css" />
+    <link type="text/css" rel="stylesheet" href="/__middleman/assets/meta.css" />
   </head>
-
   <body>
     <div class="container">
       <article id="main">
         <h1>Middleman Information</h1>
+        <a>Information</a>
+        <a href="/__middleman/config/">Configuration</a>
+        <a href="/__middleman/sitemap/">Sitemap</a>
         <p>
-          Middleman version <%= Middleman::VERSION %>
+          This page shows an overview of the Middleman application its meta-pages.
         </p>
+        <p>Middleman version <%= Middleman::VERSION %></p>
         <ul class="nav-list">
           <li>
             <a href="/__middleman/sitemap/">Sitemap</a>
