@@ -122,7 +122,7 @@ GEM
     ffi (1.14.2)
     fiber-local (1.0.0)
     generator (0.0.1)
-    haml (5.2.1)
+    haml (5.2.2)
       temple (>= 0.8.0)
       tilt
     hamster (3.0.0)
