@@ -81,6 +81,10 @@ module Middleman
     # @return [NilClass, String]
     define_setting :bind_address, nil, 'The bind address of the preview server'
 
+    # Which web server the preview server should use
+    # @return [String]
+    define_setting :web_server, :webrick, 'The web server of the preview server'
+
     # Whether to serve the preview server over HTTPS.
     # @return [Boolean]
     define_setting :https, false, 'Serve the preview server over SSL/TLS'

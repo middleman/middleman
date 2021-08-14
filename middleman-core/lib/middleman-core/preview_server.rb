@@ -194,7 +194,8 @@ module Middleman
         server_information.use(bind_address: possible_from_cli(:bind_address, app.config),
                                port: possible_from_cli(:port, app.config),
                                server_name: possible_from_cli(:server_name, app.config),
-                               https: possible_from_cli(:https, app.config))
+                               https: possible_from_cli(:https, app.config),
+                               web_server: possible_from_cli(:web_server, app.config))
 
         unless server_information.port == configured_port
           logger.warn format(
@@ -237,12 +238,23 @@ module Middleman
       def start_webserver(app)
         @app = app
 
-        @web_server = Servers::Webrick.new(
+        @web_server = web_server_class.new(
           ::Middleman::Rack.new(app).to_app,
           server_information,
           @options[:debug] || false
         )
         @web_server.start
+      end
+
+      def web_server_class
+        logger.debug %(== Loading web server class for #{server_information.web_server})
+        Servers.const_get(server_information.web_server.capitalize)
+      rescue NameError
+        logger.warn format(
+          '== Error to load "%<server>s" web server. Fallback to webrick.',
+          server: server_information.web_server
+        )
+        Servers::Webrick
       end
 
       # Stop web server and app
