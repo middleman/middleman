@@ -217,9 +217,12 @@ module Middleman
           reload_queue << true
         end
 
+        app.before_shutdown do
+          reload_queue << false # just exit
+        end
+
         Thread.new do
-          reload_queue.pop # wait for reload signal
-          reload
+          reload if reload_queue.pop # wait for reload signal or just die
         end
 
         # Add in the meta pages application
