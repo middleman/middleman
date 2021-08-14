@@ -73,7 +73,8 @@ module Middleman
 
         signals_thread = stop_on_exit_thread
 
-        start_webserver(app)
+        init_webserver(app)
+        web_server.start
 
         signals_thread.join # wait after reload for real exit by signals
       end
@@ -124,9 +125,11 @@ module Middleman
 
         stop_webserver
 
+        init_webserver(new_app)
+
         logger.info '== The Middleman has reloaded'
 
-        start_webserver(new_app)
+        web_server.start
       end
 
       # Stop the current instance
@@ -232,10 +235,10 @@ module Middleman
         @cli_options[key] || config[key]
       end
 
-      # Start web server and app
+      # Init web server
       # @param [Middleman::Application] app
       # @return [void]
-      def start_webserver(app)
+      def init_webserver(app)
         @app = app
 
         @web_server = web_server_class.new(
@@ -243,7 +246,6 @@ module Middleman
           server_information,
           @options[:debug] || false
         )
-        @web_server.start
       end
 
       def web_server_class
