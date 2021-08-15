@@ -153,8 +153,6 @@ module Middleman
           opts[:instrumenting] || false
         )
 
-        reload_queue = Queue.new
-
         app = ::Middleman::Application.new do
           config[:cli_options] = cli_options.each_with_object({}) do |(k, v), sum|
             sum[k] = v
@@ -211,6 +209,8 @@ module Middleman
 
         @ssl_certificate = possible_from_cli(:ssl_certificate, app.config)
         @ssl_private_key = possible_from_cli(:ssl_private_key, app.config)
+
+        reload_queue = Queue.new
 
         app.files.on_change :reload do
           reload_queue << true
