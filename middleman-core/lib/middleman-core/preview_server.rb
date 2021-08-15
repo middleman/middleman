@@ -39,11 +39,11 @@ module Middleman
           exit 1
         end
 
-        logger.debug %(== Server information is provided by #{server_information.handler})
-        logger.debug %(== The Middleman is running in "#{environment}" environment)
-        logger.debug format('== The Middleman preview server is bound to %<url>s', url: ServerUrl.new(hosts: server_information.listeners, port: server_information.port, https: server_information.https?).to_bind_addresses.join(', '))
-        logger.info format('== View your site at %<url>s', url: ServerUrl.new(hosts: server_information.site_addresses, port: server_information.port, https: server_information.https?).to_urls.join(', '))
-        logger.info format('== Inspect your site configuration at %<url>s', url: ServerUrl.new(hosts: server_information.site_addresses, port: server_information.port, https: server_information.https?).to_config_urls.join(', '))
+        app.logger.debug %(== Server information is provided by #{server_information.handler})
+        app.logger.debug %(== The Middleman is running in "#{environment}" environment)
+        app.logger.debug format('== The Middleman preview server is bound to %<url>s', url: ServerUrl.new(hosts: server_information.listeners, port: server_information.port, https: server_information.https?).to_bind_addresses.join(', '))
+        app.logger.info format('== View your site at %<url>s', url: ServerUrl.new(hosts: server_information.site_addresses, port: server_information.port, https: server_information.https?).to_urls.join(', '))
+        app.logger.info format('== Inspect your site configuration at %<url>s', url: ServerUrl.new(hosts: server_information.site_addresses, port: server_information.port, https: server_information.https?).to_config_urls.join(', '))
 
         @initialized ||= false
         return if @initialized
@@ -61,7 +61,7 @@ module Middleman
           child_pid = fork
 
           if child_pid
-            logger.info "== Middleman preview server is running in background with PID #{child_pid}"
+            app.logger.info "== Middleman preview server is running in background with PID #{child_pid}"
             Process.detach child_pid
             exit 0
           else
@@ -100,7 +100,7 @@ module Middleman
       # @return [void]
       def stop
         begin
-          logger.info '== The Middleman is shutting down'
+          app.logger.info '== The Middleman is shutting down'
         rescue StandardError
           # if the user closed their terminal STDOUT/STDERR won't exist
         end
@@ -111,7 +111,7 @@ module Middleman
       # Simply stop, then start the server
       # @return [void]
       def reload
-        logger.info '== The Middleman is reloading'
+        app.logger.info '== The Middleman is reloading'
 
         app.execute_callbacks(:reload)
 
@@ -119,7 +119,7 @@ module Middleman
           new_app = initialize_new_app
         rescue StandardError => e
           warn "Error reloading Middleman: #{e}\n#{e.backtrace.join("\n")}"
-          logger.info '== The Middleman is still running the application from before the error'
+          app.logger.info '== The Middleman is still running the application from before the error'
           return
         end
 
@@ -127,7 +127,7 @@ module Middleman
 
         init_webserver(new_app)
 
-        logger.info '== The Middleman has reloaded'
+        app.logger.info '== The Middleman has reloaded'
 
         web_server.start
       end
@@ -139,10 +139,6 @@ module Middleman
       end
 
       private
-
-      def logger
-        @logger ||= Logger.new(@options[:debug] ? :debug : :info)
-      end
 
       def initialize_new_app
         opts = @options.dup
@@ -198,7 +194,7 @@ module Middleman
                                https: possible_from_cli(:https, app.config))
 
         unless server_information.port == configured_port
-          logger.warn format(
+          app.logger.warn format(
             '== The Middleman uses a different port "%<new_port>s" then the configured one "%<old_port>s" because some other server is listening on that port.',
             new_port: server_information.port,
             old_port: configured_port
