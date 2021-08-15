@@ -14,9 +14,6 @@ module Middleman::Cli
                  aliases: '-s'
     class_option :bind_address,
                  aliases: '-b'
-    class_option :web_server,
-                 aliases: '-w',
-                 desc: 'Web server'
     class_option :verbose,
                  type: :boolean,
                  default: false,

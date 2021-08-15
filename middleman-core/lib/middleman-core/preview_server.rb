@@ -7,7 +7,7 @@ require 'middleman-core/rack'
 require 'middleman-core/preview_server/server_information'
 require 'middleman-core/preview_server/server_url'
 require 'middleman-core/preview_server/server_information_callback_proxy'
-require 'middleman-core/preview_server/servers/webrick'
+require 'middleman-core/preview_server/webrick'
 
 module Middleman
   class PreviewServer
@@ -244,22 +244,11 @@ module Middleman
       def init_webserver(app)
         @app = app
 
-        @web_server = web_server_class.new(
+        @web_server = Webrick.new(
           ::Middleman::Rack.new(app).to_app,
           server_information,
           @options[:debug] || false
         )
-      end
-
-      def web_server_class
-        logger.debug %(== Loading web server class for #{server_information.web_server})
-        Servers.const_get(server_information.web_server.capitalize)
-      rescue NameError
-        logger.warn format(
-          '== Error to load "%<server>s" web server. Fallback to webrick.',
-          server: server_information.web_server
-        )
-        Servers::Webrick
       end
 
       # Stop web server and app
