@@ -197,8 +197,7 @@ module Middleman
         server_information.use(bind_address: possible_from_cli(:bind_address, app.config),
                                port: possible_from_cli(:port, app.config),
                                server_name: possible_from_cli(:server_name, app.config),
-                               https: possible_from_cli(:https, app.config),
-                               web_server: possible_from_cli(:web_server, app.config))
+                               https: possible_from_cli(:https, app.config))
 
         unless server_information.port == configured_port
           logger.warn format(
