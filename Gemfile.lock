@@ -63,8 +63,9 @@ GEM
       debug_inspector (>= 0.0.1)
     builder (3.2.4)
     byebug (11.1.3)
-    capybara (3.35.3)
+    capybara (3.36.0)
       addressable
+      matrix
       mini_mime (>= 0.1.3)
       nokogiri (~> 1.8)
       rack (>= 1.6.0)
@@ -139,10 +140,11 @@ GEM
     listen (3.4.1)
       rb-fsevent (~> 0.10, >= 0.10.3)
       rb-inotify (~> 0.9, >= 0.9.10)
+    matrix (0.4.2)
     memoist (0.16.2)
     method_source (1.0.0)
     middleware (0.1.0)
-    mini_mime (1.0.2)
+    mini_mime (1.1.2)
     mini_portile2 (2.6.1)
     mini_racer (0.4.0)
       libv8-node (~> 15.14.0.0)
@@ -179,7 +181,7 @@ GEM
       binding_of_caller (~> 1.0)
       pry (~> 0.13)
     public_suffix (4.0.6)
-    racc (1.5.2)
+    racc (1.6.0)
     rack (2.2.3)
     rack-protection (2.1.0)
       rack
@@ -273,7 +275,7 @@ DEPENDENCIES
   addressable (~> 2.8)
   aruba (~> 1.0.4)
   byebug
-  capybara (~> 3.35.3)
+  capybara (~> 3.36.0)
   coffee-script (~> 2.2)
   cucumber (~> 5.3)
   haml (>= 4.0.5)
