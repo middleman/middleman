@@ -1,5 +1,13 @@
 # master
 
+# 4.4.2
+
+- Use compiled regex for performance improvement (#2502)
+
+# 4.4.1
+
+- Yanked
+
 # 4.4.0
 
 - Ruby 3.0 support.
