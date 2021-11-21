@@ -57,8 +57,14 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
   end
 
   helpers do
-    def t(*args)
-      ::I18n.t(*args)
+    if RUBY_VERSION.start_with? '2.'
+      def t(*args)
+        ::I18n.t(*args)
+      end
+    else
+      def t(*args, **kwargs)
+        ::I18n.t(*args, **kwargs)
+      end
     end
 
     def url_for(path_or_resource, options_hash = ::Middleman::EMPTY_HASH)
