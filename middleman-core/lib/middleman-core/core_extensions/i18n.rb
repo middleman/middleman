@@ -235,7 +235,9 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
     ::I18n.default_locale = @mount_at_root
 
     # Reset fallbacks to fall back to our new default
-    ::I18n.fallbacks = ::I18n::Locale::Fallbacks.new if ::I18n.respond_to?(:fallbacks)
+    if ::I18n.respond_to?(:fallbacks)
+      ::I18n.fallbacks = ::I18n::Locale::Fallbacks.new(@mount_at_root)
+    end
   end
 
   Contract ArrayOf[Symbol]
