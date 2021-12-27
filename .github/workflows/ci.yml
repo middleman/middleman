@@ -18,6 +18,7 @@ jobs:
       with:
         ruby-version: ${{ matrix.ruby-version }}
         bundler-cache: true
+        cache-version: 2
     - name: Runs linter
       run: bundle exec rake rubocop
     - name: Runs tests
