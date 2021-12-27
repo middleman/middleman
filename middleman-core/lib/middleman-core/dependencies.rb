@@ -45,17 +45,18 @@ module Middleman
         sum[p] = ::Middleman::Util.hash_file(file)
       end
 
-      ::YAML.dump(
+      ::YAML.safe_load_file(
         {
           'data_depth' => app.config[:data_collection_depth],
           'global' => global
-        }.merge(serialized)
+        }.merge(serialized),
+        permitted_classes: [Date, Time, DateTime, Symbol, Regexp]
       )
     end
 
     Contract String => Graph
     def parse_yaml(file_path)
-      ::YAML.load_file(file_path)
+      ::YAML.safe_load_file(file_path, permitted_classes: [Date, Time, DateTime, Symbol, Regexp])
     rescue StandardError, ::Psych::SyntaxError => e
       warn "YAML Exception parsing dependency graph: #{e.message}"
     end
