@@ -55,7 +55,7 @@ Gem::Specification.new do |s|
   s.add_dependency('oj', ['~> 3'])
 
   # Testing
-  s.add_dependency('contracts', ['~> 0.16.0'])
+  s.add_dependency('contracts', ['0.16.0'])
 
   # Hash stuff
   s.add_dependency('hashie', ['~> 5'])

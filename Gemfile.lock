@@ -11,7 +11,7 @@ PATH
       activesupport (>= 5.0.0)
       addressable (~> 2)
       bundler
-      contracts (~> 0.16.0)
+      contracts (= 0.16.0)
       dotenv
       erubis
       execjs (~> 2)
