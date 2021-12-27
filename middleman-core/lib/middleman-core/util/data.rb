@@ -127,7 +127,7 @@ module Middleman
       def parse_yaml(content, full_path)
         c = begin
           ::Middleman::Util.instrument 'parse.yaml' do
-            ::YAML.safe_load(content, permitted_classes: [Date, Time, DateTime, Symbol, Regexp, Array, Hash], aliases: true)
+            ::YAML.safe_load(content, permitted_classes: [Date, Time, DateTime, Symbol, Regexp], aliases: true)
           end
         rescue StandardError, ::Psych::SyntaxError => e
           warn "YAML Exception parsing #{full_path}: #{e.message}"
