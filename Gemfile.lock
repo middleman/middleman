@@ -136,6 +136,7 @@ GEM
       rexml
     lazy_priority_queue (0.1.1)
     libv8-node (16.10.0.0)
+    libv8-node (16.10.0.0-x86_64-darwin)
     libv8-node (16.10.0.0-x86_64-linux)
     liquid (5.1.0)
     listen (3.7.0)
@@ -158,6 +159,8 @@ GEM
     nio4r (2.5.8)
     nokogiri (1.12.5)
       mini_portile2 (~> 2.6.1)
+      racc (~> 1.4)
+    nokogiri (1.12.5-x86_64-darwin)
       racc (~> 1.4)
     nokogiri (1.12.5-x86_64-linux)
       racc (~> 1.4)
@@ -269,6 +272,7 @@ GEM
 
 PLATFORMS
   ruby
+  x86_64-darwin-20
   x86_64-linux
 
 DEPENDENCIES
