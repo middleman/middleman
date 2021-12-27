@@ -56,7 +56,7 @@ module Middleman
 
     Contract String => Graph
     def parse_yaml(file_path)
-      ::YAML.safe_load_file(file_path, permitted_classes: [Date, Time, DateTime, Symbol, Regexp], aliases: true)
+      ::YAML.safe_load(File.read(file_path), permitted_classes: [Date, Time, DateTime, Symbol, Regexp], aliases: true)
     rescue StandardError, ::Psych::SyntaxError => e
       warn "YAML Exception parsing dependency graph: #{e.message}"
     end

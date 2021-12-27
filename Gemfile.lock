@@ -11,7 +11,7 @@ PATH
       activesupport (>= 5.0.0)
       addressable (~> 2)
       bundler
-      contracts (~> 0)
+      contracts (~> 0.16.0)
       dotenv
       erubis
       execjs (~> 2)
@@ -81,7 +81,7 @@ GEM
     concurrent-ruby (1.1.9)
     console (1.14.0)
       fiber-local
-    contracts (0.16.1)
+    contracts (0.16.0)
     cucumber (7.1.0)
       builder (~> 3.2, >= 3.2.4)
       cucumber-core (~> 10.1, >= 10.1.0)
