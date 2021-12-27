@@ -25,39 +25,39 @@ Gem::Specification.new do |s|
   s.add_dependency('parallel')
   s.add_dependency('servolux')
   s.add_dependency('dotenv')
-  s.add_dependency('rgl', ['~> 0.5.3'])
+  s.add_dependency('rgl', ['~> 0.5'])
   s.add_dependency('toml')
   s.add_dependency('webrick')
 
   # Helpers
   s.add_dependency('activesupport', ['>= 5.0.0'])
-  s.add_dependency('padrino-helpers', ['~> 0.15'])
-  s.add_dependency('addressable', ['~> 2.3'])
-  s.add_dependency('memoist', ['~> 0.14'])
+  s.add_dependency('padrino-helpers', ['~> 0'])
+  s.add_dependency('addressable', ['~> 2'])
+  s.add_dependency('memoist', ['~> 0'])
 
   # Watcher
-  s.add_dependency('listen', ['~> 3.0'])
+  s.add_dependency('listen', ['~> 3'])
 
   # i18n
-  s.add_dependency('i18n', ['>= 1.6', '< 2'])
+  s.add_dependency('i18n', ['~> 1'])
 
   # Automatic Image Sizes
-  s.add_dependency('fastimage', ['~> 2.0'])
+  s.add_dependency('fastimage', ['~> 2'])
 
   # Sass and Minify CSS
-  s.add_dependency('sassc', ['~> 2.0'])
+  s.add_dependency('sassc', ['~> 2'])
 
   # Minify JS
-  s.add_dependency('uglifier', ['~> 4.1'])
-  s.add_dependency('execjs', ['~> 2.0'])
+  s.add_dependency('uglifier', ['~> 4'])
+  s.add_dependency('execjs', ['~> 2'])
 
   # Perf
-  s.add_dependency('oj', ['~> 3.7'])
+  s.add_dependency('oj', ['~> 3'])
 
   # Testing
-  s.add_dependency('contracts', ['~> 0.16.0'])
+  s.add_dependency('contracts', ['~> 0'])
 
   # Hash stuff
-  s.add_dependency('hashie', ['~> 4.0'])
-  s.add_dependency('hamster', ['~> 3.0'])
+  s.add_dependency('hashie', ['~> 5'])
+  s.add_dependency('hamster', ['~> 3'])
 end

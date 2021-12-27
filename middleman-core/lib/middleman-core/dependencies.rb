@@ -3,6 +3,7 @@
 require 'hamster'
 require 'set'
 require 'pathname'
+require 'date'
 require 'yaml'
 require 'fileutils'
 require 'middleman-core/contracts'
@@ -45,18 +46,17 @@ module Middleman
         sum[p] = ::Middleman::Util.hash_file(file)
       end
 
-      ::YAML.safe_load_file(
+      ::YAML.dump(
         {
           'data_depth' => app.config[:data_collection_depth],
           'global' => global
-        }.merge(serialized),
-        permitted_classes: [Date, Time, DateTime, Symbol, Regexp]
+        }.merge(serialized)
       )
     end
 
     Contract String => Graph
     def parse_yaml(file_path)
-      ::YAML.safe_load_file(file_path, permitted_classes: [Date, Time, DateTime, Symbol, Regexp])
+      ::YAML.safe_load_file(file_path, permitted_classes: [Date, Time, DateTime, Symbol, Regexp, Array, Hash], aliases: true)
     rescue StandardError, ::Psych::SyntaxError => e
       warn "YAML Exception parsing dependency graph: #{e.message}"
     end

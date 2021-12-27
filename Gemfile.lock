@@ -9,39 +9,38 @@ PATH
   specs:
     middleman-core (5.0.0.rc.2)
       activesupport (>= 5.0.0)
-      addressable (~> 2.3)
+      addressable (~> 2)
       bundler
-      contracts (~> 0.16.0)
+      contracts (~> 0)
       dotenv
       erubis
-      execjs (~> 2.0)
-      fastimage (~> 2.0)
-      hamster (~> 3.0)
-      hashie (~> 4.0)
-      i18n (>= 1.6, < 2)
-      listen (~> 3.0)
-      memoist (~> 0.14)
-      oj (~> 3.7)
-      padrino-helpers (~> 0.15)
+      execjs (~> 2)
+      fastimage (~> 2)
+      hamster (~> 3)
+      hashie (~> 5)
+      i18n (~> 1)
+      listen (~> 3)
+      memoist (~> 0)
+      oj (~> 3)
+      padrino-helpers (~> 0)
       parallel
       rack (>= 1.4.5, < 3)
-      rgl (~> 0.5.3)
-      sassc (~> 2.0)
+      rgl (~> 0.5)
+      sassc (~> 2)
       servolux
       tilt (~> 2.0.9)
       toml
-      uglifier (~> 4.1)
+      uglifier (~> 4)
       webrick
 
 GEM
   remote: https://rubygems.org/
   specs:
-    activesupport (6.1.4.4)
+    activesupport (7.0.0)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (>= 1.6, < 2)
       minitest (>= 5.1)
       tzinfo (~> 2.0)
-      zeitwerk (~> 2.3)
     addressable (2.8.0)
       public_suffix (>= 2.0.2, < 5.0)
     aruba (1.0.4)
@@ -128,7 +127,7 @@ GEM
       tilt
     hamster (3.0.0)
       concurrent-ruby (~> 1.0)
-    hashie (4.1.0)
+    hashie (5.0.0)
     i18n (1.8.11)
       concurrent-ruby (~> 1.0)
     interception (0.5)
@@ -267,7 +266,6 @@ GEM
       nokogiri (~> 1.8)
     yard (0.9.27)
       webrick (~> 1.7.0)
-    zeitwerk (2.5.2)
 
 PLATFORMS
   ruby
@@ -294,7 +292,7 @@ DEPENDENCIES
   rubocop (~> 1.23)
   rubocop-performance (~> 1.12)
   rubydns (~> 2.0.2)
-  sassc (~> 2.4)
+  sassc (~> 2)
   simplecov (~> 0.21)
   sinatra (>= 2.0.0.beta2)
   slim (>= 2.0)
