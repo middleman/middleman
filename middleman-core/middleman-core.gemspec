@@ -31,7 +31,7 @@ Gem::Specification.new do |s|
 
   # Helpers
   s.add_dependency('activesupport', ['>= 5.0.0'])
-  s.add_dependency('padrino-helpers', ['~> 0.14.4'])
+  s.add_dependency('padrino-helpers', ['~> 0.15'])
   s.add_dependency('addressable', ['~> 2.3'])
   s.add_dependency('memoist', ['~> 0.14'])
 
@@ -39,7 +39,7 @@ Gem::Specification.new do |s|
   s.add_dependency('listen', ['~> 3.0'])
 
   # i18n
-  s.add_dependency('i18n', ['~> 0.9.0'])
+  s.add_dependency('i18n', ['>= 1.6', '< 2'])
 
   # Automatic Image Sizes
   s.add_dependency('fastimage', ['~> 2.0'])
