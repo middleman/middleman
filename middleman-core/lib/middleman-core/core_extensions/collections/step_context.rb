@@ -30,6 +30,12 @@ module Middleman
             @app.config_context.send(name, *args, &block)
           end
         end
+
+        def respond_to_missing?(method_name, include_private = false)
+          return super if method_name.to_s.start_with?('_internal_')
+
+          respond_to?(:"_internal_#{method_name}") || super
+        end
       end
     end
   end

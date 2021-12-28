@@ -25,7 +25,7 @@ Feature: Alternate between multiple asset hosts
     And a file named "config.rb" with:
       """
       activate :asset_host, host: Proc.new { |asset|
-        hash = Digest::MD5.digest(asset).bytes.map!(&:ord).reduce(&:+)
+        hash = Digest::SHA256.digest(asset).bytes.map!(&:ord).reduce(&:+)
         "http://assets%d.example.com" % (hash % 4)
       }
       """

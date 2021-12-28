@@ -11,7 +11,7 @@ PATH
       activesupport (>= 5.0.0)
       addressable (~> 2)
       bundler
-      contracts (= 0.16.0)
+      contracts (~> 0.17)
       dotenv
       erubis
       execjs (~> 2)
@@ -81,7 +81,7 @@ GEM
     concurrent-ruby (1.1.9)
     console (1.14.0)
       fiber-local
-    contracts (0.16.0)
+    contracts (0.17)
     cucumber (7.1.0)
       builder (~> 3.2, >= 3.2.4)
       cucumber-core (~> 10.1, >= 10.1.0)
@@ -136,8 +136,6 @@ GEM
       rexml
     lazy_priority_queue (0.1.1)
     libv8-node (16.10.0.0)
-    libv8-node (16.10.0.0-x86_64-darwin)
-    libv8-node (16.10.0.0-x86_64-linux)
     liquid (5.1.0)
     listen (3.7.0)
       rb-fsevent (~> 0.10, >= 0.10.3)
@@ -159,10 +157,6 @@ GEM
     nio4r (2.5.8)
     nokogiri (1.12.5)
       mini_portile2 (~> 2.6.1)
-      racc (~> 1.4)
-    nokogiri (1.12.5-x86_64-darwin)
-      racc (~> 1.4)
-    nokogiri (1.12.5-x86_64-linux)
       racc (~> 1.4)
     oj (3.13.10)
     padrino-helpers (0.15.1)
@@ -272,8 +266,6 @@ GEM
 
 PLATFORMS
   ruby
-  x86_64-darwin-20
-  x86_64-linux
 
 DEPENDENCIES
   addressable (~> 2.8)

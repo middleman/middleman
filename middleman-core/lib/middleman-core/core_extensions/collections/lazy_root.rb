@@ -6,6 +6,8 @@ module Middleman
   module CoreExtensions
     module Collections
       class LazyCollectorRoot < BasicObject
+        DELEGATE = %i[hash eql? is_a? puts p].freeze
+
         def initialize(parent)
           @data = nil
           @parent = parent
@@ -24,7 +26,13 @@ module Middleman
         end
 
         def method_missing(name, *args, &block)
+          return ::Kernel.send(name, *args, &block) if DELEGATE.include? name
+
           LazyCollectorStep.new(name, args, block, self)
+        end
+
+        def respond_to_missing?(method_name, include_private = false)
+          true
         end
       end
     end

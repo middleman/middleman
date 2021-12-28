@@ -54,8 +54,8 @@ module Middleman
       end
 
       # Needed so that method_missing makes sense
-      def respond_to?(method, include_private = false)
-        super || defines_setting?(method) || (method =~ /^(\w+)=$/ && defines_setting?(Regexp.last_match(1)))
+      def respond_to_missing?(method, include_private = false)
+        defines_setting?(method) || (method =~ /^(\w+)=$/ && defines_setting?(Regexp.last_match(1))) || super
       end
 
       # Does this configuration manager know about the setting identified by key?
