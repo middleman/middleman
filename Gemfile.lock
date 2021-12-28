@@ -22,7 +22,7 @@ PATH
       listen (~> 3)
       memoist (~> 0)
       oj (~> 3)
-      padrino-helpers (~> 0)
+      padrino-helpers (~> 0.15.0)
       parallel
       rack (>= 1.4.5, < 3)
       rgl (~> 0.5)
