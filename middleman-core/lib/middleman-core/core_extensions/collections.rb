@@ -79,12 +79,12 @@ module Middleman
           root
         end
 
-        # Contract Symbol => Any
+        Contract Symbol => Any
         def collector_value(label)
           @values_by_name[label]
         end
 
-        # Contract IsA['Middleman::Sitemap::ResourceListContainer'] => Any
+        Contract IsA['Middleman::Sitemap::ResourceListContainer'] => Any
         def manipulate_resource_list_container!(resource_list)
           @lock.synchronize do
             @collector_roots.each do |pair|
