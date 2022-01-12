@@ -44,13 +44,6 @@ Gem::Specification.new do |s|
   # Automatic Image Sizes
   s.add_dependency('fastimage', ['~> 2'])
 
-  # Sass and Minify CSS
-  s.add_dependency('sassc', ['~> 2'])
-
-  # Minify JS
-  s.add_dependency('uglifier', ['~> 4'])
-  s.add_dependency('execjs', ['~> 2'])
-
   # Perf
   s.add_dependency('oj', ['~> 3'])
 

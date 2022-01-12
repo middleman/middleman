@@ -8,22 +8,10 @@ Middleman::Extensions.register :erb_renderer, auto_activate: :before_configurati
   Middleman::Renderers::ERb
 end
 
-# CoffeeScript Support
-Middleman::Extensions.register :coffee_renderer, auto_activate: :before_configuration do
-  require 'middleman-core/renderers/coffee_script'
-  Middleman::Renderers::CoffeeScript
-end
-
 # Haml Support
 Middleman::Extensions.register :haml_renderer, auto_activate: :before_configuration do
   require 'middleman-core/renderers/haml'
   Middleman::Renderers::Haml
-end
-
-# Sass Support
-Middleman::Extensions.register :sass_renderer, auto_activate: :before_configuration do
-  require 'middleman-core/renderers/sass'
-  Middleman::Renderers::Sass
 end
 
 # Markdown Support
@@ -42,10 +30,4 @@ end
 Middleman::Extensions.register :slim_renderer, auto_activate: :before_configuration do
   require 'middleman-core/renderers/slim'
   Middleman::Renderers::Slim
-end
-
-# Less Support
-Middleman::Extensions.register :less_renderer, auto_activate: :before_configuration do
-  require 'middleman-core/renderers/less'
-  Middleman::Renderers::Less
 end

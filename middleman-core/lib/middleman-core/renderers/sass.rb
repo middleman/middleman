@@ -74,7 +74,6 @@ module Middleman
           error_msg = <<~END
             /*
             #{header.gsub('*/', '*\\/')}
-
             Backtrace:\n#{e.backtrace.join("\n").gsub('*/', '*\\/')}
             */
             body:before {

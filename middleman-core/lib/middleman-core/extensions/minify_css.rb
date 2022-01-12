@@ -3,13 +3,13 @@
 require 'memoist'
 require 'middleman-core/contracts'
 require 'rack/mime'
-require 'sassc'
 
 # Minify CSS Extension
 class Middleman::Extensions::MinifyCss < ::Middleman::Extension
   option :inline, false, 'Whether to minify CSS inline within HTML files'
   option :ignore, [], 'Patterns to avoid minifying'
   option :compressor, proc {
+    require 'sassc'
     SassCompressor
   }, 'Set the CSS compressor to use.'
   option :content_types, %w[text/css], 'Content types of resources that contain CSS'
