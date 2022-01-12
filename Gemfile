@@ -33,8 +33,8 @@ gem 'slim', '>= 2.0', require: false
 gem 'rubydns', '~> 2.0.2', require: false
 
 # For less, note there is no compatible JS runtime for windows
-# gem 'mini_racer', '~> 0.6.0', platforms: :ruby
-# gem 'therubyrhino', '>= 2.0', platforms: :jruby
+gem 'mini_racer', '~> 0.6.1', platforms: :ruby
+gem 'therubyrhino', '>= 2.0', platforms: :jruby
 
 # Code Quality
 gem 'rubocop', '~> 1.24', require: false
