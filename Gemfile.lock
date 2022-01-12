@@ -135,7 +135,6 @@ GEM
     kramdown (2.3.1)
       rexml
     lazy_priority_queue (0.1.1)
-    libv8-node (16.10.0.0)
     liquid (5.1.0)
     listen (3.7.0)
       rb-fsevent (~> 0.10, >= 0.10.3)
@@ -148,8 +147,6 @@ GEM
     mime-types-data (3.2021.1115)
     mini_mime (1.1.2)
     mini_portile2 (2.6.1)
-    mini_racer (0.6.1)
-      libv8-node (~> 16.10.0.0)
     minitest (5.15.0)
     multi_test (0.1.2)
     mustermann (1.1.1)
@@ -279,7 +276,6 @@ DEPENDENCIES
   liquid (>= 3.0)
   middleman-cli!
   middleman-core!
-  mini_racer (~> 0.6.1)
   pry
   pry-rescue
   pry-stack_explorer
@@ -293,7 +289,6 @@ DEPENDENCIES
   simplecov (~> 0.21)
   sinatra (>= 2.0.0.beta2)
   slim (>= 2.0)
-  therubyrhino (>= 2.0)
   yard (~> 0.9.27)
 
 BUNDLED WITH
