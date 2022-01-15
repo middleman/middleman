@@ -9,31 +9,42 @@ class Middleman::Extensions::ExternalPipeline < ::Middleman::Extension
   option :latency, 0.25, 'Latency between refreshes of source'
   option :disable_background_execution, false, "Don't run the command in a separate background thread"
   option :ignore_exit_code, false, 'Ignore exit code for restart or stop of a command'
-  option :manifest_json, nil, 'Ignore exit code for restart or stop of a command'
+  option :manifest_json, nil, 'JSON file, which contain information about external assets paths'
 
   helpers do
-    def external_pipeline_asset_path(*args)
-      manifest_json = extensions[:external_pipeline].options[:manifest_json]
+    def external_pipeline_manifest_value(pipeline_name, path = [])
+      return @cached_manifest[pipeline_name].dig(*path) if build? && @cached_manifest&.key?(pipeline_name)
+
+      selected_extension = extensions[:external_pipeline].find { |_k, ep| ep.options[:name] == pipeline_name }&.last
+      if selected_extension.nil?
+        raise [
+          "Couldn't find external pipeline with name #{pipeline_name}.",
+          "Have only #{extensions[:external_pipeline].values.map { |ep| ep.options[:name] }.inspect}"
+        ].join(' ')
+      end
+
+      manifest_json = selected_extension.options[:manifest_json]
       raise "Couldn't find manifest_json file at path #{manifest_json}" if manifest_json.nil? || !File.exist?(manifest_json)
 
       manifest_content = if build?
-                           @cached_manifest ||= JSON.parse(File.read(manifest_json))
-                           @cached_manifest
+                           @cached_manifest ||= {}
+                           @cached_manifest[pipeline_name] ||= JSON.parse(File.read(manifest_json))
+                           @cached_manifest[pipeline_name]
                          else
                            JSON.parse(File.read(manifest_json)) # no caching for dev
                          end
-      manifest_content.dig(*args)
+      manifest_content.dig(*path)
     end
 
-    def external_pipeline_javascript_tag(path = [], options = {})
-      content_tag(:script, nil, {
-        src: external_pipeline_asset_path(*path)
+    def external_pipeline_javascript_tag(pipeline_name, path = [], options = {})
+      tag(:script, {
+        src: external_pipeline_manifest_value(pipeline_name, path)
       }.update(options))
     end
 
-    def external_pipeline_stylesheet_tag(path = [], options = {})
-      content_tag(:link, nil, {
-        href: external_pipeline_asset_path(*path),
+    def external_pipeline_stylesheet_tag(pipeline_name, path = [], options = {})
+      tag(:link, {
+        href: external_pipeline_manifest_value(pipeline_name, path),
         rel: 'stylesheet'
       }.update(options))
     end
