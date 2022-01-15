@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'openssl'
 require 'middleman-core/meta_pages'
 require 'middleman-core/logger'
 require 'middleman-core/rack'
