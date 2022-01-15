@@ -9,6 +9,35 @@ class Middleman::Extensions::ExternalPipeline < ::Middleman::Extension
   option :latency, 0.25, 'Latency between refreshes of source'
   option :disable_background_execution, false, "Don't run the command in a separate background thread"
   option :ignore_exit_code, false, 'Ignore exit code for restart or stop of a command'
+  option :manifest_json, nil, 'Ignore exit code for restart or stop of a command'
+
+  helpers do
+    def external_pipeline_asset_path(*args)
+      manifest_json = extensions[:external_pipeline].options[:manifest_json]
+      raise "Couldn't find manifest_json file at path #{manifest_json}" if manifest_json.nil? || !File.exist?(manifest_json)
+
+      manifest_content = if build?
+                           @cached_manifest ||= JSON.parse(File.read(manifest_json))
+                           @cached_manifest
+                         else
+                           JSON.parse(File.read(manifest_json)) # no caching for dev
+                         end
+      manifest_content.dig(*args)
+    end
+
+    def external_pipeline_javascript_tag(path = [], options = {})
+      content_tag(:script, nil, {
+        src: external_pipeline_asset_path(*path)
+      }.update(options))
+    end
+
+    def external_pipeline_stylesheet_tag(path = [], options = {})
+      content_tag(:link, nil, {
+        href: external_pipeline_asset_path(*path),
+        rel: 'stylesheet'
+      }.update(options))
+    end
+  end
 
   def initialize(app, options_hash = ::Middleman::EMPTY_HASH, &block)
     super
