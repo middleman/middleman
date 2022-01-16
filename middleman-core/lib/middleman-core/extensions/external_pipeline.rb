@@ -37,7 +37,7 @@ class Middleman::Extensions::ExternalPipeline < ::Middleman::Extension
     end
 
     def external_pipeline_javascript_tag(pipeline_name, path = [], options = {})
-      tag(:script, {
+      content_tag(:script, nil, {
         src: external_pipeline_manifest_value(pipeline_name, path)
       }.update(options))
     end
