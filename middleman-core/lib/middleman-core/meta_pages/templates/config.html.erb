@@ -25,30 +25,30 @@
         </p>
         <h2 id="core">Core Configuration</h2>
         <ul class="settings">
-<% global_config.each do |setting| %>
-          <li class="setting"><%= setting.render %></li>
-<% end %>
+          <%- global_config.each do |setting| -%>
+            <li class="setting"><%= setting.render %></li>
+          <%- end -%>
         </ul>
         <h2 id="extensions">Extensions</h2>
         <ul class="extensions">
-<% [extension_config, auto_activated_config].each do |extensions| %>
-<% extensions.each do |ext_name, configs| %>
-          <li>
-<% registered_extensions.delete(ext_name) %>
-            <span class="extension active">:<%= ext_name %></span>
-<% if configs && !configs.empty? %>
-            <ul class="settings">
-<% configs.each do |setting| %>
-              <li class="setting"><%= setting.render %></li>
-<% end %>
-            </ul>
-<% end %>
-          </li>
-<% end %>
-<% end %>
-<% registered_extensions.keys.each do |ext_name| %>
-          <li><span class="extension inactive"><%= ext_name.inspect %></span></li>
-<% end %>
+          <%- [extension_config, auto_activated_config].each do |extensions| -%>
+            <%- extensions.each do |ext_name, configs| -%>
+              <li>
+                <%- registered_extensions.delete(ext_name) -%>
+                <span class="extension active">:<%= ext_name %></span>
+                <%- if configs && !configs.empty? -%>
+                  <ul class="settings">
+                    <%- configs.each do |setting| -%>
+                      <li class="setting"><%= setting.render %></li>
+                    <%- end -%>
+                  </ul>
+                <%- end -%>
+              </li>
+            <%- end -%>
+          <%- end -%>
+          <%- registered_extensions.keys.each do |ext_name| -%>
+            <li><span class="extension inactive"><%= ext_name.inspect %></span></li>
+          <%- end -%>
         </ul>
       </article>
     </div>

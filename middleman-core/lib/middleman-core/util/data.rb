@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'date'
 require 'yaml'
 require 'json'
 require 'toml'
@@ -126,7 +127,7 @@ module Middleman
       def parse_yaml(content, full_path)
         c = begin
           ::Middleman::Util.instrument 'parse.yaml' do
-            ::YAML.load(content)
+            ::YAML.safe_load(content, permitted_classes: [Date, Time, DateTime, Symbol, Regexp], aliases: true)
           end
         rescue StandardError, ::Psych::SyntaxError => e
           warn "YAML Exception parsing #{full_path}: #{e.message}"

@@ -4,7 +4,7 @@ module Middleman
   module CoreExtensions
     module Collections
       class LazyCollectorStep < BasicObject
-        DELEGATE = %i[hash eql?].freeze
+        DELEGATE = %i[hash eql? is_a? puts p].freeze
 
         def initialize(name, args, block, parent = nil)
           @name = name
@@ -45,6 +45,10 @@ module Middleman
           leaves.delete self
 
           LazyCollectorStep.new(name, args, block, self)
+        end
+
+        def respond_to_missing?(_method_name, _include_private = false)
+          true
         end
       end
     end

@@ -65,8 +65,8 @@ module Middleman
     end
 
     # Needed so that method_missing makes sense
-    def respond_to?(method, include_private = false)
-      super || @ctx.internal_data_store.key?(method)
+    def respond_to_missing?(method, include_private = false)
+      @ctx.internal_data_store.key?(method) || super
     end
   end
 end

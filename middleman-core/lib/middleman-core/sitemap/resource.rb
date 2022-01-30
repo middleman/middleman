@@ -204,7 +204,7 @@ module Middleman
 
       # Render this resource
       # @return [String]
-      Contract Hash, Hash, Maybe[Proc] => String
+      Contract Maybe[Hash], Maybe[Hash], Maybe[Proc] => String
       def render(options_hash = ::Middleman::EMPTY_HASH, locs = ::Middleman::EMPTY_HASH, &_block)
         @vertices = ::Hamster::Set.empty
 
