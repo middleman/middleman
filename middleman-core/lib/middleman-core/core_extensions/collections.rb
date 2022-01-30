@@ -52,22 +52,18 @@ module Middleman
           @leaves.clear
         end
 
-        Contract Symbol, LazyCollectorStep => Any
         def register_collector(label, endpoint)
           @collectors_by_name[label] = endpoint
         end
 
-        Contract LazyCollectorRoot
         def sitemap_collector
           live_collector { |_, resources| resources.to_a }
         end
 
-        Contract LazyCollectorRoot
         def data_collector
           live_collector { |app, _| app.data }
         end
 
-        Contract Proc => LazyCollectorRoot
         def live_collector(&block)
           root = LazyCollectorRoot.new(self)
 

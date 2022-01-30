@@ -94,8 +94,8 @@ module Middleman
         end
 
         # Needed so that method_missing makes sense
-        def respond_to?(method, include_private = false)
-          super || key?(method)
+        def respond_to_missing?(method, include_private = false)
+          key?(method) || super
         end
 
         # Convert all the data into a static hash

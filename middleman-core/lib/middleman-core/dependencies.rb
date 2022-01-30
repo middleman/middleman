@@ -3,6 +3,7 @@
 require 'hamster'
 require 'set'
 require 'pathname'
+require 'date'
 require 'yaml'
 require 'fileutils'
 require 'middleman-core/contracts'
@@ -55,7 +56,7 @@ module Middleman
 
     Contract String => Graph
     def parse_yaml(file_path)
-      ::YAML.load_file(file_path)
+      ::YAML.safe_load(File.read(file_path), permitted_classes: [Date, Time, DateTime, Symbol, Regexp], aliases: true)
     rescue StandardError, ::Psych::SyntaxError => e
       warn "YAML Exception parsing dependency graph: #{e.message}"
     end

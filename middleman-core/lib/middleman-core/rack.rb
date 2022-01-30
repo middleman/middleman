@@ -87,7 +87,7 @@ module Middleman
     # @param [Rack::Request] req
     # @param [Rack::Response] res
     def process_request(env, req, res)
-      start_time = Time.now
+      start_time = Process.clock_gettime(Process::CLOCK_MONOTONIC)
 
       request_path = Addressable::URI.unencode(env['PATH_INFO'].dup)
       if request_path.respond_to? :force_encoding
@@ -120,7 +120,7 @@ module Middleman
       end
 
       # End the request
-      logger.debug "== Finishing Request: #{resource.destination_path} (#{(Time.now - start_time).round(2)}s)"
+      logger.debug "== Finishing Request: #{resource.destination_path} (#{(Process.clock_gettime(Process::CLOCK_MONOTONIC) - start_time).round(2)}s)"
       halt res.finish
     end
 
