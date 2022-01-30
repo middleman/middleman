@@ -15,7 +15,7 @@ Gem::Specification.new do |s|
 
   s.files       = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(fixtures|features|spec)/}) }
   s.require_path = 'lib'
-  s.required_ruby_version = '>= 3.0.0'
+  s.required_ruby_version = '>= 3.1.0'
 
   # Core
   s.add_dependency('bundler')
