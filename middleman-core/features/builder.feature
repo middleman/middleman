@@ -52,6 +52,14 @@ Feature: Builder
     When I run `middleman b`
     Then was successfully built
 
+  Scenario: Build external_pipeline with helpers
+    Given a successfully built app at "external-pipeline-helpers"
+    When I cd to "build"
+    And the file "index.html" should contain '<link href="/app-553d121b3246dc3ea415.css" rel="stylesheet" media="all" />'
+    And the file "index.html" should contain '<script src="/app-6427c0e37380b2306421.js" async="async"></script>'
+    And the file "another-file.html" should contain '<link href="/app-553d121b3246dc3ea415.css" rel="stylesheet" />'
+    And the file "another-file.html" should contain '<script src="/app-6427c0e37380b2306421.js"></script>'
+
   Scenario: Builded text file(ex: html, css, xml, txt)'s permission is 0644
     Given a successfully built app at "large-build-app"
     When I cd to "build"

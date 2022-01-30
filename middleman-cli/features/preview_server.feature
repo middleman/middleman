@@ -440,6 +440,7 @@ Feature: Run the preview server
     Server name "garbage.example.com" does not resolve to an ip address. Please fix that and try again.
     """
 
+  @wip
   Scenario: Start the server with server name "www.example.com" and the network name server is used to resolve the server name
     Given I have a local hosts file with:
     """
