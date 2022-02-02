@@ -194,7 +194,7 @@ module Middleman
 
         unless server_information.port == configured_port
           app.logger.warn format(
-            '== The Middleman uses a different port "%<new_port>s" then the configured one "%<old_port>s" because some other server is listening on that port.',
+            '== The Middleman will use a different port "%<new_port>s" than port "%<old_port>s" as requested, because another server is listening on that port.',
             new_port: server_information.port,
             old_port: configured_port
           )
