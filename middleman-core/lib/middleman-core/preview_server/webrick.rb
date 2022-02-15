@@ -7,9 +7,12 @@ require 'webrick/https'
 module Middleman
   class PreviewServer
     class Webrick
-      attr_reader :webrick
+      attr_reader :webrick, :ssl_certificate, :ssl_private_key
 
-      def initialize(rack_app, server_information, is_debug)
+      def initialize(rack_app, server_information, ssl_information, is_debug)
+        @ssl_certificate = ssl_information[:ssl_certificate]
+        @ssl_private_key = ssl_information[:ssl_private_key]
+
         @webrick = setup_webrick(server_information, is_debug)
         webrick.mount '/', ::Rack::Handler::WEBrick, rack_app
       end
