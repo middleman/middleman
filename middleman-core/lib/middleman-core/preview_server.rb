@@ -13,7 +13,7 @@ module Middleman
     class << self
       extend Forwardable
 
-      attr_reader :app, :web_server, :ssl_certificate, :ssl_private_key, :environment, :server_information
+      attr_reader :app, :web_server, :ssl_information, :environment, :server_information
 
       # Start an instance of Middleman::Application
       # @return [void]
@@ -202,8 +202,10 @@ module Middleman
 
         @environment = possible_from_cli(:environment, app.config)
 
-        @ssl_certificate = possible_from_cli(:ssl_certificate, app.config)
-        @ssl_private_key = possible_from_cli(:ssl_private_key, app.config)
+        @ssl_information = {
+          ssl_certificate: possible_from_cli(:ssl_certificate, app.config),
+          ssl_private_key: possible_from_cli(:ssl_private_key, app.config)
+        }
 
         reload_queue = Queue.new
 
@@ -241,6 +243,7 @@ module Middleman
         @web_server = Webrick.new(
           ::Middleman::Rack.new(app).to_app,
           server_information,
+          ssl_information,
           @options[:debug] || false
         )
       end
