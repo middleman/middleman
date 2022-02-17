@@ -1,5 +1,6 @@
 # master
 
+-   Minify JS: migrate default compressor from Uglifier to Terser, to support ES6 (#2530)
 -   Require Ruby 3.1+
 -   Support TOML as frontmatter and data.
 -   Handle the removal of a file in dependencies. Fixes (#2292)
