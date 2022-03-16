@@ -120,7 +120,7 @@ module Middleman
       def parse_yaml(content, full_path)
         c = begin
           ::Middleman::Util.instrument 'parse.yaml' do
-            ::YAML.load(content)
+            ::YAML.respond_to?(:unsafe_load) ? ::YAML.unsafe_load(content) : ::YAML.load(content)
           end
         rescue StandardError, ::Psych::SyntaxError => error
           warn "YAML Exception parsing #{full_path}: #{error.message}"
