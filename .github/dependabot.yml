@@ -12,3 +12,10 @@ updates:
       - dependency-name: pry-stack_explorer
         versions:
           - ">= 5.0"
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: monthly
+      time: "08:00"
+      timezone: America/New_York
+    open-pull-requests-limit: 10
