@@ -3,7 +3,7 @@
 [![Gem Version](http://img.shields.io/gem/v/middleman.svg?style=flat)][gem]
 [![License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)][license]
 
-**Middleman** is a static site generator using all the shortcuts and tools in modern web development. Check out [middlemanapp.com](https://middlemanapp.com/) for detailed tutorials, including a [getting started guide](https://middlemanapp.com/basics/getting-started/). You can also follow [@middlemanapp](https://twitter.com/middlemanapp) for updates.
+**Middleman** is a static site generator using all the shortcuts and tools available in modern web development. Check out [middlemanapp.com](https://middlemanapp.com/) for detailed tutorials, including a [getting started guide](https://middlemanapp.com/basics/getting-started/). You can also follow [@middlemanapp](https://twitter.com/middlemanapp) for updates.
 
 ## Why Middleman?
 
