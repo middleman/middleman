@@ -63,7 +63,7 @@ class Middleman::Extensions::MinifyJavaScript < ::Middleman::Extension
   def minify(content)
     @compressor.compress(content)
   rescue ::ExecJS::ProgramError => e
-    warn "WARNING: Couldn't compress JavaScript in #{@path}: #{e.message}"
+    warn "WARNING: Couldn't compress JavaScript : #{e.message}"
     content
   end
   memoize :minify
