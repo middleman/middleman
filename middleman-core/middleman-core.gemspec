@@ -21,7 +21,7 @@ Gem::Specification.new do |s|
   # Core
   s.add_dependency('bundler', '~> 2.0')
   s.add_dependency('rack', ['>= 1.4.5', '< 3'])
-  s.add_dependency('tilt', ['~> 2.0.9'])
+  s.add_dependency('tilt', ['~> 2.0.11'])
   s.add_dependency('erubis')
   s.add_dependency('fast_blank')
   s.add_dependency('parallel')
@@ -46,7 +46,7 @@ Gem::Specification.new do |s|
   s.add_dependency('fastimage', ['~> 2.0'])
 
   # Sass and Minify CSS
-  s.add_dependency('sassc', ['~> 2.0'])
+  s.add_dependency('sass-embedded', ['~> 1.70'])
 
   # Minify JS
   s.add_dependency('uglifier', ['>= 3', '< 5'])
