@@ -15,8 +15,8 @@ module Middleman
       #   background: url(image-path("image.jpg", $digest: true)); // background: url("/assets/image-27a8f1f96afd8d4c67a59eb9447f45bd.jpg");
       #
       def image_path(source, options={})
-        p = ::Middleman::Util.asset_path(middleman_context, :images, source.value, map_options(options))
-        ::SassC::Script::Value::String.new p.to_s, :string
+        p = ::Middleman::Util.asset_path(middleman_context, :images, source.text, map_options(options))
+        ::Sass::Value::String.new p.to_s
       end
 
       # Using Middleman::Util#asset_path, return the url CSS
@@ -39,7 +39,7 @@ module Middleman
           end
         end
 
-        ::SassC::Script::Value::String.new "url(#{image_path(source, options)})"
+        ::Sass::Value::String.new "url(#{image_path(source, options)})", quoted: false
       end
 
       # Using Middleman::Util#asset_path, return the full path
@@ -52,8 +52,8 @@ module Middleman
       #   src: url(font-path("font.ttf", $digest: true)); // src: url("/assets/font-27a8f1f96afd8d4c67a59eb9447f45bd.ttf");
       #
       def font_path(source, options={})
-        p = ::Middleman::Util.asset_path(middleman_context, :fonts, source.value, map_options(options))
-        ::SassC::Script::Value::String.new p.to_s, :string
+        p = ::Middleman::Util.asset_path(middleman_context, :fonts, source.text, map_options(options))
+        ::Sass::Value::String.new p.to_s
       end
 
       # Using Middleman::Util#asset_path, return the url CSS
@@ -75,7 +75,7 @@ module Middleman
             options = {}
           end
         end
-        ::SassC::Script::Value::String.new "url(#{font_path(source, options)})"
+        ::Sass::Value::String.new "url(#{font_path(source, options)})", quoted: false
       end
 
       protected
@@ -94,16 +94,32 @@ module Middleman
       # Returns an options hash where the keys are symbolized
       # and the values are unwrapped Sass literals.
       def map_options(options={}) # :nodoc:
-        # ::Sass::Util.map_hash(options) do |key, value|
-        #   [key.to_sym, value.respond_to?(:value) ? value.value : value]
-        # end
+        options = options.transform_values do |value|
+          unwrap(value)
+        end
 
         options[:current_resource] = current_resource
 
         options
       end
+
+      # Returns a unwrapped Sass literal if possible.
+      def unwrap(sass_value)
+        case sass_value
+        when ::Sass::Value::Boolean, ::Sass::Value::Null, ::Sass::Value::Number
+          sass_value.value
+        when ::Sass::Value::List
+          sass_value.to_a.map do |item|
+            unwrap(item)
+          end
+        when ::Sass::Value::Map
+          sass_value.contents.to_h do |key, value|
+            [unwrap(key), unwrap(value)]
+          end
+        else
+          sass_value
+        end
+      end
     end
   end
 end
-
-::SassC::Script::Functions.send :include, ::Middleman::Sass::Functions
