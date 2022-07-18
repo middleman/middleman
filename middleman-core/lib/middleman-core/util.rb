@@ -1,5 +1,4 @@
-# For instrumenting
-require 'active_support/notifications'
+require 'active_support/all'
 
 require 'middleman-core/application'
 require 'middleman-core/sources'
