@@ -8,7 +8,7 @@ PATH
   remote: middleman-core
   specs:
     middleman-core (4.4.2)
-      activesupport (>= 6.1, < 7.0)
+      activesupport (>= 6.1, < 7.1)
       addressable (~> 2.4)
       backports (~> 3.6)
       bundler (~> 2.0)
@@ -36,7 +36,7 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
-    activesupport (6.1.4.1)
+    activesupport (6.1.6.1)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (>= 1.6, < 2)
       minitest (>= 5.1)
@@ -243,4 +243,4 @@ DEPENDENCIES
   yard (~> 0.9.20)
 
 BUNDLED WITH
-   2.2.22
+   2.2.33
