@@ -70,7 +70,7 @@ Contributions are welcomed! To get started, please see our [contribution guideli
 
 ## Donate
 
-[Click here to lend your support to Middleman](https://plasso.co/s/4dXbHBorC3)
+[Click here to lend your support to Middleman](https://github.com/sponsors/tdreyno)
 
 ## Versioning
 
