@@ -5,7 +5,6 @@ on: [push, pull_request]
 jobs:
   test:
     runs-on: ubuntu-latest
-    continue-on-error: true
     name: ubuntu-ruby-${{ matrix.ruby-version }}
     strategy:
       matrix:
