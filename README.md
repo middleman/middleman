@@ -11,7 +11,7 @@ These days, many websites are built with an API in mind. Rather than package the
 
 - Uses [Sass](https://sass-lang.com/) for DRY stylesheets.
 - Bring your own asset pipeline (WebPack, Babel, Sprockets or any other).
-- Easy templating with [ERb](https://ruby-doc.org/stdlib-2.0.0/libdoc/erb/rdoc/ERB.html) or [Haml](https://haml.info/).
+- Easy templating with [ERB](https://ruby-doc.org/stdlib-2.0.0/libdoc/erb/rdoc/ERB.html) or [Haml](https://haml.info/).
 
 **Middleman** gives the stand-alone developer access to all these tools and many, many more.
 
