@@ -12,7 +12,7 @@ PATH
       addressable (~> 2.4)
       backports (~> 3.6)
       bundler (~> 2.0)
-      contracts (~> 0.13.0)
+      contracts (~> 0.13)
       dotenv
       erubis
       execjs (~> 2.0)
@@ -21,7 +21,7 @@ PATH
       hamster (~> 3.0)
       hashie (~> 3.4)
       i18n (~> 1.6.0)
-      listen (~> 3.0.0)
+      listen (~> 3.0)
       memoist (~> 0.14)
       padrino-helpers (~> 0.15.0)
       parallel
