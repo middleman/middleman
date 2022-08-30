@@ -218,8 +218,11 @@ class Middleman::CoreExtensions::DefaultHelpers < ::Middleman::Extension
     # Given a source path (referenced either absolutely or relatively)
     # or a Resource, this will produce the nice URL configured for that
     # path, respecting :relative_links, directory indexes, etc.
+    #
+    # Relative routes will be relative the the current_resource. Pass the
+    # `:current_resource` option to customize.
     def url_for(path_or_resource, options={})
-      options_with_resource = {}.merge!(options).merge!(current_resource: current_resource)
+      options_with_resource = {}.merge!(current_resource: current_resource).merge!(options)
       ::Middleman::Util.url_for(app, path_or_resource, options_with_resource)
     end
 
