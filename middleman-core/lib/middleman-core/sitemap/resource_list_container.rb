@@ -10,7 +10,7 @@ module Middleman
       extend Forwardable
       include Contracts
 
-      def_delegators :without_ignored, :each, :find, :select, :reject, :map
+      def_delegators :without_ignored, :each, :each_with_index, :find, :select, :reject, :map
 
       Contract Maybe[ArrayOf[Resource]] => Any
       def initialize(initial = nil)
