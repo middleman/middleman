@@ -41,7 +41,4 @@ gem 'simplecov', '~> 0.21', require: false
 gem 'middleman-cli', path: 'middleman-cli'
 gem 'middleman-core', path: 'middleman-core'
 
-# Locked in 2.7.0 until https://github.com/rails/execjs/issues/99 be solved (still dont work in 2.8.1)
-gem 'execjs', '2.7.0'
-
 # gem 'middleman-sprockets', github: 'middleman/middleman-sprockets', require: false

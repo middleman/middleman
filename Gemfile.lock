@@ -14,7 +14,7 @@ PATH
       contracts (~> 0.17)
       dotenv
       erubis
-      execjs (~> 2)
+      execjs (>= 2, < 2.8.0)
       fastimage (~> 2)
       hamster (~> 3)
       hashie (~> 5)
@@ -270,7 +270,6 @@ DEPENDENCIES
   capybara (~> 3.36.0)
   coffee-script (~> 2.2)
   cucumber (~> 7)
-  execjs (= 2.7.0)
   haml (>= 4.0.5)
   kramdown (~> 2.3)
   liquid (>= 3.0)
