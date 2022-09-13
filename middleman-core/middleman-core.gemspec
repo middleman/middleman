@@ -49,7 +49,7 @@ Gem::Specification.new do |s|
 
   # Minify JS
   s.add_dependency('terser', ['~> 1.1'])
-  s.add_dependency('execjs', ['~> 2'])
+  s.add_dependency('execjs', ['>= 2', '< 2.8.0'])
 
   # Perf
   s.add_dependency('oj', ['~> 3'])
