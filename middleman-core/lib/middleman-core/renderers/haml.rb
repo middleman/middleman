@@ -46,7 +46,7 @@ module Middleman
     class Haml < ::Middleman::Extension
       def initialize(app, options_hash = ::Middleman::EMPTY_HASH, &block)
         super
-        
+
         if Object.const_defined?('::Haml::Options') # not available in haml 6
           ::Haml::Options.defaults[:context] = nil
           ::Haml::Options.send :attr_accessor, :context
