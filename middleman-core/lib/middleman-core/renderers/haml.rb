@@ -47,8 +47,10 @@ module Middleman
       def initialize(app, options_hash = ::Middleman::EMPTY_HASH, &block)
         super
 
-        ::Haml::Options.defaults[:context] = nil
-        ::Haml::Options.send :attr_accessor, :context
+        if Object.const_defined?('::Haml::Options') # not available in haml 6
+          ::Haml::Options.defaults[:context] = nil
+          ::Haml::Options.send :attr_accessor, :context
+        end
         ::Haml::TempleEngine.define_options context: nil if defined?(::Haml::TempleEngine)
         [::Haml::Filters::Sass, ::Haml::Filters::Scss, ::Haml::Filters::Markdown].each do |f|
           f.class_exec do
