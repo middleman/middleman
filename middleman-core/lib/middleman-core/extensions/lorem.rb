@@ -148,7 +148,7 @@ class Middleman::Extensions::Lorem < ::Middleman::Extension
       # @param [Hash] options
       # @return [String]
       def image(size, options_hash = ::Middleman::EMPTY_HASH)
-        domain           = options_hash[:domain] || 'http://placehold.it'
+        domain           = options_hash[:domain] || 'https://dummyimage.com'
         src_array        = ["#{domain}/#{size}"]
         hex              = %w[a b c d e f 0 1 2 3 4 5 6 7 8 9]
         background_color = options_hash[:background_color]
