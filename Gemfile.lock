@@ -122,8 +122,9 @@ GEM
     ffi (1.15.5)
     fiber-local (1.0.0)
     generator (0.0.1)
-    haml (5.2.2)
-      temple (>= 0.8.0)
+    haml (6.0.8)
+      temple (>= 0.8.2)
+      thor
       tilt
     hamster (3.0.0)
       concurrent-ruby (~> 1.0)
@@ -247,7 +248,7 @@ GEM
     terser (1.1.8)
       execjs (>= 0.3.0, < 3)
     thor (1.2.1)
-    tilt (2.0.10)
+    tilt (2.0.11)
     timers (4.3.3)
     toml (0.3.0)
       parslet (>= 1.8.0, < 3.0.0)
