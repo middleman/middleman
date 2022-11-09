@@ -1,5 +1,11 @@
 # master
 
+# 4.4.3
+
+- Lock haml to < 6.0 (#2570)
+- Allow url_for to override current_resource (#2567)
+- Allow users to use Active Support 7.0 (#2552
+
 # 4.4.2
 
 - Use compiled regex for performance improvement (#2502)
