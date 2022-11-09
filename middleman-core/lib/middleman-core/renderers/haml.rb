@@ -32,12 +32,18 @@ module Middleman
         options = @options.dup
         options.delete(:lang)
         options.delete(:locale)
-        options.merge!(filename: eval_file, line: line, context: @context || scope)
+        options[:context] = @context || scope
         if options.include?(:outvar)
           options[:buffer] = options.delete(:outvar)
           options[:save_buffer] = true
         end
-        @engine = ::Haml::Engine.new(data, options)
+        if Object.const_defined?('::Haml::Template') # haml 6+
+          @engine = ::Haml::Template.new(eval_file, line, options) { data }
+        else
+          options[:filename] = eval_file
+          options[:line] = line
+          @engine = ::Haml::Engine.new(data, options)
+        end
         @engine.render(scope, locals, &block)
       end
     end
@@ -47,19 +53,40 @@ module Middleman
       def initialize(app, options_hash = ::Middleman::EMPTY_HASH, &block)
         super
 
-        if Object.const_defined?('::Haml::Options') # not available in haml 6
+        if Object.const_defined?('::Haml::Options') # Haml 5 and older
           ::Haml::Options.defaults[:context] = nil
           ::Haml::Options.send :attr_accessor, :context
+        else # Haml 6+
+          ::Haml::Engine.define_options context: nil
         end
         ::Haml::TempleEngine.define_options context: nil if defined?(::Haml::TempleEngine)
         [::Haml::Filters::Sass, ::Haml::Filters::Scss, ::Haml::Filters::Markdown].each do |f|
           f.class_exec do
-            def self.render_with_options(text, compiler_options)
-              modified_options = options.dup
-              modified_options[:context] = compiler_options[:context]
+            if respond_to?(:template_class) # Haml 5 and older
+              def self.render_with_options(text, compiler_options)
+                modified_options = options.dup
+                modified_options[:context] = compiler_options[:context]
 
-              text = template_class.new(nil, 1, modified_options) { text }.render
-              super(text, compiler_options)
+                text = template_class.new(nil, 1, modified_options) { text }.render
+                super(text, compiler_options)
+              end
+            else # Haml 6+
+              def initialize(options = {})
+                super
+                @context = options[:context]
+              end
+
+              def compile_with_tilt(node, name, indent_width: 0)
+                options = { context: @context }
+                source = node.value[:text]
+                result = ::Tilt["t.#{name}"].new(nil, 1, options) { source }.render
+
+                temple = [:multi, [:static, result.gsub(/^/, ' ' * indent_width)]]
+                source.lines.size.times do
+                  temple << [:newline]
+                end
+                temple
+              end
             end
           end
         end
