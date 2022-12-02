@@ -236,7 +236,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
 
     # Reset fallbacks to fall back to our new default
     if ::I18n.respond_to?(:fallbacks)
-      ::I18n.fallbacks = ::I18n::Locale::Fallbacks.new(@mount_at_root)
+      ::I18n.fallbacks = ::I18n::Locale::Fallbacks.new(::I18n.default_locale)
     end
   end
 
