@@ -242,6 +242,11 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
       exposed_paths.each do |path|
         @lookup['/' + path] = locale_map
       end
+
+      if @mount_at_root == false
+        src_path = src_path.sub(options[:templates_dir] + '/', '')
+        @lookup["/#{src_path}"] = locale_map
+      end
     end
 
     new_resources.reduce(resources) do |sum, r|
