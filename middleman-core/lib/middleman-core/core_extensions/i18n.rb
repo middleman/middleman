@@ -151,7 +151,9 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
     new_resources = []
 
     file_extension_resources = resources.select do |resource|
-      parse_locale_extension(resource.path)
+      # Ignore resources which are outside of the localizable directory
+      File.fnmatch?(File.join(options[:templates_dir], '**'), resource.path) &&
+        parse_locale_extension(resource.path)
     end
 
     localizable_folder_resources = resources.select do |resource|
@@ -190,10 +192,56 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
       resource.ignore!
     end
 
-    @lookup = new_resources.each_with_object({}) do |desc, sum|
-      abs_path = desc.source_path.sub(options[:templates_dir], '')
-      sum[abs_path] ||= {}
-      sum[abs_path][desc.locale] = '/' + desc.path
+    # This generates a lookup hash that maps the real path (as seen by the web
+    # page user) to the paths of the localized versions. The lookup is later
+    # used by `url_for '/some/page.html', :locale => :en` and other url
+    # helpers.
+    #
+    # For example (given :mount_at_root => :es) and localized paths:
+    #
+    # @lookup['/en/magic/stuff.html'] = {:en => '/en/magic/stuff.html', :de => '/de/magisches/zeug.html', :es => '/magico/cosas.html'}
+    # @lookup['/de/index.html'] = {:en => '/en/index.html', :de => '/de/index.html', :es => '/index.html'}
+    # @lookup['/en/index.html'] = {:en => '/en/index.html', :de => '/de/index.html', :es => '/index.html'}
+    # @lookup['/index.html'] = {:en => '/en/index.html', :de => '/de/index.html', :es => '/index.html'}
+    #
+    # We do this by grouping by the source paths with the locales removed. All
+    # the localized pages with the same content in different languages get the
+    # same key.
+    #
+    @source_path_group = new_resources.group_by do |resource|
+      # Try to get source path without extension
+      _locale, path, _page_id = parse_locale_extension(resource.source_path)
+
+      # If that fails, there is no extension, so we use the original path. We
+      # can not use resource.path here, because .path may be translated, so the
+      # file names do not match up.
+      path ||= resource.source_path
+
+      # This will contain the localizable/ directory, but that does not matter,
+      # because it will be contained in both alternatives above, so the
+      # grouping key will be correct.
+      path
+    end
+
+    # Then we walk this grouped hash and generate the lookup table as given
+    # above.
+    @lookup = {}
+    @source_path_group.each do |src_path, resources|
+      # For each group we generate a list of the paths the user really sees
+      # (e.g. ['/en/index.html', '/de/index.html', '/index.html'])
+      exposed_paths = resources.map(&:path)
+
+      # We also generate a map with the same infos, but with the locales as keys.
+      # e.g. {:en => '/en/index.html', :de => '/de/index.html', :es => '/index.html'}
+      locale_map = resources.each_with_object({}) do |resource, map|
+        map[resource.locale] = '/' + resource.path
+      end
+
+      # Then we add those to the lookup table, so every path has a
+      # cross-reference to any other path in other locales.
+      exposed_paths.each do |path|
+        @lookup['/' + path] = locale_map
+      end
     end
 
     new_resources.reduce(resources) do |sum, r|
