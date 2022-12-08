@@ -152,7 +152,7 @@ GEM
     multi_test (0.1.2)
     mustermann (1.1.1)
       ruby2_keywords (~> 0.0.1)
-    nokogiri (1.13.9)
+    nokogiri (1.13.10)
       mini_portile2 (~> 2.8.0)
       racc (~> 1.4)
     oj (3.13.11)
@@ -175,7 +175,7 @@ GEM
       binding_of_caller (~> 1.0)
       pry (~> 0.13)
     public_suffix (5.0.0)
-    racc (1.6.0)
+    racc (1.6.1)
     rack (2.2.4)
     rack-protection (2.1.0)
       rack
