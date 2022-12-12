@@ -267,3 +267,97 @@ Feature: i18n Paths
     And the Server is running
     When I go to "/index.html"
     Then I should see '<a href="https://www.example.org/">Example</a>'
+
+  Scenario: Using url_for with the no mount config
+    Given a fixture app "empty-app"
+    And a file named "data/pages.yml" with:
+      """
+      - hello.html
+      """
+    And a file named "locales/en.yml" with:
+      """
+      ---
+      en:
+        msg: Hello
+      """
+    And a file named "locales/es.yml" with:
+      """
+      ---
+      es:
+        paths:
+          hello: "hola"
+        msg: Hola
+      """
+    And a file named "source/localizable/hello.html.erb" with:
+      """
+      Page: <%= t(:msg) %>
+      <% data.pages.each_with_index do |p, i| %>
+        Current: <%= url_for "/#{p}" %>
+        Other: <%= url_for "/#{p}", locale: ::I18n.locale == :en ? :es : :en %>
+      <% end %>
+      """
+    And a file named "source/localizable/article.html.erb" with:
+      """
+      Page Lang: Default
+
+      Current: <%= url_for "/article.html" %>
+      Other: <%= url_for "/article.html", locale: ::I18n.locale == :en ? :es : :en %>
+      Current with anchor: <%= url_for "/article.html", :anchor => "test-anchor" %>
+      """
+    And a file named "source/localizable/article.es.html.erb" with:
+      """
+      Page Lang: Spanish
+
+      Current: <%= url_for "/article.html" %>
+      Other: <%= url_for "/article.html", locale: :en %>
+      Current with anchor: <%= url_for "/article.html", :anchor => "test-anchor" %>
+      """
+    And a file named "source/localizable/post.en.html.erb" with:
+      """
+      Page Lang: English
+
+      Current: <%= url_for "/post.html" %>
+      Other: <%= url_for "/post.html", locale: :es %>
+      Current with anchor: <%= url_for "/post.html", :anchor => "test-anchor" %>
+      """
+    And a file named "source/localizable/post.es.html.erb" with:
+      """
+      Page Lang: Spanish
+
+      Current: <%= url_for "/post.html" %>
+      Other: <%= url_for "/post.html", locale: :en %>
+      Current with anchor: <%= url_for "/post.html", :anchor => "test-anchor" %>
+      """
+    And a file named "config.rb" with:
+      """
+      activate :i18n, mount_at_root: false
+      """
+    Given the Server is running
+    When I go to "/en/hello.html"
+    Then I should see "Page: Hello"
+    Then I should see 'Current: /en/hello.html'
+    Then I should see 'Other: /es/hola.html'
+    When I go to "/es/hola.html"
+    Then I should see "Page: Hola"
+    Then I should see 'Current: /es/hola.html'
+    Then I should see 'Other: /en/hello.html'
+    When I go to "/en/article.html"
+    Then I should see "Page Lang: Default"
+    Then I should see 'Current: /en/article.html'
+    Then I should see 'Other: /es/article.html'
+    Then I should see 'Current with anchor: /en/article.html#test-anchor'
+    When I go to "/es/article.html"
+    Then I should see "Page Lang: Spanish"
+    Then I should see 'Current: /es/article.html'
+    Then I should see 'Other: /en/article.html'
+    Then I should see 'Current with anchor: /es/article.html#test-anchor'
+    When I go to "/en/post.html"
+    Then I should see "Page Lang: English"
+    Then I should see 'Current: /en/post.html'
+    Then I should see 'Other: /es/post.html'
+    Then I should see 'Current with anchor: /en/post.html#test-anchor'
+    When I go to "/es/post.html"
+    Then I should see "Page Lang: Spanish"
+    Then I should see 'Current: /es/post.html'
+    Then I should see 'Other: /en/post.html'
+    Then I should see 'Current with anchor: /es/post.html#test-anchor'
