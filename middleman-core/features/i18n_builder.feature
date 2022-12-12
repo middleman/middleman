@@ -123,8 +123,10 @@ Feature: i18n Builder
       | hello.html                                    |
     And the file "en/index.html" should contain "Howdy"
     And the file "en/hello.html" should contain "Hello World"
+    And the file "en/fallback.html" should contain "Fallback"
     And the file "es/index.html" should contain "Como Esta?"
     And the file "es/hola.html" should contain "Hola World"
+    And the file "es/fallback.html" should contain "Fallback"
 
   Scenario: Running localize with the subset config
     Given a fixture app "i18n-test-app"
