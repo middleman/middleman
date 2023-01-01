@@ -122,7 +122,7 @@ GEM
     ffi (1.15.5)
     fiber-local (1.0.0)
     generator (0.0.1)
-    haml (6.0.12)
+    haml (6.1.1)
       temple (>= 0.8.2)
       thor
       tilt
