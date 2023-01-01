@@ -35,7 +35,7 @@ gem 'rubydns', '~> 2.0.2', require: false
 # Code Quality
 gem 'rubocop', '~> 1.24', require: false
 gem 'rubocop-performance', '~> 1.15', require: false
-gem 'simplecov', '~> 0.21', require: false
+gem 'simplecov', '~> 0.22', require: false
 
 # Middleman itself
 gem 'middleman-cli', path: 'middleman-cli'
