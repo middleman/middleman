@@ -8,23 +8,23 @@ jobs:
     name: ubuntu-ruby-${{ matrix.ruby-version }}
     strategy:
       matrix:
-        ruby-version: ['3.0', 2.7, 2.6, 2.5]
+        ruby-version: ["3.0", "2.7", "2.6", "2.5"]
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up Ruby
-      uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: ${{ matrix.ruby-version }}
-        bundler-cache: true
-    - name: Set up Node
-      uses: actions/setup-node@v2
-      with:
-        node-version: '12'
-    - name: Install dependencies
-      run: bundle install
-    - name: Runs linter
-      run: bundle exec rake rubocop
-    - name: Runs tests
-      run: bundle exec rake test
-      env:
-        TEST: true
+      - uses: actions/checkout@v2
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby-version }}
+          bundler-cache: true
+      - name: Set up Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: "12"
+      - name: Install dependencies
+        run: bundle install
+      - name: Runs linter
+        run: bundle exec rake rubocop
+      - name: Runs tests
+        run: bundle exec rake test
+        env:
+          TEST: true
