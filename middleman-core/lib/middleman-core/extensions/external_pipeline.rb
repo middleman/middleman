@@ -6,6 +6,7 @@ class Middleman::Extensions::ExternalPipeline < ::Middleman::Extension
   option :source, nil, 'Path to merge into sitemap', required: true
   option :latency, 0.25, 'Latency between refreshes of source'
   option :disable_background_execution, false, "Don't run the command in a separate background thread"
+  option :ignore_exit_code, false, 'Ignore exit code for restart or stop of a command'
 
   def initialize(app, config={}, &block)
     super
@@ -65,7 +66,7 @@ class Middleman::Extensions::ExternalPipeline < ::Middleman::Extension
 
       @current_thread.wait
 
-      if !@current_thread.exitstatus.nil? && @current_thread.exitstatus != 0
+      if !options[:ignore_exit_code] && !@current_thread.exitstatus.nil? && @current_thread.exitstatus != 0
         logger.error '== External: Command failed with non-zero exit status'
         exit(1)
       end
