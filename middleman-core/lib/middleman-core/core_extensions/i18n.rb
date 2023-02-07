@@ -245,7 +245,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
     # Then we walk this grouped hash and generate the lookup table as given
     # above.
     @lookup = {}
-    @source_path_group.each do |_path, resources|
+    @source_path_group.each do |src_path, resources|
       # For each group we generate a list of the paths the user really sees
       # (e.g. ['/en/index.html', '/de/index.html', '/index.html'])
       exposed_paths = resources.map(&:path)
@@ -260,6 +260,11 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
       # cross-reference to any other path in other locales.
       exposed_paths.each do |path|
         @lookup["/#{path}"] = locale_map
+      end
+
+      if @mount_at_root == false
+        src_path = src_path.sub(options[:templates_dir] + '/', '') unless options[:templates_dir].nil?
+        @lookup["/#{src_path}"] = locale_map
       end
     end
 
