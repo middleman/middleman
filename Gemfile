@@ -19,7 +19,7 @@ gem 'pry-rescue'
 # Optional middleman dependencies, included for tests
 gem 'coffee-script', '~> 2.2', require: false
 gem 'haml', '~> 4.0', require: false
-gem 'kramdown', '~> 1.2', require: false
+gem 'kramdown', '~> 2.4', require: false
 gem 'liquid', '~> 3.0', require: false
 gem 'redcarpet', '>= 3.1', require: false
 gem 'sinatra', '>= 2.0.0.beta2', require: false

@@ -100,7 +100,8 @@ GEM
     i18n (1.6.0)
       concurrent-ruby (~> 1.0)
     interception (0.5)
-    kramdown (1.17.0)
+    kramdown (2.4.0)
+      rexml
     liquid (3.0.6)
     listen (3.0.8)
       rb-fsevent (~> 0.9, >= 0.9.4)
@@ -225,7 +226,7 @@ DEPENDENCIES
   coffee-script (~> 2.2)
   cucumber (~> 2.0)
   haml (~> 4.0)
-  kramdown (~> 1.2)
+  kramdown (~> 2.4)
   liquid (~> 3.0)
   middleman-cli!
   middleman-core!
