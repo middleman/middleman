@@ -143,7 +143,7 @@ GEM
     rack-test (1.1.0)
       rack (>= 1.0, < 3)
     rainbow (3.0.0)
-    rake (10.5.0)
+    rake (13.0.6)
     rb-fsevent (0.11.0)
     rb-inotify (0.10.1)
       ffi (~> 1.0)
@@ -231,7 +231,7 @@ DEPENDENCIES
   middleman-core!
   pry
   pry-rescue
-  rake (~> 10.3)
+  rake (~> 13.0)
   redcarpet (>= 3.1)
   rspec (~> 3.0)
   rubocop
