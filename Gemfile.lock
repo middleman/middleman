@@ -91,7 +91,9 @@ GEM
     fastimage (2.2.5)
     ffi (1.15.4)
     gherkin (4.1.3)
-    haml (4.0.7)
+    haml (6.1.1)
+      temple (>= 0.8.2)
+      thor
       tilt
     hamster (3.0.0)
       concurrent-ruby (~> 1.0)
@@ -199,7 +201,7 @@ GEM
       tilt (>= 2.0.6, < 2.1)
     temple (0.8.2)
     thor (1.2.1)
-    tilt (2.0.10)
+    tilt (2.0.11)
     timers (4.0.4)
       hitimes
     toml (0.3.0)
@@ -224,7 +226,7 @@ DEPENDENCIES
   capybara (~> 2.5.0)
   coffee-script (~> 2.2)
   cucumber (~> 2.0)
-  haml (~> 4.0)
+  haml (~> 6.1)
   kramdown (~> 1.2)
   liquid (~> 3.0)
   middleman-cli!
