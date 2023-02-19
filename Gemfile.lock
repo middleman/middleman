@@ -14,7 +14,7 @@ PATH
       contracts (~> 0.17)
       dotenv
       erubis
-      execjs (~> 2)
+      execjs (>= 2, < 2.8.0)
       fastimage (~> 2)
       hamster (~> 3)
       hashie (~> 5)
@@ -117,7 +117,7 @@ GEM
     docile (1.4.0)
     dotenv (2.7.6)
     erubis (2.7.0)
-    execjs (2.8.1)
+    execjs (2.7.0)
     fastimage (2.2.6)
     ffi (1.15.5)
     fiber-local (1.0.0)
