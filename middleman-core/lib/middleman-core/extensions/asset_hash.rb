@@ -1,3 +1,4 @@
+require 'addressable/uri'
 require 'middleman-core/util'
 require 'middleman-core/rack'
 
@@ -87,7 +88,7 @@ class Middleman::Extensions::AssetHash < ::Middleman::Extension
     else
       # Render through the Rack interface so middleware and mounted apps get a shot
       response = @rack_client.get(
-        ::WEBrick::HTTPUtils.escape(resource.destination_path),
+        Addressable::URI.encode(resource.destination_path),
         'bypass_inline_url_rewriter_asset_hash' => 'true'
       )
 

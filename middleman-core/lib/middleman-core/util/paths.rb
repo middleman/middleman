@@ -4,7 +4,6 @@ require 'uri'
 require 'addressable/uri'
 require 'memoist'
 require 'tilt'
-require 'webrick'
 
 require 'middleman-core/contracts'
 
@@ -34,7 +33,7 @@ module Middleman
     Contract String => String
     def normalize_path(path)
       # The tr call works around a bug in Ruby's Unicode handling
-      WEBrick::HTTPUtils.unescape(path).sub(%r{^/}, '').tr('', '')
+      Addressable::URI.unencode(path).sub(%r{^/}, '').tr('', '')
     end
     memoize :normalize_path
 
