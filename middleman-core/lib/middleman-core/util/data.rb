@@ -118,9 +118,17 @@ module Middleman
       # @return [Hash]
       Contract String, Pathname => Hash
       def parse_yaml(content, full_path)
+        permitted_classes = [Date, Symbol]
         c = begin
           ::Middleman::Util.instrument 'parse.yaml' do
-            ::YAML.load(content)
+            allowed_parameters = ::YAML.method(:safe_load).parameters
+            if allowed_parameters.include? [:key, :permitted_classes]
+              ::YAML.safe_load(content, permitted_classes: permitted_classes)
+            elsif allowed_parameters.include? [:key, :whitelist_classes]
+              ::YAML.safe_load(content, whitelist_classes: permitted_classes)
+            else
+              ::YAML.safe_load(content, permitted_classes)
+            end
           end
         rescue StandardError, ::Psych::SyntaxError => error
           warn "YAML Exception parsing #{full_path}: #{error.message}"
