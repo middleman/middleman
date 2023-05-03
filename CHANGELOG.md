@@ -1,10 +1,19 @@
 # master
 
+# 4.5.0
+
+- Support Haml 6 (#2590)
+- Add support for Ruby 3.1 (#2635)
+- Switch from Webrick to Addressable for uri encode/decode (#2622)
+- Fix 18n fallback when "mount_at_root" is false (4.x) (#2605)
+- external pipeline: add option to ignore process exit code (#2623)
+- Backport of i18n lookup table changes to 4.x (#2604)
+
 # 4.4.3
 
 - Lock haml to < 6.0 (#2570)
 - Allow url_for to override current_resource (#2567)
-- Allow users to use Active Support 7.0 (#2552
+- Allow users to use Active Support 7.0 (#2552)
 
 # 4.4.2
 
