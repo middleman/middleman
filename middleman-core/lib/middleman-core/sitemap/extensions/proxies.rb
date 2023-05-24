@@ -20,6 +20,7 @@ module Middleman
         # @option opts [Boolean] directory_indexes Whether or not the `:directory_indexes` extension applies to these paths.
         # @option opts [Hash] locals Local variables for the template. These will be available when the template renders.
         # @option opts [Hash] data Extra metadata to add to the page. This is the same as frontmatter, though frontmatter will take precedence over metadata defined here. Available via {Resource#data}.
+        # @option opts [Boolean] allow_recursive Allow proxies to point to other proxies.
         # @return [ProxyDescriptor]
         Contract String, String, Maybe[Hash] => RespondTo[:execute_descriptor]
         def proxy(path, target, opts={})
@@ -35,11 +36,12 @@ module Middleman
         def execute_descriptor(app, resources)
           md = metadata.dup
           should_ignore = md.delete(:ignore)
+          allow_recursive = md.delete(:allow_recursive) || false
 
           page_data = md.delete(:data) || {}
           page_data[:id] = md.delete(:id) if md.key?(:id)
 
-          r = ProxyResource.new(app.sitemap, path, target)
+          r = ProxyResource.new(app.sitemap, path, target, allow_recursive)
           r.add_metadata(
             locals: md.delete(:locals) || {},
             page: page_data || {},
@@ -70,8 +72,11 @@ module Middleman
       # @param [Middleman::Sitemap::Store] store
       # @param [String] path
       # @param [String] target
-      def initialize(store, path, target)
+      # @param [Boolean] allow_recursive
+      def initialize(store, path, target, allow_recursive)
         super(store, path)
+
+        @allow_recursive = allow_recursive
 
         target = ::Middleman::Util.normalize_path(target)
         raise "You can't proxy #{path} to itself!" if target == path
@@ -90,7 +95,13 @@ module Middleman
         end
 
         if resource.is_a? ProxyResource
-          raise "You can't proxy #{path} to #{@target} which is itself a proxy."
+          # 1 level proxy chaining since the next target won't have
+          # this instance variable
+          if @allow_recursive
+            resource = resource.target_resource
+          else
+            raise "You can't proxy #{path} to #{@target} which is itself a proxy."
+          end
         end
 
         resource
