@@ -12,7 +12,7 @@ PATH
       addressable (~> 2.4)
       backports (~> 3.6)
       bundler (~> 2.0)
-      contracts (~> 0.13, <= 0.14)
+      contracts (~> 0.13)
       dotenv
       erubis
       execjs (~> 2.0)
