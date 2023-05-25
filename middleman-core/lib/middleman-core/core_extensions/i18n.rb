@@ -326,7 +326,7 @@ class Middleman::CoreExtensions::Internationalization < ::Middleman::Extension
 
   LocalizedPageDescriptor = Struct.new(:path, :source_path, :locale) do
     def execute_descriptor(app, resources)
-      r = ::Middleman::Sitemap::ProxyResource.new(app.sitemap, path, source_path)
+      r = ::Middleman::Sitemap::ProxyResource.new(app.sitemap, path, source_path, false)
       r.add_metadata options: { locale: locale }
       resources + [r]
     end
