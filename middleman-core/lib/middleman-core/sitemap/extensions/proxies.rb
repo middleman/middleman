@@ -113,7 +113,15 @@ module Middleman
       end
 
       def metadata
-        target_resource.metadata.deep_merge super
+        resource = @store.find_resource_by_path(@target)
+        
+        if resource && resource.is_a?(ProxyResource) && @allow_recursive
+          step1 = resource.metadata.deep_merge @metadata
+          step2 = target_resource.metadata.deep_merge step1
+          return step2
+        end
+
+        target_resource.metadata.deep_merge @metadata
       end
 
       Contract Maybe[String]

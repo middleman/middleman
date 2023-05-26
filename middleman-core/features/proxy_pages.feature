@@ -82,3 +82,10 @@ Feature: Proxy Pages (using proxy rather than page)
     Then I should see "File Not Found"
     When I go to "/should_be_ignored8.html"
     Then I should see "File Not Found"
+
+  Scenario: Running localize with a proxy to a i18n resource
+    Given the Server is running at "proxy-pages-app"
+    When I go to "/second.html"
+    Then I should see "Alpha: 1"
+    Then I should see "Beta: 2"
+    Then I should see "Gamma: 3"

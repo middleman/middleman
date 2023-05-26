@@ -16,3 +16,6 @@ proxy "/target_ignore4.html", "should_be_ignored8.html", ignore: true
 end
 
 proxy "明日がある.html", "/real.html", layout: false
+
+proxy "/first.html", "/double.html", ignore: true, locals: { a: 1, g: 5 }
+proxy "/second.html", "/first.html", allow_recursive: true, locals: { b: 2, g: 3 }

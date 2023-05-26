@@ -34,7 +34,7 @@ end
 Given /^the Server is running$/ do
   root_dir = File.expand_path(expand_path("."))
 
-  if File.exists?(File.join(root_dir, 'source'))
+  if File.exist?(File.join(root_dir, 'source'))
     ENV['MM_SOURCE'] = 'source'
   else
     ENV['MM_SOURCE'] = ''
