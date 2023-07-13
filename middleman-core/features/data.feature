@@ -83,6 +83,11 @@ Feature: Local Data API
     Then I should see "title2:More"
     Then I should see "title3:Stuff"
 
+  Scenario: Using data with aliases
+    Given the Server is running at "data-with-aliases-app"
+    When I go to "/test1.html"
+    Then I should see "Welcome"
+
   Scenario: Using data postscript
     Given the Server is running at "nested-data-app"
     When I go to "/extracontent.html"
