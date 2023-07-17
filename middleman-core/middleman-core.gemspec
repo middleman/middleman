@@ -52,9 +52,6 @@ Gem::Specification.new do |s|
   s.add_dependency('uglifier', ['~> 3.0'])
   s.add_dependency('execjs', ['~> 2.0'])
 
-  # Testing
-  s.add_dependency('contracts', ['~> 0.13', '< 0.17'])
-
   # Hash stuff
   s.add_dependency('hashie', ['~> 3.4'])
   s.add_dependency('hamster', ['~> 3.0'])
