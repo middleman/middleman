@@ -36,7 +36,7 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
-    activesupport (7.0.6)
+    activesupport (7.0.8)
       concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (>= 1.6, < 2)
       minitest (>= 5.1)
@@ -111,7 +111,7 @@ GEM
       mime-types-data (~> 3.2015)
     mime-types-data (3.2021.0225)
     mini_portile2 (2.6.1)
-    minitest (5.18.1)
+    minitest (5.20.0)
     multi_json (1.15.0)
     multi_test (0.1.2)
     mustermann (1.1.1)
