@@ -81,3 +81,20 @@ Feature: Step through sitemap as a tree (more)
     Then I should see "Sibling: directory-indexed/fake2.html"
     Then I should see "Sibling: directory-indexed/sibling2.html"
     Then I should see "Sibling: directory-indexed/sub2/index.html"
+
+  Scenario: non-html pages have their parents and siblings set
+    Given the Server is running at "more-traversal-app"
+    When I go to "/non-html/foo"
+    Then I should see "Path: non-html/foo.log"
+    Then I should see "Parent: non-html/index.xhtml"
+    Then I should see "Sibling: non-html/bar.txt"
+    Then I should see "Sibling: non-html/index.txt"
+
+  Scenario: non-html pages have their children set
+    Given the Server is running at "more-traversal-app"
+    When I go to "/non-html/"
+    Then I should see "Path: non-html/index.xhtml"
+    Then I should see "Parent: index.html"
+    Then I should see "Child: sub/index.txt"
+    Then I should see "Child: foo.log"
+    Then I should see "Child: bar.txt"
