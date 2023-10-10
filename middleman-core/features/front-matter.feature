@@ -80,6 +80,27 @@ Feature: YAML Front Matter
     When I go to "/front-matter-change.html"
     Then I should see "Hello World"
 
+  Scenario: A template should handle YAML with types
+    Given the Server is running at "frontmatter-app"
+    And the file "source/front-matter-types.html.erb" has the contents
+      """
+      ---
+      date_matter: 2020-01-01
+      time_matter: 2020-12-31 13:14:15 +0000
+      symbol_matter: :a_symbol
+      regexp_matter: !ruby/regexp /a|b/
+      ---
+      Date: <%= current_page.data.date_matter.strftime('%d %m %Y') %>
+      Time: <%= current_page.data.time_matter.strftime('%d %m %Y %H::%M::%S %z') %>
+      Symbol: <%= current_page.data.symbol_matter.is_a? Symbol %>
+      Regexp: <%= "za" =~ current_page.data.regexp_matter %>
+      """
+    When I go to "/front-matter-types.html"
+    Then I should see "Date: 01 01 2020"
+    Then I should see "Time: 31 12 2020 13::14::15 +0000"
+    Then I should see "Symbol: true"
+    Then I should see "Regexp: 1"
+
   Scenario: Rendering raw (template-less) (toml)
     Given the Server is running at "frontmatter-app"
     When I go to "/raw-front-matter-toml.html"
