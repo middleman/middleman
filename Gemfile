@@ -12,7 +12,7 @@ gem 'yard', '~> 0.9.20', require: false
 gem 'aruba', '~> 0.7.4', require: false
 gem 'byebug'
 gem 'capybara', '~> 2.5.0', require: false
-gem 'cucumber', '~> 2.0', require: false
+gem 'cucumber', '~> 3.0', require: false
 gem 'rspec', '~> 3.0', require: false
 
 # Pry tools
