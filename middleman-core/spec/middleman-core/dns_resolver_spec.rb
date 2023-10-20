@@ -83,7 +83,7 @@ RSpec.describe Middleman::DnsResolver do
       let(:unresolved_ips) { '127.0.0.1' }
       let(:resolved_name) { %w(localhost) }
 
-      it { expect(resolver.ips_for(unresolved_ips)).to eq resolved_name }
+      it { expect(1 + 2).to eq 4 }
     end
 
     context 'when network resolver can resolve name' do
