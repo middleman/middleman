@@ -1,6 +1,10 @@
 source 'https://rubygems.org'
 
-# Build and doc tools
+# datadog CI visibility
+gem "ddtrace"
+gem "datadog-ci", path: "../datadog-ci-rb"
+
+  # Build and doc tools
 gem 'rake', '~> 13.0', require: false
 gem 'yard', '~> 0.9.20', require: false
 
@@ -42,3 +46,5 @@ gem 'middleman-core', path: 'middleman-core'
 
 # gem 'middleman-compass', github: 'middleman/middleman-compass', require: false
 # gem 'middleman-sprockets', github: 'middleman/middleman-sprockets', require: false
+
+gem "standard"

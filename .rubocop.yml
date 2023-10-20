@@ -1,22 +1,22 @@
 AllCops:
   Include:
-    - '**/Rakefile'
-    - '**/Gemfile'
-    - '**/config.ru'
-    - '**/gem_rake_helper.rb'
+    - "**/Rakefile"
+    - "**/Gemfile"
+    - "**/config.ru"
+    - "**/gem_rake_helper.rb"
   Exclude:
-    - 'script/**/*'
-    - 'vendor/**/*'
-    - '**/tmp/**/*'
-    - '**/bin/**/*'
-    - 'middleman-core/lib/middleman-core/step_definitions/**/*'
-    - 'middleman-core/fixtures/**/*'
-    - 'middleman-core/features/**/*'
-    - 'middleman-core/spec/**/*'
-    - 'middleman-cli/lib/middleman-cli/templates/**/*'
-    - 'middleman-cli/fixtures/**/*'
-    - 'middleman-cli/features/**/*'
-    - 'middleman-cli/spec/**/*'
+    - "script/**/*"
+    - "vendor/**/*"
+    - "**/tmp/**/*"
+    - "**/bin/**/*"
+    - "middleman-core/lib/middleman-core/step_definitions/**/*"
+    - "middleman-core/fixtures/**/*"
+    - "middleman-core/features/**/*"
+    - "middleman-core/spec/**/*"
+    - "middleman-cli/lib/middleman-cli/templates/**/*"
+    - "middleman-cli/fixtures/**/*"
+    - "middleman-cli/features/**/*"
+    - "middleman-cli/spec/**/*"
 DoubleNegation:
   Enabled: false
 LineLength:
@@ -38,8 +38,6 @@ ClassAndModuleChildren:
 AssignmentInCondition:
   Enabled: false
 CyclomaticComplexity:
-  Enabled: false
-HandleExceptions:
   Enabled: false
 EndAlignment:
   EnforcedStyleAlignWith: variable
