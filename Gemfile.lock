@@ -5,6 +5,16 @@ PATH
       msgpack
 
 PATH
+  remote: ../dd-trace-rb
+  specs:
+    ddtrace (2.0.0.alpha1)
+      datadog-ci (~> 0.2.0)
+      debase-ruby_core_source (= 3.2.2)
+      libdatadog (~> 5.0.0.1.0)
+      libddwaf (~> 1.14.0.0.0)
+      msgpack
+
+PATH
   remote: middleman-cli
   specs:
     middleman-cli (4.5.0)
@@ -92,12 +102,6 @@ GEM
     cucumber-expressions (6.0.1)
     cucumber-tag_expressions (1.1.1)
     cucumber-wire (0.0.1)
-    ddtrace (1.15.0)
-      datadog-ci (~> 0.2.0)
-      debase-ruby_core_source (= 3.2.2)
-      libdatadog (~> 5.0.0.1.0)
-      libddwaf (~> 1.14.0.0.0)
-      msgpack
     debase-ruby_core_source (3.2.2)
     diff-lcs (1.4.4)
     docile (1.4.0)
@@ -252,7 +256,7 @@ DEPENDENCIES
   coffee-script (~> 2.2)
   cucumber (~> 3.0)
   datadog-ci!
-  ddtrace
+  ddtrace!
   haml (~> 4.0)
   kramdown (~> 2.4)
   liquid (~> 3.0)
