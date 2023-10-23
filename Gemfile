@@ -1,8 +1,8 @@
 source 'https://rubygems.org'
 
 # datadog CI visibility
-gem "ddtrace", path: "../dd-trace-rb"
-gem "datadog-ci", path: "../datadog-ci-rb"
+gem "ddtrace"
+# gem "datadog-ci", path: "../datadog-ci-rb"
 
   # Build and doc tools
 gem 'rake', '~> 13.0', require: false
