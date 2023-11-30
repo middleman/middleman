@@ -118,7 +118,7 @@ module Middleman
       # @return [Hash]
       Contract String, Pathname => Hash
       def parse_yaml(content, full_path)
-        permitted_classes = [Date, Symbol]
+        permitted_classes = [Date, Time, DateTime, Symbol, Regexp]
         c = begin
           ::Middleman::Util.instrument 'parse.yaml' do
             allowed_parameters = ::YAML.method(:safe_load).parameters

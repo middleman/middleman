@@ -1,5 +1,9 @@
 # master
 
+# 4.5.1
+
+- Lock thor dependency to 1.2.x
+
 # 4.5.0
 
 - Support Haml 6 (#2590)
