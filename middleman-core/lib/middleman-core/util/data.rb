@@ -123,11 +123,11 @@ module Middleman
           ::Middleman::Util.instrument 'parse.yaml' do
             allowed_parameters = ::YAML.method(:safe_load).parameters
             if allowed_parameters.include? [:key, :permitted_classes]
-              ::YAML.safe_load(content, permitted_classes: permitted_classes)
+              ::YAML.safe_load(content, permitted_classes: permitted_classes, aliases: true)
             elsif allowed_parameters.include? [:key, :whitelist_classes]
-              ::YAML.safe_load(content, whitelist_classes: permitted_classes)
+              ::YAML.safe_load(content, whitelist_classes: permitted_classes, aliases: true)
             else
-              ::YAML.safe_load(content, permitted_classes)
+              ::YAML.safe_load(content, permitted_classes, [], true)
             end
           end
         rescue StandardError, ::Psych::SyntaxError => error

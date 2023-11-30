@@ -1,0 +1,9 @@
+-
+  from: "/test1.html"
+  to:   "/index.html"
+  content: &greeting 'Welcome'
+
+-
+  from: "/test2.html"
+  to:   "/index.html"
+  content: *greeting
