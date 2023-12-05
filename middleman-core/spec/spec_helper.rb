@@ -15,7 +15,7 @@ Datadog.configure do |c|
   c.service = "middleman"
   c.tracing.enabled = true
   c.ci.enabled = true
-  c.ci.instrument :rspec
+  c.ci.instrument :rspec, operation_name: "blahblahblahblahblahblah"
 end
 
 # encoding: utf-8
