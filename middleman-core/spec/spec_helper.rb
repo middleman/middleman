@@ -15,6 +15,7 @@ Datadog.configure do |c|
   c.service = "middleman"
   c.tracing.enabled = true
   c.ci.enabled = true
+  c.ci.experimental_test_suite_level_visibility_enabled = true
   c.ci.instrument :rspec
 end
 
