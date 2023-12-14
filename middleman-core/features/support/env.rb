@@ -15,5 +15,6 @@ require File.join(PROJECT_ROOT_PATH, "lib", "middleman-core", "step_definitions"
 Datadog.configure do |c|
   c.service = "middleman"
   c.ci.enabled = true
+  c.ci.experimental_test_suite_level_visibility_enabled = true
   c.ci.instrument :cucumber
 end
