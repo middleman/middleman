@@ -14,6 +14,8 @@ jobs:
     continue-on-error: ${{ matrix.experimental }}
     steps:
       - uses: actions/checkout@v3
+      - name: Delete Gemfile.lock
+        run: rm Gemfile.lock
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
