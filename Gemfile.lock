@@ -1,10 +1,10 @@
 GIT
   remote: https://github.com/DataDog/dd-trace-rb.git
-  revision: 0fa4a6753b16ab039cb000e345f8136ac4f25dc8
+  revision: 7088ace6a50857b7e0931fa5eb67587ad0cae3d3
   ref: master
   specs:
     ddtrace (1.18.0)
-      datadog-ci (~> 0.5.0)
+      datadog-ci (~> 0.6.0)
       debase-ruby_core_source (= 3.2.3)
       libdatadog (~> 5.0.0.1.0)
       libddwaf (~> 1.14.0.0.0)
@@ -13,7 +13,7 @@ GIT
 PATH
   remote: ../datadog-ci-rb
   specs:
-    datadog-ci (0.5.1)
+    datadog-ci (0.6.0)
       msgpack
 
 PATH
@@ -296,4 +296,4 @@ DEPENDENCIES
   yard (~> 0.9.20)
 
 BUNDLED WITH
-   2.2.33
+   2.5.3
