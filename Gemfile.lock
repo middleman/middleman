@@ -241,7 +241,7 @@ DEPENDENCIES
   rubydns (~> 1.0.1)
   simplecov
   sinatra (>= 2.0.0.beta2)
-  slim (>= 2.0)
+  slim (< 5)
   therubyrhino (>= 2.0)
   yard (~> 0.9.20)
 
