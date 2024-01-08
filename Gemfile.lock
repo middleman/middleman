@@ -111,7 +111,7 @@ GEM
       mime-types-data (~> 3.2015)
     mime-types-data (3.2021.0225)
     mini_portile2 (2.6.1)
-    minitest (5.20.0)
+    minitest (5.15.0)
     multi_json (1.15.0)
     multi_test (0.1.2)
     mustermann (1.1.1)
@@ -218,6 +218,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  activesupport
   aruba (~> 0.7.4)
   byebug
   capybara (~> 2.5.0)
@@ -228,8 +229,11 @@ DEPENDENCIES
   liquid (~> 3.0)
   middleman-cli!
   middleman-core!
+  minitest (~> 5.15.0)
+  nokogiri
   pry
   pry-rescue
+  public_suffix
   rake (~> 13.0)
   redcarpet (>= 3.1)
   rspec (~> 3.0)
