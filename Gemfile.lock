@@ -103,7 +103,7 @@ GEM
     interception (0.5)
     kramdown (2.4.0)
       rexml
-    liquid (3.0.6)
+    liquid (4.0.4)
     listen (3.8.0)
       rb-fsevent (~> 0.10, >= 0.10.3)
       rb-inotify (~> 0.9, >= 0.9.10)
@@ -228,7 +228,7 @@ DEPENDENCIES
   cucumber (~> 2.0)
   haml (~> 4.0)
   kramdown (~> 2.4)
-  liquid (~> 3.0)
+  liquid (~> 4.0)
   middleman-cli!
   middleman-core!
   minitest (~> 5.15.0)
