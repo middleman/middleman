@@ -2,9 +2,9 @@ When /^I stop (?:middleman|all commands) if the output( of the last command)? co
   begin
     Timeout.timeout(exit_timeout) do
       loop do
-        fail "You need to start middleman interactively first." unless @interactive
+        fail "You need to start middleman interactively first." unless last_command_started
 
-        if unescape(@interactive.output) =~ Regexp.new(unescape(expected))
+        if unescape(last_command_started.output) =~ Regexp.new(unescape(expected))
           all_commands.each { |p| p.terminate }
           break
         end
@@ -13,10 +13,10 @@ When /^I stop (?:middleman|all commands) if the output( of the last command)? co
       end
     end
   rescue ChildProcess::TimeoutError, TimeoutError
-    @interactive.terminate
+    last_command_started.terminate
   ensure
-    aruba.announcer.stdout @interactive.stdout
-    aruba.announcer.stderr @interactive.stderr
+    aruba.announcer.stdout last_command_started.stdout
+    aruba.announcer.stderr last_command_started.stderr
   end
 end
 
