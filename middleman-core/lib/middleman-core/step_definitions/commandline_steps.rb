@@ -15,8 +15,8 @@ When /^I stop (?:middleman|all commands) if the output( of the last command)? co
   rescue ChildProcess::TimeoutError, TimeoutError
     last_command_started.terminate
   ensure
-    aruba.announcer.stdout last_command_started.stdout
-    aruba.announcer.stderr last_command_started.stderr
+    aruba.announcer.announce :stdout, last_command_started.stdout
+    aruba.announcer.announce :stderr, last_command_started.stderr
   end
 end
 
