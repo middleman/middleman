@@ -3,7 +3,7 @@ require 'middleman-core/core_extensions/collections/lazy_step'
 module Middleman
   module CoreExtensions
     module Collections
-      class LazyCollectorRoot < BasicObject
+      class LazyCollectorRoot
         def initialize(parent)
           @data = nil
           @parent = parent
