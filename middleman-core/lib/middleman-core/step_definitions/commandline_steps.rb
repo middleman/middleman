@@ -5,7 +5,7 @@ When /^I stop (?:middleman|all commands) if the output( of the last command)? co
         fail "You need to start middleman interactively first." unless @interactive
 
         if unescape(@interactive.output) =~ Regexp.new(unescape(expected))
-          only_processes.each { |p| p.terminate }
+          all_commands.each { |p| p.terminate }
           break
         end
 
@@ -80,5 +80,5 @@ end
 
 # Make sure each and every process is really dead
 After do
-  only_processes.each { |p| p.terminate }
+  all_commands.each { |p| p.terminate }
 end
