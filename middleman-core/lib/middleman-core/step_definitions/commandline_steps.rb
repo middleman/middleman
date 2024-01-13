@@ -12,7 +12,7 @@ When /^I stop (?:middleman|all commands) if the output( of the last command)? co
         sleep 0.1
       end
     end
-  rescue ChildProcess::TimeoutError, TimeoutError
+  rescue ChildProcess::TimeoutError, Timeout::Error
     last_command_started.terminate
   ensure
     aruba.announcer.announce :stdout, last_command_started.stdout
