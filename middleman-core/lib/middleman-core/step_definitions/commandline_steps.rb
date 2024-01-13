@@ -1,6 +1,6 @@
 When /^I stop (?:middleman|all commands) if the output( of the last command)? contains:$/ do |last_command, expected|
   begin
-    Timeout.timeout(exit_timeout) do
+    Timeout.timeout(aruba.config.exit_timeout) do
       loop do
         fail "You need to start middleman interactively first." unless last_command_started
 
