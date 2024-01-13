@@ -22,7 +22,7 @@ end
 
 # Make it just a long running process
 Given /`(.*?)` is running in background/ do |cmd|
-  run(cmd, 120)
+  run_command(cmd, 120)
 end
 
 Given /I have a local hosts file with:/ do |string|
@@ -52,7 +52,7 @@ Given /I start a dns server with:/ do |string|
   set_env 'PATH', File.expand_path(File.join(current_dir, 'bin')) + ':' + ENV['PATH']
   write_file db_file, string
 
-  @dns_server = run("dns_server.rb #{db_file} #{port}", 120)
+  @dns_server = run_command("dns_server.rb #{db_file} #{port}", 120)
 end
 
 Given /I start a mdns server with:/ do |string|
@@ -71,7 +71,7 @@ Given /I start a mdns server with:/ do |string|
   set_env 'PATH', File.expand_path(File.join(current_dir, 'bin')) + ':' + ENV['PATH']
   write_file db_file, string
 
-  @mdns_server = run("dns_server.rb #{db_file} #{port}", 120)
+  @mdns_server = run_command("dns_server.rb #{db_file} #{port}", 120)
 end
 
 Given /I start a mdns server for the local hostname/ do
