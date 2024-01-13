@@ -4,7 +4,7 @@ When /^I stop (?:middleman|all commands) if the output( of the last command)? co
       loop do
         fail "You need to start middleman interactively first." unless last_command_started
 
-        if unescape(last_command_started.output) =~ Regexp.new(unescape(expected))
+        if unescape_text(last_command_started.output) =~ Regexp.new(unescape_text(expected))
           all_commands.each { |p| p.terminate }
           break
         end
