@@ -49,7 +49,7 @@ Given /I start a dns server with:/ do |string|
     )
   )
 
-  set_env 'PATH', File.expand_path(File.join(current_dir, 'bin')) + ':' + ENV['PATH']
+  set_env 'PATH', File.expand_path(File.join(aruba.current_directory, 'bin')) + ':' + ENV['PATH']
   write_file db_file, string
 
   @dns_server = run_command("dns_server.rb #{db_file} #{port}", 120)
@@ -68,7 +68,7 @@ Given /I start a mdns server with:/ do |string|
     )
   )
 
-  set_env 'PATH', File.expand_path(File.join(current_dir, 'bin')) + ':' + ENV['PATH']
+  set_env 'PATH', File.expand_path(File.join(aruba.current_directory, 'bin')) + ':' + ENV['PATH']
   write_file db_file, string
 
   @mdns_server = run_command("dns_server.rb #{db_file} #{port}", 120)
