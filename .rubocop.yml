@@ -39,7 +39,7 @@ AssignmentInCondition:
   Enabled: false
 CyclomaticComplexity:
   Enabled: false
-HandleExceptions:
+Lint/SuppressedException:
   Enabled: false
 EndAlignment:
   EnforcedStyleAlignWith: variable

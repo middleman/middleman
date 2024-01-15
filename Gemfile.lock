@@ -43,10 +43,12 @@ GEM
       tzinfo (~> 2.0)
     addressable (2.8.5)
       public_suffix (>= 2.0.2, < 6.0)
-    aruba (0.7.4)
-      childprocess (>= 0.3.6)
-      cucumber (>= 1.1.1)
-      rspec-expectations (>= 2.7.0)
+    aruba (1.0.4)
+      childprocess (>= 2.0, < 5.0)
+      contracts (~> 0.16.0)
+      cucumber (>= 2.4, < 6.0)
+      rspec-expectations (~> 3.4)
+      thor (~> 1.0)
     ast (2.4.2)
     backports (3.24.1)
     builder (3.2.4)
@@ -81,7 +83,7 @@ GEM
     cucumber-core (1.5.0)
       gherkin (~> 4.0)
     cucumber-wire (0.0.1)
-    diff-lcs (1.4.4)
+    diff-lcs (1.5.0)
     docile (1.4.0)
     dotenv (2.8.1)
     erubis (2.7.0)
@@ -101,7 +103,7 @@ GEM
     interception (0.5)
     kramdown (2.4.0)
       rexml
-    liquid (3.0.6)
+    liquid (4.0.4)
     listen (3.8.0)
       rb-fsevent (~> 0.10, >= 0.10.3)
       rb-inotify (~> 0.9, >= 0.9.10)
@@ -111,9 +113,9 @@ GEM
       mime-types-data (~> 3.2015)
     mime-types-data (3.2021.0225)
     mini_portile2 (2.6.1)
-    minitest (5.20.0)
+    minitest (5.15.0)
     multi_json (1.15.0)
-    multi_test (0.1.2)
+    multi_test (1.1.0)
     mustermann (1.1.1)
       ruby2_keywords (~> 0.0.1)
     nio4r (2.5.7)
@@ -156,13 +158,13 @@ GEM
       rspec-mocks (~> 3.10.0)
     rspec-core (3.10.1)
       rspec-support (~> 3.10.0)
-    rspec-expectations (3.10.1)
+    rspec-expectations (3.10.2)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.10.0)
     rspec-mocks (3.10.2)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.10.0)
-    rspec-support (3.10.2)
+    rspec-support (3.10.3)
     rubocop (1.17.0)
       parallel (~> 1.10)
       parser (>= 3.0.0.0)
@@ -218,18 +220,22 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  aruba (~> 0.7.4)
+  activesupport
+  aruba (~> 1.0.0)
   byebug
   capybara (~> 2.5.0)
   coffee-script (~> 2.2)
   cucumber (~> 2.0)
   haml (~> 4.0)
   kramdown (~> 2.4)
-  liquid (~> 3.0)
+  liquid (~> 4.0)
   middleman-cli!
   middleman-core!
+  minitest (~> 5.15.0)
+  nokogiri
   pry
   pry-rescue
+  public_suffix
   rake (~> 13.0)
   redcarpet (>= 3.1)
   rspec (~> 3.0)
@@ -237,7 +243,7 @@ DEPENDENCIES
   rubydns (~> 1.0.1)
   simplecov
   sinatra (>= 2.0.0.beta2)
-  slim (>= 2.0)
+  slim (< 5)
   therubyrhino (>= 2.0)
   yard (~> 0.9.20)
 
