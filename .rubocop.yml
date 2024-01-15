@@ -17,6 +17,7 @@ AllCops:
     - 'middleman-cli/fixtures/**/*'
     - 'middleman-cli/features/**/*'
     - 'middleman-cli/spec/**/*'
+
 Layout/CaseIndentation:
   EnforcedStyle: end
 Layout/EndAlignment:
@@ -25,22 +26,23 @@ Layout/LineLength:
   Enabled: false
 Layout/SpaceAroundEqualsInParameterDefault:
   EnforcedStyle: no_space
+
 Lint/AssignmentInCondition:
   Enabled: false
 Lint/SuppressedException:
+  Enabled: false
+
+Metrics/AbcSize:
   Enabled: false
 Metrics/ClassLength:
   Enabled: false
 Metrics/CyclomaticComplexity:
   Enabled: false
-Metrics/AbcSize:
-  Enabled: false
 Metrics/MethodLength:
   Enabled: false
 Metrics/PerceivedComplexity:
   Enabled: false
-Style/ParallelAssignment:
-  Enabled: false
+
 Style/BlockDelimiters:
   Enabled: false
 Style/ClassAndModuleChildren:
@@ -51,9 +53,13 @@ Style/DoubleNegation:
   Enabled: false
 Style/FormatString:
   Enabled: false
+Style/FrozenStringLiteralComment:
+  Enabled: false
 Style/HashSyntax:
   EnforcedStyle: ruby19
 Style/MultilineBlockChain:
+  Enabled: false
+Style/ParallelAssignment:
   Enabled: false
 Style/PerlBackrefs:
   Enabled: false
@@ -66,6 +72,4 @@ Style/SingleLineBlockParams:
 Style/SpecialGlobalVars:
   Enabled: false
 Style/TrivialAccessors:
-  Enabled: false
-Style/FrozenStringLiteralComment:
   Enabled: false
