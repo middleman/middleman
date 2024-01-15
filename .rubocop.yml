@@ -17,6 +17,8 @@ AllCops:
     - 'middleman-cli/fixtures/**/*'
     - 'middleman-cli/features/**/*'
     - 'middleman-cli/spec/**/*'
+  NewCops: disable
+  SuggestExtensions: false
 
 Layout/CaseIndentation:
   EnforcedStyle: end
