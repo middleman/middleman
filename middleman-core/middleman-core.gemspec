@@ -31,7 +31,7 @@ Gem::Specification.new do |s|
   s.add_dependency('webrick')
 
   # Helpers
-  s.add_dependency('activesupport', ['>= 6.1', '< 7.1'])
+  s.add_dependency('activesupport', ['>= 6.1'])
   s.add_dependency('padrino-helpers', ['~> 0.15.0'])
   s.add_dependency("addressable", ["~> 2.4"])
   s.add_dependency('memoist', ['~> 0.14'])
