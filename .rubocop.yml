@@ -17,55 +17,61 @@ AllCops:
     - 'middleman-cli/fixtures/**/*'
     - 'middleman-cli/features/**/*'
     - 'middleman-cli/spec/**/*'
-DoubleNegation:
+  NewCops: disable
+  SuggestExtensions: false
+
+Layout/CaseIndentation:
+  EnforcedStyle: end
+Layout/EndAlignment:
+  EnforcedStyleAlignWith: variable
+Layout/LineLength:
   Enabled: false
-LineLength:
-  Enabled: false
-MethodLength:
-  Enabled: false
-ClassLength:
-  Enabled: false
-Documentation:
-  Enabled: false
-HashSyntax:
-  EnforcedStyle: ruby19
-SpaceAroundEqualsInParameterDefault:
+Layout/SpaceAroundEqualsInParameterDefault:
   EnforcedStyle: no_space
-PerlBackrefs:
-  Enabled: false
-ClassAndModuleChildren:
-  Enabled: false
-AssignmentInCondition:
-  Enabled: false
-CyclomaticComplexity:
+
+Lint/AssignmentInCondition:
   Enabled: false
 Lint/SuppressedException:
   Enabled: false
-EndAlignment:
-  EnforcedStyleAlignWith: variable
-SignalException:
-  Enabled: false
-RegexpLiteral:
-  Enabled: false
-FormatString:
-  Enabled: false
-CaseIndentation:
-  EnforcedStyle: end
-TrivialAccessors:
-  Enabled: false
-SingleLineBlockParams:
-  Enabled: false
+
 Metrics/AbcSize:
+  Enabled: false
+Metrics/ClassLength:
+  Enabled: false
+Metrics/CyclomaticComplexity:
+  Enabled: false
+Metrics/MethodLength:
   Enabled: false
 Metrics/PerceivedComplexity:
   Enabled: false
-Style/ParallelAssignment:
-  Enabled: false
+
 Style/BlockDelimiters:
   Enabled: false
+Style/ClassAndModuleChildren:
+  Enabled: false
+Style/Documentation:
+  Enabled: false
+Style/DoubleNegation:
+  Enabled: false
+Style/FormatString:
+  Enabled: false
+Style/FrozenStringLiteralComment:
+  Enabled: false
+Style/HashSyntax:
+  EnforcedStyle: ruby19
 Style/MultilineBlockChain:
+  Enabled: false
+Style/ParallelAssignment:
+  Enabled: false
+Style/PerlBackrefs:
+  Enabled: false
+Style/RegexpLiteral:
+  Enabled: false
+Style/SignalException:
+  Enabled: false
+Style/SingleLineBlockParams:
   Enabled: false
 Style/SpecialGlobalVars:
   Enabled: false
-Style/FrozenStringLiteralComment:
+Style/TrivialAccessors:
   Enabled: false
