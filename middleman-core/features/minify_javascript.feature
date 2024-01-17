@@ -131,14 +131,14 @@ Feature: Minify Javascript
     Then I should see:
     """
     <script>
-      !function(){should(),all.be(),on={one:line}}();
+      should(),all.be(),on={one:line};
     </script>
     <script>
-      !function(){should(),too()}();
+      should(),too();
     </script>
     <script type='text/javascript'>
       //<!--
-    !function(){one,line(),here()}();
+    one,line(),here();
       //-->
     </script>
     <script type='text/html'>
@@ -159,11 +159,11 @@ Feature: Minify Javascript
     <?='Hello'?>
 
     <script>
-      !function(){should(),all.be(),on={one:line}}();
+      should(),all.be(),on={one:line};
     </script>
     <script type='text/javascript'>
       //<!--
-    !function(){one,line(),here()}();
+    one,line(),here();
       //-->
     </script>
     <script type='text/html'>
@@ -263,4 +263,3 @@ Feature: Minify Javascript
     And the Server is running at "passthrough-app"
     When I go to "/javascripts/coffee_test.js"
     Then I should see "11" lines
-
