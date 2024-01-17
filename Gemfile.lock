@@ -8,7 +8,7 @@ PATH
   remote: middleman-core
   specs:
     middleman-core (4.5.1)
-      activesupport (>= 6.1, < 7.1)
+      activesupport (>= 6.1)
       addressable (~> 2.4)
       backports (~> 3.6)
       bundler (~> 2.0)
@@ -152,7 +152,7 @@ GEM
     rb-fsevent (0.11.2)
     rb-inotify (0.10.1)
       ffi (~> 1.0)
-    redcarpet (3.5.1)
+    redcarpet (3.6.0)
     regexp_parser (2.9.0)
     rexml (3.2.6)
     rspec (3.10.0)
