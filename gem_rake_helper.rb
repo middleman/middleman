@@ -15,10 +15,10 @@ require 'bundler/gem_tasks'
 
 require 'cucumber/rake/task'
 Cucumber::Rake::Task.new do |t|
-  exempt_tags = ['--tags ~@wip']
-  exempt_tags << '--tags ~@nojava' if RUBY_PLATFORM == 'java'
-  exempt_tags << '--tags ~@encoding' unless Object.const_defined?(:Encoding)
-  exempt_tags << '--tags ~@nowindows' if Gem.win_platform?
+  exempt_tags = ["--tags 'not @wip'"]
+  exempt_tags << "--tags 'not @nojava'" if RUBY_PLATFORM == 'java'
+  exempt_tags << "--tags 'not @encoding'" unless Object.const_defined?(:Encoding)
+  exempt_tags << "--tags 'not @nowindows'" if Gem.win_platform?
   t.cucumber_opts = "--require features --color #{exempt_tags.join(' ')} --strict" # --format #{ENV['CUCUMBER_FORMAT'] || 'Fivemat'}"
 end
 
