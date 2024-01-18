@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 
 # Build and doc tools
 gem 'rake', '~> 13.0', require: false
-gem 'yard', '~> 0.9.20', require: false
+gem 'yard', '~> 0.9.34', require: false
 
 # Test tools
 gem 'aruba', '~> 1.0.0', require: false
