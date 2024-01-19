@@ -18,6 +18,7 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby-version }}
+          rubygems: ${{ (matrix.ruby_version < '2.6' && '3.3.26') || (matrix.ruby_version < '3.0' && '3.4.22') || 'latest' }}
           bundler-cache: true
       - name: Set up Node
         uses: actions/setup-node@v3
