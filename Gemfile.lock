@@ -36,28 +36,22 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
-    activesupport (7.1.3)
-      base64
-      bigdecimal
+    activesupport (7.0.8)
       concurrent-ruby (~> 1.0, >= 1.0.2)
-      connection_pool (>= 2.2.5)
-      drb
       i18n (>= 1.6, < 2)
       minitest (>= 5.1)
-      mutex_m
       tzinfo (~> 2.0)
     addressable (2.8.5)
       public_suffix (>= 2.0.2, < 6.0)
-    aruba (1.0.4)
+    aruba (1.1.2)
+      bundler (>= 1.17, < 3.0)
       childprocess (>= 2.0, < 5.0)
-      contracts (~> 0.16.0)
-      cucumber (>= 2.4, < 6.0)
+      contracts (>= 0.16.0, < 0.18.0)
+      cucumber (>= 2.4, < 7.0)
       rspec-expectations (~> 3.4)
       thor (~> 1.0)
     ast (2.4.2)
     backports (3.24.1)
-    base64 (0.2.0)
-    bigdecimal (3.1.5)
     builder (3.2.4)
     byebug (11.1.3)
     capybara (2.5.0)
@@ -78,30 +72,32 @@ GEM
       execjs
     coffee-script-source (1.12.2)
     concurrent-ruby (1.2.3)
-    connection_pool (2.4.1)
     contracts (0.16.1)
-    cucumber (2.99.0)
+    cucumber (3.2.0)
       builder (>= 2.1.2)
-      cucumber-core (~> 1.5.0)
+      cucumber-core (~> 3.2.0)
+      cucumber-expressions (~> 6.0.1)
       cucumber-wire (~> 0.0.1)
-      diff-lcs (>= 1.1.3)
-      gherkin (~> 4.0)
+      diff-lcs (~> 1.3)
+      gherkin (~> 5.1.0)
       multi_json (>= 1.7.5, < 2.0)
       multi_test (>= 0.1.2)
-    cucumber-core (1.5.0)
-      gherkin (~> 4.0)
+    cucumber-core (3.2.1)
+      backports (>= 3.8.0)
+      cucumber-tag_expressions (~> 1.1.0)
+      gherkin (~> 5.0)
+    cucumber-expressions (6.0.1)
+    cucumber-tag_expressions (1.1.1)
     cucumber-wire (0.0.1)
     diff-lcs (1.5.0)
     docile (1.4.0)
     dotenv (2.8.1)
-    drb (2.2.0)
-      ruby2_keywords
     erubis (2.7.0)
     execjs (2.9.1)
     fast_blank (1.0.1)
     fastimage (2.2.7)
     ffi (1.16.3)
-    gherkin (4.1.3)
+    gherkin (5.1.0)
     haml (4.0.7)
       tilt
     hamster (3.0.0)
@@ -130,7 +126,6 @@ GEM
     multi_test (1.1.0)
     mustermann (2.0.2)
       ruby2_keywords (~> 0.0.1)
-    mutex_m (0.2.0)
     nio4r (2.5.7)
     nokogiri (1.12.5)
       mini_portile2 (~> 2.6.1)
@@ -236,12 +231,12 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  activesupport
-  aruba (~> 1.0.0)
+  activesupport (~> 7.0.0)
+  aruba (~> 1.0)
   byebug
   capybara (~> 2.5.0)
   coffee-script (~> 2.2)
-  cucumber (~> 2.0)
+  cucumber
   haml (~> 4.0)
   kramdown (~> 2.4)
   liquid (~> 4.0)
@@ -264,4 +259,4 @@ DEPENDENCIES
   yard (~> 0.9.34)
 
 BUNDLED WITH
-   2.2.33
+   2.5.3

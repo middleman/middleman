@@ -5,10 +5,10 @@ gem 'rake', '~> 13.0', require: false
 gem 'yard', '~> 0.9.34', require: false
 
 # Test tools
-gem 'aruba', '~> 1.0.0', require: false
+gem 'aruba', '~> 1.0', require: false
 gem 'byebug'
 gem 'capybara', '~> 2.5.0', require: false
-gem 'cucumber', '~> 2.0', require: false
+gem 'cucumber', require: false
 gem 'rspec', '~> 3.0', require: false
 
 # Pry tools
@@ -17,7 +17,7 @@ gem 'pry-rescue'
 # gem 'pry-stack_explorer', require: false
 
 # Optional middleman dependencies, included for tests
-gem 'activesupport', RUBY_VERSION < '2.6' ? '~> 6.1.0' : '>= 0', require: false
+gem 'activesupport', RUBY_VERSION < '2.7' ? '~> 6.1.0' : '~> 7.0.0', require: false
 gem 'coffee-script', '~> 2.2', require: false
 gem 'haml', '~> 4.0', require: false
 gem 'kramdown', '~> 2.4', require: false
