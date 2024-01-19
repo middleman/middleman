@@ -1,6 +1,7 @@
 # Middleman - Makes developing websites simple
 
 [![Gem Version](http://img.shields.io/gem/v/middleman.svg?style=flat)][gem]
+[![CI](https://github.com/middleman/middleman/actions/workflows/ci.yml/badge.svg)](https://github.com/middleman/middleman/actions/workflows/ci.yml)
 [![License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)][license]
 
 **Middleman** is a static site generator using all the shortcuts and tools in modern web development. Check out [middlemanapp.com](http://middlemanapp.com/) for detailed tutorials, including a [getting started guide](http://middlemanapp.com/basics/getting-started/).
@@ -93,7 +94,7 @@ should) specify a dependency on this gem using the [Pessimistic Version
 Constraint][pvc] with two digits of precision. For example:
 
 ```ruby
-    spec.add_dependency 'middleman-core', '~> 4.0'
+gem 'middleman', '~> 4.0'
 ```
 
 [semver]: http://semver.org/
