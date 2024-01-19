@@ -48,10 +48,11 @@ GEM
       tzinfo (~> 2.0)
     addressable (2.8.5)
       public_suffix (>= 2.0.2, < 6.0)
-    aruba (1.0.4)
+    aruba (1.1.2)
+      bundler (>= 1.17, < 3.0)
       childprocess (>= 2.0, < 5.0)
-      contracts (~> 0.16.0)
-      cucumber (>= 2.4, < 6.0)
+      contracts (>= 0.16.0, < 0.18.0)
+      cucumber (>= 2.4, < 7.0)
       rspec-expectations (~> 3.4)
       thor (~> 1.0)
     ast (2.4.2)
@@ -237,7 +238,7 @@ PLATFORMS
 
 DEPENDENCIES
   activesupport
-  aruba (~> 1.0.0)
+  aruba (~> 1.0)
   byebug
   capybara (~> 2.5.0)
   coffee-script (~> 2.2)
@@ -264,4 +265,4 @@ DEPENDENCIES
   yard (~> 0.9.34)
 
 BUNDLED WITH
-   2.2.33
+   2.5.3
