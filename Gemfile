@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 
 # Build and doc tools
 gem 'rake', '~> 13.0', require: false
-gem 'yard', '~> 0.9.20', require: false
+gem 'yard', '~> 0.9.34', require: false
 
 # Test tools
 gem 'aruba', '~> 1.0.0', require: false
@@ -26,7 +26,7 @@ gem 'minitest', '~> 5.15.0', require: false
 gem 'nokogiri', RUBY_VERSION < '2.6' ? '~> 1.12.0' : '>= 0', require: false
 gem 'public_suffix', RUBY_VERSION < '2.6' ? '~> 4.0.0' : '>= 0', require: false
 gem 'redcarpet', '>= 3.1', require: false
-gem 'sinatra', '>= 2.0.0.beta2', require: false
+gem 'sinatra', '~> 2.0', require: false
 gem 'slim', '< 5', require: false
 
 # Dns server to test preview server
