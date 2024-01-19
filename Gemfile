@@ -8,7 +8,7 @@ gem 'yard', '~> 0.9.34', require: false
 gem 'aruba', '~> 1.0', require: false
 gem 'byebug'
 gem 'capybara', '~> 2.5.0', require: false
-gem 'cucumber', '~> 2.0', require: false
+gem 'cucumber', require: false
 gem 'rspec', '~> 3.0', require: false
 
 # Pry tools
