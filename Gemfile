@@ -9,7 +9,7 @@ gem 'aruba', '~> 1.0', require: false
 gem 'byebug'
 gem 'capybara', require: false
 gem 'cucumber', require: false
-gem 'rspec', '~> 3.0', require: false
+gem 'rspec', require: false
 
 # Pry tools
 gem 'pry'
