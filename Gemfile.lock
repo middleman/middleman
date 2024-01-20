@@ -54,12 +54,15 @@ GEM
     backports (3.24.1)
     builder (3.2.4)
     byebug (11.1.3)
-    capybara (2.5.0)
-      mime-types (>= 1.16)
-      nokogiri (>= 1.3.3)
-      rack (>= 1.0.0)
-      rack-test (>= 0.5.4)
-      xpath (~> 2.0)
+    capybara (3.39.2)
+      addressable
+      matrix
+      mini_mime (>= 0.1.3)
+      nokogiri (~> 1.8)
+      rack (>= 1.6.0)
+      rack-test (>= 0.6.3)
+      regexp_parser (>= 1.5, < 3.0)
+      xpath (~> 3.2)
     celluloid (0.16.0)
       timers (~> 4.0.0)
     celluloid-io (0.16.2)
@@ -115,20 +118,19 @@ GEM
     listen (3.8.0)
       rb-fsevent (~> 0.10, >= 0.10.3)
       rb-inotify (~> 0.9, >= 0.9.10)
+    matrix (0.4.2)
     memoist (0.16.2)
     method_source (1.0.0)
-    mime-types (3.3.1)
-      mime-types-data (~> 3.2015)
-    mime-types-data (3.2021.0225)
-    mini_portile2 (2.6.1)
-    minitest (5.15.0)
+    mini_mime (1.1.5)
+    mini_portile2 (2.8.5)
+    minitest (5.21.2)
     multi_json (1.15.0)
     multi_test (1.1.0)
     mustermann (2.0.2)
       ruby2_keywords (~> 0.0.1)
     nio4r (2.5.7)
-    nokogiri (1.12.5)
-      mini_portile2 (~> 2.6.1)
+    nokogiri (1.16.0)
+      mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
     padrino-helpers (0.15.3)
       i18n (>= 0.6.7, < 2)
@@ -151,8 +153,8 @@ GEM
     rack (2.2.8)
     rack-protection (2.2.4)
       rack
-    rack-test (1.1.0)
-      rack (>= 1.0, < 3)
+    rack-test (2.1.0)
+      rack (>= 1.3)
     rainbow (3.1.1)
     rake (13.0.6)
     rb-fsevent (0.11.2)
@@ -161,19 +163,19 @@ GEM
     redcarpet (3.6.0)
     regexp_parser (2.9.0)
     rexml (3.2.6)
-    rspec (3.10.0)
-      rspec-core (~> 3.10.0)
-      rspec-expectations (~> 3.10.0)
-      rspec-mocks (~> 3.10.0)
-    rspec-core (3.10.1)
-      rspec-support (~> 3.10.0)
-    rspec-expectations (3.10.2)
+    rspec (3.12.0)
+      rspec-core (~> 3.12.0)
+      rspec-expectations (~> 3.12.0)
+      rspec-mocks (~> 3.12.0)
+    rspec-core (3.12.2)
+      rspec-support (~> 3.12.0)
+    rspec-expectations (3.12.3)
       diff-lcs (>= 1.2.0, < 2.0)
-      rspec-support (~> 3.10.0)
-    rspec-mocks (3.10.2)
+      rspec-support (~> 3.12.0)
+    rspec-mocks (3.12.6)
       diff-lcs (>= 1.2.0, < 2.0)
-      rspec-support (~> 3.10.0)
-    rspec-support (3.10.3)
+      rspec-support (~> 3.12.0)
+    rspec-support (3.12.1)
     rubocop (1.60.0)
       json (~> 2.3)
       language_server-protocol (>= 3.17.0)
@@ -223,8 +225,8 @@ GEM
       execjs (>= 0.3.0, < 3)
     unicode-display_width (2.5.0)
     webrick (1.8.1)
-    xpath (2.1.0)
-      nokogiri (~> 1.3)
+    xpath (3.2.0)
+      nokogiri (~> 1.8)
     yard (0.9.34)
 
 PLATFORMS
@@ -234,7 +236,7 @@ DEPENDENCIES
   activesupport (~> 7.0.0)
   aruba (~> 1.0)
   byebug
-  capybara (~> 2.5.0)
+  capybara
   coffee-script (~> 2.2)
   cucumber
   haml (~> 4.0)
@@ -242,14 +244,14 @@ DEPENDENCIES
   liquid (~> 4.0)
   middleman-cli!
   middleman-core!
-  minitest (~> 5.15.0)
+  minitest
   nokogiri
   pry
   pry-rescue
   public_suffix
   rake (~> 13.0)
   redcarpet (>= 3.1)
-  rspec (~> 3.0)
+  rspec
   rubocop
   rubydns (~> 1.0.1)
   simplecov

@@ -7,9 +7,9 @@ gem 'yard', '~> 0.9.34', require: false
 # Test tools
 gem 'aruba', '~> 1.0', require: false
 gem 'byebug'
-gem 'capybara', '~> 2.5.0', require: false
+gem 'capybara', require: false
 gem 'cucumber', require: false
-gem 'rspec', '~> 3.0', require: false
+gem 'rspec', require: false
 
 # Pry tools
 gem 'pry'
@@ -22,7 +22,7 @@ gem 'coffee-script', '~> 2.2', require: false
 gem 'haml', '~> 4.0', require: false
 gem 'kramdown', '~> 2.4', require: false
 gem 'liquid', '~> 4.0', require: false
-gem 'minitest', '~> 5.15.0', require: false
+gem 'minitest', require: false
 gem 'nokogiri', RUBY_VERSION < '2.6' ? '~> 1.12.0' : '>= 0', require: false
 gem 'public_suffix', RUBY_VERSION < '2.6' ? '~> 4.0.0' : '>= 0', require: false
 gem 'redcarpet', '>= 3.1', require: false
