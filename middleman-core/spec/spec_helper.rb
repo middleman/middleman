@@ -14,7 +14,6 @@ require_relative "support/given"
 Datadog.configure do |c|
   c.service = "middleman"
   c.ci.enabled = true
-  c.ci.experimental_test_suite_level_visibility_enabled = true
   c.ci.instrument :rspec
 end
 
