@@ -46,3 +46,9 @@ gem 'middleman-core', path: 'middleman-core'
 
 # gem 'middleman-compass', github: 'middleman/middleman-compass', require: false
 # gem 'middleman-sprockets', github: 'middleman/middleman-sprockets', require: false
+
+if RUBY_VERSION < '3.0.0'
+  gem 'contracts', '~> 0.13', '< 0.17'
+else
+  gem 'contracts', '~> 0.17'
+end

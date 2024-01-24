@@ -12,7 +12,7 @@ PATH
       addressable (~> 2.4)
       backports (~> 3.6)
       bundler (~> 2.0)
-      contracts (~> 0.13, < 0.17)
+      contracts (~> 0.13, < 0.18)
       dotenv
       erubis
       execjs (~> 2.0)
@@ -75,7 +75,7 @@ GEM
       execjs
     coffee-script-source (1.12.2)
     concurrent-ruby (1.2.3)
-    contracts (0.16.1)
+    contracts (0.17)
     cucumber (3.2.0)
       builder (>= 2.1.2)
       cucumber-core (~> 3.2.0)
@@ -238,6 +238,7 @@ DEPENDENCIES
   byebug
   capybara
   coffee-script (~> 2.2)
+  contracts (~> 0.17)
   cucumber
   haml (~> 4.0)
   kramdown (~> 2.4)
