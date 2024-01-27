@@ -1,20 +1,17 @@
-require 'sassc'
+require 'addressable/uri'
+require 'sass-embedded'
 
 module Middleman
   module Renderers
     # Sass renderer
     class Sass < ::Middleman::Extension
-      opts = { output_style: :nested }
-      opts[:line_comments] = false if ENV['TEST']
-      define_setting :sass, opts, 'Sass engine options'
+      define_setting :sass, {}, 'Sass options'
       define_setting :sass_assets_paths, [], 'Paths to extra SASS/SCSS files'
       define_setting :sass_source_maps, nil, 'Whether to inline sourcemap into Sass'
 
       # Setup extension
       def initialize(app, options={}, &block)
         super
-
-        app.files.ignore :sass_cache, :source, /(^|\/)\.sass-cache\//
 
         # Tell Tilt to use it as well (for inline sass blocks)
         ::Tilt.register 'sass', SassPlusCSSFilenameTemplate
@@ -38,7 +35,7 @@ module Middleman
         # Define the expected syntax for the template
         # @return [Symbol]
         def syntax
-          :sass
+          :indented
         end
 
         def prepare; end
@@ -49,66 +46,74 @@ module Middleman
         def evaluate(context, _)
           @context ||= context
 
-          @engine = ::SassC::Engine.new(data, sass_options)
-
           begin
-            @engine.render
-          rescue ::SassC::SyntaxError => e
+            result = ::Sass.compile_string(data, **sass_options)
+            if result.source_map
+              source_mapping_url = "data:application/json;base64,#{[result.source_map].pack('m0')}"
+              result.css + "\n\n/*# sourceMappingURL=#{source_mapping_url} */"
+            else
+              result.css + "\n"
+            end
+          rescue ::Sass::CompileError => e
             raise e if @context.app.build?
 
-            exception_to_css(e)
+            +e.to_css
           end
         end
 
-        def exception_to_css(e)
-          header = "#{e.class}: #{e.message}"
-
-          <<~END
-            /*
-            #{header.gsub('*/', '*\\/')}
-
-            Backtrace:\n#{e.backtrace.join("\n").gsub('*/', '*\\/')}
-            */
-            body:before {
-              white-space: pre;
-              font-family: monospace;
-              content: "#{header.gsub('"', '\"').gsub("\n", '\\A ')}"; }
-          END
-        end
 
         # Change Sass path, for url functions, to the build folder if we're building
         # @return [Hash]
         def sass_options
           ctx = @context
 
-          preexisting_load_paths = begin
-            ::Sass.load_paths
-          rescue
-            []
+          sass_options = {}.merge!(ctx.app.config[:sass])
+          sass_options[:load_paths] = [].concat(sass_options[:load_paths] || []).concat(ctx.app.config[:sass_assets_paths] || [])
+          sass_options[:syntax] = syntax
+          sass_options[:url] = Addressable::URI.convert_path(eval_file)
+          sass_options[:style] = options[:style] if options.key?(:style)
+
+          if ctx.app.config[:sass_source_maps] || (ctx.app.config[:sass_source_maps].nil? && ctx.app.development?)
+            %i[source_map source_map_include_sources].each do |option|
+              sass_options[option] = true if sass_options[option].nil?
+            end
           end
 
-          more_opts = {
-            load_paths: preexisting_load_paths + ctx.app.config[:sass_assets_paths],
-            filename: eval_file,
-            line: line,
-            syntax: syntax,
+          custom_options = {
             custom: {}.merge!(options[:custom] || {}).merge!(
               middleman_context: ctx.app,
               current_resource: ctx.current_resource
             )
           }
 
-          if ctx.app.config[:sass_source_maps] || (ctx.app.config[:sass_source_maps].nil? && ctx.app.development?)
-            more_opts[:source_map_file] = '.'
-            more_opts[:source_map_embed] = true
-            more_opts[:source_map_contents] = true
-          end
+          functions_options = {}.merge!(options).merge!(sass_options).merge!(custom_options)
 
-          if ctx.is_a?(::Middleman::TemplateContext) && file
-            more_opts[:css_filename] = file.sub(/\.s[ac]ss$/, '')
-          end
+          sass_options[:functions] = {}.merge!(sass_options[:functions] || {}).merge!(
+            functions(::Middleman::Sass::Functions, functions_options)
+          )
 
-          {}.merge!(options).merge!(more_opts)
+          sass_options
+        end
+
+        private
+
+        # Convert Ruby functions module to Sass functions hash
+        def functions(functions_module, functions_options)
+          functions_wrapper = Class.new do
+            attr_reader :options
+
+            include functions_module
+
+            def initialize(options)
+              @options = options
+            end
+          end.new(functions_options)
+
+          functions_module.public_instance_methods.to_h do |function_name|
+            ["#{function_name}($args...)", lambda do |args|
+              functions_wrapper.send(function_name, *args[0].to_a, args[0].keywords)
+            end]
+          end
         end
       end
 

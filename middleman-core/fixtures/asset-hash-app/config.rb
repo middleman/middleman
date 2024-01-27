@@ -1,3 +1,4 @@
+set :sass_source_maps, false
 
 activate :asset_hash
 

@@ -50,7 +50,7 @@ module Middleman
     # Reference to lower level listener
     attr_reader :listener
 
-    IGNORED_DIRECTORIES = Set.new(%w(.git node_modules .sass-cache vendor/bundle .bundle))
+    IGNORED_DIRECTORIES = Set.new(%w(.git node_modules vendor/bundle .bundle))
 
     # Construct a new SourceWatcher
     #
@@ -175,7 +175,6 @@ module Middleman
 
       @listener = ::Listen.to(@directory.to_s, config, &method(:on_listener_change))
 
-      @listener.ignore(/^\.sass-cache/)
       @listener.ignore(/^node_modules/)
       @listener.ignore(/^vendor\/bundle/)
 

@@ -26,9 +26,9 @@ PATH
       padrino-helpers (~> 0.15.0)
       parallel
       rack (>= 1.4.5, < 3)
-      sassc (~> 2.0)
+      sass-embedded (~> 1.70)
       servolux
-      tilt (~> 2.0.9)
+      tilt (~> 2.0.11)
       toml
       uglifier (>= 3, < 5)
       webrick
@@ -101,6 +101,7 @@ GEM
     fastimage (2.3.0)
     ffi (1.16.3)
     gherkin (5.1.0)
+    google-protobuf (3.25.2)
     haml (4.0.7)
       tilt
     hamster (3.0.0)
@@ -195,8 +196,9 @@ GEM
       celluloid (= 0.16.0)
       celluloid-io (= 0.16.2)
       timers (~> 4.0.1)
-    sassc (2.4.0)
-      ffi (~> 1.9)
+    sass-embedded (1.70.0)
+      google-protobuf (~> 3.25)
+      rake (>= 13.0.0)
     servolux (0.13.0)
     simplecov (0.21.2)
       docile (~> 1.1)
