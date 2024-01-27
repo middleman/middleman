@@ -53,7 +53,7 @@ Gem::Specification.new do |s|
   s.add_dependency('execjs', ['~> 2.0'])
 
   # Testing
-  s.add_dependency('contracts', ['~> 0.13', '< 0.17'])
+  s.add_dependency('contracts')
 
   # Hash stuff
   s.add_dependency('hashie', ['~> 3.4'])
