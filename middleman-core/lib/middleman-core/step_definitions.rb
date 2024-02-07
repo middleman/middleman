@@ -16,6 +16,9 @@ module ArubaMonkeypatch
 end
 World(ArubaMonkeypatch)
 
+# The Capybara monkey-patch that switches between RSpec::Matchers#all and Capybara::DSL#all
+World(Capybara::RSpecMatcherProxies)
+
 Before do
   @aruba_timeout_seconds = RUBY_PLATFORM == 'java' ? 120 : 60
 end
