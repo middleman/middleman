@@ -5,7 +5,7 @@ gem 'rake', '~> 13.0', require: false
 gem 'yard', '~> 0.9.34', require: false
 
 # Test tools
-gem 'aruba', '~> 1.0', require: false
+gem 'aruba', require: false
 gem 'byebug'
 gem 'capybara', require: false
 gem 'cucumber', require: false
