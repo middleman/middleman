@@ -133,7 +133,7 @@ GEM
     mustermann (2.0.2)
       ruby2_keywords (~> 0.0.1)
     nio4r (2.5.7)
-    nokogiri (1.16.0)
+    nokogiri (1.16.2)
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
     padrino-helpers (0.15.3)
