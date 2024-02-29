@@ -25,7 +25,7 @@ PATH
       memoist (~> 0.14)
       padrino-helpers (~> 0.15.0)
       parallel
-      rack (>= 1.4.5, < 3)
+      rack (>= 1.4.5, < 4)
       sassc (~> 2.0)
       servolux
       tilt (~> 2.0.9)
@@ -154,7 +154,7 @@ GEM
       pry (>= 0.12.0)
     public_suffix (5.0.3)
     racc (1.7.3)
-    rack (2.2.8)
+    rack (2.2.8.1)
     rack-protection (2.2.4)
       rack
     rack-test (2.1.0)
