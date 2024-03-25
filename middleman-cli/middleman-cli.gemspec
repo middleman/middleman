@@ -20,5 +20,5 @@ Gem::Specification.new do |s|
   s.required_ruby_version = '>= 2.5.0'
 
   # CLI
-  s.add_dependency('thor', ['>= 0.17.0', '< 1.3.0'])
+  s.add_dependency('thor', '>= 0.17.0', '< 1.4.0')
 end
