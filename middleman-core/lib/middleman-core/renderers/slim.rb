@@ -39,9 +39,13 @@ module Middleman
         ::Slim::Engine.set_options(
           buffer: '@_out_buf',
           use_html_safe: true,
-          generator: ::Temple::Generators::RailsOutputBuffer,
           disable_escape: true
         )
+        if Gem::Version.create(::Slim::VERSION) < Gem::Version.create('5')
+          ::Slim::Engine.set_options(
+            generator: ::Temple::Generators::RailsOutputBuffer,
+          )
+        end
       end
     end
   end
