@@ -19,7 +19,7 @@ gem 'pry-rescue'
 # Optional middleman dependencies, included for tests
 gem 'activesupport', RUBY_VERSION < '2.7' ? '~> 6.1.0' : '~> 7.0.0', require: false
 gem 'coffee-script', '~> 2.2', require: false
-gem 'haml', '~> 4.0', require: false
+gem 'haml', '~> 6.3', require: false
 gem 'kramdown', '~> 2.4', require: false
 gem 'liquid', '~> 4.0', require: false
 gem 'minitest', require: false
