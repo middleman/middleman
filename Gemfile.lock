@@ -106,7 +106,9 @@ GEM
     fast_blank (1.0.1)
     fastimage (2.3.0)
     ffi (1.16.3)
-    haml (4.0.7)
+    haml (6.3.0)
+      temple (>= 0.8.2)
+      thor
       tilt
     hamster (3.0.0)
       concurrent-ruby (~> 1.0)
@@ -245,7 +247,7 @@ DEPENDENCIES
   capybara
   coffee-script (~> 2.2)
   cucumber
-  haml (~> 4.0)
+  haml (~> 6.3)
   kramdown (~> 2.4)
   liquid (~> 4.0)
   middleman-cli!
