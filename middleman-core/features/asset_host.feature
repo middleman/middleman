@@ -40,6 +40,8 @@ Feature: Alternate between multiple asset hosts
     Then I should see content matching %r{http://assets1.example.com/}
     Then I should not see content matching %r{http://assets1.example.com//}
 
+
+
   Scenario: Hosts are not rewritten for rewrite ignored paths
     Given a fixture app "asset-host-app"
     And a file named "config.rb" with:

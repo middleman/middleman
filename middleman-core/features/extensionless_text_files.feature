@@ -7,7 +7,10 @@ Feature: Text Files Without Extensions Should Build and Preview
       | CNAME   |
       | LICENSE |
       | README  |
-  
+
+
+
+
   Scenario: Previewing Text Files
     Given the Server is running at "extensionless-text-files-app"
     When I go to "/CNAME"
