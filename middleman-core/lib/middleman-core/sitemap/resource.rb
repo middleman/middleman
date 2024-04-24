@@ -1,8 +1,8 @@
-require 'rack/mime'
-require 'middleman-core/sitemap/extensions/traversal'
-require 'middleman-core/file_renderer'
-require 'middleman-core/template_renderer'
-require 'middleman-core/contracts'
+require "rack/mime"
+require "middleman-core/sitemap/extensions/traversal"
+require "middleman-core/file_renderer"
+require "middleman-core/template_renderer"
+require "middleman-core/contracts"
 
 module Middleman
   # Sitemap namespace
@@ -23,15 +23,15 @@ module Middleman
 
       # The on-disk source file for this resource, if there is one
       # @return [String]
-      Contract Maybe[IsA['Middleman::SourceFile']]
+      Contract Maybe[IsA["Middleman::SourceFile"]]
       attr_reader :file_descriptor
 
       # The path to use when requesting this resource. Normally it's
       # the same as {#destination_path} but it can be overridden in subclasses.
       # @return [String]
-      alias request_path destination_path
+      alias_method :request_path, :destination_path
 
-      METADATA_HASH = { options: Maybe[Hash], locals: Maybe[Hash], page: Maybe[Hash] }.freeze
+      METADATA_HASH = {options: Maybe[Hash], locals: Maybe[Hash], page: Maybe[Hash]}.freeze
 
       # The metadata for this resource
       # @return [Hash]
@@ -44,12 +44,12 @@ module Middleman
       # @param [Middleman::Sitemap::Store] store
       # @param [String] path
       # @param [String] source
-      Contract IsA['Middleman::Sitemap::Store'], String, Maybe[Or[IsA['Middleman::SourceFile'], String]] => Any
-      def initialize(store, path, source=nil)
-        @store       = store
-        @app         = @store.app
-        @path        = path
-        @ignored     = false
+      Contract IsA["Middleman::Sitemap::Store"], String, Maybe[Or[IsA["Middleman::SourceFile"], String]] => Any
+      def initialize(store, path, source = nil)
+        @store = store
+        @app = @store.app
+        @path = path
+        @ignored = false
 
         source = Pathname(source) if source && source.is_a?(String)
 
@@ -59,13 +59,14 @@ module Middleman
           source
         end
 
+        @destination_path = nil
         @destination_path = @path
 
         # Options are generally rendering/sitemap options
         # Locals are local variables for rendering this resource's template
         # Page are data that is exposed through this resource's data member.
         # Note: It is named 'page' for backwards compatibility with older MM.
-        @metadata = { options: {}, locals: {}, page: {} }
+        @metadata = {options: {}, locals: {}, page: {}}
 
         @page_data = nil
       end
@@ -97,7 +98,7 @@ module Middleman
       #   Page are data that is exposed through this resource's data member.
       #   Note: It is named 'page' for backwards compatibility with older MM.
       Contract METADATA_HASH, Maybe[Bool] => METADATA_HASH
-      def add_metadata(meta={}, reverse=false)
+      def add_metadata(meta = {}, reverse = false)
         @page_data = nil
 
         @metadata = if reverse
@@ -139,10 +140,10 @@ module Middleman
       # Render this resource
       # @return [String]
       Contract Hash, Hash => String
-      def render(opts={}, locs={})
+      def render(opts = {}, locs = {})
         return ::Middleman::FileRenderer.new(@app, file_descriptor[:full_path].to_s).template_data_for_file unless template?
 
-        md   = metadata
+        md = metadata
         opts = md[:options].deep_merge(opts)
         locs = md[:locals].deep_merge(locs)
         locs[:current_path] ||= destination_path
@@ -162,7 +163,7 @@ module Middleman
         url_path = destination_path
         if @app.config[:strip_index_file]
           url_path = url_path.sub(/(^|\/)#{Regexp.escape(@app.config[:index_file])}$/,
-                                  @app.config[:trailing_slash] ? '/' : '')
+            @app.config[:trailing_slash] ? "/" : "")
         end
         File.join(@app.config[:http_prefix], url_path)
       end
@@ -207,7 +208,7 @@ module Middleman
       def to_s
         "#<#{self.class} path=#{@path}>"
       end
-      alias inspect to_s # Ruby 2.0 calls inspect for NoMethodError instead of to_s
+      alias_method :inspect, :to_s # Ruby 2.0 calls inspect for NoMethodError instead of to_s
 
       protected
 
@@ -222,22 +223,22 @@ module Middleman
             return prok.call(path)
           end
 
-          basename = if ext == '.html'
+          basename = if ext == ".html"
             File.basename(path, ext)
           else
             File.basename(path)
-                     end
+          end
 
           # Remove leading dot or slash if present
-          File.join(File.dirname(path), basename).gsub(/^\.?\//, '')
+          File.join(File.dirname(path), basename).gsub(/^\.?\//, "")
         end
       end
     end
 
     class StringResource < Resource
-      def initialize(store, path, contents=nil, &block)
+      def initialize(store, path, contents = nil, &block)
         @request_path = path
-        @contents = block_given? ? block : contents
+        @contents = block || contents
         super(store, path)
       end
 
