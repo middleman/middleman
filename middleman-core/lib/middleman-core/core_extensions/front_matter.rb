@@ -1,12 +1,12 @@
 # Core Pathname library used for traversal
-require 'pathname'
+require "pathname"
 
 # DbC
-require 'middleman-core/contracts'
+require "middleman-core/contracts"
 
-require 'active_support/core_ext/hash/keys'
+require "active_support/core_ext/hash/keys"
 
-require 'middleman-core/util/data'
+require "middleman-core/util/data"
 
 # Extensions namespace
 module Middleman::CoreExtensions
@@ -16,12 +16,12 @@ module Middleman::CoreExtensions
 
     # Set textual delimiters that denote the start and end of frontmatter
     define_setting :frontmatter_delims, {
-      json: [%w(;;; ;;;)],
-      toml: [%w(+++ +++)],
-      yaml: [%w(--- ---), %w(--- ...)]
-    }, 'Allowed frontmatter delimiters'
+      json: [%w[;;; ;;;]],
+      toml: [%w[+++ +++]],
+      yaml: [%w[--- ---], %w[--- ...]]
+    }, "Allowed frontmatter delimiters"
 
-    def initialize(app, options_hash={}, &block)
+    def initialize(app, options_hash = {}, &block)
       super
 
       @cache = {}
@@ -49,7 +49,6 @@ module Middleman::CoreExtensions
 
         ignored = fmdata.delete(:ignored)
 
-        # TODO: Enhance data? NOOOO
         # TODO: stringify-keys? immutable/freeze?
 
         resource.add_metadata options: opts, page: fmdata
@@ -76,15 +75,13 @@ module Middleman::CoreExtensions
 
       file_path = file[:full_path].to_s
 
-      @cache[file_path] ||= begin
-        ::Middleman::Util::Data.parse(
-          file,
-          app.config[:frontmatter_delims]
-        )
-      end
+      @cache[file_path] ||= ::Middleman::Util::Data.parse(
+        file,
+        app.config[:frontmatter_delims]
+      )
     end
 
-    Contract ArrayOf[IsA['Middleman::SourceFile']], ArrayOf[IsA['Middleman::SourceFile']] => Any
+    Contract ArrayOf[IsA["Middleman::SourceFile"]], ArrayOf[IsA["Middleman::SourceFile"]] => Any
     def clear_data(updated_files, removed_files)
       (updated_files + removed_files).each do |file|
         @cache.delete(file[:full_path].to_s)
