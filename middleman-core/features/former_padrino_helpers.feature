@@ -11,6 +11,9 @@ Feature: Built-in macro view helpers
     And I should see 'href="/stylesheets/test1.css"'
     And I should see '1 KB'
 
+
+
+
   Scenario: Setting http_prefix
     Given a fixture app "padrino-helpers-app"
     And a file named "config.rb" with:
@@ -24,4 +27,3 @@ Feature: Built-in macro view helpers
     And I should see 'src="/foo/javascripts/test1.js"'
     And I should see 'href="/foo/stylesheets/test1.css"'
 
-                
