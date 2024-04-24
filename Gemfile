@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 
 # datadog CI visibility
-gem "ddtrace", github: "DataDog/dd-trace-rb", ref: "master"
+gem "datadog", github: "DataDog/dd-trace-rb", ref: "master"
 gem "datadog-ci", path: "../datadog-ci-rb"
 
 # Build and doc tools

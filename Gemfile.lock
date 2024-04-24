@@ -1,19 +1,19 @@
 GIT
   remote: https://github.com/DataDog/dd-trace-rb.git
-  revision: 7088ace6a50857b7e0931fa5eb67587ad0cae3d3
+  revision: 0352901168c0477539fac7d03b087906c34c95a3
   ref: master
   specs:
-    ddtrace (1.18.0)
-      datadog-ci (~> 0.6.0)
-      debase-ruby_core_source (= 3.2.3)
-      libdatadog (~> 5.0.0.1.0)
+    datadog (2.0.0.beta2)
+      debase-ruby_core_source (= 3.3.1)
+      libdatadog (~> 7.0.0.1.0)
       libddwaf (~> 1.14.0.0.0)
       msgpack
 
 PATH
   remote: ../datadog-ci-rb
   specs:
-    datadog-ci (0.6.0)
+    datadog-ci (1.0.0.beta2)
+      datadog (~> 2.0.0.beta2)
       msgpack
 
 PATH
@@ -105,7 +105,7 @@ GEM
     cucumber-expressions (6.0.1)
     cucumber-tag_expressions (1.1.1)
     cucumber-wire (0.0.1)
-    debase-ruby_core_source (3.2.3)
+    debase-ruby_core_source (3.3.1)
     diff-lcs (1.5.0)
     docile (1.4.0)
     dotenv (2.8.1)
@@ -128,7 +128,7 @@ GEM
     kramdown (2.4.0)
       rexml
     language_server-protocol (3.17.0.3)
-    libdatadog (5.0.0.1.0)
+    libdatadog (7.0.0.1.0)
     libddwaf (1.14.0.0.0)
       ffi (~> 1.0)
     lint_roller (1.1.0)
@@ -274,8 +274,8 @@ DEPENDENCIES
   capybara (~> 2.5.0)
   coffee-script (~> 2.2)
   cucumber (~> 3.0)
+  datadog!
   datadog-ci!
-  ddtrace!
   haml (~> 4.0)
   kramdown (~> 2.4)
   liquid (~> 3.0)
