@@ -106,7 +106,7 @@ module Middleman
       # If this path is a binary file, send it immediately
       return send_file(resource, env) if resource.binary?
 
-      res['Content-Type'] = resource.content_type || 'text/plain'
+      res['content-type'] = resource.content_type || 'text/plain'
 
       begin
         # Write out the contents of the page
@@ -144,11 +144,11 @@ module Middleman
         response = file.serving(env)
       end
       status = response[0]
-      response[1]['Content-Encoding'] = 'gzip' if %w(.svgz .gz).include?(resource.ext)
-      # Do not set Content-Type if status is 1xx, 204, 205 or 304, otherwise
+      response[1]['content-encoding'] = 'gzip' if %w(.svgz .gz).include?(resource.ext)
+      # Do not set content-type if status is 1xx, 204, 205 or 304, otherwise
       # Rack will throw an error (500)
       if !(100..199).cover?(status) && ![204, 205, 304].include?(status)
-        response[1]['Content-Type'] = resource.content_type || 'application/octet-stream'
+        response[1]['content-type'] = resource.content_type || 'application/octet-stream'
       end
       halt response
     end
