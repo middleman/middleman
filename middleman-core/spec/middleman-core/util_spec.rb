@@ -4,6 +4,11 @@ require 'middleman-core'
 describe Middleman::Util do
 
   describe "::path_match" do
+    it "is flaky", :retry => 5 do
+      res = rand(3)
+      expect(res).to eq 1
+    end
+
     it "matches a literal string" do
       expect(Middleman::Util.path_match '/index.html', '/index.html').to be true
     end

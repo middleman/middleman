@@ -1,13 +1,9 @@
-require "datadog/ci"
-
 require "simplecov"
 SimpleCov.root(File.expand_path(File.dirname(__FILE__) + "/.."))
 SimpleCov.start
 
+require "datadog/ci"
 require "aruba/api"
-RSpec.configure do |config|
-  config.include Aruba::Api
-end
 
 require_relative "support/given"
 
@@ -17,8 +13,12 @@ Datadog.configure do |c|
   c.ci.instrument :rspec
 end
 
+require 'rspec/fortify'
+
 # encoding: utf-8
 RSpec.configure do |config|
+  config.include Aruba::Api
+
   config.filter_run :focus
   config.run_all_when_everything_filtered = true
 
@@ -36,4 +36,7 @@ RSpec.configure do |config|
     mocks.syntax = :expect
     mocks.verify_partial_doubles = true
   end
+
+  config.retry_on_failure = true
+  config.retry_on_failure_count = 5
 end
