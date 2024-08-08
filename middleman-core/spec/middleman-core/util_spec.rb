@@ -4,8 +4,9 @@ require 'middleman-core'
 describe Middleman::Util do
 
   describe "::path_match" do
-    it "is flaky", :retry => 5 do
+    it "is new flaky" do
       res = rand(3)
+      p "Executing flaky test with result #{res}"
       expect(res).to eq 1
     end
 

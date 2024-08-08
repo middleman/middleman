@@ -1,12 +1,4 @@
 GIT
-  remote: https://github.com/Betterment/rspec-fortify.git
-  revision: acd81ec641c6c1a97daf18ef5c734165fdf73b4c
-  ref: main
-  specs:
-    rspec-fortify (1.0.0.pre)
-      rspec-core (> 3.9)
-
-GIT
   remote: https://github.com/DataDog/dd-trace-rb.git
   revision: 8dfe622ba604eec318e73f4e0fc43902b85b5aa1
   ref: master
@@ -294,7 +286,6 @@ DEPENDENCIES
   rake (~> 13.0)
   redcarpet (>= 3.1)
   rspec (~> 3.0)
-  rspec-fortify!
   rubocop
   rubydns (~> 1.0.1)
   simplecov

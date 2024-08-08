@@ -13,7 +13,6 @@ Datadog.configure do |c|
   c.ci.instrument :rspec
 end
 
-require 'rspec/fortify'
 
 # encoding: utf-8
 RSpec.configure do |config|
@@ -36,7 +35,4 @@ RSpec.configure do |config|
     mocks.syntax = :expect
     mocks.verify_partial_doubles = true
   end
-
-  config.retry_on_failure = true
-  config.retry_on_failure_count = 5
 end
