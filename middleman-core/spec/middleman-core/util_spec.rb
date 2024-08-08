@@ -10,6 +10,10 @@ describe Middleman::Util do
       expect(res).to eq 1
     end
 
+    it "fails" do
+      expect(1).to eq 2
+    end
+
     it "matches a literal string" do
       expect(Middleman::Util.path_match '/index.html', '/index.html').to be true
     end
