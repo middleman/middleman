@@ -50,7 +50,7 @@ GEM
       rspec-expectations (~> 3.4)
       thor (~> 1.0)
     ast (2.4.2)
-    backports (3.24.1)
+    backports (3.25.0)
     bigdecimal (3.1.8)
     builder (3.3.0)
     byebug (11.1.3)
