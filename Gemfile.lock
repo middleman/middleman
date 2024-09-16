@@ -106,7 +106,7 @@ GEM
     erubis (2.7.0)
     execjs (2.9.1)
     fast_blank (1.0.1)
-    fastimage (2.3.0)
+    fastimage (2.3.1)
     ffi (1.17.0)
     haml (4.0.7)
       tilt
