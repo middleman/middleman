@@ -8,7 +8,7 @@ module Middleman
 
       public
 
-      def initialize(opts={})
+      def initialize(opts = {})
         # using the splat operator works around a non-existing HOSTSRC variable
         # using nil as input does not work, but `*[]` does and then Resolv::Hosts
         # uses its defaults
@@ -23,7 +23,9 @@ module Middleman
       # @return [Array]
       #   Array of Names
       def getnames(ip)
-        resolver.getnames(ip.to_s).map(&:to_s)
+        resolver
+          .getnames(ip.to_s)
+          .map(&:to_s)
       rescue Resolv::ResolvError
         []
       end
@@ -54,7 +56,7 @@ module Middleman
       #   # <ip> <hostname>
       #   127.0.0.1 localhost.localhost localhost
       def hosts_file
-        return [ENV['MM_HOSTSRC']] if ENV.key?('MM_HOSTSRC') && File.file?(ENV['MM_HOSTSRC'])
+        return [ENV["MM_HOSTSRC"]] if ENV.key?("MM_HOSTSRC") && File.file?(ENV["MM_HOSTSRC"])
 
         []
       end

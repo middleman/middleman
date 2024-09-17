@@ -1,13 +1,9 @@
-require "datadog/ci"
-
 require "simplecov"
 SimpleCov.root(File.expand_path(File.dirname(__FILE__) + "/.."))
 SimpleCov.start
 
+require "datadog/ci"
 require "aruba/api"
-RSpec.configure do |config|
-  config.include Aruba::Api
-end
 
 require_relative "support/given"
 
@@ -17,8 +13,11 @@ Datadog.configure do |c|
   c.ci.instrument :rspec
 end
 
+
 # encoding: utf-8
 RSpec.configure do |config|
+  config.include Aruba::Api
+
   config.filter_run :focus
   config.run_all_when_everything_filtered = true
 

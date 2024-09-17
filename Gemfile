@@ -2,7 +2,7 @@ source "https://rubygems.org"
 
 # datadog CI visibility
 gem "datadog", github: "DataDog/dd-trace-rb", ref: "master"
-gem "datadog-ci", path: "../datadog-ci-rb"
+gem "datadog-ci", path: "../../p/datadog-ci-rb"
 
 # Build and doc tools
 gem "rake", "~> 13.0", require: false
