@@ -114,7 +114,7 @@ GEM
       concurrent-ruby (~> 1.0)
     hashie (5.0.0)
     hitimes (2.0.0)
-    i18n (1.14.5)
+    i18n (1.14.6)
       concurrent-ruby (~> 1.0)
     interception (0.5)
     json (2.7.2)
