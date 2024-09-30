@@ -154,7 +154,7 @@ GEM
     pry-rescue (1.6.0)
       interception (>= 0.5)
       pry (>= 0.12.0)
-    public_suffix (5.0.3)
+    public_suffix (6.0.1)
     racc (1.8.1)
     rack (2.2.9)
     rack-protection (2.2.4)
