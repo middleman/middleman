@@ -231,7 +231,7 @@ GEM
     uglifier (4.2.0)
       execjs (>= 0.3.0, < 3)
     unicode-display_width (2.6.0)
-    webrick (1.8.1)
+    webrick (1.8.2)
     xpath (3.2.0)
       nokogiri (~> 1.8)
     yard (0.9.37)
