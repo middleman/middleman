@@ -6,15 +6,14 @@ gem 'yard', '~> 0.9.37', require: false
 
 # Test tools
 gem 'aruba', require: false
-gem 'byebug'
 gem 'capybara', require: false
 gem 'cucumber', require: false
 gem 'rspec', require: false
 
-# Pry tools
+# Debug tools
+gem 'byebug'
 gem 'pry'
 gem 'pry-rescue'
-# gem 'pry-stack_explorer', require: false
 
 # Optional middleman dependencies, included for tests
 gem 'activesupport', RUBY_VERSION < '2.7' ? '~> 6.1.0' : '~> 7.0.0', require: false
@@ -32,10 +31,6 @@ gem 'slim', '< 5', require: false
 # Dns server to test preview server
 gem 'rubydns', '~> 1.0.1', require: false
 
-# For less, note there is no compatible JS runtime for windows
-# gem 'therubyracer', '>= 0.12', platforms: :ruby
-gem 'therubyrhino', '>= 2.0', platforms: :jruby
-
 # Code Quality
 gem 'rubocop', require: false
 gem 'simplecov', require: false
@@ -43,6 +38,3 @@ gem 'simplecov', require: false
 # Middleman itself
 gem 'middleman-cli', path: 'middleman-cli'
 gem 'middleman-core', path: 'middleman-core'
-
-# gem 'middleman-compass', github: 'middleman/middleman-compass', require: false
-# gem 'middleman-sprockets', github: 'middleman/middleman-sprockets', require: false
