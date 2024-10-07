@@ -13,7 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby-version: ["3.3", "3.2", "3.1", "3.0", "2.7", "2.6", "2.5"]
+        ruby-version: ["3.3", "3.2", "3.1", "3.0", "2.7"]
     steps:
       - uses: actions/checkout@v4
       - name: Delete Gemfile.lock
@@ -22,7 +22,6 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby-version }}
-          rubygems: ${{ (matrix.ruby_version < '2.6' && '3.3.26') || (matrix.ruby_version < '3.0' && '3.4.22') || 'latest' }}
           bundler-cache: true
       - name: Set up Node
         uses: actions/setup-node@v4
