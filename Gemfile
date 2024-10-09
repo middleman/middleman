@@ -16,14 +16,10 @@ gem 'pry'
 gem 'pry-rescue'
 
 # Optional middleman dependencies, included for tests
-gem 'activesupport', '~> 7.0.0', require: false
 gem 'coffee-script', '~> 2.2', require: false
 gem 'haml', '~> 4.0', require: false
 gem 'kramdown', '~> 2.4', require: false
 gem 'liquid', '~> 4.0', require: false
-gem 'minitest', require: false
-gem 'nokogiri', require: false
-gem 'public_suffix', require: false
 gem 'redcarpet', '>= 3.1', require: false
 gem 'sinatra', '~> 2.0', require: false
 gem 'slim', '< 5', require: false

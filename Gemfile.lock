@@ -101,7 +101,7 @@ GEM
     cucumber-messages (22.0.0)
     cucumber-tag-expressions (6.1.0)
     diff-lcs (1.5.1)
-    docile (1.4.0)
+    docile (1.4.1)
     dotenv (3.1.4)
     erubis (2.7.0)
     execjs (2.9.1)
@@ -134,7 +134,7 @@ GEM
     multi_test (1.1.0)
     mustermann (2.0.2)
       ruby2_keywords (~> 0.0.1)
-    nio4r (2.5.7)
+    nio4r (2.7.3)
     nokogiri (1.16.7)
       mini_portile2 (~> 2.8.2)
       racc (~> 1.4)
@@ -168,7 +168,7 @@ GEM
       ffi (~> 1.0)
     redcarpet (3.6.0)
     regexp_parser (2.9.2)
-    rexml (3.3.7)
+    rexml (3.3.8)
     rspec (3.13.0)
       rspec-core (~> 3.13.0)
       rspec-expectations (~> 3.13.0)
@@ -178,7 +178,7 @@ GEM
     rspec-expectations (3.13.3)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.13.0)
-    rspec-mocks (3.13.1)
+    rspec-mocks (3.13.2)
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.13.0)
     rspec-support (3.13.1)
@@ -207,7 +207,7 @@ GEM
       docile (~> 1.1)
       simplecov-html (~> 0.11)
       simplecov_json_formatter (~> 0.1)
-    simplecov-html (0.12.3)
+    simplecov-html (0.13.1)
     simplecov_json_formatter (0.1.4)
     sinatra (2.2.4)
       mustermann (~> 2.0)
@@ -240,7 +240,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  activesupport (~> 7.0.0)
   aruba
   byebug
   capybara
@@ -251,11 +250,8 @@ DEPENDENCIES
   liquid (~> 4.0)
   middleman-cli!
   middleman-core!
-  minitest
-  nokogiri
   pry
   pry-rescue
-  public_suffix
   rake (~> 13.2)
   redcarpet (>= 3.1)
   rspec
