@@ -1,4 +1,5 @@
 # Contributing
+
 In the spirit of [free software][free-sw], **everyone** is encouraged to help
 improve this project.
 
@@ -19,6 +20,7 @@ Here are some ways *you* can contribute:
 [issues]: https://github.com/middleman/middleman/issues
 
 ## Submitting an Issue
+
 We use the [GitHub issue tracker][issues] to track bugs and features. Before
 submitting a bug report or feature request, check to make sure it hasn't
 already been submitted. When submitting a bug report, please include a [Gist][]
@@ -29,8 +31,6 @@ Ideally, a bug report should include a pull request with failing specs.
 [gist]: https://gist.github.com/
 
 ## Submitting a Pull Request
-
-**WE DO NOT ACCEPT NEW FEATURES FOR THE V3 BRANCH ANYMORE**
 
 1. [Fork the repository.][fork]
 2. Create a topic [branch]. `git checkout -b local_topic_branch`
