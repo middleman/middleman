@@ -29,7 +29,7 @@ module Middleman
       #   background: image-url("image.jpg", $digest: true); // background: url("/assets/image-27a8f1f96afd8d4c67a59eb9447f45bd.jpg");
       #
       def image_url(source, options={}, _cache_buster=nil)
-        # Work with the Compass #image_url API
+        # Work with the Sass #image_url API
         if options.respond_to? :value
           case options.value
           when true
@@ -66,7 +66,7 @@ module Middleman
       #   src: font-url("image.jpg", $digest: true);  // src: url("/assets/font-27a8f1f96afd8d4c67a59eb9447f45bd.ttf");
       #
       def font_url(source, options={})
-        # Work with the Compass #font_url API
+        # Work with the Sass #font_url API
         if options.respond_to? :value
           case options.value
           when true

@@ -1,12 +1,11 @@
 require 'rake'
-
-require File.expand_path('middleman-core/lib/middleman-core/version.rb', __dir__)
+require_relative './middleman-core/lib/middleman-core/version'
 
 ROOT = __dir__
 GEM_NAME = 'middleman'.freeze
-
 middleman_gems = %w[middleman-core middleman-cli middleman]
 GEM_PATHS = middleman_gems.freeze
+GEMS_WITH_TESTS = middleman_gems - %w[middleman].freeze
 
 def sh_rake(command)
   sh "#{Gem.ruby} -S rake #{command}", verbose: true
@@ -44,14 +43,14 @@ desc 'Run tests for all middleman gems'
 task :test do
   Rake::Task['rubocop'].invoke
 
-  GEM_PATHS.each do |g|
+  GEMS_WITH_TESTS.each do |g|
     Dir.chdir(File.join(ROOT, g).to_s) { sh "#{Gem.ruby} -S rake test" }
   end
 end
 
 desc 'Run specs for all middleman gems'
 task :spec do
-  GEM_PATHS.each do |g|
+  GEMS_WITH_TESTS.each do |g|
     Dir.chdir(File.join(ROOT, g).to_s) { sh "#{Gem.ruby} -S rake spec" }
   end
 end

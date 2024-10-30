@@ -1,6 +1,4 @@
-# -*- encoding: utf-8 -*-
-$LOAD_PATH.push File.expand_path('../lib', __FILE__)
-require File.expand_path('../../middleman-core/lib/middleman-core/version', __FILE__)
+require_relative '../middleman-core/lib/middleman-core/version'
 
 Gem::Specification.new do |s|
   s.name        = 'middleman'
@@ -11,11 +9,10 @@ Gem::Specification.new do |s|
   s.email       = ['me@tdreyno.com', 'ben@benhollis.net', 'karlfreeman@gmail.com']
   s.homepage    = 'http://middlemanapp.com'
   s.summary     = 'Hand-crafted frontend development'
-  s.description = 'A static site generator. Provides dozens of templating languages (Haml, Sass, Compass, Slim, CoffeeScript, and more). Makes minification, compression, cache busting, Yaml data (and more) an easy part of your development cycle.'
+  s.description = 'A static site generator. Provides dozens of templating languages (Haml, Sass, Slim, CoffeeScript, and more). Makes minification, compression, cache busting, Yaml data (and more) an easy part of your development cycle.'
 
   s.files        = `git ls-files -z`.split("\0")
-  s.test_files   = `git ls-files -z -- {fixtures,features}/*`.split("\0")
-  s.require_path = 'lib'
+
   s.required_ruby_version = '>= 2.7.0'
 
   s.add_dependency('middleman-core', Middleman::VERSION)
