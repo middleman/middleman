@@ -19,11 +19,11 @@ PATH
       execjs (~> 2.0)
       fast_blank
       fastimage (~> 2.0)
-      haml (>= 4.0.5)
+      haml (~> 4.0)
       hamster (~> 3.0)
       hashie (>= 3.4, < 6.0)
       i18n (>= 1.6, < 1.15)
-      kramdown (>= 2.3.0)
+      kramdown (~> 2.4)
       listen (~> 3.0)
       memoist (~> 0.14)
       padrino-helpers (~> 0.15.0)
