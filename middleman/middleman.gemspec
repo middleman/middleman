@@ -17,7 +17,4 @@ Gem::Specification.new do |s|
 
   s.add_dependency('middleman-core', Middleman::VERSION)
   s.add_dependency('middleman-cli', Middleman::VERSION)
-  s.add_dependency('haml', ['>= 4.0.5'])
-  s.add_dependency('coffee-script', ['~> 2.2'])
-  s.add_dependency('kramdown', ['>= 2.3.0'])
 end
