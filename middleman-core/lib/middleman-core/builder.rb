@@ -87,7 +87,7 @@ module Middleman
       !@has_error
     end
 
-    # Pre-request CSS to give Compass a chance to build sprites
+    # Pre-request CSS to give Sass a chance to build sprites
     # @return [Array<Resource>] List of css resources that were output.
     Contract ResourceList
     def prerender_css
@@ -99,9 +99,9 @@ module Middleman
       end
 
       ::Middleman::Util.instrument 'builder.prerender.check-files' do
-        # Double-check for compass sprites
+        # Double-check for Sass sprites
         unless @app.files.find_new_files!.empty?
-          logger.debug '== Checking for Compass sprites'
+          logger.debug '== Checking for Sass sprites'
           @app.sitemap.ensure_resource_list_updated!
         end
       end
