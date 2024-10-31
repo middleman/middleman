@@ -10,7 +10,6 @@ PATH
     middleman-core (4.5.1)
       activesupport (>= 6.1)
       addressable (~> 2.4)
-      backports (~> 3.6)
       bundler (~> 2.0)
       coffee-script (~> 2.2)
       contracts
@@ -59,7 +58,6 @@ GEM
       rspec-expectations (~> 3.4)
       thor (~> 1.0)
     ast (2.4.2)
-    backports (3.25.0)
     base64 (0.2.0)
     bigdecimal (3.1.8)
     builder (3.3.0)
