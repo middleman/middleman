@@ -27,7 +27,6 @@ else
       base.extend self
     end
 
-    # rubocop:disable MethodName
     def Contract(*); end
 
     class Callable

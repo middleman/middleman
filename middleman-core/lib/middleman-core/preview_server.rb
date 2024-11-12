@@ -8,7 +8,6 @@ require 'middleman-core/preview_server/server_information'
 require 'middleman-core/preview_server/server_url'
 require 'middleman-core/preview_server/server_information_callback_proxy'
 
-# rubocop:disable GlobalVars
 module Middleman
   class PreviewServer
     class << self
