@@ -27,8 +27,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "12"
-      - name: Runs linter
-        run: bundle exec rake rubocop
       - name: Runs tests
         run: bundle exec rake test
         env:

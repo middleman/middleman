@@ -25,7 +25,6 @@ gem 'slim', '< 5', require: false
 gem 'rubydns', '~> 1.0.1', require: false
 
 # Code Quality
-gem 'rubocop', require: false
 gem 'simplecov', require: false
 
 # Middleman itself

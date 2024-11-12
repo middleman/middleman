@@ -62,7 +62,6 @@ module Middleman
           ::Haml::TempleEngine.define_options context: nil
         end
 
-        # rubocop:disable NestedMethodDefinition
         [::Haml::Filters::Sass, ::Haml::Filters::Scss, ::Haml::Filters::Markdown].each do |f|
           f.class_exec do
             if respond_to?(:template_class) # Haml 5 and older
@@ -93,7 +92,6 @@ module Middleman
             end
           end
         end
-        # rubocop:enable NestedMethodDefinition
 
         ::Tilt.prefer(::Middleman::Renderers::HamlTemplate, :haml)
 
