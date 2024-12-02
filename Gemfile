@@ -18,7 +18,7 @@ gem 'pry-rescue'
 # Optional middleman dependencies, included for tests
 gem 'liquid', '~> 5.5', require: false
 gem 'redcarpet', '>= 3.1', require: false
-gem 'sinatra', '~> 2.0', require: false
+gem 'sinatra', '~> 4.1', require: false
 gem 'slim', '< 5', require: false
 
 # Dns server to test preview server
