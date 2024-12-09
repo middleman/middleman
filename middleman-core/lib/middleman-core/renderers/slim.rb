@@ -1,5 +1,6 @@
 # Load gem
 require 'slim'
+require 'action_view' # Required for Slim 5
 
 module SafeTemplate
   def render(*)
