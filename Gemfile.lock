@@ -38,7 +38,7 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
-    activesupport (8.0.0)
+    activesupport (8.0.1)
       base64
       benchmark (>= 0.3)
       bigdecimal
@@ -135,13 +135,13 @@ GEM
     listen (3.9.0)
       rb-fsevent (~> 0.10, >= 0.10.3)
       rb-inotify (~> 0.9, >= 0.9.10)
-    logger (1.6.1)
+    logger (1.6.3)
     matrix (0.4.2)
     memoist (0.16.2)
     method_source (1.1.0)
     mini_mime (1.1.5)
     mini_portile2 (2.8.7)
-    minitest (5.25.1)
+    minitest (5.25.4)
     multi_test (1.1.0)
     mustermann (2.0.2)
       ruby2_keywords (~> 0.0.1)
@@ -196,7 +196,7 @@ GEM
       timers (~> 4.0.1)
     sassc (2.4.0)
       ffi (~> 1.9)
-    securerandom (0.3.2)
+    securerandom (0.4.1)
     servolux (0.13.0)
     simplecov (0.22.0)
       docile (~> 1.1)
@@ -225,7 +225,7 @@ GEM
       concurrent-ruby (~> 1.0)
     uglifier (4.2.1)
       execjs (>= 0.3.0, < 3)
-    uri (1.0.1)
+    uri (1.0.2)
     webrick (1.9.1)
     xpath (3.2.0)
       nokogiri (~> 1.8)
