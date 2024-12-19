@@ -30,7 +30,7 @@ PATH
       rack (>= 1.4.5, < 4)
       sassc (~> 2.0)
       servolux
-      tilt (~> 2.0.9)
+      tilt (~> 2.0)
       toml
       uglifier (>= 3, < 5)
       webrick
