@@ -156,7 +156,7 @@ GEM
     padrino-support (0.15.3)
     parallel (1.26.3)
     parslet (2.0.0)
-    pry (0.15.0)
+    pry (0.15.2)
       coderay (~> 1.1)
       method_source (~> 1.0)
     pry-rescue (1.6.0)
