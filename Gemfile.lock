@@ -18,7 +18,7 @@ PATH
       execjs (~> 2.0)
       fast_blank
       fastimage (~> 2.0)
-      haml (~> 4.0)
+      haml (>= 4.0.5)
       hamster (~> 3.0)
       hashie (>= 3.4, < 6.0)
       i18n (>= 1.6, < 1.15)
