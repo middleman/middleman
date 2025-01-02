@@ -253,7 +253,7 @@ DEPENDENCIES
   rubydns (~> 1.0.1)
   simplecov
   sinatra (~> 2.0)
-  slim (< 5)
+  slim (~> 4.0)
   yard (~> 0.9.37)
 
 BUNDLED WITH
