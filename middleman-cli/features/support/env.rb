@@ -1,6 +1,6 @@
 ENV["TEST"] = "true"
 
-require 'sassc'
+require 'sass-embedded'
 
 require 'simplecov'
 SimpleCov.root(File.expand_path(File.dirname(__FILE__) + '/../..'))

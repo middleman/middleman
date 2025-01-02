@@ -1,7 +1,7 @@
 require 'active_support/core_ext/object/try'
 require 'memoist'
 require 'middleman-core/contracts'
-require 'sassc'
+require 'sass-embedded'
 
 # Minify CSS Extension
 class Middleman::Extensions::MinifyCss < ::Middleman::Extension
@@ -23,12 +23,12 @@ class Middleman::Extensions::MinifyCss < ::Middleman::Extension
   end
 
   class SassCompressor
-    COMPRESSED_OPTIONS = { style: :compressed }.freeze
+    COMPRESSED_OPTIONS = { style: :compressed, syntax: :css }.freeze
 
     def self.compress(style, options={})
       options = options.merge(COMPRESSED_OPTIONS)
 
-      ::SassC::Engine.new(style, options).render.strip
+      ::Sass.compile_string(style, **options).css
     end
   end
 
