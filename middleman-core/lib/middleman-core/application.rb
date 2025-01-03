@@ -300,8 +300,6 @@ module Middleman
         Encoding.default_external = config[:encoding]
       end
 
-      prune_tilt_templates!
-
       # After extensions have worked after_config
       execute_callbacks(:after_configuration)
 
@@ -341,17 +339,6 @@ module Middleman
 
       logger.debug "== Reading: #{config[:environment]} config"
       config_context.instance_eval File.read(env_config), env_config, 1
-    end
-
-    # Clean up missing Tilt exts
-    def prune_tilt_templates!
-      ::Tilt.default_mapping.lazy_map.each_key do |key|
-        begin
-          ::Tilt[".#{key}"]
-        rescue LoadError, NameError
-          ::Tilt.default_mapping.lazy_map.delete(key)
-        end
-      end
     end
 
     # Whether we're in a specific mode

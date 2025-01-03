@@ -23,6 +23,8 @@ module Middleman
     Contract String => Any
     def tilt_class(path)
       ::Tilt[path]
+    rescue LoadError
+      nil
     end
     memoize :tilt_class
 

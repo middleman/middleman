@@ -335,7 +335,7 @@ module Middleman
 
     Contract Pathname => Pathname
     def strip_extensions(p)
-      p = p.sub_ext('') while ::Tilt[p.to_s] || p.extname == '.html'
+      p = p.sub_ext('') while Middleman::Util.tilt_class(p.to_s) || p.extname == '.html'
       Pathname(p.to_s + '.*')
     end
 
