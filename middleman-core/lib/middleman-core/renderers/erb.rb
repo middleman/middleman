@@ -6,7 +6,7 @@ module Middleman
         ::Tilt.prefer(Template, :erb)
       end
 
-      class Template < ::Tilt::ErubisTemplate
+      class Template < ::Tilt::ErubiTemplate
         ##
         # In preamble we need a flag `__in_erb_template` and SafeBuffer for padrino apps.
         #

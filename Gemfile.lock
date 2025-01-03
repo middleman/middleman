@@ -14,7 +14,7 @@ PATH
       coffee-script (~> 2.2)
       contracts
       dotenv
-      erubis
+      erubi
       execjs (~> 2.0)
       fast_blank
       fastimage (~> 2.0)
@@ -115,7 +115,7 @@ GEM
     docile (1.4.1)
     dotenv (3.1.7)
     drb (2.2.1)
-    erubis (2.7.0)
+    erubi (1.13.1)
     execjs (2.10.0)
     fast_blank (1.0.1)
     fastimage (2.3.1)
