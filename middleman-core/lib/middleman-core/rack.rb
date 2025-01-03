@@ -1,5 +1,5 @@
 require 'rack'
-require 'rack/file'
+require 'rack/files'
 require 'rack/lint'
 require 'rack/head'
 require 'rack/utils'
@@ -134,7 +134,7 @@ module Middleman
 
     # Immediately send static file
     def send_file(resource, env)
-      file     = ::Rack::File.new nil
+      file     = ::Rack::Files.new nil
       path     = resource.file_descriptor[:full_path]
       if !file.respond_to?(:path=)
         request  = ::Rack::Request.new(env)

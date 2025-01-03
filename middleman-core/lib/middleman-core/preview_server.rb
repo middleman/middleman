@@ -314,7 +314,9 @@ module Middleman
         @webrick ||= setup_webrick(@options[:debug] || false)
 
         rack_app = ::Middleman::Rack.new(@app).to_app
-        @webrick.mount '/', ::Rack::Handler::WEBrick, rack_app
+
+        require "rackup/handler/webrick"
+        @webrick.mount '/', ::Rackup::Handler::WEBrick, rack_app
       end
 
       # Detach the current Middleman::Application instance
