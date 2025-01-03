@@ -19,23 +19,23 @@ Feature: Minify Javascript
       })();
     </script>
     <script>
-      ;(function() {
-        this;
-        should();
-        too();
-      })();
+    ;(function() {
+      this;
+      should();
+      too();
+    })();
     </script>
     <script type='text/javascript'>
-      //<!--
-      ;(function() {
-        one;
-        line();
-        here();
-      })();
-      //-->
+    //<!--
+    ;(function() {
+      one;
+      line();
+      here();
+    })();
+    //-->
     </script>
     <script type='text/html'>
-      I'm a jQuery {{template}}.
+    I'm a jQuery {{template}}.
     </script>
     """
 
@@ -66,23 +66,23 @@ Feature: Minify Javascript
       })();
     </script>
     <script>
-      ;(function() {
-        this;
-        should();
-        too();
-      })();
+    ;(function() {
+      this;
+      should();
+      too();
+    })();
     </script>
     <script type='text/javascript'>
-      //<!--
-      ;(function() {
-        one;
-        line();
-        here();
-      })();
-      //-->
+    //<!--
+    ;(function() {
+      one;
+      line();
+      here();
+    })();
+    //-->
     </script>
     <script type='text/html'>
-      I'm a jQuery {{template}}.
+    I'm a jQuery {{template}}.
     </script>
     """
 
@@ -108,15 +108,15 @@ Feature: Minify Javascript
       Hello
     </script>
     <script>
-      Hello
+    Hello
     </script>
     <script type='text/javascript'>
-      //<!--
+    //<!--
     Hello
-      //-->
+    //-->
     </script>
     <script type='text/html'>
-      I'm a jQuery {{template}}.
+    I'm a jQuery {{template}}.
     </script>
     """
 
@@ -134,15 +134,15 @@ Feature: Minify Javascript
       should(),all.be(),on={one:line};
     </script>
     <script>
-      should(),too();
+    should(),too();
     </script>
     <script type='text/javascript'>
-      //<!--
+    //<!--
     one,line(),here();
-      //-->
+    //-->
     </script>
     <script type='text/html'>
-      I'm a jQuery {{template}}.
+    I'm a jQuery {{template}}.
     </script>
     """
 

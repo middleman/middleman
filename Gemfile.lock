@@ -18,7 +18,7 @@ PATH
       execjs (~> 2.0)
       fast_blank
       fastimage (~> 2.0)
-      haml (~> 4.0)
+      haml (>= 4.0.5)
       hamster (~> 3.0)
       hashie (>= 3.4, < 6.0)
       i18n (>= 1.6, < 1.15)
@@ -127,7 +127,9 @@ GEM
     ffi (1.17.1-x86_64-darwin)
     ffi (1.17.1-x86_64-linux-gnu)
     ffi (1.17.1-x86_64-linux-musl)
-    haml (4.0.7)
+    haml (6.3.0)
+      temple (>= 0.8.2)
+      thor
       tilt
     hamster (3.0.0)
       concurrent-ruby (~> 1.0)
