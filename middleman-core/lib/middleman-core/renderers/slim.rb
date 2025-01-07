@@ -41,7 +41,11 @@ module Middleman
           use_html_safe: true,
           disable_escape: true
         )
-        if Gem::Version.create(::Slim::VERSION) < Gem::Version.create('5')
+        begin
+          require "action_view"
+        rescue LoadError
+          # Don't add generator option if action_view is not available, since it depends on it
+        else
           ::Slim::Engine.set_options(
             generator: ::Temple::Generators::RailsOutputBuffer,
           )
