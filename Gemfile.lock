@@ -32,7 +32,7 @@ PATH
       rackup
       sassc (~> 2.0)
       servolux
-      tilt (~> 2.0)
+      tilt (~> 2.2)
       toml
       uglifier (>= 3, < 5)
       webrick
@@ -259,15 +259,15 @@ GEM
       rack-protection (= 4.1.1)
       rack-session (>= 2.0.0, < 3)
       tilt (~> 2.0)
-    slim (5.1.0)
+    slim (5.2.1)
       temple (~> 0.10.0)
-      tilt (>= 2.0.6, < 2.2)
+      tilt (>= 2.1.0)
     strscan (3.1.2)
     sys-uname (1.3.1)
       ffi (~> 1.1)
     temple (0.10.3)
     thor (1.2.2)
-    tilt (2.0.11)
+    tilt (2.5.0)
     timers (4.0.4)
       hitimes
     toml (0.3.0)
@@ -309,7 +309,6 @@ DEPENDENCIES
   simplecov
   sinatra (~> 4.0)
   slim (~> 5.0)
-  tilt (< 2.2)
   yard (~> 0.9.37)
 
 BUNDLED WITH
