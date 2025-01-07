@@ -20,6 +20,7 @@ gem 'liquid', RUBY_VERSION <= '2.7' ? '< 5.6' : '> 0', require: false
 gem 'redcarpet', '>= 3.1', require: false
 gem 'sinatra', '~> 4.0', require: false
 gem 'slim', '~> 4.0', require: false
+gem 'actionview', '~> 7.0', require: false
 
 # Dns server to test preview server
 gem 'rubydns', '~> 1.0.1', require: false
