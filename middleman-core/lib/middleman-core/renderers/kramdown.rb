@@ -4,20 +4,16 @@ module Middleman
   module Renderers
     # Our own Kramdown Tilt template that simply uses our custom renderer.
     class KramdownTemplate < ::Tilt::KramdownTemplate
-      def initialize(*args, &block)
-        super
+      private
 
+      def _prepare_output
         @context = @options[:context]
-      end
-
-      def evaluate(context, *)
         MiddlemanKramdownHTML.scope = @context || context
 
-        @output ||= begin
-          output, warnings = MiddlemanKramdownHTML.convert(@engine.root, @engine.options)
-          @engine.warnings.concat(warnings)
-          output
-        end
+        @engine = Kramdown::Document.new(data, options)
+        output, warnings = MiddlemanKramdownHTML.convert(@engine.root, @engine.options)
+        @engine.warnings.concat(warnings)
+        output
       end
     end
 

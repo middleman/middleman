@@ -21,14 +21,10 @@ module Middleman
         # Make the current Middleman app accessible to the template
         cattr_accessor :middleman_app
 
-        # Add exception messaging
-        # @param [Class] context
-        # @param [Hash] locals
-        # @return [String]
-        def evaluate(context, locals, &block)
+        def prepare
           return super unless middleman_app.server?
 
-          begin
+          @output = begin
             super
           rescue ::ExecJS::RuntimeError => e
             e.to_s

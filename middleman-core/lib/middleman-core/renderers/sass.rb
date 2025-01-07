@@ -29,26 +29,19 @@ module Middleman
 
       # A SassTemplate for Tilt which outputs debug messages
       class SassPlusCSSFilenameTemplate < ::Tilt::SassTemplate
-        def initialize(*args, &block)
-          super
-
-          @context = @options[:context]
-        end
-
         # Define the expected syntax for the template
         # @return [Symbol]
         def syntax
           :sass
         end
 
-        def prepare; end
+        private
 
         # Add exception messaging
         # @param [Class] context
         # @return [String]
-        def evaluate(context, _)
-          @context ||= context
-
+        def _prepare_output
+          @context = @options[:context]
           @engine = ::SassC::Engine.new(data, sass_options)
 
           begin
