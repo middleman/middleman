@@ -67,15 +67,9 @@ module Middleman
       end
 
       # Read compiled template from disk or cache
-      template = ::Tilt.new(path, 1, options) { body }
-      # template = cache.fetch(:compiled_template, extension, options, body) do
-      #   ::Tilt.new(path, 1, options) { body }
-      # end
+      template = ::Tilt.new(path, 1, options) { body.dup }
 
       # Render using Tilt
-      # content = ::Middleman::Util.instrument 'render.tilt', path: path do
-      #   template.render(context, locs, &block)
-      # end
       content = template.render(context, locs, &block)
 
       # Allow hooks to manipulate the result after render
