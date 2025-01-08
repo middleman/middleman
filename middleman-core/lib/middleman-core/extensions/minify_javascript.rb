@@ -10,7 +10,7 @@ class Middleman::Extensions::MinifyJavascript < ::Middleman::Extension
     require 'uglifier'
     ::Uglifier.new
   }, 'Set the JS compressor to use.'
-  option :content_types, %w(application/javascript), 'Content types of resources that contain JS'
+  option :content_types, %w(text/javascript), 'Content types of resources that contain JS'
   option :inline_content_types, %w(text/html text/php), 'Content types of resources that contain inline JS'
 
   def ready

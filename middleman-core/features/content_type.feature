@@ -7,7 +7,7 @@ Feature: Setting the right content type for files
     When I go to "/images/blank.gif"
     Then the content type should be "image/gif"
     When I go to "/javascripts/app.js"
-    Then the content type should be "application/javascript"
+    Then the content type should be "text/javascript"
     When I go to "/stylesheets/site.css"
     Then the content type should be "text/css"
     When I go to "/README"
