@@ -27,3 +27,14 @@ Feature: Preview Changes
     And the file "source/a-page.html.erb" is removed
     When I go to "/a-page.html"
     Then I should see "File Not Found"
+
+  Scenario: A template with apostrophe is reloaded during preview
+    Given the Server is running at "preview-app"
+    And the file "source/a-page.html.erb" has the contents
+      """
+      Matz's Ruby Interpreter
+      """
+    When I go to "/a-page.html"
+    Then I should see "Matz's Ruby Interpreter"
+    When I go to "/a-page.html"
+    Then I should see "Matz's Ruby Interpreter"

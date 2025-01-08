@@ -67,7 +67,7 @@ module Middleman
       end
 
       # Read compiled template from disk or cache
-      template = ::Tilt.new(path, 1, options) { body }
+      template = ::Tilt.new(path, 1, options) { body.dup }
 
       # Render using Tilt
       content = template.render(context, locs, &block)
