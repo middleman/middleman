@@ -1,6 +1,0 @@
-middleman-*/lib/**/*.rb
---exclude middleman-core/lib/middleman-core/step_definitions
---exclude middleman-cli/lib/middleman-cli/templates/extension/
---no-private
---hide-void-return
---markup=markdown

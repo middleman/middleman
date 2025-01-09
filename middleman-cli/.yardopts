@@ -1,5 +1,5 @@
 lib/**/*.rb
---exclude lib/middleman-cli/templates/extension/
+--exclude lib/middleman-cli/templates/
 --no-private
 --hide-void-return
 --markup=markdown
