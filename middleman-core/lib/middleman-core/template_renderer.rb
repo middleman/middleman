@@ -119,10 +119,10 @@ module Middleman
 
       if defined?(::I18n)
         old_locale = ::I18n.locale
-        ::I18n.locale = options[:locale] if options[:locale]
+        ::I18n.locale = options.delete(:locale) if options[:locale]
 
         # Backwards compat
-        ::I18n.locale = options[:lang] if options[:lang]
+        ::I18n.locale = options.delete(:lang) if options[:lang]
       end
 
       # Sandboxed class for template eval
