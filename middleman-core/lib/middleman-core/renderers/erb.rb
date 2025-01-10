@@ -7,13 +7,25 @@ module Middleman
       end
 
       class Template < ::Tilt::ErubiTemplate
+        def initialize(*args, &block)
+          super
+
+          @context = @options[:context]
+        end
+
         ##
-        # In preamble we need a flag `__in_erb_template` and SafeBuffer for padrino apps.
+        # In preamble we need a flag `__in_erb_template` for padrino apps.
         #
         def precompiled_preamble(locals)
           original = super
           "__in_erb_template = true\n" << original
-          # .rpartition("\n").first << "#{@outvar} = _buf = ActiveSupport::SafeBuffer.new\n"
+        end
+
+        ##
+        # Force the template the use the configured encoding.
+        #
+        def precompiled_template(locals)
+          super.dup.force_encoding(@context.app.config[:encoding])
         end
       end
     end

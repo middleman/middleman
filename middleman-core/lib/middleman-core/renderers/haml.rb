@@ -23,7 +23,7 @@ module Middleman
       def initialize(*args, &block)
         super
 
-        @context = @options[:context] if @options.key?(:context)
+        @context = @options[:context]
       end
 
       def prepare; end
