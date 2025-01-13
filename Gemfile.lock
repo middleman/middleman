@@ -87,7 +87,7 @@ GEM
     concurrent-ruby (1.3.4)
     connection_pool (2.4.1)
     contracts (0.17.2)
-    cucumber (9.2.0)
+    cucumber (9.2.1)
       builder (~> 3.2)
       cucumber-ci-environment (> 9, < 11)
       cucumber-core (> 13, < 14)
