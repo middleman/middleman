@@ -15,7 +15,7 @@ Feature: Sass/SCSS support in Slim
       """
     Given the Server is running at "sass-in-slim-app"
     When I go to "/sass_filter/"
-    Then I should see "text/css"
+    Then I should see "<style>"
     Then I should see ".sass"
     Then I should see "margin:0"
 
@@ -35,6 +35,6 @@ Feature: Sass/SCSS support in Slim
       """
     Given the Server is running at "sass-in-slim-app"
     When I go to "/scss_filter/"
-    Then I should see "text/css"
+    Then I should see "<style>"
     Then I should see ".scss"
     Then I should see "margin:0"

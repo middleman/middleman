@@ -41,9 +41,3 @@ Middleman::Extensions.register :slim_renderer, auto_activate: :before_configurat
   require 'middleman-core/renderers/slim'
   Middleman::Renderers::Slim
 end
-
-# Less Support
-Middleman::Extensions.register :less_renderer, auto_activate: :before_configuration do
-  require 'middleman-core/renderers/less'
-  Middleman::Renderers::Less
-end

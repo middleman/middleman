@@ -20,7 +20,7 @@ Gem::Specification.new do |s|
   s.add_dependency('bundler', '~> 2.0')
   s.add_dependency('rack', '>= 3')
   s.add_dependency('rackup')
-  s.add_dependency('tilt', ['~> 2.0'])
+  s.add_dependency('tilt', ['~> 2.2'])
   s.add_dependency('erubi')
   s.add_dependency('haml', ['>= 4.0.5'])
   s.add_dependency('coffee-script', ['~> 2.2'])
