@@ -10,13 +10,12 @@ module Middleman
         escape_html: :filter_html
       }.freeze
 
-      def initialize(*args, &block)
-        super
+      private
 
-        @context = @options[:context]
+      def _prepare_output
+        Redcarpet::Markdown.new(generate_renderer, options).render(data)
       end
 
-      # Overwrite built-in Tilt version.
       # Don't overload :renderer option with smartypants
       # Support renderer-level options
       def generate_renderer
@@ -26,6 +25,7 @@ module Middleman
 
         # Pick a renderer
         renderer = MiddlemanRedcarpetHTML
+        renderer.scope = options[:context]
 
         if options.delete(:smartypants)
           # Support SmartyPants
@@ -43,16 +43,6 @@ module Middleman
 
         renderer.new(render_options)
       end
-
-      def evaluate(scope, _)
-        @output ||= begin
-          MiddlemanRedcarpetHTML.scope = @context || scope
-
-          @engine.render(data)
-        end
-      end
-
-      private
 
       def covert_options_to_aliases!
         ALIASES.each do |aka, actual|
