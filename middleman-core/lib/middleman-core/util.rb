@@ -1,3 +1,9 @@
+if RUBY_VERSION < "3.2"
+  require "active_support/version"
+
+  require "logger" if ActiveSupport.version < Gem::Version.new("8.0.0")
+end
+
 require 'active_support/all'
 
 require 'middleman-core/application'
