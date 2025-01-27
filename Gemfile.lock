@@ -39,13 +39,13 @@ PATH
 GEM
   remote: https://rubygems.org/
   specs:
-    actionview (7.2.2.1)
-      activesupport (= 7.2.2.1)
+    actionview (8.0.1)
+      activesupport (= 8.0.1)
       builder (~> 3.1)
       erubi (~> 1.11)
       rails-dom-testing (~> 2.2)
       rails-html-sanitizer (~> 1.6)
-    activesupport (7.2.2.1)
+    activesupport (8.0.1)
       base64
       benchmark (>= 0.3)
       bigdecimal
@@ -57,6 +57,7 @@ GEM
       minitest (>= 5.1)
       securerandom (>= 0.3)
       tzinfo (~> 2.0, >= 2.0.5)
+      uri (>= 0.13.1)
     addressable (2.8.7)
       public_suffix (>= 2.0.2, < 7.0)
     aruba (2.3.0)
@@ -275,6 +276,7 @@ GEM
       concurrent-ruby (~> 1.0)
     uglifier (4.2.1)
       execjs (>= 0.3.0, < 3)
+    uri (1.0.2)
     webrick (1.9.1)
     xpath (3.2.0)
       nokogiri (~> 1.8)
@@ -291,7 +293,7 @@ PLATFORMS
   x86_64-linux-musl
 
 DEPENDENCIES
-  actionview (~> 7.0)
+  actionview (~> 8.0)
   aruba
   byebug
   capybara
