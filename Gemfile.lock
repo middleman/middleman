@@ -266,7 +266,7 @@ GEM
       ffi (~> 1.1)
     temple (0.10.3)
     thor (1.2.2)
-    tilt (2.5.0)
+    tilt (2.6.0)
     timers (4.0.4)
       hitimes
     toml (0.3.0)
