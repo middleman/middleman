@@ -23,7 +23,7 @@ gem 'slim', '~> 5.0', require: false
 gem 'actionview', RUBY_VERSION < '3.2' ? '~> 7.0' : '~> 8.0', require: false
 
 # Dns server to test preview server
-gem 'rubydns', '~> 1.0.1', require: false
+gem 'rubydns', '~> 2.1.1', require: false
 
 # Code Quality
 gem 'simplecov', require: false
