@@ -74,7 +74,7 @@ module Middleman::Cli
           if File.exist?(thorfile)
             ::Thor::Util.load_thorfile(thorfile)
 
-            invoke 'middleman:generator'
+            invoke 'middleman:generator:copy_default_files'
           else
             source_paths << dir
             directory dir, '.', exclude_pattern: /\.git\/|\.gitignore$/
