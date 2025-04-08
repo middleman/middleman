@@ -25,7 +25,11 @@ module Middleman
         # Force the template the use the configured encoding.
         #
         def precompiled_template(locals)
-          super.dup.force_encoding(@context.app.config[:encoding])
+          if @context
+            super.dup.force_encoding(@context.app.config[:encoding])
+          else
+            super
+          end
         end
       end
     end
