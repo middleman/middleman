@@ -121,7 +121,7 @@ GEM
     cucumber-tag-expressions (6.1.1)
     diff-lcs (1.5.1)
     docile (1.4.1)
-    dotenv (3.1.7)
+    dotenv (3.1.8)
     drb (2.2.1)
     erubi (1.13.1)
     execjs (2.10.0)
