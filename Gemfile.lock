@@ -148,7 +148,7 @@ GEM
     interception (0.5)
     kramdown (2.5.1)
       rexml (>= 3.3.9)
-    liquid (5.8.3)
+    liquid (5.8.4)
       bigdecimal
       strscan (>= 3.1.1)
     listen (3.9.0)
@@ -262,7 +262,7 @@ GEM
     slim (5.2.1)
       temple (~> 0.10.0)
       tilt (>= 2.1.0)
-    strscan (3.1.2)
+    strscan (3.1.3)
     sys-uname (1.3.1)
       ffi (~> 1.1)
     temple (0.10.3)
