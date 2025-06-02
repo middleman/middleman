@@ -217,7 +217,7 @@ GEM
     rails-html-sanitizer (1.6.2)
       loofah (~> 2.21)
       nokogiri (>= 1.15.7, != 1.16.7, != 1.16.6, != 1.16.5, != 1.16.4, != 1.16.3, != 1.16.2, != 1.16.1, != 1.16.0.rc1, != 1.16.0)
-    rake (13.2.1)
+    rake (13.3.0)
     rb-fsevent (0.11.2)
     rb-inotify (0.11.1)
       ffi (~> 1.0)
@@ -303,7 +303,7 @@ DEPENDENCIES
   middleman-core!
   pry
   pry-rescue
-  rake (~> 13.2)
+  rake (~> 13.3)
   redcarpet (>= 3.1)
   rspec
   rubydns (~> 1.0.1)
