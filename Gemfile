@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 # Build and doc tools
-gem 'rake', '~> 13.2', require: false
+gem 'rake', '~> 13.3', require: false
 gem 'yard', '~> 0.9.37', require: false
 
 # Test tools
