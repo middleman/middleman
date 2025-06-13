@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## 4.6.1
+
+- Allow upgrade to thor 1.3 (#2811)
+- Fix regression when visiting sitemap and config page (#2820)
+
 ## 4.6.0
 
 - Update Rubies matrix support (add: 3.3 and 3.4, remove: 2.5, 2.6)
