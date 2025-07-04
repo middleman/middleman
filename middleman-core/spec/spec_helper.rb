@@ -2,17 +2,9 @@ require "simplecov"
 SimpleCov.root(File.expand_path(File.dirname(__FILE__) + "/.."))
 SimpleCov.start
 
-require "datadog/ci"
 require "aruba/api"
 
 require_relative "support/given"
-
-Datadog.configure do |c|
-  c.service = "middleman"
-  c.ci.enabled = true
-  c.ci.instrument :rspec
-end
-
 
 # encoding: utf-8
 RSpec.configure do |config|
