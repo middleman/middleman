@@ -42,8 +42,6 @@ end
 
 desc 'Run tests for all middleman gems'
 task :test do
-  Rake::Task['rubocop'].invoke
-
   GEM_PATHS.each do |g|
     Dir.chdir(File.join(ROOT, g).to_s) { sh "#{Gem.ruby} -S rake test" }
   end
