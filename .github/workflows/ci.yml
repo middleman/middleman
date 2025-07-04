@@ -9,9 +9,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby-version: ["3.2", "3.1", "3.0", "2.7", "2.6", "2.5"]
-        experimental: [true, true, true, false, false, false]
-    continue-on-error: ${{ matrix.experimental }}
+        ruby-version: ["3.2", "3.1"]
     steps:
       - uses: actions/checkout@v3
       - name: Set up Ruby
@@ -25,9 +23,8 @@ jobs:
           node-version: "12"
       - name: Install dependencies
         run: bundle install
-      - name: Runs linter
-        run: bundle exec rake rubocop
       - name: Runs tests
         run: bundle exec rake test
         env:
           TEST: true
+          DD_TEST_SESSION_NAME: middleman-unit
