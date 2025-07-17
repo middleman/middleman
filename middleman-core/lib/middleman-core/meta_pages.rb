@@ -101,7 +101,7 @@ module Middleman
 
       # Respond to an HTML request
       def response(content)
-        [200, { 'Content-Type' => 'text/html' }, Array(content)]
+        [200, { 'content-type' => 'text/html' }, Array(content)]
       end
 
       def extension_options(extension)
