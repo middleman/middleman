@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## 4.6.2
+
+- Use lowercase headers in preview app, to make it compatible with Rack 3 (#2839)
+
 ## 4.6.1
 
 - Allow upgrade to thor 1.3 (#2811)
