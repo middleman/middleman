@@ -135,7 +135,7 @@ module Middleman
     # Immediately send static file
     def send_file(resource, env)
       file     = ::Rack::Files.new nil
-      path     = resource.file_descriptor[:full_path]
+      path     = resource.file_descriptor[:full_path].to_s
       if !file.respond_to?(:path=)
         request  = ::Rack::Request.new(env)
         response = file.serving(request, path)
