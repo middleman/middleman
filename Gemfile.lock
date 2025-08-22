@@ -1,12 +1,4 @@
 PATH
-  remote: ../../p/datadog-ci-rb
-  specs:
-    datadog-ci (1.22.0)
-      datadog (~> 2.4)
-      drb
-      msgpack
-
-PATH
   remote: middleman-cli
   specs:
     middleman-cli (4.5.0)
@@ -95,17 +87,9 @@ GEM
     cucumber-expressions (6.0.1)
     cucumber-tag_expressions (1.1.1)
     cucumber-wire (0.0.1)
-    datadog (2.19.0)
-      datadog-ruby_core_source (~> 3.4, >= 3.4.1)
-      libdatadog (~> 18.1.0.1.0)
-      libddwaf (~> 1.24.1.0.3)
-      logger
-      msgpack
-    datadog-ruby_core_source (3.4.1)
     diff-lcs (1.5.0)
     docile (1.4.0)
     dotenv (2.8.1)
-    drb (2.2.3)
     erubis (2.7.0)
     execjs (2.9.1)
     fast_blank (1.0.1)
@@ -125,15 +109,11 @@ GEM
     kramdown (2.4.0)
       rexml
     language_server-protocol (3.17.0.3)
-    libdatadog (18.1.0.1.0)
-    libddwaf (1.24.1.0.3)
-      ffi (~> 1.0)
     lint_roller (1.1.0)
     liquid (3.0.6)
     listen (3.8.0)
       rb-fsevent (~> 0.10, >= 0.10.3)
       rb-inotify (~> 0.9, >= 0.9.10)
-    logger (1.7.0)
     memoist (0.16.2)
     method_source (1.0.0)
     mime-types (3.5.1)
@@ -141,7 +121,6 @@ GEM
     mime-types-data (3.2023.1003)
     mini_portile2 (2.8.5)
     minitest (5.20.0)
-    msgpack (1.8.0)
     multi_json (1.15.0)
     multi_test (1.1.0)
     mustermann (3.0.0)
@@ -272,7 +251,6 @@ DEPENDENCIES
   capybara (~> 2.5.0)
   coffee-script (~> 2.2)
   cucumber (~> 3.0)
-  datadog-ci!
   haml (~> 4.0)
   kramdown (~> 2.4)
   liquid (~> 3.0)

@@ -44,5 +44,3 @@ gem "middleman-core", path: "middleman-core"
 # gem 'middleman-sprockets', github: 'middleman/middleman-sprockets', require: false
 
 gem "standard"
-
-gem "datadog-ci", path: "../../p/datadog-ci-rb"
