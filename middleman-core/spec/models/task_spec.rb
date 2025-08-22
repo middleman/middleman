@@ -10,6 +10,24 @@ RSpec.describe 'Task' do
               expect(1).to eq(1)
             end
           end
+
+          context ' ' do
+            it 'values           ' do
+              expect(1).to eq(1)
+            end
+          end
+
+          context '             ' do
+            it 'values           ' do
+              expect(1).to eq(1)
+            end
+          end
+
+          context '                               ' do
+            it 'values           ' do
+              expect(1).to eq(1)
+            end
+          end
         end
       end
     end
