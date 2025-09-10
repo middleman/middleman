@@ -165,3 +165,15 @@ Feature: Markdown (Redcarpet) support
     Then I should see 'width="1"'
     And I should see 'height="1"'
     And I should see 'src="/images/blank.gif"'
+
+  Scenario: Redcarpet using a custom renderer
+    Given the Server is running at "markdown-app"
+    And a custom renderer with name "LinksInBold"
+    And a file named "config.rb" with:
+      """
+      set :markdown_engine, :redcarpet
+      set :markdown, renderer: LinksInBold
+      """
+    Given the Server is running at "markdown-app"
+    When I go to "/link.html"
+    Then I should see '<a href="http://example.net/">**This link**</a> <a href="links.html">links</a>'

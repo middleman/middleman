@@ -72,6 +72,13 @@ Given /^a template named "([^\"]*)" with:$/ do |name, string|
   step %Q{a file named "source/#{name}" with:}, string
 end
 
+Given /^a custom renderer with name "([^\"]*)"$/ do |custom_renderer_name|
+  # Convert custom renderer class name from CamelCase to snake_case
+  custom_renderer_filename = custom_renderer_name.gsub(/([A-Z])/, '_\1').downcase.sub(/^_/, '') + '.rb'
+  target = File.join(PROJECT_ROOT_PATH, 'fixtures', 'custom-renderers', custom_renderer_filename)
+  require target
+end
+
 When /^I go to "([^\"]*)"$/ do |url|
   visit(Addressable::URI.encode(url))
 end
