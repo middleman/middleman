@@ -12,7 +12,7 @@ Feature: Assets get file hashes appended to them and references to them are upda
       | images/300px-59adce76.jpg           |
       | images/100px-5fd6fb90.gif           |
       | javascripts/application-1d8d5276.js |
-      | stylesheets/site-8bc55985.css       |
+      | stylesheets/site-5b3d74bc.css       |
       | index.html                          |
       | subdir/index.html                   |
       | other/index.html                    |
@@ -26,21 +26,21 @@ Feature: Assets get file hashes appended to them and references to them are upda
       | stylesheets/site.css       |
 
     And the file "javascripts/application-1d8d5276.js" should contain "img.src = '/images/100px-5fd6fb90.jpg'"
-    And the file "stylesheets/site-8bc55985.css" should contain:
+    And the file "stylesheets/site-5b3d74bc.css" should contain:
       """
       background-image: url("../images/100px-5fd6fb90.jpg")
       """
     And the file "index.html" should contain 'href="apple-touch-icon.png"'
-    And the file "index.html" should contain 'href="stylesheets/site-8bc55985.css"'
+    And the file "index.html" should contain 'href="stylesheets/site-5b3d74bc.css"'
     And the file "index.html" should contain 'src="javascripts/application-1d8d5276.js"'
     And the file "index.html" should contain 'src="images/100px-5fd6fb90.jpg"'
-    And the file "subdir/index.html" should contain 'href="../stylesheets/site-8bc55985.css"'
+    And the file "subdir/index.html" should contain 'href="../stylesheets/site-5b3d74bc.css"'
     And the file "index.html" should contain 'srcset="images/100px-5fd6fb90.jpg 1x, images/200px-c11eb203.jpg 2x, images/300px-59adce76.jpg 3x"'
     And the file "index.html" should contain 'src="images/100px-5fd6fb90.gif"'
     And the file "index.html" should contain 'src="images/100px-1242c368.png"'
     And the file "subdir/index.html" should contain 'src="../javascripts/application-1d8d5276.js"'
     And the file "subdir/index.html" should contain 'src="../images/100px-5fd6fb90.jpg"'
-    And the file "other/index.html" should contain 'href="../stylesheets/site-8bc55985.css"'
+    And the file "other/index.html" should contain 'href="../stylesheets/site-5b3d74bc.css"'
     And the file "other/index.html" should contain 'src="../javascripts/application-1d8d5276.js"'
     And the file "other/index.html" should contain 'src="../images/100px-5fd6fb90.jpg"'
     And the file "api.json" should contain 'images/100px-5fd6fb90.gif'
@@ -63,8 +63,8 @@ Feature: Assets get file hashes appended to them and references to them are upda
     Given the Server is running at "asset-hash-app"
     When I go to "/"
     Then I should see 'href="apple-touch-icon.png"'
-    And I should see 'href="stylesheets/site-47c40978.css"'
-    And I should see 'href="stylesheets/fragment-313b648b.css"'
+    And I should see 'href="stylesheets/site-5a24e43b.css"'
+    And I should see 'href="stylesheets/fragment-c1f7fc1d.css"'
     And I should see 'src="javascripts/application-1d8d5276.js"'
     And I should see 'src="images/100px-5fd6fb90.jpg"'
     And I should see 'srcset="images/100px-5fd6fb90.jpg 1x, images/200px-c11eb203.jpg 2x, images/300px-59adce76.jpg 3x"'
@@ -72,11 +72,11 @@ Feature: Assets get file hashes appended to them and references to them are upda
     And I should see 'src="images/100px-5fd6fb90.jpg?#test"'
     And I should see 'src="images/100px-5fd6fb90.jpg#test"'
     When I go to "/subdir/"
-    Then I should see 'href="../stylesheets/site-47c40978.css"'
+    Then I should see 'href="../stylesheets/site-5a24e43b.css"'
     And I should see 'src="../javascripts/application-1d8d5276.js"'
     And I should see 'src="../images/100px-5fd6fb90.jpg"'
     When I go to "/other/"
-    Then I should see 'href="../stylesheets/site-47c40978.css"'
+    Then I should see 'href="../stylesheets/site-5a24e43b.css"'
     And I should see 'src="../javascripts/application-1d8d5276.js"'
     And I should see 'src="../images/100px-5fd6fb90.jpg"'
     And I should see 'src="../images/100px-5fd6fb90.jpg?test"'
@@ -84,7 +84,7 @@ Feature: Assets get file hashes appended to them and references to them are upda
     And I should see 'src="../images/100px-5fd6fb90.jpg#test"'
     When I go to "/javascripts/application-1d8d5276.js"
     Then I should see "img.src = '/images/100px-5fd6fb90.jpg'"
-    When I go to "/stylesheets/site-47c40978.css"
+    When I go to "/stylesheets/site-5a24e43b.css"
     Then I should see 'background-image: url("../images/100px-5fd6fb90.jpg");'
     When I go to "/api.json"
     Then I should see 'images/100px-5fd6fb90.gif'
@@ -94,7 +94,7 @@ Feature: Assets get file hashes appended to them and references to them are upda
     Then I should see 'images/100px-5fd6fb90.gif'
     And I should see 'images/100px-5fd6fb90.jpg'
     And I should see 'images/100px-1242c368.png'
-    When I go to "/stylesheets/fragment-313b648b.css"
+    When I go to "/stylesheets/fragment-c1f7fc1d.css"
     And I should see 'url("../images/100px-5fd6fb90.jpg");'
     And I should see 'url("../images/100px-5fd6fb90.jpg?test");'
     And I should see 'url("../images/100px-5fd6fb90.jpg?#test");'
@@ -118,22 +118,22 @@ Feature: Assets get file hashes appended to them and references to them are upda
       """
     Given the Server is running at "asset-hash-host-app"
     When I go to "/"
-    Then I should see 'href="http://middlemanapp.com/stylesheets/site-7474cadd.css"'
-    Then I should see 'href="http://middlemanapp.com/stylesheets/fragment-2902933e.css"'
+    Then I should see 'href="http://middlemanapp.com/stylesheets/site-9eacdd87.css"'
+    Then I should see 'href="http://middlemanapp.com/stylesheets/fragment-87c9a8e8.css"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg?test"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg?#test"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg#test"'
     When I go to "/subdir/"
-    Then I should see 'href="http://middlemanapp.com/stylesheets/site-7474cadd.css"'
+    Then I should see 'href="http://middlemanapp.com/stylesheets/site-9eacdd87.css"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg"'
     When I go to "/other/"
-    Then I should see 'href="http://middlemanapp.com/stylesheets/site-7474cadd.css"'
+    Then I should see 'href="http://middlemanapp.com/stylesheets/site-9eacdd87.css"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg?test"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg?#test"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg#test"'
-    When I go to "/stylesheets/fragment-2902933e.css"
+    When I go to "/stylesheets/fragment-87c9a8e8.css"
     And I should see 'url("http://middlemanapp.com/images/100px-5fd6fb90.jpg");'
     And I should see 'url("http://middlemanapp.com/images/100px-5fd6fb90.jpg?test");'
     And I should see 'url("http://middlemanapp.com/images/100px-5fd6fb90.jpg?#test");'
@@ -150,22 +150,22 @@ Feature: Assets get file hashes appended to them and references to them are upda
       """
     Given the Server is running at "asset-hash-host-app"
     When I go to "/"
-    Then I should see 'href="http://middlemanapp.com/stylesheets/site-7474cadd.css"'
-    Then I should see 'href="http://middlemanapp.com/stylesheets/fragment-2902933e.css"'
+    Then I should see 'href="http://middlemanapp.com/stylesheets/site-9eacdd87.css"'
+    Then I should see 'href="http://middlemanapp.com/stylesheets/fragment-87c9a8e8.css"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg?test"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg?#test"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg#test"'
     When I go to "/subdir/"
-    Then I should see 'href="http://middlemanapp.com/stylesheets/site-7474cadd.css"'
+    Then I should see 'href="http://middlemanapp.com/stylesheets/site-9eacdd87.css"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg"'
     When I go to "/other/"
-    Then I should see 'href="http://middlemanapp.com/stylesheets/site-7474cadd.css"'
+    Then I should see 'href="http://middlemanapp.com/stylesheets/site-9eacdd87.css"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg?test"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg?#test"'
     And I should see 'src="http://middlemanapp.com/images/100px-5fd6fb90.jpg#test"'
-    When I go to "/stylesheets/fragment-2902933e.css"
+    When I go to "/stylesheets/fragment-87c9a8e8.css"
     And I should see 'url("http://middlemanapp.com/images/100px-5fd6fb90.jpg")'
     And I should see 'url("http://middlemanapp.com/images/100px-5fd6fb90.jpg?test")'
     And I should see 'url("http://middlemanapp.com/images/100px-5fd6fb90.jpg?#test")'
@@ -241,7 +241,7 @@ Feature: Assets get file hashes appended to them and references to them are upda
       | images/100px-5fd6fb90.jpg           |
       | images/100px-5fd6fb90.gif           |
       | javascripts/application-1d8d5276.js |
-      | stylesheets/site-7474cadd.css       |
+      | stylesheets/site-9eacdd87.css       |
 
   Scenario: Hashed-asset files are not replaced for rewrite ignored paths
     Given a fixture app "asset-hash-app"
@@ -263,17 +263,17 @@ Feature: Assets get file hashes appended to them and references to them are upda
       | subdir/index.html                   |
       | images/100px-5fd6fb90.jpg           |
       | javascripts/application-1d8d5276.js |
-      | stylesheets/site-8bc55985.css       |
+      | stylesheets/site-5b3d74bc.css       |
     And the following files should not exist:
       | images/100px.jpg           |
       | javascripts/application.js |
       | stylesheets/site.css       |
     And the file "javascripts/application-1d8d5276.js" should contain "img.src = '/images/100px.jpg'"
-    And the file "stylesheets/site-8bc55985.css" should contain:
+    And the file "stylesheets/site-5b3d74bc.css" should contain:
       """
       background-image: url("../images/100px.jpg")
       """
-    And the file "index.html" should contain 'href="stylesheets/site-8bc55985.css"'
+    And the file "index.html" should contain 'href="stylesheets/site-5b3d74bc.css"'
     And the file "index.html" should contain 'src="javascripts/application-1d8d5276.js"'
     And the file "index.html" should contain 'src="images/100px-5fd6fb90.jpg"'
     And the file "subdir/index.html" should contain:
