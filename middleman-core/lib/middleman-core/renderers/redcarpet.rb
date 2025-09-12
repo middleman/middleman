@@ -19,7 +19,12 @@ module Middleman
       # Don't overload :renderer option with smartypants
       # Support renderer-level options
       def generate_renderer
-        return options.delete(:renderer) if options.key?(:renderer)
+        if options.key?(:renderer)
+          renderer = options.delete(:renderer)
+          renderer.scope = options[:context] if renderer.respond_to?(:scope=)
+
+          return renderer
+        end
 
         covert_options_to_aliases!
 
