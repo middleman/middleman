@@ -4,4 +4,4 @@ Feature: Support srcset property as params for image_tag helper
   Scenario: Rendering an image with the feature enabled
     Given the Server is running at "image-srcset-paths-app"
     When I go to "/image-srcset-paths.html"
-    Then I should see '//example.com/remote-image.jpg 2x, /images/blank_3x.jpg 3x'
+    Then I should see '/images/blank.jpg, //example.com/remote-image.jpg 2x, /images/blank_3x.jpg 3x'
