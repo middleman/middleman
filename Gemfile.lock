@@ -200,7 +200,7 @@ GEM
     public_suffix (6.0.2)
     racc (1.8.1)
     rack (3.2.3)
-    rack-protection (4.1.1)
+    rack-protection (4.2.0)
       base64 (>= 0.1.0)
       logger (>= 1.6.0)
       rack (>= 3.0.0, < 4)
@@ -253,11 +253,11 @@ GEM
       simplecov_json_formatter (~> 0.1)
     simplecov-html (0.13.2)
     simplecov_json_formatter (0.1.4)
-    sinatra (4.1.1)
+    sinatra (4.2.0)
       logger (>= 1.6.0)
       mustermann (~> 3.0)
       rack (>= 3.0.0, < 4)
-      rack-protection (= 4.1.1)
+      rack-protection (= 4.2.0)
       rack-session (>= 2.0.0, < 3)
       tilt (~> 2.0)
     slim (5.2.1)
@@ -310,7 +310,7 @@ DEPENDENCIES
   rspec
   rubydns (~> 1.0.1)
   simplecov
-  sinatra (~> 4.0)
+  sinatra (~> 4.2)
   slim (~> 5.0)
   yard (~> 0.9.37)
 
