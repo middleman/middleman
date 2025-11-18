@@ -8,7 +8,7 @@ module Middleman
 
       def _prepare_output
         @context = @options[:context]
-        MiddlemanKramdownHTML.scope = @context || context
+        MiddlemanKramdownHTML.scope = @context
 
         @engine = Kramdown::Document.new(data, options)
         output, warnings = MiddlemanKramdownHTML.convert(@engine.root, @engine.options)
