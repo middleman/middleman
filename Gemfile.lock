@@ -148,7 +148,7 @@ GEM
     json (2.15.2)
     kramdown (2.5.1)
       rexml (>= 3.3.9)
-    liquid (5.10.0)
+    liquid (5.11.0)
       bigdecimal
       strscan (>= 3.1.1)
     listen (3.9.0)
