@@ -17,7 +17,7 @@ Gem::Specification.new do |s|
   s.required_ruby_version = '>= 2.7.0'
 
   # Core
-  s.add_dependency('bundler', '~> 2.0')
+  s.add_dependency('bundler', '> 2.0')
   s.add_dependency('rack', '>= 3')
   s.add_dependency('rackup')
   s.add_dependency('tilt', ['~> 2.2'])
