@@ -10,7 +10,7 @@ PATH
     middleman-core (4.6.2)
       activesupport (>= 6.1)
       addressable (~> 2.4)
-      bundler (~> 2.0)
+      bundler (> 2.0)
       coffee-script (~> 2.2)
       contracts
       dotenv
@@ -279,7 +279,7 @@ GEM
     uglifier (4.2.1)
       execjs (>= 0.3.0, < 3)
     uri (1.1.0)
-    webrick (1.9.1)
+    webrick (1.9.2)
     xpath (3.2.0)
       nokogiri (~> 1.8)
     yard (0.9.37)
