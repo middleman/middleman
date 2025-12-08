@@ -282,7 +282,7 @@ GEM
     webrick (1.9.2)
     xpath (3.2.0)
       nokogiri (~> 1.8)
-    yard (0.9.37)
+    yard (0.9.38)
 
 PLATFORMS
   aarch64-linux-gnu
@@ -312,7 +312,7 @@ DEPENDENCIES
   simplecov
   sinatra (~> 4.2)
   slim (~> 5.0)
-  yard (~> 0.9.37)
+  yard (~> 0.9.38)
 
 BUNDLED WITH
    2.6.2
