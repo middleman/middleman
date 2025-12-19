@@ -9,7 +9,7 @@ Feature: Minify CSS
       """
     And the Server is running at "minify-css-app"
     When I go to "/stylesheets/site.css"
-    Then I should see "7" lines
+    Then I should see "10" lines
     And I should see "only screen and (device-width"
 
   Scenario: Rendering external css with the feature enabled
@@ -27,7 +27,7 @@ Feature: Minify CSS
     When I go to "/more-css/site.css"
     Then I should see "1" lines
     When I go to "/stylesheets/report.css"
-    Then I should see "p{border:1px solid #ff6600}"
+    Then I should see "p{border:1px solid #f60}"
 
   Scenario: Rendering external css in a proxied resource
     Given a fixture app "minify-css-app"
@@ -59,7 +59,7 @@ Feature: Minify CSS
       """
     And the Server is running at "passthrough-app"
     When I go to "/stylesheets/site.css"
-    Then I should see "5" lines
+    Then I should see "7" lines
 
   Scenario: Rendering inline css with the feature disabled
     Given a fixture app "minify-css-app"
@@ -102,7 +102,8 @@ Feature: Minify CSS
     <style>
       body {
         test: style;
-        good: deal; }
+        good: deal;
+      }
     </style>
     """
 

@@ -29,7 +29,7 @@ PATH
       parallel
       rack (>= 3)
       rackup
-      sassc (~> 2.0)
+      sassc-embedded (~> 1.80)
       servolux
       tilt (~> 2.2)
       toml
@@ -134,6 +134,27 @@ GEM
     ffi (1.17.2-x86_64-darwin)
     ffi (1.17.2-x86_64-linux-gnu)
     ffi (1.17.2-x86_64-linux-musl)
+    google-protobuf (4.33.2)
+      bigdecimal
+      rake (>= 13)
+    google-protobuf (4.33.2-aarch64-linux-gnu)
+      bigdecimal
+      rake (>= 13)
+    google-protobuf (4.33.2-aarch64-linux-musl)
+      bigdecimal
+      rake (>= 13)
+    google-protobuf (4.33.2-arm64-darwin)
+      bigdecimal
+      rake (>= 13)
+    google-protobuf (4.33.2-x86_64-darwin)
+      bigdecimal
+      rake (>= 13)
+    google-protobuf (4.33.2-x86_64-linux-gnu)
+      bigdecimal
+      rake (>= 13)
+    google-protobuf (4.33.2-x86_64-linux-musl)
+      bigdecimal
+      rake (>= 13)
     haml (6.4.0)
       temple (>= 0.8.2)
       thor
@@ -243,8 +264,24 @@ GEM
       celluloid (= 0.16.0)
       celluloid-io (= 0.16.2)
       timers (~> 4.0.1)
-    sassc (2.4.0)
-      ffi (~> 1.9)
+    sass-embedded (1.97.1-aarch64-linux-gnu)
+      google-protobuf (~> 4.31)
+    sass-embedded (1.97.1-aarch64-linux-musl)
+      google-protobuf (~> 4.31)
+    sass-embedded (1.97.1-arm-linux-gnueabihf)
+      google-protobuf (~> 4.31)
+    sass-embedded (1.97.1-arm-linux-musleabihf)
+      google-protobuf (~> 4.31)
+    sass-embedded (1.97.1-arm64-darwin)
+      google-protobuf (~> 4.31)
+    sass-embedded (1.97.1-x86_64-darwin)
+      google-protobuf (~> 4.31)
+    sass-embedded (1.97.1-x86_64-linux-gnu)
+      google-protobuf (~> 4.31)
+    sass-embedded (1.97.1-x86_64-linux-musl)
+      google-protobuf (~> 4.31)
+    sassc-embedded (1.80.8)
+      sass-embedded (~> 1.80)
     securerandom (0.4.1)
     servolux (0.13.0)
     simplecov (0.22.0)
