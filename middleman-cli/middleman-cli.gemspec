@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
 
   s.executable   = 'middleman'
 
-  s.required_ruby_version = '>= 2.7.0'
+  s.required_ruby_version = '>= 3.2.0'
 
   # CLI
   s.add_dependency('thor', ['>= 0.17.0', '< 2'])
