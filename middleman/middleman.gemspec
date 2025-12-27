@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
 
   s.files        = `git ls-files -z`.split("\0")
 
-  s.required_ruby_version = '>= 2.7.0'
+  s.required_ruby_version = '>= 3.2.0'
 
   s.add_dependency('middleman-core', Middleman::VERSION)
   s.add_dependency('middleman-cli', Middleman::VERSION)
