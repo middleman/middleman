@@ -91,7 +91,7 @@ GEM
     coffee-script-source (1.12.2)
     concurrent-ruby (1.3.5)
     connection_pool (2.5.4)
-    contracts (0.17.2)
+    contracts (0.17.3)
     crass (1.0.6)
     cucumber (10.2.0)
       base64 (~> 0.2)
