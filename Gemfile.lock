@@ -140,7 +140,8 @@ GEM
       tilt
     hamster (3.0.0)
       concurrent-ruby (~> 1.0)
-    hashie (5.0.0)
+    hashie (5.1.0)
+      logger
     hitimes (3.1.0)
     i18n (1.14.7)
       concurrent-ruby (~> 1.0)
