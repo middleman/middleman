@@ -274,7 +274,7 @@ GEM
       memoist3 (~> 1.0.0)
     temple (0.10.4)
     thor (1.4.0)
-    tilt (2.6.1)
+    tilt (2.7.0)
     timers (4.0.4)
       hitimes
     toml (0.3.0)
