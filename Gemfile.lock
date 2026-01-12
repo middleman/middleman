@@ -275,7 +275,7 @@ GEM
       ffi (~> 1.1)
       memoist3 (~> 1.0.0)
     temple (0.10.4)
-    thor (1.4.0)
+    thor (1.5.0)
     tilt (2.7.0)
     timers (4.0.4)
       hitimes
