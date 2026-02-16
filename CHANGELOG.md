@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## 4.6.3
+
+- Fix errors when using a custom redcarpet renderer (#2855)
+- Fix implicit 1x scale in srcset crashing middleman (#2857)
+- Relax bundler version constraint to allow 4.x (#2883)
+- fix syntax error in kramdown.rb (#2880)
+
 ## 4.6.2
 
 - Use lowercase headers in preview app, to make it compatible with Rack 3 (#2839)
