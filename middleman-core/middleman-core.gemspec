@@ -22,7 +22,7 @@ Gem::Specification.new do |s|
   s.add_dependency('rackup')
   s.add_dependency('tilt', ['~> 2.2'])
   s.add_dependency('erubi')
-  s.add_dependency('haml', ['>= 4.0.5', '< 7'])
+  s.add_dependency('haml', ['>= 4.0.5'])
   s.add_dependency('coffee-script', ['~> 2.2'])
   s.add_dependency('kramdown', ['~> 2.4'])
   s.add_dependency('fast_blank')
