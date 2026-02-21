@@ -5,6 +5,7 @@ Feature: Minify Javascript
     Given a fixture app "minify-js-app"
     And a file named "config.rb" with:
       """
+      set :haml, { :attr_quote => '"' }
       """
     And the Server is running at "minify-js-app"
     When I go to "/inline-js.html"
@@ -25,7 +26,7 @@ Feature: Minify Javascript
       too();
     })();
     </script>
-    <script type='text/javascript'>
+    <script type="text/javascript">
     //<!--
     ;(function() {
       one;
@@ -34,7 +35,7 @@ Feature: Minify Javascript
     })();
     //-->
     </script>
-    <script type='text/html'>
+    <script type="text/html">
     I'm a jQuery {{template}}.
     </script>
     """
@@ -43,6 +44,8 @@ Feature: Minify Javascript
     Given a fixture app "passthrough-app"
     And a file named "config.rb" with:
       """
+      set :haml, { :attr_quote => '"' }
+
       module ::PassThrough
         def self.compress(data)
           data
@@ -72,7 +75,7 @@ Feature: Minify Javascript
       too();
     })();
     </script>
-    <script type='text/javascript'>
+    <script type="text/javascript">
     //<!--
     ;(function() {
       one;
@@ -81,7 +84,7 @@ Feature: Minify Javascript
     })();
     //-->
     </script>
-    <script type='text/html'>
+    <script type="text/html">
     I'm a jQuery {{template}}.
     </script>
     """
@@ -90,6 +93,8 @@ Feature: Minify Javascript
     Given a fixture app "passthrough-app"
     And a file named "config.rb" with:
       """
+      set :haml, { :attr_quote => '"' }
+
       module ::HelloCompressor
         def self.compress(data)
           "Hello"
@@ -110,12 +115,12 @@ Feature: Minify Javascript
     <script>
     Hello
     </script>
-    <script type='text/javascript'>
+    <script type="text/javascript">
     //<!--
     Hello
     //-->
     </script>
-    <script type='text/html'>
+    <script type="text/html">
     I'm a jQuery {{template}}.
     </script>
     """
@@ -124,6 +129,8 @@ Feature: Minify Javascript
     Given a fixture app "minify-js-app"
     And a file named "config.rb" with:
       """
+      set :haml, { :attr_quote => '"' }
+
       activate :minify_javascript, inline: true
       """
     And the Server is running at "minify-js-app"
@@ -136,12 +143,12 @@ Feature: Minify Javascript
     <script>
     should(),too();
     </script>
-    <script type='text/javascript'>
+    <script type="text/javascript">
     //<!--
     one,line(),here();
     //-->
     </script>
-    <script type='text/html'>
+    <script type="text/html">
     I'm a jQuery {{template}}.
     </script>
     """
@@ -161,12 +168,12 @@ Feature: Minify Javascript
     <script>
       should(),all.be(),on={one:line};
     </script>
-    <script type='text/javascript'>
+    <script type="text/javascript">
       //<!--
     one,line(),here();
       //-->
     </script>
-    <script type='text/html'>
+    <script type="text/html">
       I'm a jQuery {{template}}.
     </script>
     """
