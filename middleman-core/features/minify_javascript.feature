@@ -168,12 +168,12 @@ Feature: Minify Javascript
     <script>
       should(),all.be(),on={one:line};
     </script>
-    <script type='text/javascript'>
+    <script type="text/javascript">
       //<!--
     one,line(),here();
       //-->
     </script>
-    <script type='text/html'>
+    <script type="text/html">
       I'm a jQuery {{template}}.
     </script>
     """
