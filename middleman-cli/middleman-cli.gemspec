@@ -20,4 +20,5 @@ Gem::Specification.new do |s|
 
   # CLI
   s.add_dependency('thor', ['>= 0.17.0', '< 2'])
+  s.add_dependency('irb')
 end
