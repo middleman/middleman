@@ -19,7 +19,7 @@ PATH
       execjs (~> 2.0)
       fast_blank
       fastimage (~> 2.0)
-      haml (>= 4.0.5, < 7)
+      haml (>= 4.0.5)
       hamster (~> 3.0)
       hashie (>= 3.4, < 6.0)
       i18n (>= 1.6, < 1.15)
@@ -59,7 +59,7 @@ GEM
       securerandom (>= 0.3)
       tzinfo (~> 2.0, >= 2.0.5)
       uri (>= 0.13.1)
-    addressable (2.8.8)
+    addressable (2.8.9)
       public_suffix (>= 2.0.2, < 8.0)
     aruba (2.3.3)
       bundler (>= 1.17)
@@ -218,7 +218,7 @@ GEM
     psych (5.3.1)
       date
       stringio
-    public_suffix (7.0.0)
+    public_suffix (7.0.2)
     racc (1.8.1)
     rack (3.2.5)
     rack-protection (4.2.1)
