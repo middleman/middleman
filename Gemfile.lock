@@ -159,7 +159,7 @@ GEM
     json (2.19.2)
     kramdown (2.5.2)
       rexml (>= 3.4.4)
-    liquid (5.11.0)
+    liquid (5.12.0)
       bigdecimal
       strscan (>= 3.1.1)
     listen (3.10.0)
@@ -291,7 +291,7 @@ GEM
       temple (~> 0.10.0)
       tilt (>= 2.1.0)
     stringio (3.2.0)
-    strscan (3.1.5)
+    strscan (3.1.7)
     sys-uname (1.4.1)
       ffi (~> 1.1)
       memoist3 (~> 1.0.0)
