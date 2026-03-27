@@ -156,6 +156,18 @@ module Middleman
         end
       end
 
+      # Find a resource given its destination path
+      # @param [String] request_path The destination (output) path of a resource.
+      # @return [Array<Middleman::Sitemap::Resource>]
+      Contract String => ArrayOf[IsA['Middleman::Sitemap::Resource']]
+      def find_index_resources_by_prefix(prefix)
+        @lock.synchronize do
+          prefix = ::Middleman::Util.normalize_path(prefix)
+          ensure_resource_list_updated!
+          @_lookup_indexes_at_path[prefix] || []
+        end
+      end
+
       # Find a resource given its page id
       # @param [String] page_id The page id.
       # @return [Middleman::Sitemap::Resource]
@@ -244,6 +256,20 @@ module Middleman
                 @resources.each do |resource|
                   @_lookup_by_destination_path[resource.destination_path] = resource
                 end
+               
+                if @app.config[:traversal_use_any_index]
+                  @resources.each do |resource|
+                    parts = resource.destination_path.split('/')
+                    
+                    filename = parts.pop
+                    prefix = parts.join('/')
+
+                    if !filename.nil? && filename.start_with?("index.")
+                      @_lookup_indexes_at_path[prefix] ||= []
+                      @_lookup_indexes_at_path[prefix] << resource
+                    end
+                  end
+                end
 
                 # NB: This needs to be done after the previous two steps,
                 # since some proxy resources are looked up by path in order to
@@ -269,6 +295,7 @@ module Middleman
         @lock.synchronize do
           @_lookup_by_path = {}
           @_lookup_by_destination_path = {}
+          @_lookup_indexes_at_path = {}
           @_lookup_by_page_id = {}
         end
       end
