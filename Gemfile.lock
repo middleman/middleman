@@ -288,7 +288,7 @@ GEM
       rack-protection (= 4.2.1)
       rack-session (>= 2.0.0, < 3)
       tilt (~> 2.0)
-    slim (5.2.1)
+    slim (5.2.2)
       temple (~> 0.10.0)
       tilt (>= 2.1.0)
     stringio (3.2.0)
@@ -296,9 +296,9 @@ GEM
     sys-uname (1.4.1)
       ffi (~> 1.1)
       memoist3 (~> 1.0.0)
-    temple (0.10.4)
+    temple (0.10.7)
     thor (1.5.0)
-    tilt (2.7.0)
+    tilt (2.9.0)
     timers (4.0.4)
       hitimes
     toml (0.3.0)
@@ -341,7 +341,7 @@ DEPENDENCIES
   rubydns (~> 1.0.1)
   simplecov
   sinatra (~> 4.2)
-  slim (~> 5.0)
+  slim (~> 5.2)
   yard (~> 0.9.38)
 
 BUNDLED WITH
