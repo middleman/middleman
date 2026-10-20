@@ -3,7 +3,7 @@ module Middleman
   module Renderers
     class ERb < ::Middleman::Extension
       def after_configuration
-        ::Tilt.prefer(Template, :erb)
+        ::Tilt.prefer(Template, :erb, 'html.erb')
       end
 
       class Template < ::Tilt::ErubiTemplate

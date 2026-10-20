@@ -4,6 +4,7 @@ Feature: link_to helper
     Given the Server is running at "link-to-app"
     When I go to "/link_to_erb.html"
     Then I should see "erb <s>with html tags</s>"
+    Then I should see '<a href="/">'
 
   Scenario: link_to works with absolute URLs (where the relative part matches a local path)
     Given a fixture app "link-to-app"
