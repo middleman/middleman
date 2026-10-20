@@ -326,10 +326,11 @@ PLATFORMS
 
 DEPENDENCIES
   actionview (~> 8.0)
-  aruba
+  aruba (~> 2.2)
   byebug
   capybara
   cucumber
+  json (> 0)
   liquid (> 0)
   middleman-cli!
   middleman-core!
