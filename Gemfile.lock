@@ -21,7 +21,7 @@ PATH
       fastimage (~> 2.0)
       haml (>= 4.0.5)
       hamster (~> 3.0)
-      hashie (>= 3.4, < 6.0)
+      hashie (>= 3.4, < 7.0)
       i18n (>= 1.6, < 1.16)
       kramdown (~> 2.4)
       listen (~> 3.0)
@@ -144,7 +144,7 @@ GEM
       tilt
     hamster (3.0.0)
       concurrent-ruby (~> 1.0)
-    hashie (5.1.0)
+    hashie (6.0.0)
       logger
     hitimes (3.1.0)
     i18n (1.15.2)
