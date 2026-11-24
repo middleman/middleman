@@ -123,6 +123,10 @@ module Middleman
     # Whether to include a trailing slash when stripping the index file
     # @return [Boolean]
     define_setting :trailing_slash, true, 'Whether to include a trailing slash when stripping the index file'
+    
+    # When using traversal helpers, treat all filenames starting with "index" as index files. Otherwise, use :index_file setting. 
+    # @return [Boolean]
+    define_setting :traversal_use_any_index, false, 'When using traversal helpers, treat all filenames starting with "index" as index files. Otherwise, use :index_file setting'
 
     # Location of javascripts within source.
     # @return [String]
